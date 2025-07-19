@@ -67,7 +67,7 @@ function MobileCodeEditorComponent({
   
   const editorRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedContent = useRef(initialContent);
 
   // Auto-save functionality

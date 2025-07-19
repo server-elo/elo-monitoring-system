@@ -1,0 +1,111 @@
+/**
+ * Application Configuration
+ * Implements 12-factor principle III: Store config in the environment
+ */
+
+const config = {
+  // Application
+  app: {
+    name: process.env.APP_NAME || 'Learning Solidity Platform',
+    version: process.env.APP_VERSION || '1.0.0',
+    env: process.env.NODE_ENV || 'development',
+    port: parseInt(process.env.PORT || '3000', 10),
+    url: process.env.APP_URL || 'http://localhost:3000'
+  },
+
+  // Database (12-factor principle IV: Backing services)
+  database: {
+    url: process.env.DATABASE_URL,
+    poolMin: parseInt(process.env.DB_POOL_MIN || '2', 10),
+    poolMax: parseInt(process.env.DB_POOL_MAX || '10', 10),
+    ssl: process.env.DB_SSL === 'true'
+  },
+
+  // Redis Cache
+  redis: {
+    url: process.env.REDIS_URL,
+    ttl: parseInt(process.env.REDIS_TTL || '3600', 10)
+  },
+
+  // Authentication
+  auth: {
+    secret: process.env.NEXTAUTH_SECRET,
+    url: process.env.NEXTAUTH_URL,
+    providers: {
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET
+      },
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET
+      }
+    }
+  },
+
+  // AI Services
+  ai: {
+    openai: {
+      apiKey: process.env.OPENAI_API_KEY,
+      model: process.env.OPENAI_MODEL || 'gpt-4'
+    },
+    gemini: {
+      apiKey: process.env.GEMINI_API_KEY
+    },
+    localLLM: {
+      endpoint: process.env.LOCAL_LLM_ENDPOINT,
+      enabled: process.env.ENABLE_LOCAL_LLM === 'true'
+    }
+  },
+
+  // Feature Flags
+  features: {
+    aiTutor: process.env.ENABLE_AI_TUTOR === 'true',
+    collaboration: process.env.ENABLE_COLLABORATION === 'true',
+    gamification: process.env.ENABLE_GAMIFICATION === 'true',
+    debugging: process.env.ENABLE_DEBUGGING === 'true'
+  },
+
+  // Security
+  security: {
+    rateLimitWindow: parseInt(process.env.RATE_LIMIT_WINDOW || '900000', 10),
+    rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
+    corsOrigins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000']
+  },
+
+  // Monitoring
+  monitoring: {
+    sentry: {
+      dsn: process.env.SENTRY_DSN,
+      environment: process.env.NODE_ENV
+    },
+    googleAnalytics: {
+      id: process.env.GOOGLE_ANALYTICS_ID
+    }
+  },
+
+  // Logging (12-factor principle XI: Logs)
+  logging: {
+    level: process.env.LOG_LEVEL || 'info',
+    format: process.env.LOG_FORMAT || 'json'
+  }
+};
+
+// Validate required configuration
+const requiredEnvVars = [
+  'DATABASE_URL',
+  'NEXTAUTH_SECRET',
+  'NEXTAUTH_URL'
+];
+
+if (config.app.env === 'production') {
+  requiredEnvVars.push('REDIS_URL', 'SENTRY_DSN');
+}
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+
+module.exports = config;

@@ -36,8 +36,8 @@ export function SecuritySection({
   onUpdateSecurity,
   onChangePassword,
   onSetupTwoFactor,
-  onEnableTwoFactor,
-  onDisableTwoFactor,
+  onEnableTwoFactor: _onEnableTwoFactor,
+  onDisableTwoFactor: _onDisableTwoFactor,
   onRevokeSession,
   onRefreshSessions,
   className
@@ -56,7 +56,7 @@ export function SecuritySection({
     confirm: false
   });
   const [_twoFactorSetup, setTwoFactorSetup] = useState<TwoFactorSetup | null>(null);
-  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [_twoFactorCode, _setTwoFactorCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // Password strength calculation

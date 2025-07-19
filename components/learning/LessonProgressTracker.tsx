@@ -63,25 +63,25 @@ export function LessonProgressTracker({
         setTotalXpEarned(xp);
         setCurrentStep(savedCurrentStep);
       } catch (error) {
-        logger.error('Failed to load lesson progress:', {}, error as Error);
+        logger.error('Failed to load lesson progress', error as Error);
       }
     }
   }, [lessonId]);
 
-  // Save progress to localStorage
-  const _saveProgress = (completed: Set<string>, xp: number, currentStepId: string | null) => {
-    try {
-      const progressData = {
-        completed: Array.from(completed),
-        xp,
-        currentStepId,
-        lastUpdated: new Date().toISOString()
-      };
-      localStorage.setItem(`lesson_progress_${lessonId}`, JSON.stringify(progressData));
-    } catch (error) {
-      logger.error('Failed to save lesson progress:', {}, error as Error);
-    }
-  };
+  // Save progress to localStorage - currently handled by parent component
+  // const saveProgress = (completed: Set<string>, xp: number, currentStepId: string | null) => {
+  //   try {
+  //     const progressData = {
+  //       completed: Array.from(completed),
+  //       xp,
+  //       currentStepId,
+  //       lastUpdated: new Date().toISOString()
+  //     };
+  //     localStorage.setItem(`lesson_progress_${lessonId}`, JSON.stringify(progressData));
+  //   } catch (error) {
+  //     logger.error('Failed to save lesson progress', error as Error, {});
+  //   }
+  // };
 
   // Step completion is handled by parent component
   // const _completeStep = async (stepId: string) => {

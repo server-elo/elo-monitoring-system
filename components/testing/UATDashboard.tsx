@@ -23,7 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { uatScenarios, uatSuccessCriteria } from '@/lib/testing/uatScenarios';
+import { uatScenarios, uatSuccessCriteria, type UATSession } from '@/lib/testing/uatScenarios';
 // import { useToast } from '@/hooks/use-toast'; // Temporarily disabled for build
 
 /**
@@ -397,21 +397,21 @@ export const UATDashboard: React.FC = () => {
             .map((session) => (
               <div key={session.id} className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <p className="font-medium">{session.testerInfo.name}</p>
+                  <p className="font-medium">{session.testerInfo?.name || 'Unknown Tester'}</p>
                   <p className="text-sm text-gray-600">
-                    {session.testerInfo.experience} • {session.testerInfo.device} • {session.testerInfo.browser}
+                    {session.testerInfo?.experience || 'N/A'} • {session.testerInfo?.device || 'N/A'} • {session.testerInfo?.browser || 'N/A'}
                   </p>
                   <p className="text-xs text-gray-500">
-                    Started: {new Date(session.startTime).toLocaleTimeString()}
+                    Started: {session.startTime ? new Date(session.startTime).toLocaleTimeString() : 'Not started'}
                   </p>
                 </div>
                 
                 <div className="text-right">
                   <p className="text-sm font-medium">
-                    {session.metrics.tasksCompleted}/{session.assignedTasks.length} tasks
+                    {session.metrics?.tasksCompleted || 0}/{session.assignedTasks?.length || 0} tasks
                   </p>
                   <Progress 
-                    value={(session.metrics.tasksCompleted / session.assignedTasks.length) * 100} 
+                    value={session.assignedTasks?.length ? ((session.metrics?.tasksCompleted || 0) / session.assignedTasks.length) * 100 : 0} 
                     className="h-2 w-20"
                   />
                 </div>

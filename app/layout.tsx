@@ -67,52 +67,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#3b82f6" />
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            // FORCE BROWSER TO ALWAYS BE ONLINE
-            Object.defineProperty(navigator, 'onLine', {
-              get: () => true,
-              configurable: true
-            });
-            
-            // Remove all offline event listeners
-            window.addEventListener = new Proxy(window.addEventListener, {
-              apply(target, thisArg, args) {
-                const [event] = args;
-                if (event === 'offline' || event === 'online') {
-                  return;
-                }
-                return target.apply(thisArg, args);
-              }
-            });
-            
-            // Aggressively prevent and remove all service workers
-            if ('serviceWorker' in navigator) {
-              // Unregister all existing service workers
-              navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(let registration of registrations) {
-                  registration.unregister();
-                }
-              });
-              
-              // Prevent any new registrations
-              const originalRegister = navigator.serviceWorker.register;
-              navigator.serviceWorker.register = function() {
-                return Promise.reject(new Error('Service workers are disabled'));
-              };
-              
-              // Listen for messages from service worker to reload
-              navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data && event.data.type === 'RELOAD') {
-                  window.location.reload();
-                }
-              });
-            }
-          `
-        }} />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Learn Solidity" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
       <body className={inter.className}>
         <MainProviders>

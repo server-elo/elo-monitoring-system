@@ -19,9 +19,7 @@ const GamificationDashboard = lazy(() =>
 );
 
 const AITutoringInterface = lazy(() => 
-  import('@/components/ai/EnhancedAITutor').then(module => ({
-    default: module.EnhancedAITutor
-  }))
+  import('@/components/ai/EnhancedAITutor')
 );
 
 const RealTimeCollaboration = lazy(() => 

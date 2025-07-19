@@ -32,8 +32,8 @@ export class SimpleErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log the error
     logger.error('React Error Boundary caught an error', error, {
-      message: error.message,
       component: 'SimpleErrorBoundary',
+      componentStack: errorInfo.componentStack || undefined,
     });
 
     // Call custom error handler if provided

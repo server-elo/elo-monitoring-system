@@ -12,14 +12,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Download, RefreshCw, Wifi, WifiOff, Bell, BellOff, X, Smartphone, Monitor, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { serviceWorkerManager, ServiceWorkerStatus } from '@/lib/pwa/service-worker-manager';
+import { serviceWorkerManager, ServiceWorkerStatus, ServiceWorkerStatusType } from '@/lib/pwa/service-worker-manager';
 import { cn } from '@/lib/utils';
 
 /**
  * PWA status component
  */
 export function PWAStatus() {
-  const [status, setStatus] = useState<ServiceWorkerStatus>('not-supported');
+  const [status, setStatus] = useState<ServiceWorkerStatus>({
+    isInstalled: false,
+    isUpdateAvailable: false,
+    isOnline: true,
+    canInstall: false,
+    status: 'not-supported'
+  });
   const [isOnline, setIsOnline] = useState(true);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
@@ -149,8 +155,8 @@ export function PWAStatus() {
   /**
    * Get status color
    */
-  const getStatusColor = (status: ServiceWorkerStatus) => {
-    switch (status) {
+  const getStatusColor = (statusType: ServiceWorkerStatusType) => {
+    switch (statusType) {
       case 'registered':
       case 'updated':
         return 'text-green-500';
@@ -168,8 +174,8 @@ export function PWAStatus() {
   /**
    * Get status message
    */
-  const getStatusMessage = (status: ServiceWorkerStatus) => {
-    switch (status) {
+  const getStatusMessage = (statusType: ServiceWorkerStatusType) => {
+    switch (statusType) {
       case 'not-supported':
         return 'PWA features not supported';
       case 'not-registered':
@@ -201,7 +207,7 @@ export function PWAStatus() {
     return `${totalItems} items cached`;
   };
 
-  if (status === 'not-supported') {
+  if (status.status === 'not-supported') {
     return null; // Don't show component if PWA not supported
   }
 
@@ -292,7 +298,7 @@ export function PWAStatus() {
             )}
 
             {/* PWA status */}
-            <div className={cn("w-2 h-2 rounded-full", getStatusColor(status))} />
+            <div className={cn("w-2 h-2 rounded-full", getStatusColor(status.status))} />
             
             {/* Device indicator */}
             {window.matchMedia('(max-width: 768px)').matches ? (
@@ -331,8 +337,8 @@ export function PWAStatus() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Status</span>
                       <div className="flex items-center space-x-2">
-                        <div className={cn("w-2 h-2 rounded-full", getStatusColor(status))} />
-                        <span className="text-sm font-medium">{getStatusMessage(status)}</span>
+                        <div className={cn("w-2 h-2 rounded-full", getStatusColor(status.status))} />
+                        <span className="text-sm font-medium">{getStatusMessage(status.status)}</span>
                       </div>
                     </div>
 

@@ -53,7 +53,7 @@ class RealGoogleGenAI {
       return {
         sendMessage: async (message: string | { message?: string; content?: string; [key: string]: any }) => {
           try {
-            const prompt = typeof message === 'string' ? message : message.message || message.content;
+            const prompt = typeof message === 'string' ? message : (message.message || message.content || '');
             const result = await this.model.generateContent(prompt);
             const response = await result.response;
             return {
@@ -70,10 +70,12 @@ class RealGoogleGenAI {
     }
   };
 
-  models = {
-    generateContent: async (config: { contents?: string; prompt?: string; [key: string]: any } | string) => {
+  getModels() {
+    return {
+      generateContent: async (config: { contents?: string; prompt?: string; [key: string]: any } | string) => {
       try {
-        const prompt = config.contents || config.prompt || config;
+        const isString = typeof config === 'string';
+        const prompt = isString ? config : (config.contents || config.prompt || '');
         const result = await this.model.generateContent(prompt);
         const response = await result.response;
         return {
@@ -91,12 +93,13 @@ class RealGoogleGenAI {
     generateContentStream: async function* (config: { contents?: string; prompt?: string; temperature?: number; maxTokens?: number; safetySettings?: any[]; [key: string]: any } | string): AsyncGenerator<{ text: string; candidates: any[] }, void, unknown> {
       try {
         // Enhanced config processing with validation and analytics
+        const isString = typeof config === 'string';
         const processedConfig = {
-          prompt: config.contents || config.prompt || config,
-          temperature: config.temperature || 0.7,
-          maxTokens: config.maxTokens || 2048,
-          safetySettings: config.safetySettings || [],
-          ...config
+          prompt: isString ? config : (config.contents || config.prompt || ''),
+          temperature: isString ? 0.7 : (config.temperature || 0.7),
+          maxTokens: isString ? 2048 : (config.maxTokens || 2048),
+          safetySettings: isString ? [] : (config.safetySettings || []),
+          ...(isString ? {} : config)
         };
 
         // Log streaming request for analytics
@@ -146,14 +149,15 @@ class RealGoogleGenAI {
     },
     generateImages: async (config: { prompt?: string; model?: string; numberOfImages?: number; outputMimeType?: string; aspectRatio?: string; [key: string]: any } | string) => {
       // Enhanced config processing for image generation
+      const isString = typeof config === 'string';
       const processedConfig = {
-        prompt: config.prompt || config,
-        model: config.model || 'imagen-3.0-generate-002',
-        numberOfImages: config.numberOfImages || 1,
-        outputMimeType: config.outputMimeType || 'image/png',
-        aspectRatio: config.aspectRatio || '1:1',
-        safetySettings: config.safetySettings || [],
-        ...config
+        prompt: isString ? config : (config.prompt || 'Generate a beautiful image'),
+        model: isString ? 'imagen-3.0-generate-002' : (config.model || 'imagen-3.0-generate-002'),
+        numberOfImages: isString ? 1 : (config.numberOfImages || 1),
+        outputMimeType: isString ? 'image/png' : (config.outputMimeType || 'image/png'),
+        aspectRatio: isString ? '1:1' : (config.aspectRatio || '1:1'),
+        safetySettings: isString ? [] : (config.safetySettings || []),
+        ...(isString ? {} : config)
       };
 
       // Log image generation request for analytics
@@ -191,7 +195,8 @@ class RealGoogleGenAI {
         requestConfig: processedConfig
       };
     }
-  };
+    };
+  }
 }
 
 type Chat = any;
@@ -343,7 +348,7 @@ export const generateDiagramForConcept = async (prompt: string): Promise<{ base6
     return { error: "Gemini AI Service not initialized. API Key may be missing." };
   }
   try {
-    const response = await ai.models.generateImages({
+    const response = await ai.getModels().generateImages({
         model: IMAGE_MODEL_NAME,
         prompt: prompt,
         config: { numberOfImages: 1, outputMimeType: 'image/png' },
@@ -396,7 +401,7 @@ export const getTopicExplanation = async (topic: string, details: string): Promi
   }
   try {
     const prompt = `Explain the following blockchain/Solidity topic: "${topic}". Specific details or question: "${details}". Provide a comprehensive yet easy-to-understand explanation formatted with markdown.`;
-    const response: GenerateContentResponse = await ai.models.generateContent({
+    const response: GenerateContentResponse = await ai.getModels().generateContent({
         model: TEXT_MODEL_NAME,
         contents: prompt,
         config: {

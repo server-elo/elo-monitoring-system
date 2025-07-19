@@ -21,7 +21,7 @@ export function PrivacySection({
   onUpdate,
   onRequestDataExport,
   onRequestAccountDeletion,
-  validationErrors = [],
+  validationErrors: _validationErrors = [],
   className
 }: PrivacySectionProps) {
   const [activeTab, setActiveTab] = useState<'profile' | 'data' | 'sharing'>('profile');
@@ -66,9 +66,9 @@ export function PrivacySection({
 
   // Get validation error for a specific field
   // Validation errors are displayed inline
-  const getFieldError = useCallback((field: string) => {
-    return validationErrors.find(error => error.field === field);
-  }, [validationErrors]);
+  // const getFieldError = useCallback((field: string) => {
+  //   return validationErrors.find(error => error.field === field);
+  // }, [validationErrors]);
 
   return (
     <GlassContainer

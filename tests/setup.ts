@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 config({ path: '.env.test' });
 
 // Mock environment variables for testing
+// @ts-expect-error - NODE_ENV is read-only but we need to set it for tests
 process.env.NODE_ENV = 'test';
 process.env.DATABASE_URL = 'file:./test.db';
 process.env.LOCAL_LLM_URL = 'http://localhost:1234/v1';

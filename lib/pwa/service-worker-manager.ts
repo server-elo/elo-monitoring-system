@@ -5,12 +5,22 @@
  * for Progressive Web App functionality.
  */
 
+export type ServiceWorkerStatusType = 
+  | 'not-supported'
+  | 'not-registered'
+  | 'registering'
+  | 'registered'
+  | 'updating'
+  | 'updated'
+  | 'error';
+
 export interface ServiceWorkerStatus {
   isInstalled: boolean;
   isUpdateAvailable: boolean;
   isOnline: boolean;
   canInstall: boolean;
   installationPrompt?: BeforeInstallPromptEvent;
+  status: ServiceWorkerStatusType;
 }
 
 export interface BeforeInstallPromptEvent extends Event {
@@ -22,15 +32,19 @@ export interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
+type EventCallback = (...args: any[]) => void;
+
 class ServiceWorkerManager {
   private registration: ServiceWorkerRegistration | null = null;
   private status: ServiceWorkerStatus = {
     isInstalled: false,
     isUpdateAvailable: false,
-    isOnline: navigator.onLine,
+    isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
     canInstall: false,
+    status: 'not-registered'
   };
   private listeners: ((status: ServiceWorkerStatus) => void)[] = [];
+  private eventListeners: Map<string, EventCallback[]> = new Map();
   private installPrompt: BeforeInstallPromptEvent | null = null;
 
   constructor() {
@@ -45,22 +59,26 @@ class ServiceWorkerManager {
       e.preventDefault();
       this.installPrompt = e as BeforeInstallPromptEvent;
       this.updateStatus({ canInstall: true, installationPrompt: this.installPrompt });
+      this.emit('install-prompt', e);
     });
 
     // Listen for online/offline events
     window.addEventListener('online', () => {
       this.updateStatus({ isOnline: true });
+      this.emit('network-online');
     });
 
     window.addEventListener('offline', () => {
       this.updateStatus({ isOnline: false });
+      this.emit('network-offline');
     });
 
     // Register service worker
     if ('serviceWorker' in navigator) {
       try {
         this.registration = await navigator.serviceWorker.register('/sw.js');
-        this.updateStatus({ isInstalled: true });
+        this.updateStatus({ isInstalled: true, status: 'registered' });
+        this.emit('status-change', this.status);
 
         // Listen for updates
         this.registration.addEventListener('updatefound', () => {
@@ -68,13 +86,15 @@ class ServiceWorkerManager {
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                this.updateStatus({ isUpdateAvailable: true });
+                this.updateStatus({ isUpdateAvailable: true, status: 'updated' });
+                this.emit('update-available');
               }
             });
           }
         });
       } catch (error) {
         console.error('Service worker registration failed:', error);
+        this.updateStatus({ status: 'error' });
       }
     }
   }
@@ -114,6 +134,7 @@ class ServiceWorkerManager {
       
       if (choiceResult.outcome === 'accepted') {
         this.updateStatus({ canInstall: false, installationPrompt: undefined });
+        this.emit('app-installed');
         return true;
       }
     } catch (error) {
@@ -151,11 +172,112 @@ class ServiceWorkerManager {
     try {
       const result = await this.registration.unregister();
       if (result) {
-        this.updateStatus({ isInstalled: false, isUpdateAvailable: false });
+        this.updateStatus({ isInstalled: false, isUpdateAvailable: false, status: 'not-registered' });
       }
       return result;
     } catch (error) {
       console.error('Service worker unregistration failed:', error);
+      return false;
+    }
+  }
+
+  // Event emitter methods
+  public on(event: string, callback: EventCallback): void {
+    if (!this.eventListeners.has(event)) {
+      this.eventListeners.set(event, []);
+    }
+    this.eventListeners.get(event)!.push(callback);
+  }
+
+  public off(event: string, callback: EventCallback): void {
+    const listeners = this.eventListeners.get(event);
+    if (listeners) {
+      const index = listeners.indexOf(callback);
+      if (index > -1) {
+        listeners.splice(index, 1);
+      }
+    }
+  }
+
+  private emit(event: string, ...args: any[]): void {
+    const listeners = this.eventListeners.get(event);
+    if (listeners) {
+      listeners.forEach(callback => callback(...args));
+    }
+  }
+
+  // Additional methods expected by PWAStatus component
+  public isNetworkOnline(): boolean {
+    return this.status.isOnline;
+  }
+
+  public isUpdateAvailable(): boolean {
+    return this.status.isUpdateAvailable;
+  }
+
+  public async getCacheStatus(): Promise<any> {
+    if (!('caches' in window)) {
+      return null;
+    }
+
+    try {
+      const cacheNames = await caches.keys();
+      const cacheStatus: any = { caches: {} };
+      
+      for (const cacheName of cacheNames) {
+        const cache = await caches.open(cacheName);
+        const requests = await cache.keys();
+        cacheStatus.caches[cacheName] = { size: requests.length };
+      }
+      
+      return cacheStatus;
+    } catch (error) {
+      console.error('Failed to get cache status:', error);
+      return null;
+    }
+  }
+
+  public async applyUpdate(): Promise<void> {
+    if (this.registration?.waiting) {
+      // Tell waiting service worker to take control
+      this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      
+      // Reload once the new service worker takes control
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      }, { once: true });
+    }
+  }
+
+  public async showInstallPrompt(): Promise<boolean> {
+    return this.promptInstall();
+  }
+
+  public async requestNotificationPermission(): Promise<boolean> {
+    if (!('Notification' in window)) {
+      return false;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      return permission === 'granted';
+    } catch (error) {
+      console.error('Failed to request notification permission:', error);
+      return false;
+    }
+  }
+
+  public async clearCache(): Promise<boolean> {
+    if (!('caches' in window)) {
+      return false;
+    }
+
+    try {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+      return true;
+    } catch (error) {
+      console.error('Failed to clear cache:', error);
       return false;
     }
   }

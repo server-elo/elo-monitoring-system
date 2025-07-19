@@ -866,7 +866,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
           await commitManager.commitLessonCompletion(lessonId, code);
           showToastMessage('Solution committed to git repository', 'success');
         } catch (gitError) {
-          logger.warn('Git commit failed:', {}, gitError as Error);
+          logger.warn('Git commit failed', { error: gitError as Error });
           // Don't fail the submission if git fails
         }
       }
@@ -894,7 +894,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
         await commitManager.commitCodeSave(sessionId, `Save code version: ${newVersion.message}`);
         showToastMessage('Code version saved and committed', 'success');
       } catch (gitError) {
-        logger.warn('Git commit failed:', {}, gitError as Error);
+        logger.warn('Git commit failed', { error: gitError as Error });
         showToastMessage('Code version saved (git commit failed)', 'warning');
       }
     } else {

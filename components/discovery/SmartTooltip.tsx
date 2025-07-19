@@ -62,7 +62,7 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
   
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hoverStartRef = useRef<number>(0);
 
   // Check if tooltip should be shown based on conditions

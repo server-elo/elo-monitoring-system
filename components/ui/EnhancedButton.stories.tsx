@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { EnhancedButton } from './EnhancedButton';
 import { Play, Download, Settings, Heart, Share, Plus } from 'lucide-react';
-import { fn } from '@storybook/test';
+import { action } from '@storybook/addon-actions';
 
 /**
  * EnhancedButton component provides a comprehensive button implementation with
@@ -110,7 +110,7 @@ It supports multiple variants, sizes, loading states, and accessibility features
     },
   },
   args: {
-    onClick: fn(),
+    onClick: action('onClick'),
   },
 };
 

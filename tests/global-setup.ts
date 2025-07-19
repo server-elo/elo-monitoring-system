@@ -78,7 +78,6 @@ async function createTestUsers() {
       create: {
         email: 'test@soliditylearn.com',
         name: 'Test User',
-        username: 'testuser',
         image: 'https://avatars.githubusercontent.com/u/1?v=4',
         emailVerified: new Date(),
         createdAt: new Date(),
@@ -93,7 +92,6 @@ async function createTestUsers() {
       create: {
         email: 'collab@soliditylearn.com',
         name: 'Collaboration User',
-        username: 'collabuser',
         image: 'https://avatars.githubusercontent.com/u/2?v=4',
         emailVerified: new Date(),
         createdAt: new Date(),
@@ -108,7 +106,6 @@ async function createTestUsers() {
       create: {
         email: 'admin@soliditylearn.com',
         name: 'Admin User',
-        username: 'adminuser',
         image: 'https://avatars.githubusercontent.com/u/3?v=4',
         emailVerified: new Date(),
         createdAt: new Date(),
