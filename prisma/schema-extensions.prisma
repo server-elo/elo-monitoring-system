@@ -1,0 +1,256 @@
+// Enhanced AI Features Database Schema Extensions
+// Add these models to your main schema.prisma file
+
+// AI Learning Analytics and Context
+model AILearningContext {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  currentLevel          Int      @default(1)
+  skillLevel            SkillLevel @default(BEGINNER)
+  learningPath          String[] // Array of topic names
+  recentTopics          String[] // Recently studied topics
+  weakAreas             String[] // Areas needing improvement
+  strongAreas           String[] // Areas of strength
+  preferredLearningStyle String  @default("mixed") // visual, textual, interactive, mixed
+  conceptMastery        Json     // concept -> mastery level (0-1)
+  timeSpentPerTopic     Json     // topic -> minutes
+  errorPatterns         String[] // Common error patterns
+  successPatterns       String[] // Successful learning patterns
+  recommendedNextTopics String[] // AI-recommended next topics
+  difficultyPreference  Float    @default(0.5) // 0-1, where 1 is challenging
+  lastAnalysisUpdate    DateTime @default(now())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Personalized Coding Challenges
+model PersonalizedChallenge {
+  id                String   @id @default(cuid())
+  userId            String
+  title             String
+  description       String
+  difficulty        Int      // 1-10 scale
+  topic             String
+  starterCode       String
+  solutionCode      String?
+  testCases         Json     // Array of test case objects
+  hints             String[] // Progressive hints
+  learningObjectives String[] // What student should learn
+  aiGenerated       Boolean  @default(true)
+  isCompleted       Boolean  @default(false)
+  completedAt       DateTime?
+  timeSpent         Int      @default(0) // minutes
+  attempts          Int      @default(0)
+  bestScore         Int?     // 0-100
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user        User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submissions PersonalizedSubmission[]
+}
+
+// Submissions for personalized challenges
+model PersonalizedSubmission {
+  id          String   @id @default(cuid())
+  challengeId String
+  userId      String
+  code        String
+  score       Int?     // 0-100
+  feedback    String?
+  aiAnalysis  Json?    // AI-generated analysis
+  isCorrect   Boolean  @default(false)
+  timeSpent   Int      @default(0) // minutes
+  createdAt   DateTime @default(now())
+
+  challenge PersonalizedChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Security Analysis Results
+model SecurityAnalysis {
+  id                String   @id @default(cuid())
+  userId            String
+  codeHash          String   // Hash of analyzed code for caching
+  code              String
+  vulnerabilities   Json     // Array of vulnerability objects
+  gasOptimizations  Json     // Array of optimization suggestions
+  bestPractices     Json     // Array of best practice recommendations
+  overallScore      Int      // 0-100 security score
+  aiModel           String   // Which AI model performed analysis
+  analysisTime      Int      // Time taken in milliseconds
+  createdAt         DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, codeHash])
+}
+
+// AI Interaction Logs
+model AIInteraction {
+  id           String   @id @default(cuid())
+  userId       String
+  sessionId    String   // Group related interactions
+  requestType  String   // code, explanation, analysis, quick
+  prompt       String
+  response     String
+  aiModel      String   // CodeLlama-34B, Gemini-Pro, etc.
+  responseTime Int      // milliseconds
+  confidence   Float    // AI confidence score
+  wasHelpful   Boolean? // User feedback
+  fallbackUsed Boolean  @default(false)
+  contextUsed  Json?    // User context at time of request
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, sessionId])
+  @@index([requestType, aiModel])
+}
+
+// Voice Learning Sessions
+model VoiceLearningSession {
+  id              String   @id @default(cuid())
+  userId          String
+  audioData       String?  // Base64 encoded audio or file path
+  transcription   String?  // Speech-to-text result
+  command         String?  // Extracted command
+  response        String?  // AI response
+  accuracy        Float?   // Transcription accuracy
+  sessionDuration Int      @default(0) // seconds
+  isSuccessful    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Multi-Modal Learning Content
+model MultiModalContent {
+  id                String   @id @default(cuid())
+  concept           String
+  skillLevel        SkillLevel
+  textExplanation   String
+  visualDiagram     String?  // URL or base64 image
+  interactiveDemo   String?  // URL or embedded content
+  codeExample       String?
+  audioNarration    String?  // URL to audio file
+  videoExplanation  String?  // URL to video
+  aiGenerated       Boolean  @default(true)
+  generationModel   String?  // Which AI model generated content
+  usageCount        Int      @default(0)
+  averageRating     Float?   // User ratings
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([concept, skillLevel])
+}
+
+// Job Board Integration
+model JobPosting {
+  id              String   @id @default(cuid())
+  title           String
+  company         String
+  description     String
+  requirements    String[] // Required skills
+  soliditySkills  String[] // Specific Solidity skills needed
+  experienceLevel SkillLevel
+  salaryMin       Int?
+  salaryMax       Int?
+  location        String?
+  isRemote        Boolean  @default(false)
+  applicationUrl  String?
+  contactEmail    String?
+  isActive        Boolean  @default(true)
+  postedBy        String?  // Company representative
+  aiMatched       Boolean  @default(false) // AI-matched to users
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  applications JobApplication[]
+
+  @@index([isActive, experienceLevel])
+  @@index([soliditySkills])
+}
+
+// Job Applications
+model JobApplication {
+  id          String   @id @default(cuid())
+  userId      String
+  jobId       String
+  status      String   @default("applied") // applied, reviewed, interview, rejected, accepted
+  coverLetter String?
+  portfolio   Json?    // Links to projects, GitHub, etc.
+  aiScore     Float?   // AI-calculated match score
+  appliedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+}
+
+// Blockchain Certificates (NFT-based)
+model BlockchainCertificate {
+  id              String   @id @default(cuid())
+  userId          String
+  certificateType String   // beginner, intermediate, advanced, specialized
+  skillsVerified  String[] // Verified Solidity skills
+  nftTokenId      String?  // On-chain certificate token ID
+  nftContractAddress String? // Smart contract address
+  blockchainNetwork String @default("polygon") // ethereum, polygon, etc.
+  transactionHash String?  // Minting transaction
+  ipfsHash        String?  // Metadata stored on IPFS
+  issuedBy        String   @default("SolidityLearn") // Issuing authority
+  validUntil      DateTime? // Expiration date
+  isRevoked       Boolean  @default(false)
+  verificationUrl String?  // Public verification URL
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, certificateType])
+  @@index([nftTokenId])
+}
+
+// Mentorship Matching (Enhanced)
+model MentorshipMatch {
+  id              String   @id @default(cuid())
+  mentorId        String
+  menteeId        String
+  matchScore      Float    // AI-calculated compatibility (0-1)
+  skillsToLearn   String[] // What mentee wants to learn
+  skillsToTeach   String[] // What mentor can teach
+  preferredStyle  String?  // Learning/teaching style preference
+  timeZone        String?
+  availability    Json?    // Available time slots
+  status          String   @default("pending") // pending, active, completed, cancelled
+  aiRecommended   Boolean  @default(true)
+  startDate       DateTime?
+  endDate         DateTime?
+  sessionsHeld    Int      @default(0)
+  rating          Float?   // Mutual rating
+  feedback        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  mentor User @relation("MentorMatches", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentee User @relation("MenteeMatches", fields: [menteeId], references: [id], onDelete: Cascade)
+
+  @@unique([mentorId, menteeId])
+  @@index([matchScore])
+}
+
+// Add these relations to the existing User model:
+// aiLearningContext     AILearningContext?
+// personalizedChallenges PersonalizedChallenge[]
+// personalizedSubmissions PersonalizedSubmission[]
+// securityAnalyses      SecurityAnalysis[]
+// aiInteractions        AIInteraction[]
+// voiceLearningSession  VoiceLearningSession[]
+// jobApplications       JobApplication[]
+// blockchainCertificates BlockchainCertificate[]
+// mentorMatches         MentorshipMatch[] @relation("MentorMatches")
+// menteeMatches         MentorshipMatch[] @relation("MenteeMatches")

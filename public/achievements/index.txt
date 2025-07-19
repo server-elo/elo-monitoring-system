@@ -1,0 +1,13 @@
+# Achievements Index
+# This file contains the index of available achievements for the learning platform
+
+first-contract: First Smart Contract Deployment
+security-expert: Security Best Practices Master
+gas-optimizer: Gas Optimization Specialist
+defi-builder: DeFi Protocol Developer
+nft-creator: NFT Collection Creator
+testing-guru: Smart Contract Testing Expert
+audit-specialist: Security Audit Professional
+community-contributor: Community Helper
+streak-master: Learning Streak Champion
+code-reviewer: Code Review Expert

@@ -1,0 +1,206 @@
+{
+  "budget": [
+    {
+      "path": "/*",
+      "timings": [
+        {
+          "metric": "first-contentful-paint",
+          "budget": 2000,
+          "tolerance": 500
+        },
+        {
+          "metric": "largest-contentful-paint",
+          "budget": 2500,
+          "tolerance": 500
+        },
+        {
+          "metric": "cumulative-layout-shift",
+          "budget": 0.1,
+          "tolerance": 0.05
+        },
+        {
+          "metric": "total-blocking-time",
+          "budget": 300,
+          "tolerance": 100
+        },
+        {
+          "metric": "speed-index",
+          "budget": 3000,
+          "tolerance": 500
+        }
+      ],
+      "resourceSizes": [
+        {
+          "resourceType": "script",
+          "budget": 400,
+          "tolerance": 100
+        },
+        {
+          "resourceType": "stylesheet",
+          "budget": 100,
+          "tolerance": 25
+        },
+        {
+          "resourceType": "image",
+          "budget": 500,
+          "tolerance": 100
+        },
+        {
+          "resourceType": "font",
+          "budget": 150,
+          "tolerance": 50
+        },
+        {
+          "resourceType": "total",
+          "budget": 1000,
+          "tolerance": 200
+        }
+      ],
+      "resourceCounts": [
+        {
+          "resourceType": "script",
+          "budget": 10,
+          "tolerance": 3
+        },
+        {
+          "resourceType": "stylesheet",
+          "budget": 5,
+          "tolerance": 2
+        },
+        {
+          "resourceType": "image",
+          "budget": 20,
+          "tolerance": 5
+        },
+        {
+          "resourceType": "font",
+          "budget": 3,
+          "tolerance": 1
+        },
+        {
+          "resourceType": "third-party",
+          "budget": 5,
+          "tolerance": 2
+        }
+      ]
+    },
+    {
+      "path": "/learn",
+      "timings": [
+        {
+          "metric": "first-contentful-paint",
+          "budget": 1800,
+          "tolerance": 400
+        },
+        {
+          "metric": "largest-contentful-paint",
+          "budget": 2200,
+          "tolerance": 400
+        }
+      ],
+      "resourceSizes": [
+        {
+          "resourceType": "script",
+          "budget": 350,
+          "tolerance": 75
+        }
+      ]
+    },
+    {
+      "path": "/code",
+      "timings": [
+        {
+          "metric": "first-contentful-paint",
+          "budget": 2500,
+          "tolerance": 600
+        },
+        {
+          "metric": "largest-contentful-paint",
+          "budget": 4000,
+          "tolerance": 800
+        }
+      ],
+      "resourceSizes": [
+        {
+          "resourceType": "script",
+          "budget": 800,
+          "tolerance": 200
+        }
+      ]
+    },
+    {
+      "path": "/dashboard",
+      "timings": [
+        {
+          "metric": "first-contentful-paint",
+          "budget": 2000,
+          "tolerance": 500
+        },
+        {
+          "metric": "largest-contentful-paint",
+          "budget": 2800,
+          "tolerance": 500
+        }
+      ]
+    }
+  ],
+  "assertions": {
+    "categories:performance": ["error", { "minScore": 0.9 }],
+    "categories:accessibility": ["error", { "minScore": 0.95 }],
+    "categories:best-practices": ["error", { "minScore": 0.9 }],
+    "categories:seo": ["error", { "minScore": 0.9 }],
+    "categories:pwa": ["warn", { "minScore": 0.8 }]
+  },
+  "ci": {
+    "collect": {
+      "numberOfRuns": 3,
+      "settings": {
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.85 }],
+        "categories:accessibility": ["error", { "minScore": 0.9 }]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  },
+  "thresholds": {
+    "performance": {
+      "first-contentful-paint": 2000,
+      "largest-contentful-paint": 2500,
+      "cumulative-layout-shift": 0.1,
+      "total-blocking-time": 300,
+      "speed-index": 3000
+    },
+    "accessibility": {
+      "score": 0.95
+    },
+    "best-practices": {
+      "score": 0.9
+    },
+    "seo": {
+      "score": 0.9
+    },
+    "pwa": {
+      "score": 0.8
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "frequency": "daily",
+    "alerts": {
+      "performance-regression": {
+        "threshold": 0.1,
+        "channels": ["email", "slack"]
+      },
+      "budget-exceeded": {
+        "threshold": 1.2,
+        "channels": ["email"]
+      }
+    }
+  }
+}

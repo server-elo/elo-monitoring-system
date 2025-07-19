@@ -1,291 +1,527 @@
-# 🌐 ELO Multi-PC Monitoring System
+# 🚀 Solidity Learning Platform
 
-A production-ready, 12-factor compliant monitoring system for multi-PC environments with secure remote connectivity and free cloud hosting.
+> Next-generation Solidity learning platform with AI-powered features, interactive coding, immersive blockchain education, and comprehensive accessibility support.
 
-## 🚀 Features
+[![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.0.0-blue)](https://react.dev/)
+[![Performance](https://img.shields.io/badge/Lighthouse-90%2B-brightgreen)](https://web.dev/performance-scoring/)
+[![Accessibility](https://img.shields.io/badge/WCAG-2.1%20AA-blue)](https://www.w3.org/WAI/WCAG21/quickref/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-- **✅ 12-Factor App Compliant** - Production-ready architecture
-- **🔒 Secure Authentication** - API key-based security with rate limiting
-- **🌐 Remote Connectivity** - Monitor PCs across different networks
-- **📊 Real-time Dashboards** - Individual PC and central aggregation views
-- **🔧 Environment-based Config** - Dev/staging/production configurations
-- **☁️ Cloud Deployment Ready** - Heroku, Railway, Vercel support
-- **📈 Auto-discovery** - PCs automatically register with central service
-- **🚨 Smart Alerting** - Health checks with intelligent notifications
+## ✨ Features
 
-## 🏗️ Architecture
+### 🎮 Interactive Learning Experience
+- **Monaco Code Editor** with Solidity syntax highlighting, auto-completion, and error detection
+  - IntelliSense with context-aware suggestions
+  - Real-time syntax checking and linting
+  - Auto-save functionality with 2-3 second intervals
+  - Customizable themes (dark/light) and font sizes
+- **Real-time Compilation** with instant feedback and gas estimation
+- **Interactive Tutorials** with step-by-step guided learning and progress tracking
+- **Gamification System** with comprehensive XP, levels, achievements, and badges
+  - Dynamic XP calculation with streak multipliers
+  - 50+ achievements across learning, coding, and social categories
+  - Level progression with unlockable content and rewards
+  - Real-time notifications with glassmorphism design
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    ENTERPRISE MONITORING                    │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
-│  │   CLOUD HUB  │    │  TUNNEL/VPN  │    │   LOCAL HUB  │  │
-│  │              │    │              │    │              │  │
-│  │ - Dashboard  │    │ - Ngrok      │    │ - Discovery  │  │
-│  │ - API        │    │ - SSH Tunnel │    │ - Aggregation│  │
-│  │ - Auth       │    │ - Direct IP  │    │ - Dashboard  │  │
-│  └──────────────┘    └──────────────┘    └──────────────┘  │
-│         │                     │                     │      │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │                  PC AGENTS                          │  │
-│  │                                                     │  │
-│  │ PC1 (Local)    PC2 (Remote)    PC3 (Office)        │  │
-│  │ ──────────────────────────────────────────────────  │  │
-│  │ • Health       • Health        • Health            │  │
-│  │ • Metrics      • Metrics       • Metrics           │  │
-│  │ • Alerts       • Alerts        • Alerts            │  │
-│  │ • Reports      • Reports       • Reports           │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
+### 🤖 AI-Powered Features
+- **Google Gemini Integration** for personalized tutoring and code review
+- **Intelligent Code Analysis** with security vulnerability detection
+- **Adaptive Learning Paths** based on user progress and skill assessment
+- **AI Assistant** with conversation history and context-aware responses
+
+### 🌐 Blockchain Integration
+- **Web3 Wallet Support** with MetaMask integration
+- **Multi-Testnet Support** (Sepolia, Goerli, Mumbai)
+- **Contract Deployment** with gas estimation and transaction monitoring
+- **Real-time Blockchain Visualization** using Three.js
+
+### 🎨 Modern UI/UX
+- **Glassmorphism & Neumorphism** design patterns
+- **Advanced Animations** with GSAP, Lottie, and Framer Motion
+- **Responsive Design** optimized for all devices
+- **Dark/Light Theme** support
+
+### 🔄 Real-Time Collaboration
+- **Live Coding Sessions** with WebSocket-powered real-time synchronization
+  - Operational transformation for conflict-free editing
+  - <200ms latency for 2-10 concurrent users
+  - Persistent session management with auto-reconnection
+- **Collaborative Editor** with multi-user cursor and selection tracking
+  - Color-coded user presence indicators
+  - Real-time typing indicators and user activity
+  - Shared code execution and debugging
+- **Team Challenges** and group projects with progress synchronization
+- **Community Chat** and Q&A system with moderation tools
+
+### ♿ Accessibility & Inclusion
+- **WCAG 2.1 AA Compliant** with comprehensive screen reader support
+- **Full Keyboard Navigation** with enhanced focus indicators
+- **High Contrast Mode** and reduced motion support
+- **Multi-language Support** and internationalization
+- **Voice Commands** and speech synthesis integration
+
+### ⚡ Performance & Optimization
+- **Sub-200ms Page Load Times** with intelligent caching
+- **Service Worker** with offline-first approach
+- **Lazy Loading** and code splitting for optimal bundle sizes
+- **Core Web Vitals Optimization** (LCP < 2.5s, CLS < 0.1)
+- **Progressive Web App (PWA)** with native app-like experience
 
 ## 🚀 Quick Start
 
-### Option 1: Local Setup
+### Prerequisites
+- **Node.js 18.0.0 or higher** (20+ recommended)
+- **npm 9.0.0 or higher**
+- **Git** for version control
 
-1. **Start Central Service**
+### Installation
+
+1. **Clone the repository**
    ```bash
-   ./scripts/start-central-pro.sh development
+   git clone https://github.com/[your-username]/learning_solidity.git
+   cd learning_solidity/learning_sol
    ```
 
-2. **Start PC Monitoring**
+2. **Install dependencies**
    ```bash
-   ./scripts/start-pc-monitor-pro.sh http://localhost:3001
+   npm install
    ```
 
-3. **Access Dashboards**
-   - Central: http://localhost:3001/dashboard
-   - PC: http://localhost:3002/dashboard
-
-### Option 2: Cloud Deployment
-
-#### Render Deployment (FREE - Recommended)
-1. Push to GitHub repository
-2. Connect to Render.com
-3. Deploy automatically with render.yaml
-4. Access at: `https://elo-status.onrender.com`
-
-#### Alternative Deployments
-- **Heroku**: `./scripts/deploy-heroku.sh`
-- **Railway**: Connect repo and deploy
-- **Vercel**: `vercel --prod`
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Copy `.env.example` to `.env.development` and configure:
-
-```bash
-# Application
-NODE_ENV=development
-PORT=3001
-
-# Security
-API_SECRET_KEY=your-secret-key-here
-JWT_SECRET=your-jwt-secret-here
-API_RATE_LIMIT=100
-
-# Remote Connectivity
-CENTRAL_SERVICE_URL=http://localhost:3001
-```
-
-For production, use `.env.production` with secure values.
-
-## 📊 API Endpoints
-
-### Central Service (Port 3001)
-
-| Endpoint | Method | Description | Auth Required |
-|----------|--------|-------------|---------------|
-| `/` | GET | Service info | No |
-| `/health` | GET | Health check | No |
-| `/dashboard` | GET | Central dashboard | No |
-| `/api/generate-key` | POST | Generate PC API key | No* |
-| `/api/register` | POST | Register PC | Yes |
-| `/api/update` | POST | Update PC data | Yes |
-| `/api/pcs` | GET | List active PCs | Yes |
-| `/api/metrics` | GET | Aggregated metrics | Yes |
-
-*Development only
-
-### PC Monitor (Port 3002)
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | PC info |
-| `/health` | GET | PC health |
-| `/metrics` | GET | PC metrics |
-| `/dashboard` | GET | PC dashboard |
-
-## 🔒 Security Features
-
-- **API Key Authentication** - Each PC has unique API key
-- **Rate Limiting** - Configurable requests per minute
-- **CORS Protection** - Strict origin policies
-- **Input Validation** - All inputs validated
-- **HTTPS Support** - SSL/TLS encryption ready
-
-## 🌐 Remote Connectivity Options
-
-### 1. Cloud Deployment (Recommended)
-Deploy central service to cloud platform. PCs connect via HTTPS.
-```bash
-export CENTRAL_SERVICE_URL="https://your-app.herokuapp.com"
-./scripts/start-pc-monitor-pro.sh
-```
-
-### 2. Ngrok Tunneling (Quick Setup)
-Create public tunnel for local central service.
-```bash
-./scripts/setup-ngrok.sh 3001
-# Use generated public URL for PC connections
-```
-
-### 3. VPN/Direct IP (Enterprise)
-Configure private network between PCs.
-```bash
-export CENTRAL_SERVICE_URL="http://central-pc-ip:3001"
-./scripts/start-pc-monitor-pro.sh
-```
-
-## 📱 Adding New PCs
-
-### Automatic Setup (Recommended)
-1. Copy monitoring system to new PC
-2. Run setup script:
+3. **Set up environment variables**
    ```bash
-   ./scripts/start-pc-monitor-pro.sh https://your-central-service.com
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
    ```
-3. API key is automatically generated and saved
 
-### Manual Setup
-1. Generate API key:
+   Required environment variables:
+   - `DATABASE_URL` - Database connection string
+   - `NEXTAUTH_SECRET` - Authentication secret (generate with: `openssl rand -hex 32`)
+   - `NEXTAUTH_URL` - Application URL (default: http://localhost:5000)
+
+4. **Initialize the database**
    ```bash
-   curl -X POST https://your-central-service.com/api/generate-key \
-        -H 'Content-Type: application/json' \
-        -d '{"pcId":"new-pc-name"}'
+   npx prisma generate
+   npx prisma db push
    ```
-2. Save API key to `.pc-api-key` file
-3. Start PC monitoring service
 
-## 📊 Monitoring Capabilities
+5. **Start the development server**
+   ```bash
+   npm run dev
+   # Open http://localhost:3000 in your browser
+   
+   # Or run on a different port:
+   npm run dev -- -p 5000
+   ```
+   - 📦 Optimized for Next.js 15
+   - 🚀 Better development experience
 
-### Health Checks
-- **Endpoint Monitoring** - HTTP/HTTPS health checks
-- **Response Time Tracking** - Performance metrics
-- **Error Detection** - Automatic failure alerts
-- **Custom Endpoints** - Configurable monitoring targets
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-### System Metrics
-- **CPU Usage** - Real-time CPU monitoring
-- **Memory Usage** - RAM consumption tracking
-- **Disk Space** - Storage monitoring
-- **Network Status** - Connectivity checks
+## 🛠️ Development
 
-### Alerting
-- **Real-time Alerts** - Instant failure notifications
-- **Dashboard Notifications** - Visual alert indicators
-- **Configurable Thresholds** - Custom alert conditions
-- **Alert History** - Alert tracking and analysis
+### Available Scripts
 
-## 🔧 Scripts Reference
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript type checking
+- `npm test` - Run tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Run tests with coverage
 
-| Script | Purpose |
-|--------|---------|
-| `start-central-pro.sh` | Start central monitoring service |
-| `start-pc-monitor-pro.sh` | Start PC monitoring agent |
-| `setup-ngrok.sh` | Create ngrok tunnel |
-| `deploy-heroku.sh` | Deploy to Heroku |
+### Database Commands
 
-## 📝 Package.json Scripts
+- `npm run db:generate` - Generate Prisma client
+- `npm run db:push` - Push schema to database
+- `npm run db:migrate` - Run database migrations
+- `npm run db:studio` - Open Prisma Studio
+
+### Docker Support
 
 ```bash
-npm run start:central    # Start central service
-npm run start:pc         # Start PC monitor
-npm run start:dev        # Development mode
-npm run start:prod       # Production mode
+# Build Docker image
+npm run docker:build
+
+# Run Docker container
+npm run docker:run
 ```
 
-## 🐛 Troubleshooting
+## 🚀 Deployment
+
+### Build for Production
+```bash
+npm run build
+npm start
+```
+
+### Recommended Deployment Platforms
+
+#### Vercel (Recommended for Next.js)
+1. Install Vercel CLI: `npm i -g vercel`
+2. Run: `vercel`
+3. Follow the prompts to deploy
+
+#### Railway
+1. Install Railway CLI: `npm i -g @railway/cli`
+2. Run: `railway login` and `railway up`
+3. Configure environment variables in Railway dashboard
+
+#### Other Platforms
+- **Netlify**: Great for static sites with serverless functions
+- **Render**: Full-stack hosting with PostgreSQL included
+- **Heroku**: Easy deployment with buildpacks
+- **DigitalOcean App Platform**: Container-based deployment
+
+### Production Environment Variables
+
+Configure these in your deployment platform:
+
+```env
+# Required
+DATABASE_URL=postgresql://user:password@host:5432/dbname
+NEXTAUTH_SECRET=your-production-secret-min-32-chars
+NEXTAUTH_URL=https://your-domain.com
+
+# Optional
+GEMINI_API_KEY=your_gemini_api_key
+GITHUB_CLIENT_ID=your_github_oauth_id
+GITHUB_CLIENT_SECRET=your_github_oauth_secret
+GOOGLE_CLIENT_ID=your_google_oauth_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_secret
+```
+
+### Important Notes
+- Use PostgreSQL for production (not SQLite)
+- Generate a secure NEXTAUTH_SECRET: `openssl rand -hex 32`
+- Set NODE_ENV=production in your deployment platform
+- Enable HTTPS for production deployments
+
+# Optional: Monitoring
+SENTRY_DSN=your_sentry_dsn
+```
+
+### Migration from Static Deployment
+
+⚠️ **Important**: This application has been migrated from static export to server-side functionality to enable:
+- API routes for real-time features
+- Database integration
+- Authentication systems
+- AI-powered tutoring
+- Real-time collaboration
+
+If you were previously using GitHub Pages deployment, you'll need to migrate to one of the server-compatible platforms listed above.
+
+## 📁 Project Structure
+
+```
+learning_sol/
+├── app/                    # Next.js App Router
+├── components/             # React components
+│   ├── accessibility/     # Accessibility components
+│   ├── ai/                # AI-related components
+│   ├── auth/              # Authentication components
+│   ├── blockchain/        # Web3 components
+│   ├── code/              # Code editor components
+│   ├── lazy/              # Lazy-loaded components
+│   ├── learning/          # Learning platform components
+│   ├── monitoring/        # Performance monitoring
+│   ├── performance/       # Performance optimization
+│   └── ui/                # UI components
+├── lib/                   # Utility libraries
+│   ├── hooks/             # Custom React hooks
+│   ├── monitoring/        # Performance monitoring
+│   └── utils/             # Utility functions
+├── prisma/                # Database schema
+├── public/                # Static assets
+├── scripts/               # Build and optimization scripts
+├── services/              # External services
+├── tests/                 # Test suites
+│   ├── accessibility/     # Accessibility tests
+│   └── performance/       # Performance tests
+├── types/                 # TypeScript type definitions
+└── docs/                  # Documentation
+```
+
+## 🔧 Environment Variables
+
+Create a `.env.local` file with the following configuration:
+
+```env
+# Database Configuration
+DATABASE_URL="postgresql://username:password@localhost:5432/solidity_learn"
+DIRECT_URL="postgresql://username:password@localhost:5432/solidity_learn"
+
+# NextAuth Configuration
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-super-secret-key-min-32-chars"
+
+# OAuth Providers
+GOOGLE_CLIENT_ID="your-google-oauth-client-id"
+GOOGLE_CLIENT_SECRET="your-google-oauth-client-secret"
+GITHUB_CLIENT_ID="your-github-oauth-client-id"
+GITHUB_CLIENT_SECRET="your-github-oauth-client-secret"
+
+# AI Integration (Required for AI tutoring features)
+GOOGLE_AI_API_KEY="your-gemini-pro-api-key"
+OPENAI_API_KEY="your-openai-api-key"  # Optional: For additional AI features
+
+# Real-time Collaboration (Required for collaborative features)
+WEBSOCKET_URL="ws://localhost:3001"  # Development
+COLLABORATION_SECRET="your-collaboration-secret"
+
+# Performance Monitoring (Recommended for production)
+SENTRY_DSN="your-sentry-dsn"
+SENTRY_ORG="your-sentry-org"
+SENTRY_PROJECT="your-sentry-project"
+PLAUSIBLE_DOMAIN="your-domain.com"
+
+# File Storage (Required for user uploads and assets)
+CLOUDINARY_CLOUD_NAME="your-cloudinary-cloud"
+CLOUDINARY_API_KEY="your-cloudinary-key"
+CLOUDINARY_API_SECRET="your-cloudinary-secret"
+UPLOAD_MAX_SIZE="10485760"  # 10MB in bytes
+
+# Caching and Session Management (Recommended for production)
+REDIS_URL="redis://localhost:6379"
+SESSION_SECRET="your-session-secret-min-32-chars"
+
+# Email Services (Required for notifications)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"
+
+# Rate Limiting (Production security)
+RATE_LIMIT_MAX="100"  # Requests per window
+RATE_LIMIT_WINDOW="900000"  # 15 minutes in ms
+```
+
+### Environment Setup Guide
+
+1. **Database Setup**:
+   - Install PostgreSQL locally or use a cloud provider (Supabase, PlanetScale)
+   - Create a new database named `solidity_learn`
+   - Update `DATABASE_URL` with your connection string
+
+2. **OAuth Setup**:
+   - **Google**: Visit [Google Cloud Console](https://console.cloud.google.com/)
+   - **GitHub**: Visit [GitHub Developer Settings](https://github.com/settings/developers)
+   - Configure redirect URIs: `http://localhost:3000/api/auth/callback/[provider]`
+
+3. **AI Integration**:
+   - Get Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Ensure you have access to Gemini Pro model
+
+## 📜 Available Scripts
+
+### Development
+```bash
+npm run dev              # Start development server with Turbopack
+npm run dev:webpack      # Start development server with Webpack
+npm run build            # Build for production
+npm run start            # Start production server
+npm run lint             # Run ESLint with auto-fix
+npm run type-check       # Run TypeScript type checking
+```
+
+### Database
+```bash
+npm run db:push          # Push schema changes to database
+npm run db:pull          # Pull schema from database
+npm run db:generate      # Generate Prisma client
+npm run db:studio        # Open Prisma Studio
+npm run db:seed          # Seed database with sample data
+npm run db:reset         # Reset database (destructive)
+```
+
+### Testing
+```bash
+npm run test             # Run unit tests
+npm run test:watch       # Run tests in watch mode
+npm run test:coverage    # Run tests with coverage report
+npm run test:e2e         # Run end-to-end tests
+npm run test:e2e:ui      # Run E2E tests with UI
+npm run test:performance # Run performance tests
+npm run test:accessibility # Run accessibility tests
+```
+
+### Performance & Analysis
+```bash
+npm run build:analyze    # Analyze bundle size
+npm run lighthouse       # Run Lighthouse audit
+npm run lighthouse:mobile # Run mobile Lighthouse audit
+npm run performance:analyze # Full performance analysis
+```
+
+### Code Quality
+```bash
+npm run format           # Format code with Prettier
+npm run lint:fix         # Fix ESLint issues
+npm run prepare          # Set up Husky hooks
+```
+
+## ♿ Accessibility Compliance
+
+This platform is built with accessibility as a core principle, achieving **WCAG 2.1 AA compliance**:
+
+### Key Accessibility Features
+- **Screen Reader Support**: Full compatibility with NVDA, JAWS, and VoiceOver
+- **Keyboard Navigation**: Complete keyboard accessibility with enhanced focus indicators
+- **High Contrast**: Support for high contrast mode and custom color schemes
+- **Reduced Motion**: Respects user preferences for reduced motion
+- **Semantic HTML**: Proper heading hierarchy and landmark usage
+- **ARIA Labels**: Comprehensive ARIA labeling for complex interactions
+
+### Testing Accessibility
+```bash
+# Run automated accessibility tests
+npm run test:accessibility
+
+# Manual testing with screen readers
+# - NVDA (Windows): Free download from nvaccess.org
+# - VoiceOver (macOS): Built-in, activate with Cmd+F5
+# - JAWS (Windows): Commercial screen reader
+
+# Keyboard navigation testing
+# - Tab through all interactive elements
+# - Use arrow keys for menu navigation
+# - Test Escape key for modal dismissal
+```
+
+### Accessibility Resources
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+- [Accessibility Testing Guide](docs/accessibility-testing.md)
+- [Screen Reader Testing Procedures](docs/screen-reader-testing.md)
+
+## ⚡ Performance Optimization
+
+The platform is optimized for exceptional performance with sub-200ms load times:
+
+### Performance Features
+- **Core Web Vitals Optimization**: LCP < 2.5s, FID < 100ms, CLS < 0.1
+- **Intelligent Caching**: Multi-layer caching with service worker
+- **Code Splitting**: Lazy loading for optimal bundle sizes
+- **Image Optimization**: WebP/AVIF formats with responsive loading
+- **Critical CSS**: Inline critical styles for faster rendering
+
+### Performance Monitoring
+```bash
+# Run performance tests
+npm run test:performance
+
+# Lighthouse audits
+npm run lighthouse        # Desktop audit
+npm run lighthouse:mobile # Mobile audit
+
+# Bundle analysis
+npm run build:analyze
+
+# Performance monitoring in development
+# - Real-time Core Web Vitals display
+# - Resource timing analysis
+# - API performance tracking
+```
+
+### Performance Budgets
+The platform enforces strict performance budgets:
+- **JavaScript**: < 400KB initial bundle
+- **CSS**: < 100KB total styles
+- **Images**: < 500KB per page
+- **Total Page Size**: < 1MB critical path
+
+## 🔧 Troubleshooting
 
 ### Common Issues
 
-**PC can't connect to central service**
-- Check central service URL
-- Verify API key is generated
-- Check network connectivity
-
-**Authentication failures**
-- Regenerate API key
-- Check API key file permissions
-- Verify central service is running
-
-**High memory usage**
-- Adjust monitoring intervals
-- Check for memory leaks in monitored apps
-- Restart monitoring services
-
-### Debug Commands
-
+#### Performance Issues
 ```bash
-# View central service logs
-tail -f central-monitoring-pro.log
+# Clear Next.js cache
+rm -rf .next
 
-# View PC monitoring logs
-tail -f pc-monitoring-pro.log
+# Clear npm cache
+npm cache clean --force
 
-# Test connectivity
-curl http://localhost:3001/health
-curl http://localhost:3002/health
-
-# Check running processes
-ps aux | grep monitoring
+# Rebuild with fresh dependencies
+rm -rf node_modules package-lock.json
+npm install
 ```
 
-## 🏆 12-Factor Compliance
+#### Database Issues
+```bash
+# Reset database schema
+npm run db:reset
 
-This system implements all 12 factors:
+# Regenerate Prisma client
+npm run db:generate
 
-1. **Codebase** - Single repo, multiple deploys
-2. **Dependencies** - Explicit package.json declarations
-3. **Config** - Environment-based configuration
-4. **Backing Services** - PCs as attached resources
-5. **Build/Release/Run** - Separate stages
-6. **Processes** - Stateless service processes
-7. **Port Binding** - Self-contained services
-8. **Concurrency** - Horizontal scaling ready
-9. **Disposability** - Fast startup/shutdown
-10. **Dev/Prod Parity** - Environment consistency
-11. **Logs** - Structured event streams
-12. **Admin Processes** - One-off management tasks
+# Check database connection
+npm run db:studio
+```
 
-## 📈 Performance
+#### Build Issues
+```bash
+# Check TypeScript errors
+npm run type-check
 
-- **Response Time** - < 500ms dashboard loads
-- **Scalability** - 100+ PCs supported
-- **Resource Usage** - < 100MB RAM per PC
-- **Network Efficiency** - < 1MB/hour per PC
+# Fix linting issues
+npm run lint:fix
+
+# Clear build cache
+npm run clean
+```
+
+### Getting Help
+- 📖 [Documentation](docs/)
+- 🐛 [Report Issues](https://github.com/ezekaj/learning_sol/issues)
+- 💬 [Discussions](https://github.com/ezekaj/learning_sol/discussions)
+- 📧 [Email Support](mailto:elvizekaj02@gmail.com)
+
+## 🎯 Competitive Advantages
+
+Our platform surpasses existing solutions by combining:
+
+- **Superior Learning Experience** with multi-modal learning approaches
+- **Advanced Technical Features** including integrated IDE and debugging tools
+- **Innovative Gamification** with blockchain-native rewards
+- **Comprehensive Ecosystem** with job board integration and mentorship
+
+See our [Competitive Analysis](docs/competitive-analysis.md) for detailed comparisons.
 
 ## 🤝 Contributing
 
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
 1. Fork the repository
-2. Create feature branch
-3. Add tests for new functionality
-4. Submit pull request
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-MIT License - see LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-- 📧 Email: monitoring-support@example.com
-- 📚 Documentation: https://docs.example.com/monitoring
-- 🐛 Issues: https://github.com/your-username/enterprise-monitoring/issues
+- [CryptoZombies](https://cryptozombies.io/) for gamification inspiration
+- [Alchemy University](https://university.alchemy.com/) for curriculum structure
+- [OpenZeppelin](https://openzeppelin.com/) for security best practices
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) for the code editor
+- [Three.js](https://threejs.org/) for 3D visualizations
+
+## 📞 Support
+
+- 📧 Email: [elvizekaj02@gmail.com](mailto:elvizekaj02@gmail.com)
+- 🐛 Issues: [GitHub Issues](https://github.com/ezekaj/learning_sol/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/ezekaj/learning_sol/discussions)
 
 ---
 
-**Built with PRP (Product Requirements Proposal) methodology for enterprise-grade quality and 12-factor compliance.**
+<div align="center">
+  <strong>Built with ❤️ for the blockchain community</strong>
+</div>
+

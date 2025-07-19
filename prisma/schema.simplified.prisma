@@ -1,0 +1,581 @@
+// Simplified Prisma Schema for Solidity Learning Platform
+// Consolidated from 48 models to ~30 models with cleaner relationships
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// CORE AUTHENTICATION & USER MANAGEMENT
+// ============================================================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? 
+  access_token      String? 
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? 
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Consolidated User model with essential fields only
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          UserRole  @default(STUDENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Core Relations (reduced from 25+ to 12)
+  accounts        Account[]
+  sessions        Session[]
+  profile         UserProfile?
+  enrollments     CourseEnrollment[]
+  submissions     Submission[]
+  achievements    UserAchievement[]
+  collaborations  CollaborationMember[]
+  reviews         Review[]
+  interactions    AIInteraction[]
+  certificates    Certificate[]
+  feedback        Feedback[]
+  analytics       LearningAnalytics?
+
+  @@index([role, createdAt])
+  @@index([email])
+}
+
+// Simplified profile with learning context integrated
+model UserProfile {
+  id              String     @id @default(cuid())
+  userId          String     @unique
+  bio             String?
+  githubUsername  String?
+  linkedinUrl     String?
+  websiteUrl      String?
+  skillLevel      SkillLevel @default(BEGINNER)
+  totalXP         Int        @default(0)
+  currentLevel    Int        @default(1)
+  currentStreak   Int        @default(0)
+  longestStreak   Int        @default(0)
+  lessonsCompleted Int       @default(0)
+  projectsCompleted Int      @default(0)
+  lastActiveDate  DateTime   @default(now())
+  
+  // Learning preferences and AI context (consolidated)
+  learningStyle   String     @default("mixed") // visual, hands-on, reading, mixed
+  difficultyPref  Float      @default(0.5) // 0=easy, 1=challenging
+  weeklyGoal      Int        @default(5) // hours per week
+  notifications   Json?      // notification preferences
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([skillLevel, totalXP])
+}
+
+// ============================================================================
+// LEARNING CONTENT & CURRICULUM
+// ============================================================================
+
+model Course {
+  id             String     @id @default(cuid())
+  title          String
+  description    String
+  difficulty     SkillLevel
+  estimatedHours Int
+  xpReward       Int        @default(500)
+  isPublished    Boolean    @default(false)
+  order          Int
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  modules     Module[]
+  enrollments CourseEnrollment[]
+
+  @@index([isPublished, difficulty])
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  courseId    String
+  title       String
+  description String
+  content     Json     // Rich content structure
+  order       Int
+  xpReward    Int      @default(100)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@unique([courseId, order])
+  @@index([courseId])
+}
+
+model Lesson {
+  id          String     @id @default(cuid())
+  moduleId    String
+  title       String
+  description String
+  content     Json       // Rich content with code examples, videos, etc.
+  type        LessonType
+  order       Int
+  xpReward    Int        @default(50)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+
+  @@unique([moduleId, order])
+  @@index([moduleId, type])
+}
+
+// ============================================================================
+// PROGRESS TRACKING (CONSOLIDATED)
+// ============================================================================
+
+// Single enrollment model with comprehensive progress tracking
+model CourseEnrollment {
+  id            String    @id @default(cuid())
+  userId        String
+  courseId      String
+  enrolledAt    DateTime  @default(now())
+  completedAt   DateTime?
+  
+  // Progress metrics (consolidated from multiple models)
+  progress      Float     @default(0.0) // 0.0 to 1.0 overall course progress
+  currentModule Int       @default(0) // Current module index
+  currentLesson Int       @default(0) // Current lesson index
+  timeSpent     Int       @default(0) // Total minutes spent
+  xpEarned      Int       @default(0) // XP earned in this course
+  streakDays    Int       @default(0) // Current streak for this course
+  
+  // Learning analytics (moved from separate model)
+  weakAreas     Json?     // Topics that need more work
+  strongAreas   Json?     // Topics mastered well
+  studyPattern  Json?     // When and how user studies
+  
+  lastStudied   DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId, progress])
+  @@index([userId, lastStudied])
+}
+
+// ============================================================================
+// SUBMISSIONS & ASSESSMENTS (CONSOLIDATED)
+// ============================================================================
+
+// Unified submission model for all types of code submissions
+model Submission {
+  id           String           @id @default(cuid())
+  userId       String
+  lessonId     String?          // For lesson submissions
+  projectId    String?          // For project submissions  
+  challengeId  String?          // For AI-generated challenges
+  
+  title        String           @default("Code Submission")
+  code         String
+  language     String           @default("solidity")
+  status       SubmissionStatus @default(PENDING)
+  
+  // Assessment results
+  score        Int?             // 0-100
+  feedback     String?          // Human or AI feedback
+  aiAnalysis   Json?            // AI-generated analysis
+  gasAnalysis  Json?            // Gas usage analysis
+  testResults  Json?            // Test execution results
+  
+  // Metadata
+  timeSpent    Int              @default(0) // minutes
+  attempts     Int              @default(1)
+  isCorrect    Boolean          @default(false)
+  submittedAt  DateTime         @default(now())
+  reviewedAt   DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson  Lesson?  @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  reviews Review[]
+
+  @@index([userId, status])
+  @@index([lessonId, status])
+  @@index([projectId, status])
+}
+
+// ============================================================================
+// PROJECTS & CHALLENGES
+// ============================================================================
+
+model Project {
+  id              String          @id @default(cuid())
+  title           String
+  description     String
+  difficulty      SkillLevel
+  category        ProjectCategory
+  tags            String          // Comma-separated
+  requirements    Json            // Structured requirements
+  starterCode     String
+  solutionCode    String?         // Hidden reference solution
+  testCases       Json
+  estimatedHours  Int             @default(4)
+  xpReward        Int             @default(500)
+  isPublished     Boolean         @default(false)
+  isTemplate      Boolean         @default(false)
+  githubUrl       String?
+  resources       Json?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  submissions     Submission[]
+  collaborations  Collaboration[]
+  reviews         Review[]
+
+  @@index([isPublished, difficulty, category])
+}
+
+// ============================================================================
+// COLLABORATION & SOCIAL FEATURES
+// ============================================================================
+
+// Simplified collaboration model for all types
+model Collaboration {
+  id              String                @id @default(cuid())
+  title           String
+  description     String?
+  type            CollaborationType
+  status          CollaborationStatus   @default(ACTIVE)
+  projectId       String?               // Optional project association
+  maxParticipants Int                   @default(4)
+  isPublic        Boolean               @default(true)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  project     Project?              @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  members     CollaborationMember[]
+  messages    ChatMessage[]
+
+  @@index([status, type, isPublic])
+}
+
+// Join table for collaboration members
+model CollaborationMember {
+  id              String          @id @default(cuid())
+  collaborationId String
+  userId          String
+  role            CollaborationRole @default(MEMBER)
+  joinedAt        DateTime        @default(now())
+
+  collaboration Collaboration @relation(fields: [collaborationId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([collaborationId, userId])
+}
+
+model ChatMessage {
+  id              String      @id @default(cuid())
+  collaborationId String
+  userId          String
+  content         String
+  type            MessageType @default(TEXT)
+  metadata        Json?
+  createdAt       DateTime    @default(now())
+
+  collaboration Collaboration @relation(fields: [collaborationId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([collaborationId, createdAt])
+}
+
+// ============================================================================
+// REVIEWS & FEEDBACK
+// ============================================================================
+
+// Unified review model for all content types
+model Review {
+  id           String   @id @default(cuid())
+  reviewerId   String
+  submissionId String
+  
+  // Rating components
+  overall      Int      // 1-5 overall rating
+  codeQuality  Int?     // 1-5 code quality
+  functionality Int?    // 1-5 functionality
+  creativity   Int?     // 1-5 creativity
+  
+  feedback     String
+  isHelpful    Int      @default(0) // Upvotes
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reviewer   User       @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, reviewerId])
+  @@index([submissionId, overall])
+}
+
+// ============================================================================
+// ACHIEVEMENTS & GAMIFICATION
+// ============================================================================
+
+model Achievement {
+  id          String              @id @default(cuid())
+  title       String
+  description String
+  icon        String
+  category    AchievementCategory
+  requirement Json                // Structured requirements
+  xpReward    Int                 @default(100)
+  rarity      String              @default("common") // common, rare, epic, legendary
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+
+  userAchievements UserAchievement[]
+
+  @@index([category, isActive])
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  progress      Int      @default(0)   // Progress towards achievement (0-100)
+  isCompleted   Boolean  @default(false)
+  unlockedAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId, isCompleted])
+}
+
+// ============================================================================
+// AI & ANALYTICS
+// ============================================================================
+
+// Simplified AI interaction logging
+model AIInteraction {
+  id           String   @id @default(cuid())
+  userId       String
+  sessionId    String   // Group related interactions
+  type         String   // code_review, explanation, debug_help, quick_question
+  prompt       String
+  response     String
+  model        String   // gemini-pro, codellama-34b, etc.
+  responseTime Int      // milliseconds
+  wasHelpful   Boolean? // User feedback
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, sessionId])
+  @@index([type, model])
+}
+
+// Consolidated learning analytics
+model LearningAnalytics {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  
+  // Learning patterns
+  totalStudyTime      Int      @default(0) // Total minutes
+  averageSessionTime  Int      @default(0) // Average session length
+  preferredStudyTimes Json?    // Time patterns when user is most active
+  
+  // Performance metrics
+  averageScore        Float    @default(0)
+  improvementRate     Float    @default(0) // Week-over-week improvement
+  conceptsLearned     Int      @default(0)
+  
+  // Behavioral insights
+  learningVelocity    Float    @default(0) // XP per hour
+  consistencyScore    Float    @default(0) // How regularly they study
+  challengePreference Float    @default(0.5) // Difficulty preference (0-1)
+  
+  // AI recommendations
+  nextTopics          Json?    // Recommended next learning topics
+  weakAreas           Json?    // Areas needing improvement
+  strengthAreas       Json?    // Areas of strength
+  
+  lastUpdated         DateTime @default(now())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([averageScore, improvementRate])
+}
+
+// ============================================================================
+// CERTIFICATES & CREDENTIALS
+// ============================================================================
+
+model Certificate {
+  id              String   @id @default(cuid())
+  userId          String
+  type            String   // course_completion, skill_mastery, project_portfolio
+  title           String   // e.g., "Solidity Fundamentals", "DeFi Developer"
+  description     String
+  skillsVerified  Json     // Array of verified skills
+  issueDate       DateTime @default(now())
+  expiryDate      DateTime? // Some certificates may expire
+  verificationUrl String?  // Public verification link
+  blockchainTxId  String?  // If stored on blockchain
+  isRevoked       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@index([issueDate])
+}
+
+// ============================================================================
+// FEEDBACK & SUPPORT
+// ============================================================================
+
+model Feedback {
+  id          String   @id @default(cuid())
+  userId      String?
+  type        String   // bug_report, feature_request, general
+  category    String   // ui_ux, content, performance, other
+  title       String
+  description String
+  priority    String   @default("medium") // low, medium, high, critical
+  status      String   @default("open") // open, in_progress, resolved, closed
+  page        String?  // Where feedback was submitted
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([type, status])
+  @@index([priority, createdAt])
+}
+
+// ============================================================================
+// ENUMS (SIMPLIFIED)
+// ============================================================================
+
+enum UserRole {
+  STUDENT
+  MENTOR
+  INSTRUCTOR
+  ADMIN
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum LessonType {
+  THEORY
+  CODING
+  QUIZ
+  PROJECT
+  INTERACTIVE
+}
+
+enum SubmissionStatus {
+  PENDING
+  TESTING
+  PASSED
+  FAILED
+  ERROR
+}
+
+enum ProjectCategory {
+  DEFI
+  NFT
+  DAO
+  GAMING
+  UTILITY
+  SECURITY
+  EDUCATIONAL
+}
+
+enum CollaborationType {
+  PAIR_PROGRAMMING
+  CODE_REVIEW
+  PROJECT
+  STUDY_GROUP
+}
+
+enum CollaborationStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum CollaborationRole {
+  OWNER
+  MODERATOR
+  MEMBER
+}
+
+enum MessageType {
+  TEXT
+  CODE
+  SYSTEM
+  FILE
+}
+
+enum AchievementCategory {
+  LEARNING
+  CODING
+  SOCIAL
+  STREAK
+  SPECIAL
+}
