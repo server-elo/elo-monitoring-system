@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRP Monitoring Dashboard</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .metric-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .metric-value {
+      font-size: 2em;
+      font-weight: bold;
+      color: #333;
+    }
+    .metric-label {
+      color: #666;
+      margin-top: 5px;
+    }
+    .status-healthy {
+      color: #4CAF50;
+    }
+    .status-warning {
+      color: #FF9800;
+    }
+    .status-critical {
+      color: #F44336;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>PRP Monitoring Dashboard</h1>
+    
+    <!-- PC Info Card -->
+    <div class="metric-card">
+      <h2>🖥️ Current PC Info</h2>
+      <div id="pc-info">
+        <div><strong>PC:</strong> <span id="pc-hostname">Loading...</span></div>
+        <div><strong>User:</strong> <span id="pc-username">Loading...</span></div>
+        <div><strong>Platform:</strong> <span id="pc-platform">Loading...</span></div>
+        <div><strong>Uptime:</strong> <span id="pc-uptime">Loading...</span></div>
+      </div>
+    </div>
+    
+    <div class="grid">
+      <div class="metric-card">
+        <div class="metric-value status-healthy" id="health-status">Healthy</div>
+        <div class="metric-label">System Status</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-value" id="response-time">0ms</div>
+        <div class="metric-label">Avg Response Time</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-value" id="error-rate">0%</div>
+        <div class="metric-label">Error Rate</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-value" id="active-users">0</div>
+        <div class="metric-label">Total Checks</div>
+      </div>
+    </div>
+    
+    <div class="metric-card">
+      <h2>🚨 Alerts by PC/User</h2>
+      <div id="alerts-by-pc">No alerts</div>
+    </div>
+    
+    <div class="metric-card">
+      <h2>📋 Recent Alerts (All PCs)</h2>
+      <div id="alerts-list">No alerts</div>
+    </div>
+  </div>
+  
+  <script>
+    // Helper function to format uptime
+    function formatUptime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      
+      if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      if (minutes > 0) return `${minutes}m ${secs}s`;
+      return `${secs}s`;
+    }
+    
+    // Update metrics every 5 seconds
+    setInterval(async () => {
+      try {
+        // Fetch metrics from monitoring service
+        const metrics = await fetch('http://localhost:3002/metrics').then(r => r.json());
+        
+        // Update PC Info
+        if (metrics.environment) {
+          document.getElementById('pc-hostname').textContent = metrics.environment.hostname;
+          document.getElementById('pc-username').textContent = metrics.environment.username;
+          document.getElementById('pc-platform').textContent = metrics.environment.platform;
+          document.getElementById('pc-uptime').textContent = formatUptime(metrics.uptime);
+        }
+        
+        // Update dashboard values
+        document.getElementById('response-time').textContent = metrics.avgResponseTime + 'ms';
+        document.getElementById('error-rate').textContent = metrics.errorRate + '%';
+        document.getElementById('active-users').textContent = metrics.totalChecks || '0';
+        
+        // Update health status based on all health checks
+        const allHealthy = Object.values(metrics.healthChecks).every(check => check.status === 'healthy');
+        document.getElementById('health-status').textContent = allHealthy ? 'Healthy' : 'Issues Detected';
+        document.getElementById('health-status').className = 
+          'metric-value ' + (allHealthy ? 'status-healthy' : 'status-warning');
+        
+        // Update alerts by PC
+        const alertsByPCDiv = document.getElementById('alerts-by-pc');
+        if (metrics.alertsByPC && Object.keys(metrics.alertsByPC).length > 0) {
+          alertsByPCDiv.innerHTML = Object.entries(metrics.alertsByPC)
+            .map(([pcKey, alerts]) => `
+              <div style="margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                <h4 style="margin: 0 0 8px 0; color: #d32f2f;">💻 ${pcKey}</h4>
+                <div style="font-size: 0.9em; color: #666;">${alerts.length} alert(s)</div>
+                <div style="margin-top: 5px;">
+                  ${alerts.slice(-3).map(alert => `
+                    <div style="font-size: 0.8em; color: #333; margin: 2px 0;">
+                      • ${alert.endpoint}: ${alert.condition} 
+                      <span style="color: #999;">(${new Date(alert.timestamp).toLocaleTimeString()})</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('');
+        } else {
+          alertsByPCDiv.innerHTML = '<div style="color: #4CAF50;">✅ No alerts from any PC</div>';
+        }
+        
+        // Update recent alerts (all PCs)
+        const alertsList = document.getElementById('alerts-list');
+        if (metrics.recentAlerts && metrics.recentAlerts.length > 0) {
+          alertsList.innerHTML = metrics.recentAlerts
+            .reverse()
+            .map(alert => `
+              <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                <strong>${alert.endpoint}</strong> - ${alert.condition}
+                <div style="color: #666; font-size: 0.9em;">
+                  💻 ${alert.pc?.username || 'unknown'}@${alert.pc?.hostname || 'unknown'} - 
+                  ${new Date(alert.timestamp).toLocaleString()}
+                </div>
+              </div>
+            `).join('');
+        } else {
+          alertsList.textContent = 'No recent alerts';
+        }
+      } catch (error) {
+        console.error('Failed to fetch metrics:', error);
+        document.getElementById('health-status').textContent = 'Monitoring Offline';
+        document.getElementById('health-status').className = 'metric-value status-critical';
+      }
+    }, 5000);
+    
+    // Fetch initial metrics immediately
+    (async () => {
+      try {
+        const metrics = await fetch('http://localhost:3002/metrics').then(r => r.json());
+        document.getElementById('active-users').textContent = metrics.totalChecks || '0';
+      } catch (error) {
+        console.error('Failed to fetch initial metrics:', error);
+      }
+    })();
+  </script>
+</body>
+</html>

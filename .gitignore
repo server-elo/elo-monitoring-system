@@ -1,0 +1,59 @@
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# API Keys and Secrets
+.pc-api-key
+*.key
+*.pem
+
+# Ngrok
+.ngrok.conf
+ngrok-output.log
+ngrok-url.txt
+
+# Monitoring outputs
+remote-connection.json
+monitoring.log
+central-monitoring.log
+pc-monitoring-pro.log
+central-monitoring-pro.log
+
+# Node modules
+node_modules/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Embedded git repositories
+PRPs-agentic-eng/
+learning_sol/

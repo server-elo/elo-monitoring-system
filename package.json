@@ -1,0 +1,44 @@
+{
+  "name": "enterprise-monitoring-system",
+  "version": "2.0.0",
+  "description": "Production-ready multi-PC monitoring system with remote connectivity",
+  "main": "central-monitoring-pro.js",
+  "scripts": {
+    "start": "node central-monitoring-pro.js",
+    "start:central": "node central-monitoring-pro.js",
+    "start:pc": "node monitoring-service-pro.js",
+    "start:dev": "NODE_ENV=development node central-monitoring-pro.js",
+    "start:prod": "NODE_ENV=production node central-monitoring-pro.js",
+    "setup:central": "./scripts/start-central-pro.sh",
+    "setup:pc": "./scripts/start-pc-monitor-pro.sh",
+    "setup:ngrok": "./scripts/setup-ngrok.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "monitoring",
+    "12-factor",
+    "remote",
+    "multi-pc",
+    "enterprise",
+    "production-ready"
+  ],
+  "author": "PRP AI Assistant",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/enterprise-monitoring-system.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "files": [
+    "central-monitoring-pro.js",
+    "monitoring-service-pro.js",
+    "src/",
+    "scripts/",
+    ".env.example",
+    "README.md"
+  ]
+}
