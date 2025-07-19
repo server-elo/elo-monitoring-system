@@ -5,10 +5,10 @@
 import { ReactElement, ReactNode, MouseEvent, ChangeEvent, FormEvent, KeyboardEvent } from 'react';
 
 // Common event handler types
-export type ClickHandler<T = HTMLElement> = (event: MouseEvent<T>) => void;
-export type ChangeHandler<T = HTMLInputElement> = (event: ChangeEvent<T>) => void;
-export type FormHandler = (event: FormEvent<HTMLFormElement>) => void;
-export type KeyboardHandler<T = HTMLElement> = (event: KeyboardEvent<T>) => void;
+export type ClickHandler<T = HTMLElement> = (_event: MouseEvent<T>) => void;
+export type ChangeHandler<T = HTMLInputElement> = (_event: ChangeEvent<T>) => void;
+export type FormHandler = (_event: FormEvent<HTMLFormElement>) => void;
+export type KeyboardHandler<T = HTMLElement> = (_event: KeyboardEvent<T>) => void;
 
 // Common prop types
 export interface BaseComponentProps {
@@ -41,7 +41,7 @@ export interface LayoutProps extends BaseComponentProps {
 // Modal types
 export interface ModalProps extends BaseComponentProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   title?: string;
 }
 
@@ -61,7 +61,7 @@ export interface TableColumn<T> {
   label: string;
   width?: string | number;
   sortable?: boolean;
-  render?: (value: any, row: T, index: number) => ReactNode;
+  render?: ( value: any, row: T, index: number) => ReactNode;
 }
 
 export interface TableProps<T> {
@@ -69,14 +69,14 @@ export interface TableProps<T> {
   data: T[];
   loading?: boolean;
   error?: string;
-  onRowClick?: (row: T, index: number) => void;
+  onRowClick?: ( row: T, index: number) => void;
 }
 
 // Pagination types
 export interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  onPageChange: (_page: number) => void;
   pageSize?: number;
   totalItems?: number;
 }
@@ -125,7 +125,7 @@ export interface Notification {
   duration?: number;
   action?: {
     label: string;
-    onClick: () => void;
+    onClick: (_) => void;
   };
 }
 

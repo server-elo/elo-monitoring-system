@@ -27,7 +27,7 @@ export const PerformanceOptimizer: React.FC<PerformanceOptimizerProps> = ({
 }) => {
   useEffect(() => {
     // Only run optimizations in the browser
-    if (typeof window === 'undefined') return;
+    if (_typeof window === 'undefined') return;
 
     const runOptimizations = async () => {
       try {
@@ -42,26 +42,26 @@ export const PerformanceOptimizer: React.FC<PerformanceOptimizerProps> = ({
           ]);
 
           // Optimize font display
-          optimizeFontDisplay();
+          optimizeFontDisplay(_);
         }
 
         // 2. Critical CSS extraction and loading
         if (enableCriticalCSS) {
-          const cssLoader = new CSSLoader();
+          const cssLoader = new CSSLoader(_);
           
           // Load glassmorphism critical CSS immediately
-          await cssLoader.loadCriticalCSS(GLASSMORPHISM_CRITICAL_CSS);
+          await cssLoader.loadCriticalCSS(_GLASSMORPHISM_CRITICAL_CSS);
 
           // Extract page-specific critical CSS
-          const pageSelectors = getPageSelectors(page);
+          const pageSelectors = getPageSelectors(_page);
           const criticalCSS = extractCriticalCSS({
             selectors: pageSelectors,
-            mediaQueries: ['(max-width: 768px)', '(prefers-reduced-motion: reduce)'],
+            mediaQueries: ['(_max-width: 768px)', '(_prefers-reduced-motion: reduce)'],
             excludeSelectors: ['.tooltip', '.modal', '.dropdown'],
           });
 
           if (criticalCSS) {
-            await cssLoader.loadCriticalCSS(criticalCSS);
+            await cssLoader.loadCriticalCSS(_criticalCSS);
           }
         }
 
@@ -69,27 +69,27 @@ export const PerformanceOptimizer: React.FC<PerformanceOptimizerProps> = ({
         if (enableCSSDefer) {
           // Wait a bit for critical content to render
           setTimeout(() => {
-            deferNonCriticalCSS();
+            deferNonCriticalCSS(_);
           }, 100);
         }
 
         // 4. Preload next page resources based on current page
-        preloadNextPageResources(page);
+        preloadNextPageResources(_page);
 
-      } catch (error) {
+      } catch (_error) {
         console.error('Performance optimization error:', error);
       }
     };
 
     // Run optimizations after initial render
-    requestAnimationFrame(runOptimizations);
+    requestAnimationFrame(_runOptimizations);
   }, [page, enableCriticalCSS, enableFontOptimization, enableCSSDefer]);
 
   return <>{children}</>;
 };
 
 // Get critical selectors for each page type
-function getPageSelectors(page: string): string[] {
+function getPageSelectors(_page: string): string[] {
   const commonSelectors = [
     'nav', 'header', 'main', 'footer',
     '.glass', '.gradient-text', '.focus-visible',
@@ -115,11 +115,11 @@ function getPageSelectors(page: string): string[] {
     ],
   };
 
-  return [...commonSelectors, ...(pageSpecificSelectors[page] || [])];
+  return [...commonSelectors, ...(_pageSpecificSelectors[page] || [])];
 }
 
 // Preload resources for likely next pages
-function preloadNextPageResources(currentPage: string): void {
+function preloadNextPageResources(_currentPage: string): void {
   const nextPageMap: Record<string, string[]> = {
     homepage: ['/learn', '/code'],
     dashboard: ['/learn', '/profile'],
@@ -134,14 +134,14 @@ function preloadNextPageResources(currentPage: string): void {
     const link = document.createElement('link');
     link.rel = 'prefetch';
     link.href = page;
-    document.head.appendChild(link);
+    document.head.appendChild(_link);
   });
 }
 
 // Critical CSS component for server-side rendering
-export const CriticalCSS: React.FC<{ page?: string }> = ({ page = 'homepage' }) => {
+export const CriticalCSS: React.FC<{ page?: string }> = ({ page = 'homepage'  }) => {
   // Page selectors would be used for more specific critical CSS extraction
-  // const pageSelectors = getPageSelectors(page);
+  // const pageSelectors = getPageSelectors(_page);
   
   // This would be generated at build time in a real implementation
   const criticalCSS = `
@@ -169,12 +169,12 @@ export const CriticalCSS: React.FC<{ page?: string }> = ({ page = 'homepage' }) 
     .loading { opacity: 0.6; pointer-events: none; }
     
     /* Responsive utilities */
-    @media (max-width: 768px) {
+    @media (_max-width: 768px) {
       .hidden-mobile { display: none; }
     }
     
     /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
+    @media (_prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
@@ -185,14 +185,14 @@ export const CriticalCSS: React.FC<{ page?: string }> = ({ page = 'homepage' }) 
 
   return (
     <style
-      dangerouslySetInnerHTML={{ __html: criticalCSS }}
+      dangerouslySetInnerHTML={{  html: criticalCSS }}
       data-critical-css={page}
     />
   );
 };
 
 // Font preload component
-export const FontPreloader: React.FC = () => (
+export const FontPreloader: React.FC = (_) => (
   <>
     <link
       rel="preload"
@@ -214,8 +214,8 @@ export const FontPreloader: React.FC = () => (
 );
 
 // Resource hints component
-export const ResourceHints: React.FC<{ page?: string }> = ({ page = 'homepage' }) => {
-  const hints = getResourceHints(page);
+export const ResourceHints: React.FC<{ page?: string }> = ({ page = 'homepage'  }) => {
+  const hints = getResourceHints(_page);
   
   return (
     <>
@@ -225,14 +225,14 @@ export const ResourceHints: React.FC<{ page?: string }> = ({ page = 'homepage' }
       {hints.dnsPrefetch.map(href => (
         <link key={href} rel="dns-prefetch" href={href} />
       ))}
-      {hints.preload.map(({ href, as, type }) => (
+      {hints.preload.map( ({ href, as, type }) => (
         <link key={href} rel="preload" href={href} as={as} type={type} />
       ))}
     </>
   );
 };
 
-function getResourceHints(_page: string) {
+function getResourceHints( page: string) {
   return {
     preconnect: [
       'https://fonts.googleapis.com',
@@ -250,30 +250,30 @@ function getResourceHints(_page: string) {
 }
 
 // Performance monitoring component
-export const PerformanceMonitor: React.FC = () => {
+export const PerformanceMonitor: React.FC = (_) => {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (_typeof window === 'undefined') return;
 
     // Monitor Core Web Vitals
     const observer = new PerformanceObserver((list) => {
-      list.getEntries().forEach((entry) => {
-        if (entry.entryType === 'largest-contentful-paint') {
+      list.getEntries(_).forEach((entry) => {
+        if (_entry.entryType === 'largest-contentful-paint') {
           console.log('LCP:', entry.startTime);
         }
-        if (entry.entryType === 'first-input') {
+        if (_entry.entryType === 'first-input') {
           const fidEntry = entry as any; // PerformanceEventTiming
           console.log('FID:', fidEntry.processingStart - fidEntry.startTime);
         }
-        if (entry.entryType === 'layout-shift') {
+        if (_entry.entryType === 'layout-shift') {
           const clsEntry = entry as any; // LayoutShift
           console.log('CLS:', clsEntry.value);
         }
       });
     });
 
-    observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
+    observer.observe( { entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
 
-    return () => observer.disconnect();
+    return (_) => observer.disconnect(_);
   }, []);
 
   return null;

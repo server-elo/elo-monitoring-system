@@ -4,12 +4,12 @@ import { ProfileSection } from '../ProfileSection';
 import { UserProfile } from '@/types/settings';
 
 // Mock framer-motion
-jest.mock('framer-motion', () => ({
+jest.mock( 'framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    div: ( { children, ...props }: any) => <div {...props}>{children}</div>,
+    button: ( { children, ...props }: any) => <button {...props}>{children}</button>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: (_{ children }: any) => <>{children}</>,
 }));
 
 const mockProfile: UserProfile = {
@@ -26,129 +26,129 @@ const mockProfile: UserProfile = {
   linkedin: 'johndoe'
 };
 
-describe('ProfileSection', () => {
-  const mockOnUpdate = jest.fn();
+describe( 'ProfileSection', () => {
+  const mockOnUpdate = jest.fn(_);
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
-  it('renders profile information correctly', () => {
+  it( 'renders profile information correctly', () => {
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
-    expect(screen.getByDisplayValue('John')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Doe')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('john@example.com')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('johndoe')).toBeInTheDocument();
+    expect(_screen.getByDisplayValue('John')).toBeInTheDocument(_);
+    expect(_screen.getByDisplayValue('Doe')).toBeInTheDocument(_);
+    expect(_screen.getByDisplayValue('john@example.com')).toBeInTheDocument(_);
+    expect(_screen.getByDisplayValue('johndoe')).toBeInTheDocument(_);
   });
 
-  it('enters edit mode when edit button is clicked', () => {
+  it( 'enters edit mode when edit button is clicked', () => {
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
     const editButton = screen.getByText('Edit Profile');
-    fireEvent.click(editButton);
+    fireEvent.click(_editButton);
     
-    expect(screen.getByText('Save Changes')).toBeInTheDocument();
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
+    expect(_screen.getByText('Save Changes')).toBeInTheDocument(_);
+    expect(_screen.getByText('Cancel')).toBeInTheDocument(_);
   });
 
-  it('updates profile data when form is submitted', async () => {
-    mockOnUpdate.mockResolvedValue({ success: true });
+  it( 'updates profile data when form is submitted', async () => {
+    mockOnUpdate.mockResolvedValue({ success: true  });
     
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
     // Enter edit mode
-    fireEvent.click(screen.getByText('Edit Profile'));
+    fireEvent.click(_screen.getByText('Edit Profile'));
     
     // Update first name
     const firstNameInput = screen.getByDisplayValue('John');
-    fireEvent.change(firstNameInput, { target: { value: 'Jane' } });
+    fireEvent.change( firstNameInput, { target: { value: 'Jane' } });
     
     // Save changes
-    fireEvent.click(screen.getByText('Save Changes'));
+    fireEvent.click(_screen.getByText('Save Changes'));
     
     await waitFor(() => {
-      expect(mockOnUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ firstName: 'Jane' })
+      expect(_mockOnUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ firstName: 'Jane'  })
       );
     });
   });
 
-  it('validates required fields', async () => {
+  it( 'validates required fields', async () => {
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
     // Enter edit mode
-    fireEvent.click(screen.getByText('Edit Profile'));
+    fireEvent.click(_screen.getByText('Edit Profile'));
     
     // Clear required field
     const firstNameInput = screen.getByDisplayValue('John');
-    fireEvent.change(firstNameInput, { target: { value: '' } });
+    fireEvent.change( firstNameInput, { target: { value: '' } });
     
     // Try to save
-    fireEvent.click(screen.getByText('Save Changes'));
+    fireEvent.click(_screen.getByText('Save Changes'));
     
     await waitFor(() => {
-      expect(screen.getByText('First name is required')).toBeInTheDocument();
+      expect(_screen.getByText('First name is required')).toBeInTheDocument(_);
     });
   });
 
-  it('validates email format', async () => {
+  it( 'validates email format', async () => {
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
     // Enter edit mode
-    fireEvent.click(screen.getByText('Edit Profile'));
+    fireEvent.click(_screen.getByText('Edit Profile'));
     
     // Enter invalid email
     const emailInput = screen.getByDisplayValue('john@example.com');
-    fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+    fireEvent.change( emailInput, { target: { value: 'invalid-email' } });
     
     // Try to save
-    fireEvent.click(screen.getByText('Save Changes'));
+    fireEvent.click(_screen.getByText('Save Changes'));
     
     await waitFor(() => {
-      expect(screen.getByText('Please enter a valid email address')).toBeInTheDocument();
+      expect(_screen.getByText('Please enter a valid email address')).toBeInTheDocument(_);
     });
   });
 
-  it('handles avatar upload', async () => {
+  it( 'handles avatar upload', async () => {
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
     // Enter edit mode
-    fireEvent.click(screen.getByText('Edit Profile'));
+    fireEvent.click(_screen.getByText('Edit Profile'));
     
     // Create a mock file
-    const file = new File(['avatar'], 'avatar.jpg', { type: 'image/jpeg' });
-    const fileInput = screen.getByLabelText(/upload avatar/i);
+    const file = new File( ['avatar'], 'avatar.jpg', { type: 'image/jpeg' });
+    const fileInput = screen.getByLabelText(_/upload avatar/i);
     
     // Upload file
-    fireEvent.change(fileInput, { target: { files: [file] } });
+    fireEvent.change( fileInput, { target: { files: [file] } });
     
     await waitFor(() => {
-      expect(screen.getByText('avatar.jpg')).toBeInTheDocument();
+      expect(_screen.getByText('avatar.jpg')).toBeInTheDocument(_);
     });
   });
 
-  it('cancels edit mode without saving changes', () => {
+  it( 'cancels edit mode without saving changes', () => {
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
     // Enter edit mode
-    fireEvent.click(screen.getByText('Edit Profile'));
+    fireEvent.click(_screen.getByText('Edit Profile'));
     
     // Make changes
     const firstNameInput = screen.getByDisplayValue('John');
-    fireEvent.change(firstNameInput, { target: { value: 'Jane' } });
+    fireEvent.change( firstNameInput, { target: { value: 'Jane' } });
     
     // Cancel
-    fireEvent.click(screen.getByText('Cancel'));
+    fireEvent.click(_screen.getByText('Cancel'));
     
     // Should not call onUpdate
-    expect(mockOnUpdate).not.toHaveBeenCalled();
+    expect(_mockOnUpdate).not.toHaveBeenCalled(_);
     
     // Should show original value
-    expect(screen.getByDisplayValue('John')).toBeInTheDocument();
+    expect(_screen.getByDisplayValue('John')).toBeInTheDocument(_);
   });
 
-  it('displays validation errors from props', () => {
+  it( 'displays validation errors from props', () => {
     const validationErrors = [
       { field: 'email', message: 'Email already exists' }
     ];
@@ -161,53 +161,53 @@ describe('ProfileSection', () => {
       />
     );
     
-    expect(screen.getByText('Email already exists')).toBeInTheDocument();
+    expect(_screen.getByText('Email already exists')).toBeInTheDocument(_);
   });
 
-  it('shows loading state when saving', async () => {
-    mockOnUpdate.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({ success: true }), 100)));
+  it( 'shows loading state when saving', async () => {
+    mockOnUpdate.mockImplementation(() => new Promise(_resolve => setTimeout(() => resolve({ success: true  }), 100)));
     
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
     // Enter edit mode and save
-    fireEvent.click(screen.getByText('Edit Profile'));
-    fireEvent.click(screen.getByText('Save Changes'));
+    fireEvent.click(_screen.getByText('Edit Profile'));
+    fireEvent.click(_screen.getByText('Save Changes'));
     
-    expect(screen.getByText('Saving...')).toBeInTheDocument();
+    expect(_screen.getByText('Saving...')).toBeInTheDocument(_);
     
     await waitFor(() => {
-      expect(screen.queryByText('Saving...')).not.toBeInTheDocument();
+      expect(_screen.queryByText('Saving...')).not.toBeInTheDocument(_);
     });
   });
 
-  it('handles drag and drop for avatar upload', async () => {
+  it( 'handles drag and drop for avatar upload', async () => {
     render(<ProfileSection profile={mockProfile} onUpdate={mockOnUpdate} />);
     
     // Enter edit mode
-    fireEvent.click(screen.getByText('Edit Profile'));
+    fireEvent.click(_screen.getByText('Edit Profile'));
     
-    const dropZone = screen.getByText(/drag.*drop.*avatar/i).closest('div');
+    const dropZone = screen.getByText(_/drag.*drop.*avatar/i).closest('div');
     
     // Create mock drag event
-    const file = new File(['avatar'], 'avatar.jpg', { type: 'image/jpeg' });
+    const file = new File( ['avatar'], 'avatar.jpg', { type: 'image/jpeg' });
     const dragEvent = {
       dataTransfer: {
         files: [file],
         types: ['Files']
       },
-      preventDefault: jest.fn(),
-      stopPropagation: jest.fn()
+      preventDefault: jest.fn(_),
+      stopPropagation: jest.fn(_)
     };
     
     // Simulate drag over
-    fireEvent.dragOver(dropZone!, dragEvent);
-    expect(dropZone).toHaveClass('border-blue-500');
+    fireEvent.dragOver( dropZone!, dragEvent);
+    expect(_dropZone).toHaveClass('border-blue-500');
     
     // Simulate drop
-    fireEvent.drop(dropZone!, dragEvent);
+    fireEvent.drop( dropZone!, dragEvent);
     
     await waitFor(() => {
-      expect(screen.getByText('avatar.jpg')).toBeInTheDocument();
+      expect(_screen.getByText('avatar.jpg')).toBeInTheDocument(_);
     });
   });
 });

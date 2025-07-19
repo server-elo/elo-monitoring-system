@@ -9,7 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
     outcome: 'accepted' | 'dismissed';
     platform: string;
   }>;
-  prompt(): Promise<void>;
+  prompt(_): Promise<void>;
 }
 
 interface WindowEventMap {

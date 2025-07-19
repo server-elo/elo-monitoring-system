@@ -76,8 +76,8 @@ const recentLessons: RecentLesson[] = [
 ];
 
 export function NotFoundPage() {
-  const router = useRouter();
-  const pathname = usePathname();
+  const router = useRouter(_);
+  const pathname = usePathname(_);
   // Search functionality moved to navigation bar
   // const [searchQuery, setSearchQuery] = useState('');
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
@@ -86,33 +86,33 @@ export function NotFoundPage() {
   useEffect(() => {
     // Generate breadcrumbs from pathname
     const pathSegments = pathname.split('/').filter(Boolean);
-    setBreadcrumbs(pathSegments);
+    setBreadcrumbs(_pathSegments);
 
     // Generate intelligent redirect suggestions
-    const suggestions = generateRedirectSuggestions(pathname);
-    setSuggestedRedirects(suggestions);
+    const suggestions = generateRedirectSuggestions(_pathname);
+    setSuggestedRedirects(_suggestions);
 
     // Track 404 error
-    trackNotFoundError(pathname);
+    trackNotFoundError(_pathname);
   }, [pathname]);
 
-  const generateRedirectSuggestions = (path: string): string[] => {
+  const generateRedirectSuggestions = (_path: string): string[] => {
     const suggestions: string[] = [];
     
     // Common URL pattern fixes
-    if (path.includes('/course/')) {
-      suggestions.push(path.replace('/course/', '/courses/'));
+    if (_path.includes('/course/')) {
+      suggestions.push( path.replace('/course/', '/courses/'));
     }
-    if (path.includes('/lesson/')) {
-      suggestions.push(path.replace('/lesson/', '/lessons/'));
+    if (_path.includes('/lesson/')) {
+      suggestions.push( path.replace('/lesson/', '/lessons/'));
     }
-    if (path.includes('/user/')) {
-      suggestions.push(path.replace('/user/', '/profile/'));
+    if (_path.includes('/user/')) {
+      suggestions.push( path.replace('/user/', '/profile/'));
     }
     
     // Remove trailing slashes
-    if (path.endsWith('/') && path.length > 1) {
-      suggestions.push(path.slice(0, -1));
+    if (_path.endsWith('/') && path.length > 1) {
+      suggestions.push( path.slice(0, -1));
     }
     
     // Add leading slash if missing
@@ -123,34 +123,34 @@ export function NotFoundPage() {
     return suggestions.slice(0, 3); // Limit to 3 suggestions
   };
 
-  const trackNotFoundError = (path: string) => {
+  const trackNotFoundError = (_path: string) => {
     // Track 404 errors for analytics
-    if (typeof window !== 'undefined') {
+    if (_typeof window !== 'undefined') {
       // Send to analytics service
       console.log('404 Error tracked:', { path, timestamp: new Date().toISOString() });
       
       // You can integrate with your analytics service here
-      // analytics.track('404_error', { path, referrer: document.referrer });
+      // analytics.track( '404_error', { path, referrer: document.referrer });
     }
   };
 
   // Search handling moved to navigation bar
-  // const handleSearch = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (searchQuery.trim()) {
-  //     router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+  // const handleSearch = (_e: React.FormEvent) => {
+  //   e.preventDefault(_);
+  //   if (_searchQuery.trim()) {
+  //     router.push(_`/search?q=${encodeURIComponent(searchQuery.trim())}`);
   //   }
   // };
 
-  const handleReportBrokenLink = () => {
+  const handleReportBrokenLink = (_) => {
     // Open feedback form or email
-    const subject = encodeURIComponent(`Broken Link Report: ${pathname}`);
-    const body = encodeURIComponent(`I found a broken link at: ${window.location.href}\n\nAdditional details:`);
-    window.open(`mailto:support@soliditylearning.com?subject=${subject}&body=${body}`);
+    const subject = encodeURIComponent(_`Broken Link Report: ${pathname}`);
+    const body = encodeURIComponent(_`I found a broken link at: ${window.location.href}\n\nAdditional details:`);
+    window.open(_`mailto:support@soliditylearning.com?subject=${subject}&body=${body}`);
   };
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
+  const getLevelColor = (_level: string) => {
+    switch (_level) {
       case 'beginner': return 'text-green-400 bg-green-400/10';
       case 'intermediate': return 'text-yellow-400 bg-yellow-400/10';
       case 'advanced': return 'text-red-400 bg-red-400/10';
@@ -170,7 +170,7 @@ export function NotFoundPage() {
           <div className="flex items-center space-x-2 text-sm text-gray-400 mb-4">
             <Home className="w-4 h-4" />
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            {breadcrumbs.map((segment, index) => (
+            {breadcrumbs.map( (segment, index) => (
               <React.Fragment key={index}>
                 <ChevronRight className="w-4 h-4" />
                 <span className="capitalize">{segment.replace(/-/g, ' ')}</span>
@@ -228,7 +228,7 @@ export function NotFoundPage() {
                 <h3 className="text-lg font-semibold text-white">Did you mean?</h3>
               </div>
               <div className="space-y-2">
-                {suggestedRedirects.map((suggestion, index) => (
+                {suggestedRedirects.map( (suggestion, index) => (
                   <Link
                     key={index}
                     href={suggestion}
@@ -299,7 +299,7 @@ export function NotFoundPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {getContextualSuggestions(pathname).map((suggestion, index) => (
+                {getContextualSuggestions(_pathname).map( (suggestion, index) => (
                   <Link
                     key={index}
                     href={suggestion}
@@ -334,7 +334,7 @@ export function NotFoundPage() {
                     <h4 className="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">
                       {course.title}
                     </h4>
-                    <span className={cn('px-2 py-1 rounded-full text-xs font-medium', getLevelColor(course.level))}>
+                    <span className={cn( 'px-2 py-1 rounded-full text-xs font-medium', getLevelColor(course.level))}>
                       {course.level}
                     </span>
                   </div>
@@ -348,7 +348,7 @@ export function NotFoundPage() {
                     </div>
                     <div className="flex items-center space-x-1">
                       <Users className="w-4 h-4" />
-                      <span>{course.students.toLocaleString()}</span>
+                      <span>{course.students.toLocaleString(_)}</span>
                     </div>
                   </div>
                 </GlassContainer>
@@ -406,7 +406,7 @@ export function NotFoundPage() {
         >
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
             <button
-              onClick={() => router.back()}
+              onClick={(_) => router.back(_)}
               className="flex items-center space-x-2 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -414,7 +414,7 @@ export function NotFoundPage() {
             </button>
             
             <button
-              onClick={() => window.location.reload()}
+              onClick={(_) => window.location.reload(_)}
               className="flex items-center space-x-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
             >
               <RefreshCw className="w-4 h-4" />

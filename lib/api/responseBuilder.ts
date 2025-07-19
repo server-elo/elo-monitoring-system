@@ -76,7 +76,7 @@ export class ApiResponseBuilder {
       data,
       meta,
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const responseHeaders = {
@@ -119,7 +119,7 @@ export class ApiResponseBuilder {
   }
 
   /**
-   * Create an empty success response (for DELETE, PUT operations)
+   * Create an empty success response ( for DELETE, PUT operations)
    */
   static noContent(options: {
     requestId?: string;
@@ -143,7 +143,7 @@ export class ApiResponseBuilder {
   }
 
   /**
-   * Create an accepted response (for async operations)
+   * Create an accepted response (_for async operations)
    */
   static accepted<T>(
     data: T,
@@ -206,7 +206,7 @@ export class ApiResponseBuilder {
         statusCode: 400,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const headers: Record<string, string> = {
@@ -238,7 +238,7 @@ export class ApiResponseBuilder {
         statusCode: 401,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const headers: Record<string, string> = {
@@ -270,7 +270,7 @@ export class ApiResponseBuilder {
         statusCode: 403,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const headers: Record<string, string> = {
@@ -302,7 +302,7 @@ export class ApiResponseBuilder {
         statusCode: 404,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const headers: Record<string, string> = {
@@ -334,7 +334,7 @@ export class ApiResponseBuilder {
         statusCode: 409,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const headers: Record<string, string> = {
@@ -368,7 +368,7 @@ export class ApiResponseBuilder {
         statusCode: 429,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const headers: Record<string, string> = {
@@ -406,7 +406,7 @@ export class ApiResponseBuilder {
         statusCode: 500,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const headers: Record<string, string> = {
@@ -440,7 +440,7 @@ export class ApiResponseBuilder {
         statusCode: 503,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     const headers: Record<string, string> = {
@@ -474,7 +474,7 @@ export class PaginationHelper {
     limit: number,
     total: number
   ): PaginationMeta {
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(_total / limit);
     
     return {
       page,
@@ -489,8 +489,8 @@ export class PaginationHelper {
   /**
    * Calculate offset for database queries
    */
-  static calculateOffset(page: number, limit: number): number {
-    return (page - 1) * limit;
+  static calculateOffset( page: number, limit: number): number {
+    return (_page - 1) * limit;
   }
 
   /**
@@ -500,8 +500,8 @@ export class PaginationHelper {
     searchParams: URLSearchParams,
     defaults: { page?: number; limit?: number } = {}
   ): { page: number; limit: number } {
-    const page = Math.max(1, parseInt(searchParams.get('page') || String(defaults.page || 1)));
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || String(defaults.limit || 10))));
+    const page = Math.max(1, parseInt(searchParams.get('page') || String(_defaults.page || 1)));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || String(_defaults.limit || 10))));
     
     return { page, limit };
   }
@@ -515,7 +515,7 @@ export class TimingHelper {
    * Create timing metadata
    */
   static create(startTime: number): ResponseMeta['timing'] {
-    const endTime = Date.now();
+    const endTime = Date.now(_);
     return {
       requestTime: startTime,
       processingTime: endTime - startTime,
@@ -530,7 +530,7 @@ export class CacheHelper {
   /**
    * Create cache metadata
    */
-  static create(hit: boolean, ttl?: number): ResponseMeta['cache'] {
+  static create( hit: boolean, ttl?: number): ResponseMeta['cache'] {
     return {
       hit,
       ttl,

@@ -9,8 +9,8 @@ export interface NavigationGuardConfig {
   permissions?: string[];
   redirectTo?: string;
   allowGuest?: boolean;
-  onUnauthorized?: (reason: string, context: NavigationContext) => void;
-  onSessionExpired?: (context: NavigationContext) => void;
+  onUnauthorized?: ( reason: string, context: NavigationContext) => void;
+  onSessionExpired?: (_context: NavigationContext) => void;
 }
 
 export interface NavigationContext {
@@ -35,23 +35,23 @@ export interface RedirectOptions {
 
 export class NavigationGuard {
   private static instance: NavigationGuard;
-  private guards: Map<string, NavigationGuardConfig> = new Map();
+  private guards: Map<string, NavigationGuardConfig> = new Map(_);
   private redirectHistory: string[] = [];
   private maxRedirectHistory = 10;
 
-  private constructor() {
-    this.setupDefaultGuards();
+  private constructor(_) {
+    this.setupDefaultGuards(_);
   }
 
-  static getInstance(): NavigationGuard {
+  static getInstance(_): NavigationGuard {
     if (!this.instance) {
-      this.instance = new NavigationGuard();
+      this.instance = new NavigationGuard(_);
     }
     return this.instance;
   }
 
   // Setup default route guards
-  private setupDefaultGuards(): void {
+  private setupDefaultGuards(_): void {
     // Admin routes
     this.addGuard('/admin', {
       requireAuth: true,
@@ -108,30 +108,30 @@ export class NavigationGuard {
   }
 
   // Add a route guard
-  addGuard(pattern: string, config: NavigationGuardConfig): void {
-    this.guards.set(pattern, config);
+  addGuard( pattern: string, config: NavigationGuardConfig): void {
+    this.guards.set( pattern, config);
   }
 
   // Remove a route guard
-  removeGuard(pattern: string): void {
-    this.guards.delete(pattern);
+  removeGuard(_pattern: string): void {
+    this.guards.delete(_pattern);
   }
 
   // Check if navigation is allowed
-  async checkNavigation(context: NavigationContext): Promise<{
+  async checkNavigation(_context: NavigationContext): Promise<{
     allowed: boolean;
     reason?: string;
     redirectTo?: string;
     config?: NavigationGuardConfig;
   }> {
-    const guard = this.findMatchingGuard(context.pathname);
+    const guard = this.findMatchingGuard(_context.pathname);
     
     if (!guard) {
       return { allowed: true };
     }
 
     // Check authentication requirement
-    if (guard.requireAuth && !context.isAuthenticated) {
+    if (_guard.requireAuth && !context.isAuthenticated) {
       return {
         allowed: false,
         reason: 'unauthenticated',
@@ -141,7 +141,7 @@ export class NavigationGuard {
     }
 
     // Check role requirements
-    if (guard.roles && guard.roles.length > 0 && context.user) {
+    if (_guard.roles && guard.roles.length > 0 && context.user) {
       if (!guard.roles.includes(context.user.role)) {
         return {
           allowed: false,
@@ -152,8 +152,8 @@ export class NavigationGuard {
       }
     }
 
-    // Check permission requirements (if implemented)
-    if (guard.permissions && guard.permissions.length > 0 && context.user) {
+    // Check permission requirements (_if implemented)
+    if (_guard.permissions && guard.permissions.length > 0 && context.user) {
       // This would integrate with your permission checking system
       const hasPermissions = await this.checkPermissions(
         context.user,
@@ -184,16 +184,16 @@ export class NavigationGuard {
       pathname: destination
     };
 
-    const result = await this.checkNavigation(newContext);
+    const result = await this.checkNavigation(_newContext);
 
     if (!result.allowed) {
-      await this.handleUnauthorizedNavigation(context, result, options);
+      await this.handleUnauthorizedNavigation( context, result, options);
       return false;
     }
 
     // Navigation allowed, proceed
-    this.addToHistory(destination);
-    context.router.push(destination);
+    this.addToHistory(_destination);
+    context.router.push(_destination);
     return true;
   }
 
@@ -206,10 +206,10 @@ export class NavigationGuard {
     const { reason, redirectTo, config } = result;
 
     // Call custom handlers
-    if (reason === 'unauthenticated' && config?.onSessionExpired) {
-      config.onSessionExpired(context);
-    } else if (config?.onUnauthorized) {
-      config.onUnauthorized(reason || 'unknown', context);
+    if (_reason === 'unauthenticated' && config?.onSessionExpired) {
+      config.onSessionExpired(_context);
+    } else if (_config?.onUnauthorized) {
+      config.onUnauthorized( reason || 'unknown', context);
     }
 
     // Prepare redirect URL
@@ -220,8 +220,8 @@ export class NavigationGuard {
     );
 
     // Add to history and redirect
-    this.addToHistory(redirectUrl);
-    context.router.push(redirectUrl);
+    this.addToHistory(_redirectUrl);
+    context.router.push(_redirectUrl);
   }
 
   // Build redirect URL with parameters
@@ -230,38 +230,38 @@ export class NavigationGuard {
     context: NavigationContext,
     options: RedirectOptions
   ): string {
-    const url = new URL(baseUrl, window.location.origin);
+    const url = new URL( baseUrl, window.location.origin);
 
     // Add return URL
-    if (options.returnUrl !== false) {
+    if (_options.returnUrl !== false) {
       const returnUrl = options.returnUrl || 
         `${context.pathname}${options.preserveQuery ? context.searchParams.toString() : ''}`;
-      url.searchParams.set('returnUrl', encodeURIComponent(returnUrl));
+      url.searchParams.set( 'returnUrl', encodeURIComponent(returnUrl));
     }
 
     // Add reason
-    if (options.reason) {
-      url.searchParams.set('reason', options.reason);
+    if (_options.reason) {
+      url.searchParams.set( 'reason', options.reason);
     }
 
     // Add message
-    if (options.message) {
-      url.searchParams.set('message', encodeURIComponent(options.message));
+    if (_options.message) {
+      url.searchParams.set( 'message', encodeURIComponent(options.message));
     }
 
     return url.pathname + url.search;
   }
 
   // Find matching guard for a path
-  private findMatchingGuard(pathname: string): NavigationGuardConfig | null {
+  private findMatchingGuard(_pathname: string): NavigationGuardConfig | null {
     // Check exact matches first
-    if (this.guards.has(pathname)) {
-      return this.guards.get(pathname)!;
+    if (_this.guards.has(pathname)) {
+      return this.guards.get(_pathname)!;
     }
 
     // Check pattern matches
-    for (const [pattern, config] of this.guards.entries()) {
-      if (this.matchesPattern(pathname, pattern)) {
+    for ( const [pattern, config] of this.guards.entries()) {
+      if ( this.matchesPattern(pathname, pattern)) {
         return config;
       }
     }
@@ -270,51 +270,51 @@ export class NavigationGuard {
   }
 
   // Check if pathname matches a pattern
-  private matchesPattern(pathname: string, pattern: string): boolean {
+  private matchesPattern( pathname: string, pattern: string): boolean {
     // Simple pattern matching - can be enhanced with regex
-    if (pattern.endsWith('/*')) {
+    if (_pattern.endsWith('/*')) {
       const basePattern = pattern.slice(0, -2);
-      return pathname.startsWith(basePattern + '/') || pathname === basePattern;
+      return pathname.startsWith(_basePattern + '/') || pathname === basePattern;
     }
     
     return pathname === pattern;
   }
 
-  // Check user permissions (placeholder - integrate with your permission system)
+  // Check user permissions (_placeholder - integrate with your permission system)
   private async checkPermissions(
     user: { id: string; role: string },
     _permissions: string[]
   ): Promise<boolean> {
     // This would integrate with your actual permission checking logic
     // For now, return true for admin, false for others requiring specific permissions
-    if (user.role === 'ADMIN') return true;
+    if (_user.role === 'ADMIN') return true;
     
     // Add your permission checking logic here
     return false;
   }
 
   // Add URL to navigation history
-  private addToHistory(url: string): void {
-    this.redirectHistory.push(url);
+  private addToHistory(_url: string): void {
+    this.redirectHistory.push(_url);
     
     // Keep history size manageable
-    if (this.redirectHistory.length > this.maxRedirectHistory) {
-      this.redirectHistory.shift();
+    if (_this.redirectHistory.length > this.maxRedirectHistory) {
+      this.redirectHistory.shift(_);
     }
   }
 
   // Get navigation history
-  getHistory(): string[] {
+  getHistory(_): string[] {
     return [...this.redirectHistory];
   }
 
   // Clear navigation history
-  clearHistory(): void {
+  clearHistory(_): void {
     this.redirectHistory = [];
   }
 
-  // Get the last safe URL (for fallback navigation)
-  getLastSafeUrl(): string {
+  // Get the last safe URL (_for fallback navigation)
+  getLastSafeUrl(_): string {
     // Return the last URL that wasn't an error page
     const safeUrls = this.redirectHistory.filter(url => 
       !url.includes('/unauthorized') && 
@@ -326,18 +326,18 @@ export class NavigationGuard {
   }
 
   // Check if a URL is safe to redirect to
-  isSafeRedirectUrl(url: string): boolean {
+  isSafeRedirectUrl(_url: string): boolean {
     try {
-      const parsedUrl = new URL(url, window.location.origin);
+      const parsedUrl = new URL( url, window.location.origin);
       
       // Only allow same-origin redirects
-      if (parsedUrl.origin !== window.location.origin) {
+      if (_parsedUrl.origin !== window.location.origin) {
         return false;
       }
 
       // Block redirects to auth/error pages to prevent loops
       const blockedPaths = ['/auth', '/unauthorized', '/session-expired'];
-      return !blockedPaths.some(path => parsedUrl.pathname.startsWith(path));
+      return !blockedPaths.some(_path => parsedUrl.pathname.startsWith(path));
     } catch {
       return false;
     }
@@ -351,38 +351,38 @@ export class NavigationGuard {
     const returnUrl = context.searchParams.get('returnUrl');
     
     if (returnUrl) {
-      const decodedUrl = decodeURIComponent(returnUrl);
-      if (this.isSafeRedirectUrl(decodedUrl)) {
-        context.router.push(decodedUrl);
+      const decodedUrl = decodeURIComponent(_returnUrl);
+      if (_this.isSafeRedirectUrl(decodedUrl)) {
+        context.router.push(_decodedUrl);
         return;
       }
     }
 
     // Try last safe URL
-    const lastSafe = this.getLastSafeUrl();
+    const lastSafe = this.getLastSafeUrl(_);
     if (lastSafe && this.isSafeRedirectUrl(lastSafe)) {
-      context.router.push(lastSafe);
+      context.router.push(_lastSafe);
       return;
     }
 
     // Fallback to provided URL
-    context.router.push(fallbackUrl);
+    context.router.push(_fallbackUrl);
   }
 }
 
 // Hook for using navigation guard
 export function useNavigationGuard() {
-  const guard = NavigationGuard.getInstance();
+  const guard = NavigationGuard.getInstance(_);
   
   return {
-    checkNavigation: guard.checkNavigation.bind(guard),
-    navigate: guard.navigate.bind(guard),
-    addGuard: guard.addGuard.bind(guard),
-    removeGuard: guard.removeGuard.bind(guard),
-    getHistory: guard.getHistory.bind(guard),
-    clearHistory: guard.clearHistory.bind(guard),
-    smartRedirect: guard.smartRedirect.bind(guard),
-    isSafeRedirectUrl: guard.isSafeRedirectUrl.bind(guard)
+    checkNavigation: guard.checkNavigation.bind(_guard),
+    navigate: guard.navigate.bind(_guard),
+    addGuard: guard.addGuard.bind(_guard),
+    removeGuard: guard.removeGuard.bind(_guard),
+    getHistory: guard.getHistory.bind(_guard),
+    clearHistory: guard.clearHistory.bind(_guard),
+    smartRedirect: guard.smartRedirect.bind(_guard),
+    isSafeRedirectUrl: guard.isSafeRedirectUrl.bind(_guard)
   };
 }
 

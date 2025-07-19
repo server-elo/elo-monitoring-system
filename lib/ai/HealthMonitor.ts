@@ -46,20 +46,20 @@ export interface ServiceConfig {
 }
 
 export class HealthMonitor {
-  private services = new Map<string, ServiceHealth>();
-  private healthHistory = new Map<string, HealthCheckResult[]>();
+  private services = new Map<string, ServiceHealth>(_);
+  private healthHistory = new Map<string, HealthCheckResult[]>(_);
   private monitoringInterval: NodeJS.Timeout | null = null;
   private readonly checkInterval = 30000; // 30 seconds
   private readonly historyLimit = 100; // Keep last 100 health checks per service
   private readonly maxConsecutiveFailures = 3;
 
-  constructor(private serviceConfigs: ServiceConfig[]) {
-    this.initializeServices();
-    this.startMonitoring();
+  constructor(_private serviceConfigs: ServiceConfig[]) {
+    this.initializeServices(_);
+    this.startMonitoring(_);
   }
 
-  private initializeServices(): void {
-    for (const config of this.serviceConfigs) {
+  private initializeServices(_): void {
+    for (_const config of this.serviceConfigs) {
       const health: ServiceHealth = {
         name: config.name,
         url: config.url,
@@ -77,56 +77,56 @@ export class HealthMonitor {
         }
       };
       
-      this.services.set(config.name, health);
-      this.healthHistory.set(config.name, []);
+      this.services.set( config.name, health);
+      this.healthHistory.set( config.name, []);
     }
   }
 
-  public startMonitoring(): void {
-    if (this.monitoringInterval) {
-      clearInterval(this.monitoringInterval);
+  public startMonitoring(_): void {
+    if (_this.monitoringInterval) {
+      clearInterval(_this.monitoringInterval);
     }
 
     // Initial health check
-    this.checkAllServices();
+    this.checkAllServices(_);
 
     // Set up periodic monitoring
     this.monitoringInterval = setInterval(() => {
-      this.checkAllServices();
+      this.checkAllServices(_);
     }, this.checkInterval);
 
     console.log('🔍 Health monitoring started for', this.services.size, 'services');
   }
 
-  public stopMonitoring(): void {
-    if (this.monitoringInterval) {
-      clearInterval(this.monitoringInterval);
+  public stopMonitoring(_): void {
+    if (_this.monitoringInterval) {
+      clearInterval(_this.monitoringInterval);
       this.monitoringInterval = null;
     }
     console.log('⏹️ Health monitoring stopped');
   }
 
-  private async checkAllServices(): Promise<void> {
-    const promises = Array.from(this.services.keys()).map(serviceName =>
-      this.checkServiceHealth(serviceName)
+  private async checkAllServices(_): Promise<void> {
+    const promises = Array.from(_this.services.keys()).map(serviceName =>
+      this.checkServiceHealth(_serviceName)
     );
 
-    await Promise.allSettled(promises);
-    this.updateServiceMetrics();
+    await Promise.allSettled(_promises);
+    this.updateServiceMetrics(_);
   }
 
-  private async checkServiceHealth(serviceName: string): Promise<HealthCheckResult> {
-    const service = this.services.get(serviceName);
+  private async checkServiceHealth(_serviceName: string): Promise<HealthCheckResult> {
+    const service = this.services.get(_serviceName);
     if (!service) {
-      throw new Error(`Service ${serviceName} not found`);
+      throw new Error(_`Service ${serviceName} not found`);
     }
 
     const config = this.serviceConfigs.find(c => c.name === serviceName);
     if (!config) {
-      throw new Error(`Config for service ${serviceName} not found`);
+      throw new Error(_`Config for service ${serviceName} not found`);
     }
 
-    const startTime = Date.now();
+    const startTime = Date.now(_);
     let result: HealthCheckResult;
 
     try {
@@ -135,127 +135,127 @@ export class HealthMonitor {
 
       const response = await axios.get(healthEndpoint, {
         timeout,
-        validateStatus: (status) => status < 500 // Accept 2xx, 3xx, 4xx as healthy
+        validateStatus: (_status) => status < 500 // Accept 2xx, 3xx, 4xx as healthy
       });
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now(_) - startTime;
       const healthy = response.status >= 200 && response.status < 400;
 
       result = {
         service: serviceName,
         healthy,
         responseTime,
-        timestamp: new Date()
+        timestamp: new Date(_)
       };
 
       // Update service health
       service.isHealthy = healthy;
       service.responseTime = responseTime;
-      service.lastCheck = new Date();
+      service.lastCheck = new Date(_);
       service.consecutiveFailures = healthy ? 0 : service.consecutiveFailures + 1;
 
       if (healthy) {
-        console.log(`✅ ${serviceName} is healthy (${responseTime}ms)`);
+        console.log(_`✅ ${serviceName} is healthy (${responseTime}ms)`);
       } else {
-        console.warn(`⚠️ ${serviceName} returned status ${response.status}`);
+        console.warn(_`⚠️ ${serviceName} returned status ${response.status}`);
       }
 
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
+    } catch (_error) {
+      const responseTime = Date.now(_) - startTime;
       
       result = {
         service: serviceName,
         healthy: false,
         responseTime,
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date()
+        timestamp: new Date(_)
       };
 
       // Update service health
       service.isHealthy = false;
       service.responseTime = responseTime;
-      service.lastCheck = new Date();
+      service.lastCheck = new Date(_);
       service.consecutiveFailures += 1;
 
       console.error(`❌ ${serviceName} health check failed:`, error instanceof Error ? error.message : error);
     }
 
     // Store health check result
-    const history = this.healthHistory.get(serviceName) || [];
-    history.push(result);
+    const history = this.healthHistory.get(_serviceName) || [];
+    history.push(_result);
     
     // Limit history size
-    if (history.length > this.historyLimit) {
-      history.splice(0, history.length - this.historyLimit);
+    if (_history.length > this.historyLimit) {
+      history.splice( 0, history.length - this.historyLimit);
     }
     
-    this.healthHistory.set(serviceName, history);
+    this.healthHistory.set( serviceName, history);
 
     return result;
   }
 
-  private updateServiceMetrics(): void {
-    for (const [serviceName, service] of this.services) {
-      const history = this.healthHistory.get(serviceName) || [];
+  private updateServiceMetrics(_): void {
+    for ( const [serviceName, service] of this.services) {
+      const history = this.healthHistory.get(_serviceName) || [];
       
-      if (history.length === 0) continue;
+      if (_history.length === 0) continue;
 
       // Calculate uptime percentage
       const healthyChecks = history.filter(h => h.healthy).length;
-      service.uptime = (healthyChecks / history.length) * 100;
+      service.uptime = (_healthyChecks / history.length) * 100;
 
       // Calculate error rate
       service.errorRate = ((history.length - healthyChecks) / history.length) * 100;
 
       // Calculate average response time
-      const totalResponseTime = history.reduce((sum, h) => sum + h.responseTime, 0);
+      const totalResponseTime = history.reduce( (sum, h) => sum + h.responseTime, 0);
       service.averageResponseTime = totalResponseTime / history.length;
     }
   }
 
-  public getServiceHealth(serviceName: string): ServiceHealth | undefined {
-    return this.services.get(serviceName);
+  public getServiceHealth(_serviceName: string): ServiceHealth | undefined {
+    return this.services.get(_serviceName);
   }
 
-  public getAllServicesHealth(): ServiceHealth[] {
-    return Array.from(this.services.values());
+  public getAllServicesHealth(_): ServiceHealth[] {
+    return Array.from(_this.services.values());
   }
 
-  public getHealthyServices(specialty?: string): ServiceHealth[] {
-    return Array.from(this.services.values())
+  public getHealthyServices(_specialty?: string): ServiceHealth[] {
+    return Array.from(_this.services.values())
       .filter(service => {
         const isHealthy = service.isHealthy && service.consecutiveFailures < this.maxConsecutiveFailures;
         const matchesSpecialty = !specialty || service.specialty === specialty || service.specialty === 'general';
         return isHealthy && matchesSpecialty;
       })
-      .sort((a, b) => {
+      .sort( (a, b) => {
         // Sort by uptime, then by response time
-        if (a.uptime !== b.uptime) {
+        if (_a.uptime !== b.uptime) {
           return b.uptime - a.uptime;
         }
         return a.averageResponseTime - b.averageResponseTime;
       });
   }
 
-  public getBestService(specialty: 'code' | 'explanation' | 'quick' | 'general'): ServiceHealth | null {
-    const healthyServices = this.getHealthyServices(specialty);
+  public getBestService(_specialty: 'code' | 'explanation' | 'quick' | 'general'): ServiceHealth | null {
+    const healthyServices = this.getHealthyServices(_specialty);
     return healthyServices.length > 0 ? healthyServices[0] : null;
   }
 
-  public getServiceHistory(serviceName: string): HealthCheckResult[] {
-    return this.healthHistory.get(serviceName) || [];
+  public getServiceHistory(_serviceName: string): HealthCheckResult[] {
+    return this.healthHistory.get(_serviceName) || [];
   }
 
-  public getOverallHealth(): {
+  public getOverallHealth(_): {
     totalServices: number;
     healthyServices: number;
     averageUptime: number;
     averageResponseTime: number;
   } {
-    const services = Array.from(this.services.values());
+    const services = Array.from(_this.services.values());
     const healthyServices = services.filter(s => s.isHealthy).length;
-    const totalUptime = services.reduce((sum, s) => sum + s.uptime, 0);
-    const totalResponseTime = services.reduce((sum, s) => sum + s.averageResponseTime, 0);
+    const totalUptime = services.reduce( (sum, s) => sum + s.uptime, 0);
+    const totalResponseTime = services.reduce( (sum, s) => sum + s.averageResponseTime, 0);
 
     return {
       totalServices: services.length,
@@ -265,15 +265,15 @@ export class HealthMonitor {
     };
   }
 
-  public async forceHealthCheck(serviceName?: string): Promise<HealthCheckResult[]> {
+  public async forceHealthCheck(_serviceName?: string): Promise<HealthCheckResult[]> {
     if (serviceName) {
-      const result = await this.checkServiceHealth(serviceName);
+      const result = await this.checkServiceHealth(_serviceName);
       return [result];
     } else {
-      const promises = Array.from(this.services.keys()).map(name =>
-        this.checkServiceHealth(name)
+      const promises = Array.from(_this.services.keys()).map(name =>
+        this.checkServiceHealth(_name)
       );
-      const results = await Promise.allSettled(promises);
+      const results = await Promise.allSettled(_promises);
       return results
         .filter((result): result is PromiseFulfilledResult<HealthCheckResult> => 
           result.status === 'fulfilled'
@@ -282,8 +282,8 @@ export class HealthMonitor {
     }
   }
 
-  public addService(config: ServiceConfig): void {
-    this.serviceConfigs.push(config);
+  public addService(_config: ServiceConfig): void {
+    this.serviceConfigs.push(_config);
     
     const health: ServiceHealth = {
       name: config.name,
@@ -302,29 +302,29 @@ export class HealthMonitor {
       }
     };
     
-    this.services.set(config.name, health);
-    this.healthHistory.set(config.name, []);
+    this.services.set( config.name, health);
+    this.healthHistory.set( config.name, []);
 
     // Immediate health check for new service
-    this.checkServiceHealth(config.name);
+    this.checkServiceHealth(_config.name);
   }
 
-  public removeService(serviceName: string): boolean {
-    const removed = this.services.delete(serviceName);
-    this.healthHistory.delete(serviceName);
+  public removeService(_serviceName: string): boolean {
+    const removed = this.services.delete(_serviceName);
+    this.healthHistory.delete(_serviceName);
     
     // Remove from config
-    const configIndex = this.serviceConfigs.findIndex(c => c.name === serviceName);
-    if (configIndex >= 0) {
-      this.serviceConfigs.splice(configIndex, 1);
+    const configIndex = this.serviceConfigs.findIndex(_c => c.name === serviceName);
+    if (_configIndex >= 0) {
+      this.serviceConfigs.splice( configIndex, 1);
     }
     
     return removed;
   }
 
-  public destroy(): void {
-    this.stopMonitoring();
-    this.services.clear();
-    this.healthHistory.clear();
+  public destroy(_): void {
+    this.stopMonitoring(_);
+    this.services.clear(_);
+    this.healthHistory.clear(_);
   }
 }

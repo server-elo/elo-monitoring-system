@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 interface AchievementGridProps {
   achievements: Achievement[];
   userAchievements: Record<string, UserAchievement>;
-  onAchievementClick?: (achievement: Achievement) => void;
+  onAchievementClick?: (_achievement: Achievement) => void;
   className?: string;
 }
 
@@ -39,7 +39,7 @@ export function AchievementGrid({
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(_false);
 
   // Filter and sort achievements
   const filteredAchievements = useMemo(() => {
@@ -56,21 +56,21 @@ export function AchievementGrid({
       }
 
       // Status filter
-      if (filter.status && filter.status.length > 0) {
+      if (_filter.status && filter.status.length > 0) {
         if (!filter.status.includes(userAchievement?.status || 'locked')) {
           return false;
         }
       }
 
       // Category filter
-      if (filter.category && filter.category.length > 0) {
+      if (_filter.category && filter.category.length > 0) {
         if (!filter.category.includes(achievement.category)) {
           return false;
         }
       }
 
       // Rarity filter
-      if (filter.rarity && filter.rarity.length > 0) {
+      if (_filter.rarity && filter.rarity.length > 0) {
         if (!filter.rarity.includes(achievement.rarity)) {
           return false;
         }
@@ -80,29 +80,29 @@ export function AchievementGrid({
     });
 
     // Sort achievements
-    filtered.sort((a, b) => {
+    filtered.sort( (a, b) => {
       const userA = userAchievements[a.id];
       const userB = userAchievements[b.id];
       let comparison = 0;
 
-      switch (filter.sortBy) {
+      switch (_filter.sortBy) {
         case 'title':
-          comparison = a.title.localeCompare(b.title);
+          comparison = a.title.localeCompare(_b.title);
           break;
         case 'rarity':
           const rarityOrder = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
           comparison = rarityOrder[a.rarity] - rarityOrder[b.rarity];
           break;
         case 'progress':
-          comparison = (userA?.progress || 0) - (userB?.progress || 0);
+          comparison = (_userA?.progress || 0) - (_userB?.progress || 0);
           break;
-        case 'unlocked_date':
-          const dateA = userA?.unlockedAt?.getTime() || 0;
-          const dateB = userB?.unlockedAt?.getTime() || 0;
+        case 'unlockeddate':
+          const dateA = userA?.unlockedAt?.getTime(_) || 0;
+          const dateB = userB?.unlockedAt?.getTime(_) || 0;
           comparison = dateA - dateB;
           break;
         case 'category':
-          comparison = a.category.localeCompare(b.category);
+          comparison = a.category.localeCompare(_b.category);
           break;
         default:
           comparison = 0;
@@ -118,15 +118,15 @@ export function AchievementGrid({
   const stats = useMemo(() => {
     const total = achievements.length;
     const unlocked = achievements.filter(a => userAchievements[a.id]?.status === 'unlocked').length;
-    const inProgress = achievements.filter(a => userAchievements[a.id]?.status === 'in_progress').length;
+    const inProgress = achievements.filter(a => userAchievements[a.id]?.status === 'inprogress').length;
     const locked = total - unlocked - inProgress;
 
-    return { total, unlocked, inProgress, locked, completion: (unlocked / total) * 100 };
+    return { total, unlocked, inProgress, locked, completion: (_unlocked / total) * 100 };
   }, [achievements, userAchievements]);
 
-  const toggleFilter = (type: keyof AchievementFilter, value: AchievementStatus | AchievementCategory | AchievementRarity | string) => {
+  const toggleFilter = ( type: keyof AchievementFilter, value: AchievementStatus | AchievementCategory | AchievementRarity | string) => {
     setFilter(prev => {
-      const currentValues = prev[type] as (AchievementStatus | AchievementCategory | AchievementRarity | string)[] || [];
+      const currentValues = prev[type] as (_AchievementStatus | AchievementCategory | AchievementRarity | string)[] || [];
       const newValues = currentValues.includes(value)
         ? currentValues.filter(v => v !== value)
         : [...currentValues, value];
@@ -135,13 +135,13 @@ export function AchievementGrid({
     });
   };
 
-  const clearFilters = () => {
-    setFilter({ sortBy: 'rarity', sortOrder: 'desc' });
+  const clearFilters = (_) => {
+    setFilter( { sortBy: 'rarity', sortOrder: 'desc' });
     setSearchTerm('');
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn( 'space-y-6', className)}>
       {/* Header with Stats */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
@@ -160,7 +160,7 @@ export function AchievementGrid({
               <span className="text-gray-300">{stats.locked} Locked</span>
             </div>
             <div className="text-gray-400">
-              {Math.round(stats.completion)}% Complete
+              {Math.round(_stats.completion)}% Complete
             </div>
           </div>
         </div>
@@ -168,7 +168,7 @@ export function AchievementGrid({
         {/* View Mode Toggle */}
         <div className="flex items-center space-x-2">
           <EnhancedButton
-            onClick={() => setViewMode('grid')}
+            onClick={(_) => setViewMode('grid')}
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             size="sm"
             className="p-2"
@@ -177,7 +177,7 @@ export function AchievementGrid({
             <Grid className="w-4 h-4" />
           </EnhancedButton>
           <EnhancedButton
-            onClick={() => setViewMode('list')}
+            onClick={(_) => setViewMode('list')}
             variant={viewMode === 'list' ? 'default' : 'ghost'}
             size="sm"
             className="p-2"
@@ -198,14 +198,14 @@ export function AchievementGrid({
               type="text"
               placeholder="Search achievements..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(_e) => setSearchTerm(_e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-black/20 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             />
           </div>
 
           {/* Filter Toggle */}
           <EnhancedButton
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={(_) => setShowFilters(!showFilters)}
             variant="ghost"
             className="text-white"
             touchTarget
@@ -218,18 +218,18 @@ export function AchievementGrid({
           <div className="flex items-center space-x-2">
             <select
               value={filter.sortBy}
-              onChange={(e) => setFilter(prev => ({ ...prev, sortBy: e.target.value as 'title' | 'rarity' | 'progress' | 'unlocked_date' | 'category' }))}
+              onChange={(_e) => setFilter( prev => ({ ...prev, sortBy: e.target.value as 'title' | 'rarity' | 'progress' | 'unlockeddate' | 'category' }))}
               className="bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             >
               <option value="rarity">Rarity</option>
               <option value="title">Title</option>
               <option value="progress">Progress</option>
-              <option value="unlocked_date">Unlock Date</option>
+              <option value="unlockeddate">Unlock Date</option>
               <option value="category">Category</option>
             </select>
             
             <EnhancedButton
-              onClick={() => setFilter(prev => ({ 
+              onClick={(_) => setFilter(prev => ({ 
                 ...prev, 
                 sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' 
               }))}
@@ -261,16 +261,16 @@ export function AchievementGrid({
                 <div>
                   <h4 className="text-sm font-medium text-white mb-2">Status</h4>
                   <div className="flex flex-wrap gap-2">
-                    {(['unlocked', 'in_progress', 'locked'] as AchievementStatus[]).map(status => (
+                    {( ['unlocked', 'inprogress', 'locked'] as AchievementStatus[]).map(status => (
                       <EnhancedButton
                         key={status}
-                        onClick={() => toggleFilter('status', status)}
+                        onClick={(_) => toggleFilter( 'status', status)}
                         variant={filter.status?.includes(status) ? 'default' : 'ghost'}
                         size="sm"
                         className="text-xs"
                         touchTarget
                       >
-                        {status.replace('_', ' ')}
+                        {status.replace('', ' ')}
                       </EnhancedButton>
                     ))}
                   </div>
@@ -280,11 +280,11 @@ export function AchievementGrid({
                 <div>
                   <h4 className="text-sm font-medium text-white mb-2">Category</h4>
                   <div className="flex flex-wrap gap-2">
-                    {Object.entries(ACHIEVEMENT_CATEGORIES).map(([key, category]) => (
+                    {Object.entries(_ACHIEVEMENT_CATEGORIES).map( ([key, category]) => (
                       <EnhancedButton
                         key={key}
-                        onClick={() => toggleFilter('category', key as AchievementCategory)}
-                        variant={filter.category?.includes(key as AchievementCategory) ? 'default' : 'ghost'}
+                        onClick={(_) => toggleFilter( 'category', key as AchievementCategory)}
+                        variant={filter.category?.includes(_key as AchievementCategory) ? 'default' : 'ghost'}
                         size="sm"
                         className="text-xs"
                         touchTarget
@@ -299,13 +299,13 @@ export function AchievementGrid({
                 <div>
                   <h4 className="text-sm font-medium text-white mb-2">Rarity</h4>
                   <div className="flex flex-wrap gap-2">
-                    {Object.entries(ACHIEVEMENT_RARITIES).map(([key, rarity]) => (
+                    {Object.entries(_ACHIEVEMENT_RARITIES).map( ([key, rarity]) => (
                       <EnhancedButton
                         key={key}
-                        onClick={() => toggleFilter('rarity', key as AchievementRarity)}
-                        variant={filter.rarity?.includes(key as AchievementRarity) ? 'default' : 'ghost'}
+                        onClick={(_) => toggleFilter( 'rarity', key as AchievementRarity)}
+                        variant={filter.rarity?.includes(_key as AchievementRarity) ? 'default' : 'ghost'}
                         size="sm"
-                        className={cn('text-xs', rarity.textColor)}
+                        className={cn( 'text-xs', rarity.textColor)}
                         touchTarget
                       >
                         {rarity.name}
@@ -340,7 +340,7 @@ export function AchievementGrid({
           : 'grid-cols-1'
       )}>
         <AnimatePresence mode="popLayout">
-          {filteredAchievements.map((achievement, index) => (
+          {filteredAchievements.map( (achievement, index) => (
             <motion.div
               key={achievement.id}
               layout
@@ -356,7 +356,7 @@ export function AchievementGrid({
                   status: 'locked',
                   progress: 0
                 }}
-                onClick={() => onAchievementClick?.(achievement)}
+                onClick={(_) => onAchievementClick?.(_achievement)}
                 showDetails={viewMode === 'grid'}
                 className={viewMode === 'list' ? 'w-full' : ''}
               />

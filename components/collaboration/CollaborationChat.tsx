@@ -34,10 +34,10 @@ interface CollaborationChatProps {
   currentUserId: string;
   currentUserName: string;
   isConnected: boolean;
-  onSendMessage: (content: string, type?: 'text' | 'code' | 'file') => void;
-  onFileUpload?: (file: File) => Promise<string>;
-  onReaction?: (messageId: string, emoji: string) => void;
-  onMarkAsRead?: (messageId: string) => void;
+  onSendMessage: ( content: string, type?: 'text' | 'code' | 'file') => void;
+  onFileUpload?: (_file: File) => Promise<string>;
+  onReaction?: ( messageId: string, emoji: string) => void;
+  onMarkAsRead?: (_messageId: string) => void;
   className?: string;
   compact?: boolean;
   enableNotifications?: boolean;
@@ -59,36 +59,36 @@ export function CollaborationChat({
   enableNotifications = true
 }: CollaborationChatProps) {
   const [newMessage, setNewMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState<string | null>(null);
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState(_false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState<string | null>(_null);
+  const [replyingTo, setReplyingTo] = useState<string | null>(_null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
-  const [filteredMessages, setFilteredMessages] = useState(messages);
+  const [showSearch, setShowSearch] = useState(_false);
+  const [filteredMessages, setFilteredMessages] = useState(_messages);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [isMinimized, setIsMinimized] = useState(_false);
+  const [soundEnabled, setSoundEnabled] = useState(_true);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(_null);
+  const inputRef = useRef<HTMLInputElement>(_null);
+  const fileInputRef = useRef<HTMLInputElement>(_null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(_null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth'  });
   }, [messages]);
 
   // Filter messages based on search query
   useEffect(() => {
-    if (searchQuery.trim()) {
+    if (_searchQuery.trim()) {
       const filtered = messages.filter(msg =>
-        msg.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        msg.userName.toLowerCase().includes(searchQuery.toLowerCase())
+        msg.content.toLowerCase().includes(_searchQuery.toLowerCase()) ||
+        msg.userName.toLowerCase().includes(_searchQuery.toLowerCase())
       );
-      setFilteredMessages(filtered);
+      setFilteredMessages(_filtered);
     } else {
-      setFilteredMessages(messages);
+      setFilteredMessages(_messages);
     }
   }, [messages, searchQuery]);
 
@@ -98,7 +98,7 @@ export function CollaborationChat({
       msg.userId !== currentUserId && 
       (!msg.readBy || !msg.readBy.includes(currentUserId))
     ).length;
-    setUnreadCount(unread);
+    setUnreadCount(_unread);
   }, [messages, currentUserId]);
 
   // Mark messages as read when they come into view
@@ -109,7 +109,7 @@ export function CollaborationChat({
     );
 
     unreadMessages.forEach(msg => {
-      onMarkAsRead?.(msg.id);
+      onMarkAsRead?.(_msg.id);
     });
   }, [messages, currentUserId, onMarkAsRead]);
 
@@ -117,80 +117,80 @@ export function CollaborationChat({
   useEffect(() => {
     if (soundEnabled && enableNotifications && messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
-      if (lastMessage.userId !== currentUserId) {
-        // Play notification sound (would be implemented with actual audio)
+      if (_lastMessage.userId !== currentUserId) {
+        // Play notification sound (_would be implemented with actual audio)
         console.log('🔔 New message notification');
       }
     }
   }, [messages, currentUserId, soundEnabled, enableNotifications]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (_) => {
     if (!newMessage.trim() || !isConnected) return;
 
     const messageType = newMessage.startsWith('```') ? 'code' : 'text';
-    onSendMessage(newMessage.trim(), messageType);
+    onSendMessage(_newMessage.trim(), messageType);
     setNewMessage('');
-    setReplyingTo(null);
-    setIsTyping(false);
+    setReplyingTo(_null);
+    setIsTyping(_false);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+  const handleKeyPress = (_e: React.KeyboardEvent) => {
+    if (_e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(_);
+      handleSendMessage(_);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMessage(e.target.value);
+  const handleInputChange = (_e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(_e.target.value);
     
     if (!isTyping) {
-      setIsTyping(true);
+      setIsTyping(_true);
     }
 
     // Clear existing timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
+    if (_typingTimeoutRef.current) {
+      clearTimeout(_typingTimeoutRef.current);
     }
 
     // Set new timeout to stop typing indicator
     typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
+      setIsTyping(_false);
     }, 2000);
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (_e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !onFileUpload) return;
 
     try {
-      await onFileUpload(file);
-      onSendMessage(`📎 ${file.name}`, 'file');
-    } catch (error) {
+      await onFileUpload(_file);
+      onSendMessage( `📎 ${file.name}`, 'file');
+    } catch (_error) {
       console.error('File upload failed:', error);
     }
   };
 
-  const handleReaction = (messageId: string, emoji: string) => {
-    onReaction?.(messageId, emoji);
-    setShowEmojiPicker(null);
+  const handleReaction = ( messageId: string, emoji: string) => {
+    onReaction?.( messageId, emoji);
+    setShowEmojiPicker(_null);
   };
 
   const formatTimestamp = (date: Date): string => {
     const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMinutes = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMinutes / 60);
-    const diffDays = Math.floor(diffHours / 24);
+    const diffMs = now.getTime() - date.getTime(_);
+    const diffMinutes = Math.floor(_diffMs / 60000);
+    const diffHours = Math.floor(_diffMinutes / 60);
+    const diffDays = Math.floor(_diffHours / 24);
 
-    if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 60) return `${diffMinutes}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
+    if (_diffMinutes < 1) return 'Just now';
+    if (_diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (_diffHours < 24) return `${diffHours}h ago`;
+    if (_diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString(_);
   };
 
-  const renderMessage = (message: ChatMessage) => {
+  const renderMessage = (_message: ChatMessage) => {
     const isOwn = message.userId === currentUserId;
     const isSystem = message.type === 'system';
 
@@ -214,7 +214,7 @@ export function CollaborationChat({
           isOwn ? 'justify-end' : 'justify-start'
         )}
       >
-        <div className={cn('flex max-w-[80%]', isOwn ? 'flex-row-reverse' : 'flex-row')}>
+        <div className={cn( 'flex max-w-[80%]', isOwn ? 'flex-row-reverse' : 'flex-row')}>
           {/* Avatar */}
           {!isOwn && (
             <div className="flex-shrink-0 mr-2">
@@ -236,12 +236,12 @@ export function CollaborationChat({
           )}
 
           {/* Message content */}
-          <div className={cn('flex flex-col', isOwn ? 'items-end' : 'items-start')}>
+          <div className={cn( 'flex flex-col', isOwn ? 'items-end' : 'items-start')}>
             {/* User name and timestamp */}
             {!isOwn && (
               <div className="flex items-center space-x-2 mb-1">
                 <span className="text-sm font-medium text-white">{message.userName}</span>
-                <span className="text-xs text-gray-400">{formatTimestamp(message.timestamp)}</span>
+                <span className="text-xs text-gray-400">{formatTimestamp(_message.timestamp)}</span>
               </div>
             )}
 
@@ -283,7 +283,7 @@ export function CollaborationChat({
               {/* Edited indicator */}
               {message.edited && (
                 <div className="text-xs opacity-50 mt-1">
-                  edited {message.editedAt && formatTimestamp(message.editedAt)}
+                  edited {message.editedAt && formatTimestamp(_message.editedAt)}
                 </div>
               )}
 
@@ -302,10 +302,10 @@ export function CollaborationChat({
             {/* Reactions */}
             {message.reactions && message.reactions.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-1">
-                {message.reactions.map((reaction, index) => (
+                {message.reactions.map( (reaction, index) => (
                   <button
                     key={index}
-                    onClick={() => handleReaction(message.id, reaction.emoji)}
+                    onClick={(_) => handleReaction(message.id, reaction.emoji)}
                     className={cn(
                       'flex items-center space-x-1 px-2 py-1 rounded-full text-xs',
                       'bg-white/10 hover:bg-white/20 transition-colors',
@@ -322,7 +322,7 @@ export function CollaborationChat({
             {/* Message actions */}
             <div className="flex items-center space-x-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button
-                onClick={() => setShowEmojiPicker(message.id)}
+                onClick={(_) => setShowEmojiPicker(_message.id)}
                 variant="ghost"
                 size="sm"
                 className="h-6 w-6 p-0"
@@ -330,7 +330,7 @@ export function CollaborationChat({
                 <Smile className="w-3 h-3" />
               </Button>
               <Button
-                onClick={() => setReplyingTo(message.id)}
+                onClick={(_) => setReplyingTo(_message.id)}
                 variant="ghost"
                 size="sm"
                 className="h-6 w-6 p-0"
@@ -352,7 +352,7 @@ export function CollaborationChat({
                     {EMOJI_LIST.map(emoji => (
                       <button
                         key={emoji}
-                        onClick={() => handleReaction(message.id, emoji)}
+                        onClick={(_) => handleReaction(message.id, emoji)}
                         className="p-1 hover:bg-white/10 rounded"
                       >
                         {emoji}
@@ -366,7 +366,7 @@ export function CollaborationChat({
             {/* Timestamp for own messages */}
             {isOwn && (
               <div className="text-xs text-gray-400 mt-1">
-                {formatTimestamp(message.timestamp)}
+                {formatTimestamp(_message.timestamp)}
               </div>
             )}
           </div>
@@ -377,7 +377,7 @@ export function CollaborationChat({
 
   if (compact) {
     return (
-      <Card className={cn('p-3 bg-white/10 backdrop-blur-md border border-white/20', className)}>
+      <Card className={cn( 'p-3 bg-white/10 backdrop-blur-md border border-white/20', className)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <MessageCircle className="w-4 h-4 text-blue-400" />
@@ -389,7 +389,7 @@ export function CollaborationChat({
             )}
           </div>
           <Button
-            onClick={() => setIsMinimized(!isMinimized)}
+            onClick={(_) => setIsMinimized(!isMinimized)}
             variant="ghost"
             size="sm"
             className="h-6 w-6 p-0"
@@ -402,7 +402,7 @@ export function CollaborationChat({
   }
 
   return (
-    <Card className={cn('flex flex-col h-96 bg-white/10 backdrop-blur-md border border-white/20', className)}>
+    <Card className={cn( 'flex flex-col h-96 bg-white/10 backdrop-blur-md border border-white/20', className)}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         <div className="flex items-center space-x-2">
@@ -417,7 +417,7 @@ export function CollaborationChat({
 
         <div className="flex items-center space-x-1">
           <Button
-            onClick={() => setShowSearch(!showSearch)}
+            onClick={(_) => setShowSearch(!showSearch)}
             variant="ghost"
             size="sm"
             className="h-6 w-6 p-0"
@@ -425,7 +425,7 @@ export function CollaborationChat({
             <Search className="w-3 h-3" />
           </Button>
           <Button
-            onClick={() => setSoundEnabled(!soundEnabled)}
+            onClick={(_) => setSoundEnabled(!soundEnabled)}
             variant="ghost"
             size="sm"
             className="h-6 w-6 p-0"
@@ -433,7 +433,7 @@ export function CollaborationChat({
             {soundEnabled ? <Volume2 className="w-3 h-3" /> : <VolumeX className="w-3 h-3" />}
           </Button>
           <Button
-            onClick={() => setIsMinimized(!isMinimized)}
+            onClick={(_) => setIsMinimized(!isMinimized)}
             variant="ghost"
             size="sm"
             className="h-6 w-6 p-0"
@@ -460,12 +460,12 @@ export function CollaborationChat({
                     type="text"
                     placeholder="Search messages..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(_e) => setSearchQuery(_e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"
                   />
                   {searchQuery && (
                     <button
-                      onClick={() => setSearchQuery('')}
+                      onClick={(_) => setSearchQuery('')}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2"
                     >
                       <X className="w-4 h-4 text-gray-400" />
@@ -493,7 +493,7 @@ export function CollaborationChat({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-blue-400">Replying to message</span>
-                  <button onClick={() => setReplyingTo(null)}>
+                  <button onClick={(_) => setReplyingTo(_null)}>
                     <X className="w-4 h-4 text-gray-400" />
                   </button>
                 </div>
@@ -524,7 +524,7 @@ export function CollaborationChat({
               />
 
               <Button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={(_) => fileInputRef.current?.click(_)}
                 variant="ghost"
                 size="sm"
                 className="h-8 w-8 p-0"
@@ -535,7 +535,7 @@ export function CollaborationChat({
 
               <Button
                 onClick={handleSendMessage}
-                disabled={!newMessage.trim() || !isConnected}
+                disabled={!newMessage.trim(_) || !isConnected}
                 className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700"
               >
                 <Send className="w-4 h-4" />
@@ -549,56 +549,56 @@ export function CollaborationChat({
 }
 
 // Hook for managing chat messages with persistence
-export function useChatMessages(sessionId: string) {
+export function useChatMessages(_sessionId: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(_true);
 
   // Load messages from localStorage on mount
   useEffect(() => {
-    const loadMessages = () => {
+    const loadMessages = (_) => {
       try {
-        const saved = localStorage.getItem(`chat_messages_${sessionId}`);
+        const saved = localStorage.getItem(_`chat_messages_${sessionId}`);
         if (saved) {
-          const parsed = JSON.parse(saved);
+          const parsed = JSON.parse(_saved);
           const messagesWithDates = parsed.map((msg: any) => ({
             ...msg,
-            timestamp: new Date(msg.timestamp),
-            editedAt: msg.editedAt ? new Date(msg.editedAt) : undefined
+            timestamp: new Date(_msg.timestamp),
+            editedAt: msg.editedAt ? new Date(_msg.editedAt) : undefined
           }));
-          setMessages(messagesWithDates);
+          setMessages(_messagesWithDates);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to load chat messages:', error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(_false);
       }
     };
 
-    loadMessages();
+    loadMessages(_);
   }, [sessionId]);
 
   // Save messages to localStorage whenever they change
   useEffect(() => {
     if (!isLoading && messages.length > 0) {
       try {
-        localStorage.setItem(`chat_messages_${sessionId}`, JSON.stringify(messages));
-      } catch (error) {
+        localStorage.setItem( `chat_messages_${sessionId}`, JSON.stringify(messages));
+      } catch (_error) {
         console.error('Failed to save chat messages:', error);
       }
     }
   }, [messages, sessionId, isLoading]);
 
-  const addMessage = (message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
+  const addMessage = ( message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
     const newMessage: ChatMessage = {
       ...message,
-      id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `msg_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date()
     };
-    setMessages(prev => [...prev, newMessage]);
+    setMessages( prev => [...prev, newMessage]);
     return newMessage;
   };
 
-  const updateMessage = (messageId: string, updates: Partial<ChatMessage>) => {
+  const updateMessage = ( messageId: string, updates: Partial<ChatMessage>) => {
     setMessages(prev => prev.map(msg =>
       msg.id === messageId
         ? { ...msg, ...updates, edited: true, editedAt: new Date() }
@@ -606,36 +606,36 @@ export function useChatMessages(sessionId: string) {
     ));
   };
 
-  const addReaction = (messageId: string, emoji: string, userId: string) => {
+  const addReaction = ( messageId: string, emoji: string, userId: string) => {
     setMessages(prev => prev.map(msg => {
-      if (msg.id !== messageId) return msg;
+      if (_msg.id !== messageId) return msg;
 
       const reactions = msg.reactions || [];
       const existingReaction = reactions.find(r => r.emoji === emoji);
 
       if (existingReaction) {
-        if (existingReaction.users.includes(userId)) {
+        if (_existingReaction.users.includes(userId)) {
           // Remove user from reaction
           existingReaction.users = existingReaction.users.filter(id => id !== userId);
-          if (existingReaction.users.length === 0) {
+          if (_existingReaction.users.length === 0) {
             return { ...msg, reactions: reactions.filter(r => r.emoji !== emoji) };
           }
         } else {
           // Add user to reaction
-          existingReaction.users.push(userId);
+          existingReaction.users.push(_userId);
         }
       } else {
         // Add new reaction
-        reactions.push({ emoji, users: [userId] });
+        reactions.push( { emoji, users: [userId] });
       }
 
       return { ...msg, reactions };
     }));
   };
 
-  const markAsRead = (messageId: string, userId: string) => {
+  const markAsRead = ( messageId: string, userId: string) => {
     setMessages(prev => prev.map(msg => {
-      if (msg.id !== messageId) return msg;
+      if (_msg.id !== messageId) return msg;
 
       const readBy = msg.readBy || [];
       if (!readBy.includes(userId)) {
@@ -645,9 +645,9 @@ export function useChatMessages(sessionId: string) {
     }));
   };
 
-  const clearMessages = () => {
+  const clearMessages = (_) => {
     setMessages([]);
-    localStorage.removeItem(`chat_messages_${sessionId}`);
+    localStorage.removeItem(_`chat_messages_${sessionId}`);
   };
 
   return {

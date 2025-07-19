@@ -69,27 +69,27 @@ export interface StepResult {
  * breakpoint management, and variable inspection
  */
 export class SolidityDebugger extends EventEmitter {
-  private sessions: Map<string, DebugSession> = new Map();
+  private sessions: Map<string, DebugSession> = new Map(_);
   private activeSessionId: string | null = null;
   private isInitialized = false;
 
-  constructor() {
-    super();
+  constructor(_) {
+    super(_);
   }
 
   /**
    * Initialize the debugger
    */
-  async initialize(): Promise<void> {
-    if (this.isInitialized) return;
+  async initialize(_): Promise<void> {
+    if (_this.isInitialized) return;
 
     try {
       // Initialize debugging infrastructure
-      await this.setupDebuggingEnvironment();
+      await this.setupDebuggingEnvironment(_);
       this.isInitialized = true;
       this.emit('initialized');
-    } catch (error) {
-      this.emit('error', { message: 'Failed to initialize debugger', error });
+    } catch (_error) {
+      this.emit( 'error', { message: 'Failed to initialize debugger', error });
       throw error;
     }
   }
@@ -104,7 +104,7 @@ export class SolidityDebugger extends EventEmitter {
     sourceMap: string,
     abi: any[]
   ): Promise<string> {
-    const sessionId = this.generateSessionId();
+    const sessionId = this.generateSessionId(_);
     
     const session: DebugSession = {
       id: sessionId,
@@ -123,38 +123,38 @@ export class SolidityDebugger extends EventEmitter {
         gasUsed: 0,
         gasLimit: 0
       },
-      breakpoints: new Map()
+      breakpoints: new Map(_)
     };
 
-    this.sessions.set(sessionId, session);
+    this.sessions.set( sessionId, session);
     this.activeSessionId = sessionId;
 
     // Load initial state
-    await this.loadInitialState(session);
+    await this.loadInitialState(_session);
 
-    this.emit('session-started', { sessionId, session });
+    this.emit( 'session-started', { sessionId, session });
     return sessionId;
   }
 
   /**
    * Stop a debugging session
    */
-  async stopSession(sessionId: string): Promise<void> {
-    const session = this.sessions.get(sessionId);
+  async stopSession(_sessionId: string): Promise<void> {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
     // Cleanup session resources
-    await this.cleanupSession(session);
+    await this.cleanupSession(_session);
     
-    this.sessions.delete(sessionId);
+    this.sessions.delete(_sessionId);
     
-    if (this.activeSessionId === sessionId) {
+    if (_this.activeSessionId === sessionId) {
       this.activeSessionId = null;
     }
 
-    this.emit('session-stopped', { sessionId });
+    this.emit( 'session-stopped', { sessionId });
   }
 
   /**
@@ -166,12 +166,12 @@ export class SolidityDebugger extends EventEmitter {
     condition?: string,
     logMessage?: string
   ): string {
-    const session = this.sessions.get(sessionId);
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
-    const breakpointId = this.generateBreakpointId();
+    const breakpointId = this.generateBreakpointId(_);
     const breakpoint: BreakpointInfo = {
       id: breakpointId,
       line,
@@ -181,8 +181,8 @@ export class SolidityDebugger extends EventEmitter {
       hitCount: 0
     };
 
-    session.breakpoints.set(line, breakpoint);
-    this.emit('breakpoint-set', { sessionId, breakpoint });
+    session.breakpoints.set( line, breakpoint);
+    this.emit( 'breakpoint-set', { sessionId, breakpoint });
     
     return breakpointId;
   }
@@ -190,55 +190,55 @@ export class SolidityDebugger extends EventEmitter {
   /**
    * Remove a breakpoint
    */
-  removeBreakpoint(sessionId: string, line: number): void {
-    const session = this.sessions.get(sessionId);
+  removeBreakpoint( sessionId: string, line: number): void {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
-    const breakpoint = session.breakpoints.get(line);
+    const breakpoint = session.breakpoints.get(_line);
     if (breakpoint) {
-      session.breakpoints.delete(line);
-      this.emit('breakpoint-removed', { sessionId, breakpoint });
+      session.breakpoints.delete(_line);
+      this.emit( 'breakpoint-removed', { sessionId, breakpoint });
     }
   }
 
   /**
    * Toggle breakpoint enabled state
    */
-  toggleBreakpoint(sessionId: string, line: number): void {
-    const session = this.sessions.get(sessionId);
+  toggleBreakpoint( sessionId: string, line: number): void {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
-    const breakpoint = session.breakpoints.get(line);
+    const breakpoint = session.breakpoints.get(_line);
     if (breakpoint) {
       breakpoint.enabled = !breakpoint.enabled;
-      this.emit('breakpoint-toggled', { sessionId, breakpoint });
+      this.emit( 'breakpoint-toggled', { sessionId, breakpoint });
     }
   }
 
   /**
    * Step into the next instruction
    */
-  async stepInto(sessionId: string): Promise<StepResult> {
-    const session = this.sessions.get(sessionId);
+  async stepInto(_sessionId: string): Promise<StepResult> {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
     try {
-      const result = await this.executeStep(session, 'into');
-      this.emit('step-completed', { sessionId, type: 'into', result });
+      const result = await this.executeStep( session, 'into');
+      this.emit( 'step-completed', { sessionId, type: 'into', result });
       return result;
-    } catch (error) {
+    } catch (_error) {
       const errorResult: StepResult = {
         success: false,
         newState: session.state,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
-      this.emit('step-error', { sessionId, type: 'into', error: errorResult.error });
+      this.emit( 'step-error', { sessionId, type: 'into', error: errorResult.error });
       return errorResult;
     }
   }
@@ -246,23 +246,23 @@ export class SolidityDebugger extends EventEmitter {
   /**
    * Step over the next instruction
    */
-  async stepOver(sessionId: string): Promise<StepResult> {
-    const session = this.sessions.get(sessionId);
+  async stepOver(_sessionId: string): Promise<StepResult> {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
     try {
-      const result = await this.executeStep(session, 'over');
-      this.emit('step-completed', { sessionId, type: 'over', result });
+      const result = await this.executeStep( session, 'over');
+      this.emit( 'step-completed', { sessionId, type: 'over', result });
       return result;
-    } catch (error) {
+    } catch (_error) {
       const errorResult: StepResult = {
         success: false,
         newState: session.state,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
-      this.emit('step-error', { sessionId, type: 'over', error: errorResult.error });
+      this.emit( 'step-error', { sessionId, type: 'over', error: errorResult.error });
       return errorResult;
     }
   }
@@ -270,23 +270,23 @@ export class SolidityDebugger extends EventEmitter {
   /**
    * Step out of the current function
    */
-  async stepOut(sessionId: string): Promise<StepResult> {
-    const session = this.sessions.get(sessionId);
+  async stepOut(_sessionId: string): Promise<StepResult> {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
     try {
-      const result = await this.executeStep(session, 'out');
-      this.emit('step-completed', { sessionId, type: 'out', result });
+      const result = await this.executeStep( session, 'out');
+      this.emit( 'step-completed', { sessionId, type: 'out', result });
       return result;
-    } catch (error) {
+    } catch (_error) {
       const errorResult: StepResult = {
         success: false,
         newState: session.state,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
-      this.emit('step-error', { sessionId, type: 'out', error: errorResult.error });
+      this.emit( 'step-error', { sessionId, type: 'out', error: errorResult.error });
       return errorResult;
     }
   }
@@ -294,26 +294,26 @@ export class SolidityDebugger extends EventEmitter {
   /**
    * Continue execution until next breakpoint
    */
-  async continue(sessionId: string): Promise<StepResult> {
-    const session = this.sessions.get(sessionId);
+  async continue(_sessionId: string): Promise<StepResult> {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
     try {
       session.state.isRunning = true;
       session.state.isPaused = false;
       
-      const result = await this.executeContinue(session);
-      this.emit('execution-continued', { sessionId, result });
+      const result = await this.executeContinue(_session);
+      this.emit( 'execution-continued', { sessionId, result });
       return result;
-    } catch (error) {
+    } catch (_error) {
       const errorResult: StepResult = {
         success: false,
         newState: session.state,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
-      this.emit('execution-error', { sessionId, error: errorResult.error });
+      this.emit( 'execution-error', { sessionId, error: errorResult.error });
       return errorResult;
     }
   }
@@ -321,38 +321,38 @@ export class SolidityDebugger extends EventEmitter {
   /**
    * Pause execution
    */
-  pause(sessionId: string): void {
-    const session = this.sessions.get(sessionId);
+  pause(_sessionId: string): void {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
     session.state.isRunning = false;
     session.state.isPaused = true;
-    this.emit('execution-paused', { sessionId });
+    this.emit( 'execution-paused', { sessionId });
   }
 
   /**
    * Get current execution state
    */
-  getExecutionState(sessionId: string): ExecutionState | null {
-    const session = this.sessions.get(sessionId);
+  getExecutionState(_sessionId: string): ExecutionState | null {
+    const session = this.sessions.get(_sessionId);
     return session ? session.state : null;
   }
 
   /**
    * Get all breakpoints for a session
    */
-  getBreakpoints(sessionId: string): BreakpointInfo[] {
-    const session = this.sessions.get(sessionId);
-    return session ? Array.from(session.breakpoints.values()) : [];
+  getBreakpoints(_sessionId: string): BreakpointInfo[] {
+    const session = this.sessions.get(_sessionId);
+    return session ? Array.from(_session.breakpoints.values()) : [];
   }
 
   /**
    * Get variable value at current execution point
    */
-  async getVariableValue(sessionId: string, variableName: string): Promise<VariableInfo | null> {
-    const session = this.sessions.get(sessionId);
+  async getVariableValue( sessionId: string, variableName: string): Promise<VariableInfo | null> {
+    const session = this.sessions.get(_sessionId);
     if (!session) return null;
 
     // Search in current scope variables
@@ -362,7 +362,7 @@ export class SolidityDebugger extends EventEmitter {
     }
 
     // Search in call stack
-    for (const frame of session.state.callStack) {
+    for (_const frame of session.state.callStack) {
       const frameVariable = frame.variables.find(v => v.name === variableName);
       if (frameVariable) {
         return frameVariable;
@@ -375,10 +375,10 @@ export class SolidityDebugger extends EventEmitter {
   /**
    * Evaluate expression at current execution point
    */
-  async evaluateExpression(sessionId: string, expression: string): Promise<any> {
-    const session = this.sessions.get(sessionId);
+  async evaluateExpression( sessionId: string, expression: string): Promise<any> {
+    const session = this.sessions.get(_sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(_`Session ${sessionId} not found`);
     }
 
     try {
@@ -389,20 +389,20 @@ export class SolidityDebugger extends EventEmitter {
         result: `Evaluated: ${expression}`,
         type: 'string'
       };
-    } catch (error) {
-      throw new Error(`Failed to evaluate expression: ${expression}`);
+    } catch (_error) {
+      throw new Error(_`Failed to evaluate expression: ${expression}`);
     }
   }
 
   // Private methods
 
-  private async setupDebuggingEnvironment(): Promise<void> {
+  private async setupDebuggingEnvironment(_): Promise<void> {
     // Initialize debugging infrastructure
     // This would set up connections to blockchain nodes, debugging tools, etc.
     await new Promise(resolve => setTimeout(resolve, 100)); // Mock async operation
   }
 
-  private async loadInitialState(session: DebugSession): Promise<void> {
+  private async loadInitialState(_session: DebugSession): Promise<void> {
     // Load initial execution state from transaction
     // This would analyze the transaction and set up the initial state
     session.state = {
@@ -425,7 +425,7 @@ export class SolidityDebugger extends EventEmitter {
     };
   }
 
-  private async executeStep(session: DebugSession, type: 'into' | 'over' | 'out'): Promise<StepResult> {
+  private async executeStep( session: DebugSession, type: 'into' | 'over' | 'out'): Promise<StepResult> {
     // Execute a single step in the debugger
     // This would interface with the actual debugging engine
     
@@ -435,7 +435,7 @@ export class SolidityDebugger extends EventEmitter {
     newState.gasUsed += 100;
 
     // Check for breakpoints
-    const breakpoint = session.breakpoints.get(newState.currentLine);
+    const breakpoint = session.breakpoints.get(_newState.currentLine);
     if (breakpoint && breakpoint.enabled) {
       breakpoint.hitCount++;
       newState.isPaused = true;
@@ -450,7 +450,7 @@ export class SolidityDebugger extends EventEmitter {
     };
   }
 
-  private async executeContinue(session: DebugSession): Promise<StepResult> {
+  private async executeContinue(_session: DebugSession): Promise<StepResult> {
     // Continue execution until breakpoint or completion
     // This would run the execution engine until a stopping condition
     
@@ -458,8 +458,8 @@ export class SolidityDebugger extends EventEmitter {
     const newState = { ...session.state };
     
     // Simulate execution until breakpoint
-    for (let line = newState.currentLine + 1; line <= 100; line++) {
-      const breakpoint = session.breakpoints.get(line);
+    for (_let line = newState.currentLine + 1; line <= 100; line++) {
+      const breakpoint = session.breakpoints.get(_line);
       if (breakpoint && breakpoint.enabled) {
         breakpoint.hitCount++;
         newState.currentLine = line;
@@ -477,16 +477,16 @@ export class SolidityDebugger extends EventEmitter {
     };
   }
 
-  private async cleanupSession(session: DebugSession): Promise<void> {
+  private async cleanupSession(_session: DebugSession): Promise<void> {
     // Cleanup session resources
-    session.breakpoints.clear();
+    session.breakpoints.clear(_);
   }
 
-  private generateSessionId(): string {
-    return `debug-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  private generateSessionId(_): string {
+    return `debug-session-${Date.now(_)}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private generateBreakpointId(): string {
-    return `breakpoint-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  private generateBreakpointId(_): string {
+    return `breakpoint-${Date.now(_)}-${Math.random().toString(36).substr(2, 9)}`;
   }
 }

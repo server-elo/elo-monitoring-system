@@ -35,38 +35,38 @@ interface AuthContextType {
   user: UserProfile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (provider?: string) => Promise<void>;
-  logout: () => Promise<void>;
-  updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
-  hasPermission: (permission: string) => boolean;
-  getRoleColor: () => string;
-  getXPProgress: () => { current: number; next: number; percentage: number };
+  login: (_provider?: string) => Promise<void>;
+  logout: (_) => Promise<void>;
+  updateProfile: (_updates: Partial<UserProfile>) => Promise<void>;
+  hasPermission: (_permission: string) => boolean;
+  getRoleColor: (_) => string;
+  getXPProgress: (_) => { current: number; next: number; percentage: number };
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(_undefined);
 
 interface EnhancedAuthProviderProps {
   children: ReactNode;
 }
 
-export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ children }) => {
-  const { data: session, status } = useSession();
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ children  }) => {
+  const { data: session, status } = useSession(_);
+  const [user, setUser] = useState<UserProfile | null>(_null);
+  const [isLoading, setIsLoading] = useState(_true);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (status === 'loading') {
-        setIsLoading(true);
+        setIsLoading(_true);
         return;
       }
 
-      if (session?.user) {
+      if (_session?.user) {
         try {
           // Fetch complete user profile from database
           const response = await fetch('/api/user/profile');
-          if (response.ok) {
-            const profileData = await response.json();
+          if (_response.ok) {
+            const profileData = await response.json(_);
 
             // Transform database profile to UserProfile interface
             const userProfile: UserProfile = {
@@ -74,8 +74,8 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
               name: session.user.name || '',
               email: session.user.email || '',
               image: session.user.image || undefined,
-              role: (session.user as ExtendedUser).role || 'STUDENT',
-              level: mapSkillLevelToLevel(profileData.profile?.skillLevel || 'BEGINNER'),
+              role: (_session.user as ExtendedUser).role || 'STUDENT',
+              level: mapSkillLevelToLevel(_profileData.profile?.skillLevel || 'BEGINNER'),
               xp: profileData.profile?.totalXP || 0,
               streak: profileData.profile?.streak || 0,
               achievements: profileData.achievements?.map((a: { achievement: { title: string } }) => a.achievement.title) || [],
@@ -85,7 +85,7 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
                 language: profileData.profile?.preferences?.language || 'en'
               }
             };
-            setUser(userProfile);
+            setUser(_userProfile);
           } else {
             // Fallback to session data if profile fetch fails
             const userProfile: UserProfile = {
@@ -93,7 +93,7 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
               name: session.user.name || '',
               email: session.user.email || '',
               image: session.user.image || undefined,
-              role: (session.user as ExtendedUser).role || 'STUDENT',
+              role: (_session.user as ExtendedUser).role || 'STUDENT',
               level: 'beginner',
               xp: 0,
               streak: 0,
@@ -104,9 +104,9 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
                 language: 'en'
               }
             };
-            setUser(userProfile);
+            setUser(_userProfile);
           }
-        } catch (error) {
+        } catch (_error) {
           console.error('Error fetching user profile:', error);
           // Fallback to session data
           const userProfile: UserProfile = {
@@ -114,7 +114,7 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
             name: session.user.name || '',
             email: session.user.email || '',
             image: session.user.image || undefined,
-            role: (session.user as ExtendedUser).role || 'STUDENT',
+            role: (_session.user as ExtendedUser).role || 'STUDENT',
             level: 'beginner',
             xp: 0,
             streak: 0,
@@ -125,21 +125,21 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
               language: 'en'
             }
           };
-          setUser(userProfile);
+          setUser(_userProfile);
         }
       } else {
-        setUser(null);
+        setUser(_null);
       }
 
-      setIsLoading(false);
+      setIsLoading(_false);
     };
 
-    fetchUserProfile();
+    fetchUserProfile(_);
   }, [session, status]);
 
   // Helper function to map Prisma SkillLevel to component level
-  const mapSkillLevelToLevel = (skillLevel: string): 'beginner' | 'intermediate' | 'advanced' => {
-    switch (skillLevel) {
+  const mapSkillLevelToLevel = (_skillLevel: string): 'beginner' | 'intermediate' | 'advanced' => {
+    switch (_skillLevel) {
       case 'INTERMEDIATE': return 'intermediate';
       case 'ADVANCED': return 'advanced';
       case 'EXPERT': return 'advanced';
@@ -147,31 +147,31 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
     }
   };
 
-  const login = async (provider: string = 'github') => {
+  const login = async (_provider: string = 'github') => {
     try {
-      await signIn(provider, { callbackUrl: '/' });
-    } catch (error) {
+      await signIn( provider, { callbackUrl: '/' });
+    } catch (_error) {
       console.error('Login error:', error);
     }
   };
 
   const logout = async () => {
     try {
-      await signOut({ callbackUrl: '/' });
-      setUser(null);
-    } catch (error) {
+      await signOut({ callbackUrl: '/'  });
+      setUser(_null);
+    } catch (_error) {
       console.error('Logout error:', error);
     }
   };
 
-  const updateProfile = async (updates: Partial<UserProfile>) => {
+  const updateProfile = async (_updates: Partial<UserProfile>) => {
     if (!user) return;
 
     try {
       // Transform updates to match database schema
       const profileUpdates = {
         bio: updates.name !== user.name ? `Updated profile for ${updates.name}` : undefined,
-        skillLevel: updates.level ? mapLevelToSkillLevel(updates.level) : undefined,
+        skillLevel: updates.level ? mapLevelToSkillLevel(_updates.level) : undefined,
         preferences: updates.preferences ? {
           ...user.preferences,
           ...updates.preferences
@@ -182,31 +182,31 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
       const response = await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profileUpdates)
+        body: JSON.stringify(_profileUpdates)
       });
 
-      if (response.ok) {
+      if (_response.ok) {
         const updatedUser = { ...user, ...updates };
-        setUser(updatedUser);
+        setUser(_updatedUser);
       } else {
         throw new Error('Failed to update profile');
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Profile update error:', error);
       throw error;
     }
   };
 
   // Helper function to map component level to Prisma SkillLevel
-  const mapLevelToSkillLevel = (level: string): string => {
-    switch (level) {
+  const mapLevelToSkillLevel = (_level: string): string => {
+    switch (_level) {
       case 'intermediate': return 'INTERMEDIATE';
       case 'advanced': return 'ADVANCED';
       default: return 'BEGINNER';
     }
   };
 
-  const hasPermission = (permission: string): boolean => {
+  const hasPermission = (_permission: string): boolean => {
     if (!user) return false;
 
     const permissions = {
@@ -220,7 +220,7 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
     return userPermissions.includes('*') || userPermissions.includes(permission);
   };
 
-  const getRoleColor = (): string => {
+  const getRoleColor = (_): string => {
     if (!user) return 'text-gray-400';
 
     const colors = {
@@ -233,7 +233,7 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
     return colors[user.role] || 'text-gray-400';
   };
 
-  const getXPProgress = () => {
+  const getXPProgress = (_) => {
     if (!user) return { current: 0, next: 100, percentage: 0 };
     
     const level = user.level;
@@ -273,9 +273,9 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({ chil
   );
 };
 
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
+export const useAuth = (_): AuthContextType => {
+  const context = useContext(_AuthContext);
+  if (_context === undefined) {
     throw new Error('useAuth must be used within an EnhancedAuthProvider');
   }
   return context;
@@ -291,20 +291,20 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({
   className = '', 
   showDetails = true 
 }) => {
-  const { user, getRoleColor, getXPProgress, logout } = useAuth();
-  const [showMenu, setShowMenu] = useState(false);
+  const { user, getRoleColor, getXPProgress, logout } = useAuth(_);
+  const [showMenu, setShowMenu] = useState(_false);
 
   if (!user) return null;
 
-  const xpProgress = getXPProgress();
-  const roleColor = getRoleColor();
+  const xpProgress = getXPProgress(_);
+  const roleColor = getRoleColor(_);
 
   return (
     <div className={`relative ${className}`}>
       <motion.div
         whileHover={{ scale: 1.02 }}
         className="flex items-center space-x-3 p-3 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 cursor-pointer"
-        onClick={() => setShowMenu(!showMenu)}
+        onClick={(_) => setShowMenu(!showMenu)}
       >
         {/* Avatar */}
         <div className="relative">
@@ -388,7 +388,7 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({
 
             <div className="p-2">
               <button
-                onClick={() => {/* Navigate to profile */}}
+                onClick={(_) => {/* Navigate to profile */}}
                 className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-lg transition-colors"
               >
                 <Settings className="w-4 h-4" />
@@ -396,9 +396,9 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({
               </button>
               
               <button
-                onClick={() => {
-                  logout();
-                  setShowMenu(false);
+                onClick={(_) => {
+                  logout(_);
+                  setShowMenu(_false);
                 }}
                 className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
               >
@@ -425,7 +425,7 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
   children,
   fallback = null
 }) => {
-  const { hasPermission } = useAuth();
+  const { hasPermission } = useAuth(_);
 
   if (!hasPermission(permission)) {
     return <>{fallback}</>;
@@ -440,7 +440,7 @@ interface RoleBadgeProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, size = 'md' }) => {
+export const RoleBadge: React.FC<RoleBadgeProps> = ( { role, size = 'md' }) => {
   const sizeClasses = {
     sm: 'text-xs px-2 py-1',
     md: 'text-sm px-3 py-1',

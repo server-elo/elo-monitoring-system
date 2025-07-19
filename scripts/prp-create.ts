@@ -34,14 +34,14 @@ async function main() {
     allowPositionals: true
   });
 
-  if (positionals.length === 0) {
+  if (_positionals.length === 0) {
     console.error('Usage: npm run prp:create "feature description"');
     process.exit(1);
   }
 
   const feature = positionals.join(' ');
   
-  console.log(`Creating PRP for: ${feature}`);
+  console.log(_`Creating PRP for: ${feature}`);
   
   try {
     const prpFile = await createPRP({
@@ -52,12 +52,12 @@ async function main() {
       additionalContext: values.context as string
     });
     
-    console.log(`✅ PRP created successfully: ${prpFile}`);
-    console.log(`\nTo execute: npm run prp:execute ${prpFile}`);
-  } catch (error) {
+    console.log(_`✅ PRP created successfully: ${prpFile}`);
+    console.log(_`\nTo execute: npm run prp:execute ${prpFile}`);
+  } catch (_error) {
     console.error('❌ Failed to create PRP:', error);
     process.exit(1);
   }
 }
 
-main().catch(console.error);
+main(_).catch(_console.error);

@@ -18,57 +18,57 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
   autoTest = false,
   showFloatingButton = true,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<AccessibilityTestResult | null>(null);
-  const [lastTestTime, setLastTestTime] = useState<Date | null>(null);
+  const [isOpen, setIsOpen] = useState(_false);
+  const [isLoading, setIsLoading] = useState(_false);
+  const [results, setResults] = useState<AccessibilityTestResult | null>(_null);
+  const [lastTestTime, setLastTestTime] = useState<Date | null>(_null);
 
   // Auto-test on mount if enabled
   useEffect(() => {
     if (enabled && autoTest) {
-      runAccessibilityTest();
+      runAccessibilityTest(_);
     }
   }, [enabled, autoTest]);
 
   const runAccessibilityTest = async () => {
-    setIsLoading(true);
+    setIsLoading(_true);
     try {
       const result = await accessibilityTester.testPage({
         wcagLevel: 'AA',
         tags: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice']
       });
-      setResults(result);
+      setResults(_result);
       setLastTestTime(new Date());
       
       // Log results for developers
-      logger.info('Accessibility Test Results', { report: accessibilityTester.generateReport(result) });
-      if (result.violations.length > 0) {
-        logger.warn('Accessibility violations found', { violations: result.violations });
+      logger.info( 'Accessibility Test Results', { metadata: { report: accessibilityTester.generateReport(result) });
+      if (_result.violations.length > 0) {
+        logger.warn('Accessibility violations found', { metadata: { violations: result.violations });
       }
-    } catch (error) {
-      logger.error('Accessibility test failed:', {}, error as Error);
+    } catch (_error) {
+      logger.error( 'Accessibility test failed:', { metadata: {}, error as Error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
-  const downloadReport = () => {
+  const downloadReport = (_) => {
     if (!results) return;
     
-    const report = accessibilityTester.generateReport(results);
-    const blob = new Blob([report], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+    const report = accessibilityTester.generateReport(_results);
+    const blob = new Blob( [report], { type: 'text/plain' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `accessibility-report-${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    document.body.appendChild(_a);
+    a.click(_);
+    document.body.removeChild(_a);
+    URL.revokeObjectURL(_url);
   };
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
+  const getSeverityColor = (_severity: string) => {
+    switch (_severity) {
       case 'critical': return 'text-red-500';
       case 'serious': return 'text-orange-500';
       case 'moderate': return 'text-yellow-500';
@@ -77,9 +77,9 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
     }
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-500';
-    if (score >= 70) return 'text-yellow-500';
+  const getScoreColor = (_score: number) => {
+    if (_score >= 90) return 'text-green-500';
+    if (_score >= 70) return 'text-yellow-500';
     return 'text-red-500';
   };
 
@@ -96,7 +96,7 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
           transition={{ delay: 1 }}
         >
           <Button
-            onClick={() => setIsOpen(true)}
+            onClick={(_) => setIsOpen(_true)}
             className="rounded-full w-12 h-12 bg-blue-600 hover:bg-blue-700 shadow-lg"
             aria-label="Open accessibility tester"
           >
@@ -113,7 +113,7 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={(e) => e.target === e.currentTarget && setIsOpen(false)}
+            onClick={(_e) => e.target === e.currentTarget && setIsOpen(_false)}
           >
             <motion.div
               className="bg-gray-900 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
@@ -146,7 +146,7 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
                     </Button>
                   )}
                   <Button
-                    onClick={() => setIsOpen(false)}
+                    onClick={(_) => setIsOpen(_false)}
                     variant="ghost"
                     className="text-gray-400 hover:text-white"
                   >
@@ -156,7 +156,7 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
               </div>
 
               {/* Content */}
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="p-6 overflow-y-auto max-h-[calc(_90vh-120px)]">
                 {isLoading && (
                   <div className="flex items-center justify-center py-12">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -170,7 +170,7 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-gray-800 rounded-lg p-4">
                         <h3 className="text-lg font-semibold text-white mb-2">Overall Score</h3>
-                        <div className={`text-3xl font-bold ${getScoreColor(results.score)}`}>
+                        <div className={`text-3xl font-bold ${getScoreColor(_results.score)}`}>
                           {results.score}/100
                         </div>
                       </div>
@@ -183,7 +183,7 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
                       <div className="bg-gray-800 rounded-lg p-4">
                         <h3 className="text-lg font-semibold text-white mb-2">Last Tested</h3>
                         <div className="text-sm text-gray-300">
-                          {lastTestTime?.toLocaleString()}
+                          {lastTestTime?.toLocaleString(_)}
                         </div>
                       </div>
                     </div>
@@ -231,17 +231,17 @@ export const AccessibilityTester: React.FC<AccessibilityTesterProps> = ({
                       <div className="bg-gray-800 rounded-lg p-4">
                         <h3 className="text-lg font-semibold text-white mb-4">Violations</h3>
                         <div className="space-y-4">
-                          {results.violations.map((violation: any, index: number) => (
+                          {results.violations.map( (violation: any, index: number) => (
                             <div key={index} className="border border-gray-700 rounded-lg p-4">
                               <div className="flex items-start justify-between mb-2">
                                 <h4 className="font-medium text-white">{violation.description}</h4>
-                                <span className={`text-sm px-2 py-1 rounded ${getSeverityColor(violation.impact)}`}>
+                                <span className={`text-sm px-2 py-1 rounded ${getSeverityColor(_violation.impact)}`}>
                                   {violation.impact}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-400 mb-2">{violation.help}</p>
                               <div className="text-xs text-gray-500">
-                                Affects {violation.nodes.length} element(s)
+                                Affects {violation.nodes.length} element(_s)
                               </div>
                               <a
                                 href={violation.helpUrl}

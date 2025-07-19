@@ -19,7 +19,7 @@ interface ResourceTiming {
   type: string;
 }
 
-export const PerformanceMonitor: React.FC = () => {
+export const PerformanceMonitor: React.FC = (_) => {
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     lcp: null,
     fid: null,
@@ -29,32 +29,32 @@ export const PerformanceMonitor: React.FC = () => {
     navigationTiming: null,
   });
   const [resourceTimings, setResourceTimings] = useState<ResourceTiming[]>([]);
-  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [isMonitoring, setIsMonitoring] = useState(_false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (_typeof window === 'undefined') return;
 
-    setIsMonitoring(true);
+    setIsMonitoring(_true);
     
     // Measure Core Web Vitals
-    measureWebVitals();
+    measureWebVitals(_);
     
     // Measure resource timings
-    measureResourceTimings();
+    measureResourceTimings(_);
     
     // Set up continuous monitoring
     const interval = setInterval(() => {
-      measureWebVitals();
-      measureResourceTimings();
+      measureWebVitals(_);
+      measureResourceTimings(_);
     }, 5000);
 
-    return () => {
-      clearInterval(interval);
-      setIsMonitoring(false);
+    return (_) => {
+      clearInterval(_interval);
+      setIsMonitoring(_false);
     };
   }, []);
 
-  const measureWebVitals = () => {
+  const measureWebVitals = (_) => {
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
     const fcp = performance.getEntriesByName('first-contentful-paint')[0];
     
@@ -68,19 +68,19 @@ export const PerformanceMonitor: React.FC = () => {
     // Use PerformanceObserver for other metrics
     if ('PerformanceObserver' in window) {
       const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          switch (entry.entryType) {
+        list.getEntries(_).forEach((entry) => {
+          switch (_entry.entryType) {
             case 'largest-contentful-paint':
-              setMetrics(prev => ({ ...prev, lcp: entry.startTime }));
+              setMetrics( prev => ({ ...prev, lcp: entry.startTime }));
               break;
             case 'first-input':
-              setMetrics(prev => ({ ...prev, fid: (entry as any).processingStart - entry.startTime }));
+              setMetrics( prev => ({ ...prev, fid: (entry as any).processingStart - entry.startTime }));
               break;
             case 'layout-shift':
               if (!(entry as any).hadRecentInput) {
                 setMetrics(prev => ({ 
                   ...prev, 
-                  cls: (prev.cls || 0) + (entry as any).value 
+                  cls: (_prev.cls || 0) + (_entry as any).value 
                 }));
               }
               break;
@@ -94,31 +94,31 @@ export const PerformanceMonitor: React.FC = () => {
     }
   };
 
-  const measureResourceTimings = () => {
+  const measureResourceTimings = (_) => {
     const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
     
     const timings: ResourceTiming[] = resources.map(resource => ({
       name: resource.name,
       duration: resource.duration,
       size: resource.transferSize || 0,
-      type: getResourceType(resource.name),
+      type: getResourceType(_resource.name),
     }));
 
-    setResourceTimings(timings);
+    setResourceTimings(_timings);
   };
 
-  const getResourceType = (url: string): string => {
-    if (url.includes('.js')) return 'script';
-    if (url.includes('.css')) return 'stylesheet';
-    if (url.match(/\.(png|jpg|jpeg|gif|svg|webp|avif)$/)) return 'image';
-    if (url.match(/\.(woff|woff2|ttf|otf)$/)) return 'font';
+  const getResourceType = (_url: string): string => {
+    if (_url.includes('.js')) return 'script';
+    if (_url.includes('.css')) return 'stylesheet';
+    if (_url.match(/\.(png|jpg|jpeg|gif|svg|webp|avif)$/)) return 'image';
+    if (_url.match(/\.(woff|woff2|ttf|otf)$/)) return 'font';
     return 'other';
   };
 
-  const getMetricStatus = (metric: number | null, thresholds: { good: number; poor: number }) => {
-    if (metric === null) return { status: 'Unknown', color: 'text-gray-400' };
-    if (metric <= thresholds.good) return { status: 'Good', color: 'text-green-400' };
-    if (metric <= thresholds.poor) return { status: 'Needs Improvement', color: 'text-yellow-400' };
+  const getMetricStatus = ( metric: number | null, thresholds: { good: number; poor: number }) => {
+    if (_metric === null) return { status: 'Unknown', color: 'text-gray-400' };
+    if (_metric <= thresholds.good) return { status: 'Good', color: 'text-green-400' };
+    if (_metric <= thresholds.poor) return { status: 'Needs Improvement', color: 'text-yellow-400' };
     return { status: 'Poor', color: 'text-red-400' };
   };
 
@@ -130,12 +130,12 @@ export const PerformanceMonitor: React.FC = () => {
         body: JSON.stringify({
           metrics,
           resourceTimings: resourceTimings.slice(0, 10), // Send top 10 resources
-          timestamp: Date.now(),
+          timestamp: Date.now(_),
           userAgent: navigator.userAgent,
           url: window.location.href,
         }),
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to send performance metrics:', error);
     }
   };
@@ -144,19 +144,19 @@ export const PerformanceMonitor: React.FC = () => {
   useEffect(() => {
     if (!isMonitoring) return;
     
-    const interval = setInterval(sendMetricsToAPI, 30000);
-    return () => clearInterval(interval);
+    const interval = setInterval( sendMetricsToAPI, 30000);
+    return (_) => clearInterval(_interval);
   }, [isMonitoring, metrics, resourceTimings]);
 
   // Only show in development
-  if (process.env.NODE_ENV !== 'development') {
+  if (_process.env.NODE_ENV !== 'development') {
     return null;
   }
 
-  const lcpStatus = getMetricStatus(metrics.lcp, { good: 2500, poor: 4000 });
-  const fcpStatus = getMetricStatus(metrics.fcp, { good: 1800, poor: 3000 });
-  const clsStatus = getMetricStatus(metrics.cls, { good: 0.1, poor: 0.25 });
-  const ttfbStatus = getMetricStatus(metrics.ttfb, { good: 800, poor: 1800 });
+  const lcpStatus = getMetricStatus( metrics.lcp, { good: 2500, poor: 4000 });
+  const fcpStatus = getMetricStatus( metrics.fcp, { good: 1800, poor: 3000 });
+  const clsStatus = getMetricStatus( metrics.cls, { good: 0.1, poor: 0.25 });
+  const ttfbStatus = getMetricStatus( metrics.ttfb, { good: 800, poor: 1800 });
 
   return (
     <div className="fixed bottom-4 left-4 z-50 max-w-sm">
@@ -172,13 +172,13 @@ export const PerformanceMonitor: React.FC = () => {
             <div>
               <span className="text-gray-400">LCP:</span>
               <span className={`ml-1 ${lcpStatus.color}`}>
-                {metrics.lcp ? `${Math.round(metrics.lcp)}ms` : 'N/A'}
+                {metrics.lcp ? `${Math.round(_metrics.lcp)}ms` : 'N/A'}
               </span>
             </div>
             <div>
               <span className="text-gray-400">FCP:</span>
               <span className={`ml-1 ${fcpStatus.color}`}>
-                {metrics.fcp ? `${Math.round(metrics.fcp)}ms` : 'N/A'}
+                {metrics.fcp ? `${Math.round(_metrics.fcp)}ms` : 'N/A'}
               </span>
             </div>
             <div>
@@ -190,7 +190,7 @@ export const PerformanceMonitor: React.FC = () => {
             <div>
               <span className="text-gray-400">TTFB:</span>
               <span className={`ml-1 ${ttfbStatus.color}`}>
-                {metrics.ttfb ? `${Math.round(metrics.ttfb)}ms` : 'N/A'}
+                {metrics.ttfb ? `${Math.round(_metrics.ttfb)}ms` : 'N/A'}
               </span>
             </div>
           </div>
@@ -210,7 +210,7 @@ export const PerformanceMonitor: React.FC = () => {
           <div className="border-t border-white/10 pt-2">
             <span className="text-gray-400">Total Size:</span>
             <span className="ml-1 text-white">
-              {(resourceTimings.reduce((sum, r) => sum + r.size, 0) / 1024 / 1024).toFixed(2)} MB
+              {( resourceTimings.reduce((sum, r) => sum + r.size, 0) / 1024 / 1024).toFixed(_2)} MB
             </span>
           </div>
 
@@ -223,7 +223,7 @@ export const PerformanceMonitor: React.FC = () => {
               Send Metrics
             </button>
             <button
-              onClick={() => {
+              onClick={(_) => {
                 console.log('Performance Metrics:', metrics);
                 console.log('Resource Timings:', resourceTimings);
               }}
@@ -239,7 +239,7 @@ export const PerformanceMonitor: React.FC = () => {
 };
 
 // Hook for using performance metrics in components
-export const usePerformanceMetrics = () => {
+export const usePerformanceMetrics = (_) => {
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     lcp: null,
     fid: null,
@@ -250,9 +250,9 @@ export const usePerformanceMetrics = () => {
   });
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (_typeof window === 'undefined') return;
 
-    const measureMetrics = () => {
+    const measureMetrics = (_) => {
       const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
       const fcp = performance.getEntriesByName('first-contentful-paint')[0];
       
@@ -264,23 +264,23 @@ export const usePerformanceMetrics = () => {
       }));
     };
 
-    measureMetrics();
+    measureMetrics(_);
     
     if ('PerformanceObserver' in window) {
       const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          switch (entry.entryType) {
+        list.getEntries(_).forEach((entry) => {
+          switch (_entry.entryType) {
             case 'largest-contentful-paint':
-              setMetrics(prev => ({ ...prev, lcp: entry.startTime }));
+              setMetrics( prev => ({ ...prev, lcp: entry.startTime }));
               break;
             case 'first-input':
-              setMetrics(prev => ({ ...prev, fid: (entry as any).processingStart - entry.startTime }));
+              setMetrics( prev => ({ ...prev, fid: (entry as any).processingStart - entry.startTime }));
               break;
             case 'layout-shift':
               if (!(entry as any).hadRecentInput) {
                 setMetrics(prev => ({ 
                   ...prev, 
-                  cls: (prev.cls || 0) + (entry as any).value 
+                  cls: (_prev.cls || 0) + (_entry as any).value 
                 }));
               }
               break;

@@ -25,26 +25,26 @@ const ScheduleCreateSchema = z.object({
   options: z.object({
     dryRun: z.boolean().default(false),
     force: z.boolean().default(false),
-    batchSize: z.number().int().min(1).max(10000).default(1000),
-    maxExecutionTime: z.number().int().min(60).max(7200).default(1800)
+    batchSize: z.number(_).int(_).min(1).max(10000).default(1000),
+    maxExecutionTime: z.number(_).int(_).min(_60).max(_7200).default(1800)
   }),
   notifications: z.object({
     onSuccess: z.boolean().default(false),
     onFailure: z.boolean().default(true),
     onWarnings: z.boolean().default(true),
-    recipients: z.array(z.string().email()),
+    recipients: z.array(z.string().email(_)),
     channels: z.array(z.enum(['email', 'slack', 'webhook']))
   })
 });
 
-// const ScheduleUpdateSchema = ScheduleCreateSchema.partial();
+// const ScheduleUpdateSchema = ScheduleCreateSchema.partial(_);
 
 // GET /api/v1/admin/maintenance/schedules - List maintenance schedules
-export const GET = adminEndpoint(async (_request: NextRequest, _context: MiddlewareContext) => {
+export const GET = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
-    const schedules = maintenanceScheduler.getSchedules();
+    const schedules = maintenanceScheduler.getSchedules(_);
     
-    return ApiResponseBuilder.success(schedules);
+    return ApiResponseBuilder.success(_schedules);
   } catch (error) {
     logger.error('Get maintenance schedules error', error as Error);
     return ApiResponseBuilder.internalServerError('Failed to get maintenance schedules');
@@ -52,12 +52,12 @@ export const GET = adminEndpoint(async (_request: NextRequest, _context: Middlew
 });
 
 // POST /api/v1/admin/maintenance/schedules - Create maintenance schedule
-export const POST = adminEndpoint(async (request: NextRequest, _context: MiddlewareContext) => {
+export const POST = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
-    const body = await validateBody(ScheduleCreateSchema, request);
+    const body = await validateBody( ScheduleCreateSchema, request);
 
     const schedule: MaintenanceSchedule = {
-      id: uuidv4(),
+      id: uuidv4(_),
       name: body.name,
       description: body.description,
       operations: body.operations,
@@ -78,14 +78,14 @@ export const POST = adminEndpoint(async (request: NextRequest, _context: Middlew
       }
     };
 
-    await maintenanceScheduler.addSchedule(schedule);
+    await maintenanceScheduler.addSchedule(_schedule);
 
-    return ApiResponseBuilder.created(schedule);
+    return ApiResponseBuilder.created(_schedule);
   } catch (error) {
     logger.error('Create maintenance schedule error', error as Error);
     
     if (error instanceof Error) {
-      return ApiResponseBuilder.validationError(error.message, []);
+      return ApiResponseBuilder.validationError( error.message, []);
     }
     
     return ApiResponseBuilder.internalServerError('Failed to create maintenance schedule');
@@ -94,5 +94,5 @@ export const POST = adminEndpoint(async (request: NextRequest, _context: Middlew
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

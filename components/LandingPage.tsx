@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 
 interface LandingPageProps {
-  onLogin: (formData: { email?: string; password?: string }) => void;
-  onSignup: (formData: { email?: string; password?: string; confirmPassword?: string }) => void;
-  onDirectAccess: () => void; // New prop
+  onLogin: (_formData: { email?: string; password?: string }) => void;
+  onSignup: (_formData: { email?: string; password?: string; confirmPassword?: string }) => void;
+  onDirectAccess: (_) => void; // New prop
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAccess }) => {
+const LandingPage: React.FC<LandingPageProps> = ( { onLogin, onSignup, onDirectAccess }) => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -15,18 +15,18 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
   const [signupPassword, setSignupPassword] = useState('');
   const [signupConfirmPassword, setSignupConfirmPassword] = useState('');
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onLogin({ email: loginEmail, password: loginPassword });
+  const handleLoginSubmit = (_e: React.FormEvent) => {
+    e.preventDefault(_);
+    onLogin( { email: loginEmail, password: loginPassword });
   };
 
-  const handleSignupSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (signupPassword !== signupConfirmPassword) {
+  const handleSignupSubmit = (_e: React.FormEvent) => {
+    e.preventDefault(_);
+    if (_signupPassword !== signupConfirmPassword) {
       alert("Passwords don't match!"); 
       return;
     }
-    onSignup({ email: signupEmail, password: signupPassword });
+    onSignup( { email: signupEmail, password: signupPassword });
   };
 
   return (
@@ -43,13 +43,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
       <main className="w-full max-w-md p-8 md:p-10 glass-card">
         <div className="mb-6 flex border-b border-white/10">
           <button
-            onClick={() => setActiveTab('login')}
+            onClick={(_) => setActiveTab('login')}
             className={`landing-tab-button flex-1 py-3 text-center font-medium ${activeTab === 'login' ? 'text-brand-accent active-tab' : 'text-brand-text-muted hover:text-brand-text-primary'}`}
           >
             Login
           </button>
           <button
-            onClick={() => setActiveTab('signup')}
+            onClick={(_) => setActiveTab('signup')}
             className={`landing-tab-button flex-1 py-3 text-center font-medium ${activeTab === 'signup' ? 'text-brand-accent active-tab' : 'text-brand-text-muted hover:text-brand-text-primary'}`}
           >
             Sign Up
@@ -63,7 +63,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 type="email" 
                 id="login-email" 
                 value={loginEmail} 
-                onChange={(e) => setLoginEmail(e.target.value)} 
+                onChange={(_e) => setLoginEmail(_e.target.value)} 
                 className="landing-input peer w-full px-4 py-3 rounded-lg" 
                 placeholder=" " 
                 autoComplete="email" 
@@ -72,7 +72,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 htmlFor="login-email" 
                 className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
               >
-                Email Address (mock)
+                Email Address (_mock)
               </label>
             </div>
             <div className="relative">
@@ -80,7 +80,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 type="password" 
                 id="login-password" 
                 value={loginPassword} 
-                onChange={(e) => setLoginPassword(e.target.value)} 
+                onChange={(_e) => setLoginPassword(_e.target.value)} 
                 className="landing-input peer w-full px-4 py-3 rounded-lg" 
                 placeholder=" " 
                 autoComplete="current-password" 
@@ -89,7 +89,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 htmlFor="login-password" 
                 className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
               >
-                Password (mock)
+                Password (_mock)
               </label>
             </div>
             <button type="submit" className="landing-button w-full">
@@ -105,7 +105,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 type="email" 
                 id="signup-email" 
                 value={signupEmail} 
-                onChange={(e) => setSignupEmail(e.target.value)} 
+                onChange={(_e) => setSignupEmail(_e.target.value)} 
                 className="landing-input peer w-full px-4 py-3 rounded-lg" 
                 placeholder=" " 
                 autoComplete="email" 
@@ -114,7 +114,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 htmlFor="signup-email" 
                 className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
               >
-                Email Address (mock)
+                Email Address (_mock)
               </label>
             </div>
             <div className="relative">
@@ -122,7 +122,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 type="password" 
                 id="signup-password" 
                 value={signupPassword} 
-                onChange={(e) => setSignupPassword(e.target.value)} 
+                onChange={(_e) => setSignupPassword(_e.target.value)} 
                 className="landing-input peer w-full px-4 py-3 rounded-lg" 
                 placeholder=" " 
                 autoComplete="new-password"
@@ -131,7 +131,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 htmlFor="signup-password" 
                 className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
               >
-                Password (mock)
+                Password (_mock)
               </label>
             </div>
             <div className="relative">
@@ -139,7 +139,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 type="password" 
                 id="signup-confirm-password" 
                 value={signupConfirmPassword} 
-                onChange={(e) => setSignupConfirmPassword(e.target.value)} 
+                onChange={(_e) => setSignupConfirmPassword(_e.target.value)} 
                 className="landing-input peer w-full px-4 py-3 rounded-lg" 
                 placeholder=" " 
                 autoComplete="new-password"
@@ -148,7 +148,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
                 htmlFor="signup-confirm-password" 
                 className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
               >
-                Confirm Password (mock)
+                Confirm Password (_mock)
               </label>
             </div>
             <button type="submit" className="landing-button w-full">
@@ -162,7 +162,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup, onDirectAc
             onClick={onDirectAccess}
             className="landing-button w-full bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 hover:from-emerald-600 hover:via-green-600 hover:to-emerald-600"
             style={{
-                 backgroundImage: 'linear-gradient(to right, var(--brand-colors-aurora-3, #10B981) 0%, #22C55E 50%, var(--brand-colors-aurora-3, #10B981) 100%)'
+                 backgroundImage: 'linear-gradient( to right, var(--brand-colors-aurora-3, #10B981) 0%, #22C55E 50%, var( --brand-colors-aurora-3, #10B981) 100%)'
             }}
             >
             Access Course Directly

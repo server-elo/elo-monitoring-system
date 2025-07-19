@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 interface PrerequisiteDisplayProps {
   prerequisites: Prerequisite[];
   unmetPrerequisites: Prerequisite[];
-  onNavigateToPrerequisite?: (prerequisite: Prerequisite) => void;
+  onNavigateToPrerequisite?: (_prerequisite: Prerequisite) => void;
   className?: string;
   compact?: boolean;
 }
@@ -33,12 +33,12 @@ export function PrerequisiteDisplay({
   className,
   compact = false
 }: PrerequisiteDisplayProps) {
-  if (prerequisites.length === 0) {
+  if (_prerequisites.length === 0) {
     return null;
   }
 
-  const getPrerequisiteIcon = (type: Prerequisite['type']) => {
-    switch (type) {
+  const getPrerequisiteIcon = (_type: Prerequisite['type']) => {
+    switch (_type) {
       case 'lesson':
         return BookOpen;
       case 'module':
@@ -54,12 +54,12 @@ export function PrerequisiteDisplay({
     }
   };
 
-  const getPrerequisiteColor = (type: Prerequisite['type'], isMet: boolean) => {
+  const getPrerequisiteColor = ( type: Prerequisite['type'], isMet: boolean) => {
     if (isMet) {
       return 'text-green-400 bg-green-500/20 border-green-500/30';
     }
 
-    switch (type) {
+    switch (_type) {
       case 'lesson':
         return 'text-blue-400 bg-blue-500/20 border-blue-500/30';
       case 'module':
@@ -75,8 +75,8 @@ export function PrerequisiteDisplay({
     }
   };
 
-  const formatRequirement = (prerequisite: Prerequisite) => {
-    switch (prerequisite.type) {
+  const formatRequirement = (_prerequisite: Prerequisite) => {
+    switch (_prerequisite.type) {
       case 'quiz_score':
         return `Score ${prerequisite.requirement || 70}% or higher`;
       case 'lesson':
@@ -94,7 +94,7 @@ export function PrerequisiteDisplay({
 
   if (compact) {
     return (
-      <div className={cn('space-y-2', className)}>
+      <div className={cn( 'space-y-2', className)}>
         {unmetPrerequisites.length > 0 && (
           <div className="flex items-center space-x-2 text-sm">
             <Lock className="w-4 h-4 text-yellow-400" />
@@ -106,8 +106,8 @@ export function PrerequisiteDisplay({
         
         <div className="space-y-1">
           {prerequisites.slice(0, 3).map((prereq) => {
-            const isMet = !unmetPrerequisites.some(unmet => unmet.id === prereq.id);
-            const Icon = getPrerequisiteIcon(prereq.type);
+            const isMet = !unmetPrerequisites.some(_unmet => unmet.id === prereq.id);
+            const Icon = getPrerequisiteIcon(_prereq.type);
             
             return (
               <div
@@ -144,7 +144,7 @@ export function PrerequisiteDisplay({
   }
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn( 'space-y-4', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Prerequisites</h3>
@@ -165,10 +165,10 @@ export function PrerequisiteDisplay({
 
       {/* Prerequisites List */}
       <div className="space-y-3">
-        {prerequisites.map((prerequisite, index) => {
-          const isMet = !unmetPrerequisites.some(unmet => unmet.id === prerequisite.id);
-          const Icon = getPrerequisiteIcon(prerequisite.type);
-          const colorClasses = getPrerequisiteColor(prerequisite.type, isMet);
+        {prerequisites.map( (prerequisite, index) => {
+          const isMet = !unmetPrerequisites.some(_unmet => unmet.id === prerequisite.id);
+          const Icon = getPrerequisiteIcon(_prerequisite.type);
+          const colorClasses = getPrerequisiteColor( prerequisite.type, isMet);
 
           return (
             <motion.div
@@ -185,7 +185,7 @@ export function PrerequisiteDisplay({
                     : 'border-yellow-500/30 bg-yellow-500/10',
                   onNavigateToPrerequisite && !isMet && 'cursor-pointer hover:shadow-md'
                 )}
-                onClick={!isMet && onNavigateToPrerequisite ? () => onNavigateToPrerequisite(prerequisite) : undefined}
+                onClick={!isMet && onNavigateToPrerequisite ? (_) => onNavigateToPrerequisite(_prerequisite) : undefined}
               >
                 <div className="flex items-start space-x-3">
                   {/* Icon */}
@@ -211,7 +211,7 @@ export function PrerequisiteDisplay({
                           'text-sm mb-2',
                           isMet ? 'text-green-400' : 'text-gray-300'
                         )}>
-                          {formatRequirement(prerequisite)}
+                          {formatRequirement(_prerequisite)}
                         </p>
 
                         {prerequisite.description && (
@@ -225,7 +225,7 @@ export function PrerequisiteDisplay({
                           'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border',
                           colorClasses
                         )}>
-                          {prerequisite.type.replace('_', ' ')}
+                          {prerequisite.type.replace('', ' ')}
                         </div>
                       </div>
 
@@ -246,9 +246,9 @@ export function PrerequisiteDisplay({
                         {/* Navigate Button */}
                         {!isMet && onNavigateToPrerequisite && (
                           <EnhancedButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onNavigateToPrerequisite(prerequisite);
+                            onClick={(_e) => {
+                              e.stopPropagation(_);
+                              onNavigateToPrerequisite(_prerequisite);
                             }}
                             variant="ghost"
                             size="sm"

@@ -25,7 +25,7 @@ interface LearningAnalyticsProps {
   userProgress: UserCurriculumProgress;
   analytics?: LearningAnalytics;
   timeframe?: 'daily' | 'weekly' | 'monthly' | 'all_time';
-  onTimeframeChange?: (timeframe: 'daily' | 'weekly' | 'monthly' | 'all_time') => void;
+  onTimeframeChange?: (_timeframe: 'daily' | 'weekly' | 'monthly' | 'all_time') => void;
   className?: string;
 }
 
@@ -40,19 +40,19 @@ export function LearningAnalytics({
 
   // Calculate basic metrics from user progress
   const basicMetrics = useMemo(() => {
-    const totalLessons = Object.keys(userProgress.lessons).length;
-    const completedLessons = Object.values(userProgress.lessons).filter(l => l.status === 'completed').length;
-    const inProgressLessons = Object.values(userProgress.lessons).filter(l => l.status === 'in_progress').length;
+    const totalLessons = Object.keys(_userProgress.lessons).length;
+    const completedLessons = Object.values(_userProgress.lessons).filter(l => l.status === 'completed').length;
+    const inProgressLessons = Object.values(_userProgress.lessons).filter(l => l.status === 'inprogress').length;
     
-    const totalModules = Object.keys(userProgress.modules).length;
-    const completedModules = Object.values(userProgress.modules).filter(m => m.status === 'completed').length;
-    const inProgressModules = Object.values(userProgress.modules).filter(m => m.status === 'in_progress').length;
+    const totalModules = Object.keys(_userProgress.modules).length;
+    const completedModules = Object.values(_userProgress.modules).filter(m => m.status === 'completed').length;
+    const inProgressModules = Object.values(_userProgress.modules).filter(m => m.status === 'inprogress').length;
 
-    const averageQuizScore = Object.values(userProgress.lessons)
+    const averageQuizScore = Object.values(_userProgress.lessons)
       .filter(l => l.bestScore !== undefined)
-      .reduce((sum, l, _, arr) => sum + (l.bestScore || 0) / arr.length, 0);
+      .reduce( (sum, l, _, arr) => sum + (_l.bestScore || 0) / arr.length, 0);
 
-    const totalTimeHours = Math.round(userProgress.totalTimeSpent / 60);
+    const totalTimeHours = Math.round(_userProgress.totalTimeSpent / 60);
     const averageSessionTime = userProgress.analytics.averageSessionDuration || 0;
 
     return {
@@ -62,16 +62,16 @@ export function LearningAnalytics({
       totalModules,
       completedModules,
       inProgressModules,
-      completionRate: totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0,
-      averageQuizScore: Math.round(averageQuizScore),
+      completionRate: totalLessons > 0 ? (_completedLessons / totalLessons) * 100 : 0,
+      averageQuizScore: Math.round(_averageQuizScore),
       totalTimeHours,
-      averageSessionTime: Math.round(averageSessionTime),
+      averageSessionTime: Math.round(_averageSessionTime),
       streakDays: userProgress.streakDays,
       totalXP: userProgress.totalXPEarned
     };
   }, [userProgress]);
 
-  // Mock progress trend data (in real app, this would come from analytics)
+  // Mock progress trend data ( in real app, this would come from analytics)
   const progressTrend = useMemo(() => {
     const days = timeframe === 'daily' ? 7 : timeframe === 'weekly' ? 4 : timeframe === 'monthly' ? 12 : 30;
     const data = [];
@@ -82,9 +82,9 @@ export function LearningAnalytics({
       
       data.push({
         date,
-        lessonsCompleted: Math.floor(Math.random() * 3),
-        xpEarned: Math.floor(Math.random() * 200) + 50,
-        timeSpent: Math.floor(Math.random() * 120) + 30
+        lessonsCompleted: Math.floor(_Math.random() * 3),
+        xpEarned: Math.floor(_Math.random() * 200) + 50,
+        timeSpent: Math.floor(_Math.random() * 120) + 30
       });
     }
     
@@ -118,7 +118,7 @@ export function LearningAnalytics({
       <GlassCard className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
-            <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center border', colorClasses[color])}>
+            <div className={cn( 'w-10 h-10 rounded-lg flex items-center justify-center border', colorClasses[color])}>
               <Icon className="w-5 h-5" />
             </div>
             <div>
@@ -133,8 +133,8 @@ export function LearningAnalytics({
               'flex items-center space-x-1 text-xs',
               trend > 0 ? 'text-green-400' : trend < 0 ? 'text-red-400' : 'text-gray-400'
             )}>
-              <TrendingUp className={cn('w-3 h-3', trend < 0 && 'rotate-180')} />
-              <span>{Math.abs(trend)}%</span>
+              <TrendingUp className={cn( 'w-3 h-3', trend < 0 && 'rotate-180')} />
+              <span>{Math.abs(_trend)}%</span>
             </div>
           )}
         </div>
@@ -142,7 +142,7 @@ export function LearningAnalytics({
     );
   };
 
-  const OverviewTab = () => (
+  const OverviewTab = (_) => (
     <div className="space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -150,7 +150,7 @@ export function LearningAnalytics({
           icon={BookOpen}
           title="Lessons Completed"
           value={`${basicMetrics.completedLessons}/${basicMetrics.totalLessons}`}
-          subtitle={`${Math.round(basicMetrics.completionRate)}% completion rate`}
+          subtitle={`${Math.round(_basicMetrics.completionRate)}% completion rate`}
           color="blue"
           trend={5}
         />
@@ -164,7 +164,7 @@ export function LearningAnalytics({
         <StatCard
           icon={Zap}
           title="Total XP"
-          value={basicMetrics.totalXP.toLocaleString()}
+          value={basicMetrics.totalXP.toLocaleString(_)}
           color="yellow"
           trend={8}
         />
@@ -185,7 +185,7 @@ export function LearningAnalytics({
           <div>
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-gray-400">Overall Completion</span>
-              <span className="text-sm text-gray-300 font-mono">{Math.round(userProgress.overallProgress)}%</span>
+              <span className="text-sm text-gray-300 font-mono">{Math.round(_userProgress.overallProgress)}%</span>
             </div>
             <ProgressBar
               progress={userProgress.overallProgress}
@@ -200,7 +200,7 @@ export function LearningAnalytics({
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-400">Lessons Progress</span>
-                <span className="text-sm text-gray-300 font-mono">{Math.round(basicMetrics.completionRate)}%</span>
+                <span className="text-sm text-gray-300 font-mono">{Math.round(_basicMetrics.completionRate)}%</span>
               </div>
               <ProgressBar
                 progress={basicMetrics.completionRate}
@@ -265,22 +265,22 @@ export function LearningAnalytics({
     </div>
   );
 
-  const ProgressTab = () => (
+  const ProgressTab = (_) => (
     <div className="space-y-6">
       {/* Timeframe Selector */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Progress Trends</h3>
         <div className="flex items-center space-x-2">
-          {(['daily', 'weekly', 'monthly', 'all_time'] as const).map(period => (
+          {( ['daily', 'weekly', 'monthly', 'all_time'] as const).map(period => (
             <EnhancedButton
               key={period}
-              onClick={() => onTimeframeChange?.(period)}
+              onClick={(_) => onTimeframeChange?.(_period)}
               variant={timeframe === period ? 'default' : 'ghost'}
               size="sm"
               className="text-xs"
               touchTarget
             >
-              {period.replace('_', ' ')}
+              {period.replace('', ' ')}
             </EnhancedButton>
           ))}
         </div>
@@ -302,11 +302,11 @@ export function LearningAnalytics({
       <GlassCard className="p-6">
         <h4 className="text-md font-medium text-white mb-4">Recent Activity</h4>
         <div className="space-y-3">
-          {progressTrend.slice(-5).reverse().map((day, index) => (
+          {progressTrend.slice(-5).reverse(_).map( (day, index) => (
             <div key={index} className="flex items-center justify-between p-3 bg-black/20 rounded-lg">
               <div className="flex items-center space-x-3">
                 <Calendar className="w-4 h-4 text-gray-400" />
-                <span className="text-sm text-gray-300">{day.date.toLocaleDateString()}</span>
+                <span className="text-sm text-gray-300">{day.date.toLocaleDateString(_)}</span>
               </div>
               <div className="flex items-center space-x-4 text-xs">
                 <span className="text-blue-400">{day.lessonsCompleted} lessons</span>
@@ -320,7 +320,7 @@ export function LearningAnalytics({
     </div>
   );
 
-  const PerformanceTab = () => (
+  const PerformanceTab = (_) => (
     <div className="space-y-6">
       {/* Performance Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -339,7 +339,7 @@ export function LearningAnalytics({
         <StatCard
           icon={TrendingUp}
           title="Completion Rate"
-          value={`${Math.round(basicMetrics.completionRate)}%`}
+          value={`${Math.round(_basicMetrics.completionRate)}%`}
           color="purple"
         />
       </div>
@@ -353,7 +353,7 @@ export function LearningAnalytics({
             { topic: 'Smart Contracts', mastery: 72, color: 'yellow' },
             { topic: 'DeFi Concepts', mastery: 45, color: 'red' },
             { topic: 'Security Patterns', mastery: 60, color: 'yellow' }
-          ].map((item, index) => (
+          ].map( (item, index) => (
             <div key={index}>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-300">{item.topic}</span>
@@ -374,7 +374,7 @@ export function LearningAnalytics({
       <GlassCard className="p-6">
         <h4 className="text-md font-medium text-white mb-4">Recommendations</h4>
         <div className="space-y-3">
-          {userProgress.analytics.recommendedReview.slice(0, 3).map((topic, index) => (
+          {userProgress.analytics.recommendedReview.slice(0, 3).map( (topic, index) => (
             <div key={index} className="flex items-center justify-between p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
               <div className="flex items-center space-x-3">
                 <Star className="w-4 h-4 text-yellow-400" />
@@ -395,7 +395,7 @@ export function LearningAnalytics({
     </div>
   );
 
-  const AchievementsTab = () => (
+  const AchievementsTab = (_) => (
     <div className="space-y-6">
       <GlassCard className="p-6">
         <h4 className="text-md font-medium text-white mb-4">Achievement Progress</h4>
@@ -409,7 +409,7 @@ export function LearningAnalytics({
   );
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn( 'space-y-6', className)}>
       {/* Tab Navigation */}
       <div className="flex items-center space-x-1 bg-black/20 rounded-lg p-1">
         {[
@@ -422,7 +422,7 @@ export function LearningAnalytics({
           return (
             <EnhancedButton
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(_) => setActiveTab(_tab.id as any)}
               variant={activeTab === tab.id ? 'default' : 'ghost'}
               className={cn(
                 'flex-1 justify-center',

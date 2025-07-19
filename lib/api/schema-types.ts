@@ -74,7 +74,7 @@ export type MetricsQuery = z.infer<typeof MetricsQuerySchema>;
 // Feature flag types
 export type FeatureFlagQuery = z.infer<typeof FeatureFlagQuerySchema>;
 
-// API Response types (matching the API response format)
+// API Response types (_matching the API response format)
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
@@ -240,7 +240,7 @@ export interface FileUploadResponse {
 }
 
 // Type guards for runtime type checking
-export function isApiResponse<T>(obj: any): obj is ApiResponse<T> {
+export function isApiResponse<T>(_obj: any): obj is ApiResponse<T> {
   return (
     typeof obj === 'object' &&
     obj !== null &&
@@ -250,7 +250,7 @@ export function isApiResponse<T>(obj: any): obj is ApiResponse<T> {
   );
 }
 
-export function isValidationError(obj: any): obj is ValidationError {
+export function isValidationError(_obj: any): obj is ValidationError {
   return (
     typeof obj === 'object' &&
     obj !== null &&
@@ -260,11 +260,11 @@ export function isValidationError(obj: any): obj is ValidationError {
   );
 }
 
-export function isPaginatedResponse<T>(obj: any): obj is PaginatedResponse<T> {
+export function isPaginatedResponse<T>(_obj: any): obj is PaginatedResponse<T> {
   return (
     typeof obj === 'object' &&
     obj !== null &&
-    Array.isArray(obj.items) &&
+    Array.isArray(_obj.items) &&
     typeof obj.pagination === 'object' &&
     obj.pagination !== null &&
     typeof obj.pagination.currentPage === 'number' &&

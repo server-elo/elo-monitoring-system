@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     
     // Build where clause for filtering
     const where: Prisma.ProjectWhereInput = {
-      isPublished: true
+      isPublished: true 
     };
     
     if (category) {
@@ -36,26 +36,26 @@ export async function GET(request: NextRequest) {
 
     // Fetch projects from database
     const projects = await prisma.project.findMany({
-      where,
-      include: {
-        submissions: {
-          where: { userId: session.user.id },
-          select: {
-            id: true,
-            status: true,
-            score: true,
-            submittedAt: true
+      where 
+      include: { 
+        submissions: { 
+          where: { userId: session.user.id } 
+          select: { 
+            id: true 
+            status: true 
+            score: true 
+            submittedAt: true 
           }
-        },
-        _count: {
-          select: {
-            submissions: true,
-            reviews: true
+        } 
+        _count: { 
+          select: { 
+            submissions: true 
+            reviews: true 
           }
         }
-      },
-      orderBy: [
-        { difficulty: 'asc' },
+      } 
+      orderBy: [ 
+        { difficulty: 'asc' } 
         { xpReward: 'desc' }
       ]
     });
@@ -64,51 +64,51 @@ export async function GET(request: NextRequest) {
     const projectsWithProgress = projects.map(project => {
       const userSubmission = project.submissions[0];
       return {
-        ...project,
-        userProgress: {
-          started: !!userSubmission,
-          completed: userSubmission?.status === 'APPROVED',
-          score: userSubmission?.score,
-          submittedAt: userSubmission?.submittedAt
-        },
-        totalSubmissions: project._count.submissions,
-        totalReviews: project._count.reviews
+        ...project 
+        userProgress: { 
+          started: !!userSubmission 
+          completed: userSubmission?.status === 'APPROVED' 
+          score: userSubmission?.score 
+          submittedAt: userSubmission?.submittedAt 
+        } 
+        totalSubmissions: project.count.submissions 
+        totalReviews: project.count.reviews 
       };
     });
 
     // If no projects exist, seed some example projects
-    if (projects.length === 0) {
+    if (codeSnippets.length === 0) {
       await seedExampleProjects();
       return GET(request); // Retry after seeding
     }
 
     return NextResponse.json({ projects: projectsWithProgress });
   } catch (error) {
-    logger.error('Error fetching projects', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      operation: 'get-projects'
+    logger.error('Error fetching projects', { metadata: {
+      error: error instanceof Error ? error.message : 'Unknown error' 
+      stack: error instanceof Error ? error.stack : undefined 
+      operation: 'get-projects' 
     }, error instanceof Error ? error : undefined);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
+  });
 }
 
 // Helper function to seed example projects
 async function seedExampleProjects() {
   const exampleProjects = [
     {
-      title: 'Hello World Contract',
-      description: 'Create your first smart contract that stores and retrieves a message',
-      difficulty: 'BEGINNER',
-      category: 'EDUCATIONAL',
-      tags: 'beginner,basics,hello-world,first-contract',
-      requirements: JSON.stringify([
-        'Create a contract that stores a message',
-        'Implement functions to get and set the message',
-        'Add events for message updates',
+      title: 'Hello World Contract' 
+      description: 'Create your first smart contract that stores and retrieves a message' 
+      difficulty: 'BEGINNER' 
+      category: 'EDUCATIONAL' 
+      tags: 'beginner,basics,hello-world,first-contract' 
+      requirements: JSON.stringify([ 
+        'Create a contract that stores a message' 
+        'Implement functions to get and set the message' 
+        'Add events for message updates' 
         'Deploy and test the contract'
-      ]),
-      starterCode: `// SPDX-License-Identifier: MIT
+      ]) 
+      starterCode: `// SPDX-License-Identifier: MIT 
 pragma solidity ^0.8.0;
 
 contract HelloWorld {
@@ -121,46 +121,46 @@ contract HelloWorld {
     // TODO: Add getMessage function
     
     // TODO: Add setMessage function
-}`,
-      testCases: JSON.stringify([
+}` 
+      testCases: JSON.stringify([ 
         {
-          name: 'Should deploy with initial message',
-          type: 'deployment',
+          name: 'Should deploy with initial message' 
+          type: 'deployment' 
           expected: 'Hello, World!'
-        },
+        } 
         {
-          name: 'Should update message',
-          type: 'function',
-          function: 'setMessage',
-          args: ['Hello, Blockchain!'],
+          name: 'Should update message' 
+          type: 'function' 
+          function: 'setMessage' 
+          args: ['Hello, Blockchain!'] 
           expected: 'Hello, Blockchain!'
         }
-      ]),
-      estimatedHours: 2,
-      xpReward: 200,
-      isPublished: true,
-      resources: JSON.stringify({
-        links: [
-          'https://docs.soliditylang.org/en/latest/introduction-to-smart-contracts.html',
+      ]) 
+      estimatedHours: 2 
+      xpReward: 200 
+      isPublished: true 
+      resources: JSON.stringify({ 
+        links: [ 
+          'https://docs.soliditylang.org/en/latest/introduction-to-smart-contracts.html' 
           'https://ethereum.org/en/developers/docs/smart-contracts/'
-        ],
-        videos: [],
-        articles: []
+        ] 
+        videos: [] 
+        articles: [] 
       })
-    },
+    } 
     {
-      title: 'Simple Storage Contract',
-      description: 'Build a contract that stores and retrieves different data types',
-      difficulty: 'BEGINNER',
-      category: 'UTILITY',
-      tags: 'storage,data-types,state-variables,functions',
-      requirements: JSON.stringify([
-        'Store different data types (uint, string, address, bool)',
-        'Create getter and setter functions',
-        'Implement access control for setters',
+      title: 'Simple Storage Contract' 
+      description: 'Build a contract that stores and retrieves different data types' 
+      difficulty: 'BEGINNER' 
+      category: 'UTILITY' 
+      tags: 'storage,data-types,state-variables,functions' 
+      requirements: JSON.stringify([ 
+        'Store different data types (uint, string, address, bool)' 
+        'Create getter and setter functions' 
+        'Implement access control for setters' 
         'Add input validation'
-      ]),
-      starterCode: `// SPDX-License-Identifier: MIT
+      ]) 
+      starterCode: `// SPDX-License-Identifier: MIT 
 pragma solidity ^0.8.0;
 
 contract SimpleStorage {
@@ -169,39 +169,39 @@ contract SimpleStorage {
     // TODO: Add getter functions
     
     // TODO: Add setter functions with access control
-}`,
-      testCases: JSON.stringify([
+}` 
+      testCases: JSON.stringify([ 
         {
-          name: 'Should store and retrieve uint',
-          type: 'storage',
-          variable: 'storedNumber',
-          value: 42
-        },
+          name: 'Should store and retrieve uint' 
+          type: 'storage' 
+          variable: 'storedNumber' 
+          value: 42 
+        } 
         {
-          name: 'Should restrict setter access',
-          type: 'access',
-          function: 'setNumber',
-          shouldRevert: true
+          name: 'Should restrict setter access' 
+          type: 'access' 
+          function: 'setNumber' 
+          shouldRevert: true 
         }
-      ]),
-      estimatedHours: 3,
-      xpReward: 300,
-      isPublished: true
-    },
+      ]) 
+      estimatedHours: 3 
+      xpReward: 300 
+      isPublished: true 
+    } 
     {
-      title: 'ERC-20 Token Contract',
-      description: 'Create a fungible token following the ERC-20 standard',
-      difficulty: 'INTERMEDIATE',
-      category: 'DEFI',
-      tags: 'erc20,token,defi,fungible,openzeppelin',
-      requirements: JSON.stringify([
-        'Implement ERC-20 interface',
-        'Add minting and burning functions',
-        'Implement ownership and access control',
-        'Add pausable functionality',
+      title: 'ERC-20 Token Contract' 
+      description: 'Create a fungible token following the ERC-20 standard' 
+      difficulty: 'INTERMEDIATE' 
+      category: 'DEFI' 
+      tags: 'erc20,token,defi,fungible,openzeppelin' 
+      requirements: JSON.stringify([ 
+        'Implement ERC-20 interface' 
+        'Add minting and burning functions' 
+        'Implement ownership and access control' 
+        'Add pausable functionality' 
         'Include token metadata'
-      ]),
-      starterCode: `// SPDX-License-Identifier: MIT
+      ]) 
+      starterCode: `// SPDX-License-Identifier: MIT 
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -215,38 +215,38 @@ contract MyToken is ERC20, Ownable {
     // TODO: Add minting function
     
     // TODO: Add burning function
-}`,
-      testCases: JSON.stringify([
+}` 
+      testCases: JSON.stringify([ 
         {
-          name: 'Should have correct name and symbol',
-          type: 'metadata',
+          name: 'Should have correct name and symbol' 
+          type: 'metadata' 
           expected: { name: 'MyToken', symbol: 'MTK' }
-        },
+        } 
         {
-          name: 'Should mint tokens correctly',
-          type: 'mint',
-          amount: '1000000000000000000000',
-          recipient: 'owner'
+          name: 'Should mint tokens correctly' 
+          type: 'mint' 
+          amount: '1000000000000000000000' 
+          recipient: 'owner' 
         }
-      ]),
-      estimatedHours: 6,
-      xpReward: 500,
-      isPublished: true
-    },
+      ]) 
+      estimatedHours: 6 
+      xpReward: 500 
+      isPublished: true 
+    } 
     {
-      title: 'NFT Collection',
-      description: 'Build an ERC-721 NFT collection with metadata and minting',
-      difficulty: 'ADVANCED',
-      category: 'NFT',
-      tags: 'nft,erc721,metadata,minting,collection',
-      requirements: JSON.stringify([
-        'Implement ERC-721 standard',
-        'Add metadata URI functionality',
-        'Create public and whitelist minting',
-        'Implement royalties (ERC-2981)',
+      title: 'NFT Collection' 
+      description: 'Build an ERC-721 NFT collection with metadata and minting' 
+      difficulty: 'ADVANCED' 
+      category: 'NFT' 
+      tags: 'nft,erc721,metadata,minting,collection' 
+      requirements: JSON.stringify([ 
+        'Implement ERC-721 standard' 
+        'Add metadata URI functionality' 
+        'Create public and whitelist minting' 
+        'Implement royalties (_ERC-2981)' 
         'Add reveal mechanism'
-      ]),
-      starterCode: `// SPDX-License-Identifier: MIT
+      ]) 
+      starterCode: `// SPDX-License-Identifier: MIT 
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -261,38 +261,38 @@ contract MyNFTCollection is ERC721, ERC721Enumerable, Ownable {
     // TODO: Add minting functions
     
     // TODO: Add metadata functions
-}`,
-      testCases: JSON.stringify([
+}` 
+      testCases: JSON.stringify([ 
         {
-          name: 'Should mint NFT with correct tokenId',
-          type: 'mint',
-          expectedTokenId: 1
-        },
+          name: 'Should mint NFT with correct tokenId' 
+          type: 'mint' 
+          expectedTokenId: 1 
+        } 
         {
-          name: 'Should return correct metadata URI',
-          type: 'metadata',
-          tokenId: 1,
-          expectedPrefix: 'ipfs://'
+          name: 'Should return correct metadata URI' 
+          type: 'metadata' 
+          tokenId: 1 
+          expectedPrefix: 'ipfs://' 
         }
-      ]),
-      estimatedHours: 8,
-      xpReward: 750,
-      isPublished: true
-    },
+      ]) 
+      estimatedHours: 8 
+      xpReward: 750 
+      isPublished: true 
+    } 
     {
-      title: 'Decentralized Voting System',
-      description: 'Create a secure voting contract with proposals and delegation',
-      difficulty: 'ADVANCED',
-      category: 'DAO',
-      tags: 'dao,voting,governance,delegation,proposals',
-      requirements: JSON.stringify([
-        'Create proposal system',
-        'Implement voting with weight',
-        'Add vote delegation',
-        'Include time-based voting periods',
+      title: 'Decentralized Voting System' 
+      description: 'Create a secure voting contract with proposals and delegation' 
+      difficulty: 'ADVANCED' 
+      category: 'DAO' 
+      tags: 'dao,voting,governance,delegation,proposals' 
+      requirements: JSON.stringify([ 
+        'Create proposal system' 
+        'Implement voting with weight' 
+        'Add vote delegation' 
+        'Include time-based voting periods' 
         'Prevent double voting'
-      ]),
-      starterCode: `// SPDX-License-Identifier: MIT
+      ]) 
+      starterCode: `// SPDX-License-Identifier: MIT 
 pragma solidity ^0.8.0;
 
 contract Voting {
@@ -309,29 +309,29 @@ contract Voting {
     // TODO: Add voting mechanism
     
     // TODO: Add delegation
-}`,
-      testCases: JSON.stringify([
+}` 
+      testCases: JSON.stringify([ 
         {
-          name: 'Should create proposal',
-          type: 'proposal',
-          description: 'Increase funding',
-          duration: 86400
-        },
+          name: 'Should create proposal' 
+          type: 'proposal' 
+          description: 'Increase funding' 
+          duration: 86400 
+        } 
         {
-          name: 'Should count votes correctly',
-          type: 'voting',
-          proposalId: 0,
-          expectedCount: 1
+          name: 'Should count votes correctly' 
+          type: 'voting' 
+          proposalId: 0 
+          expectedCount: 1 
         }
-      ]),
-      estimatedHours: 10,
-      xpReward: 1000,
-      isPublished: true
+      ]) 
+      estimatedHours: 10 
+      xpReward: 1000 
+      isPublished: true 
     }
   ];
 
   await prisma.project.createMany({
-    data: exampleProjects as any
+    data: exampleProjects as any 
   });
 }
 
@@ -354,7 +354,7 @@ export async function POST(request: NextRequest) {
 
         // Check if project exists
         const project = await prisma.project.findUnique({
-          where: { id: projectId }
+          where: { id: projectId } 
         });
 
         if (!project) {
@@ -363,30 +363,30 @@ export async function POST(request: NextRequest) {
 
         // Create or update submission
         const submission = await prisma.projectSubmission.upsert({
-          where: {
-            projectId_userId: {
-              projectId,
-              userId: session.user.id
+          where: { 
+            projectIduserId: { 
+              projectId 
+              userId: session.user.id 
             }
-          },
-          update: {
-            status: 'IN_PROGRESS',
-            updatedAt: new Date()
-          },
-          create: {
-            projectId,
-            userId: session.user.id,
-            title: project.title,
-            description: project.description,
-            code: project.starterCode || '',
-            status: 'IN_PROGRESS'
+          } 
+          update: { 
+            status: 'IN_PROGRESS' 
+            updatedAt: new Date() 
+          } 
+          create: { 
+            projectId 
+            userId: session.user.id 
+            title: project.title 
+            description: project.description 
+            code: project.starterCode || '' 
+            status: 'IN_PROGRESS' 
           }
         });
 
         return NextResponse.json({ 
-          success: true,
-          submissionId: submission.id,
-          message: 'Project started successfully' 
+          success: true 
+          submissionId: submission.id 
+          message: 'Project started successfully'  
         });
 
       case 'submit_project':
@@ -396,10 +396,10 @@ export async function POST(request: NextRequest) {
 
         // Get existing submission
         const existingSubmission = await prisma.projectSubmission.findUnique({
-          where: {
-            projectId_userId: {
-              projectId,
-              userId: session.user.id
+          where: { 
+            projectIduserId: { 
+              projectId 
+              userId: session.user.id 
             }
           }
         });
@@ -410,72 +410,72 @@ export async function POST(request: NextRequest) {
 
         // Update submission
         const updatedSubmission = await prisma.projectSubmission.update({
-          where: { id: existingSubmission.id },
-          data: {
-            title: title || existingSubmission.title,
-            description: description || existingSubmission.description,
-            code,
-            githubUrl,
-            deploymentUrl,
-            status: 'SUBMITTED',
-            submittedAt: new Date()
+          where: { id: existingSubmission.id } 
+          data: { 
+            title: title || existingSubmission.title 
+            description: description || existingSubmission.description 
+            code 
+            githubUrl 
+            deploymentUrl 
+            status: 'SUBMITTED' 
+            submittedAt: new Date() 
           }
         });
 
         // Award XP for submission
         const projectData = await prisma.project.findUnique({
-          where: { id: projectId }
+          where: { id: projectId } 
         });
         
         if (projectData) {
           await prisma.userProfile.upsert({
-            where: { userId: session.user.id },
-            update: {
-              totalXP: {
-                increment: projectData.xpReward
+            where: { userId: session.user.id } 
+            update: { 
+              totalXP: { 
+                increment: projectData.xpReward 
               }
-            },
-            create: {
-              userId: session.user.id,
-              totalXP: projectData.xpReward
+            } 
+            create: { 
+              userId: session.user.id 
+              totalXP: projectData.xpReward 
             }
           });
         }
 
         return NextResponse.json({ 
-          success: true,
-          submissionId: updatedSubmission.id,
-          xpAwarded: projectData?.xpReward || 0,
-          message: 'Project submitted successfully' 
+          success: true 
+          submissionId: updatedSubmission.id 
+          xpAwarded: projectData?.xpReward || 0 
+          message: 'Project submitted successfully'  
         });
 
-      case 'save_progress':
+      case 'saveprogress':
         if (!projectId || !code) {
           return NextResponse.json({ error: 'Project ID and code required' }, { status: 400 });
         }
 
         // Update submission with latest code
         const savedSubmission = await prisma.projectSubmission.update({
-          where: {
-            projectId_userId: {
-              projectId,
-              userId: session.user.id
+          where: { 
+            projectIduserId: { 
+              projectId 
+              userId: session.user.id 
             }
-          },
-          data: {
-            code,
-            title: title || undefined,
-            description: description || undefined,
-            githubUrl: githubUrl || undefined,
-            deploymentUrl: deploymentUrl || undefined,
-            updatedAt: new Date()
+          } 
+          data: { 
+            code 
+            title: title || undefined 
+            description: description || undefined 
+            githubUrl: githubUrl || undefined 
+            deploymentUrl: deploymentUrl || undefined 
+            updatedAt: new Date() 
           }
         });
 
         return NextResponse.json({ 
-          success: true,
-          submissionId: savedSubmission.id,
-          message: 'Progress saved successfully' 
+          success: true 
+          submissionId: savedSubmission.id 
+          message: 'Progress saved successfully'  
         });
 
       case 'request_review':
@@ -485,32 +485,32 @@ export async function POST(request: NextRequest) {
 
         // Update submission status to under review
         const reviewSubmission = await prisma.projectSubmission.update({
-          where: {
-            projectId_userId: {
-              projectId,
-              userId: session.user.id
+          where: { 
+            projectIduserId: { 
+              projectId 
+              userId: session.user.id 
             }
-          },
-          data: {
-            status: 'UNDER_REVIEW'
+          } 
+          data: { 
+            status: 'UNDER_REVIEW' 
           }
         });
 
         return NextResponse.json({ 
-          success: true,
-          submissionId: reviewSubmission.id,
-          message: 'Project submitted for review' 
+          success: true 
+          submissionId: reviewSubmission.id 
+          message: 'Project submitted for review'  
         });
 
-      default:
+      default: 
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    logger.error('Error processing project action', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      operation: 'post-project-action'
+    logger.error('Error processing project action', { metadata: {
+      error: error instanceof Error ? error.message : 'Unknown error' 
+      stack: error instanceof Error ? error.stack : undefined 
+      operation: 'post-project-action' 
     }, error instanceof Error ? error : undefined);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
+  });
 }

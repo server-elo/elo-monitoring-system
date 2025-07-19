@@ -8,7 +8,7 @@ import { promisify } from 'util';
 import fs from 'fs/promises';
 import path from 'path';
 
-const execAsync = promisify(exec);
+const execAsync = promisify(_exec);
 
 interface DatabaseSetupResult {
   success: boolean;
@@ -19,40 +19,40 @@ interface DatabaseSetupResult {
 class DatabaseSetup {
   private databaseUrl: string;
 
-  constructor() {
+  constructor(_) {
     this.databaseUrl = process.env.DATABASE_URL || '';
   }
 
-  async setupDatabase(): Promise<DatabaseSetupResult> {
+  async setupDatabase(_): Promise<DatabaseSetupResult> {
     console.log('🗄️  Database Setup for Enhanced AI Features');
     console.log('===========================================');
 
     try {
       // Step 1: Check if DATABASE_URL is set
       if (!this.databaseUrl) {
-        return await this.handleMissingDatabaseUrl();
+        return await this.handleMissingDatabaseUrl(_);
       }
 
       // Step 2: Test database connection
-      const connectionResult = await this.testDatabaseConnection();
+      const connectionResult = await this.testDatabaseConnection(_);
       if (!connectionResult.success) {
-        return await this.handleConnectionFailure(connectionResult);
+        return await this.handleConnectionFailure(_connectionResult);
       }
 
       // Step 3: Run Prisma migrations
-      const migrationResult = await this.runPrismaMigrations();
+      const migrationResult = await this.runPrismaMigrations(_);
       if (!migrationResult.success) {
         return migrationResult;
       }
 
       // Step 4: Generate Prisma client
-      const clientResult = await this.generatePrismaClient();
+      const clientResult = await this.generatePrismaClient(_);
       if (!clientResult.success) {
         return clientResult;
       }
 
       // Step 5: Seed initial data if needed
-      const seedResult = await this.seedInitialData();
+      const seedResult = await this.seedInitialData(_);
 
       return {
         success: true,
@@ -60,7 +60,7 @@ class DatabaseSetup {
         details: `Database ready with Enhanced AI features. ${seedResult.message}`
       };
 
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         message: '❌ Database setup failed',
@@ -69,19 +69,19 @@ class DatabaseSetup {
     }
   }
 
-  private async handleMissingDatabaseUrl(): Promise<DatabaseSetupResult> {
+  private async handleMissingDatabaseUrl(_): Promise<DatabaseSetupResult> {
     console.log('⚠️  DATABASE_URL not found. Setting up development database...');
     
     // Create a simple file-based database URL for development
-    const devDbPath = path.join(process.cwd(), 'dev.db');
+    const devDbPath = path.join(_process.cwd(), 'dev.db');
     const devDatabaseUrl = `file:${devDbPath}`;
     
     // Update .env.local with SQLite URL
-    const envPath = path.join(process.cwd(), '.env.local');
+    const envPath = path.join(_process.cwd(), '.env.local');
     try {
-      let envContent = await fs.readFile(envPath, 'utf-8');
+      let envContent = await fs.readFile( envPath, 'utf-8');
       
-      if (envContent.includes('DATABASE_URL=')) {
+      if (_envContent.includes('DATABASE_URL=')) {
         envContent = envContent.replace(
           /DATABASE_URL=.*/,
           `DATABASE_URL="${devDatabaseUrl}"`
@@ -90,10 +90,10 @@ class DatabaseSetup {
         envContent += `\nDATABASE_URL="${devDatabaseUrl}"\n`;
       }
       
-      await fs.writeFile(envPath, envContent);
+      await fs.writeFile( envPath, envContent);
       
       // Update schema to use SQLite
-      await this.updateSchemaForSQLite();
+      await this.updateSchemaForSQLite(_);
       
       console.log('✅ Development database configuration created');
       
@@ -102,9 +102,9 @@ class DatabaseSetup {
       this.databaseUrl = devDatabaseUrl;
       
       // Continue with setup
-      return await this.setupDatabase();
+      return await this.setupDatabase(_);
       
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         message: '❌ Failed to create development database configuration',
@@ -113,9 +113,9 @@ class DatabaseSetup {
     }
   }
 
-  private async updateSchemaForSQLite(): Promise<void> {
-    const schemaPath = path.join(process.cwd(), 'prisma', 'schema.prisma');
-    let schemaContent = await fs.readFile(schemaPath, 'utf-8');
+  private async updateSchemaForSQLite(_): Promise<void> {
+    const schemaPath = path.join(_process.cwd(), 'prisma', 'schema.prisma');
+    let schemaContent = await fs.readFile( schemaPath, 'utf-8');
     
     // Update provider to sqlite
     schemaContent = schemaContent.replace(
@@ -128,28 +128,28 @@ class DatabaseSetup {
     schemaContent = schemaContent.replace(/@db\.Text/g, '');
     schemaContent = schemaContent.replace(/String\[\]/g, 'String'); // Convert arrays to strings
     
-    await fs.writeFile(schemaPath, schemaContent);
+    await fs.writeFile( schemaPath, schemaContent);
     console.log('✅ Schema updated for SQLite compatibility');
   }
 
-  private async testDatabaseConnection(): Promise<DatabaseSetupResult> {
+  private async testDatabaseConnection(_): Promise<DatabaseSetupResult> {
     try {
       console.log('🔍 Testing database connection...');
       
       // Try to generate Prisma client first
-      await execAsync('npx prisma generate', { cwd: process.cwd() });
+      await execAsync( 'npx prisma generate', { cwd: process.cwd() });
       
       // Test connection with a simple query
       const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma = new PrismaClient(_);
       
-      await prisma.$connect();
+      await prisma.$connect(_);
       await prisma.$disconnect();
       
       console.log('✅ Database connection successful');
       return { success: true, message: 'Database connection successful' };
       
-    } catch (error) {
+    } catch (_error) {
       console.log('❌ Database connection failed');
       return {
         success: false,
@@ -159,33 +159,33 @@ class DatabaseSetup {
     }
   }
 
-  private async handleConnectionFailure(_connectionResult: DatabaseSetupResult): Promise<DatabaseSetupResult> {
+  private async handleConnectionFailure( connectionResult: DatabaseSetupResult): Promise<DatabaseSetupResult> {
     console.log('⚠️  Database connection failed. Attempting fallback setup...');
     
     // Try to set up a development database
-    return await this.handleMissingDatabaseUrl();
+    return await this.handleMissingDatabaseUrl(_);
   }
 
-  private async runPrismaMigrations(): Promise<DatabaseSetupResult> {
+  private async runPrismaMigrations(_): Promise<DatabaseSetupResult> {
     try {
       console.log('🔄 Running Prisma migrations...');
       
-      // First, try to push the schema (for development)
-      await execAsync('npx prisma db push', { cwd: process.cwd() });
+      // First, try to push the schema (_for development)
+      await execAsync( 'npx prisma db push', { cwd: process.cwd() });
       
       console.log('✅ Database schema updated');
       return { success: true, message: 'Migrations completed' };
       
-    } catch (error) {
+    } catch (_error) {
       console.log('❌ Migration failed, trying alternative approach...');
       
       try {
         // Try migrate dev as fallback
-        await execAsync('npx prisma migrate dev --name init', { cwd: process.cwd() });
+        await execAsync( 'npx prisma migrate dev --name init', { cwd: process.cwd() });
         console.log('✅ Database migrations completed');
         return { success: true, message: 'Migrations completed' };
         
-      } catch (migrationError) {
+      } catch (_migrationError) {
         return {
           success: false,
           message: 'Database migration failed',
@@ -195,16 +195,16 @@ class DatabaseSetup {
     }
   }
 
-  private async generatePrismaClient(): Promise<DatabaseSetupResult> {
+  private async generatePrismaClient(_): Promise<DatabaseSetupResult> {
     try {
       console.log('⚙️  Generating Prisma client...');
       
-      await execAsync('npx prisma generate', { cwd: process.cwd() });
+      await execAsync( 'npx prisma generate', { cwd: process.cwd() });
       
       console.log('✅ Prisma client generated');
       return { success: true, message: 'Prisma client generated' };
       
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         message: 'Prisma client generation failed',
@@ -213,15 +213,15 @@ class DatabaseSetup {
     }
   }
 
-  private async seedInitialData(): Promise<DatabaseSetupResult> {
+  private async seedInitialData(_): Promise<DatabaseSetupResult> {
     try {
       console.log('🌱 Seeding initial data...');
       
       // Check if seed script exists
-      const seedPath = path.join(process.cwd(), 'prisma', 'seed.ts');
+      const seedPath = path.join(_process.cwd(), 'prisma', 'seed.ts');
       try {
-        await fs.access(seedPath);
-        await execAsync('npx prisma db seed', { cwd: process.cwd() });
+        await fs.access(_seedPath);
+        await execAsync( 'npx prisma db seed', { cwd: process.cwd() });
         console.log('✅ Initial data seeded');
         return { success: true, message: 'Initial data seeded' };
       } catch {
@@ -229,7 +229,7 @@ class DatabaseSetup {
         return { success: true, message: 'No seeding required' };
       }
       
-    } catch (error) {
+    } catch (_error) {
       // Seeding failure is not critical
       console.log('⚠️  Seeding failed, but continuing...');
       return { 
@@ -243,22 +243,22 @@ class DatabaseSetup {
 
 // Main execution
 async function main() {
-  const setup = new DatabaseSetup();
-  const result = await setup.setupDatabase();
+  const setup = new DatabaseSetup(_);
+  const result = await setup.setupDatabase(_);
   
   console.log('\n' + '='.repeat(50));
-  console.log(result.message);
-  if (result.details) {
+  console.log(_result.message);
+  if (_result.details) {
     console.log('Details:', result.details);
   }
   console.log('='.repeat(50));
   
-  process.exit(result.success ? 0 : 1);
+  process.exit(_result.success ? 0 : 1);
 }
 
 // Run setup if called directly
-if (require.main === module) {
-  main().catch((error) => {
+if (_require.main === module) {
+  main(_).catch((error) => {
     console.error('Database setup failed:', error);
     process.exit(1);
   });

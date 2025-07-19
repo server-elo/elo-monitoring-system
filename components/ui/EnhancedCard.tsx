@@ -20,7 +20,7 @@ export const EnhancedCard: React.FC<EnhancedCardProps> = ({
   const variants = {
     default: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
     glass: 'bg-white/10 backdrop-blur-md border border-white/20',
-    neumorphism: 'bg-gray-100 dark:bg-gray-800 shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] dark:shadow-[8px_8px_16px_#1a1a1a,-8px_-8px_16px_#2a2a2a]',
+    neumorphism: 'bg-gray-100 dark:bg-gray-800 shadow-[8px_8px16px_#d1d9e6,-8px_-8px16px_#ffffff] dark:shadow-[8px_8px16px_#1a1a1a,-8px_-8px16px_#2a2a2a]',
     gradient: 'bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30'
   };
 
@@ -45,7 +45,7 @@ export const EnhancedCard: React.FC<EnhancedCardProps> = ({
     onBlur: props.onBlur,
     onKeyDown: props.onKeyDown,
     id: props.id,
-    'data-testid': (props as any)['data-testid']
+    'data-testid': (_props as any)['data-testid']
   };
 
   return (

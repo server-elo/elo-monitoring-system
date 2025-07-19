@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 interface AchievementCardProps {
   achievement: Achievement;
   userAchievement: UserAchievement;
-  onClick?: () => void;
+  onClick?: (_) => void;
   showDetails?: boolean;
   className?: string;
 }
@@ -33,18 +33,18 @@ export function AchievementCard({
   showDetails = false,
   className 
 }: AchievementCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(_false);
   const rarity = ACHIEVEMENT_RARITIES[achievement.rarity];
   const isUnlocked = userAchievement.status === 'unlocked';
-  const isInProgress = userAchievement.status === 'in_progress';
+  const isInProgress = userAchievement.status === 'inprogress';
   const isLocked = userAchievement.status === 'locked';
   const isFeatured = userAchievement.status === 'featured';
 
-  const getStatusIcon = () => {
-    switch (userAchievement.status) {
+  const getStatusIcon = (_) => {
+    switch (_userAchievement.status) {
       case 'unlocked':
         return <CheckCircle className="w-5 h-5 text-green-400" />;
-      case 'in_progress':
+      case 'inprogress':
         return <Target className="w-5 h-5 text-blue-400" />;
       case 'featured':
         return <Star className="w-5 h-5 text-yellow-400" />;
@@ -53,7 +53,7 @@ export function AchievementCard({
     }
   };
 
-  const getProgressColor = () => {
+  const getProgressColor = (_) => {
     if (isUnlocked) return 'bg-green-500';
     if (isInProgress) return 'bg-blue-500';
     return 'bg-gray-500';
@@ -69,11 +69,11 @@ export function AchievementCard({
 
   return (
     <motion.div
-      className={cn('relative group', className)}
+      className={cn( 'relative group', className)}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      onHoverStart={(_) => setIsHovered(_true)}
+      onHoverEnd={(_) => setIsHovered(_false)}
     >
       <GlassCard 
         className={cn(
@@ -110,7 +110,7 @@ export function AchievementCard({
             </div>
             
             <div className="flex flex-col items-end space-y-2">
-              {getStatusIcon()}
+              {getStatusIcon(_)}
               
               {/* Rarity Badge */}
               <div className={cn(
@@ -147,12 +147,12 @@ export function AchievementCard({
               <div className="flex justify-between items-center mb-2">
                 <span className="text-xs text-gray-400">Progress</span>
                 <span className="text-xs text-gray-300 font-mono">
-                  {Math.round(userAchievement.progress)}%
+                  {Math.round(_userAchievement.progress)}%
                 </span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
                 <motion.div
-                  className={cn('h-full rounded-full', getProgressColor())}
+                  className={cn( 'h-full rounded-full', getProgressColor())}
                   initial={{ width: 0 }}
                   animate={{ width: `${userAchievement.progress}%` }}
                   transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -166,11 +166,11 @@ export function AchievementCard({
             <div className="mb-4">
               <div className="text-xs text-gray-400 mb-2">Requirements:</div>
               <div className="space-y-1">
-                {achievement.requirements.slice(0, 2).map((req, index) => (
+                {achievement.requirements.slice(0, 2).map( (req, index) => (
                   <div key={index} className="flex items-center space-x-2 text-xs">
                     <Target className="w-3 h-3 text-gray-500" />
                     <span className="text-gray-400">
-                      {req.type.replace('_', ' ')}: {req.current}/{req.target}
+                      {req.type.replace('', ' ')}: {req.current}/{req.target}
                     </span>
                   </div>
                 ))}
@@ -215,7 +215,7 @@ export function AchievementCard({
               <div className="flex items-center space-x-1">
                 <Calendar className="w-3 h-3 text-gray-400" />
                 <span className="text-xs text-gray-400">
-                  {formatDate(userAchievement.unlockedAt)}
+                  {formatDate(_userAchievement.unlockedAt)}
                 </span>
               </div>
             )}
@@ -277,10 +277,10 @@ export function AchievementCard({
                 <div>
                   <h4 className="text-sm font-medium text-white mb-2">Requirements</h4>
                   <div className="space-y-1">
-                    {achievement.requirements.map((req, index) => (
+                    {achievement.requirements.map( (req, index) => (
                       <div key={index} className="flex items-center justify-between text-xs">
                         <span className="text-gray-300">
-                          {req.type.replace('_', ' ')}
+                          {req.type.replace('', ' ')}
                         </span>
                         <span className="text-gray-400 font-mono">
                           {req.current}/{req.target}

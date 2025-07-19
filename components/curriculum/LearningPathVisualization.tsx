@@ -25,8 +25,8 @@ interface LearningPathVisualizationProps {
   learningPath: LearningPath;
   modules: Module[];
   userProgress: UserCurriculumProgress;
-  onModuleClick: (module: Module) => void;
-  checkPrerequisites: (moduleId: string) => boolean;
+  onModuleClick: (_module: Module) => void;
+  checkPrerequisites: (_moduleId: string) => boolean;
   className?: string;
 }
 
@@ -38,7 +38,7 @@ export function LearningPathVisualization({
   checkPrerequisites,
   className
 }: LearningPathVisualizationProps) {
-  const [expandedModule, setExpandedModule] = useState<string | null>(null);
+  const [expandedModule, setExpandedModule] = useState<string | null>(_null);
 
   // Calculate path progress
   const pathProgress = React.useMemo(() => {
@@ -47,41 +47,41 @@ export function LearningPathVisualization({
       userProgress.modules[module.id]?.status === 'completed'
     ).length;
     
-    const totalXP = modules.reduce((sum, module) => sum + module.totalXPReward, 0);
-    const earnedXP = modules.reduce((sum, module) => 
-      sum + (userProgress.modules[module.id]?.totalXPEarned || 0), 0
+    const totalXP = modules.reduce( (sum, module) => sum + module.totalXPReward, 0);
+    const earnedXP = modules.reduce( (sum, module) => 
+      sum + (_userProgress.modules[module.id]?.totalXPEarned || 0), 0
     );
 
-    const totalTime = modules.reduce((sum, module) => sum + module.estimatedDuration, 0);
-    const spentTime = modules.reduce((sum, module) => 
+    const totalTime = modules.reduce( (sum, module) => sum + module.estimatedDuration, 0);
+    const spentTime = modules.reduce( (sum, module) => 
       sum + ((userProgress.modules[module.id]?.timeSpent || 0) / 60), 0
     );
 
     return {
-      completion: totalModules > 0 ? (completedModules / totalModules) * 100 : 0,
+      completion: totalModules > 0 ? (_completedModules / totalModules) * 100 : 0,
       completedModules,
       totalModules,
       earnedXP,
       totalXP,
-      spentTime: Math.round(spentTime),
+      spentTime: Math.round(_spentTime),
       totalTime: Math.round(totalTime)
     };
   }, [modules, userProgress]);
 
-  const getModuleStatus = (module: Module) => {
+  const getModuleStatus = (_module: Module) => {
     const progress = userProgress.modules[module.id];
-    const isUnlocked = checkPrerequisites(module.id);
+    const isUnlocked = checkPrerequisites(_module.id);
     
     if (!isUnlocked) return 'locked';
     if (!progress) return 'available';
     return progress.status;
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
+  const getStatusIcon = (_status: string) => {
+    switch (_status) {
       case 'completed':
         return CheckCircle;
-      case 'in_progress':
+      case 'inprogress':
         return Play;
       case 'locked':
         return Lock;
@@ -90,11 +90,11 @@ export function LearningPathVisualization({
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const getStatusColor = (_status: string) => {
+    switch (_status) {
       case 'completed':
         return 'text-green-400 bg-green-500/20 border-green-500/30';
-      case 'in_progress':
+      case 'inprogress':
         return 'text-blue-400 bg-blue-500/20 border-blue-500/30';
       case 'locked':
         return 'text-gray-400 bg-gray-500/20 border-gray-500/30';
@@ -103,7 +103,7 @@ export function LearningPathVisualization({
     }
   };
 
-  const PathHeader = () => (
+  const PathHeader = (_) => (
     <GlassCard className="p-6 mb-6">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start space-x-4">
@@ -166,7 +166,7 @@ export function LearningPathVisualization({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           <div className="text-center p-3 bg-black/20 rounded-lg">
-            <div className="text-lg font-bold text-blue-400">{Math.round(pathProgress.completion)}%</div>
+            <div className="text-lg font-bold text-blue-400">{Math.round(_pathProgress.completion)}%</div>
             <div className="text-xs text-gray-400">Completed</div>
           </div>
           
@@ -184,10 +184,10 @@ export function LearningPathVisualization({
     </GlassCard>
   );
 
-  const ModuleNode = ({ module, index }: { module: Module; index: number }) => {
-    const status = getModuleStatus(module);
+  const ModuleNode = ( { module, index }: { module: Module; index: number }) => {
+    const status = getModuleStatus(_module);
     const progress = userProgress.modules[module.id];
-    const StatusIcon = getStatusIcon(status);
+    const StatusIcon = getStatusIcon(_status);
     const isExpanded = expandedModule === module.id;
     const isLast = index === modules.length - 1;
 
@@ -210,9 +210,9 @@ export function LearningPathVisualization({
               status === 'locked' ? 'opacity-60' : 'hover:shadow-lg',
               isExpanded && 'ring-2 ring-blue-500/50'
             )}
-            onClick={() => {
+            onClick={(_) => {
               if (status !== 'locked') {
-                setExpandedModule(isExpanded ? null : module.id);
+                setExpandedModule(_isExpanded ? null : module.id);
               }
             }}
           >
@@ -220,7 +220,7 @@ export function LearningPathVisualization({
               {/* Status Icon */}
               <div className={cn(
                 'w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300',
-                getStatusColor(status),
+                getStatusColor(_status),
                 status === 'completed' && 'animate-pulse'
               )}>
                 <StatusIcon className="w-6 h-6" />
@@ -293,7 +293,7 @@ export function LearningPathVisualization({
                 </div>
 
                 {/* Progress Bar for In Progress */}
-                {status === 'in_progress' && progress && (
+                {status === 'inprogress' && progress && (
                   <div className="mt-3">
                     <ProgressBar
                       progress={progress.progress}
@@ -332,7 +332,7 @@ export function LearningPathVisualization({
                                 <div className={cn(
                                   'w-4 h-4 rounded-full flex items-center justify-center',
                                   lessonStatus === 'completed' ? 'bg-green-500/20 text-green-400' :
-                                  lessonStatus === 'in_progress' ? 'bg-blue-500/20 text-blue-400' :
+                                  lessonStatus === 'inprogress' ? 'bg-blue-500/20 text-blue-400' :
                                   'bg-gray-500/20 text-gray-400'
                                 )}>
                                   {lessonStatus === 'completed' ? (
@@ -364,15 +364,15 @@ export function LearningPathVisualization({
                         <h4 className="text-sm font-medium text-gray-300 mb-2">Actions</h4>
                         <div className="space-y-2">
                           <EnhancedButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onModuleClick(module);
+                            onClick={(_e) => {
+                              e.stopPropagation(_);
+                              onModuleClick(_module);
                             }}
                             className={cn(
                               'w-full text-sm',
                               status === 'completed' 
                                 ? 'bg-green-600 hover:bg-green-700 text-white' 
-                                : status === 'in_progress'
+                                : status === 'inprogress'
                                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
                                 : 'bg-white/10 hover:bg-white/20 text-white'
                             )}
@@ -380,13 +380,13 @@ export function LearningPathVisualization({
                             touchTarget
                           >
                             {status === 'completed' ? 'Review Module' :
-                             status === 'in_progress' ? 'Continue Learning' :
+                             status === 'inprogress' ? 'Continue Learning' :
                              'Start Module'}
                           </EnhancedButton>
 
                           {progress && progress.completedAt && (
                             <div className="text-xs text-green-400 text-center">
-                              Completed {progress.completedAt.toLocaleDateString()}
+                              Completed {progress.completedAt.toLocaleDateString(_)}
                             </div>
                           )}
                         </div>
@@ -408,7 +408,7 @@ export function LearningPathVisualization({
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn( 'space-y-6', className)}>
       <PathHeader />
 
       {/* Learning Path Visualization */}
@@ -419,7 +419,7 @@ export function LearningPathVisualization({
         </div>
 
         <div className="space-y-6">
-          {modules.map((module, index) => (
+          {modules.map( (module, index) => (
             <ModuleNode key={module.id} module={module} index={index} />
           ))}
         </div>

@@ -14,21 +14,21 @@ export class PRPCreator {
   private prpPath: string;
   private templatePath: string;
 
-  constructor(projectRoot: string = process.cwd()) {
+  constructor(_projectRoot: string = process.cwd()) {
     this.projectRoot = projectRoot;
-    this.prpPath = path.join(projectRoot, 'PRPs');
-    this.templatePath = path.join(this.prpPath, 'templates');
+    this.prpPath = path.join( projectRoot, 'PRPs');
+    this.templatePath = path.join( this.prpPath, 'templates');
   }
 
   /**
    * Load PRP template
    */
-  async loadTemplate(templateName: string = 'prp_base.md'): Promise<string> {
-    const fullPath = path.join(this.templatePath, templateName);
+  async loadTemplate(_templateName: string = 'prp_base.md'): Promise<string> {
+    const fullPath = path.join( this.templatePath, templateName);
     try {
-      return await fs.readFile(fullPath, 'utf-8');
-    } catch (error) {
-      throw new Error(`Failed to load template ${templateName}: ${error}`);
+      return await fs.readFile( fullPath, 'utf-8');
+    } catch (_error) {
+      throw new Error(_`Failed to load template ${templateName}: ${error}`);
     }
   }
 
@@ -36,7 +36,7 @@ export class PRPCreator {
    * Research codebase for similar patterns
    * This simulates what Claude would do during research phase
    */
-  async researchCodebase(feature: string, filesToAnalyze?: string[]): Promise<{
+  async researchCodebase( feature: string, filesToAnalyze?: string[]): Promise<{
     patterns: string[];
     examples: Array<{ file: string; description: string }>;
   }> {
@@ -46,11 +46,11 @@ export class PRPCreator {
     const examples: Array<{ file: string; description: string }> = [];
 
     // Placeholder for codebase research
-    console.log(`Researching codebase for patterns related to: ${feature}`);
+    console.log(_`Researching codebase for patterns related to: ${feature}`);
     
     if (filesToAnalyze) {
-      for (const file of filesToAnalyze) {
-        console.log(`Analyzing file: ${file}`);
+      for (_const file of filesToAnalyze) {
+        console.log(_`Analyzing file: ${file}`);
         // Claude would actually read and analyze these files
       }
     }
@@ -62,19 +62,19 @@ export class PRPCreator {
    * Research external documentation
    * This simulates what Claude would do for external research
    */
-  async researchExternal(feature: string, urls?: string[]): Promise<{
+  async researchExternal( feature: string, urls?: string[]): Promise<{
     documentation: Array<{ url: string; why: string; section?: string }>;
     bestPractices: string[];
   }> {
     // Placeholder for external research
-    console.log(`Researching external resources for: ${feature}`);
+    console.log(_`Researching external resources for: ${feature}`);
     
     const documentation: Array<{ url: string; why: string; section?: string }> = [];
     const bestPractices: string[] = [];
 
     if (urls) {
-      for (const url of urls) {
-        console.log(`Researching URL: ${url}`);
+      for (_const url of urls) {
+        console.log(_`Researching URL: ${url}`);
         // Claude would fetch and analyze these URLs
       }
     }
@@ -99,14 +99,14 @@ export class PRPCreator {
     content = content.replace(/\{why\}/g, `To enable ${feature} functionality for users`);
     
     // Add context sections
-    if (context.documentation.length > 0) {
+    if (_context.documentation.length > 0) {
       const docSection = context.documentation
         .map(doc => `- ${doc.url ? `url: ${doc.url}` : `file: ${doc.file}`}\n  why: ${doc.why}`)
         .join('\n\n');
       content = content.replace(/\{documentation\}/g, docSection);
     }
 
-    if (context.gotchas.length > 0) {
+    if (_context.gotchas.length > 0) {
       const gotchasSection = context.gotchas
         .map(gotcha => `# CRITICAL: ${gotcha}`)
         .join('\n\n');
@@ -121,13 +121,13 @@ export class PRPCreator {
    * 
    * This is what Claude will use internally to create PRPs
    */
-  async createPRP(options: PRPCreationOptions): Promise<string> {
+  async createPRP(_options: PRPCreationOptions): Promise<string> {
     const { feature, additionalContext, deepResearch = true, filesToAnalyze, urlsToResearch } = options;
     
-    console.log(`Creating PRP for feature: ${feature}`);
+    console.log(_`Creating PRP for feature: ${feature}`);
 
     // 1. Load template
-    const template = await this.loadTemplate();
+    const template = await this.loadTemplate(_);
 
     // 2. Research phase
     const context: PRPContext = {
@@ -139,12 +139,12 @@ export class PRPCreator {
 
     if (deepResearch) {
       // Codebase research
-      const codebaseResearch = await this.researchCodebase(feature, filesToAnalyze);
+      const codebaseResearch = await this.researchCodebase( feature, filesToAnalyze);
       context.patterns = codebaseResearch.patterns;
       context.codeExamples = codebaseResearch.examples;
 
       // External research
-      const externalResearch = await this.researchExternal(feature, urlsToResearch);
+      const externalResearch = await this.researchExternal( feature, urlsToResearch);
       context.documentation = externalResearch.documentation;
       
       // Add best practices as gotchas
@@ -152,7 +152,7 @@ export class PRPCreator {
     }
 
     // 3. Generate PRP content
-    let prpContent = this.generatePRPContent(feature, context, template);
+    let prpContent = this.generatePRPContent( feature, context, template);
 
     // 4. Add additional context if provided
     if (additionalContext) {
@@ -160,13 +160,13 @@ export class PRPCreator {
     }
 
     // 5. Save PRP
-    const filename = this.generateFilename(feature);
-    const fullPath = path.join(this.prpPath, filename);
+    const filename = this.generateFilename(_feature);
+    const fullPath = path.join( this.prpPath, filename);
     
-    await fs.mkdir(this.prpPath, { recursive: true });
-    await fs.writeFile(fullPath, prpContent, 'utf-8');
+    await fs.mkdir( this.prpPath, { recursive: true });
+    await fs.writeFile( fullPath, prpContent, 'utf-8');
     
-    console.log(`PRP created: ${filename}`);
+    console.log(_`PRP created: ${filename}`);
     
     return filename;
   }
@@ -174,7 +174,7 @@ export class PRPCreator {
   /**
    * Generate a filename for the PRP
    */
-  private generateFilename(feature: string): string {
+  private generateFilename(_feature: string): string {
     // Convert feature name to kebab-case
     const kebabCase = feature
       .toLowerCase()
@@ -188,20 +188,20 @@ export class PRPCreator {
    * Create a PRP from existing command content
    * This allows Claude to use the command templates directly
    */
-  async createPRPFromCommand(commandPath: string, args: string): Promise<string> {
+  async createPRPFromCommand( commandPath: string, args: string): Promise<string> {
     // Load the command template
-    const commandContent = await fs.readFile(commandPath, 'utf-8');
+    const commandContent = await fs.readFile( commandPath, 'utf-8');
     
     // Replace $ARGUMENTS placeholder
     const prpContent = commandContent.replace(/\$ARGUMENTS/g, args);
     
     // Extract feature name from arguments
     const feature = args.split(' ').slice(0, 3).join(' ');
-    const filename = this.generateFilename(feature);
-    const fullPath = path.join(this.prpPath, filename);
+    const filename = this.generateFilename(_feature);
+    const fullPath = path.join( this.prpPath, filename);
     
-    await fs.mkdir(this.prpPath, { recursive: true });
-    await fs.writeFile(fullPath, prpContent, 'utf-8');
+    await fs.mkdir( this.prpPath, { recursive: true });
+    await fs.writeFile( fullPath, prpContent, 'utf-8');
     
     return filename;
   }
@@ -209,31 +209,31 @@ export class PRPCreator {
   /**
    * Update an existing PRP with new information
    */
-  async updatePRP(prpFile: string, updates: Partial<PRP['content']>): Promise<void> {
-    const fullPath = path.join(this.prpPath, prpFile);
+  async updatePRP( prpFile: string, updates: Partial<PRP['content']>): Promise<void> {
+    const fullPath = path.join( this.prpPath, prpFile);
     
     try {
-      let content = await fs.readFile(fullPath, 'utf-8');
+      let content = await fs.readFile( fullPath, 'utf-8');
       
       // Update sections as needed
-      if (updates.goal) {
+      if (_updates.goal) {
         content = content.replace(
-          /## Goal\s*([\s\S]*?)(?=##|$)/,
+          /## Goal\s*([\s\S]*?)(_?=##|$)/,
           `## Goal\n\n${updates.goal}\n\n`
         );
       }
       
-      if (updates.why) {
+      if (_updates.why) {
         content = content.replace(
-          /## Why\s*([\s\S]*?)(?=##|$)/,
+          /## Why\s*([\s\S]*?)(_?=##|$)/,
           `## Why\n\n${updates.why}\n\n`
         );
       }
       
-      await fs.writeFile(fullPath, content, 'utf-8');
-      console.log(`Updated PRP: ${prpFile}`);
-    } catch (error) {
-      throw new Error(`Failed to update PRP ${prpFile}: ${error}`);
+      await fs.writeFile( fullPath, content, 'utf-8');
+      console.log(_`Updated PRP: ${prpFile}`);
+    } catch (_error) {
+      throw new Error(_`Failed to update PRP ${prpFile}: ${error}`);
     }
   }
 }
@@ -250,17 +250,17 @@ export class PRPCreator {
  *   urlsToResearch: ['https://web.dev/push-notifications/']
  * });
  */
-export async function createPRP(options: PRPCreationOptions): Promise<string> {
-  const creator = new PRPCreator();
-  return creator.createPRP(options);
+export async function createPRP(_options: PRPCreationOptions): Promise<string> {
+  const creator = new PRPCreator(_);
+  return creator.createPRP(_options);
 }
 
 /**
  * Create a quick PRP without deep research
  * Useful for simpler features
  */
-export async function createQuickPRP(feature: string): Promise<string> {
-  const creator = new PRPCreator();
+export async function createQuickPRP(_feature: string): Promise<string> {
+  const creator = new PRPCreator(_);
   return creator.createPRP({
     feature,
     deepResearch: false

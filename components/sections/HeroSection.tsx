@@ -8,19 +8,19 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Play, Code, Brain, Users, Zap } from 'lucide-react';
 import Link from 'next/link';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(_ScrollTrigger);
 
 export function HeroSection() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(_null);
+  const titleRef = useRef<HTMLHeadingElement>(_null);
+  const subtitleRef = useRef<HTMLParagraphElement>(_null);
+  const ctaRef = useRef<HTMLDivElement>(_null);
+  const featuresRef = useRef<HTMLDivElement>(_null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Hero animation timeline
-      const tl = gsap.timeline();
+      const tl = gsap.timeline(_);
       
       tl.fromTo(titleRef.current, 
         { y: 100, opacity: 0 },
@@ -54,7 +54,7 @@ export function HeroSection() {
 
     }, heroRef);
 
-    return () => ctx.revert();
+    return (_) => ctx.revert(_);
   }, []);
 
   const features = [
@@ -101,7 +101,7 @@ export function HeroSection() {
 
       {/* Animated Background Elements */}
       <div className="absolute inset-0" aria-hidden="true">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(_20)].map( (_, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-blue-500/20 rounded-full"
@@ -193,7 +193,7 @@ export function HeroSection() {
           aria-label="Platform features overview"
           role="region"
         >
-          {features.map((feature, index) => (
+          {features.map( (feature, index) => (
             <motion.article
               key={feature.title}
               className="glass p-6 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-300 relative"
@@ -271,7 +271,7 @@ export function HeroSection() {
                 aria-valuemin={1}
                 aria-valuemax={features.length}
               >
-                {Array.from({ length: 4 }, (_, i) => (
+                {Array.from( { length: 4 }, (_, i) => (
                   <div
                     key={i}
                     className={`w-2 h-1 rounded-full transition-all duration-300 ${

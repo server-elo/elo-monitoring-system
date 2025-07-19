@@ -19,8 +19,8 @@ import { useError } from '@/lib/errors/ErrorContext';
 export interface UseSettingsOptions {
   autoSave?: boolean;
   debounceMs?: number;
-  onSettingsChange?: (settings: UserSettings) => void;
-  onError?: (error: string) => void;
+  onSettingsChange?: (_settings: UserSettings) => void;
+  onError?: (_error: string) => void;
 }
 
 export interface UseSettingsReturn {
@@ -32,36 +32,36 @@ export interface UseSettingsReturn {
   validationErrors: Record<string, SettingsValidationError[]>;
   
   // Actions
-  updateSettings: (section: keyof UserSettings, data: Partial<UserSettings[keyof UserSettings]>, immediate?: boolean) => Promise<SettingsUpdateResponse>;
-  saveAllChanges: () => Promise<boolean>;
-  resetSection: (section: keyof UserSettings) => void;
-  refreshSettings: () => Promise<void>;
+  updateSettings: ( section: keyof UserSettings, data: Partial<UserSettings[keyof UserSettings]>, immediate?: boolean) => Promise<SettingsUpdateResponse>;
+  saveAllChanges: (_) => Promise<boolean>;
+  resetSection: (_section: keyof UserSettings) => void;
+  refreshSettings: (_) => Promise<void>;
   
   // Security
-  changePassword: (currentPassword: string, newPassword: string) => Promise<SettingsUpdateResponse>;
-  setupTwoFactor: () => Promise<TwoFactorSetup | null>;
-  enableTwoFactor: (verificationCode: string) => Promise<boolean>;
-  disableTwoFactor: (verificationCode: string) => Promise<boolean>;
+  changePassword: ( currentPassword: string, newPassword: string) => Promise<SettingsUpdateResponse>;
+  setupTwoFactor: (_) => Promise<TwoFactorSetup | null>;
+  enableTwoFactor: (_verificationCode: string) => Promise<boolean>;
+  disableTwoFactor: (_verificationCode: string) => Promise<boolean>;
   
   // Sessions
   activeSessions: ActiveSession[];
-  revokeSession: (sessionId: string) => Promise<boolean>;
-  refreshSessions: () => Promise<void>;
+  revokeSession: (_sessionId: string) => Promise<boolean>;
+  refreshSessions: (_) => Promise<void>;
   
   // Audit
   auditLog: AuditLogEntry[];
-  refreshAuditLog: () => Promise<void>;
+  refreshAuditLog: (_) => Promise<void>;
   
   // Data management
-  requestDataExport: (type: DataExportRequest['type'], format: DataExportRequest['format']) => Promise<DataExportRequest | null>;
-  requestAccountDeletion: (reason?: string) => Promise<AccountDeletionRequest | null>;
+  requestDataExport: ( type: DataExportRequest['type'], format: DataExportRequest['format']) => Promise<DataExportRequest | null>;
+  requestAccountDeletion: (_reason?: string) => Promise<AccountDeletionRequest | null>;
   
   // Utilities
-  validateField: (section: keyof UserSettings, field: string, value: any) => SettingsValidationError[];
-  clearValidationErrors: (section?: keyof UserSettings) => void;
+  validateField: ( section: keyof UserSettings, field: string, value: any) => SettingsValidationError[];
+  clearValidationErrors: (_section?: keyof UserSettings) => void;
 }
 
-export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn {
+export function useSettings(_options: UseSettingsOptions = {}): UseSettingsReturn {
   const {
     autoSave = true,
     debounceMs = 500,
@@ -69,25 +69,25 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
     onError
   } = options;
 
-  const { data: session } = useSession();
-  const { showSuccess, showError, showWarning, showInfo } = useNotifications();
-  const { reportError } = useError();
+  const { data: session } = useSession(_);
+  const { showSuccess, showError, showWarning, showInfo } = useNotifications(_);
+  const { reportError } = useError(_);
   
-  const settingsService = useRef(SettingsService.getInstance());
-  const pendingChanges = useRef<Map<string, any>>(new Map());
+  const settingsService = useRef(_SettingsService.getInstance());
+  const pendingChanges = useRef<Map<string, any>>(_new Map());
   
-  const [settings, setSettings] = useState<UserSettings | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<Record<string, SettingsValidationError[]>>({});
+  const [settings, setSettings] = useState<UserSettings | null>(_null);
+  const [isLoading, setIsLoading] = useState(_true);
+  const [isSaving, setIsSaving] = useState(_false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(_false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, SettingsValidationError[]>>({  });
   const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([]);
   const [auditLog, setAuditLog] = useState<AuditLogEntry[]>([]);
 
   // Load initial settings
   useEffect(() => {
-    if (session?.user?.id) {
-      loadSettings();
+    if (_session?.user?.id) {
+      loadSettings(_);
     }
   }, [session?.user?.id]);
 
@@ -95,28 +95,28 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
   useEffect(() => {
     if (autoSave && hasUnsavedChanges && settings) {
       const timer = setTimeout(() => {
-        saveAllChanges();
+        saveAllChanges(_);
       }, debounceMs);
 
-      return () => clearTimeout(timer);
+      return (_) => clearTimeout(_timer);
     }
   }, [hasUnsavedChanges, autoSave, debounceMs, settings]);
 
-  const loadSettings = useCallback(async () => {
+  const loadSettings = useCallback( async () => {
     if (!session?.user?.id) return;
 
     try {
-      setIsLoading(true);
-      const userSettings = await settingsService.current.getUserSettings(session.user.id);
-      setSettings(userSettings);
-      onSettingsChange?.(userSettings);
-    } catch (error) {
+      setIsLoading(_true);
+      const userSettings = await settingsService.current.getUserSettings(_session.user.id);
+      setSettings(_userSettings);
+      onSettingsChange?.(_userSettings);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load settings';
-      reportError(error as Error, { context: 'loadSettings' });
-      showError('Settings Error', errorMessage);
-      onError?.(errorMessage);
+      reportError( error as Error, { context: 'loadSettings' });
+      showError( 'Settings Error', errorMessage);
+      onError?.(_errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, [session?.user?.id, onSettingsChange, onError, reportError, showError]);
 
@@ -129,19 +129,19 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
       const error: SettingsUpdateResponse = {
         success: false,
         errors: [{ field: section, message: 'User not authenticated', code: 'NOT_AUTHENTICATED' }],
-        timestamp: new Date()
+        timestamp: new Date(_)
       };
       return error;
     }
 
     // Validate data
-    const errors = settingsService.current.validateSettings(section, data);
-    if (errors.length > 0) {
-      setValidationErrors(prev => ({ ...prev, [section]: errors }));
+    const errors = settingsService.current.validateSettings( section, data);
+    if (_errors.length > 0) {
+      setValidationErrors( prev => ({ ...prev, [section]: errors }));
       return {
         success: false,
         errors,
-        timestamp: new Date()
+        timestamp: new Date(_)
       };
     }
 
@@ -159,31 +159,31 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
     } : null);
 
     // Track pending changes
-    const changeKey = `${section}:${Date.now()}`;
-    pendingChanges.current.set(changeKey, { section, data });
-    setHasUnsavedChanges(true);
+    const changeKey = `${section}:${Date.now(_)}`;
+    pendingChanges.current.set( changeKey, { section, data });
+    setHasUnsavedChanges(_true);
 
     try {
-      setIsSaving(true);
+      setIsSaving(_true);
       
       const response = immediate 
-        ? await settingsService.current.updateSettingsImmediate(session.user.id, section, data)
-        : await settingsService.current.updateSettings(session.user.id, section, data, debounceMs);
+        ? await settingsService.current.updateSettingsImmediate( session.user.id, section, data)
+        : await settingsService.current.updateSettings( session.user.id, section, data, debounceMs);
 
-      if (response.success) {
-        pendingChanges.current.delete(changeKey);
+      if (_response.success) {
+        pendingChanges.current.delete(_changeKey);
         
-        if (pendingChanges.current.size === 0) {
-          setHasUnsavedChanges(false);
+        if (_pendingChanges.current.size === 0) {
+          setHasUnsavedChanges(_false);
         }
 
         // Show success notification for immediate updates
         if (immediate) {
-          showSuccess('Settings Updated', response.message || 'Settings saved successfully');
+          showSuccess( 'Settings Updated', response.message || 'Settings saved successfully');
         }
 
         // Refresh settings to ensure consistency
-        if (response.data) {
+        if (_response.data) {
           setSettings(prev => prev ? {
             ...prev,
             [section]: { ...prev[section], ...response.data }
@@ -191,76 +191,76 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
         }
       } else {
         // Revert optimistic update on failure
-        await loadSettings();
+        await loadSettings(_);
         
-        if (response.errors) {
-          setValidationErrors(prev => ({ ...prev, [section]: response.errors! }));
+        if (_response.errors) {
+          setValidationErrors( prev => ({ ...prev, [section]: response.errors! }));
         }
         
-        showError('Settings Error', response.errors?.[0]?.message || 'Failed to update settings');
+        showError( 'Settings Error', response.errors?.[0]?.message || 'Failed to update settings');
       }
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       // Revert optimistic update on error
-      await loadSettings();
-      pendingChanges.current.delete(changeKey);
+      await loadSettings(_);
+      pendingChanges.current.delete(_changeKey);
       
       const errorMessage = error instanceof Error ? error.message : 'Failed to update settings';
-      reportError(error as Error, { context: 'updateSettings', section });
-      showError('Settings Error', errorMessage);
+      reportError( error as Error, { context: 'updateSettings', section });
+      showError( 'Settings Error', errorMessage);
       
       return {
         success: false,
         errors: [{ field: section, message: errorMessage, code: 'NETWORK_ERROR' }],
-        timestamp: new Date()
+        timestamp: new Date(_)
       };
     } finally {
-      setIsSaving(false);
+      setIsSaving(_false);
     }
   }, [session?.user?.id, settings, debounceMs, loadSettings, reportError, showSuccess, showError]);
 
-  const saveAllChanges = useCallback(async (): Promise<boolean> => {
+  const saveAllChanges = useCallback( async (): Promise<boolean> => {
     if (!hasUnsavedChanges || pendingChanges.current.size === 0) {
       return true;
     }
 
     try {
-      setIsSaving(true);
+      setIsSaving(_true);
       let allSuccessful = true;
 
       // Process all pending changes
-      for (const [changeKey, change] of pendingChanges.current) {
+      for ( const [changeKey, change] of pendingChanges.current) {
         const response = await settingsService.current.updateSettingsImmediate(
           session!.user!.id!,
           change.section,
           change.data
         );
 
-        if (response.success) {
-          pendingChanges.current.delete(changeKey);
+        if (_response.success) {
+          pendingChanges.current.delete(_changeKey);
         } else {
           allSuccessful = false;
-          if (response.errors) {
-            setValidationErrors(prev => ({ ...prev, [change.section]: response.errors! }));
+          if (_response.errors) {
+            setValidationErrors( prev => ({ ...prev, [change.section]: response.errors! }));
           }
         }
       }
 
       if (allSuccessful) {
-        setHasUnsavedChanges(false);
-        showSuccess('Settings Saved', 'All changes have been saved successfully');
+        setHasUnsavedChanges(_false);
+        showSuccess( 'Settings Saved', 'All changes have been saved successfully');
       } else {
-        showWarning('Partial Save', 'Some settings could not be saved. Please check for errors.');
+        showWarning( 'Partial Save', 'Some settings could not be saved. Please check for errors.');
       }
 
       return allSuccessful;
-    } catch (error) {
-      reportError(error as Error, { context: 'saveAllChanges' });
-      showError('Save Error', 'Failed to save settings changes');
+    } catch (_error) {
+      reportError( error as Error, { context: 'saveAllChanges' });
+      showError( 'Save Error', 'Failed to save settings changes');
       return false;
     } finally {
-      setIsSaving(false);
+      setIsSaving(_false);
     }
   }, [hasUnsavedChanges, session?.user?.id, reportError, showSuccess, showWarning, showError]);
 
@@ -268,9 +268,9 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
     if (!settings) return;
 
     // Remove from pending changes
-    for (const [changeKey, change] of pendingChanges.current) {
-      if (change.section === section) {
-        pendingChanges.current.delete(changeKey);
+    for ( const [changeKey, change] of pendingChanges.current) {
+      if (_change.section === section) {
+        pendingChanges.current.delete(_changeKey);
       }
     }
 
@@ -282,147 +282,147 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
     });
 
     // Reload settings to reset the section
-    loadSettings();
+    loadSettings(_);
     
-    showInfo('Settings Reset', `${section} settings have been reset`);
+    showInfo( 'Settings Reset', `${section} settings have been reset`);
   }, [settings, loadSettings, showInfo]);
 
-  const refreshSettings = useCallback(async () => {
-    settingsService.current.clearCache(session?.user?.id);
-    await loadSettings();
+  const refreshSettings = useCallback( async () => {
+    settingsService.current.clearCache(_session?.user?.id);
+    await loadSettings(_);
   }, [session?.user?.id, loadSettings]);
 
   // Security methods
-  const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<SettingsUpdateResponse> => {
+  const changePassword = useCallback( async (currentPassword: string, newPassword: string): Promise<SettingsUpdateResponse> => {
     if (!session?.user?.id) {
       return {
         success: false,
         errors: [{ field: 'password', message: 'User not authenticated', code: 'NOT_AUTHENTICATED' }],
-        timestamp: new Date()
+        timestamp: new Date(_)
       };
     }
 
     try {
-      const response = await settingsService.current.changePassword(session.user.id, currentPassword, newPassword);
+      const response = await settingsService.current.changePassword( session.user.id, currentPassword, newPassword);
       
-      if (response.success) {
-        showSuccess('Password Changed', 'Your password has been updated successfully');
+      if (_response.success) {
+        showSuccess( 'Password Changed', 'Your password has been updated successfully');
       } else {
-        showError('Password Change Failed', response.errors?.[0]?.message || 'Failed to change password');
+        showError( 'Password Change Failed', response.errors?.[0]?.message || 'Failed to change password');
       }
       
       return response;
-    } catch (error) {
-      reportError(error as Error, { context: 'changePassword' });
+    } catch (_error) {
+      reportError( error as Error, { context: 'changePassword' });
       const errorMessage = error instanceof Error ? error.message : 'Failed to change password';
-      showError('Password Error', errorMessage);
+      showError( 'Password Error', errorMessage);
       
       return {
         success: false,
         errors: [{ field: 'password', message: errorMessage, code: 'NETWORK_ERROR' }],
-        timestamp: new Date()
+        timestamp: new Date(_)
       };
     }
   }, [session?.user?.id, reportError, showSuccess, showError]);
 
-  const setupTwoFactor = useCallback(async (): Promise<TwoFactorSetup | null> => {
+  const setupTwoFactor = useCallback( async (): Promise<TwoFactorSetup | null> => {
     if (!session?.user?.id) return null;
 
     try {
-      const setup = await settingsService.current.setupTwoFactor(session.user.id);
-      showInfo('2FA Setup', 'Scan the QR code with your authenticator app');
+      const setup = await settingsService.current.setupTwoFactor(_session.user.id);
+      showInfo( '2FA Setup', 'Scan the QR code with your authenticator app');
       return setup;
-    } catch (error) {
-      reportError(error as Error, { context: 'setupTwoFactor' });
-      showError('2FA Setup Error', 'Failed to setup two-factor authentication');
+    } catch (_error) {
+      reportError( error as Error, { context: 'setupTwoFactor' });
+      showError( '2FA Setup Error', 'Failed to setup two-factor authentication');
       return null;
     }
   }, [session?.user?.id, reportError, showInfo, showError]);
 
-  const enableTwoFactor = useCallback(async (verificationCode: string): Promise<boolean> => {
+  const enableTwoFactor = useCallback( async (verificationCode: string): Promise<boolean> => {
     if (!session?.user?.id) return false;
 
     try {
-      const success = await settingsService.current.enableTwoFactor(session.user.id, verificationCode);
+      const success = await settingsService.current.enableTwoFactor( session.user.id, verificationCode);
       
       if (success) {
-        showSuccess('2FA Enabled', 'Two-factor authentication has been enabled');
-        await refreshSettings();
+        showSuccess( '2FA Enabled', 'Two-factor authentication has been enabled');
+        await refreshSettings(_);
       } else {
-        showError('2FA Error', 'Invalid verification code');
+        showError( '2FA Error', 'Invalid verification code');
       }
       
       return success;
-    } catch (error) {
-      reportError(error as Error, { context: 'enableTwoFactor' });
-      showError('2FA Error', 'Failed to enable two-factor authentication');
+    } catch (_error) {
+      reportError( error as Error, { context: 'enableTwoFactor' });
+      showError( '2FA Error', 'Failed to enable two-factor authentication');
       return false;
     }
   }, [session?.user?.id, reportError, showSuccess, showError, refreshSettings]);
 
-  const disableTwoFactor = useCallback(async (verificationCode: string): Promise<boolean> => {
+  const disableTwoFactor = useCallback( async (verificationCode: string): Promise<boolean> => {
     if (!session?.user?.id) return false;
 
     try {
-      const success = await settingsService.current.disableTwoFactor(session.user.id, verificationCode);
+      const success = await settingsService.current.disableTwoFactor( session.user.id, verificationCode);
       
       if (success) {
-        showSuccess('2FA Disabled', 'Two-factor authentication has been disabled');
-        await refreshSettings();
+        showSuccess( '2FA Disabled', 'Two-factor authentication has been disabled');
+        await refreshSettings(_);
       } else {
-        showError('2FA Error', 'Invalid verification code');
+        showError( '2FA Error', 'Invalid verification code');
       }
       
       return success;
-    } catch (error) {
-      reportError(error as Error, { context: 'disableTwoFactor' });
-      showError('2FA Error', 'Failed to disable two-factor authentication');
+    } catch (_error) {
+      reportError( error as Error, { context: 'disableTwoFactor' });
+      showError( '2FA Error', 'Failed to disable two-factor authentication');
       return false;
     }
   }, [session?.user?.id, reportError, showSuccess, showError, refreshSettings]);
 
   // Session management
-  const refreshSessions = useCallback(async () => {
+  const refreshSessions = useCallback( async () => {
     if (!session?.user?.id) return;
 
     try {
-      const sessions = await settingsService.current.getActiveSessions(session.user.id);
-      setActiveSessions(sessions);
-    } catch (error) {
-      reportError(error as Error, { context: 'refreshSessions' });
+      const sessions = await settingsService.current.getActiveSessions(_session.user.id);
+      setActiveSessions(_sessions);
+    } catch (_error) {
+      reportError( error as Error, { context: 'refreshSessions' });
     }
   }, [session?.user?.id, reportError]);
 
-  const revokeSession = useCallback(async (sessionId: string): Promise<boolean> => {
+  const revokeSession = useCallback( async (sessionId: string): Promise<boolean> => {
     if (!session?.user?.id) return false;
 
     try {
-      const success = await settingsService.current.revokeSession(session.user.id, sessionId);
+      const success = await settingsService.current.revokeSession( session.user.id, sessionId);
       
       if (success) {
-        showSuccess('Session Revoked', 'Session has been terminated');
-        await refreshSessions();
+        showSuccess( 'Session Revoked', 'Session has been terminated');
+        await refreshSessions(_);
       } else {
-        showError('Session Error', 'Failed to revoke session');
+        showError( 'Session Error', 'Failed to revoke session');
       }
       
       return success;
-    } catch (error) {
-      reportError(error as Error, { context: 'revokeSession' });
-      showError('Session Error', 'Failed to revoke session');
+    } catch (_error) {
+      reportError( error as Error, { context: 'revokeSession' });
+      showError( 'Session Error', 'Failed to revoke session');
       return false;
     }
   }, [session?.user?.id, reportError, showSuccess, showError, refreshSessions]);
 
   // Audit log
-  const refreshAuditLog = useCallback(async () => {
+  const refreshAuditLog = useCallback( async () => {
     if (!session?.user?.id) return;
 
     try {
-      const log = await settingsService.current.getAuditLog(session.user.id);
-      setAuditLog(log);
-    } catch (error) {
-      reportError(error as Error, { context: 'refreshAuditLog' });
+      const log = await settingsService.current.getAuditLog(_session.user.id);
+      setAuditLog(_log);
+    } catch (_error) {
+      reportError( error as Error, { context: 'refreshAuditLog' });
     }
   }, [session?.user?.id, reportError]);
 
@@ -434,26 +434,26 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
     if (!session?.user?.id) return null;
 
     try {
-      const request = await settingsService.current.requestDataExport(session.user.id, type, format);
-      showInfo('Export Requested', 'Your data export has been queued. You will receive an email when ready.');
+      const request = await settingsService.current.requestDataExport( session.user.id, type, format);
+      showInfo( 'Export Requested', 'Your data export has been queued. You will receive an email when ready.');
       return request;
-    } catch (error) {
-      reportError(error as Error, { context: 'requestDataExport' });
-      showError('Export Error', 'Failed to request data export');
+    } catch (_error) {
+      reportError( error as Error, { context: 'requestDataExport' });
+      showError( 'Export Error', 'Failed to request data export');
       return null;
     }
   }, [session?.user?.id, reportError, showInfo, showError]);
 
-  const requestAccountDeletion = useCallback(async (reason?: string): Promise<AccountDeletionRequest | null> => {
+  const requestAccountDeletion = useCallback( async (reason?: string): Promise<AccountDeletionRequest | null> => {
     if (!session?.user?.id) return null;
 
     try {
-      const request = await settingsService.current.requestAccountDeletion(session.user.id, reason);
-      showWarning('Deletion Requested', 'Account deletion has been scheduled. Check your email for confirmation.');
+      const request = await settingsService.current.requestAccountDeletion( session.user.id, reason);
+      showWarning( 'Deletion Requested', 'Account deletion has been scheduled. Check your email for confirmation.');
       return request;
-    } catch (error) {
-      reportError(error as Error, { context: 'requestAccountDeletion' });
-      showError('Deletion Error', 'Failed to request account deletion');
+    } catch (_error) {
+      reportError( error as Error, { context: 'requestAccountDeletion' });
+      showError( 'Deletion Error', 'Failed to request account deletion');
       return null;
     }
   }, [session?.user?.id, reportError, showWarning, showError]);
@@ -465,7 +465,7 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
     value: any
   ): SettingsValidationError[] => {
     const data = { [field]: value };
-    return settingsService.current.validateSettings(section, data);
+    return settingsService.current.validateSettings( section, data);
   }, []);
 
   const clearValidationErrors = useCallback((section?: keyof UserSettings) => {
@@ -476,7 +476,7 @@ export function useSettings(options: UseSettingsOptions = {}): UseSettingsReturn
         return newErrors;
       });
     } else {
-      setValidationErrors({});
+      setValidationErrors({  });
     }
   }, []);
 

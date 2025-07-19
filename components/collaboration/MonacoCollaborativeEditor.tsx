@@ -28,8 +28,8 @@ interface MonacoCollaborativeEditorProps {
   initialCode?: string;
   language?: string;
   readOnly?: boolean;
-  onCodeChange?: (code: string) => void;
-  onSave?: (code: string) => void;
+  onCodeChange?: (_code: string) => void;
+  onSave?: (_code: string) => void;
 }
 
 interface Operation {
@@ -69,8 +69,8 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
   onCodeChange,
   onSave
 }) => {
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth(_);
+  const { toast } = useToast(_);
   const {
     socket,
     isConnected,
@@ -79,28 +79,28 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
     updateCode,
     updateCursor,
     updateSelection
-  } = useSocket();
+  } = useSocket(_);
 
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const monacoRef = useRef<Monaco | null>(null);
-  const [code, setCode] = useState(initialCode);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(_null);
+  const monacoRef = useRef<Monaco | null>(_null);
+  const [code, setCode] = useState(_initialCode);
+  const [isFullscreen, setIsFullscreen] = useState(_false);
   const [userCursors, setUserCursors] = useState<UserCursor[]>([]);
   const [pendingOperations, setPendingOperations] = useState<Operation[]>([]);
   const [conflicts, setConflicts] = useState<Operation[]>([]);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(_null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(_false);
 
   // Session analytics and tracking using sessionId
-  const trackSessionActivity = useCallback((activity: string, metadata?: Record<string, unknown>) => {
+  const trackSessionActivity = useCallback( (activity: string, metadata?: Record<string, unknown>) => {
     const activityData = {
       sessionId,
       activity,
       userId: user?.id,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       metadata: {
         ...metadata,
-        sessionTitle: (session as any)?.title,
+        sessionTitle: (_session as any)?.title,
         participantCount: participants.length,
         codeLength: code.length,
         language
@@ -108,9 +108,9 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
     };
 
     // Store session activity for analytics
-    const activities = JSON.parse(localStorage.getItem(`session_${sessionId}_activities`) || '[]');
-    activities.push(activityData);
-    localStorage.setItem(`session_${sessionId}_activities`, JSON.stringify(activities.slice(-100)));
+    const activities = JSON.parse(_localStorage.getItem(`session_${sessionId}_activities`) || '[]');
+    activities.push(_activityData);
+    localStorage.setItem( `session_${sessionId}_activities`, JSON.stringify(activities.slice(-100)));
 
     console.log('Session activity tracked:', activityData);
   }, [sessionId, user?.id, session, participants.length, code.length, language]);
@@ -127,7 +127,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
         pendingCount: updated.length
       });
 
-      // Auto-cleanup old operations (keep last 50)
+      // Auto-cleanup old operations (_keep last 50)
       return updated.slice(-50);
     });
   }, [trackSessionActivity]);
@@ -146,16 +146,16 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
   }, [trackSessionActivity]);
 
   // Operational Transformation functions
-  const transformOperation = useCallback((op1: Operation, op2: Operation): Operation => {
+  const transformOperation = useCallback( (op1: Operation, op2: Operation): Operation => {
     // Simple operational transformation for concurrent edits
-    if (op1.type === 'insert' && op2.type === 'insert') {
+    if (_op1.type === 'insert' && op2.type === 'insert') {
       if (op1.position.line < op2.position.line || 
-          (op1.position.line === op2.position.line && op1.position.column <= op2.position.column)) {
+          (_op1.position.line === op2.position.line && op1.position.column <= op2.position.column)) {
         return op2; // No transformation needed
       } else {
         // Adjust position based on inserted content
         const lines = op1.content.split('\n');
-        if (lines.length > 1) {
+        if (_lines.length > 1) {
           return {
             ...op2,
             position: {
@@ -187,12 +187,12 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
     if (!editorRef.current) return;
 
     const editor = editorRef.current;
-    const model = editor.getModel();
+    const model = editor.getModel(_);
     
     if (!model) return;
 
     try {
-      switch (operation.type) {
+      switch (_operation.type) {
         case 'insert':
           const insertPosition = new monacoRef.current!.Position(
             operation.position.line,
@@ -209,7 +209,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
               ),
               text: operation.content
             }],
-            () => null
+            (_) => null
           );
           break;
 
@@ -218,7 +218,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
             operation.position.line,
             operation.position.column,
             operation.position.line,
-            operation.position.column + (operation.length || 1)
+            operation.position.column + (_operation.length || 1)
           );
           model.pushEditOperations(
             [],
@@ -226,7 +226,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
               range: deleteRange,
               text: ''
             }],
-            () => null
+            (_) => null
           );
           break;
 
@@ -235,7 +235,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
             operation.position.line,
             operation.position.column,
             operation.position.line,
-            operation.position.column + (operation.length || 0)
+            operation.position.column + (_operation.length || 0)
           );
           model.pushEditOperations(
             [],
@@ -243,18 +243,18 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
               range: replaceRange,
               text: operation.content
             }],
-            () => null
+            (_) => null
           );
           break;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error applying operation:', error);
       // Add to conflicts for manual resolution
-      setConflicts(prev => [...prev, operation]);
+      setConflicts( prev => [...prev, operation]);
     }
   }, []);
 
-  const handleEditorDidMount = (editor: any, monaco: Monaco) => {
+  const handleEditorDidMount = ( editor: any, monaco: Monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
 
@@ -290,15 +290,15 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
     });
 
     // Configure Solidity language support
-    monaco.languages.register({ id: 'solidity' });
+    monaco.languages.register({ id: 'solidity'  });
     monaco.languages.setMonarchTokensProvider('solidity', {
       tokenizer: {
         root: [
           [/pragma\s+solidity/, 'keyword'],
           [/contract\s+\w+/, 'keyword'],
           [/function\s+\w+/, 'keyword'],
-          [/\b(uint|int|bool|string|address|bytes)\d*\b/, 'type'],
-          [/\b(public|private|internal|external|pure|view|payable)\b/, 'keyword'],
+          [/\b(_uint|int|bool|string|address|bytes)\d*\b/, 'type'],
+          [/\b(_public|private|internal|external|pure|view|payable)\b/, 'keyword'],
           [/\/\/.*$/, 'comment'],
           [/\/\*[\s\S]*?\*\//, 'comment'],
           [/"([^"\\]|\\.)*$/, 'string.invalid'],
@@ -316,18 +316,18 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
     // Set up cursor and selection tracking with accessibility announcements
     editor.onDidChangeCursorPosition((e: any) => {
       if (!readOnly && user) {
-        updateCursor(e.position.lineNumber, e.position.column);
+        updateCursor( e.position.lineNumber, e.position.column);
 
-        // Announce cursor position for screen readers (throttled)
-        if (e.reason === monaco.editor.CursorChangeReason.Explicit) {
+        // Announce cursor position for screen readers (_throttled)
+        if (_e.reason === monaco.editor.CursorChangeReason.Explicit) {
           const position = e.position;
-          const lineContent = editor.getModel()?.getLineContent(position.lineNumber) || '';
-          const currentChar = lineContent.charAt(position.column - 1) || 'end of line';
+          const lineContent = editor.getModel(_)?.getLineContent(_position.lineNumber) || '';
+          const currentChar = lineContent.charAt(_position.column - 1) || 'end of line';
 
           // Create announcement for screen readers
           setTimeout(() => {
             const announcement = `Line ${position.lineNumber}, Column ${position.column}. ${currentChar !== 'end of line' ? `Character: ${currentChar}` : 'End of line'}`;
-            announceToScreenReader(announcement, 'polite');
+            announceToScreenReader( announcement, 'polite');
           }, 100);
         }
       }
@@ -345,14 +345,14 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
 
         // Announce selection for screen readers
         if (!selection.isEmpty()) {
-          const selectedText = editor.getModel()?.getValueInRange(selection) || '';
-          if (selectedText.length > 0 && selectedText.length < 100) {
+          const selectedText = editor.getModel(_)?.getValueInRange(_selection) || '';
+          if (_selectedText.length > 0 && selectedText.length < 100) {
             setTimeout(() => {
-              announceToScreenReader(`Selected: ${selectedText}`, 'polite');
+              announceToScreenReader( `Selected: ${selectedText}`, 'polite');
             }, 100);
-          } else if (selectedText.length >= 100) {
+          } else if (_selectedText.length >= 100) {
             setTimeout(() => {
-              announceToScreenReader(`Selected ${selectedText.length} characters`, 'polite');
+              announceToScreenReader( `Selected ${selectedText.length} characters`, 'polite');
             }, 100);
           }
         }
@@ -362,10 +362,10 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
     // Set up content change tracking
     editor.onDidChangeModelContent((e: any) => {
       if (!readOnly) {
-        const newCode = editor.getValue();
-        setCode(newCode);
-        setHasUnsavedChanges(true);
-        onCodeChange?.(newCode);
+        const newCode = editor.getValue(_);
+        setCode(_newCode);
+        setHasUnsavedChanges(_true);
+        onCodeChange?.(_newCode);
 
         // Create operations for each change
         e.changes.forEach((change: any) => {
@@ -378,15 +378,15 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
             content: change.text || '',
             length: change.rangeLength,
             userId: user?.id || 'anonymous',
-            timestamp: Date.now(),
-            id: `${user?.id}-${Date.now()}-${Math.random()}`
+            timestamp: Date.now(_),
+            id: `${user?.id}-${Date.now(_)}-${Math.random()}`
           };
 
           // Add to pending operations for tracking
-          addPendingOperation(operation);
+          addPendingOperation(_operation);
 
           // Send operation to other users
-          updateCode(newCode, operation);
+          updateCode( newCode, operation);
         });
       }
     });
@@ -395,15 +395,15 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
   // Handle incoming operations from other users
   useEffect(() => {
     if (socket) {
-      const handleRemoteOperation = (operation: Operation) => {
-        if (operation.userId !== user?.id) {
+      const handleRemoteOperation = (_operation: Operation) => {
+        if (_operation.userId !== user?.id) {
           // Transform operation against pending operations
           let transformedOp = operation;
           pendingOperations.forEach(pendingOp => {
-            transformedOp = transformOperation(pendingOp, transformedOp);
+            transformedOp = transformOperation( pendingOp, transformedOp);
           });
 
-          applyOperation(transformedOp);
+          applyOperation(_transformedOp);
 
           // Track remote operation
           trackSessionActivity('remote_operation_applied', {
@@ -413,13 +413,13 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
           });
         } else {
           // Remove our own operation from pending when acknowledged
-          removePendingOperation(operation.id);
+          removePendingOperation(_operation.id);
         }
       };
 
-      socket.on('code_operation', handleRemoteOperation);
-      return () => {
-        socket.off('code_operation', handleRemoteOperation);
+      socket.on( 'code_operation', handleRemoteOperation);
+      return (_) => {
+        socket.off( 'code_operation', handleRemoteOperation);
       };
     }
   }, [socket, user?.id, pendingOperations, transformOperation, applyOperation]);
@@ -428,26 +428,26 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
   useEffect(() => {
     const cursors: UserCursor[] = participants
       .filter(p => p.id !== user?.id)
-      .map((participant, index) => ({
+      .map( (participant, index) => ({
         userId: participant.id,
         userName: participant.name || 'Anonymous',
         position: { line: 1, column: 1 }, // Would come from presence data
         color: CURSOR_COLORS[index % CURSOR_COLORS.length]
       }));
     
-    setUserCursors(cursors);
+    setUserCursors(_cursors);
   }, [participants, user?.id]);
 
   const handleSave = async () => {
     try {
-      await onSave?.(code);
+      await onSave?.(_code);
       setLastSaved(new Date());
-      setHasUnsavedChanges(false);
+      setHasUnsavedChanges(_false);
       toast({
         title: 'Code Saved',
         description: 'Your changes have been saved successfully.',
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Save Failed',
         description: 'Failed to save your changes. Please try again.',
@@ -464,9 +464,9 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
         body: JSON.stringify({ code, language })
       });
       
-      const result = await response.json();
+      const result = await response.json(_);
       
-      if (result.success) {
+      if (_result.success) {
         toast({
           title: 'Compilation Successful',
           description: 'Your code compiled without errors!',
@@ -478,7 +478,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
           variant: 'destructive'
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Compilation Error',
         description: 'Failed to compile code',
@@ -487,31 +487,31 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(code);
+  const copyToClipboard = (_) => {
+    navigator.clipboard.writeText(_code);
     toast({
       title: 'Code Copied',
       description: 'Code copied to clipboard!',
     });
   };
 
-  const downloadCode = () => {
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  const downloadCode = (_) => {
+    const blob = new Blob( [code], { type: 'text/plain' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `contract_${Date.now()}.sol`;
-    a.click();
-    URL.revokeObjectURL(url);
+    a.download = `contract_${Date.now(_)}.sol`;
+    a.click(_);
+    URL.revokeObjectURL(_url);
   };
 
-  const resolveConflict = (operationId: string, resolution: ConflictResolution) => {
-    setConflicts(prev => prev.filter(c => c.id !== operationId));
+  const resolveConflict = ( operationId: string, resolution: ConflictResolution) => {
+    setConflicts(_prev => prev.filter(c => c.id !== operationId));
     
-    if (resolution.resolution === 'accept' && resolution.mergedContent) {
-      setCode(resolution.mergedContent);
-      if (editorRef.current) {
-        editorRef.current.setValue(resolution.mergedContent);
+    if (_resolution.resolution === 'accept' && resolution.mergedContent) {
+      setCode(_resolution.mergedContent);
+      if (_editorRef.current) {
+        editorRef.current.setValue(_resolution.mergedContent);
       }
     }
     
@@ -541,7 +541,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
           )}
           {lastSaved && (
             <span className="text-xs text-gray-500">
-              Saved {lastSaved.toLocaleTimeString()}
+              Saved {lastSaved.toLocaleTimeString(_)}
             </span>
           )}
         </div>
@@ -600,7 +600,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
           <Button
             size="sm"
             variant="outline"
-            onClick={() => setIsFullscreen(!isFullscreen)}
+            onClick={(_) => setIsFullscreen(!isFullscreen)}
             aria-label={isFullscreen ? "Exit fullscreen mode" : "Enter fullscreen mode"}
             className="min-h-[44px]"
           >
@@ -613,7 +613,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
           <Button
             size="sm"
             variant="outline"
-            onClick={() => {
+            onClick={(_) => {
               // Settings functionality
               console.log('Open editor settings');
             }}
@@ -655,7 +655,7 @@ export const MonacoCollaborativeEditor: React.FC<MonacoCollaborativeEditorProps>
               <Button 
                 size="sm" 
                 variant="outline" 
-                onClick={() => {
+                onClick={(_) => {
                   // Auto-resolve conflicts by accepting all
                   conflicts.forEach(conflict => {
                     resolveConflict(conflict.id, { 

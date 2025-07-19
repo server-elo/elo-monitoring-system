@@ -71,11 +71,11 @@ export default function EnhancedAITutor() {
   const [activeTab, setActiveTab] = useState('chat');
   const [prompt, setPrompt] = useState('');
   const [code, setCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState<AIResponse | null>(null);
-  const [securityAnalysis, setSecurityAnalysis] = useState<SecurityAnalysis | null>(null);
-  const [userContext, setUserContext] = useState<UserContext | null>(null);
-  const [isListening, setIsListening] = useState(false);
+  const [isLoading, setIsLoading] = useState(_false);
+  const [response, setResponse] = useState<AIResponse | null>(_null);
+  const [securityAnalysis, setSecurityAnalysis] = useState<SecurityAnalysis | null>(_null);
+  const [userContext, setUserContext] = useState<UserContext | null>(_null);
+  const [isListening, setIsListening] = useState(_false);
   const [conversationHistory, setConversationHistory] = useState<Array<{
     type: 'user' | 'ai';
     content: string;
@@ -84,23 +84,23 @@ export default function EnhancedAITutor() {
 
   // Load user context on component mount
   useEffect(() => {
-    loadUserContext();
+    loadUserContext(_);
   }, []);
 
   const loadUserContext = async () => {
     try {
       const response = await fetch('/api/ai/enhanced-tutor?action=context');
-      const data = await response.json();
-      if (data.success) {
-        setUserContext(data.data);
+      const data = await response.json(_);
+      if (_data.success) {
+        setUserContext(_data.data);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load user context:', error);
     }
   };
 
   const handleAIRequest = async (action: string, payload: any) => {
-    setIsLoading(true);
+    setIsLoading(_true);
     try {
       const response = await fetch('/api/ai/enhanced-tutor', {
         method: 'POST',
@@ -108,35 +108,35 @@ export default function EnhancedAITutor() {
         body: JSON.stringify({ action, ...payload })
       });
 
-      const data = await response.json();
-      if (data.success) {
-        setResponse(data.data);
+      const data = await response.json(_);
+      if (_data.success) {
+        setResponse(_data.data);
         
         // Add to conversation history
         setConversationHistory(prev => [
           ...prev,
           { type: 'user', content: payload.prompt || payload.concept || 'Request', timestamp: new Date() },
-          { type: 'ai', content: data.data.content || JSON.stringify(data.data), timestamp: new Date() }
+          { type: 'ai', content: data.data.content || JSON.stringify(_data.data), timestamp: new Date() }
         ]);
 
-        toast.success(`Response from ${data.data.model} (${data.data.responseTime}ms)`);
+        toast.success(_`Response from ${data.data.model} (${data.data.responseTime}ms)`);
       } else {
-        toast.error(data.error || 'AI request failed');
+        toast.error(_data.error || 'AI request failed');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to communicate with AI tutor');
       console.error('AI request error:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
-  const handleExplainConcept = () => {
+  const handleExplainConcept = (_) => {
     if (!prompt.trim()) {
       toast.error('Please enter a concept to explain');
       return;
     }
-    handleAIRequest('explain', { concept: prompt });
+    handleAIRequest( 'explain', { concept: prompt });
   };
 
   const handleAnalyzeCode = async () => {
@@ -145,75 +145,75 @@ export default function EnhancedAITutor() {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoading(_true);
     try {
       const response = await fetch('/api/ai/security-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
+        body: JSON.stringify({ code  })
       });
 
-      const data = await response.json();
-      if (data.success) {
-        setSecurityAnalysis(data.data);
-        toast.success(`Security analysis completed (${data.data.analysisTime}ms)`);
+      const data = await response.json(_);
+      if (_data.success) {
+        setSecurityAnalysis(_data.data);
+        toast.success(_`Security analysis completed (${data.data.analysisTime}ms)`);
       } else {
-        toast.error(data.error || 'Security analysis failed');
+        toast.error(_data.error || 'Security analysis failed');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to analyze code security');
       console.error('Security analysis error:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
-  const handleGenerateChallenge = () => {
+  const handleGenerateChallenge = (_) => {
     if (!prompt.trim()) {
       toast.error('Please enter a topic for the challenge');
       return;
     }
-    handleAIRequest('generate-challenge', { topic: prompt });
+    handleAIRequest( 'generate-challenge', { topic: prompt });
   };
 
-  const handleVoiceInput = () => {
+  const handleVoiceInput = (_) => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       toast.error('Speech recognition not supported in this browser');
       return;
     }
 
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+    const SpeechRecognition = (_window as any).SpeechRecognition || (_window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition(_);
 
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.lang = 'en-US';
 
-    recognition.onstart = () => {
-      setIsListening(true);
+    recognition.onstart = (_) => {
+      setIsListening(_true);
       toast.success('Listening... Speak now!');
     };
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (_event: any) => {
       const transcript = event.results[0][0].transcript;
-      setPrompt(transcript);
+      setPrompt(_transcript);
       toast.success('Voice input captured');
     };
 
-    recognition.onerror = (event: any) => {
-      toast.error(`Speech recognition error: ${event.error}`);
-      setIsListening(false);
+    recognition.onerror = (_event: any) => {
+      toast.error(_`Speech recognition error: ${event.error}`);
+      setIsListening(_false);
     };
 
-    recognition.onend = () => {
-      setIsListening(false);
+    recognition.onend = (_) => {
+      setIsListening(_false);
     };
 
-    recognition.start();
+    recognition.start(_);
   };
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
+  const getSeverityColor = (_severity: string) => {
+    switch (_severity) {
       case 'critical': return 'bg-red-500';
       case 'high': return 'bg-orange-500';
       case 'medium': return 'bg-yellow-500';
@@ -222,8 +222,8 @@ export default function EnhancedAITutor() {
     }
   };
 
-  const getSeverityIcon = (severity: string) => {
-    switch (severity) {
+  const getSeverityIcon = (_severity: string) => {
+    switch (_severity) {
       case 'critical':
       case 'high':
         return <AlertTriangle className="h-4 w-4" />;
@@ -270,7 +270,7 @@ export default function EnhancedAITutor() {
               <div>
                 <p className="text-sm text-gray-600 mb-2">Strong Areas</p>
                 <div className="flex flex-wrap gap-1">
-                  {userContext.strongAreas.map((area, index) => (
+                  {userContext.strongAreas.map( (area, index) => (
                     <Badge key={index} variant="default" className="text-xs">
                       {area}
                     </Badge>
@@ -280,7 +280,7 @@ export default function EnhancedAITutor() {
               <div>
                 <p className="text-sm text-gray-600 mb-2">Areas to Improve</p>
                 <div className="flex flex-wrap gap-1">
-                  {userContext.weakAreas.map((area, index) => (
+                  {userContext.weakAreas.map( (area, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {area}
                     </Badge>
@@ -315,13 +315,13 @@ export default function EnhancedAITutor() {
                   <Textarea
                     placeholder="Ask me anything about Solidity, smart contracts, or blockchain development..."
                     value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
+                    onChange={(_e) => setPrompt(_e.target.value)}
                     className="flex-1"
                     rows={3}
                   />
                   <div className="flex flex-col gap-2">
                     <Button
-                      onClick={isListening ? () => setIsListening(false) : handleVoiceInput}
+                      onClick={isListening ? (_) => setIsListening(_false) : handleVoiceInput}
                       variant="outline"
                       size="sm"
                       className="p-2"
@@ -372,7 +372,7 @@ export default function EnhancedAITutor() {
                       <div className="mt-4">
                         <h4 className="font-semibold mb-2">Suggestions:</h4>
                         <ul className="list-disc list-inside space-y-1">
-                          {response.suggestions.map((suggestion, index) => (
+                          {response.suggestions.map( (suggestion, index) => (
                             <li key={index} className="text-sm">{suggestion}</li>
                           ))}
                         </ul>
@@ -383,7 +383,7 @@ export default function EnhancedAITutor() {
                       <div className="mt-4">
                         <h4 className="font-semibold mb-2">Related Concepts:</h4>
                         <div className="flex flex-wrap gap-1">
-                          {response.relatedConcepts.map((concept, index) => (
+                          {response.relatedConcepts.map( (concept, index) => (
                             <Badge key={index} variant="outline" className="text-xs">
                               {concept}
                             </Badge>
@@ -401,7 +401,7 @@ export default function EnhancedAITutor() {
                 <Textarea
                   placeholder="Paste your Solidity code here for security analysis..."
                   value={code}
-                  onChange={(e) => setCode(e.target.value)}
+                  onChange={(_e) => setCode(_e.target.value)}
                   rows={10}
                   className="font-mono"
                 />
@@ -439,10 +439,10 @@ export default function EnhancedAITutor() {
                         <div className="mb-4">
                           <h4 className="font-semibold mb-2">Vulnerabilities:</h4>
                           <div className="space-y-2">
-                            {securityAnalysis.vulnerabilities.map((vuln, index) => (
+                            {securityAnalysis.vulnerabilities.map( (vuln, index) => (
                               <div key={index} className="flex items-start gap-2 p-2 border rounded">
-                                <div className={`p-1 rounded ${getSeverityColor(vuln.severity)}`}>
-                                  {getSeverityIcon(vuln.severity)}
+                                <div className={`p-1 rounded ${getSeverityColor(_vuln.severity)}`}>
+                                  {getSeverityIcon(_vuln.severity)}
                                 </div>
                                 <div className="flex-1">
                                   <p className="font-medium">{vuln.type}</p>
@@ -459,7 +459,7 @@ export default function EnhancedAITutor() {
                         <div className="mb-4">
                           <h4 className="font-semibold mb-2">Gas Optimizations:</h4>
                           <div className="space-y-2">
-                            {securityAnalysis.gasOptimizations.map((opt, index) => (
+                            {securityAnalysis.gasOptimizations.map( (opt, index) => (
                               <div key={index} className="p-2 border rounded">
                                 <p className="font-medium">{opt.description}</p>
                                 <p className="text-sm text-green-600">Potential savings: {opt.gasSavings} gas</p>
@@ -495,7 +495,7 @@ export default function EnhancedAITutor() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {conversationHistory.map((message, index) => (
+                    {conversationHistory.map( (message, index) => (
                       <div
                         key={index}
                         className={`p-3 rounded-lg ${
@@ -509,7 +509,7 @@ export default function EnhancedAITutor() {
                             {message.type === 'user' ? 'You' : 'AI Tutor'}
                           </span>
                           <span className="text-xs text-gray-500">
-                            {message.timestamp.toLocaleTimeString()}
+                            {message.timestamp.toLocaleTimeString(_)}
                           </span>
                         </div>
                         <p className="text-sm whitespace-pre-wrap">{message.content}</p>

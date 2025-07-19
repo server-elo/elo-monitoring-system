@@ -29,27 +29,27 @@ import { Card } from './card';
 
 export function ButtonTesting() {
   const [testResults, setTestResults] = useState<string[]>([]);
-  const [_isTestingAll, setIsTestingAll] = useState(false);
+  const [_isTestingAll, setIsTestingAll] = useState(_false);
 
-  const addTestResult = (result: string) => {
-    setTestResults(prev => [...prev, `${new Date().toLocaleTimeString()}: ${result}`]);
+  const addTestResult = (_result: string) => {
+    setTestResults( prev => [...prev, `${new Date().toLocaleTimeString(_)}: ${result}`]);
   };
 
-  const simulateAsyncAction = (duration: number = 2000): Promise<void> => {
+  const simulateAsyncAction = (_duration: number = 2000): Promise<void> => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         // 80% success rate for testing
-        if (Math.random() > 0.2) {
-          resolve();
+        if (_Math.random() > 0.2) {
+          resolve(_);
         } else {
-          reject(new Error('Simulated error for testing'));
+          reject(_new Error('Simulated error for testing'));
         }
       }, duration);
     });
   };
 
   const testAllButtons = async () => {
-    setIsTestingAll(true);
+    setIsTestingAll(_true);
     setTestResults([]);
     
     try {
@@ -62,7 +62,7 @@ export function ButtonTesting() {
       
       // Test save functionality
       addTestResult('Testing async save...');
-      await simulateAsyncAction(800);
+      await simulateAsyncAction(_800);
       addTestResult('✅ Async save test passed');
       
       // Test error handling
@@ -70,15 +70,15 @@ export function ButtonTesting() {
       try {
         await simulateAsyncAction(500);
         addTestResult('✅ Error handling test passed');
-      } catch (error) {
+      } catch (_error) {
         addTestResult('✅ Error handling working correctly');
       }
       
       addTestResult('🎉 All tests completed successfully!');
-    } catch (error) {
-      addTestResult(`❌ Test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (_error) {
+      addTestResult(_`❌ Test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
-      setIsTestingAll(false);
+      setIsTestingAll(_false);
     }
   };
 
@@ -119,7 +119,7 @@ export function ButtonTesting() {
               <p className="text-gray-500 text-sm">No tests run yet...</p>
             ) : (
               <div className="space-y-1">
-                {testResults.map((result, index) => (
+                {testResults.map( (result, index) => (
                   <p key={index} className="text-sm text-gray-300 font-mono">
                     {result}
                   </p>
@@ -134,7 +134,7 @@ export function ButtonTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Enhanced Button Variants</h2>
           <GlassButtonGroup className="flex-wrap">
             <PrimaryButton
-              onClick={() => addTestResult('Primary button clicked')}
+              onClick={(_) => addTestResult('Primary button clicked')}
               tooltip="Primary action button"
             >
               <Star className="w-4 h-4 mr-2" />
@@ -142,7 +142,7 @@ export function ButtonTesting() {
             </PrimaryButton>
             
             <SecondaryButton
-              onClick={() => addTestResult('Secondary button clicked')}
+              onClick={(_) => addTestResult('Secondary button clicked')}
               tooltip="Secondary action button"
             >
               <Settings className="w-4 h-4 mr-2" />
@@ -150,7 +150,7 @@ export function ButtonTesting() {
             </SecondaryButton>
             
             <SuccessButton
-              onClick={() => addTestResult('Success button clicked')}
+              onClick={(_) => addTestResult('Success button clicked')}
               tooltip="Success action button"
             >
               <Check className="w-4 h-4 mr-2" />
@@ -158,7 +158,7 @@ export function ButtonTesting() {
             </SuccessButton>
             
             <DangerButton
-              onClick={() => addTestResult('Danger button clicked')}
+              onClick={(_) => addTestResult('Danger button clicked')}
               tooltip="Dangerous action button"
             >
               <Trash2 className="w-4 h-4 mr-2" />
@@ -172,31 +172,31 @@ export function ButtonTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Async Action Buttons</h2>
           <GlassButtonGroup className="flex-wrap">
             <AsyncSubmitButton
-              onSubmit={() => simulateAsyncAction(2000)}
+              onSubmit={(_) => simulateAsyncAction(2000)}
               submitText="Submit Form"
               tooltip="Submit form with validation"
               asyncOptions={{
-                onSuccess: () => addTestResult('Form submitted successfully'),
-                onError: (error: Error) => addTestResult(`Form submission failed: ${error.message}`)
+                onSuccess: (_) => addTestResult('Form submitted successfully'),
+                onError: (_error: Error) => addTestResult(_`Form submission failed: ${error.message}`)
               }}
             />
             
             <AsyncSaveButton
-              onSave={() => simulateAsyncAction(1500)}
+              onSave={(_) => simulateAsyncAction(1500)}
               tooltip="Save current changes"
               asyncOptions={{
-                onSuccess: () => addTestResult('Changes saved successfully'),
-                onError: (error: Error) => addTestResult(`Save failed: ${error.message}`)
+                onSuccess: (_) => addTestResult('Changes saved successfully'),
+                onError: (_error: Error) => addTestResult(_`Save failed: ${error.message}`)
               }}
             />
             
             <AsyncDeleteButton
-              onDelete={() => simulateAsyncAction(1000)}
+              onDelete={(_) => simulateAsyncAction(1000)}
               confirmText="Delete Item"
               tooltip="Delete selected item"
               asyncOptions={{
-                onSuccess: () => addTestResult('Item deleted successfully'),
-                onError: (error: Error) => addTestResult(`Delete failed: ${error.message}`)
+                onSuccess: (_) => addTestResult('Item deleted successfully'),
+                onError: (_error: Error) => addTestResult(_`Delete failed: ${error.message}`)
               }}
             />
           </GlassButtonGroup>
@@ -208,7 +208,7 @@ export function ButtonTesting() {
           <div className="space-y-4">
             <GlassButtonGroup>
               <GlassPrimaryButton
-                onClick={() => addTestResult('Glass primary clicked')}
+                onClick={(_) => addTestResult('Glass primary clicked')}
                 tooltip="Glassmorphism primary button"
               >
                 <Send className="w-4 h-4 mr-2" />
@@ -216,7 +216,7 @@ export function ButtonTesting() {
               </GlassPrimaryButton>
               
               <GlassSecondaryButton
-                onClick={() => addTestResult('Glass secondary clicked')}
+                onClick={(_) => addTestResult('Glass secondary clicked')}
                 tooltip="Glassmorphism secondary button"
               >
                 <Edit className="w-4 h-4 mr-2" />
@@ -224,7 +224,7 @@ export function ButtonTesting() {
               </GlassSecondaryButton>
               
               <GlassSuccessButton
-                onClick={() => addTestResult('Glass success clicked')}
+                onClick={(_) => addTestResult('Glass success clicked')}
                 tooltip="Glassmorphism success button"
               >
                 <Download className="w-4 h-4 mr-2" />
@@ -232,7 +232,7 @@ export function ButtonTesting() {
               </GlassSuccessButton>
               
               <GlassDangerButton
-                onClick={() => addTestResult('Glass danger clicked')}
+                onClick={(_) => addTestResult('Glass danger clicked')}
                 tooltip="Glassmorphism danger button"
               >
                 <X className="w-4 h-4 mr-2" />
@@ -247,7 +247,7 @@ export function ButtonTesting() {
                 <GlassmorphismButton
                   variant="neutral"
                   intensity="light"
-                  onClick={() => addTestResult('Light blur clicked')}
+                  onClick={(_) => addTestResult('Light blur clicked')}
                 >
                   Light Blur
                 </GlassmorphismButton>
@@ -255,7 +255,7 @@ export function ButtonTesting() {
                 <GlassmorphismButton
                   variant="neutral"
                   intensity="medium"
-                  onClick={() => addTestResult('Medium blur clicked')}
+                  onClick={(_) => addTestResult('Medium blur clicked')}
                 >
                   Medium Blur
                 </GlassmorphismButton>
@@ -263,7 +263,7 @@ export function ButtonTesting() {
                 <GlassmorphismButton
                   variant="neutral"
                   intensity="heavy"
-                  onClick={() => addTestResult('Heavy blur clicked')}
+                  onClick={(_) => addTestResult('Heavy blur clicked')}
                 >
                   Heavy Blur
                 </GlassmorphismButton>
@@ -278,7 +278,7 @@ export function ButtonTesting() {
           <GlassButtonGroup>
             <NeumorphismButton
               variant="raised"
-              onClick={() => addTestResult('Neumorphic raised clicked')}
+              onClick={(_) => addTestResult('Neumorphic raised clicked')}
             >
               <Plus className="w-4 h-4 mr-2" />
               Raised
@@ -286,7 +286,7 @@ export function ButtonTesting() {
             
             <NeumorphismButton
               variant="pressed"
-              onClick={() => addTestResult('Neumorphic pressed clicked')}
+              onClick={(_) => addTestResult('Neumorphic pressed clicked')}
             >
               <Minus className="w-4 h-4 mr-2" />
               Pressed
@@ -294,7 +294,7 @@ export function ButtonTesting() {
             
             <NeumorphismButton
               variant="flat"
-              onClick={() => addTestResult('Neumorphic flat clicked')}
+              onClick={(_) => addTestResult('Neumorphic flat clicked')}
             >
               <Copy className="w-4 h-4 mr-2" />
               Flat
@@ -307,7 +307,7 @@ export function ButtonTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Accessibility Features</h2>
           <div className="space-y-4">
             <p className="text-gray-300 text-sm">
-              All buttons include: ARIA labels, keyboard navigation, touch-friendly sizing (44px minimum), 
+              All buttons include: ARIA labels, keyboard navigation, touch-friendly sizing (_44px minimum), 
               screen reader support, and focus management.
             </p>
             
@@ -318,7 +318,7 @@ export function ButtonTesting() {
                 ariaLabel="Accessible button with ARIA label"
                 description="This button demonstrates accessibility features"
                 tooltip="Fully accessible button with ARIA support"
-                onClick={() => addTestResult('Accessible button clicked')}
+                onClick={(_) => addTestResult('Accessible button clicked')}
               >
                 <Heart className="w-4 h-4 mr-2" />
                 Accessible
@@ -330,7 +330,7 @@ export function ButtonTesting() {
                 hapticFeedback
                 soundEffect
                 tooltip="Button with haptic and sound feedback"
-                onClick={() => addTestResult('Feedback button clicked')}
+                onClick={(_) => addTestResult('Feedback button clicked')}
               >
                 <Share className="w-4 h-4 mr-2" />
                 Feedback

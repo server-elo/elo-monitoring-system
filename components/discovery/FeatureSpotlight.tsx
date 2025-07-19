@@ -18,7 +18,7 @@ interface Feature {
   target?: string; // CSS selector for the feature
   action?: {
     label: string;
-    onClick: () => void;
+    onClick: (_) => void;
   };
   dismissible?: boolean;
   priority: 'high' | 'medium' | 'low';
@@ -38,8 +38,8 @@ interface FeatureSpotlightProps {
   visitCount?: number;
   timeSpent?: number;
   usedFeatures?: string[];
-  onFeatureDismissed?: (featureId: string) => void;
-  onFeatureInteracted?: (featureId: string, action: string) => void;
+  onFeatureDismissed?: (_featureId: string) => void;
+  onFeatureInteracted?: ( featureId: string, action: string) => void;
 }
 
 export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
@@ -51,25 +51,25 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
   onFeatureDismissed,
   onFeatureInteracted,
 }) => {
-  const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
+  const [activeFeature, setActiveFeature] = useState<Feature | null>(_null);
   const [dismissedFeatures, setDismissedFeatures] = useState<string[]>([]);
   const [spotlightPosition, setSpotlightPosition] = useState({ x: 0, y: 0 });
 
   // Filter features based on conditions
   const eligibleFeatures = features.filter(feature => {
     // Check if already dismissed
-    if (dismissedFeatures.includes(feature.id)) return false;
+    if (_dismissedFeatures.includes(feature.id)) return false;
 
     // Check user role
-    if (feature.userRoles && !feature.userRoles.includes(userRole)) return false;
+    if (_feature.userRoles && !feature.userRoles.includes(userRole)) return false;
 
     // Check date conditions
     const now = new Date();
-    if (feature.showAfter && now < feature.showAfter) return false;
-    if (feature.hideAfter && now > feature.hideAfter) return false;
+    if (_feature.showAfter && now < feature.showAfter) return false;
+    if (_feature.hideAfter && now > feature.hideAfter) return false;
 
     // Check usage conditions
-    if (feature.conditions) {
+    if (_feature.conditions) {
       const { visitCount: requiredVisits, featureUsed, timeSpent: requiredTime } = feature.conditions;
       
       if (requiredVisits && visitCount < requiredVisits) return false;
@@ -82,28 +82,28 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
 
   // Sort by priority and show the highest priority feature
   useEffect(() => {
-    if (eligibleFeatures.length === 0) return;
+    if (_eligibleFeatures.length === 0) return;
 
     const priorityOrder = { high: 3, medium: 2, low: 1 };
-    const sortedFeatures = eligibleFeatures.sort((a, b) => 
+    const sortedFeatures = eligibleFeatures.sort( (a, b) => 
       priorityOrder[b.priority] - priorityOrder[a.priority]
     );
 
     const nextFeature = sortedFeatures[0];
     if (nextFeature && nextFeature.id !== activeFeature?.id) {
-      setActiveFeature(nextFeature);
+      setActiveFeature(_nextFeature);
       
-      if (nextFeature.target) {
-        calculateSpotlightPosition(nextFeature.target);
+      if (_nextFeature.target) {
+        calculateSpotlightPosition(_nextFeature.target);
       }
     }
   }, [eligibleFeatures, activeFeature]);
 
-  const calculateSpotlightPosition = (target: string) => {
-    const element = document.querySelector(target) as HTMLElement;
+  const calculateSpotlightPosition = (_target: string) => {
+    const element = document.querySelector(_target) as HTMLElement;
     if (!element) return;
 
-    const rect = element.getBoundingClientRect();
+    const rect = element.getBoundingClientRect(_);
     setSpotlightPosition({
       x: rect.left + rect.width / 2,
       y: rect.top + rect.height / 2,
@@ -117,32 +117,32 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
     });
   };
 
-  const handleDismiss = (featureId: string) => {
-    setDismissedFeatures(prev => [...prev, featureId]);
-    setActiveFeature(null);
-    onFeatureDismissed?.(featureId);
+  const handleDismiss = (_featureId: string) => {
+    setDismissedFeatures( prev => [...prev, featureId]);
+    setActiveFeature(_null);
+    onFeatureDismissed?.(_featureId);
     
     // Store in localStorage
-    const dismissed = JSON.parse(localStorage.getItem('dismissedFeatures') || '[]');
-    localStorage.setItem('dismissedFeatures', JSON.stringify([...dismissed, featureId]));
+    const dismissed = JSON.parse(_localStorage.getItem('dismissedFeatures') || '[]');
+    localStorage.setItem( 'dismissedFeatures', JSON.stringify([...dismissed, featureId]));
   };
 
-  const handleAction = (feature: Feature) => {
-    if (feature.action) {
-      feature.action.onClick();
-      onFeatureInteracted?.(feature.id, 'action');
+  const handleAction = (_feature: Feature) => {
+    if (_feature.action) {
+      feature.action.onClick(_);
+      onFeatureInteracted?.( feature.id, 'action');
     }
-    handleDismiss(feature.id);
+    handleDismiss(_feature.id);
   };
 
   // Load dismissed features from localStorage
   useEffect(() => {
-    const dismissed = JSON.parse(localStorage.getItem('dismissedFeatures') || '[]');
-    setDismissedFeatures(dismissed);
+    const dismissed = JSON.parse(_localStorage.getItem('dismissedFeatures') || '[]');
+    setDismissedFeatures(_dismissed);
   }, []);
 
-  const getCategoryIcon = (category: Feature['category']) => {
-    switch (category) {
+  const getCategoryIcon = (_category: Feature['category']) => {
+    switch (_category) {
       case 'new':
         return <SparklesIcon className="w-5 h-5" />;
       case 'updated':
@@ -158,8 +158,8 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
     }
   };
 
-  const getCategoryColor = (category: Feature['category']) => {
-    switch (category) {
+  const getCategoryColor = (_category: Feature['category']) => {
+    switch (_category) {
       case 'new':
         return 'text-green-400 border-green-500/30 bg-green-500/10';
       case 'updated':
@@ -175,8 +175,8 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
     }
   };
 
-  const getCategoryLabel = (category: Feature['category']) => {
-    switch (category) {
+  const getCategoryLabel = (_category: Feature['category']) => {
+    switch (_category) {
       case 'new':
         return 'New Feature';
       case 'updated':
@@ -209,7 +209,7 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
             animate={{ opacity: 1 }}
             className="absolute inset-0 bg-black/50"
             style={{
-              background: `radial-gradient(circle 150px at ${spotlightPosition.x}px ${spotlightPosition.y}px, transparent 0%, rgba(0,0,0,0.5) 100%)`,
+              background: `radial-gradient( circle 150px at ${spotlightPosition.x}px ${spotlightPosition.y}px, transparent 0%, rgba(0,0,0,0.5) 100%)`,
             }}
           />
         )}
@@ -223,19 +223,19 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
         >
           <div className={cn(
             'glass border rounded-xl p-6 shadow-xl',
-            getCategoryColor(activeFeature.category)
+            getCategoryColor(_activeFeature.category)
           )}>
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-2">
-                {getCategoryIcon(activeFeature.category)}
+                {getCategoryIcon(_activeFeature.category)}
                 <span className="text-xs font-semibold uppercase tracking-wider">
-                  {getCategoryLabel(activeFeature.category)}
+                  {getCategoryLabel(_activeFeature.category)}
                 </span>
               </div>
               {activeFeature.dismissible !== false && (
                 <button
-                  onClick={() => handleDismiss(activeFeature.id)}
+                  onClick={(_) => handleDismiss(_activeFeature.id)}
                   className="text-gray-400 hover:text-white transition-colors"
                   aria-label="Dismiss feature spotlight"
                 >
@@ -256,7 +256,7 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
             <div className="flex items-center space-x-3">
               {activeFeature.action && (
                 <button
-                  onClick={() => handleAction(activeFeature)}
+                  onClick={(_) => handleAction(_activeFeature)}
                   className="flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-white/50"
                 >
                   <span>{activeFeature.action.label}</span>
@@ -265,7 +265,7 @@ export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
               )}
               {activeFeature.dismissible !== false && (
                 <button
-                  onClick={() => handleDismiss(activeFeature.id)}
+                  onClick={(_) => handleDismiss(_activeFeature.id)}
                   className="px-4 py-2 text-gray-400 hover:text-white transition-colors text-sm"
                 >
                   Maybe Later
@@ -317,7 +317,7 @@ export const PLATFORM_FEATURES: Feature[] = [
     target: '[data-testid="ai-tutor-button"]',
     action: {
       label: 'Try AI Tutor',
-      onClick: () => {
+      onClick: (_) => {
         // This would open the AI tutor
         console.log('Opening AI tutor');
       },
@@ -356,7 +356,7 @@ export const PLATFORM_FEATURES: Feature[] = [
     target: '[data-testid="collaboration-button"]',
     action: {
       label: 'Start Collaborating',
-      onClick: () => {
+      onClick: (_) => {
         console.log('Starting collaboration');
       },
     },

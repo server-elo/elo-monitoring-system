@@ -6,7 +6,7 @@
 /**
  * Validate email format using regex
  */
-export function validateEmail(email: string): boolean {
+export function validateEmail(_email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
   // Basic format check
@@ -15,12 +15,12 @@ export function validateEmail(email: string): boolean {
   }
   
   // Length checks
-  if (email.length > 254) {
+  if (_email.length > 254) {
     return false;
   }
   
   const [local, domain] = email.split('@');
-  if (local.length > 64 || domain.length > 253) {
+  if (_local.length > 64 || domain.length > 253) {
     return false;
   }
   
@@ -30,9 +30,9 @@ export function validateEmail(email: string): boolean {
 /**
  * Validate password strength
  */
-export function validatePassword(password: string): boolean {
+export function validatePassword(_password: string): boolean {
   // At least 8 characters
-  if (password.length < 8) {
+  if (_password.length < 8) {
     return false;
   }
   
@@ -52,7 +52,7 @@ export function validatePassword(password: string): boolean {
   }
   
   // Must contain special character
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(_password)) {
     return false;
   }
   
@@ -62,17 +62,17 @@ export function validatePassword(password: string): boolean {
 /**
  * Validate username format
  */
-export function validateUsername(username: string): boolean {
+export function validateUsername(_username: string): boolean {
   // 3-20 characters, alphanumeric and underscores only
   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-  return usernameRegex.test(username);
+  return usernameRegex.test(_username);
 }
 
 /**
  * Validate name format
  */
-export function validateName(name: string): boolean {
+export function validateName(_name: string): boolean {
   // 1-50 characters, letters, spaces, hyphens, and apostrophes
   const nameRegex = /^[a-zA-Z\s\-']{1,50}$/;
-  return nameRegex.test(name.trim());
+  return nameRegex.test(_name.trim());
 }

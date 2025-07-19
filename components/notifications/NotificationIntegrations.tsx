@@ -18,92 +18,92 @@ import { useNotifications } from '@/components/ui/NotificationSystem';
  */
 export function NotificationIntegrations() {
   // Initialize all integration hooks
-  useErrorNotifications();
-  useAuthNotifications();
+  useErrorNotifications(_);
+  useAuthNotifications(_);
   
-  const gamificationNotifications = useGamificationNotifications();
-  const collaborationNotifications = useCollaborationNotifications();
-  const aiTutoringNotifications = useAITutoringNotifications();
-  const systemNotifications = useSystemNotifications();
+  const gamificationNotifications = useGamificationNotifications(_);
+  const collaborationNotifications = useCollaborationNotifications(_);
+  const aiTutoringNotifications = useAITutoringNotifications(_);
+  const systemNotifications = useSystemNotifications(_);
   
-  const { socket, isConnected } = useSocket();
-  const { showInfo, showError, showSuccess } = useNotifications();
+  const { socket, isConnected } = useSocket(_);
+  const { showInfo, showError, showSuccess } = useNotifications(_);
 
   // Socket.io integration for real-time notifications
   useEffect(() => {
     if (!socket || !isConnected) return;
 
     // Collaboration events
-    socket.on('user:joined', (data: { userName: string; roomName?: string }) => {
-      collaborationNotifications.notifyUserJoined(data.userName, data.roomName);
+    socket.on( 'user:joined', (data: { userName: string; roomName?: string }) => {
+      collaborationNotifications.notifyUserJoined( data.userName, data.roomName);
     });
 
-    socket.on('user:left', (data: { userName: string; roomName?: string }) => {
-      collaborationNotifications.notifyUserLeft(data.userName, data.roomName);
+    socket.on( 'user:left', (data: { userName: string; roomName?: string }) => {
+      collaborationNotifications.notifyUserLeft( data.userName, data.roomName);
     });
 
-    socket.on('code:changed', (data: { userName: string; fileName?: string }) => {
-      collaborationNotifications.notifyCodeChange(data.userName, data.fileName);
+    socket.on( 'code:changed', (data: { userName: string; fileName?: string }) => {
+      collaborationNotifications.notifyCodeChange( data.userName, data.fileName);
     });
 
-    socket.on('mentor:available', (data: { mentorName: string }) => {
-      collaborationNotifications.notifyMentorAvailable(data.mentorName);
+    socket.on( 'mentor:available', (data: { mentorName: string }) => {
+      collaborationNotifications.notifyMentorAvailable(_data.mentorName);
     });
 
     // Gamification events
-    socket.on('xp:gained', (data: { xp: number; source?: string }) => {
-      gamificationNotifications.notifyXPGain(data.xp, data.source);
+    socket.on( 'xp:gained', (data: { xp: number; source?: string }) => {
+      gamificationNotifications.notifyXPGain( data.xp, data.source);
     });
 
-    socket.on('level:up', (data: { newLevel: number; oldLevel: number }) => {
-      gamificationNotifications.notifyLevelUp(data.newLevel, data.oldLevel);
+    socket.on( 'level:up', (data: { newLevel: number; oldLevel: number }) => {
+      gamificationNotifications.notifyLevelUp( data.newLevel, data.oldLevel);
     });
 
-    socket.on('achievement:unlocked', (data: { title: string; description: string; achievementData?: any }) => {
-      gamificationNotifications.notifyAchievement(data.title, data.description, data.achievementData);
+    socket.on( 'achievement:unlocked', (data: { title: string; description: string; achievementData?: any }) => {
+      gamificationNotifications.notifyAchievement( data.title, data.description, data.achievementData);
     });
 
-    socket.on('streak:milestone', (data: { streakCount: number }) => {
-      gamificationNotifications.notifyStreak(data.streakCount);
+    socket.on( 'streak:milestone', (data: { streakCount: number }) => {
+      gamificationNotifications.notifyStreak(_data.streakCount);
     });
 
     // AI Tutoring events
-    socket.on('ai:response', (data: { message: string; confidence?: number }) => {
-      aiTutoringNotifications.notifyAIResponse(data.message, data.confidence);
+    socket.on( 'ai:response', (data: { message: string; confidence?: number }) => {
+      aiTutoringNotifications.notifyAIResponse( data.message, data.confidence);
     });
 
-    socket.on('ai:analysis', (data: { issues: number; suggestions: number; fileName?: string }) => {
-      aiTutoringNotifications.notifyCodeAnalysis(data.issues, data.suggestions, data.fileName);
+    socket.on( 'ai:analysis', (data: { issues: number; suggestions: number; fileName?: string }) => {
+      aiTutoringNotifications.notifyCodeAnalysis( data.issues, data.suggestions, data.fileName);
     });
 
-    socket.on('ai:recommendation', (data: { topic: string; reason: string }) => {
-      aiTutoringNotifications.notifyLearningRecommendation(data.topic, data.reason);
+    socket.on( 'ai:recommendation', (data: { topic: string; reason: string }) => {
+      aiTutoringNotifications.notifyLearningRecommendation( data.topic, data.reason);
     });
 
     // System events
-    socket.on('system:maintenance', (data: { startTime: string; duration: number; description?: string }) => {
+    socket.on( 'system:maintenance', (data: { startTime: string; duration: number; description?: string }) => {
       systemNotifications.notifyMaintenance(new Date(data.startTime), data.duration, data.description);
     });
 
-    socket.on('system:update', (data: { version: string; features: string[] }) => {
-      systemNotifications.notifySystemUpdate(data.version, data.features);
+    socket.on( 'system:update', (data: { version: string; features: string[] }) => {
+      systemNotifications.notifySystemUpdate( data.version, data.features);
     });
 
     // Generic notification events
-    socket.on('notification:info', (data: { title: string; message: string; options?: any }) => {
-      showInfo(data.title, data.message, data.options);
+    socket.on( 'notification:info', (data: { title: string; message: string; options?: any }) => {
+      showInfo( data.title, data.message, data.options);
     });
 
-    socket.on('notification:success', (data: { title: string; message: string; options?: any }) => {
-      showSuccess(data.title, data.message, data.options);
+    socket.on( 'notification:success', (data: { title: string; message: string; options?: any }) => {
+      showSuccess( data.title, data.message, data.options);
     });
 
-    socket.on('notification:error', (data: { title: string; message: string; options?: any }) => {
-      showError(data.title, data.message, data.options);
+    socket.on( 'notification:error', (data: { title: string; message: string; options?: any }) => {
+      showError( data.title, data.message, data.options);
     });
 
     // Cleanup listeners
-    return () => {
+    return (_) => {
       socket.off('user:joined');
       socket.off('user:left');
       socket.off('code:changed');
@@ -135,25 +135,25 @@ export function NotificationIntegrations() {
 
   // Network status monitoring
   useEffect(() => {
-    const handleOnline = () => systemNotifications.notifyNetworkIssue(true);
-    const handleOffline = () => systemNotifications.notifyNetworkIssue(false);
+    const handleOnline = (_) => systemNotifications.notifyNetworkIssue(_true);
+    const handleOffline = (_) => systemNotifications.notifyNetworkIssue(_false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener( 'online', handleOnline);
+    window.addEventListener( 'offline', handleOffline);
 
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+    return (_) => {
+      window.removeEventListener( 'online', handleOnline);
+      window.removeEventListener( 'offline', handleOffline);
     };
   }, [systemNotifications]);
 
   // Page visibility change notifications
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+    const handleVisibilityChange = (_) => {
+      if (_document.visibilityState === 'visible') {
         // User returned to the page - could show summary of missed notifications
         const missedCount = 0; // This would be calculated based on notifications received while away
-        if (missedCount > 0) {
+        if (_missedCount > 0) {
           showInfo(
             'Welcome Back!',
             `You have ${missedCount} new notification${missedCount > 1 ? 's' : ''} while you were away.`,
@@ -169,19 +169,19 @@ export function NotificationIntegrations() {
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener( 'visibilitychange', handleVisibilityChange);
+    return (_) => document.removeEventListener( 'visibilitychange', handleVisibilityChange);
   }, [showInfo]);
 
   // Performance monitoring notifications
   useEffect(() => {
     // Monitor page load performance
-    if (typeof window !== 'undefined' && 'performance' in window) {
+    if (_typeof window !== 'undefined' && 'performance' in window) {
       const observer = new PerformanceObserver((list) => {
-        const entries = list.getEntries();
+        const entries = list.getEntries(_);
         entries.forEach((entry) => {
           // Notify about slow operations
-          if (entry.duration > 5000) { // 5 seconds
+          if (_entry.duration > 5000) { // 5 seconds
             showError(
               'Performance Issue',
               'The application is running slowly. Please check your connection.',
@@ -196,15 +196,15 @@ export function NotificationIntegrations() {
         });
       });
 
-      observer.observe({ entryTypes: ['navigation', 'measure'] });
+      observer.observe( { entryTypes: ['navigation', 'measure'] });
 
-      return () => observer.disconnect();
+      return (_) => observer.disconnect(_);
     }
   }, [showError]);
 
   // Browser compatibility notifications
   useEffect(() => {
-    const checkBrowserSupport = () => {
+    const checkBrowserSupport = (_) => {
       const isSupported = 
         'serviceWorker' in navigator &&
         'PushManager' in window &&
@@ -225,7 +225,7 @@ export function NotificationIntegrations() {
       }
     };
 
-    checkBrowserSupport();
+    checkBrowserSupport(_);
   }, [showInfo]);
 
   // Storage quota monitoring
@@ -233,12 +233,12 @@ export function NotificationIntegrations() {
     const checkStorageQuota = async () => {
       if ('storage' in navigator && 'estimate' in navigator.storage) {
         try {
-          const estimate = await navigator.storage.estimate();
+          const estimate = await navigator.storage.estimate(_);
           const usagePercentage = estimate.usage && estimate.quota 
-            ? (estimate.usage / estimate.quota) * 100 
+            ? (_estimate.usage / estimate.quota) * 100 
             : 0;
 
-          if (usagePercentage > 80) {
+          if (_usagePercentage > 80) {
             showError(
               'Storage Almost Full',
               'Your browser storage is almost full. Some features may not work properly.',
@@ -249,26 +249,26 @@ export function NotificationIntegrations() {
                 },
                 action: {
                   label: 'Clear Data',
-                  onClick: () => {
+                  onClick: (_) => {
                     // Clear non-essential data
                     localStorage.removeItem('notification-history');
-                    showSuccess('Storage Cleared', 'Non-essential data has been cleared.');
+                    showSuccess( 'Storage Cleared', 'Non-essential data has been cleared.');
                   }
                 }
               }
             );
           }
-        } catch (error) {
+        } catch (_error) {
           console.warn('Could not check storage quota:', error);
         }
       }
     };
 
-    checkStorageQuota();
+    checkStorageQuota(_);
     
     // Check storage quota periodically
-    const interval = setInterval(checkStorageQuota, 5 * 60 * 1000); // Every 5 minutes
-    return () => clearInterval(interval);
+    const interval = setInterval( checkStorageQuota, 5 * 60 * 1000); // Every 5 minutes
+    return (_) => clearInterval(_interval);
   }, [showError, showSuccess]);
 
   // This component doesn't render anything - it just sets up integrations
@@ -280,41 +280,41 @@ export function NotificationIntegrations() {
  * Useful for testing or manual event triggering
  */
 export function useManualNotificationTriggers() {
-  const gamificationNotifications = useGamificationNotifications();
-  const collaborationNotifications = useCollaborationNotifications();
-  const aiTutoringNotifications = useAITutoringNotifications();
-  const systemNotifications = useSystemNotifications();
+  const gamificationNotifications = useGamificationNotifications(_);
+  const collaborationNotifications = useCollaborationNotifications(_);
+  const aiTutoringNotifications = useAITutoringNotifications(_);
+  const systemNotifications = useSystemNotifications(_);
 
   return {
     // Gamification triggers
-    triggerXPGain: (xp: number, source?: string) => 
-      gamificationNotifications.notifyXPGain(xp, source),
+    triggerXPGain: ( xp: number, source?: string) => 
+      gamificationNotifications.notifyXPGain( xp, source),
     
-    triggerLevelUp: (newLevel: number, oldLevel: number) => 
-      gamificationNotifications.notifyLevelUp(newLevel, oldLevel),
+    triggerLevelUp: ( newLevel: number, oldLevel: number) => 
+      gamificationNotifications.notifyLevelUp( newLevel, oldLevel),
     
-    triggerAchievement: (title: string, description: string, data?: any) => 
-      gamificationNotifications.notifyAchievement(title, description, data),
+    triggerAchievement: ( title: string, description: string, data?: any) => 
+      gamificationNotifications.notifyAchievement( title, description, data),
     
     // Collaboration triggers
-    triggerUserJoined: (userName: string, roomName?: string) => 
-      collaborationNotifications.notifyUserJoined(userName, roomName),
+    triggerUserJoined: ( userName: string, roomName?: string) => 
+      collaborationNotifications.notifyUserJoined( userName, roomName),
     
-    triggerCodeChange: (userName: string, fileName?: string) => 
-      collaborationNotifications.notifyCodeChange(userName, fileName),
+    triggerCodeChange: ( userName: string, fileName?: string) => 
+      collaborationNotifications.notifyCodeChange( userName, fileName),
     
     // AI Tutoring triggers
-    triggerAIResponse: (message: string, confidence?: number) => 
-      aiTutoringNotifications.notifyAIResponse(message, confidence),
+    triggerAIResponse: ( message: string, confidence?: number) => 
+      aiTutoringNotifications.notifyAIResponse( message, confidence),
     
-    triggerCodeAnalysis: (issues: number, suggestions: number, fileName?: string) => 
-      aiTutoringNotifications.notifyCodeAnalysis(issues, suggestions, fileName),
+    triggerCodeAnalysis: ( issues: number, suggestions: number, fileName?: string) => 
+      aiTutoringNotifications.notifyCodeAnalysis( issues, suggestions, fileName),
     
     // System triggers
-    triggerMaintenance: (startTime: Date, duration: number, description?: string) => 
-      systemNotifications.notifyMaintenance(startTime, duration, description),
+    triggerMaintenance: ( startTime: Date, duration: number, description?: string) => 
+      systemNotifications.notifyMaintenance( startTime, duration, description),
     
-    triggerSystemUpdate: (version: string, features: string[]) => 
-      systemNotifications.notifySystemUpdate(version, features),
+    triggerSystemUpdate: ( version: string, features: string[]) => 
+      systemNotifications.notifySystemUpdate( version, features),
   };
 }

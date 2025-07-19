@@ -5,7 +5,7 @@ interface PerformanceTest {
   name: string;
   target: number;
   unit: string;
-  test: () => Promise<number>;
+  test: (_) => Promise<number>;
 }
 
 export async function GET(request: NextRequest) {
@@ -13,14 +13,14 @@ export async function GET(request: NextRequest) {
   const testType = searchParams.get('type') || 'all';
 
   try {
-    const results = await runPerformanceTests(testType);
+    const results = await runPerformanceTests(_testType);
     
     return NextResponse.json({
       status: 'success',
       message: 'Performance tests completed',
       results,
-      summary: generatePerformanceSummary(results),
-      recommendations: generateRecommendations(results),
+      summary: generatePerformanceSummary(_results),
+      recommendations: generateRecommendations(_results),
       timestamp: new Date().toISOString()
     });
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       const startTime = Date.now();
       
       // Test database query performance
-      const result = await testDatabasePerformance();
+      const result = await testDatabasePerformance(_);
       const queryTime = Date.now() - startTime;
       
       return NextResponse.json({
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function runPerformanceTests(testType: string): Promise<any[]> {
+async function runPerformanceTests(_testType: string): Promise<any[]> {
   const tests: PerformanceTest[] = [
     {
       name: 'AI Response Time',
@@ -106,7 +106,7 @@ async function runPerformanceTests(testType: string): Promise<any[]> {
       unit: 'ms',
       test: async () => {
         const start = Date.now();
-        await testDatabasePerformance();
+        await testDatabasePerformance(_);
         return Date.now() - start;
       }
     },
@@ -116,7 +116,7 @@ async function runPerformanceTests(testType: string): Promise<any[]> {
       unit: 'ms',
       test: async () => {
         const start = Date.now();
-        await testAPIPerformance();
+        await testAPIPerformance(_);
         return Date.now() - start;
       }
     }
@@ -125,9 +125,9 @@ async function runPerformanceTests(testType: string): Promise<any[]> {
   const results = [];
 
   for (const test of tests) {
-    if (testType === 'all' || testType === test.name.toLowerCase().replace(/\s+/g, '-')) {
+    if (_testType === 'all' || testType === test.name.toLowerCase().replace(/\s+/g, '-')) {
       try {
-        const actualTime = await test.test();
+        const actualTime = await test.test(_);
         results.push({
           name: test.name,
           target: test.target,
@@ -156,7 +156,7 @@ async function runPerformanceTests(testType: string): Promise<any[]> {
   return results;
 }
 
-async function simulateAIResponse(_prompt: string): Promise<string> {
+async function simulateAIResponse( prompt: string): Promise<string> {
   // Check if local LLM is available
   try {
     const response = await fetch('http://localhost:1234/v1/models', {
@@ -165,17 +165,17 @@ async function simulateAIResponse(_prompt: string): Promise<string> {
     });
     
     if (response.ok) {
-      // Simulate local LLM response (fast)
+      // Simulate local LLM response (_fast)
       await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400)); // 800-1200ms
-      return 'Local LLM response (fast)';
+      return 'Local LLM response (_fast)';
     }
   } catch (error) {
     // Local LLM not available
   }
 
-  // Simulate fallback response (slower)
+  // Simulate fallback response (_slower)
   await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000)); // 2-3s
-  return 'Fallback response (slower)';
+  return 'Fallback response (_slower)';
 }
 
 async function testDatabasePerformance(): Promise<any> {
@@ -215,7 +215,7 @@ async function testAPIPerformance(): Promise<any> {
   };
 }
 
-function generatePerformanceSummary(results: any[]): any {
+function generatePerformanceSummary(_results: any[]): any {
   const total = results.length;
   const passing = results.filter(r => r.withinTarget).length;
   const failing = total - passing;
@@ -229,7 +229,7 @@ function generatePerformanceSummary(results: any[]): any {
   };
 }
 
-function generateRecommendations(results: any[]): string[] {
+function generateRecommendations(_results: any[]): string[] {
   const recommendations: string[] = [];
   
   const aiTest = results.find(r => r.name === 'AI Response Time');
@@ -251,7 +251,7 @@ function generateRecommendations(results: any[]): string[] {
     recommendations.push('Implement response caching where appropriate');
   }
   
-  if (recommendations.length === 0) {
+  if (codeSnippets.length === 0) {
     recommendations.push('All performance targets met! Consider monitoring for regressions.');
   }
   

@@ -1,16 +1,16 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 
 // Debounce Hook
-export const useDebounce = <T>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+export const useDebounce = <T>( value: T, delay: number): T => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(_value);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(value);
+      setDebouncedValue(_value);
     }, delay);
 
-    return () => {
-      clearTimeout(handler);
+    return (_) => {
+      clearTimeout(_handler);
     };
   }, [value, delay]);
 
@@ -22,13 +22,13 @@ export const useThrottle = <T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number
 ): T => {
-  const lastRan = useRef<number>(Date.now());
+  const lastRan = useRef<number>(_Date.now());
 
   return useCallback(
     ((...args: Parameters<T>) => {
-      if (Date.now() - lastRan.current >= delay) {
+      if (_Date.now() - lastRan.current >= delay) {
         callback(...args);
-        lastRan.current = Date.now();
+        lastRan.current = Date.now(_);
       }
     }) as T,
     [callback, delay]
@@ -46,9 +46,9 @@ export const useIntersectionObserver = (
   options: UseIntersectionObserverOptions = {}
 ) => {
   const { threshold = 0.1, rootMargin = '50px', triggerOnce = true } = options;
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const [hasTriggered, setHasTriggered] = useState(false);
-  const elementRef = useRef<HTMLElement | null>(null);
+  const [isIntersecting, setIsIntersecting] = useState(_false);
+  const [hasTriggered, setHasTriggered] = useState(_false);
+  const elementRef = useRef<HTMLElement | null>(_null);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -57,25 +57,25 @@ export const useIntersectionObserver = (
     const observer = new IntersectionObserver(
       ([entry]) => {
         const isVisible = entry.isIntersecting;
-        setIsIntersecting(isVisible);
+        setIsIntersecting(_isVisible);
 
         if (isVisible && triggerOnce && !hasTriggered) {
-          setHasTriggered(true);
+          setHasTriggered(_true);
         }
       },
       { threshold, rootMargin }
     );
 
-    observer.observe(element);
+    observer.observe(_element);
 
-    return () => {
-      observer.unobserve(element);
+    return (_) => {
+      observer.unobserve(_element);
     };
   }, [threshold, rootMargin, triggerOnce, hasTriggered]);
 
   return {
     elementRef,
-    isIntersecting: triggerOnce ? (hasTriggered || isIntersecting) : isIntersecting,
+    isIntersecting: triggerOnce ? (_hasTriggered || isIntersecting) : isIntersecting,
   };
 };
 
@@ -93,7 +93,7 @@ export const useVirtualScroll = <T>(
   const { itemHeight, containerHeight, overscan = 5 } = options;
   const [scrollTop, setScrollTop] = useState(0);
 
-  const visibleItemsCount = Math.ceil(containerHeight / itemHeight);
+  const visibleItemsCount = Math.ceil(_containerHeight / itemHeight);
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
   const endIndex = Math.min(
     items.length - 1,
@@ -105,7 +105,7 @@ export const useVirtualScroll = <T>(
   const offsetY = startIndex * itemHeight;
 
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop);
+    setScrollTop(_e.currentTarget.scrollTop);
   }, []);
 
   return {
@@ -120,14 +120,14 @@ export const useVirtualScroll = <T>(
 
 // Memoization Hook with Dependencies
 export const useMemoWithDeps = <T>(
-  factory: () => T,
+  factory: (_) => T,
   deps: React.DependencyList
 ): T => {
-  const ref = useRef<{ value: T; deps: React.DependencyList } | null>(null);
+  const ref = useRef<{ value: T; deps: React.DependencyList } | null>(_null);
 
   if (!ref.current || !depsEqual(ref.current.deps, deps)) {
     ref.current = {
-      value: factory(),
+      value: factory(_),
       deps,
     };
   }
@@ -136,9 +136,9 @@ export const useMemoWithDeps = <T>(
 };
 
 // Helper function to compare dependencies
-const depsEqual = (a: React.DependencyList, b: React.DependencyList): boolean => {
-  if (a.length !== b.length) return false;
-  return a.every((dep, index) => Object.is(dep, b[index]));
+const depsEqual = ( a: React.DependencyList, b: React.DependencyList): boolean => {
+  if (_a.length !== b.length) return false;
+  return a.every( (dep, index) => Object.is( dep, b[index]));
 };
 
 // Performance Monitoring Hook
@@ -148,9 +148,9 @@ interface PerformanceMetrics {
   lastUpdateTime: number;
 }
 
-export const usePerformanceMonitor = (componentName: string) => {
-  const mountTime = useRef<number>(Date.now());
-  const lastRenderTime = useRef<number>(Date.now());
+export const usePerformanceMonitor = (_componentName: string) => {
+  const mountTime = useRef<number>(_Date.now());
+  const lastRenderTime = useRef<number>(_Date.now());
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     renderTime: 0,
     componentMountTime: 0,
@@ -158,13 +158,13 @@ export const usePerformanceMonitor = (componentName: string) => {
   });
 
   useEffect(() => {
-    const componentMountTime = Date.now() - mountTime.current;
-    setMetrics(prev => ({ ...prev, componentMountTime }));
+    const componentMountTime = Date.now(_) - mountTime.current;
+    setMetrics( prev => ({ ...prev, componentMountTime }));
   }, []);
 
   useEffect(() => {
-    const renderTime = Date.now() - lastRenderTime.current;
-    const lastUpdateTime = Date.now();
+    const renderTime = Date.now(_) - lastRenderTime.current;
+    const lastUpdateTime = Date.now(_);
     
     setMetrics(prev => ({
       ...prev,
@@ -172,10 +172,10 @@ export const usePerformanceMonitor = (componentName: string) => {
       lastUpdateTime,
     }));
 
-    lastRenderTime.current = Date.now();
+    lastRenderTime.current = Date.now(_);
 
     // Log performance in development
-    if (process.env.NODE_ENV === 'development') {
+    if (_process.env.NODE_ENV === 'development') {
       console.log(`[Performance] ${componentName}:`, {
         renderTime: `${renderTime}ms`,
         mountTime: `${metrics.componentMountTime}ms`,
@@ -187,10 +187,10 @@ export const usePerformanceMonitor = (componentName: string) => {
 };
 
 // Image Lazy Loading Hook
-export const useLazyImage = (src: string, placeholder?: string) => {
-  const [imageSrc, setImageSrc] = useState(placeholder || '');
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isError, setIsError] = useState(false);
+export const useLazyImage = ( src: string, placeholder?: string) => {
+  const [imageSrc, setImageSrc] = useState(_placeholder || '');
+  const [isLoaded, setIsLoaded] = useState(_false);
+  const [isError, setIsError] = useState(_false);
   const { elementRef, isIntersecting } = useIntersectionObserver({
     triggerOnce: true,
     threshold: 0.1,
@@ -198,17 +198,17 @@ export const useLazyImage = (src: string, placeholder?: string) => {
 
   useEffect(() => {
     if (isIntersecting && src) {
-      const img = new Image();
+      const img = new Image(_);
       
-      img.onload = () => {
-        setImageSrc(src);
-        setIsLoaded(true);
-        setIsError(false);
+      img.onload = (_) => {
+        setImageSrc(_src);
+        setIsLoaded(_true);
+        setIsError(_false);
       };
       
-      img.onerror = () => {
-        setIsError(true);
-        setIsLoaded(false);
+      img.onerror = (_) => {
+        setIsError(_true);
+        setIsLoaded(_false);
       };
       
       img.src = src;
@@ -225,31 +225,31 @@ export const useLazyImage = (src: string, placeholder?: string) => {
 };
 
 // Batch Updates Hook
-export const useBatchUpdates = <T>(initialValue: T, delay: number = 100) => {
-  const [value, setValue] = useState<T>(initialValue);
-  const [pendingValue, setPendingValue] = useState<T>(initialValue);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+export const useBatchUpdates = <T>( initialValue: T, delay: number = 100) => {
+  const [value, setValue] = useState<T>(_initialValue);
+  const [pendingValue, setPendingValue] = useState<T>(_initialValue);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(_null);
 
   const batchedSetValue = useCallback((newValue: T | ((prev: T) => T)) => {
     const resolvedValue = typeof newValue === 'function' 
-      ? (newValue as (prev: T) => T)(pendingValue)
+      ? (_newValue as (prev: T) => T)(_pendingValue)
       : newValue;
     
-    setPendingValue(resolvedValue);
+    setPendingValue(_resolvedValue);
 
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    if (_timeoutRef.current) {
+      clearTimeout(_timeoutRef.current);
     }
 
     timeoutRef.current = setTimeout(() => {
-      setValue(resolvedValue);
+      setValue(_resolvedValue);
     }, delay);
   }, [pendingValue, delay]);
 
   useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+    return (_) => {
+      if (_timeoutRef.current) {
+        clearTimeout(_timeoutRef.current);
       }
     };
   }, []);
@@ -258,54 +258,54 @@ export const useBatchUpdates = <T>(initialValue: T, delay: number = 100) => {
 };
 
 // Resource Preloader Hook
-export const useResourcePreloader = (resources: string[]) => {
-  const [loadedResources, setLoadedResources] = useState<Set<string>>(new Set());
-  const [failedResources, setFailedResources] = useState<Set<string>>(new Set());
+export const useResourcePreloader = (_resources: string[]) => {
+  const [loadedResources, setLoadedResources] = useState<Set<string>>(_new Set());
+  const [failedResources, setFailedResources] = useState<Set<string>>(_new Set());
 
   useEffect(() => {
-    const preloadResource = (url: string) => {
-      return new Promise<void>((resolve, reject) => {
-        if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+    const preloadResource = (_url: string) => {
+      return new Promise<void>( (resolve, reject) => {
+        if (_url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
           // Preload image
-          const img = new Image();
-          img.onload = () => resolve();
-          img.onerror = () => reject();
+          const img = new Image(_);
+          img.onload = (_) => resolve(_);
+          img.onerror = (_) => reject(_);
           img.src = url;
-        } else if (url.match(/\.(js|css)$/i)) {
+        } else if (_url.match(/\.(js|css)$/i)) {
           // Preload script or stylesheet
           const link = document.createElement('link');
           link.rel = url.endsWith('.css') ? 'stylesheet' : 'preload';
           link.as = url.endsWith('.css') ? '' : 'script';
           link.href = url;
-          link.onload = () => resolve();
-          link.onerror = () => reject();
-          document.head.appendChild(link);
+          link.onload = (_) => resolve(_);
+          link.onerror = (_) => reject(_);
+          document.head.appendChild(_link);
         } else {
           // Generic fetch preload
-          fetch(url)
-            .then(() => resolve())
-            .catch(() => reject());
+          fetch(_url)
+            .then(() => resolve(_))
+            .catch(() => reject(_));
         }
       });
     };
 
     const preloadAll = async () => {
-      for (const resource of resources) {
+      for (_const resource of resources) {
         try {
-          await preloadResource(resource);
-          setLoadedResources(prev => new Set(prev).add(resource));
+          await preloadResource(_resource);
+          setLoadedResources(_prev => new Set(prev).add(_resource));
         } catch {
-          setFailedResources(prev => new Set(prev).add(resource));
+          setFailedResources(_prev => new Set(prev).add(_resource));
         }
       }
     };
 
-    preloadAll();
+    preloadAll(_);
   }, [resources]);
 
-  const isLoaded = (resource: string) => loadedResources.has(resource);
-  const isFailed = (resource: string) => failedResources.has(resource);
-  const allLoaded = resources.every(isLoaded);
+  const isLoaded = (_resource: string) => loadedResources.has(_resource);
+  const isFailed = (_resource: string) => failedResources.has(_resource);
+  const allLoaded = resources.every(_isLoaded);
   const loadingProgress = loadedResources.size / resources.length;
 
   return {
@@ -320,20 +320,20 @@ export const useResourcePreloader = (resources: string[]) => {
 };
 
 // Memory Usage Monitor Hook
-export const useMemoryMonitor = () => {
-  const [memoryInfo, setMemoryInfo] = useState<any>(null);
+export const useMemoryMonitor = (_) => {
+  const [memoryInfo, setMemoryInfo] = useState<any>(_null);
 
   useEffect(() => {
-    const updateMemoryInfo = () => {
+    const updateMemoryInfo = (_) => {
       if ('memory' in performance) {
         setMemoryInfo((performance as any).memory);
       }
     };
 
-    updateMemoryInfo();
-    const interval = setInterval(updateMemoryInfo, 5000); // Update every 5 seconds
+    updateMemoryInfo(_);
+    const interval = setInterval( updateMemoryInfo, 5000); // Update every 5 seconds
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, []);
 
   return memoryInfo;

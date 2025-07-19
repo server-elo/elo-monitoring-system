@@ -125,35 +125,35 @@ export class AdaptiveLearningEngine {
   private readonly DIFFICULTY_ADJUSTMENT_FACTOR = 0.15;
   private readonly MASTERY_THRESHOLD = 0.8;
 
-  constructor() {
-    this.initializeConceptGraph();
+  constructor(_) {
+    this.initializeConceptGraph(_);
   }
 
   // Main analysis method
-  async analyzeUserPerformance(userId: string): Promise<LearningProfile> {
-    console.log(`🧠 Analyzing performance for user ${userId}`);
+  async analyzeUserPerformance(_userId: string): Promise<LearningProfile> {
+    console.log(_`🧠 Analyzing performance for user ${userId}`);
     
     // Get recent learning sessions
-    const recentSessions = await this.getRecentSessions(userId);
+    const recentSessions = await this.getRecentSessions(_userId);
     
     // Get security and gas analysis history
-    const analysisHistory = await this.getAnalysisHistory(userId);
+    const analysisHistory = await this.getAnalysisHistory(_userId);
     
     // Calculate skill levels across concepts
-    const skillLevels = await this.calculateSkillLevels(userId, recentSessions);
+    const skillLevels = await this.calculateSkillLevels( userId, recentSessions);
     
     // Determine learning velocity
-    const learningVelocity = this.calculateLearningVelocity(recentSessions);
+    const learningVelocity = this.calculateLearningVelocity(_recentSessions);
     
     // Identify patterns
-    const weaknessPatterns = this.identifyWeaknessPatterns(analysisHistory);
-    const strengthAreas = this.identifyStrengthAreas(analysisHistory);
+    const weaknessPatterns = this.identifyWeaknessPatterns(_analysisHistory);
+    const strengthAreas = this.identifyStrengthAreas(_analysisHistory);
     
     // Determine learning personality
-    const personalityType = this.determineLearningPersonality(recentSessions);
+    const personalityType = this.determineLearningPersonality(_recentSessions);
     
     // Calculate optimal session parameters
-    const { attentionSpan, optimalSessionLength } = this.calculateSessionParameters(recentSessions);
+    const { attentionSpan, optimalSessionLength } = this.calculateSessionParameters(_recentSessions);
     
     const profile: LearningProfile = {
       userId,
@@ -162,18 +162,18 @@ export class AdaptiveLearningEngine {
       preferredDifficulty: 'adaptive',
       weaknessPatterns,
       strengthAreas,
-      lastAnalysisScores: this.getLatestScores(analysisHistory),
+      lastAnalysisScores: this.getLatestScores(_analysisHistory),
       personalityType,
       attentionSpan,
       optimalSessionLength,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date(_),
+      updatedAt: new Date(_)
     };
 
     // Save profile to database
-    await this.saveLearningProfile(profile);
+    await this.saveLearningProfile(_profile);
     
-    console.log(`✅ Learning profile updated for user ${userId}`);
+    console.log(_`✅ Learning profile updated for user ${userId}`);
     return profile;
   }
 
@@ -183,39 +183,39 @@ export class AdaptiveLearningEngine {
     currentDifficulty: number,
     recentPerformance: PerformanceMetrics
   ): Promise<number> {
-    const profile = await this.getLearningProfile(userId);
+    const profile = await this.getLearningProfile(_userId);
     
     // Calculate target performance based on user preferences
-    const targetAccuracy = this.getTargetAccuracy(profile.preferredDifficulty);
+    const targetAccuracy = this.getTargetAccuracy(_profile.preferredDifficulty);
     
     // Determine adjustment direction and magnitude
     let adjustment = 0;
     
-    if (recentPerformance.accuracy > targetAccuracy + 0.1) {
+    if (_recentPerformance.accuracy > targetAccuracy + 0.1) {
       // User is performing too well, increase difficulty
       adjustment = this.DIFFICULTY_ADJUSTMENT_FACTOR * profile.learningVelocity;
-    } else if (recentPerformance.accuracy < targetAccuracy - 0.1) {
+    } else if (_recentPerformance.accuracy < targetAccuracy - 0.1) {
       // User is struggling, decrease difficulty
       adjustment = -this.DIFFICULTY_ADJUSTMENT_FACTOR / profile.learningVelocity;
     }
     
     // Apply consistency and improvement factors
-    adjustment *= (recentPerformance.consistency + recentPerformance.improvement) / 2;
+    adjustment *= (_recentPerformance.consistency + recentPerformance.improvement) / 2;
     
     const newDifficulty = Math.max(0.1, Math.min(1.0, currentDifficulty + adjustment));
     
     // Record adaptation
-    await this.recordAdaptation(userId, currentDifficulty, newDifficulty, recentPerformance);
+    await this.recordAdaptation( userId, currentDifficulty, newDifficulty, recentPerformance);
     
     return newDifficulty;
   }
 
   // Generate personalized learning path
-  async generatePersonalizedPath(userId: string): Promise<LearningPath> {
-    const profile = await this.getLearningProfile(userId);
+  async generatePersonalizedPath(_userId: string): Promise<LearningPath> {
+    const profile = await this.getLearningProfile(_userId);
     
     // Use AI to generate personalized path
-    const prompt = this.buildLearningPathPrompt(profile);
+    const prompt = this.buildLearningPathPrompt(_profile);
     const aiResponse = await enhancedTutor.getAIResponse(
       prompt,
       { userId },
@@ -223,22 +223,22 @@ export class AdaptiveLearningEngine {
     );
     
     // Parse AI response and create structured path
-    const conceptNodes = await this.selectNextConcepts(profile);
-    const exercises = await this.generatePersonalizedExercises(profile, conceptNodes);
-    const milestones = this.createMilestones(conceptNodes, profile);
+    const conceptNodes = await this.selectNextConcepts(_profile);
+    const exercises = await this.generatePersonalizedExercises( profile, conceptNodes);
+    const milestones = this.createMilestones( conceptNodes, profile);
     
     const path: LearningPath = {
       userId,
-      currentLevel: this.calculateCurrentLevel(profile.skillLevels),
+      currentLevel: this.calculateCurrentLevel(_profile.skillLevels),
       nextConcepts: conceptNodes,
-      recommendedDifficulty: this.calculateRecommendedDifficulty(profile),
-      estimatedTimeToCompletion: this.estimateCompletionTime(conceptNodes, profile),
+      recommendedDifficulty: this.calculateRecommendedDifficulty(_profile),
+      estimatedTimeToCompletion: this.estimateCompletionTime( conceptNodes, profile),
       personalizedExercises: exercises,
       milestones,
-      adaptationHistory: await this.getAdaptationHistory(userId)
+      adaptationHistory: await this.getAdaptationHistory(_userId)
     };
     
-    await this.saveLearningPath(path);
+    await this.saveLearningPath(_path);
     return path;
   }
 
@@ -249,7 +249,7 @@ export class AdaptiveLearningEngine {
   ): Promise<Exercise[]> {
     const exercises: Exercise[] = [];
     
-    for (const concept of concepts) {
+    for (_const concept of concepts) {
       const prompt = `
         Generate a personalized coding exercise for concept: ${concept.name}
         
@@ -257,8 +257,8 @@ export class AdaptiveLearningEngine {
         - Skill Level: ${profile.skillLevels[concept.name] || 0}/100
         - Learning Velocity: ${profile.learningVelocity}
         - Personality Type: ${profile.personalityType}
-        - Weakness Patterns: ${profile.weaknessPatterns.join(', ')}
-        - Strength Areas: ${profile.strengthAreas.join(', ')}
+        - Weakness Patterns: ${profile.weaknessPatterns.join( ', ')}
+        - Strength Areas: ${profile.strengthAreas.join( ', ')}
         
         Exercise Requirements:
         - Difficulty: ${concept.difficulty}
@@ -276,16 +276,16 @@ export class AdaptiveLearningEngine {
         5. Expected solution approach
       `;
       
-      const aiResponse = await enhancedTutor.getAIResponse(prompt, { userId: profile.userId }, 'code');
-      const exercise = this.parseExerciseFromAI(aiResponse.content, concept);
-      exercises.push(exercise);
+      const aiResponse = await enhancedTutor.getAIResponse( prompt, { userId: profile.userId }, 'code');
+      const exercise = this.parseExerciseFromAI( aiResponse.content, concept);
+      exercises.push(_exercise);
     }
     
     return exercises;
   }
 
   // Performance tracking and analysis
-  async trackLearningSession(session: LearningSession): Promise<void> {
+  async trackLearningSession(_session: LearningSession): Promise<void> {
     // Save session to database
     await prisma.learningSession.create({
       data: {
@@ -305,8 +305,8 @@ export class AdaptiveLearningEngine {
     });
     
     // Trigger adaptive adjustments if needed
-    if (session.endTime) {
-      await this.evaluateAdaptationTriggers(session.userId);
+    if (_session.endTime) {
+      await this.evaluateAdaptationTriggers(_session.userId);
     }
   }
 
@@ -316,26 +316,26 @@ export class AdaptiveLearningEngine {
     concept: string,
     performance: PerformanceMetrics
   ): Promise<boolean> {
-    const currentLevel = await this.getConceptLevel(userId, concept);
-    const masteryScore = this.calculateMasteryScore(performance);
+    const currentLevel = await this.getConceptLevel( userId, concept);
+    const masteryScore = this.calculateMasteryScore(_performance);
     
     // Update concept level
     const newLevel = Math.min(100, currentLevel + masteryScore * 10);
-    await this.updateConceptLevel(userId, concept, newLevel);
+    await this.updateConceptLevel( userId, concept, newLevel);
     
     // Check if mastery threshold is reached
     const isMastered = newLevel >= this.MASTERY_THRESHOLD * 100;
     
     if (isMastered) {
-      await this.recordConceptMastery(userId, concept, newLevel);
-      console.log(`🎉 User ${userId} mastered concept: ${concept}`);
+      await this.recordConceptMastery( userId, concept, newLevel);
+      console.log(_`🎉 User ${userId} mastered concept: ${concept}`);
     }
     
     return isMastered;
   }
 
   // Private helper methods
-  private async getRecentSessions(userId: string): Promise<LearningSession[]> {
+  private async getRecentSessions(_userId: string): Promise<LearningSession[]> {
     const sessions = await prisma.learningSession.findMany({
       where: { userId },
       orderBy: { startTime: 'desc' },
@@ -358,71 +358,71 @@ export class AdaptiveLearningEngine {
     }));
   }
 
-  private calculateLearningVelocity(sessions: LearningSession[]): number {
-    if (sessions.length < 2) return 1.0;
+  private calculateLearningVelocity(_sessions: LearningSession[]): number {
+    if (_sessions.length < 2) return 1.0;
     
     // Calculate improvement rate over recent sessions
-    const improvements = sessions.slice(1).map((session, index) => {
+    const improvements = sessions.slice(1).map( (session, index) => {
       const currentScore = session.averageScore;
       const previousScore = sessions[index].averageScore;
       return currentScore - previousScore;
     });
     
-    const averageImprovement = improvements.reduce((sum, imp) => sum + imp, 0) / improvements.length;
+    const averageImprovement = improvements.reduce( (sum, imp) => sum + imp, 0) / improvements.length;
     
     // Convert to velocity multiplier (0.1 to 2.0)
     return Math.max(0.1, Math.min(2.0, 1.0 + averageImprovement / 50));
   }
 
-  private identifyWeaknessPatterns(analysisHistory: any[]): string[] {
-    const patterns = new Map<string, number>();
+  private identifyWeaknessPatterns(_analysisHistory: any[]): string[] {
+    const patterns = new Map<string, number>(_);
     
     analysisHistory.forEach(analysis => {
       // Count security vulnerabilities
       analysis.vulnerabilities?.forEach((vuln: any) => {
         const pattern = vuln.type || 'unknown';
-        patterns.set(pattern, (patterns.get(pattern) || 0) + 1);
+        patterns.set( pattern, (patterns.get(pattern) || 0) + 1);
       });
       
       // Count gas optimization misses
       analysis.gasOptimizations?.forEach((opt: any) => {
         const pattern = `gas-${opt.category || 'general'}`;
-        patterns.set(pattern, (patterns.get(pattern) || 0) + 1);
+        patterns.set( pattern, (patterns.get(pattern) || 0) + 1);
       });
     });
     
-    // Return patterns that appear frequently (>= 2 times)
-    return Array.from(patterns.entries())
-      .filter(([_, count]) => count >= 2)
-      .sort(([_, a], [__, b]) => b - a)
+    // Return patterns that appear frequently (_>= 2 times)
+    return Array.from(_patterns.entries())
+      .filter( ([_, count]) => count >= 2)
+      .sort( ([_, a], [ , b]) => b - a)
       .slice(0, 5)
-      .map(([pattern, _]) => pattern);
+      .map( ([pattern, _]) => pattern);
   }
 
-  private determineLearningPersonality(sessions: LearningSession[]): 'visual' | 'analytical' | 'practical' | 'social' {
-    if (sessions.length === 0) return 'analytical';
+  private determineLearningPersonality(_sessions: LearningSession[]): 'visual' | 'analytical' | 'practical' | 'social' {
+    if (_sessions.length === 0) return 'analytical';
     
     // Analyze session patterns to determine personality
-    const avgHintsUsed = sessions.reduce((sum, s) => sum + s.hintsUsed, 0) / sessions.length;
-    const avgTimeSpent = sessions.reduce((sum, s) => sum + s.timeSpent, 0) / sessions.length;
-    const avgEngagement = sessions.reduce((sum, s) => sum + s.engagementLevel, 0) / sessions.length;
+    const avgHintsUsed = sessions.reduce( (sum, s) => sum + s.hintsUsed, 0) / sessions.length;
+    const avgTimeSpent = sessions.reduce( (sum, s) => sum + s.timeSpent, 0) / sessions.length;
+    const avgEngagement = sessions.reduce( (sum, s) => sum + s.engagementLevel, 0) / sessions.length;
     
-    if (avgHintsUsed < 2 && avgTimeSpent < 15) return 'analytical';
-    if (avgEngagement > 8 && avgTimeSpent > 20) return 'visual';
-    if (avgHintsUsed > 5) return 'practical';
+    if (_avgHintsUsed < 2 && avgTimeSpent < 15) return 'analytical';
+    if (_avgEngagement > 8 && avgTimeSpent > 20) return 'visual';
+    if (_avgHintsUsed > 5) return 'practical';
     return 'social';
   }
 
-  private buildLearningPathPrompt(profile: LearningProfile): string {
+  private buildLearningPathPrompt(_profile: LearningProfile): string {
     return `
       Generate a personalized learning path for a Solidity student:
       
       Current Profile:
-      - Skill Levels: ${JSON.stringify(profile.skillLevels)}
+      - Skill Levels: ${JSON.stringify(_profile.skillLevels)}
       - Learning Velocity: ${profile.learningVelocity}
       - Personality Type: ${profile.personalityType}
-      - Weakness Patterns: ${profile.weaknessPatterns.join(', ')}
-      - Strength Areas: ${profile.strengthAreas.join(', ')}
+      - Weakness Patterns: ${profile.weaknessPatterns.join( ', ')}
+      - Strength Areas: ${profile.strengthAreas.join( ', ')}
       - Attention Span: ${profile.attentionSpan} minutes
       
       Recent Performance:
@@ -439,13 +439,13 @@ export class AdaptiveLearningEngine {
     `;
   }
 
-  private async initializeConceptGraph(): Promise<void> {
+  private async initializeConceptGraph(_): Promise<void> {
     // Initialize the concept dependency graph
     // This would typically be loaded from a configuration file
     console.log('🔄 Initializing concept dependency graph...');
   }
 
-  private async saveLearningProfile(profile: LearningProfile): Promise<void> {
+  private async saveLearningProfile(_profile: LearningProfile): Promise<void> {
     await prisma.userLearningProfile.upsert({
       where: { userId: profile.userId },
       update: {
@@ -458,7 +458,7 @@ export class AdaptiveLearningEngine {
         personalityType: profile.personalityType,
         attentionSpan: profile.attentionSpan,
         optimalSessionLength: profile.optimalSessionLength,
-        updatedAt: new Date()
+        updatedAt: new Date(_)
       },
       create: {
         userId: profile.userId,
@@ -476,14 +476,14 @@ export class AdaptiveLearningEngine {
   }
 
   // Database methods for concept mastery tracking
-  private async getConceptLevel(userId: string, concept: string): Promise<number> {
-    return performanceOptimizer.optimizeDBQuery(async () => {
-      const aiContext = await prisma.aiLearningContext.findUnique({
+  private async getConceptLevel( userId: string, concept: string): Promise<number> {
+    return performanceOptimizer.optimizeDBQuery( async () => {
+      const aiContext = await prisma.aILearningContext.findUnique({
         where: { userId },
         select: { conceptMastery: true } // Only select needed field
       });
 
-      if (aiContext?.conceptMastery) {
+      if (_aiContext?.conceptMastery) {
         const conceptMastery = aiContext.conceptMastery as Record<string, number>;
         return conceptMastery[concept] || 0;
       }
@@ -492,25 +492,25 @@ export class AdaptiveLearningEngine {
     }, `getConceptLevel-${userId}-${concept}`);
   }
 
-  private async updateConceptLevel(userId: string, concept: string, level: number): Promise<void> {
-    return performanceOptimizer.optimizeDBQuery(async () => {
-      const aiContext = await prisma.aiLearningContext.findUnique({
+  private async updateConceptLevel( userId: string, concept: string, level: number): Promise<void> {
+    return performanceOptimizer.optimizeDBQuery( async () => {
+      const aiContext = await prisma.aILearningContext.findUnique({
         where: { userId },
         select: { conceptMastery: true }
       });
 
       let conceptMastery: Record<string, number> = {};
-      if (aiContext?.conceptMastery) {
+      if (_aiContext?.conceptMastery) {
         conceptMastery = aiContext.conceptMastery as Record<string, number>;
       }
 
       conceptMastery[concept] = level;
 
-      await prisma.aiLearningContext.upsert({
+      await prisma.aILearningContext.upsert({
         where: { userId },
         update: {
           conceptMastery,
-          updatedAt: new Date()
+          updatedAt: new Date(_)
         },
         create: {
           userId,
@@ -524,11 +524,11 @@ export class AdaptiveLearningEngine {
         }
       });
 
-      console.log(`✅ Updated concept level: ${userId}:${concept} = ${level}`);
+      console.log(_`✅ Updated concept level: ${userId}:${concept} = ${level}`);
     }, `updateConceptLevel-${userId}-${concept}`);
   }
 
-  private async recordConceptMastery(userId: string, concept: string, level: number): Promise<void> {
+  private async recordConceptMastery( userId: string, concept: string, level: number): Promise<void> {
     try {
       // Record in concept mastery table
       await prisma.conceptMastery.upsert({
@@ -540,46 +540,46 @@ export class AdaptiveLearningEngine {
         },
         update: {
           masteryLevel: level,
-          masteredAt: new Date(),
-          updatedAt: new Date()
+          masteredAt: new Date(_),
+          updatedAt: new Date(_)
         },
         create: {
           userId,
           concept,
           masteryLevel: level,
-          masteredAt: new Date()
+          masteredAt: new Date(_)
         }
       });
 
       // Update user's strong areas in AI context
-      const aiContext = await prisma.aiLearningContext.findUnique({
+      const aiContext = await prisma.aILearningContext.findUnique({
         where: { userId }
       });
 
       if (aiContext) {
-        const strongAreas = aiContext.strongAreas ? JSON.parse(aiContext.strongAreas) : [];
+        const strongAreas = aiContext.strongAreas ? JSON.parse(_aiContext.strongAreas) : [];
         if (!strongAreas.includes(concept)) {
-          strongAreas.push(concept);
+          strongAreas.push(_concept);
 
-          await prisma.aiLearningContext.update({
+          await prisma.aILearningContext.update({
             where: { userId },
             data: {
-              strongAreas: JSON.stringify(strongAreas),
-              updatedAt: new Date()
+              strongAreas: JSON.stringify(_strongAreas),
+              updatedAt: new Date(_)
             }
           });
         }
       }
 
-      console.log(`🎉 Recorded concept mastery: ${userId} mastered ${concept} at level ${level}`);
-    } catch (error) {
+      console.log(_`🎉 Recorded concept mastery: ${userId} mastered ${concept} at level ${level}`);
+    } catch (_error) {
       console.error(`Error recording concept mastery for ${userId}:${concept}:`, error);
       throw error;
     }
   }
 
   // Missing method implementations
-  private async getRecentSessions(userId: string): Promise<LearningSession[]> {
+  private async getRecentSessions(_userId: string): Promise<LearningSession[]> {
     const sessions = await prisma.learningSession.findMany({
       where: { userId },
       orderBy: { startTime: 'desc' },
@@ -602,12 +602,12 @@ export class AdaptiveLearningEngine {
     }));
   }
 
-  private async getAnalysisHistory(userId: string): Promise<any[]> {
+  private async getAnalysisHistory(_userId: string): Promise<any[]> {
     // Implementation would fetch analysis history from database
     return [];
   }
 
-  private async calculateSkillLevels(userId: string, sessions: LearningSession[]): Promise<Record<string, number>> {
+  private async calculateSkillLevels( userId: string, sessions: LearningSession[]): Promise<Record<string, number>> {
     const skillLevels: Record<string, number> = {};
     
     // Calculate skill levels based on session performance
@@ -624,33 +624,33 @@ export class AdaptiveLearningEngine {
     return skillLevels;
   }
 
-  private identifyStrengthAreas(analysisHistory: any[]): string[] {
-    const strengths = new Map<string, number>();
+  private identifyStrengthAreas(_analysisHistory: any[]): string[] {
+    const strengths = new Map<string, number>(_);
     
     analysisHistory.forEach(analysis => {
       // Count successful implementations
-      if (analysis.overallScore > 80) {
+      if (_analysis.overallScore > 80) {
         analysis.concepts?.forEach((concept: string) => {
-          strengths.set(concept, (strengths.get(concept) || 0) + 1);
+          strengths.set( concept, (strengths.get(concept) || 0) + 1);
         });
       }
     });
     
     // Return top strength areas
-    return Array.from(strengths.entries())
-      .filter(([_, count]) => count >= 3)
-      .sort(([_, a], [__, b]) => b - a)
+    return Array.from(_strengths.entries())
+      .filter( ([_, count]) => count >= 3)
+      .sort( ([_, a], [ , b]) => b - a)
       .slice(0, 5)
-      .map(([concept, _]) => concept);
+      .map( ([concept, _]) => concept);
   }
 
-  private calculateSessionParameters(sessions: LearningSession[]): { attentionSpan: number; optimalSessionLength: number } {
-    if (sessions.length === 0) {
+  private calculateSessionParameters(_sessions: LearningSession[]): { attentionSpan: number; optimalSessionLength: number } {
+    if (_sessions.length === 0) {
       return { attentionSpan: 30, optimalSessionLength: 45 };
     }
     
-    const avgTimeSpent = sessions.reduce((sum, s) => sum + s.timeSpent, 0) / sessions.length;
-    const avgEngagement = sessions.reduce((sum, s) => sum + s.engagementLevel, 0) / sessions.length;
+    const avgTimeSpent = sessions.reduce( (sum, s) => sum + s.timeSpent, 0) / sessions.length;
+    const avgEngagement = sessions.reduce( (sum, s) => sum + s.engagementLevel, 0) / sessions.length;
     
     // Calculate optimal parameters based on engagement and time spent
     const attentionSpan = Math.min(60, Math.max(15, avgTimeSpent * (avgEngagement / 10)));
@@ -659,8 +659,8 @@ export class AdaptiveLearningEngine {
     return { attentionSpan, optimalSessionLength };
   }
 
-  private getLatestScores(analysisHistory: any[]): { security: number; gasOptimization: number; codeQuality: number } {
-    if (analysisHistory.length === 0) {
+  private getLatestScores(_analysisHistory: any[]): { security: number; gasOptimization: number; codeQuality: number } {
+    if (_analysisHistory.length === 0) {
       return { security: 0, gasOptimization: 0, codeQuality: 0 };
     }
     
@@ -672,7 +672,7 @@ export class AdaptiveLearningEngine {
     };
   }
 
-  private async saveLearningProfile(profile: LearningProfile): Promise<void> {
+  private async saveLearningProfile(_profile: LearningProfile): Promise<void> {
     await prisma.userLearningProfile.upsert({
       where: { userId: profile.userId },
       update: {
@@ -685,7 +685,7 @@ export class AdaptiveLearningEngine {
         personalityType: profile.personalityType,
         attentionSpan: profile.attentionSpan,
         optimalSessionLength: profile.optimalSessionLength,
-        updatedAt: new Date()
+        updatedAt: new Date(_)
       },
       create: {
         userId: profile.userId,
@@ -702,51 +702,51 @@ export class AdaptiveLearningEngine {
     });
   }
 
-  private async getAdaptationHistory(userId: string): Promise<AdaptationRecord[]> {
+  private async getAdaptationHistory(_userId: string): Promise<AdaptationRecord[]> {
     // Implementation would fetch adaptation history from database
     return [];
   }
 
-  private async saveLearningPath(path: LearningPath): Promise<void> {
+  private async saveLearningPath(_path: LearningPath): Promise<void> {
     // Implementation would save learning path to database
   }
 
-  private async selectNextConcepts(profile: LearningProfile): Promise<ConceptNode[]> {
+  private async selectNextConcepts(_profile: LearningProfile): Promise<ConceptNode[]> {
     // Implementation would select appropriate concepts based on profile
     return [];
   }
 
-  private createMilestones(conceptNodes: ConceptNode[], profile: LearningProfile): Milestone[] {
-    return conceptNodes.map((concept, index) => ({
+  private createMilestones( conceptNodes: ConceptNode[], profile: LearningProfile): Milestone[] {
+    return conceptNodes.map( (concept, index) => ({
       id: `milestone-${index}`,
       name: `Master ${concept.name}`,
       description: `Achieve mastery in ${concept.name}`,
       requiredConcepts: [concept.id],
       reward: 'Concept mastery badge',
-      estimatedCompletion: new Date(Date.now() + (index + 1) * 7 * 24 * 60 * 60 * 1000) // Weekly milestones
+      estimatedCompletion: new Date(_Date.now() + (_index + 1) * 7 * 24 * 60 * 60 * 1000) // Weekly milestones
     }));
   }
 
-  private calculateCurrentLevel(skillLevels: Record<string, number>): number {
-    const levels = Object.values(skillLevels);
-    return levels.length > 0 ? levels.reduce((sum, level) => sum + level, 0) / levels.length : 0;
+  private calculateCurrentLevel( skillLevels: Record<string, number>): number {
+    const levels = Object.values(_skillLevels);
+    return levels.length > 0 ? levels.reduce( (sum, level) => sum + level, 0) / levels.length : 0;
   }
 
-  private calculateRecommendedDifficulty(profile: LearningProfile): number {
-    const avgSkillLevel = this.calculateCurrentLevel(profile.skillLevels);
+  private calculateRecommendedDifficulty(_profile: LearningProfile): number {
+    const avgSkillLevel = this.calculateCurrentLevel(_profile.skillLevels);
     // Convert skill level (0-100) to difficulty (0-1)
     return Math.max(0.1, Math.min(1.0, avgSkillLevel / 100));
   }
 
-  private estimateCompletionTime(conceptNodes: ConceptNode[], profile: LearningProfile): number {
-    const totalTime = conceptNodes.reduce((sum, concept) => sum + concept.estimatedTime, 0);
+  private estimateCompletionTime( conceptNodes: ConceptNode[], profile: LearningProfile): number {
+    const totalTime = conceptNodes.reduce( (sum, concept) => sum + concept.estimatedTime, 0);
     // Adjust based on learning velocity
     return Math.round(totalTime / profile.learningVelocity);
   }
 
-  private parseExerciseFromAI(content: string, concept: ConceptNode): Exercise {
+  private parseExerciseFromAI( content: string, concept: ConceptNode): Exercise {
     return {
-      id: `exercise-${Date.now()}`,
+      id: `exercise-${Date.now(_)}`,
       type: 'coding',
       concept: concept.name,
       difficulty: concept.difficulty,
@@ -756,11 +756,11 @@ export class AdaptiveLearningEngine {
     };
   }
 
-  private async evaluateAdaptationTriggers(userId: string): Promise<void> {
+  private async evaluateAdaptationTriggers(_userId: string): Promise<void> {
     // Implementation would check if adaptation is needed based on recent performance
   }
 
-  private calculateMasteryScore(performance: PerformanceMetrics): number {
+  private calculateMasteryScore(_performance: PerformanceMetrics): number {
     // Weighted average of performance metrics
     return (
       performance.accuracy * 0.3 +
@@ -771,7 +771,7 @@ export class AdaptiveLearningEngine {
     );
   }
 
-  private async getLearningProfile(userId: string): Promise<LearningProfile> {
+  private async getLearningProfile(_userId: string): Promise<LearningProfile> {
     const profile = await prisma.userLearningProfile.findUnique({
       where: { userId }
     });
@@ -789,8 +789,8 @@ export class AdaptiveLearningEngine {
         personalityType: 'analytical',
         attentionSpan: 30,
         optimalSessionLength: 45,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date(_),
+        updatedAt: new Date(_)
       };
     }
     
@@ -810,8 +810,8 @@ export class AdaptiveLearningEngine {
     };
   }
 
-  private getTargetAccuracy(difficulty: string): number {
-    switch (difficulty) {
+  private getTargetAccuracy(_difficulty: string): number {
+    switch (_difficulty) {
       case 'gradual': return 0.8;
       case 'challenge': return 0.6;
       case 'adaptive': return 0.7;
@@ -819,9 +819,9 @@ export class AdaptiveLearningEngine {
     }
   }
 
-  private async recordAdaptation(userId: string, oldDifficulty: number, newDifficulty: number, performance: PerformanceMetrics): Promise<void> {
+  private async recordAdaptation( userId: string, oldDifficulty: number, newDifficulty: number, performance: PerformanceMetrics): Promise<void> {
     const adaptationRecord: AdaptationRecord = {
-      timestamp: new Date(),
+      timestamp: new Date(_),
       trigger: 'performance-based',
       oldDifficulty,
       newDifficulty,
@@ -832,7 +832,7 @@ export class AdaptiveLearningEngine {
     // Implementation would save adaptation record to database
   }
 
-  private async analyzeTalent(userId: string, analysisType: string): Promise<any> {
+  private async analyzeTalent( userId: string, analysisType: string): Promise<any> {
     // Implementation would analyze talent based on type
     return {
       userId,
@@ -842,10 +842,10 @@ export class AdaptiveLearningEngine {
     };
   }
 
-  private generateBulkAnalysisSummary(results: any[]): any {
+  private generateBulkAnalysisSummary(_results: any[]): any {
     return {
       totalAnalyzed: results.length,
-      averageScore: results.reduce((sum, r) => sum + r.score, 0) / results.length,
+      averageScore: results.reduce( (sum, r) => sum + r.score, 0) / results.length,
       topPerformers: results.filter(r => r.score > 90).length,
       needsImprovement: results.filter(r => r.score < 70).length
     };
@@ -853,4 +853,4 @@ export class AdaptiveLearningEngine {
 }
 
 // Export singleton instance
-export const adaptiveLearningEngine = new AdaptiveLearningEngine();
+export const adaptiveLearningEngine = new AdaptiveLearningEngine(_);

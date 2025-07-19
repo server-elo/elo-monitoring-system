@@ -13,11 +13,11 @@ export interface AsyncButtonOptions {
   successDuration?: number;
   errorDuration?: number;
   preventDoubleClick?: boolean;
-  onSuccess?: () => void;
-  onError?: (error: Error) => void;
+  onSuccess?: (_) => void;
+  onError?: (_error: Error) => void;
 }
 
-export function useAsyncButton(options: AsyncButtonOptions = {}) {
+export function useAsyncButton(_options: AsyncButtonOptions = {}) {
   const {
     debounceMs = 300,
     successDuration = 2000,
@@ -35,28 +35,28 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
     isDisabled: false
   });
 
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
-  const successTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(_null);
+  const successTimeoutRef = useRef<NodeJS.Timeout | null>(_null);
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(_null);
   const lastClickRef = useRef<number>(0);
 
   const clearTimeouts = useCallback(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
+    if (_debounceRef.current) {
+      clearTimeout(_debounceRef.current);
       debounceRef.current = null;
     }
-    if (successTimeoutRef.current) {
-      clearTimeout(successTimeoutRef.current);
+    if (_successTimeoutRef.current) {
+      clearTimeout(_successTimeoutRef.current);
       successTimeoutRef.current = null;
     }
-    if (errorTimeoutRef.current) {
-      clearTimeout(errorTimeoutRef.current);
+    if (_errorTimeoutRef.current) {
+      clearTimeout(_errorTimeoutRef.current);
       errorTimeoutRef.current = null;
     }
   }, []);
 
   const reset = useCallback(() => {
-    clearTimeouts();
+    clearTimeouts(_);
     setState({
       isLoading: false,
       isSuccess: false,
@@ -66,8 +66,8 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
     });
   }, [clearTimeouts]);
 
-  const execute = useCallback(async (asyncFn: () => Promise<void>) => {
-    const now = Date.now();
+  const execute = useCallback( async (asyncFn: () => Promise<void>) => {
+    const now = Date.now(_);
     
     // Prevent double clicks
     if (preventDoubleClick && now - lastClickRef.current < debounceMs) {
@@ -76,7 +76,7 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
     lastClickRef.current = now;
 
     // Clear any existing timeouts
-    clearTimeouts();
+    clearTimeouts(_);
 
     // Set loading state immediately
     setState(prev => ({
@@ -89,7 +89,7 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
     }));
 
     try {
-      await asyncFn();
+      await asyncFn(_);
       
       // Set success state
       setState(prev => ({
@@ -103,7 +103,7 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
 
       // Call success callback
       if (onSuccess) {
-        onSuccess();
+        onSuccess(_);
       }
 
       // Auto-clear success state after duration
@@ -114,7 +114,7 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
         }));
       }, successDuration);
 
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
       
       // Set error state
@@ -129,7 +129,7 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
 
       // Call error callback
       if (onError) {
-        onError(error instanceof Error ? error : new Error(errorMessage));
+        onError(_error instanceof Error ? error : new Error(errorMessage));
       }
 
       // Auto-clear error state after duration
@@ -145,7 +145,7 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
 
   // Cleanup on unmount
   const cleanup = useCallback(() => {
-    clearTimeouts();
+    clearTimeouts(_);
   }, [clearTimeouts]);
 
   return {
@@ -158,28 +158,28 @@ export function useAsyncButton(options: AsyncButtonOptions = {}) {
 
 // Hook for debounced async actions
 export function useDebouncedAsyncButton(
-  asyncFn: () => Promise<void>,
+  asyncFn: (_) => Promise<void>,
   options: AsyncButtonOptions = {}
 ) {
-  const { execute, state, reset, cleanup } = useAsyncButton(options);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const { execute, state, reset, cleanup } = useAsyncButton(_options);
+  const debounceRef = useRef<NodeJS.Timeout | null>(_null);
 
   const debouncedExecute = useCallback(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
+    if (_debounceRef.current) {
+      clearTimeout(_debounceRef.current);
     }
 
     debounceRef.current = setTimeout(() => {
-      execute(asyncFn);
+      execute(_asyncFn);
     }, options.debounceMs || 300);
   }, [execute, asyncFn, options.debounceMs]);
 
   const cleanupDebounce = useCallback(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
+    if (_debounceRef.current) {
+      clearTimeout(_debounceRef.current);
       debounceRef.current = null;
     }
-    cleanup();
+    cleanup(_);
   }, [cleanup]);
 
   return {
@@ -192,7 +192,7 @@ export function useDebouncedAsyncButton(
 
 // Hook for form submission buttons
 export function useFormSubmitButton(
-  submitFn: () => Promise<void>,
+  submitFn: (_) => Promise<void>,
   options: AsyncButtonOptions = {}
 ) {
   const { execute, state, reset, cleanup } = useAsyncButton({
@@ -205,9 +205,9 @@ export function useFormSubmitButton(
 
   const handleSubmit = useCallback((e?: React.FormEvent) => {
     if (e) {
-      e.preventDefault();
+      e.preventDefault(_);
     }
-    execute(submitFn);
+    execute(_submitFn);
   }, [execute, submitFn]);
 
   return {
@@ -220,36 +220,36 @@ export function useFormSubmitButton(
 
 // Hook for API call buttons
 export function useApiButton<T = any>(
-  apiFn: () => Promise<T>,
+  apiFn: (_) => Promise<T>,
   options: AsyncButtonOptions & {
-    onData?: (data: T) => void;
+    onData?: (_data: T) => void;
   } = {}
 ) {
   const { onData, ...buttonOptions } = options;
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<T | null>(_null);
   
   const { execute, state, reset, cleanup } = useAsyncButton({
     ...buttonOptions,
-    onSuccess: () => {
+    onSuccess: (_) => {
       if (onData && data) {
-        onData(data);
+        onData(_data);
       }
-      if (buttonOptions.onSuccess) {
-        buttonOptions.onSuccess();
+      if (_buttonOptions.onSuccess) {
+        buttonOptions.onSuccess(_);
       }
     }
   });
 
-  const executeApi = useCallback(async () => {
-    await execute(async () => {
-      const result = await apiFn();
-      setData(result);
+  const executeApi = useCallback( async () => {
+    await execute( async () => {
+      const result = await apiFn(_);
+      setData(_result);
     });
   }, [execute, apiFn]);
 
   const resetWithData = useCallback(() => {
-    setData(null);
-    reset();
+    setData(_null);
+    reset(_);
   }, [reset]);
 
   return {

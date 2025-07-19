@@ -7,7 +7,7 @@ import React from 'react';
 
 interface ErrorBoundaryFallbackProps {
   error: Error;
-  resetError: () => void;
+  resetError: (_) => void;
 }
 
 export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
@@ -50,7 +50,7 @@ export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
           </button>
           
           <button
-            onClick={() => window.location.reload()}
+            onClick={(_) => window.location.reload(_)}
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md transition-colors duration-200"
           >
             Reload page
@@ -60,7 +60,7 @@ export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
         {process.env.NODE_ENV === 'development' && (
           <details className="mt-4">
             <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700">
-              Error details (development only)
+              Error details (_development only)
             </summary>
             <pre className="mt-2 text-xs text-gray-600 bg-gray-100 p-2 rounded overflow-auto max-h-32">
               {error.stack}

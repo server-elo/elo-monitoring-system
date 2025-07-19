@@ -23,31 +23,31 @@ export function UserAvatar({
   showSessionStatus = true,
   showDropdown = true
 }: UserAvatarProps) {
-  const { user, logout, isAuthenticated } = useAuth();
-  const { state: learningState } = useLearning();
-  const [isOpen, setIsOpen] = useState(false);
-  const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(null);
-  const [sessionManager] = useState(() => SessionManager.getInstance());
+  const { user, logout, isAuthenticated } = useAuth(_);
+  const { state: learningState } = useLearning(_);
+  const [isOpen, setIsOpen] = useState(_false);
+  const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(_null);
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
   const [timeDisplay, setTimeDisplay] = useState('');
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(_null);
 
   // Session status monitoring
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const updateStatus = () => {
-      const status = sessionManager.getSessionStatus();
-      setSessionStatus(status);
+    const updateStatus = (_) => {
+      const status = sessionManager.getSessionStatus(_);
+      setSessionStatus(_status);
       
       // Update time display
       if (status.isValid && status.timeUntilExpiry > 0) {
-        const minutes = Math.floor(status.timeUntilExpiry / (1000 * 60));
-        const hours = Math.floor(minutes / 60);
+        const minutes = Math.floor(_status.timeUntilExpiry / (1000 * 60));
+        const hours = Math.floor(_minutes / 60);
         
-        if (hours > 0) {
-          setTimeDisplay(`${hours}h ${minutes % 60}m`);
+        if (_hours > 0) {
+          setTimeDisplay(_`${hours}h ${minutes % 60}m`);
         } else {
-          setTimeDisplay(`${minutes}m`);
+          setTimeDisplay(_`${minutes}m`);
         }
       } else {
         setTimeDisplay('Expired');
@@ -55,41 +55,41 @@ export function UserAvatar({
     };
 
     // Initial status
-    updateStatus();
+    updateStatus(_);
 
     // Listen for status changes
-    const unsubscribeStatus = sessionManager.addStatusListener(updateStatus);
+    const unsubscribeStatus = sessionManager.addStatusListener(_updateStatus);
     
     // Update every minute
-    const interval = setInterval(updateStatus, 60000);
+    const interval = setInterval( updateStatus, 60000);
 
-    return () => {
-      unsubscribeStatus();
-      clearInterval(interval);
+    return (_) => {
+      unsubscribeStatus(_);
+      clearInterval(_interval);
     };
   }, [isAuthenticated, sessionManager]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+    const handleClickOutside = (_event: MouseEvent) => {
+      if (_dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(_false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener( 'mousedown', handleClickOutside);
+    return (_) => document.removeEventListener( 'mousedown', handleClickOutside);
   }, []);
 
   // Handle logout
   const handleLogout = async () => {
-    setIsOpen(false);
-    await logout();
+    setIsOpen(_false);
+    await logout(_);
   };
 
   // Get role icon and color
-  const getRoleInfo = (role: string) => {
-    switch (role) {
+  const getRoleInfo = (_role: string) => {
+    switch (_role) {
       case 'ADMIN':
         return { icon: Crown, color: 'text-yellow-400', bgColor: 'bg-yellow-500/20' };
       case 'INSTRUCTOR':
@@ -102,7 +102,7 @@ export function UserAvatar({
   };
 
   // Get session status color and icon
-  const getSessionStatusInfo = () => {
+  const getSessionStatusInfo = (_) => {
     if (!sessionStatus) {
       return { color: 'text-gray-400', bgColor: 'bg-gray-500/20', icon: WifiOff };
     }
@@ -111,11 +111,11 @@ export function UserAvatar({
       return { color: 'text-red-400', bgColor: 'bg-red-500/20', icon: AlertTriangle };
     }
 
-    if (sessionStatus.refreshInProgress) {
+    if (_sessionStatus.refreshInProgress) {
       return { color: 'text-blue-400', bgColor: 'bg-blue-500/20', icon: RefreshCw };
     }
 
-    if (sessionStatus.isExpiringSoon) {
+    if (_sessionStatus.isExpiringSoon) {
       return { color: 'text-yellow-400', bgColor: 'bg-yellow-500/20', icon: Clock };
     }
 
@@ -126,16 +126,16 @@ export function UserAvatar({
     return null;
   }
 
-  const roleInfo = getRoleInfo(user.role);
-  const statusInfo = getSessionStatusInfo();
+  const roleInfo = getRoleInfo(_user.role);
+  const statusInfo = getSessionStatusInfo(_);
   const RoleIcon = roleInfo.icon;
   const StatusIcon = statusInfo.icon;
 
   return (
-    <div className={cn('relative', className)} ref={dropdownRef}>
+    <div className={cn( 'relative', className)} ref={dropdownRef}>
       {/* Avatar Button */}
       <motion.button
-        onClick={() => showDropdown && setIsOpen(!isOpen)}
+        onClick={(_) => showDropdown && setIsOpen(!isOpen)}
         className={cn(
           'flex items-center space-x-3 p-2 rounded-lg transition-all duration-200',
           'bg-white/10 backdrop-blur-md border border-white/20',
@@ -162,7 +162,7 @@ export function UserAvatar({
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (
-              <RoleIcon className={cn('w-5 h-5', roleInfo.color)} />
+              <RoleIcon className={cn( 'w-5 h-5', roleInfo.color)} />
             )}
           </div>
           
@@ -173,7 +173,7 @@ export function UserAvatar({
               'border-2 border-slate-900',
               statusInfo.bgColor
             )}>
-              <StatusIcon className={cn('w-2.5 h-2.5', statusInfo.color)} />
+              <StatusIcon className={cn( 'w-2.5 h-2.5', statusInfo.color)} />
             </div>
           )}
         </div>
@@ -188,7 +188,7 @@ export function UserAvatar({
           </div>
         </div>
 
-        {/* Session Time (if expiring soon) */}
+        {/* Session Time (_if expiring soon) */}
         {showSessionStatus && sessionStatus?.isExpiringSoon && (
           <div className="text-xs text-yellow-400 font-mono">
             {timeDisplay}
@@ -235,7 +235,7 @@ export function UserAvatar({
                         className="w-full h-full rounded-full object-cover"
                       />
                     ) : (
-                      <RoleIcon className={cn('w-6 h-6', roleInfo.color)} />
+                      <RoleIcon className={cn( 'w-6 h-6', roleInfo.color)} />
                     )}
                   </div>
                   
@@ -274,8 +274,8 @@ export function UserAvatar({
                 <LevelProgressBar
                   currentLevel={learningState.level}
                   currentXP={learningState.xp}
-                  xpForCurrentLevel={getLevelInfo(learningState.xp).currentLevelInfo?.xpRequired || 0}
-                  xpForNextLevel={getLevelInfo(learningState.xp).nextLevelXP}
+                  xpForCurrentLevel={getLevelInfo(_learningState.xp).currentLevelInfo?.xpRequired || 0}
+                  xpForNextLevel={getLevelInfo(_learningState.xp).nextLevelXP}
                   previousXP={learningState.previousXP}
                 />
 
@@ -293,8 +293,8 @@ export function UserAvatar({
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-300">Session Status</span>
                     <div className="flex items-center space-x-1">
-                      <StatusIcon className={cn('w-3 h-3', statusInfo.color)} />
-                      <span className={cn('text-xs font-medium', statusInfo.color)}>
+                      <StatusIcon className={cn( 'w-3 h-3', statusInfo.color)} />
+                      <span className={cn( 'text-xs font-medium', statusInfo.color)}>
                         {sessionStatus.isValid ? 'Active' : 'Expired'}
                       </span>
                     </div>
@@ -326,8 +326,8 @@ export function UserAvatar({
               {/* Menu Items */}
               <div className="p-2">
                 <EnhancedButton
-                  onClick={() => {
-                    setIsOpen(false);
+                  onClick={(_) => {
+                    setIsOpen(_false);
                     // Navigate to profile
                   }}
                   variant="ghost"
@@ -340,8 +340,8 @@ export function UserAvatar({
                 </EnhancedButton>
                 
                 <EnhancedButton
-                  onClick={() => {
-                    setIsOpen(false);
+                  onClick={(_) => {
+                    setIsOpen(_false);
                     // Navigate to settings
                   }}
                   variant="ghost"

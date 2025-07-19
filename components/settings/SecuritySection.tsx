@@ -10,13 +10,13 @@ import { cn } from '@/lib/utils';
 export interface SecuritySectionProps {
   security: SecuritySettings;
   activeSessions: ActiveSession[];
-  onUpdateSecurity: (data: Partial<SecuritySettings>) => Promise<{ success: boolean; errors?: any[] }>;
-  onChangePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; errors?: any[] }>;
-  onSetupTwoFactor: () => Promise<TwoFactorSetup | null>;
-  onEnableTwoFactor: (code: string) => Promise<boolean>;
-  onDisableTwoFactor: (code: string) => Promise<boolean>;
-  onRevokeSession: (sessionId: string) => Promise<boolean>;
-  onRefreshSessions: () => Promise<void>;
+  onUpdateSecurity: (_data: Partial<SecuritySettings>) => Promise<{ success: boolean; errors?: any[] }>;
+  onChangePassword: ( currentPassword: string, newPassword: string) => Promise<{ success: boolean; errors?: any[] }>;
+  onSetupTwoFactor: (_) => Promise<TwoFactorSetup | null>;
+  onEnableTwoFactor: (_code: string) => Promise<boolean>;
+  onDisableTwoFactor: (_code: string) => Promise<boolean>;
+  onRevokeSession: (_sessionId: string) => Promise<boolean>;
+  onRefreshSessions: (_) => Promise<void>;
   className?: string;
 }
 
@@ -43,8 +43,8 @@ export function SecuritySection({
   className
 }: SecuritySectionProps) {
   const [activeTab, setActiveTab] = useState<'password' | 'twoFactor' | 'sessions' | 'settings'>('password');
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [_showTwoFactorSetup, setShowTwoFactorSetup] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(_false);
+  const [_showTwoFactorSetup, setShowTwoFactorSetup] = useState(_false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -55,40 +55,40 @@ export function SecuritySection({
     new: false,
     confirm: false
   });
-  const [_twoFactorSetup, setTwoFactorSetup] = useState<TwoFactorSetup | null>(null);
+  const [_twoFactorSetup, setTwoFactorSetup] = useState<TwoFactorSetup | null>(_null);
   const [_twoFactorCode, _setTwoFactorCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(_false);
 
   // Password strength calculation
   const calculatePasswordStrength = useCallback((password: string) => {
     let score = 0;
     const feedback: string[] = [];
 
-    if (password.length >= PASSWORD_REQUIREMENTS.minLength) {
+    if (_password.length >= PASSWORD_REQUIREMENTS.minLength) {
       score += 20;
     } else {
-      feedback.push(`At least ${PASSWORD_REQUIREMENTS.minLength} characters`);
+      feedback.push(_`At least ${PASSWORD_REQUIREMENTS.minLength} characters`);
     }
 
-    if (/[A-Z]/.test(password)) {
+    if (_/[A-Z]/.test(password)) {
       score += 20;
     } else {
       feedback.push('One uppercase letter');
     }
 
-    if (/[a-z]/.test(password)) {
+    if (_/[a-z]/.test(password)) {
       score += 20;
     } else {
       feedback.push('One lowercase letter');
     }
 
-    if (/\d/.test(password)) {
+    if (_/\d/.test(password)) {
       score += 20;
     } else {
       feedback.push('One number');
     }
 
-    if (/[^A-Za-z0-9]/.test(password)) {
+    if (_/[^A-Za-z0-9]/.test(password)) {
       score += 20;
     } else {
       feedback.push('One special character');
@@ -97,81 +97,81 @@ export function SecuritySection({
     return { score, feedback };
   }, []);
 
-  const passwordStrength = calculatePasswordStrength(passwordForm.newPassword);
+  const passwordStrength = calculatePasswordStrength(_passwordForm.newPassword);
 
   // Handle password change
-  const handlePasswordChange = useCallback(async () => {
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+  const handlePasswordChange = useCallback( async () => {
+    if (_passwordForm.newPassword !== passwordForm.confirmPassword) {
       return;
     }
 
-    if (passwordStrength.score < 100) {
+    if (_passwordStrength.score < 100) {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoading(_true);
     try {
-      const result = await onChangePassword(passwordForm.currentPassword, passwordForm.newPassword);
-      if (result.success) {
-        setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
-        setShowPasswordForm(false);
+      const result = await onChangePassword( passwordForm.currentPassword, passwordForm.newPassword);
+      if (_result.success) {
+        setPasswordForm( { currentPassword: '', newPassword: '', confirmPassword: '' });
+        setShowPasswordForm(_false);
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, [passwordForm, passwordStrength.score, onChangePassword]);
 
   // Handle 2FA setup
-  const handleSetupTwoFactor = useCallback(async () => {
-    setIsLoading(true);
+  const handleSetupTwoFactor = useCallback( async () => {
+    setIsLoading(_true);
     try {
-      const setup = await onSetupTwoFactor();
+      const setup = await onSetupTwoFactor(_);
       if (setup) {
-        setTwoFactorSetup(setup);
-        setShowTwoFactorSetup(true);
+        setTwoFactorSetup(_setup);
+        setShowTwoFactorSetup(_true);
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, [onSetupTwoFactor]);
 
   // 2FA handling moved to modal components
-  // const _handleEnableTwoFactor = useCallback(async () => {
+  // const _handleEnableTwoFactor = useCallback( async () => {
   //   if (!twoFactorCode.trim()) return;
   //
-  //   setIsLoading(true);
+  //   setIsLoading(_true);
   //   try {
-  //     const success = await onEnableTwoFactor(twoFactorCode);
+  //     const success = await onEnableTwoFactor(_twoFactorCode);
   //     if (success) {
-  //       setShowTwoFactorSetup(false);
-  //       setTwoFactorSetup(null);
+  //       setShowTwoFactorSetup(_false);
+  //       setTwoFactorSetup(_null);
   //       setTwoFactorCode('');
   //     }
   //   } finally {
-  //     setIsLoading(false);
+  //     setIsLoading(_false);
   //   }
   // }, [twoFactorCode, onEnableTwoFactor]);
   //
   // // Handle 2FA disable
-  // const _handleDisableTwoFactor = useCallback(async () => {
+  // const _handleDisableTwoFactor = useCallback( async () => {
   //   if (!twoFactorCode.trim()) return;
   //
-  //   setIsLoading(true);
+  //   setIsLoading(_true);
   //   try {
-  //     const success = await onDisableTwoFactor(twoFactorCode);
+  //     const success = await onDisableTwoFactor(_twoFactorCode);
   //     if (success) {
   //       setTwoFactorCode('');
   //     }
   //   } finally {
-  //     setIsLoading(false);
+  //     setIsLoading(_false);
   //   }
   // }, [twoFactorCode, onDisableTwoFactor]);
   //
   // // Copy to clipboard
-  // const _copyToClipboard = useCallback(async (text: string) => {
+  // const _copyToClipboard = useCallback( async (text: string) => {
   //   try {
-  //     await navigator.clipboard.writeText(text);
-  //   } catch (error) {
+  //     await navigator.clipboard.writeText(_text);
+  //   } catch (_error) {
   //     console.error('Failed to copy to clipboard:', error);
   //   }
   // }, []);
@@ -181,7 +181,7 @@ export function SecuritySection({
       intensity="medium"
       tint="neutral"
       border
-      className={cn('p-6', className)}
+      className={cn( 'p-6', className)}
     >
       <div className="flex items-center space-x-3 mb-6">
         <Shield className="w-6 h-6 text-green-400" />
@@ -200,7 +200,7 @@ export function SecuritySection({
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(_) => setActiveTab(_tab.id as any)}
               className={cn(
                 'flex items-center space-x-2 px-4 py-2 text-sm transition-colors',
                 activeTab === tab.id
@@ -231,12 +231,12 @@ export function SecuritySection({
                 <div>
                   <h3 className="text-lg font-medium text-white">Password</h3>
                   <p className="text-gray-400 text-sm">
-                    Last changed: {new Date(security.passwordLastChanged).toLocaleDateString()}
+                    Last changed: {new Date(_security.passwordLastChanged).toLocaleDateString(_)}
                   </p>
                 </div>
 
                 <button
-                  onClick={() => setShowPasswordForm(!showPasswordForm)}
+                  onClick={(_) => setShowPasswordForm(!showPasswordForm)}
                   className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                 >
                   <Key className="w-4 h-4" />
@@ -261,13 +261,13 @@ export function SecuritySection({
                         <input
                           type={showPasswords.current ? 'text' : 'password'}
                           value={passwordForm.currentPassword}
-                          onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                          onChange={(_e) => setPasswordForm( prev => ({ ...prev, currentPassword: e.target.value }))}
                           className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="Enter current password"
                         />
                         <button
                           type="button"
-                          onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
+                          onClick={(_) => setShowPasswords( prev => ({ ...prev, current: !prev.current }))}
                           className="absolute right-3 top-2.5 text-gray-400 hover:text-white"
                         >
                           {showPasswords.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -284,13 +284,13 @@ export function SecuritySection({
                         <input
                           type={showPasswords.new ? 'text' : 'password'}
                           value={passwordForm.newPassword}
-                          onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                          onChange={(_e) => setPasswordForm( prev => ({ ...prev, newPassword: e.target.value }))}
                           className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="Enter new password"
                         />
                         <button
                           type="button"
-                          onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
+                          onClick={(_) => setShowPasswords( prev => ({ ...prev, new: !prev.new }))}
                           className="absolute right-3 top-2.5 text-gray-400 hover:text-white"
                         >
                           {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -326,7 +326,7 @@ export function SecuritySection({
 
                           {passwordStrength.feedback.length > 0 && (
                             <div className="text-xs text-gray-400">
-                              Missing: {passwordStrength.feedback.join(', ')}
+                              Missing: {passwordStrength.feedback.join( ', ')}
                             </div>
                           )}
                         </div>
@@ -342,7 +342,7 @@ export function SecuritySection({
                         <input
                           type={showPasswords.confirm ? 'text' : 'password'}
                           value={passwordForm.confirmPassword}
-                          onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                          onChange={(_e) => setPasswordForm( prev => ({ ...prev, confirmPassword: e.target.value }))}
                           className={cn(
                             'w-full px-3 py-2 pr-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2',
                             passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword
@@ -353,7 +353,7 @@ export function SecuritySection({
                         />
                         <button
                           type="button"
-                          onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
+                          onClick={(_) => setShowPasswords( prev => ({ ...prev, confirm: !prev.confirm }))}
                           className="absolute right-3 top-2.5 text-gray-400 hover:text-white"
                         >
                           {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -368,9 +368,9 @@ export function SecuritySection({
                     {/* Action Buttons */}
                     <div className="flex justify-end space-x-3 pt-4">
                       <button
-                        onClick={() => {
-                          setShowPasswordForm(false);
-                          setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                        onClick={(_) => {
+                          setShowPasswordForm(_false);
+                          setPasswordForm( { currentPassword: '', newPassword: '', confirmPassword: '' });
                         }}
                         className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                       >
@@ -467,7 +467,7 @@ export function SecuritySection({
 
                         <div className="flex space-x-3">
                           <button
-                            onClick={() => setShowTwoFactorSetup(true)}
+                            onClick={(_) => setShowTwoFactorSetup(_true)}
                             className="flex items-center space-x-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors"
                           >
                             <RefreshCw className="w-4 h-4" />
@@ -475,7 +475,7 @@ export function SecuritySection({
                           </button>
 
                           <button
-                            onClick={() => setShowTwoFactorSetup(true)}
+                            onClick={(_) => setShowTwoFactorSetup(_true)}
                             className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
                           >
                             <X className="w-4 h-4" />
@@ -549,7 +549,7 @@ export function SecuritySection({
                             </div>
                             <div className="flex items-center space-x-1">
                               <Clock className="w-3 h-3" />
-                              <span>Last active: {new Date(session.lastActivity).toLocaleString()}</span>
+                              <span>Last active: {new Date(_session.lastActivity).toLocaleString(_)}</span>
                             </div>
                             <div className="flex items-center space-x-1">
                               <Globe className="w-3 h-3" />
@@ -561,7 +561,7 @@ export function SecuritySection({
 
                       {!session.isCurrentSession && (
                         <button
-                          onClick={() => onRevokeSession(session.id)}
+                          onClick={(_) => onRevokeSession(_session.id)}
                           className="flex items-center space-x-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -596,7 +596,7 @@ export function SecuritySection({
                   </div>
 
                   <button
-                    onClick={() => onUpdateSecurity({ loginNotifications: !security.loginNotifications })}
+                    onClick={(_) => onUpdateSecurity({ loginNotifications: !security.loginNotifications  })}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       security.loginNotifications ? 'bg-green-600' : 'bg-gray-600'
@@ -619,7 +619,7 @@ export function SecuritySection({
                   </div>
 
                   <button
-                    onClick={() => onUpdateSecurity({ suspiciousActivityAlerts: !security.suspiciousActivityAlerts })}
+                    onClick={(_) => onUpdateSecurity({ suspiciousActivityAlerts: !security.suspiciousActivityAlerts  })}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       security.suspiciousActivityAlerts ? 'bg-green-600' : 'bg-gray-600'
@@ -644,7 +644,7 @@ export function SecuritySection({
                   <div className="flex items-center space-x-4">
                     <select
                       value={security.sessionTimeout}
-                      onChange={(e) => onUpdateSecurity({ sessionTimeout: parseInt(e.target.value) })}
+                      onChange={(_e) => onUpdateSecurity({ sessionTimeout: parseInt(e.target.value)  })}
                       className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value={15}>15 minutes</option>
@@ -658,7 +658,7 @@ export function SecuritySection({
                     </select>
 
                     <span className="text-gray-400 text-sm">
-                      Current: {Math.floor(security.sessionTimeout / 60)}h {security.sessionTimeout % 60}m
+                      Current: {Math.floor(_security.sessionTimeout / 60)}h {security.sessionTimeout % 60}m
                     </span>
                   </div>
                 </div>

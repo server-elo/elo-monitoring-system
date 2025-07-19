@@ -64,7 +64,7 @@ export function CompetitiveAnalysisSection() {
 
         {/* Comparison Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {competitors.map((competitor, index) => (
+          {competitors.map( (competitor, index) => (
             <motion.div
               key={competitor.name}
               className={`relative p-6 rounded-2xl border transition-all duration-300 ${
@@ -91,11 +91,11 @@ export function CompetitiveAnalysisSection() {
                 <div className="text-4xl mb-2">{competitor.logo}</div>
                 <h3 className="text-xl font-semibold text-white mb-2">{competitor.name}</h3>
                 <div className="flex items-center justify-center gap-1">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(5)].map( (_, i) => (
                     <Star
                       key={i}
                       className={`w-4 h-4 ${
-                        i < Math.floor(competitor.rating)
+                        i < Math.floor(_competitor.rating)
                           ? 'text-yellow-400 fill-current'
                           : 'text-gray-600'
                       }`}
@@ -109,7 +109,7 @@ export function CompetitiveAnalysisSection() {
               <div className="mb-4">
                 <h4 className="text-sm font-semibold text-green-400 mb-2">Strengths</h4>
                 <ul className="space-y-1">
-                  {competitor.strengths.map((strength, i) => (
+                  {competitor.strengths.map( (strength, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
                       <CheckCircle className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
                       {strength}
@@ -123,7 +123,7 @@ export function CompetitiveAnalysisSection() {
                 <div>
                   <h4 className="text-sm font-semibold text-red-400 mb-2">Weaknesses</h4>
                   <ul className="space-y-1">
-                    {competitor.weaknesses.map((weakness, i) => (
+                    {competitor.weaknesses.map( (weakness, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
                         <XCircle className="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" />
                         {weakness}

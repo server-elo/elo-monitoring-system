@@ -34,32 +34,32 @@ class XPSystem {
     0, 1000, 2500, 4500, 7000, 10000, 14000, 19000, 25000, 32000, 40000
   ];
 
-  calculateXP(event: XPEvent): number {
+  calculateXP(_event: XPEvent): number {
     let xp = event.baseXP || this.baseXPValues[event.type];
     
-    if (event.multipliers) {
-      if (event.multipliers.streak) {
+    if (_event.multipliers) {
+      if (_event.multipliers.streak) {
         xp *= (1 + (event.multipliers.streak - 1) * 0.1); // 10% per streak day
       }
-      if (event.multipliers.difficulty) {
+      if (_event.multipliers.difficulty) {
         xp *= event.multipliers.difficulty;
       }
-      if (event.multipliers.performance) {
+      if (_event.multipliers.performance) {
         xp *= event.multipliers.performance;
       }
-      if (event.multipliers.bonus) {
+      if (_event.multipliers.bonus) {
         xp += event.multipliers.bonus;
       }
     }
 
-    return Math.floor(xp);
+    return Math.floor(_xp);
   }
 
-  getLevelInfo(totalXP: number): LevelInfo {
+  getLevelInfo(_totalXP: number): LevelInfo {
     let currentLevel = 1;
     
     for (let i = this.levelThresholds.length - 1; i >= 0; i--) {
-      if (totalXP >= this.levelThresholds[i]) {
+      if (_totalXP >= this.levelThresholds[i]) {
         currentLevel = i + 1;
         break;
       }
@@ -69,7 +69,7 @@ class XPSystem {
     const nextLevelXP = this.levelThresholds[currentLevel] || this.levelThresholds[this.levelThresholds.length - 1] + 10000;
     const xpInCurrentLevel = totalXP - currentLevelXP;
     const xpToNextLevel = nextLevelXP - totalXP;
-    const levelProgress = (xpInCurrentLevel / (nextLevelXP - currentLevelXP)) * 100;
+    const levelProgress = (_xpInCurrentLevel / (nextLevelXP - currentLevelXP)) * 100;
 
     return {
       currentLevel,
@@ -80,15 +80,15 @@ class XPSystem {
     };
   }
 
-  getXPForLevel(level: number): number {
+  getXPForLevel(_level: number): number {
     return this.levelThresholds[level - 1] || 0;
   }
 
-  calculateStreakMultiplier(streakDays: number): number {
+  calculateStreakMultiplier(_streakDays: number): number {
     return Math.min(1 + (streakDays - 1) * 0.1, 3.0); // Cap at 3x multiplier
   }
 
-  calculateDifficultyMultiplier(difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert'): number {
+  calculateDifficultyMultiplier(_difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert'): number {
     const multipliers = {
       beginner: 1.0,
       intermediate: 1.2,
@@ -98,71 +98,71 @@ class XPSystem {
     return multipliers[difficulty];
   }
 
-  calculatePerformanceMultiplier(score: number): number {
-    if (score >= 95) return 1.5;
-    if (score >= 90) return 1.3;
-    if (score >= 80) return 1.1;
-    if (score >= 70) return 1.0;
+  calculatePerformanceMultiplier(_score: number): number {
+    if (_score >= 95) return 1.5;
+    if (_score >= 90) return 1.3;
+    if (_score >= 80) return 1.1;
+    if (_score >= 70) return 1.0;
     return 0.8;
   }
 }
 
-describe('XP System - Comprehensive Test Suite', () => {
+describe( 'XP System - Comprehensive Test Suite', () => {
   let xpSystem: XPSystem;
 
   beforeEach(() => {
-    xpSystem = new XPSystem();
+    xpSystem = new XPSystem(_);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.restoreAllMocks(_);
   });
 
-  describe('XP Calculation', () => {
-    describe('Base XP Values', () => {
-      it('should calculate correct base XP for lesson completion', () => {
+  describe( 'XP Calculation', () => {
+    describe( 'Base XP Values', () => {
+      it( 'should calculate correct base XP for lesson completion', () => {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 100
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(100);
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(100);
       });
 
-      it('should calculate correct base XP for perfect quiz', () => {
+      it( 'should calculate correct base XP for perfect quiz', () => {
         const event: XPEvent = {
           type: 'quiz_perfect',
           baseXP: 150
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(150);
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(150);
       });
 
-      it('should calculate correct base XP for project submission', () => {
+      it( 'should calculate correct base XP for project submission', () => {
         const event: XPEvent = {
           type: 'project_submit',
           baseXP: 300
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(300);
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(300);
       });
 
-      it('should use default base XP when not specified', () => {
+      it( 'should use default base XP when not specified', () => {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 0 // Will use default
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(100); // Default for lesson_complete
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(100); // Default for lesson_complete
       });
     });
 
-    describe('Streak Multipliers', () => {
-      it('should apply streak multiplier correctly', () => {
+    describe( 'Streak Multipliers', () => {
+      it( 'should apply streak multiplier correctly', () => {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 100,
@@ -171,18 +171,18 @@ describe('XP System - Comprehensive Test Suite', () => {
           }
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(140); // 100 * (1 + 4 * 0.1) = 140
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(140); // 100 * (1 + 4 * 0.1) = 140
       });
 
-      it('should calculate streak multiplier for different streak lengths', () => {
-        expect(xpSystem.calculateStreakMultiplier(1)).toBe(1.0);
-        expect(xpSystem.calculateStreakMultiplier(5)).toBe(1.4);
-        expect(xpSystem.calculateStreakMultiplier(10)).toBe(1.9);
-        expect(xpSystem.calculateStreakMultiplier(30)).toBe(3.0); // Capped at 3x
+      it( 'should calculate streak multiplier for different streak lengths', () => {
+        expect(_xpSystem.calculateStreakMultiplier(1)).toBe(1.0);
+        expect(_xpSystem.calculateStreakMultiplier(5)).toBe(1.4);
+        expect(_xpSystem.calculateStreakMultiplier(10)).toBe(1.9);
+        expect(_xpSystem.calculateStreakMultiplier(30)).toBe(3.0); // Capped at 3x
       });
 
-      it('should cap streak multiplier at maximum value', () => {
+      it( 'should cap streak multiplier at maximum value', () => {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 100,
@@ -191,20 +191,20 @@ describe('XP System - Comprehensive Test Suite', () => {
           }
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(300); // Should be capped at 3x multiplier
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(300); // Should be capped at 3x multiplier
       });
     });
 
-    describe('Difficulty Multipliers', () => {
-      it('should apply difficulty multipliers correctly', () => {
-        expect(xpSystem.calculateDifficultyMultiplier('beginner')).toBe(1.0);
-        expect(xpSystem.calculateDifficultyMultiplier('intermediate')).toBe(1.2);
-        expect(xpSystem.calculateDifficultyMultiplier('advanced')).toBe(1.5);
-        expect(xpSystem.calculateDifficultyMultiplier('expert')).toBe(2.0);
+    describe( 'Difficulty Multipliers', () => {
+      it( 'should apply difficulty multipliers correctly', () => {
+        expect(_xpSystem.calculateDifficultyMultiplier('beginner')).toBe(1.0);
+        expect(_xpSystem.calculateDifficultyMultiplier('intermediate')).toBe(1.2);
+        expect(_xpSystem.calculateDifficultyMultiplier('advanced')).toBe(1.5);
+        expect(_xpSystem.calculateDifficultyMultiplier('expert')).toBe(_2.0);
       });
 
-      it('should apply difficulty multiplier to XP calculation', () => {
+      it( 'should apply difficulty multiplier to XP calculation', () => {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 100,
@@ -213,22 +213,22 @@ describe('XP System - Comprehensive Test Suite', () => {
           }
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(150);
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(150);
       });
     });
 
-    describe('Performance Multipliers', () => {
-      it('should calculate performance multipliers based on score', () => {
-        expect(xpSystem.calculatePerformanceMultiplier(100)).toBe(1.5);
-        expect(xpSystem.calculatePerformanceMultiplier(95)).toBe(1.5);
-        expect(xpSystem.calculatePerformanceMultiplier(92)).toBe(1.3);
-        expect(xpSystem.calculatePerformanceMultiplier(85)).toBe(1.1);
-        expect(xpSystem.calculatePerformanceMultiplier(75)).toBe(1.0);
-        expect(xpSystem.calculatePerformanceMultiplier(65)).toBe(0.8);
+    describe( 'Performance Multipliers', () => {
+      it( 'should calculate performance multipliers based on score', () => {
+        expect(_xpSystem.calculatePerformanceMultiplier(100)).toBe(1.5);
+        expect(_xpSystem.calculatePerformanceMultiplier(95)).toBe(1.5);
+        expect(_xpSystem.calculatePerformanceMultiplier(92)).toBe(1.3);
+        expect(_xpSystem.calculatePerformanceMultiplier(85)).toBe(1.1);
+        expect(_xpSystem.calculatePerformanceMultiplier(75)).toBe(1.0);
+        expect(_xpSystem.calculatePerformanceMultiplier(65)).toBe(0.8);
       });
 
-      it('should apply performance multiplier to XP calculation', () => {
+      it( 'should apply performance multiplier to XP calculation', () => {
         const event: XPEvent = {
           type: 'quiz_perfect',
           baseXP: 150,
@@ -237,13 +237,13 @@ describe('XP System - Comprehensive Test Suite', () => {
           }
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(225); // 150 * 1.5
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(_225); // 150 * 1.5
       });
     });
 
-    describe('Combined Multipliers', () => {
-      it('should apply multiple multipliers correctly', () => {
+    describe( 'Combined Multipliers', () => {
+      it( 'should apply multiple multipliers correctly', () => {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 100,
@@ -254,12 +254,12 @@ describe('XP System - Comprehensive Test Suite', () => {
           }
         };
 
-        const xp = xpSystem.calculateXP(event);
+        const xp = xpSystem.calculateXP(_event);
         // 100 * 1.2 * 1.5 * 1.3 = 234
-        expect(xp).toBe(234);
+        expect(_xp).toBe(_234);
       });
 
-      it('should handle bonus XP addition', () => {
+      it( 'should handle bonus XP addition', () => {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 100,
@@ -268,11 +268,11 @@ describe('XP System - Comprehensive Test Suite', () => {
           }
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(150); // 100 + 50
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(150); // 100 + 50
       });
 
-      it('should apply multipliers before adding bonus', () => {
+      it( 'should apply multipliers before adding bonus', () => {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 100,
@@ -282,94 +282,94 @@ describe('XP System - Comprehensive Test Suite', () => {
           }
         };
 
-        const xp = xpSystem.calculateXP(event);
-        expect(xp).toBe(250); // (100 * 2.0) + 50
+        const xp = xpSystem.calculateXP(_event);
+        expect(_xp).toBe(_250); // (100 * 2.0) + 50
       });
     });
   });
 
-  describe('Level System', () => {
-    describe('Level Calculation', () => {
-      it('should calculate correct level for different XP amounts', () => {
-        expect(xpSystem.getLevelInfo(0).currentLevel).toBe(1);
-        expect(xpSystem.getLevelInfo(500).currentLevel).toBe(1);
-        expect(xpSystem.getLevelInfo(1000).currentLevel).toBe(2);
-        expect(xpSystem.getLevelInfo(2500).currentLevel).toBe(3);
-        expect(xpSystem.getLevelInfo(5000).currentLevel).toBe(4);
+  describe( 'Level System', () => {
+    describe( 'Level Calculation', () => {
+      it( 'should calculate correct level for different XP amounts', () => {
+        expect(_xpSystem.getLevelInfo(0).currentLevel).toBe(1);
+        expect(_xpSystem.getLevelInfo(500).currentLevel).toBe(1);
+        expect(_xpSystem.getLevelInfo(1000).currentLevel).toBe(_2);
+        expect(_xpSystem.getLevelInfo(2500).currentLevel).toBe(3);
+        expect(_xpSystem.getLevelInfo(5000).currentLevel).toBe(_4);
       });
 
-      it('should calculate XP to next level correctly', () => {
+      it( 'should calculate XP to next level correctly', () => {
         const levelInfo = xpSystem.getLevelInfo(1500);
         
-        expect(levelInfo.currentLevel).toBe(2);
-        expect(levelInfo.xpToNextLevel).toBe(1000); // 2500 - 1500
-        expect(levelInfo.totalXPForLevel).toBe(1500); // 2500 - 1000
+        expect(_levelInfo.currentLevel).toBe(_2);
+        expect(_levelInfo.xpToNextLevel).toBe(1000); // 2500 - 1500
+        expect(_levelInfo.totalXPForLevel).toBe(1500); // 2500 - 1000
       });
 
-      it('should calculate level progress percentage', () => {
+      it( 'should calculate level progress percentage', () => {
         const levelInfo = xpSystem.getLevelInfo(1750); // Halfway through level 2
         
-        expect(levelInfo.currentLevel).toBe(2);
-        expect(levelInfo.levelProgress).toBe(50); // 750/1500 * 100
+        expect(_levelInfo.currentLevel).toBe(_2);
+        expect(_levelInfo.levelProgress).toBe(50); // 750/1500 * 100
       });
 
-      it('should handle maximum level correctly', () => {
+      it( 'should handle maximum level correctly', () => {
         const levelInfo = xpSystem.getLevelInfo(100000); // Very high XP
         
-        expect(levelInfo.currentLevel).toBeGreaterThan(10);
-        expect(levelInfo.xpToNextLevel).toBeGreaterThanOrEqual(0);
+        expect(_levelInfo.currentLevel).toBeGreaterThan(10);
+        expect(_levelInfo.xpToNextLevel).toBeGreaterThanOrEqual(0);
       });
     });
 
-    describe('Level Thresholds', () => {
-      it('should return correct XP requirement for each level', () => {
-        expect(xpSystem.getXPForLevel(1)).toBe(0);
-        expect(xpSystem.getXPForLevel(2)).toBe(1000);
-        expect(xpSystem.getXPForLevel(3)).toBe(2500);
-        expect(xpSystem.getXPForLevel(5)).toBe(7000);
+    describe( 'Level Thresholds', () => {
+      it( 'should return correct XP requirement for each level', () => {
+        expect(_xpSystem.getXPForLevel(1)).toBe(0);
+        expect(_xpSystem.getXPForLevel(2)).toBe(1000);
+        expect(_xpSystem.getXPForLevel(3)).toBe(_2500);
+        expect(_xpSystem.getXPForLevel(5)).toBe(_7000);
       });
 
-      it('should handle invalid level requests', () => {
-        expect(xpSystem.getXPForLevel(0)).toBe(0);
-        expect(xpSystem.getXPForLevel(-1)).toBe(0);
-        expect(xpSystem.getXPForLevel(100)).toBe(0); // Beyond defined levels
+      it( 'should handle invalid level requests', () => {
+        expect(_xpSystem.getXPForLevel(0)).toBe(0);
+        expect(_xpSystem.getXPForLevel(-1)).toBe(0);
+        expect(_xpSystem.getXPForLevel(100)).toBe(0); // Beyond defined levels
       });
     });
   });
 
-  describe('Edge Cases and Error Handling', () => {
-    it('should handle negative XP gracefully', () => {
+  describe( 'Edge Cases and Error Handling', () => {
+    it( 'should handle negative XP gracefully', () => {
       const event: XPEvent = {
         type: 'lesson_complete',
         baseXP: -100
       };
 
-      const xp = xpSystem.calculateXP(event);
-      expect(xp).toBeLessThanOrEqual(0);
+      const xp = xpSystem.calculateXP(_event);
+      expect(_xp).toBeLessThanOrEqual(0);
     });
 
-    it('should handle zero XP', () => {
+    it( 'should handle zero XP', () => {
       const event: XPEvent = {
         type: 'lesson_complete',
         baseXP: 0
       };
 
-      const xp = xpSystem.calculateXP(event);
-      expect(xp).toBe(100); // Should use default base XP
+      const xp = xpSystem.calculateXP(_event);
+      expect(_xp).toBe(100); // Should use default base XP
     });
 
-    it('should handle missing multipliers', () => {
+    it( 'should handle missing multipliers', () => {
       const event: XPEvent = {
         type: 'lesson_complete',
         baseXP: 100
         // No multipliers
       };
 
-      const xp = xpSystem.calculateXP(event);
-      expect(xp).toBe(100);
+      const xp = xpSystem.calculateXP(_event);
+      expect(_xp).toBe(100);
     });
 
-    it('should handle extreme multiplier values', () => {
+    it( 'should handle extreme multiplier values', () => {
       const event: XPEvent = {
         type: 'lesson_complete',
         baseXP: 100,
@@ -378,11 +378,11 @@ describe('XP System - Comprehensive Test Suite', () => {
         }
       };
 
-      const xp = xpSystem.calculateXP(event);
-      expect(xp).toBe(100000);
+      const xp = xpSystem.calculateXP(_event);
+      expect(_xp).toBe(100000);
     });
 
-    it('should floor XP values to integers', () => {
+    it( 'should floor XP values to integers', () => {
       const event: XPEvent = {
         type: 'lesson_complete',
         baseXP: 100,
@@ -391,46 +391,46 @@ describe('XP System - Comprehensive Test Suite', () => {
         }
       };
 
-      const xp = xpSystem.calculateXP(event);
-      expect(xp).toBe(133); // Should be floored
-      expect(Number.isInteger(xp)).toBe(true);
+      const xp = xpSystem.calculateXP(_event);
+      expect(_xp).toBe(133); // Should be floored
+      expect(_Number.isInteger(xp)).toBe(_true);
     });
   });
 
-  describe('Performance Tests', () => {
-    it('should calculate XP efficiently for many events', () => {
-      const startTime = performance.now();
+  describe( 'Performance Tests', () => {
+    it( 'should calculate XP efficiently for many events', () => {
+      const startTime = performance.now(_);
 
       for (let i = 0; i < 1000; i++) {
         const event: XPEvent = {
           type: 'lesson_complete',
           baseXP: 100,
           multipliers: {
-            streak: Math.floor(Math.random() * 10) + 1,
+            streak: Math.floor(_Math.random() * 10) + 1,
             difficulty: 1 + Math.random(),
             performance: 0.8 + Math.random() * 0.7
           }
         };
-        xpSystem.calculateXP(event);
+        xpSystem.calculateXP(_event);
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       const duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(50); // Should complete within 50ms
+      expect(_duration).toBeLessThan(50); // Should complete within 50ms
     });
 
-    it('should calculate level info efficiently', () => {
-      const startTime = performance.now();
+    it( 'should calculate level info efficiently', () => {
+      const startTime = performance.now(_);
 
       for (let i = 0; i < 1000; i++) {
-        xpSystem.getLevelInfo(Math.random() * 50000);
+        xpSystem.getLevelInfo(_Math.random() * 50000);
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       const duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(20); // Should be very fast
+      expect(_duration).toBeLessThan(_20); // Should be very fast
     });
   });
 });

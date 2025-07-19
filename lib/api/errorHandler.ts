@@ -64,12 +64,12 @@ export abstract class BaseApiError extends Error {
   public details?: unknown;
   public field?: string;
 
-  constructor(message: string, details?: unknown, field?: string) {
-    super(message);
+  constructor( message: string, details?: unknown, field?: string) {
+    super(_message);
     this.name = this.constructor.name;
     this.details = details;
     this.field = field;
-    Error.captureStackTrace(this, this.constructor);
+    Error.captureStackTrace( this, this.constructor);
   }
 }
 
@@ -117,29 +117,29 @@ export class ServiceUnavailableError extends BaseApiError {
  * Error Detection and Classification
  */
 export class ErrorClassifier {
-  static classify(error: unknown): BaseApiError {
+  static classify(_error: unknown): BaseApiError {
     // Handle known API errors
-    if (error instanceof BaseApiError) {
+    if (_error instanceof BaseApiError) {
       return error;
     }
 
     // Handle Zod validation errors
-    if (error instanceof ZodError) {
+    if (_error instanceof ZodError) {
       const details = error.errors.map(err => ({
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
-        value: err.path.length > 0 ? err.path.reduce((obj, key) => obj?.[key], error as any) : undefined
+        value: err.path.length > 0 ? err.path.reduce( (obj, key) => obj?.[key], error as any) : undefined
       }));
-      return new ValidationError('Validation failed', details);
+      return new ValidationError( 'Validation failed', details);
     }
 
     // Handle Prisma errors
-    if (error instanceof PrismaClientKnownRequestError) {
-      return this.handlePrismaError(error);
+    if (_error instanceof PrismaClientKnownRequestError) {
+      return this.handlePrismaError(_error);
     }
 
-    if (error instanceof PrismaClientValidationError) {
+    if (_error instanceof PrismaClientValidationError) {
       return new ValidationError('Database validation error', { 
         type: 'prisma_validation',
         message: error.message 
@@ -147,22 +147,22 @@ export class ErrorClassifier {
     }
 
     // Handle standard JavaScript errors
-    if (error instanceof Error) {
+    if (_error instanceof Error) {
       // Check for specific error types by message
-      if (error.message.includes('auth') || error.message.includes('token')) {
-        return new AuthenticationError(error.message);
+      if (_error.message.includes('auth') || error.message.includes('token')) {
+        return new AuthenticationError(_error.message);
       }
       
-      if (error.message.includes('permission') || error.message.includes('forbidden')) {
-        return new AuthorizationError(error.message);
+      if (_error.message.includes('permission') || error.message.includes('forbidden')) {
+        return new AuthorizationError(_error.message);
       }
       
-      if (error.message.includes('not found')) {
-        return new NotFoundError(error.message);
+      if (_error.message.includes('not found')) {
+        return new NotFoundError(_error.message);
       }
       
-      if (error.message.includes('rate limit')) {
-        return new RateLimitError(error.message);
+      if (_error.message.includes('rate limit')) {
+        return new RateLimitError(_error.message);
       }
 
       return new InternalServerError(error.message, { 
@@ -174,16 +174,16 @@ export class ErrorClassifier {
     // Unknown error type
     return new InternalServerError('An unexpected error occurred', { 
       errorType: typeof error,
-      error: String(error) 
+      error: String(_error) 
     });
   }
 
-  private static handlePrismaError(error: PrismaClientKnownRequestError): BaseApiError {
-    switch (error.code) {
+  private static handlePrismaError(_error: PrismaClientKnownRequestError): BaseApiError {
+    switch (_error.code) {
       case 'P2002': // Unique constraint violation
         const targetField = error.meta?.target as string[] | undefined;
         return new ConflictError(
-          `Resource already exists${targetField ? ` (${targetField.join(', ')})` : ''}`,
+          `Resource already exists${targetField ? ` ( ${targetField.join(', ')})` : ''}`,
           { 
             field: targetField?.[0],
             constraint: 'unique',
@@ -226,14 +226,14 @@ export class ApiErrorHandler {
   /**
    * Create error context from request
    */
-  static createErrorContext(request: NextRequest, requestId: string): ErrorContext {
+  static createErrorContext( request: NextRequest, requestId: string): ErrorContext {
     return {
       requestId,
-      ip: this.getClientIP(request),
+      ip: this.getClientIP(_request),
       userAgent: request.headers.get('user-agent') || 'unknown',
       url: request.url,
       method: request.method,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
   }
 
@@ -246,10 +246,10 @@ export class ApiErrorHandler {
     requestId: string,
     userId?: string
   ): NextResponse {
-    const context = this.createErrorContext(request, requestId);
+    const context = this.createErrorContext( request, requestId);
     if (userId) context.userId = userId;
 
-    const apiError = ErrorClassifier.classify(error);
+    const apiError = ErrorClassifier.classify(_error);
     
     // Log error with appropriate level
     const logLevel = apiError.statusCode >= 500 ? 'error' : 'warn';
@@ -262,25 +262,25 @@ export class ApiErrorHandler {
       field: apiError.field,
     };
 
-    if (logLevel === 'error') {
-      logger.error(logMessage, logContext, apiError);
+    if (_logLevel === 'error') {
+      logger.error( logMessage, logContext, apiError);
     } else {
       logger.warn(logMessage, logContext);
     }
 
     // Handle validation errors specially
-    if (apiError instanceof ValidationError && Array.isArray(apiError.details)) {
-      return this.createValidationErrorResponse(apiError, requestId);
+    if (_apiError instanceof ValidationError && Array.isArray(apiError.details)) {
+      return this.createValidationErrorResponse( apiError, requestId);
     }
 
     // Create standard error response
-    return this.createErrorResponse(apiError, requestId);
+    return this.createErrorResponse( apiError, requestId);
   }
 
   /**
    * Create standard error response
    */
-  private static createErrorResponse(error: BaseApiError, requestId: string): NextResponse {
+  private static createErrorResponse( error: BaseApiError, requestId: string): NextResponse {
     const response: ErrorResponse = {
       success: false,
       error: {
@@ -291,7 +291,7 @@ export class ApiErrorHandler {
         statusCode: error.statusCode,
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     return NextResponse.json(response, { 
@@ -319,7 +319,7 @@ export class ApiErrorHandler {
         details: error.details as ValidationErrorResponse['error']['details'],
       },
       requestId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
     };
 
     return NextResponse.json(response, { 
@@ -334,13 +334,13 @@ export class ApiErrorHandler {
   /**
    * Get client IP address
    */
-  private static getClientIP(request: NextRequest): string {
+  private static getClientIP(_request: NextRequest): string {
     const forwarded = request.headers.get('x-forwarded-for');
     const realIP = request.headers.get('x-real-ip');
     const cfConnectingIP = request.headers.get('cf-connecting-ip');
     
     if (forwarded) {
-      return forwarded.split(',')[0].trim();
+      return forwarded.split(',')[0].trim(_);
     }
     
     if (realIP) {
@@ -364,13 +364,13 @@ export function withErrorHandler<T extends unknown[]>(
   return async (...args: T): Promise<NextResponse> => {
     try {
       return await handler(...args);
-    } catch (error) {
+    } catch (_error) {
       // Extract request and requestId from args
       const request = args[0] as NextRequest;
       const requestId = request.headers.get('x-request-id') || 
                        crypto.randomUUID();
       
-      return ApiErrorHandler.handle(error, request, requestId);
+      return ApiErrorHandler.handle( error, request, requestId);
     }
   };
 }
@@ -379,26 +379,26 @@ export function withErrorHandler<T extends unknown[]>(
  * Utility functions for common errors
  */
 export const ErrorHelpers = {
-  validation: (message: string, field?: string, details?: unknown) =>
-    new ValidationError(message, details, field),
+  validation: ( message: string, field?: string, details?: unknown) =>
+    new ValidationError( message, details, field),
     
-  notFound: (resource: string, id?: string) =>
-    new NotFoundError(`${resource}${id ? ` with id '${id}'` : ''} not found`),
+  notFound: ( resource: string, id?: string) =>
+    new NotFoundError(_`${resource}${id ? ` with id '${id}'` : ''} not found`),
     
-  unauthorized: (message = 'Authentication required') =>
-    new AuthenticationError(message),
+  unauthorized: (_message = 'Authentication required') =>
+    new AuthenticationError(_message),
     
-  forbidden: (message = 'Access denied') =>
-    new AuthorizationError(message),
+  forbidden: (_message = 'Access denied') =>
+    new AuthorizationError(_message),
     
-  conflict: (message: string, field?: string) =>
-    new ConflictError(message, undefined, field),
+  conflict: ( message: string, field?: string) =>
+    new ConflictError( message, undefined, field),
     
-  internal: (message = 'Internal server error', details?: unknown) =>
-    new InternalServerError(message, details),
+  internal: ( message = 'Internal server error', details?: unknown) =>
+    new InternalServerError( message, details),
     
-  rateLimit: (message = 'Rate limit exceeded') =>
-    new RateLimitError(message),
+  rateLimit: (_message = 'Rate limit exceeded') =>
+    new RateLimitError(_message),
 };
 
 /**
@@ -406,9 +406,9 @@ export const ErrorHelpers = {
  */
 export function createErrorHandlingMiddleware() {
   return (
-    handler: (request: NextRequest) => Promise<NextResponse>
+    handler: (_request: NextRequest) => Promise<NextResponse>
   ) => {
-    return withErrorHandler(handler);
+    return withErrorHandler(_handler);
   };
 }
 

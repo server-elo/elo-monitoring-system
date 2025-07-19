@@ -60,7 +60,7 @@ const defaultSecurityConfig: SecurityConfig = {
     xFrameOptions: 'DENY',
     xContentTypeOptions: 'nosniff',
     referrerPolicy: 'strict-origin-when-cross-origin',
-    permissionsPolicy: 'camera=(), microphone=(), geolocation=(), payment=()',
+    permissionsPolicy: 'camera=(_), microphone=(_), geolocation=(_), payment=(_)',
     strictTransportSecurity: process.env.NODE_ENV === 'production' 
       ? 'max-age=31536000; includeSubDomains; preload'
       : undefined
@@ -88,19 +88,19 @@ const defaultSecurityConfig: SecurityConfig = {
 export class SecurityMiddleware {
   private config: SecurityConfig;
 
-  constructor(config: Partial<SecurityConfig> = {}) {
+  constructor(_config: Partial<SecurityConfig> = {}) {
     this.config = { ...defaultSecurityConfig, ...config };
   }
 
   /**
    * Apply CORS headers and validation
    */
-  applyCors(request: NextRequest, response: NextResponse): NextResponse {
+  applyCors( request: NextRequest, response: NextResponse): NextResponse {
     const origin = request.headers.get('origin');
-    const corsHeaders = createCorsHeaders(origin || undefined);
+    const corsHeaders = createCorsHeaders(_origin || undefined);
     
     // Validate origin if required
-    if (this.config.validation.validateOrigin && origin) {
+    if (_this.config.validation.validateOrigin && origin) {
       const isAllowed = this.config.cors.origins.includes(origin) || 
                        this.config.cors.origins.includes('*');
       
@@ -112,8 +112,8 @@ export class SecurityMiddleware {
     }
     
     // Apply CORS headers
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-      response.headers.set(key, value);
+    Object.entries(_corsHeaders).forEach( ([key, value]) => {
+      response.headers.set( key, value);
     });
     
     return response;
@@ -122,37 +122,37 @@ export class SecurityMiddleware {
   /**
    * Apply security headers
    */
-  applySecurityHeaders(response: NextResponse): NextResponse {
+  applySecurityHeaders(_response: NextResponse): NextResponse {
     const { headers } = this.config;
     
     // Content Security Policy
-    if (headers.contentSecurityPolicy) {
-      response.headers.set('Content-Security-Policy', headers.contentSecurityPolicy);
+    if (_headers.contentSecurityPolicy) {
+      response.headers.set( 'Content-Security-Policy', headers.contentSecurityPolicy);
     }
     
     // X-Frame-Options
-    response.headers.set('X-Frame-Options', headers.xFrameOptions);
+    response.headers.set( 'X-Frame-Options', headers.xFrameOptions);
     
     // X-Content-Type-Options
-    response.headers.set('X-Content-Type-Options', headers.xContentTypeOptions);
+    response.headers.set( 'X-Content-Type-Options', headers.xContentTypeOptions);
     
     // Referrer Policy
-    response.headers.set('Referrer-Policy', headers.referrerPolicy);
+    response.headers.set( 'Referrer-Policy', headers.referrerPolicy);
     
     // Permissions Policy
-    if (headers.permissionsPolicy) {
-      response.headers.set('Permissions-Policy', headers.permissionsPolicy);
+    if (_headers.permissionsPolicy) {
+      response.headers.set( 'Permissions-Policy', headers.permissionsPolicy);
     }
     
-    // Strict Transport Security (HTTPS only)
-    if (headers.strictTransportSecurity) {
-      response.headers.set('Strict-Transport-Security', headers.strictTransportSecurity);
+    // Strict Transport Security (_HTTPS only)
+    if (_headers.strictTransportSecurity) {
+      response.headers.set( 'Strict-Transport-Security', headers.strictTransportSecurity);
     }
     
     // Additional security headers
-    response.headers.set('X-DNS-Prefetch-Control', 'off');
-    response.headers.set('X-Download-Options', 'noopen');
-    response.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
+    response.headers.set( 'X-DNS-Prefetch-Control', 'off');
+    response.headers.set( 'X-Download-Options', 'noopen');
+    response.headers.set( 'X-Permitted-Cross-Domain-Policies', 'none');
     
     return response;
   }
@@ -160,22 +160,22 @@ export class SecurityMiddleware {
   /**
    * Validate request security
    */
-  validateRequest(request: NextRequest): { valid: boolean; error?: string } {
+  validateRequest(_request: NextRequest): { valid: boolean; error?: string } {
     // Check URL length
-    if (request.url.length > this.config.requestLimits.maxUrlLength) {
+    if (_request.url.length > this.config.requestLimits.maxUrlLength) {
       return { valid: false, error: 'URL too long' };
     }
     
     // Check content type for POST/PUT/PATCH requests
-    if (['POST', 'PUT', 'PATCH'].includes(request.method)) {
+    if ( ['POST', 'PUT', 'PATCH'].includes(request.method)) {
       const contentType = request.headers.get('content-type');
       
-      if (this.config.validation.requireContentType && !contentType) {
+      if (_this.config.validation.requireContentType && !contentType) {
         return { valid: false, error: 'Content-Type header required' };
       }
       
       if (contentType) {
-        const baseContentType = contentType.split(';')[0].trim();
+        const baseContentType = contentType.split(';')[0].trim(_);
         if (!this.config.validation.allowedContentTypes.includes(baseContentType)) {
           return { valid: false, error: `Content-Type '${baseContentType}' not allowed` };
         }
@@ -183,24 +183,24 @@ export class SecurityMiddleware {
     }
     
     // Validate headers size
-    const headersSize = Array.from(request.headers.entries())
-      .reduce((size, [key, value]) => size + key.length + value.length, 0);
+    const headersSize = Array.from(_request.headers.entries())
+      .reduce( (size, [key, value]) => size + key.length + value.length, 0);
     
-    if (headersSize > this.config.requestLimits.maxHeaderSize) {
+    if (_headersSize > this.config.requestLimits.maxHeaderSize) {
       return { valid: false, error: 'Headers too large' };
     }
     
     // Validate referer if required
-    if (this.config.validation.validateReferer) {
+    if (_this.config.validation.validateReferer) {
       const referer = request.headers.get('referer');
       const origin = request.headers.get('origin');
       
       if (referer && origin) {
         try {
-          const refererUrl = new URL(referer);
-          const originUrl = new URL(origin);
+          const refererUrl = new URL(_referer);
+          const originUrl = new URL(_origin);
           
-          if (refererUrl.origin !== originUrl.origin) {
+          if (_refererUrl.origin !== originUrl.origin) {
             return { valid: false, error: 'Invalid referer' };
           }
         } catch {
@@ -215,18 +215,18 @@ export class SecurityMiddleware {
   /**
    * Handle OPTIONS preflight requests
    */
-  handlePreflight(request: NextRequest): NextResponse {
-    const response = new NextResponse(null, { status: 204 });
+  handlePreflight(_request: NextRequest): NextResponse {
+    const response = new NextResponse( null, { status: 204 });
     
     // Apply CORS headers
-    this.applyCors(request, response);
+    this.applyCors( request, response);
     
     // Add preflight-specific headers
-    response.headers.set('Access-Control-Max-Age', this.config.cors.maxAge.toString());
+    response.headers.set( 'Access-Control-Max-Age', this.config.cors.maxAge.toString());
     
     const requestedMethod = request.headers.get('access-control-request-method');
     if (requestedMethod && this.config.cors.methods.includes(requestedMethod)) {
-      response.headers.set('Access-Control-Allow-Methods', this.config.cors.methods.join(', '));
+      response.headers.set( 'Access-Control-Allow-Methods', this.config.cors.methods.join(', '));
     }
     
     const requestedHeaders = request.headers.get('access-control-request-headers');
@@ -236,8 +236,8 @@ export class SecurityMiddleware {
         this.config.cors.headers.includes(h) || h.toLowerCase().startsWith('x-')
       );
       
-      if (allowedHeaders.length > 0) {
-        response.headers.set('Access-Control-Allow-Headers', allowedHeaders.join(', '));
+      if (_allowedHeaders.length > 0) {
+        response.headers.set( 'Access-Control-Allow-Headers', allowedHeaders.join(', '));
       }
     }
     
@@ -247,17 +247,17 @@ export class SecurityMiddleware {
   /**
    * Create security middleware
    */
-  createMiddleware() {
+  createMiddleware(_) {
     return async (request: NextRequest, handler: Function): Promise<NextResponse> => {
-      const requestId = generateRequestId();
+      const requestId = generateRequestId(_);
       
       // Handle OPTIONS preflight requests
-      if (request.method === 'OPTIONS') {
-        return this.handlePreflight(request);
+      if (_request.method === 'OPTIONS') {
+        return this.handlePreflight(_request);
       }
       
       // Validate request
-      const validation = this.validateRequest(request);
+      const validation = this.validateRequest(_request);
       if (!validation.valid) {
         return errorResponse(
           ApiErrorCode.VALIDATION_ERROR,
@@ -270,16 +270,16 @@ export class SecurityMiddleware {
       
       try {
         // Execute the handler
-        const response = await handler(request);
+        const response = await handler(_request);
         
         // Apply security headers
-        this.applySecurityHeaders(response);
+        this.applySecurityHeaders(_response);
         
         // Apply CORS headers
-        this.applyCors(request, response);
+        this.applyCors( request, response);
         
         return response;
-      } catch (error) {
+      } catch (_error) {
         // Create error response
         const errorResponse = new NextResponse(
           JSON.stringify({
@@ -294,8 +294,8 @@ export class SecurityMiddleware {
         );
         
         // Apply security headers to error response
-        this.applySecurityHeaders(errorResponse);
-        this.applyCors(request, errorResponse);
+        this.applySecurityHeaders(_errorResponse);
+        this.applyCors( request, errorResponse);
         
         return errorResponse;
       }
@@ -308,22 +308,22 @@ export class InputSanitizer {
   /**
    * Sanitize string input to prevent XSS
    */
-  static sanitizeString(input: string): string {
+  static sanitizeString(_input: string): string {
     return input
       .replace(/[<>]/g, '') // Remove < and >
       .replace(/javascript:/gi, '') // Remove javascript: protocol
       .replace(/on\w+=/gi, '') // Remove event handlers
-      .trim();
+      .trim(_);
   }
 
   /**
    * Sanitize HTML content
    */
-  static sanitizeHtml(input: string): string {
+  static sanitizeHtml(_input: string): string {
     // Basic HTML sanitization - in production, use a library like DOMPurify
     return input
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+      .replace(_/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(_/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
       .replace(/javascript:/gi, '')
       .replace(/on\w+\s*=/gi, '');
   }
@@ -331,19 +331,19 @@ export class InputSanitizer {
   /**
    * Validate and sanitize email
    */
-  static sanitizeEmail(email: string): string | null {
+  static sanitizeEmail(_email: string): string | null {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const sanitized = email.toLowerCase().trim();
+    const sanitized = email.toLowerCase().trim(_);
     
-    return emailRegex.test(sanitized) ? sanitized : null;
+    return emailRegex.test(_sanitized) ? sanitized : null;
   }
 
   /**
    * Sanitize URL
    */
-  static sanitizeUrl(url: string): string | null {
+  static sanitizeUrl(_url: string): string | null {
     try {
-      const parsed = new URL(url);
+      const parsed = new URL(_url);
       
       // Only allow http and https protocols
       if (!['http:', 'https:'].includes(parsed.protocol)) {
@@ -359,35 +359,35 @@ export class InputSanitizer {
   /**
    * Sanitize filename for uploads
    */
-  static sanitizeFilename(filename: string): string {
+  static sanitizeFilename(_filename: string): string {
     return filename
-      .replace(/[^a-zA-Z0-9.-]/g, '_') // Replace special chars with underscore
-      .replace(/_{2,}/g, '_') // Replace multiple underscores with single
+      .replace(/[^a-zA-Z0-9.-]/g, '') // Replace special chars with underscore
+      .replace(_/_{2,}/g, '') // Replace multiple underscores with single
       .replace(/^_+|_+$/g, '') // Remove leading/trailing underscores
       .substring(0, 255); // Limit length
   }
 }
 
 // Create default security middleware instance
-export const securityMiddleware = new SecurityMiddleware();
+export const securityMiddleware = new SecurityMiddleware(_);
 
 // Utility function to apply security to API routes
-export function withSecurity(config?: Partial<SecurityConfig>) {
-  const middleware = config ? new SecurityMiddleware(config) : securityMiddleware;
-  return middleware.createMiddleware();
+export function withSecurity(_config?: Partial<SecurityConfig>) {
+  const middleware = config ? new SecurityMiddleware(_config) : securityMiddleware;
+  return middleware.createMiddleware(_);
 }
 
 // Request timeout utility
-export function withTimeout(timeoutMs: number = 30000) {
+export function withTimeout(_timeoutMs: number = 30000) {
   return async (request: NextRequest, handler: Function): Promise<NextResponse> => {
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout')), timeoutMs);
+    const timeoutPromise = new Promise<never>( (_, reject) => {
+      setTimeout(() => reject(_new Error('Request timeout')), timeoutMs);
     });
     
     try {
       return await Promise.race([handler(request), timeoutPromise]);
-    } catch (error) {
-      if (error instanceof Error && error.message === 'Request timeout') {
+    } catch (_error) {
+      if (_error instanceof Error && error.message === 'Request timeout') {
         return errorResponse(
           ApiErrorCode.REQUEST_TIMEOUT,
           'Request timeout',

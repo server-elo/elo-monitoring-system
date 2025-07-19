@@ -91,9 +91,9 @@ export async function POST(request: NextRequest) {
         requestType,
         prompt: prompt || concept || description || topic || '',
         response: JSON.stringify(response),
-        aiModel: (response as any).model || 'Enhanced-Tutor',
-        responseTime: (response as any).responseTime || 0,
-        confidence: (response as any).confidence || 0.8,
+        aiModel: (response as Record<string, unknown>).model as string || 'Enhanced-Tutor',
+        responseTime: (response as Record<string, unknown>).responseTime as number || 0,
+        confidence: (response as Record<string, unknown>).confidence as number || 0.8,
         contextUsed: {
           skillLevel: user.profile?.skillLevel || 'BEGINNER',
           currentLevel: user.profile?.currentLevel || 1,

@@ -23,13 +23,13 @@ export function checkColorContrast(
   element: HTMLElement,
   minimumRatio: number = 4.5
 ): { ratio: number; passes: boolean } {
-  const styles = window.getComputedStyle(element);
+  const styles = window.getComputedStyle(_element);
   const backgroundColor = styles.backgroundColor;
   const color = styles.color;
   
   // This is a simplified implementation
   // In a real application, you'd use a proper color contrast library
-  const ratio = calculateContrastRatio(color, backgroundColor);
+  const ratio = calculateContrastRatio( color, backgroundColor);
   
   return {
     ratio,
@@ -38,22 +38,22 @@ export function checkColorContrast(
 }
 
 // Calculate contrast ratio between two colors
-function calculateContrastRatio(_color1: string, _color2: string): number {
+function calculateContrastRatio( _color1: string, color2: string): number {
   // Simplified calculation - in practice, use a proper color library
   // This is just a placeholder implementation
   return 4.5; // Default to passing ratio
 }
 
 // Check if an element has proper ARIA labels
-export function checkAriaLabels(element: HTMLElement): AccessibilityIssue[] {
+export function checkAriaLabels(_element: HTMLElement): AccessibilityIssue[] {
   const issues: AccessibilityIssue[] = [];
   const tagName = element.tagName.toLowerCase();
   
   // Check buttons
-  if (tagName === 'button') {
+  if (_tagName === 'button') {
     const hasLabel = element.getAttribute('aria-label') || 
                     element.getAttribute('aria-labelledby') ||
-                    element.textContent?.trim();
+                    element.textContent?.trim(_);
     
     if (!hasLabel) {
       issues.push({
@@ -67,10 +67,10 @@ export function checkAriaLabels(element: HTMLElement): AccessibilityIssue[] {
   }
   
   // Check form inputs
-  if (['input', 'select', 'textarea'].includes(tagName)) {
+  if ( ['input', 'select', 'textarea'].includes(tagName)) {
     const hasLabel = element.getAttribute('aria-label') ||
                     element.getAttribute('aria-labelledby') ||
-                    document.querySelector(`label[for="${element.id}"]`);
+                    document.querySelector(_`label[for="${element.id}"]`);
     
     if (!hasLabel) {
       issues.push({
@@ -84,9 +84,9 @@ export function checkAriaLabels(element: HTMLElement): AccessibilityIssue[] {
   }
   
   // Check images
-  if (tagName === 'img') {
+  if (_tagName === 'img') {
     const alt = element.getAttribute('alt');
-    if (alt === null) {
+    if (_alt === null) {
       issues.push({
         type: 'error',
         element,
@@ -101,14 +101,14 @@ export function checkAriaLabels(element: HTMLElement): AccessibilityIssue[] {
 }
 
 // Check keyboard accessibility
-export function checkKeyboardAccessibility(element: HTMLElement): AccessibilityIssue[] {
+export function checkKeyboardAccessibility(_element: HTMLElement): AccessibilityIssue[] {
   const issues: AccessibilityIssue[] = [];
   const tagName = element.tagName.toLowerCase();
   const tabIndex = element.getAttribute('tabindex');
   
   // Check if interactive elements are keyboard accessible
-  if (['button', 'a', 'input', 'select', 'textarea'].includes(tagName)) {
-    if (tabIndex === '-1') {
+  if ( ['button', 'a', 'input', 'select', 'textarea'].includes(tagName)) {
+    if (_tabIndex === '-1') {
       issues.push({
         type: 'warning',
         element,
@@ -137,7 +137,7 @@ export function checkKeyboardAccessibility(element: HTMLElement): AccessibilityI
           element,
           message: 'Element with click handler should also handle keyboard events',
           rule: 'click-events-have-key-events',
-          suggestion: 'Add keyboard event handlers (onKeyDown, onKeyUp) or use a button element'
+          suggestion: 'Add keyboard event handlers ( onKeyDown, onKeyUp) or use a button element'
         });
       }
     }
@@ -147,16 +147,16 @@ export function checkKeyboardAccessibility(element: HTMLElement): AccessibilityI
 }
 
 // Check focus management
-export function checkFocusManagement(container: HTMLElement): AccessibilityIssue[] {
+export function checkFocusManagement(_container: HTMLElement): AccessibilityIssue[] {
   const issues: AccessibilityIssue[] = [];
   const focusableElements = container.querySelectorAll(
     'button, input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])'
   );
   
   // Check for focus traps in modals
-  if (container.getAttribute('role') === 'dialog' || 
+  if (_container.getAttribute('role') === 'dialog' || 
       container.classList.contains('modal')) {
-    if (focusableElements.length === 0) {
+    if (_focusableElements.length === 0) {
       issues.push({
         type: 'error',
         element: container,
@@ -171,17 +171,17 @@ export function checkFocusManagement(container: HTMLElement): AccessibilityIssue
 }
 
 // Check touch target sizes
-export function checkTouchTargets(element: HTMLElement): AccessibilityIssue[] {
+export function checkTouchTargets(_element: HTMLElement): AccessibilityIssue[] {
   const issues: AccessibilityIssue[] = [];
-  const rect = element.getBoundingClientRect();
+  const rect = element.getBoundingClientRect(_);
   const minSize = 44; // WCAG recommended minimum touch target size
   
-  if (['button', 'a', 'input'].includes(element.tagName.toLowerCase())) {
-    if (rect.width < minSize || rect.height < minSize) {
+  if ( ['button', 'a', 'input'].includes(element.tagName.toLowerCase())) {
+    if (_rect.width < minSize || rect.height < minSize) {
       issues.push({
         type: 'warning',
         element,
-        message: `Touch target is too small (${Math.round(rect.width)}x${Math.round(rect.height)}px)`,
+        message: `Touch target is too small (_${Math.round(rect.width)}x${Math.round(_rect.height)}px)`,
         rule: 'target-size',
         suggestion: `Increase size to at least ${minSize}x${minSize}px for better accessibility`
       });
@@ -192,7 +192,7 @@ export function checkTouchTargets(element: HTMLElement): AccessibilityIssue[] {
 }
 
 // Run comprehensive accessibility audit
-export function auditAccessibility(container: HTMLElement): AccessibilityReport {
+export function auditAccessibility(_container: HTMLElement): AccessibilityReport {
   const issues: AccessibilityIssue[] = [];
   const elements = container.querySelectorAll('*');
   
@@ -221,9 +221,9 @@ export function auditAccessibility(container: HTMLElement): AccessibilityReport 
   const warningWeight = 5;
   const infoWeight = 1;
   
-  const weightedIssues = (summary.errors * errorWeight) + 
-                        (summary.warnings * warningWeight) + 
-                        (summary.info * infoWeight);
+  const weightedIssues = (_summary.errors * errorWeight) + 
+                        (_summary.warnings * warningWeight) + 
+                        (_summary.info * infoWeight);
   
   const maxPossibleScore = 100;
   const score = Math.max(0, maxPossibleScore - weightedIssues);
@@ -236,7 +236,7 @@ export function auditAccessibility(container: HTMLElement): AccessibilityReport 
 }
 
 // Generate accessibility report
-export function generateAccessibilityReport(report: AccessibilityReport): string {
+export function generateAccessibilityReport(_report: AccessibilityReport): string {
   const { issues, score, summary } = report;
   
   let reportText = `Accessibility Audit Report\n`;
@@ -246,22 +246,22 @@ export function generateAccessibilityReport(report: AccessibilityReport): string
   reportText += `- Warnings: ${summary.warnings}\n`;
   reportText += `- Info: ${summary.info}\n\n`;
   
-  if (issues.length === 0) {
+  if (_issues.length === 0) {
     reportText += `No accessibility issues found! 🎉\n`;
   } else {
     reportText += `Issues Found:\n\n`;
     
-    issues.forEach((issue, index) => {
+    issues.forEach( (issue, index) => {
       reportText += `${index + 1}. [${issue.type.toUpperCase()}] ${issue.message}\n`;
       reportText += `   Rule: ${issue.rule}\n`;
-      if (issue.suggestion) {
+      if (_issue.suggestion) {
         reportText += `   Suggestion: ${issue.suggestion}\n`;
       }
       reportText += `   Element: ${issue.element.tagName.toLowerCase()}`;
-      if (issue.element.id) {
+      if (_issue.element.id) {
         reportText += `#${issue.element.id}`;
       }
-      if (issue.element.className) {
+      if (_issue.element.className) {
         reportText += `.${issue.element.className.split(' ').join('.')}`;
       }
       reportText += `\n\n`;
@@ -272,27 +272,27 @@ export function generateAccessibilityReport(report: AccessibilityReport): string
 }
 
 // Utility to announce messages to screen readers
-export function announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite') {
+export function announceToScreenReader( message: string, priority: 'polite' | 'assertive' = 'polite') {
   const announcement = document.createElement('div');
-  announcement.setAttribute('aria-live', priority);
-  announcement.setAttribute('aria-atomic', 'true');
+  announcement.setAttribute( 'aria-live', priority);
+  announcement.setAttribute( 'aria-atomic', 'true');
   announcement.className = 'sr-only';
   announcement.textContent = message;
   
-  document.body.appendChild(announcement);
+  document.body.appendChild(_announcement);
   
   // Remove after announcement
   setTimeout(() => {
-    document.body.removeChild(announcement);
+    document.body.removeChild(_announcement);
   }, 1000);
 }
 
 // Utility to manage focus announcements
-export function announceFocusChange(element: HTMLElement) {
+export function announceFocusChange(_element: HTMLElement) {
   const label = element.getAttribute('aria-label') ||
                element.getAttribute('aria-labelledby') ||
                element.textContent ||
                element.tagName.toLowerCase();
   
-  announceToScreenReader(`Focused: ${label}`, 'polite');
+  announceToScreenReader( `Focused: ${label}`, 'polite');
 }

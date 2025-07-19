@@ -1,5 +1,5 @@
 /**
- * Type definitions for PRP (Product Requirement Prompt) system
+ * Type definitions for PRP (_Product Requirement Prompt) system
  */
 
 export interface PRP {
@@ -57,7 +57,7 @@ export interface PRPContext {
 }
 
 export interface ValidationGate {
-  /** Gate level (1: syntax, 2: tests, 3: integration, etc.) */
+  /** Gate level ( 1: syntax, 2: tests, 3: integration, etc.) */
   level: number;
   
   /** Gate name */

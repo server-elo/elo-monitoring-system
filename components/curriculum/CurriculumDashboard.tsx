@@ -21,12 +21,12 @@ import { cn } from '@/lib/utils';
 interface CurriculumDashboardProps {
   modules: Module[];
   userProgress: UserCurriculumProgress;
-  onModuleClick: (module: Module) => void;
-  onLessonClick: (lesson: Lesson) => void;
-  onStartModule: (moduleId: string) => void;
-  onStartLesson: (lessonId: string) => void;
-  checkPrerequisites: (itemId: string) => boolean;
-  getUnmetPrerequisites: (itemId: string) => string[];
+  onModuleClick: (_module: Module) => void;
+  onLessonClick: (_lesson: Lesson) => void;
+  onStartModule: (_moduleId: string) => void;
+  onStartLesson: (_lessonId: string) => void;
+  checkPrerequisites: (_itemId: string) => boolean;
+  getUnmetPrerequisites: (_itemId: string) => string[];
   className?: string;
 }
 
@@ -48,18 +48,18 @@ export function CurriculumDashboard({
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'modules' | 'lessons'>('modules');
-  const [showFilters, setShowFilters] = useState(false);
-  const [_expandedModule, _setExpandedModule] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(_false);
+  const [_expandedModule, _setExpandedModule] = useState<string | null>(_null);
 
   // Calculate overall statistics
   const stats = useMemo(() => {
     const totalModules = modules.length;
-    const completedModules = Object.values(userProgress.modules).filter(m => m.status === 'completed').length;
-    const inProgressModules = Object.values(userProgress.modules).filter(m => m.status === 'in_progress').length;
+    const completedModules = Object.values(_userProgress.modules).filter(m => m.status === 'completed').length;
+    const inProgressModules = Object.values(_userProgress.modules).filter(m => m.status === 'inprogress').length;
     
-    const allLessons = modules.flatMap(m => m.lessons);
+    const allLessons = modules.flatMap(_m => m.lessons);
     const totalLessons = allLessons.length;
-    const completedLessons = Object.values(userProgress.lessons).filter(l => l.status === 'completed').length;
+    const completedLessons = Object.values(_userProgress.lessons).filter(l => l.status === 'completed').length;
     
     return {
       totalModules,
@@ -87,7 +87,7 @@ export function CurriculumDashboard({
       }
 
       // Status filter
-      if (filter.status && filter.status.length > 0) {
+      if (_filter.status && filter.status.length > 0) {
         const moduleProgress = userProgress.modules[module.id];
         const status = moduleProgress?.status || 'available';
         if (!filter.status.includes(status)) {
@@ -96,14 +96,14 @@ export function CurriculumDashboard({
       }
 
       // Difficulty filter
-      if (filter.difficulty && filter.difficulty.length > 0) {
+      if (_filter.difficulty && filter.difficulty.length > 0) {
         if (!filter.difficulty.includes(module.difficulty)) {
           return false;
         }
       }
 
       // Category filter
-      if (filter.category && filter.category.length > 0) {
+      if (_filter.category && filter.category.length > 0) {
         if (!filter.category.includes(module.category)) {
           return false;
         }
@@ -113,12 +113,12 @@ export function CurriculumDashboard({
     });
 
     // Sort modules
-    filtered.sort((a, b) => {
+    filtered.sort( (a, b) => {
       let comparison = 0;
 
-      switch (filter.sortBy) {
+      switch (_filter.sortBy) {
         case 'title':
-          comparison = a.title.localeCompare(b.title);
+          comparison = a.title.localeCompare(_b.title);
           break;
         case 'difficulty':
           const difficultyOrder = { beginner: 1, intermediate: 2, advanced: 3, expert: 4 };
@@ -147,11 +147,11 @@ export function CurriculumDashboard({
   // Get all lessons for lesson view
   const allLessons = useMemo(() => {
     return filteredModules.flatMap(module => 
-      module.lessons.map(lesson => ({ ...lesson, moduleId: module.id, moduleTitle: module.title }))
+      module.lessons.map( lesson => ({ ...lesson, moduleId: module.id, moduleTitle: module.title }))
     );
   }, [filteredModules]);
 
-  const toggleFilter = (type: keyof CurriculumFilter, value: any) => {
+  const toggleFilter = ( type: keyof CurriculumFilter, value: any) => {
     setFilter(prev => {
       const currentValues = prev[type] as any[] || [];
       const newValues = currentValues.includes(value)
@@ -163,7 +163,7 @@ export function CurriculumDashboard({
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn( 'space-y-6', className)}>
       {/* Header with Stats */}
       <div className="space-y-4">
         <div>
@@ -183,11 +183,11 @@ export function CurriculumDashboard({
               <div className="text-sm text-gray-400">Lessons Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-400 mb-1">{stats.totalXP.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-yellow-400 mb-1">{stats.totalXP.toLocaleString(_)}</div>
               <div className="text-sm text-gray-400">Total XP Earned</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-400 mb-1">{Math.round(stats.totalTime / 60)}h</div>
+              <div className="text-2xl font-bold text-purple-400 mb-1">{Math.round(_stats.totalTime / 60)}h</div>
               <div className="text-sm text-gray-400">Time Spent</div>
             </div>
           </div>
@@ -195,7 +195,7 @@ export function CurriculumDashboard({
           <div className="mt-6">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-gray-300">Overall Progress</span>
-              <span className="text-sm text-gray-300 font-mono">{Math.round(stats.overallProgress)}%</span>
+              <span className="text-sm text-gray-300 font-mono">{Math.round(_stats.overallProgress)}%</span>
             </div>
             <ProgressBar
               progress={stats.overallProgress}
@@ -218,7 +218,7 @@ export function CurriculumDashboard({
               type="text"
               placeholder="Search modules and lessons..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(_e) => setSearchTerm(_e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-black/20 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             />
           </div>
@@ -226,7 +226,7 @@ export function CurriculumDashboard({
           {/* View Mode Toggle */}
           <div className="flex items-center space-x-2">
             <EnhancedButton
-              onClick={() => setViewMode('modules')}
+              onClick={(_) => setViewMode('modules')}
               variant={viewMode === 'modules' ? 'default' : 'ghost'}
               size="sm"
               touchTarget
@@ -235,7 +235,7 @@ export function CurriculumDashboard({
               Modules
             </EnhancedButton>
             <EnhancedButton
-              onClick={() => setViewMode('lessons')}
+              onClick={(_) => setViewMode('lessons')}
               variant={viewMode === 'lessons' ? 'default' : 'ghost'}
               size="sm"
               touchTarget
@@ -247,7 +247,7 @@ export function CurriculumDashboard({
 
           {/* Filter Toggle */}
           <EnhancedButton
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={(_) => setShowFilters(!showFilters)}
             variant="ghost"
             className="text-white"
             touchTarget
@@ -276,16 +276,16 @@ export function CurriculumDashboard({
                 <div>
                   <h4 className="text-sm font-medium text-white mb-2">Status</h4>
                   <div className="flex flex-wrap gap-2">
-                    {['available', 'in_progress', 'completed', 'locked'].map(status => (
+                    {['available', 'inprogress', 'completed', 'locked'].map(status => (
                       <EnhancedButton
                         key={status}
-                        onClick={() => toggleFilter('status', status)}
-                        variant={filter.status?.includes(status as any) ? 'default' : 'ghost'}
+                        onClick={(_) => toggleFilter( 'status', status)}
+                        variant={filter.status?.includes(_status as any) ? 'default' : 'ghost'}
                         size="sm"
                         className="text-xs"
                         touchTarget
                       >
-                        {status.replace('_', ' ')}
+                        {status.replace('', ' ')}
                       </EnhancedButton>
                     ))}
                   </div>
@@ -298,8 +298,8 @@ export function CurriculumDashboard({
                     {['beginner', 'intermediate', 'advanced', 'expert'].map(difficulty => (
                       <EnhancedButton
                         key={difficulty}
-                        onClick={() => toggleFilter('difficulty', difficulty)}
-                        variant={filter.difficulty?.includes(difficulty as any) ? 'default' : 'ghost'}
+                        onClick={(_) => toggleFilter( 'difficulty', difficulty)}
+                        variant={filter.difficulty?.includes(_difficulty as any) ? 'default' : 'ghost'}
                         size="sm"
                         className="text-xs"
                         touchTarget
@@ -316,7 +316,7 @@ export function CurriculumDashboard({
                   <div className="flex items-center space-x-2">
                     <select
                       value={filter.sortBy}
-                      onChange={(e) => setFilter(prev => ({ ...prev, sortBy: e.target.value as any }))}
+                      onChange={(_e) => setFilter( prev => ({ ...prev, sortBy: e.target.value as any }))}
                       className="bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                     >
                       <option value="order">Order</option>
@@ -327,7 +327,7 @@ export function CurriculumDashboard({
                     </select>
                     
                     <EnhancedButton
-                      onClick={() => setFilter(prev => ({ 
+                      onClick={(_) => setFilter(prev => ({ 
                         ...prev, 
                         sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' 
                       }))}
@@ -351,7 +351,7 @@ export function CurriculumDashboard({
         {viewMode === 'modules' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
-              {filteredModules.map((module, index) => (
+              {filteredModules.map( (module, index) => (
                 <motion.div
                   key={module.id}
                   layout
@@ -371,10 +371,10 @@ export function CurriculumDashboard({
                       totalXPEarned: 0,
                       timeSpent: 0
                     }}
-                    isUnlocked={checkPrerequisites(module.id)}
-                    unmetPrerequisites={getUnmetPrerequisites(module.id)}
-                    onClick={() => onModuleClick(module)}
-                    onStart={() => onStartModule(module.id)}
+                    isUnlocked={checkPrerequisites(_module.id)}
+                    unmetPrerequisites={getUnmetPrerequisites(_module.id)}
+                    onClick={(_) => onModuleClick(_module)}
+                    onStart={(_) => onStartModule(_module.id)}
                   />
                 </motion.div>
               ))}
@@ -383,7 +383,7 @@ export function CurriculumDashboard({
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <AnimatePresence mode="popLayout">
-              {allLessons.map((lesson, index) => (
+              {allLessons.map( (lesson, index) => (
                 <motion.div
                   key={lesson.id}
                   layout
@@ -402,10 +402,10 @@ export function CurriculumDashboard({
                       attempts: 0,
                       xpEarned: 0
                     }}
-                    isUnlocked={checkPrerequisites(lesson.id)}
-                    unmetPrerequisites={getUnmetPrerequisites(lesson.id)}
-                    onClick={() => onLessonClick(lesson)}
-                    onStart={() => onStartLesson(lesson.id)}
+                    isUnlocked={checkPrerequisites(_lesson.id)}
+                    unmetPrerequisites={getUnmetPrerequisites(_lesson.id)}
+                    onClick={(_) => onLessonClick(_lesson)}
+                    onStart={(_) => onStartLesson(_lesson.id)}
                     compact={true}
                   />
                 </motion.div>
@@ -416,14 +416,14 @@ export function CurriculumDashboard({
       </div>
 
       {/* No Results */}
-      {(viewMode === 'modules' ? filteredModules : allLessons).length === 0 && (
+      {(_viewMode === 'modules' ? filteredModules : allLessons).length === 0 && (
         <div className="text-center py-12">
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-xl font-medium text-gray-300 mb-2">No content found</h3>
           <p className="text-gray-400 mb-4">Try adjusting your search or filters</p>
           <EnhancedButton
-            onClick={() => {
-              setFilter({ sortBy: 'order', sortOrder: 'asc', showOptional: true });
+            onClick={(_) => {
+              setFilter( { sortBy: 'order', sortOrder: 'asc', showOptional: true });
               setSearchTerm('');
             }}
             variant="ghost"

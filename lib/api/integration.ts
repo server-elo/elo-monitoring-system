@@ -18,10 +18,10 @@ import { UserSettings } from '@/types/settings';
 import { z } from 'zod';
 
 // Middleware composition utility
-export function composeMiddleware(...middlewares: Array<(request: NextRequest, handler: Function) => Promise<NextResponse>>) {
-  return (handler: Function) => {
+export function composeMiddleware( ...middlewares: Array<(request: NextRequest, handler: Function) => Promise<NextResponse>>) {
+  return (_handler: Function) => {
     return middlewares.reduceRight(
-      (acc, middleware) => (request: NextRequest) => middleware(request, acc),
+      ( acc, middleware) => (_request: NextRequest) => middleware( request, acc),
       handler
     );
   };
@@ -49,51 +49,51 @@ export function createApiRoute(options: {
     enableSecurity = true
   } = options;
 
-  return (handler: Function) => {
-    const middlewares: Array<(request: NextRequest, handler: Function) => Promise<NextResponse>> = [];
+  return (_handler: Function) => {
+    const middlewares: Array<( request: NextRequest, handler: Function) => Promise<NextResponse>> = [];
 
     // Security middleware
     if (enableSecurity) {
-      middlewares.push(withSecurity());
+      middlewares.push(_withSecurity());
     }
 
     // Logging middleware
     if (enableLogging) {
-      middlewares.push(createLoggingMiddleware());
+      middlewares.push(_createLoggingMiddleware());
     }
 
     // Rate limiting middleware
     if (rateLimit) {
-      middlewares.push(withRateLimit(rateLimiters[rateLimit]));
+      middlewares.push(_withRateLimit(rateLimiters[rateLimit]));
     }
 
     // Method validation
-    middlewares.push(async (request: NextRequest, next: Function) => {
-      const allowedMethods = Array.isArray(method) ? method : [method];
+    middlewares.push( async (request: NextRequest, next: Function) => {
+      const allowedMethods = Array.isArray(_method) ? method : [method];
       if (!allowedMethods.includes(request.method)) {
         return new NextResponse(
           JSON.stringify({
             success: false,
             error: {
               code: 'METHOD_NOT_ALLOWED',
-              message: `Method ${request.method} not allowed. Allowed methods: ${allowedMethods.join(', ')}`
+              message: `Method ${request.method} not allowed. Allowed methods: ${allowedMethods.join( ', ')}`
             }
           }),
           { 
             status: 405,
             headers: {
-              'Allow': allowedMethods.join(', '),
+              'Allow': allowedMethods.join( ', '),
               'Content-Type': 'application/json'
             }
           }
         );
       }
-      return next(request);
+      return next(_request);
     });
 
     // Authentication middleware
     if (requireAuth) {
-      middlewares.push(async (request: NextRequest, next: Function) => {
+      middlewares.push( async (request: NextRequest, next: Function) => {
         const authHeader = request.headers.get('authorization');
         const userId = request.headers.get('x-user-id');
         const userRole = request.headers.get('x-user-role');
@@ -125,13 +125,13 @@ export function createApiRoute(options: {
           );
         }
 
-        return next(request);
+        return next(_request);
       });
     }
 
     // Feature flag middleware
     if (featureFlag) {
-      middlewares.push(async (request: NextRequest, next: Function) => {
+      middlewares.push( async (request: NextRequest, next: Function) => {
         const userRole = request.headers.get('x-user-role') as any;
         const userId = request.headers.get('x-user-id');
 
@@ -148,24 +148,24 @@ export function createApiRoute(options: {
           );
         }
 
-        return next(request);
+        return next(_request);
       });
     }
 
     // Validation middleware
     if (validation) {
-      middlewares.push(createValidationMiddleware(validation));
+      middlewares.push(_createValidationMiddleware(validation));
     }
 
     // Error handling wrapper
-    middlewares.push(withErrorHandling);
+    middlewares.push(_withErrorHandling);
 
-    return composeMiddleware(...middlewares)(handler);
+    return composeMiddleware(...middlewares)(_handler);
   };
 }
 
 // Settings integration utilities
-export async function getUserSettings(_userId: string): Promise<UserSettings | null> {
+export async function getUserSettings( userId: string): Promise<UserSettings | null> {
   try {
     // In a real implementation, this would fetch from your database
     // For now, return mock settings
@@ -186,7 +186,7 @@ export async function getUserSettings(_userId: string): Promise<UserSettings | n
         sessionTimeout: 60,
         loginNotifications: true,
         backupCodes: [],
-        passwordLastChanged: new Date(),
+        passwordLastChanged: new Date(_),
         suspiciousActivityAlerts: true,
         allowedDevices: [],
         ipWhitelist: []
@@ -296,7 +296,7 @@ export async function getUserSettings(_userId: string): Promise<UserSettings | n
         shareUsageData: true
       }
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Failed to fetch user settings:', error);
     return null;
   }
@@ -327,16 +327,16 @@ export function trackApiError(error: Error, context: {
 export function createFallbackMiddleware() {
   return async (request: NextRequest, handler: Function): Promise<NextResponse> => {
     try {
-      const response = await handler(request);
+      const response = await handler(_request);
       
       // API success doesn't need fallback tracking
       
       return response;
-    } catch (error) {
+    } catch (_error) {
       // Track API failures as error boundary fallback
       trackFallbackUsage('error_boundary', {
         component: 'api',
-        page: new URL(request.url).pathname,
+        page: new URL(_request.url).pathname,
         userRole: request.headers.get('x-user-role') || undefined,
         metadata: {
           method: request.method,
@@ -356,63 +356,63 @@ export function createAccessibilityMiddleware() {
     
     if (userId) {
       try {
-        const settings = await getUserSettings(userId);
-        if (settings?.accessibility) {
+        const settings = await getUserSettings(_userId);
+        if (_settings?.accessibility) {
           // Apply accessibility settings to API responses if needed
           // This could modify response format, add additional metadata, etc.
-          const response = await handler(request);
+          const response = await handler(_request);
           
           // Add accessibility metadata to response headers
-          if (settings.accessibility.simpleLanguage) {
-            response.headers.set('X-Simple-Language', 'true');
+          if (_settings.accessibility.simpleLanguage) {
+            response.headers.set( 'X-Simple-Language', 'true');
           }
           
-          if (settings.accessibility.screenReader) {
-            response.headers.set('X-Screen-Reader-Optimized', 'true');
+          if (_settings.accessibility.screenReader) {
+            response.headers.set( 'X-Screen-Reader-Optimized', 'true');
           }
           
           return response;
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to apply accessibility settings:', error);
       }
     }
     
-    return handler(request);
+    return handler(_request);
   };
 }
 
 // Performance monitoring integration
 export function createPerformanceMiddleware() {
   return async (request: NextRequest, handler: Function): Promise<NextResponse> => {
-    const startTime = Date.now();
+    const startTime = Date.now(_);
     const requestId = request.headers.get('x-request-id') || 'unknown';
     
     try {
-      const response = await handler(request);
-      const duration = Date.now() - startTime;
+      const response = await handler(_request);
+      const duration = Date.now(_) - startTime;
       
       // Log performance metrics
-      apiLogger.log('INFO', `API Performance: ${request.method} ${new URL(request.url).pathname} - ${duration}ms`, {
+      apiLogger.log( 'INFO', `API Performance: ${request.method} ${new URL(request.url).pathname} - ${duration}ms`, {
         duration,
         method: request.method,
-        path: new URL(request.url).pathname,
+        path: new URL(_request.url).pathname,
         statusCode: response.status,
         userId: request.headers.get('x-user-id')
       }, requestId);
       
       // Add performance headers
-      response.headers.set('X-Response-Time', `${duration}ms`);
+      response.headers.set( 'X-Response-Time', `${duration}ms`);
       
       return response;
-    } catch (error) {
-      const duration = Date.now() - startTime;
+    } catch (_error) {
+      const duration = Date.now(_) - startTime;
       
       // Log error performance
-      apiLogger.log('ERROR', `API Error: ${request.method} ${new URL(request.url).pathname} - ${duration}ms`, {
+      apiLogger.log( 'ERROR', `API Error: ${request.method} ${new URL(request.url).pathname} - ${duration}ms`, {
         duration,
         method: request.method,
-        path: new URL(request.url).pathname,
+        path: new URL(_request.url).pathname,
         error: error instanceof Error ? error.message : 'Unknown error',
         userId: request.headers.get('x-user-id')
       }, requestId);
@@ -431,43 +431,43 @@ export function createCompleteApiMiddleware(options: {
   validation?: z.ZodSchema<any>;
 }) {
   const middlewares = [
-    withSecurity(),
-    createLoggingMiddleware(),
-    createPerformanceMiddleware(),
-    createFallbackMiddleware(),
-    createAccessibilityMiddleware()
+    withSecurity(_),
+    createLoggingMiddleware(_),
+    createPerformanceMiddleware(_),
+    createFallbackMiddleware(_),
+    createAccessibilityMiddleware(_)
   ];
 
-  if (options.rateLimit) {
-    middlewares.push(withRateLimit(rateLimiters[options.rateLimit]));
+  if (_options.rateLimit) {
+    middlewares.push(_withRateLimit(rateLimiters[options.rateLimit]));
   }
 
-  if (options.validation) {
-    middlewares.push(createValidationMiddleware(options.validation));
+  if (_options.validation) {
+    middlewares.push(_createValidationMiddleware(options.validation));
   }
 
-  middlewares.push(withErrorHandling);
+  middlewares.push(_withErrorHandling);
 
   return composeMiddleware(...middlewares);
 }
 
 // Utility for creating standardized API routes
 export const api = {
-  get: (options: Parameters<typeof createApiRoute>[0] = {}) => 
-    createApiRoute({ ...options, method: 'GET' }),
+  get: (_options: Parameters<typeof createApiRoute>[0] = {}) => 
+    createApiRoute( { ...options, method: 'GET' }),
   
-  post: (options: Parameters<typeof createApiRoute>[0] = {}) => 
-    createApiRoute({ ...options, method: 'POST' }),
+  post: (_options: Parameters<typeof createApiRoute>[0] = {}) => 
+    createApiRoute( { ...options, method: 'POST' }),
   
-  put: (options: Parameters<typeof createApiRoute>[0] = {}) => 
-    createApiRoute({ ...options, method: 'PUT' }),
+  put: (_options: Parameters<typeof createApiRoute>[0] = {}) => 
+    createApiRoute( { ...options, method: 'PUT' }),
   
-  patch: (options: Parameters<typeof createApiRoute>[0] = {}) => 
-    createApiRoute({ ...options, method: 'PATCH' }),
+  patch: (_options: Parameters<typeof createApiRoute>[0] = {}) => 
+    createApiRoute( { ...options, method: 'PATCH' }),
   
-  delete: (options: Parameters<typeof createApiRoute>[0] = {}) => 
-    createApiRoute({ ...options, method: 'DELETE' }),
+  delete: (_options: Parameters<typeof createApiRoute>[0] = {}) => 
+    createApiRoute( { ...options, method: 'DELETE' }),
   
-  all: (options: Parameters<typeof createApiRoute>[0] = {}) => 
-    createApiRoute({ ...options, method: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] })
+  all: (_options: Parameters<typeof createApiRoute>[0] = {}) => 
+    createApiRoute( { ...options, method: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] })
 };

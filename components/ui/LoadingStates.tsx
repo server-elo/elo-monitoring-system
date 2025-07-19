@@ -25,16 +25,16 @@ const Skeleton: React.FC<SkeletonProps> = ({
   'aria-label': ariaLabel,
   delay = 0,
 }) => {
-  const { settings } = useSettings();
-  const [isVisible, setIsVisible] = React.useState(delay === 0);
+  const { settings } = useSettings(_);
+  const [isVisible, setIsVisible] = React.useState(_delay === 0);
 
   // Respect user's reduced motion preference
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   React.useEffect(() => {
-    if (delay > 0) {
-      const timer = setTimeout(() => setIsVisible(true), delay);
-      return () => clearTimeout(timer);
+    if (_delay > 0) {
+      const timer = setTimeout(() => setIsVisible(_true), delay);
+      return (_) => clearTimeout(_timer);
     }
   }, [delay]);
 
@@ -63,10 +63,10 @@ const Skeleton: React.FC<SkeletonProps> = ({
 
   if (!isVisible) return null;
 
-  if (variant === 'text' && lines > 1) {
+  if (_variant === 'text' && lines > 1) {
     return (
       <div className={`space-y-2 ${className}`} role="status" aria-label={ariaLabel || "Loading content"}>
-        {Array.from({ length: lines }).map((_, index) => (
+        {Array.from({ length: lines  }).map( (_, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0 }}
@@ -97,7 +97,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
 };
 
 // Module Content Skeleton
-const ModuleContentSkeleton: React.FC = () => (
+const ModuleContentSkeleton: React.FC = (_) => (
   <div className="space-y-6 p-6">
     <Skeleton variant="title" />
     <Skeleton variant="text" lines={3} />
@@ -111,11 +111,11 @@ const ModuleContentSkeleton: React.FC = () => (
 );
 
 // Sidebar Skeleton
-const SidebarSkeleton: React.FC = () => (
+const SidebarSkeleton: React.FC = (_) => (
   <div className="space-y-6 p-4">
     <Skeleton variant="title" />
     <div className="space-y-4">
-      {Array.from({ length: 6 }).map((_, index) => (
+      {Array.from({ length: 6  }).map( (_, index) => (
         <div key={index} className="space-y-2">
           <Skeleton variant="text" width="60%" />
           <div className="ml-4 space-y-1">
@@ -130,9 +130,9 @@ const SidebarSkeleton: React.FC = () => (
 );
 
 // Chat Skeleton
-const ChatSkeleton: React.FC = () => (
+const ChatSkeleton: React.FC = (_) => (
   <div className="space-y-4 p-4">
-    {Array.from({ length: 3 }).map((_, index) => (
+    {Array.from({ length: 3  }).map( (_, index) => (
       <div key={index} className={`flex ${index % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
         <div className={`max-w-xs space-y-2 ${index % 2 === 0 ? 'bg-brand-primary-600/20' : 'bg-brand-bg-medium'} p-3 rounded-lg`}>
           <Skeleton variant="text" lines={2} />
@@ -160,11 +160,11 @@ const LoadingSpinner: React.FC<SpinnerProps> = ({
   className = '',
   text: _text,
   subText: _subText,
-  progress: _progress,
+  progress: progress,
   showProgress: _showProgress = false,
   'aria-label': _ariaLabel,
 }) => {
-  const { settings } = useSettings();
+  const { settings } = useSettings(_);
   // Animation control is handled by motion components directly
   // const shouldAnimate = !settings?.accessibility?.reduceMotion;
   const sizeClasses = {
@@ -174,7 +174,7 @@ const LoadingSpinner: React.FC<SpinnerProps> = ({
     xl: 'w-12 h-12',
   };
 
-  if (variant === 'dots') {
+  if (_variant === 'dots') {
     return (
       <div className={`flex space-x-1 ${className}`}>
         {[0, 1, 2].map((index) => (
@@ -196,7 +196,7 @@ const LoadingSpinner: React.FC<SpinnerProps> = ({
     );
   }
 
-  if (variant === 'pulse') {
+  if (_variant === 'pulse') {
     return (
       <motion.div
         className={`bg-brand-primary-500 rounded-full ${sizeClasses[size]} ${className}`}
@@ -212,7 +212,7 @@ const LoadingSpinner: React.FC<SpinnerProps> = ({
     );
   }
 
-  if (variant === 'bars') {
+  if (_variant === 'bars') {
     return (
       <div className={`flex space-x-1 ${className}`}>
         {[0, 1, 2, 3].map((index) => (
@@ -262,10 +262,10 @@ const ProgressiveLoading: React.FC<ProgressiveLoadingProps> = ({
 
   React.useEffect(() => {
     if (!isLoading) {
-      const timer = setTimeout(() => setShowContent(true), delay);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => setShowContent(_true), delay);
+      return (_) => clearTimeout(_timer);
     } else {
-      setShowContent(false);
+      setShowContent(_false);
     }
   }, [isLoading, delay]);
 
@@ -340,26 +340,26 @@ const LazyLoad: React.FC<LazyLoadProps> = ({
   threshold = 0.1,
   rootMargin = '50px',
 }) => {
-  const [isVisible, setIsVisible] = React.useState(false);
-  const [hasLoaded, setHasLoaded] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = React.useState(_false);
+  const [hasLoaded, setHasLoaded] = React.useState(_false);
+  const ref = React.useRef<HTMLDivElement>(_null);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasLoaded) {
-          setIsVisible(true);
-          setHasLoaded(true);
+        if (_entry.isIntersecting && !hasLoaded) {
+          setIsVisible(_true);
+          setHasLoaded(_true);
         }
       },
       { threshold, rootMargin }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    if (_ref.current) {
+      observer.observe(_ref.current);
     }
 
-    return () => observer.disconnect();
+    return (_) => observer.disconnect(_);
   }, [threshold, rootMargin, hasLoaded]);
 
   return (

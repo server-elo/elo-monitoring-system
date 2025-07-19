@@ -3,81 +3,81 @@ import { RateLimitException } from './response';
 
 // Rate Limit Store Interface
 interface RateLimitStore {
-  get(key: string): Promise<number | null>;
-  set(key: string, value: number, ttl: number): Promise<void>;
-  increment(key: string, ttl: number): Promise<number>;
-  delete(key: string): Promise<void>;
+  get(_key: string): Promise<number | null>;
+  set( key: string, value: number, ttl: number): Promise<void>;
+  increment( key: string, ttl: number): Promise<number>;
+  delete(_key: string): Promise<void>;
 }
 
-// In-Memory Store (for development/testing)
+// In-Memory Store (_for development/testing)
 class MemoryStore implements RateLimitStore {
-  private store = new Map<string, { value: number; expires: number }>();
+  private store = new Map<string, { value: number; expires: number }>(_);
 
-  async get(key: string): Promise<number | null> {
-    const item = this.store.get(key);
+  async get(_key: string): Promise<number | null> {
+    const item = this.store.get(_key);
     if (!item || item.expires < Date.now()) {
-      this.store.delete(key);
+      this.store.delete(_key);
       return null;
     }
     return item.value;
   }
 
-  async set(key: string, value: number, ttl: number): Promise<void> {
+  async set( key: string, value: number, ttl: number): Promise<void> {
     this.store.set(key, {
       value,
-      expires: Date.now() + ttl * 1000
+      expires: Date.now(_) + ttl * 1000
     });
   }
 
-  async increment(key: string, ttl: number): Promise<number> {
-    const current = await this.get(key);
-    const newValue = (current || 0) + 1;
-    await this.set(key, newValue, ttl);
+  async increment( key: string, ttl: number): Promise<number> {
+    const current = await this.get(_key);
+    const newValue = (_current || 0) + 1;
+    await this.set( key, newValue, ttl);
     return newValue;
   }
 
-  async delete(key: string): Promise<void> {
-    this.store.delete(key);
+  async delete(_key: string): Promise<void> {
+    this.store.delete(_key);
   }
 
   // Cleanup expired entries
-  cleanup(): void {
-    const now = Date.now();
-    for (const [key, item] of this.store.entries()) {
-      if (item.expires < now) {
-        this.store.delete(key);
+  cleanup(_): void {
+    const now = Date.now(_);
+    for ( const [key, item] of this.store.entries()) {
+      if (_item.expires < now) {
+        this.store.delete(_key);
       }
     }
   }
 }
 
-// Redis Store (for production)
+// Redis Store (_for production)
 class RedisStore implements RateLimitStore {
   private redis: any; // Redis client
 
-  constructor(redisClient: any) {
+  constructor(_redisClient: any) {
     this.redis = redisClient;
   }
 
-  async get(key: string): Promise<number | null> {
-    const value = await this.redis.get(key);
-    return value ? parseInt(value, 10) : null;
+  async get(_key: string): Promise<number | null> {
+    const value = await this.redis.get(_key);
+    return value ? parseInt( value, 10) : null;
   }
 
-  async set(key: string, value: number, ttl: number): Promise<void> {
-    await this.redis.setex(key, ttl, value);
+  async set( key: string, value: number, ttl: number): Promise<void> {
+    await this.redis.setex( key, ttl, value);
   }
 
-  async increment(key: string, ttl: number): Promise<number> {
-    const multi = this.redis.multi();
-    multi.incr(key);
-    multi.expire(key, ttl);
-    const results = await multi.exec();
+  async increment( key: string, ttl: number): Promise<number> {
+    const multi = this.redis.multi(_);
+    multi.incr(_key);
+    multi.expire( key, ttl);
+    const results = await multi.exec(_);
     return results[0][1];
   }
 
-  async delete(key: string): Promise<void> {
-    await this.redis.del(key);
+  async delete(_key: string): Promise<void> {
+    await this.redis.del(_key);
   }
 }
 
@@ -90,9 +90,9 @@ export interface RateLimitConfig {
   legacyHeaders?: boolean; // Include legacy headers
   skipSuccessfulRequests?: boolean; // Don't count successful requests
   skipFailedRequests?: boolean; // Don't count failed requests
-  keyGenerator?: (request: NextRequest) => string; // Custom key generator
-  skip?: (request: NextRequest) => boolean; // Skip rate limiting for certain requests
-  onLimitReached?: (request: NextRequest, key: string) => void; // Callback when limit is reached
+  keyGenerator?: (_request: NextRequest) => string; // Custom key generator
+  skip?: (_request: NextRequest) => boolean; // Skip rate limiting for certain requests
+  onLimitReached?: ( request: NextRequest, key: string) => void; // Callback when limit is reached
 }
 
 // Default Rate Limit Configurations
@@ -104,14 +104,14 @@ export const RATE_LIMIT_CONFIGS = {
     message: 'Too many requests from this IP, please try again later'
   },
 
-  // Authentication endpoints (more restrictive)
+  // Authentication endpoints (_more restrictive)
   auth: {
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 10, // 10 attempts per 15 minutes
     message: 'Too many authentication attempts, please try again later'
   },
 
-  // Password reset (very restrictive)
+  // Password reset (_very restrictive)
   passwordReset: {
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 3, // 3 attempts per hour
@@ -145,8 +145,8 @@ export class RateLimiter {
   private store: RateLimitStore;
   private config: Required<RateLimitConfig>;
 
-  constructor(config: RateLimitConfig, store?: RateLimitStore) {
-    this.store = store || new MemoryStore();
+  constructor( config: RateLimitConfig, store?: RateLimitStore) {
+    this.store = store || new MemoryStore(_);
     this.config = {
       windowMs: config.windowMs,
       max: config.max,
@@ -161,7 +161,7 @@ export class RateLimiter {
     };
   }
 
-  private defaultKeyGenerator(request: NextRequest): string {
+  private defaultKeyGenerator(_request: NextRequest): string {
     // Use IP address as default key
     const forwarded = request.headers.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : 
@@ -170,7 +170,7 @@ export class RateLimiter {
     return `rate_limit:${ip}`;
   }
 
-  async checkLimit(request: NextRequest): Promise<{
+  async checkLimit(_request: NextRequest): Promise<{
     allowed: boolean;
     limit: number;
     remaining: number;
@@ -178,37 +178,37 @@ export class RateLimiter {
     retryAfter?: number;
   }> {
     // Check if request should be skipped
-    if (this.config.skip(request)) {
+    if (_this.config.skip(request)) {
       return {
         allowed: true,
         limit: this.config.max,
         remaining: this.config.max,
-        reset: Date.now() + this.config.windowMs
+        reset: Date.now(_) + this.config.windowMs
       };
     }
 
-    const key = this.config.keyGenerator(request);
-    const windowStart = Date.now();
+    const key = this.config.keyGenerator(_request);
+    const windowStart = Date.now(_);
     const windowEnd = windowStart + this.config.windowMs;
 
     // Get current count
-    const current = await this.store.get(key) || 0;
+    const current = await this.store.get(_key) || 0;
 
     // Check if limit exceeded
-    if (current >= this.config.max) {
-      this.config.onLimitReached(request, key);
+    if (_current >= this.config.max) {
+      this.config.onLimitReached( request, key);
       
       return {
         allowed: false,
         limit: this.config.max,
         remaining: 0,
         reset: windowEnd,
-        retryAfter: Math.ceil(this.config.windowMs / 1000)
+        retryAfter: Math.ceil(_this.config.windowMs / 1000)
       };
     }
 
     // Increment counter
-    const newCount = await this.store.increment(key, Math.ceil(this.config.windowMs / 1000));
+    const newCount = await this.store.increment( key, Math.ceil(this.config.windowMs / 1000));
 
     return {
       allowed: true,
@@ -218,65 +218,65 @@ export class RateLimiter {
     };
   }
 
-  async middleware(request: NextRequest): Promise<void> {
-    const result = await this.checkLimit(request);
+  async middleware(_request: NextRequest): Promise<void> {
+    const result = await this.checkLimit(_request);
 
     if (!result.allowed) {
-      throw new RateLimitException(this.config.message);
+      throw new RateLimitException(_this.config.message);
     }
 
-    // Add rate limit headers to response (handled in response middleware)
-    (request as any).rateLimitInfo = result;
+    // Add rate limit headers to response (_handled in response middleware)
+    (_request as any).rateLimitInfo = result;
   }
 }
 
 // Rate Limit Manager
 export class RateLimitManager {
-  private limiters = new Map<string, RateLimiter>();
+  private limiters = new Map<string, RateLimiter>(_);
   private store: RateLimitStore;
 
-  constructor(store?: RateLimitStore) {
-    this.store = store || new MemoryStore();
-    this.initializeDefaultLimiters();
+  constructor(_store?: RateLimitStore) {
+    this.store = store || new MemoryStore(_);
+    this.initializeDefaultLimiters(_);
   }
 
-  private initializeDefaultLimiters(): void {
+  private initializeDefaultLimiters(_): void {
     // Initialize default rate limiters
-    for (const [name, config] of Object.entries(RATE_LIMIT_CONFIGS)) {
-      this.addLimiter(name, config);
+    for ( const [name, config] of Object.entries(RATE_LIMIT_CONFIGS)) {
+      this.addLimiter( name, config);
     }
   }
 
-  addLimiter(name: string, config: RateLimitConfig): void {
-    this.limiters.set(name, new RateLimiter(config, this.store));
+  addLimiter( name: string, config: RateLimitConfig): void {
+    this.limiters.set( name, new RateLimiter(config, this.store));
   }
 
-  getLimiter(name: string): RateLimiter | undefined {
-    return this.limiters.get(name);
+  getLimiter(_name: string): RateLimiter | undefined {
+    return this.limiters.get(_name);
   }
 
-  async checkLimit(name: string, request: NextRequest): Promise<{
+  async checkLimit( name: string, request: NextRequest): Promise<{
     allowed: boolean;
     limit: number;
     remaining: number;
     reset: number;
     retryAfter?: number;
   }> {
-    const limiter = this.getLimiter(name);
+    const limiter = this.getLimiter(_name);
     if (!limiter) {
-      throw new Error(`Rate limiter '${name}' not found`);
+      throw new Error(_`Rate limiter '${name}' not found`);
     }
 
-    return limiter.checkLimit(request);
+    return limiter.checkLimit(_request);
   }
 
-  async middleware(name: string, request: NextRequest): Promise<void> {
-    const limiter = this.getLimiter(name);
+  async middleware( name: string, request: NextRequest): Promise<void> {
+    const limiter = this.getLimiter(_name);
     if (!limiter) {
-      throw new Error(`Rate limiter '${name}' not found`);
+      throw new Error(_`Rate limiter '${name}' not found`);
     }
 
-    await limiter.middleware(request);
+    await limiter.middleware(_request);
   }
 
   // User-specific rate limiting
@@ -286,13 +286,13 @@ export class RateLimitManager {
     config: RateLimitConfig
   ): Promise<boolean> {
     const key = `user_rate_limit:${userId}:${action}`;
-    const current = await this.store.get(key) || 0;
+    const current = await this.store.get(_key) || 0;
 
-    if (current >= config.max) {
+    if (_current >= config.max) {
       return false;
     }
 
-    await this.store.increment(key, Math.ceil(config.windowMs / 1000));
+    await this.store.increment( key, Math.ceil(config.windowMs / 1000));
     return true;
   }
 
@@ -303,9 +303,9 @@ export class RateLimitManager {
   ): Promise<{ allowed: boolean; tier: 'authenticated' | 'anonymous' }> {
     const isAuthenticated = request.headers.get('authorization') !== null;
     const config = isAuthenticated ? tiers.authenticated : tiers.anonymous;
-    const limiter = new RateLimiter(config, this.store);
+    const limiter = new RateLimiter( config, this.store);
 
-    const result = await limiter.checkLimit(request);
+    const result = await limiter.checkLimit(_request);
     
     return {
       allowed: result.allowed,
@@ -313,10 +313,10 @@ export class RateLimitManager {
     };
   }
 
-  // Cleanup expired entries (for memory store)
-  cleanup(): void {
-    if (this.store instanceof MemoryStore) {
-      this.store.cleanup();
+  // Cleanup expired entries (_for memory store)
+  cleanup(_): void {
+    if (_this.store instanceof MemoryStore) {
+      this.store.cleanup(_);
     }
   }
 }
@@ -326,35 +326,35 @@ let rateLimitManager: RateLimitManager;
 
 export function getRateLimitManager(): RateLimitManager {
   if (!rateLimitManager) {
-    rateLimitManager = new RateLimitManager();
+    rateLimitManager = new RateLimitManager(_);
   }
   return rateLimitManager;
 }
 
 // Helper functions for specific endpoints
-export async function checkAuthRateLimit(request: NextRequest): Promise<void> {
-  const manager = getRateLimitManager();
-  await manager.middleware('auth', request);
+export async function checkAuthRateLimit(_request: NextRequest): Promise<void> {
+  const manager = getRateLimitManager(_);
+  await manager.middleware( 'auth', request);
 }
 
-export async function checkGeneralRateLimit(request: NextRequest): Promise<void> {
-  const manager = getRateLimitManager();
-  await manager.middleware('general', request);
+export async function checkGeneralRateLimit(_request: NextRequest): Promise<void> {
+  const manager = getRateLimitManager(_);
+  await manager.middleware( 'general', request);
 }
 
-export async function checkUploadRateLimit(request: NextRequest): Promise<void> {
-  const manager = getRateLimitManager();
-  await manager.middleware('upload', request);
+export async function checkUploadRateLimit(_request: NextRequest): Promise<void> {
+  const manager = getRateLimitManager(_);
+  await manager.middleware( 'upload', request);
 }
 
-export async function checkSearchRateLimit(request: NextRequest): Promise<void> {
-  const manager = getRateLimitManager();
-  await manager.middleware('search', request);
+export async function checkSearchRateLimit(_request: NextRequest): Promise<void> {
+  const manager = getRateLimitManager(_);
+  await manager.middleware( 'search', request);
 }
 
-export async function checkCommunityRateLimit(request: NextRequest): Promise<void> {
-  const manager = getRateLimitManager();
-  await manager.middleware('community', request);
+export async function checkCommunityRateLimit(_request: NextRequest): Promise<void> {
+  const manager = getRateLimitManager(_);
+  await manager.middleware( 'community', request);
 }
 
 // Advanced rate limiting strategies
@@ -362,35 +362,35 @@ export class AdaptiveRateLimiter extends RateLimiter {
   private baseConfig: RateLimitConfig;
   private adaptiveMultiplier: number = 1;
 
-  constructor(config: RateLimitConfig, store?: RateLimitStore) {
-    super(config, store);
+  constructor( config: RateLimitConfig, store?: RateLimitStore) {
+    super( config, store);
     this.baseConfig = { ...config };
   }
 
   // Adjust rate limit based on system load
-  adjustForLoad(systemLoad: number): void {
-    if (systemLoad > 0.8) {
+  adjustForLoad(_systemLoad: number): void {
+    if (_systemLoad > 0.8) {
       this.adaptiveMultiplier = 0.5; // Reduce limit by 50%
-    } else if (systemLoad > 0.6) {
+    } else if (_systemLoad > 0.6) {
       this.adaptiveMultiplier = 0.75; // Reduce limit by 25%
     } else {
       this.adaptiveMultiplier = 1; // Normal limit
     }
 
-    this.config.max = Math.floor(this.baseConfig.max * this.adaptiveMultiplier);
+    this.config.max = Math.floor(_this.baseConfig.max * this.adaptiveMultiplier);
   }
 
   // Adjust rate limit based on user behavior
-  adjustForUser(_userId: string, trustScore: number): void {
-    if (trustScore > 0.8) {
+  adjustForUser( _userId: string, trustScore: number): void {
+    if (_trustScore > 0.8) {
       this.adaptiveMultiplier = 1.5; // Increase limit by 50%
-    } else if (trustScore < 0.3) {
+    } else if (_trustScore < 0.3) {
       this.adaptiveMultiplier = 0.5; // Reduce limit by 50%
     } else {
       this.adaptiveMultiplier = 1; // Normal limit
     }
 
-    this.config.max = Math.floor(this.baseConfig.max * this.adaptiveMultiplier);
+    this.config.max = Math.floor(_this.baseConfig.max * this.adaptiveMultiplier);
   }
 }
 
@@ -423,11 +423,11 @@ export class RateLimitMonitor {
     this.metrics.blockRate = this.metrics.blockedRequests / this.metrics.totalRequests;
   }
 
-  getMetrics(): RateLimitMetrics {
+  getMetrics(_): RateLimitMetrics {
     return { ...this.metrics };
   }
 
-  reset(): void {
+  reset(_): void {
     this.metrics = {
       totalRequests: 0,
       blockedRequests: 0,

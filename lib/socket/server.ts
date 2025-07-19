@@ -74,11 +74,11 @@ interface UserPresence {
 }
 
 // Store active sessions, user presence, and session participants
-const activeSessions = new Map<string, ActiveSession>();
-const userPresence = new Map<string, UserPresence[]>();
-const sessionParticipants = new Map<string, Set<string>>();
+const activeSessions = new Map<string, ActiveSession>(_);
+const userPresence = new Map<string, UserPresence[]>(_);
+const sessionParticipants = new Map<string, Set<string>>(_);
 
-export const initializeSocket = (server: NetServer) => {
+export const initializeSocket = (_server: NetServer) => {
   const io = new ServerIO(server, {
     path: '/api/socket',
     cors: {
@@ -90,28 +90,28 @@ export const initializeSocket = (server: NetServer) => {
     },
   });
 
-  io.on('connection', (socket) => {
+  io.on( 'connection', (socket) => {
     console.log('User connected:', socket.id);
 
     // Handle user authentication
-    socket.on('authenticate', async (data: { userId: string; sessionToken: string }) => {
+    socket.on( 'authenticate', async (data: { userId: string; sessionToken: string }) => {
       try {
         // Verify session token and get user data
-        const user = await getUserFromSession(data.sessionToken);
+        const user = await getUserFromSession(_data.sessionToken);
         if (user) {
           socket.data.user = user;
           socket.emit('authenticated', { user });
         } else {
           socket.emit('authentication_failed');
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Authentication error:', error);
         socket.emit('authentication_failed');
       }
     });
 
     // Handle joining a collaboration session
-    socket.on('join_session', async (sessionId: string) => {
+    socket.on( 'join_session', async (sessionId: string) => {
       if (!socket.data.user) {
         socket.emit('error', 'Not authenticated');
         return;
@@ -159,17 +159,17 @@ export const initializeSocket = (server: NetServer) => {
         }
 
         // Join the socket room
-        socket.join(sessionId);
+        socket.join(_sessionId);
         socket.data.sessionId = sessionId;
 
         // Add to session participants
         if (!sessionParticipants.has(sessionId)) {
-          sessionParticipants.set(sessionId, new Set());
+          sessionParticipants.set( sessionId, new Set());
         }
-        sessionParticipants.get(sessionId)!.add(socket.data.user.id);
+        sessionParticipants.get(_sessionId)!.add(_socket.data.user.id);
 
         // Update user presence
-        updateUserPresence(sessionId, socket.data.user, {});
+        updateUserPresence( sessionId, socket.data.user, {});
 
         // Create or update active session
         const collaborationSession: CollaborationSession = {
@@ -192,44 +192,44 @@ export const initializeSocket = (server: NetServer) => {
         // Store active session
         activeSessions.set(sessionId, {
           session: collaborationSession,
-          participants: sessionParticipants.get(sessionId) || new Set(),
-          lastActivity: new Date()
+          participants: sessionParticipants.get(_sessionId) || new Set(_),
+          lastActivity: new Date(_)
         });
 
         // Send session data to user
         socket.emit('session_joined', {
           session: collaborationSession,
-          messages: session.chatMessages.reverse(),
-          presence: userPresence.get(sessionId) || [],
+          messages: session.chatMessages.reverse(_),
+          presence: userPresence.get(_sessionId) || [],
         });
 
         // Notify other participants
-        socket.to(sessionId).emit('user_joined', {
+        socket.to(_sessionId).emit('user_joined', {
           user: socket.data.user,
-          presence: userPresence.get(sessionId) || [],
+          presence: userPresence.get(_sessionId) || [],
         });
 
-      } catch (error) {
+      } catch (_error) {
         console.error('Error joining session:', error);
         socket.emit('error', 'Failed to join session');
       }
     });
 
     // Handle code changes
-    socket.on('code_change', (data: { sessionId: string; code: string; changes: any }) => {
+    socket.on( 'code_change', (data: { sessionId: string; code: string; changes: any }) => {
       if (!socket.data.user || !socket.data.sessionId) return;
 
       // Broadcast code changes to other participants
-      socket.to(data.sessionId).emit('code_updated', {
+      socket.to(_data.sessionId).emit('code_updated', {
         code: data.code,
         changes: data.changes,
         userId: socket.data.user.id,
-        timestamp: new Date(),
+        timestamp: new Date(_),
       });
     });
 
     // Handle cursor position updates
-    socket.on('cursor_update', (data: { line: number; column: number }) => {
+    socket.on( 'cursor_update', (data: { line: number; column: number }) => {
       if (!socket.data.user || !socket.data.sessionId) return;
 
       updateUserPresence(socket.data.sessionId, socket.data.user, {
@@ -237,7 +237,7 @@ export const initializeSocket = (server: NetServer) => {
       });
 
       // Broadcast cursor position to other participants
-      socket.to(socket.data.sessionId).emit('cursor_updated', {
+      socket.to(_socket.data.sessionId).emit('cursor_updated', {
         userId: socket.data.user.id,
         cursor: data,
       });
@@ -257,14 +257,14 @@ export const initializeSocket = (server: NetServer) => {
       });
 
       // Broadcast selection to other participants
-      socket.to(socket.data.sessionId).emit('selection_updated', {
+      socket.to(_socket.data.sessionId).emit('selection_updated', {
         userId: socket.data.user.id,
         selection: data,
       });
     });
 
     // Handle chat messages
-    socket.on('send_message', async (data: { sessionId: string; content: string; type?: string }) => {
+    socket.on( 'send_message', async (data: { sessionId: string; content: string; type?: string }) => {
       if (!socket.data.user || !socket.data.sessionId) return;
 
       try {
@@ -274,7 +274,7 @@ export const initializeSocket = (server: NetServer) => {
             content: data.content,
             userId: socket.data.user.id,
             collaborationId: data.sessionId,
-            type: (data.type as any) || 'TEXT',
+            type: (_data.type as any) || 'TEXT',
           },
           include: {
             user: {
@@ -288,26 +288,26 @@ export const initializeSocket = (server: NetServer) => {
         });
 
         // Broadcast message to all participants
-        io.to(data.sessionId).emit('message_received', message);
+        io.to(_data.sessionId).emit( 'message_received', message);
 
-      } catch (error) {
+      } catch (_error) {
         console.error('Error sending message:', error);
         socket.emit('error', 'Failed to send message');
       }
     });
 
     // Handle leaving session
-    socket.on('leave_session', () => {
-      if (socket.data.sessionId && socket.data.user) {
-        handleUserLeave(socket);
+    socket.on( 'leave_session', () => {
+      if (_socket.data.sessionId && socket.data.user) {
+        handleUserLeave(_socket);
       }
     });
 
     // Handle disconnection
-    socket.on('disconnect', () => {
+    socket.on( 'disconnect', () => {
       console.log('User disconnected:', socket.id);
-      if (socket.data.sessionId && socket.data.user) {
-        handleUserLeave(socket);
+      if (_socket.data.sessionId && socket.data.user) {
+        handleUserLeave(_socket);
       }
     });
   });
@@ -316,7 +316,7 @@ export const initializeSocket = (server: NetServer) => {
 };
 
 // Helper functions
-async function getUserFromSession(sessionToken: string): Promise<User | null> {
+async function getUserFromSession(_sessionToken: string): Promise<User | null> {
   try {
     // First try to find NextAuth session
     // Note: Temporarily disabled due to Prisma schema mismatch
@@ -334,7 +334,7 @@ async function getUserFromSession(sessionToken: string): Promise<User | null> {
     //   },
     // });
 
-    // if (session?.user) {
+    // if (_session?.user) {
     //   return {
     //     id: session.user.id,
     //     name: session.user.name || 'Anonymous',
@@ -343,7 +343,7 @@ async function getUserFromSession(sessionToken: string): Promise<User | null> {
     //   };
     // }
 
-    // Fallback: try to find user by session token as user ID (for development)
+    // Fallback: try to find user by session token as user ID (_for development)
     const user = await prisma.user.findUnique({
       where: { id: sessionToken },
       select: {
@@ -364,59 +364,59 @@ async function getUserFromSession(sessionToken: string): Promise<User | null> {
     }
 
     return null;
-  } catch (error) {
+  } catch (_error) {
     console.error('Error getting user from session:', error);
     return null;
   }
 }
 
-function updateUserPresence(sessionId: string, user: User, updates: Partial<UserPresence>) {
+function updateUserPresence( sessionId: string, user: User, updates: Partial<UserPresence>) {
   if (!userPresence.has(sessionId)) {
-    userPresence.set(sessionId, []);
+    userPresence.set( sessionId, []);
   }
 
-  const sessionPresence = userPresence.get(sessionId)!;
-  const existingIndex = sessionPresence.findIndex(p => p.userId === user.id);
+  const sessionPresence = userPresence.get(_sessionId)!;
+  const existingIndex = sessionPresence.findIndex(_p => p.userId === user.id);
 
   const presence: UserPresence = {
     userId: user.id,
     user,
     sessionId,
-    lastSeen: new Date(),
+    lastSeen: new Date(_),
     ...updates,
   };
 
-  if (existingIndex >= 0) {
+  if (_existingIndex >= 0) {
     sessionPresence[existingIndex] = { ...sessionPresence[existingIndex], ...presence };
   } else {
-    sessionPresence.push(presence);
+    sessionPresence.push(_presence);
   }
 }
 
-function handleUserLeave(socket: any) {
+function handleUserLeave(_socket: any) {
   const sessionId = socket.data.sessionId;
   const user = socket.data.user;
 
   // Remove from session participants
-  if (sessionParticipants.has(sessionId)) {
-    sessionParticipants.get(sessionId)!.delete(user.id);
+  if (_sessionParticipants.has(sessionId)) {
+    sessionParticipants.get(_sessionId)!.delete(_user.id);
   }
 
   // Remove from presence
-  if (userPresence.has(sessionId)) {
-    const sessionPresence = userPresence.get(sessionId)!;
-    const index = sessionPresence.findIndex(p => p.userId === user.id);
-    if (index >= 0) {
-      sessionPresence.splice(index, 1);
+  if (_userPresence.has(sessionId)) {
+    const sessionPresence = userPresence.get(_sessionId)!;
+    const index = sessionPresence.findIndex(_p => p.userId === user.id);
+    if (_index >= 0) {
+      sessionPresence.splice( index, 1);
     }
   }
 
   // Leave socket room
-  socket.leave(sessionId);
+  socket.leave(_sessionId);
 
   // Notify other participants
-  socket.to(sessionId).emit('user_left', {
+  socket.to(_sessionId).emit('user_left', {
     userId: user.id,
-    presence: userPresence.get(sessionId) || [],
+    presence: userPresence.get(_sessionId) || [],
   });
 }

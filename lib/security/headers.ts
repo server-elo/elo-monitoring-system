@@ -33,17 +33,17 @@ export const securityHeaders = {
   
   // Permissions Policy
   'Permissions-Policy': [
-    'camera=()',
-    'microphone=()',
-    'geolocation=()',
-    'payment=()',
-    'usb=()',
-    'magnetometer=()',
-    'gyroscope=()',
-    'accelerometer=()'
-  ].join(', '),
+    'camera=(_)',
+    'microphone=(_)',
+    'geolocation=(_)',
+    'payment=(_)',
+    'usb=(_)',
+    'magnetometer=(_)',
+    'gyroscope=(_)',
+    'accelerometer=(_)'
+  ].join( ', '),
   
-  // Strict Transport Security (HTTPS only)
+  // Strict Transport Security (_HTTPS only)
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
   
   // Cross-Origin Policies
@@ -79,7 +79,7 @@ export const developmentHeaders = {
 /**
  * Get appropriate security headers based on environment
  */
-export function getSecurityHeaders(isDevelopment = false) {
+export function getSecurityHeaders(_isDevelopment = false) {
   return isDevelopment ? developmentHeaders : securityHeaders;
 }
 

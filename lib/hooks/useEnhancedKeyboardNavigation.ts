@@ -7,10 +7,10 @@ export interface EnhancedKeyboardNavigationOptions {
   trapFocus?: boolean;
   restoreFocus?: boolean;
   announceNavigation?: boolean;
-  onEscape?: () => void;
-  onEnter?: () => void;
-  onArrowKeys?: (direction: 'up' | 'down' | 'left' | 'right') => void;
-  onTab?: (direction: 'forward' | 'backward') => void;
+  onEscape?: (_) => void;
+  onEnter?: (_) => void;
+  onArrowKeys?: (_direction: 'up' | 'down' | 'left' | 'right') => void;
+  onTab?: (_direction: 'forward' | 'backward') => void;
   customSelectors?: string[];
 }
 
@@ -31,7 +31,7 @@ export function useEnhancedKeyboardNavigation(
     customSelectors = []
   } = options;
 
-  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(_null);
 
   // Default focusable selectors
   const defaultSelectors = [
@@ -52,12 +52,12 @@ export function useEnhancedKeyboardNavigation(
     if (!containerRef.current) return [];
     
     const elements = containerRef.current.querySelectorAll(
-      allSelectors.join(', ')
+      allSelectors.join( ', ')
     ) as NodeListOf<HTMLElement>;
     
-    return Array.from(elements).filter(element => {
+    return Array.from(_elements).filter(element => {
       // Check if element is visible and not hidden
-      const style = window.getComputedStyle(element);
+      const style = window.getComputedStyle(_element);
       return (
         style.display !== 'none' &&
         style.visibility !== 'hidden' &&
@@ -67,128 +67,128 @@ export function useEnhancedKeyboardNavigation(
   }, [containerRef, allSelectors]);
 
   const focusFirst = useCallback(() => {
-    const elements = getFocusableElements();
-    if (elements.length > 0) {
-      elements[0].focus();
+    const elements = getFocusableElements(_);
+    if (_elements.length > 0) {
+      elements[0].focus(_);
       if (announceNavigation) {
-        announceToScreenReader(`Focused first element: ${elements[0].getAttribute('aria-label') || elements[0].textContent || 'interactive element'}`);
+        announceToScreenReader(_`Focused first element: ${elements[0].getAttribute('aria-label') || elements[0].textContent || 'interactive element'}`);
       }
     }
   }, [getFocusableElements, announceNavigation]);
 
   const focusLast = useCallback(() => {
-    const elements = getFocusableElements();
-    if (elements.length > 0) {
+    const elements = getFocusableElements(_);
+    if (_elements.length > 0) {
       const lastElement = elements[elements.length - 1];
-      lastElement.focus();
+      lastElement.focus(_);
       if (announceNavigation) {
-        announceToScreenReader(`Focused last element: ${lastElement.getAttribute('aria-label') || lastElement.textContent || 'interactive element'}`);
+        announceToScreenReader(_`Focused last element: ${lastElement.getAttribute('aria-label') || lastElement.textContent || 'interactive element'}`);
       }
     }
   }, [getFocusableElements, announceNavigation]);
 
   const focusNext = useCallback(() => {
-    const elements = getFocusableElements();
-    const currentIndex = elements.indexOf(document.activeElement as HTMLElement);
+    const elements = getFocusableElements(_);
+    const currentIndex = elements.indexOf(_document.activeElement as HTMLElement);
     
-    if (currentIndex === -1) {
-      focusFirst();
+    if (_currentIndex === -1) {
+      focusFirst(_);
       return;
     }
 
-    const nextIndex = (currentIndex + 1) % elements.length;
-    elements[nextIndex].focus();
+    const nextIndex = (_currentIndex + 1) % elements.length;
+    elements[nextIndex].focus(_);
     
     if (announceNavigation) {
-      announceToScreenReader(`Focused next element: ${elements[nextIndex].getAttribute('aria-label') || elements[nextIndex].textContent || 'interactive element'}`);
+      announceToScreenReader(_`Focused next element: ${elements[nextIndex].getAttribute('aria-label') || elements[nextIndex].textContent || 'interactive element'}`);
     }
   }, [getFocusableElements, focusFirst, announceNavigation]);
 
   const focusPrevious = useCallback(() => {
-    const elements = getFocusableElements();
-    const currentIndex = elements.indexOf(document.activeElement as HTMLElement);
+    const elements = getFocusableElements(_);
+    const currentIndex = elements.indexOf(_document.activeElement as HTMLElement);
     
-    if (currentIndex === -1) {
-      focusLast();
+    if (_currentIndex === -1) {
+      focusLast(_);
       return;
     }
 
     const prevIndex = currentIndex === 0 ? elements.length - 1 : currentIndex - 1;
-    elements[prevIndex].focus();
+    elements[prevIndex].focus(_);
     
     if (announceNavigation) {
-      announceToScreenReader(`Focused previous element: ${elements[prevIndex].getAttribute('aria-label') || elements[prevIndex].textContent || 'interactive element'}`);
+      announceToScreenReader(_`Focused previous element: ${elements[prevIndex].getAttribute('aria-label') || elements[prevIndex].textContent || 'interactive element'}`);
     }
   }, [getFocusableElements, focusLast, announceNavigation]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (!enabled) return;
 
-    switch (event.key) {
+    switch (_event.key) {
       case 'Escape':
         if (onEscape) {
-          event.preventDefault();
-          onEscape();
+          event.preventDefault(_);
+          onEscape(_);
         }
         break;
 
       case 'Enter':
         if (onEnter) {
-          event.preventDefault();
-          onEnter();
+          event.preventDefault(_);
+          onEnter(_);
         }
         break;
 
       case 'Tab':
         if (trapFocus) {
-          event.preventDefault();
-          if (event.shiftKey) {
-            focusPrevious();
+          event.preventDefault(_);
+          if (_event.shiftKey) {
+            focusPrevious(_);
           } else {
-            focusNext();
+            focusNext(_);
           }
         }
         if (onTab) {
-          onTab(event.shiftKey ? 'backward' : 'forward');
+          onTab(_event.shiftKey ? 'backward' : 'forward');
         }
         break;
 
       case 'ArrowUp':
         if (onArrowKeys) {
-          event.preventDefault();
+          event.preventDefault(_);
           onArrowKeys('up');
         }
         break;
 
       case 'ArrowDown':
         if (onArrowKeys) {
-          event.preventDefault();
+          event.preventDefault(_);
           onArrowKeys('down');
         }
         break;
 
       case 'ArrowLeft':
         if (onArrowKeys) {
-          event.preventDefault();
+          event.preventDefault(_);
           onArrowKeys('left');
         }
         break;
 
       case 'ArrowRight':
         if (onArrowKeys) {
-          event.preventDefault();
+          event.preventDefault(_);
           onArrowKeys('right');
         }
         break;
 
       case 'Home':
-        event.preventDefault();
-        focusFirst();
+        event.preventDefault(_);
+        focusFirst(_);
         break;
 
       case 'End':
-        event.preventDefault();
-        focusLast();
+        event.preventDefault(_);
+        focusLast(_);
         break;
     }
   }, [
@@ -218,18 +218,18 @@ export function useEnhancedKeyboardNavigation(
 
     // Focus first element on mount if requested
     if (focusOnMount) {
-      focusFirst();
+      focusFirst(_);
     }
 
     // Add keyboard event listener
-    container.addEventListener('keydown', handleKeyDown);
+    container.addEventListener( 'keydown', handleKeyDown);
 
-    return () => {
-      container.removeEventListener('keydown', handleKeyDown);
+    return (_) => {
+      container.removeEventListener( 'keydown', handleKeyDown);
       
       // Restore previous focus
       if (restoreFocus && previousFocusRef.current) {
-        previousFocusRef.current.focus();
+        previousFocusRef.current.focus(_);
       }
     };
   }, [enabled, containerRef, focusOnMount, restoreFocus, focusFirst, handleKeyDown]);
@@ -247,7 +247,7 @@ export function useEnhancedKeyboardNavigation(
 export function useModalKeyboardNavigation(
   isOpen: boolean,
   containerRef: React.RefObject<HTMLElement>,
-  onClose?: () => void
+  onClose?: (_) => void
 ) {
   return useEnhancedKeyboardNavigation(containerRef, {
     enabled: isOpen,
@@ -262,7 +262,7 @@ export function useModalKeyboardNavigation(
 export function useDropdownKeyboardNavigation(
   isOpen: boolean,
   containerRef: React.RefObject<HTMLElement>,
-  onClose?: () => void
+  onClose?: (_) => void
 ) {
   return useEnhancedKeyboardNavigation(containerRef, {
     enabled: isOpen,
@@ -271,22 +271,22 @@ export function useDropdownKeyboardNavigation(
     restoreFocus: true,
     announceNavigation: true,
     onEscape: onClose,
-    onArrowKeys: (direction) => {
+    onArrowKeys: (_direction) => {
       // Handle vertical navigation in dropdowns
-      if (direction === 'up' || direction === 'down') {
+      if (_direction === 'up' || direction === 'down') {
         const elements = containerRef.current?.querySelectorAll('[role="menuitem"]') as NodeListOf<HTMLElement>;
         if (!elements) return;
 
-        const currentIndex = Array.from(elements).indexOf(document.activeElement as HTMLElement);
+        const currentIndex = Array.from(_elements).indexOf(_document.activeElement as HTMLElement);
         let nextIndex = currentIndex;
 
-        if (direction === 'up') {
+        if (_direction === 'up') {
           nextIndex = currentIndex <= 0 ? elements.length - 1 : currentIndex - 1;
         } else {
           nextIndex = currentIndex >= elements.length - 1 ? 0 : currentIndex + 1;
         }
 
-        elements[nextIndex]?.focus();
+        elements[nextIndex]?.focus(_);
       }
     }
   });
@@ -294,16 +294,16 @@ export function useDropdownKeyboardNavigation(
 
 export function useFormKeyboardNavigation(
   containerRef: React.RefObject<HTMLElement>,
-  onSubmit?: () => void
+  onSubmit?: (_) => void
 ) {
   return useEnhancedKeyboardNavigation(containerRef, {
     enabled: true,
     announceNavigation: false,
-    onEnter: () => {
+    onEnter: (_) => {
       // Submit form if Enter is pressed on a submit button
       const activeElement = document.activeElement as HTMLElement;
-      if (activeElement?.getAttribute('type') === 'submit' && onSubmit) {
-        onSubmit();
+      if (_activeElement?.getAttribute('type') === 'submit' && onSubmit) {
+        onSubmit(_);
       }
     }
   });

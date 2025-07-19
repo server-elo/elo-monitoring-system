@@ -12,13 +12,13 @@ interface ErrorBoundaryState {
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  onError?: ( error: Error, errorInfo: ErrorInfo) => void;
   showDetails?: boolean;
 }
 
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
+  constructor(_props: ErrorBoundaryProps) {
+    super(_props);
     this.state = {
       hasError: false,
       error: null,
@@ -26,30 +26,30 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+  static getDerivedStateFromError(_error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
       error,
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch( error: Error, errorInfo: ErrorInfo) {
     this.setState({
       error,
       errorInfo,
     });
 
-    if (this.props.onError) {
-      this.props.onError(error, errorInfo);
+    if (_this.props.onError) {
+      this.props.onError( error, errorInfo);
     }
 
     // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
+    if (_process.env.NODE_ENV === 'development') {
       console.error('Error caught by boundary:', error, errorInfo);
     }
   }
 
-  handleRetry = () => {
+  handleRetry = (_) => {
     this.setState({
       hasError: false,
       error: null,
@@ -57,9 +57,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     });
   };
 
-  render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
+  render(_) {
+    if (_this.state.hasError) {
+      if (_this.props.fallback) {
         return this.props.fallback;
       }
 
@@ -82,8 +82,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 interface ErrorDisplayProps {
   title?: string;
   message: string;
-  onRetry?: () => void;
-  onDismiss?: () => void;
+  onRetry?: (_) => void;
+  onDismiss?: (_) => void;
   variant?: 'error' | 'warning' | 'info';
   showDetails?: boolean;
   details?: string;
@@ -100,7 +100,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   details,
   actions,
 }) => {
-  const [showFullDetails, setShowFullDetails] = React.useState(false);
+  const [showFullDetails, setShowFullDetails] = React.useState(_false);
 
   const variantStyles = {
     error: {
@@ -160,7 +160,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
           {showDetails && details && (
             <div className="mt-3">
               <button
-                onClick={() => setShowFullDetails(!showFullDetails)}
+                onClick={(_) => setShowFullDetails(!showFullDetails)}
                 className={`text-xs ${style.text} opacity-75 hover:opacity-100 underline`}
               >
                 {showFullDetails ? 'Hide' : 'Show'} details
@@ -216,7 +216,7 @@ interface InlineErrorProps {
   className?: string;
 }
 
-const InlineError: React.FC<InlineErrorProps> = ({ message, className = '' }) => (
+const InlineError: React.FC<InlineErrorProps> = ( { message, className = '' }) => (
   <motion.div
     className={`flex items-center gap-2 text-brand-error-400 text-sm ${className}`}
     initial={{ opacity: 0, x: -10 }}
@@ -233,7 +233,7 @@ const InlineError: React.FC<InlineErrorProps> = ({ message, className = '' }) =>
 
 // Retry Component
 interface RetryProps {
-  onRetry: () => void;
+  onRetry: (_) => void;
   isRetrying?: boolean;
   maxRetries?: number;
   currentRetry?: number;
@@ -285,11 +285,11 @@ const Retry: React.FC<RetryProps> = ({
 
 // Network Error Component
 interface NetworkErrorProps {
-  onRetry?: () => void;
+  onRetry?: (_) => void;
   isRetrying?: boolean;
 }
 
-const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, isRetrying = false }) => (
+const NetworkError: React.FC<NetworkErrorProps> = ( { onRetry, isRetrying = false }) => (
   <ErrorDisplay
     title="Connection Error"
     message="Unable to connect to the server. Please check your internet connection and try again."

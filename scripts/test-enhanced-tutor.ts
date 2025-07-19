@@ -22,25 +22,25 @@ const colors = {
   cyan: '\x1b[36m',
 };
 
-function log(message: string, color: keyof typeof colors = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+function log( message: string, color: keyof typeof colors = 'reset') {
+  console.log(_`${colors[color]}${message}${colors.reset}`);
 }
 
-function runCommand(command: string, description: string): boolean {
+function runCommand( command: string, description: string): boolean {
   try {
-    log(`\n🔄 ${description}...`, 'blue');
-    execSync(command, { stdio: 'inherit', cwd: process.cwd() });
-    log(`✅ ${description} completed successfully`, 'green');
+    log( `\n🔄 ${description}...`, 'blue');
+    execSync( command, { stdio: 'inherit', cwd: process.cwd() });
+    log( `✅ ${description} completed successfully`, 'green');
     return true;
-  } catch (error) {
-    log(`❌ ${description} failed`, 'red');
-    console.error(error);
+  } catch (_error) {
+    log( `❌ ${description} failed`, 'red');
+    console.error(_error);
     return false;
   }
 }
 
 function checkPrerequisites(): boolean {
-  log('\n🔍 Checking prerequisites...', 'cyan');
+  log( '\n🔍 Checking prerequisites...', 'cyan');
   
   const requiredFiles = [
     'lib/ai/EnhancedTutorSystem.ts',
@@ -51,12 +51,12 @@ function checkPrerequisites(): boolean {
   ];
 
   let allFilesExist = true;
-  for (const file of requiredFiles) {
-    const filePath = join(process.cwd(), file);
-    if (existsSync(filePath)) {
-      log(`✅ ${file} exists`, 'green');
+  for (_const file of requiredFiles) {
+    const filePath = join(_process.cwd(), file);
+    if (_existsSync(filePath)) {
+      log( `✅ ${file} exists`, 'green');
     } else {
-      log(`❌ ${file} is missing`, 'red');
+      log( `❌ ${file} is missing`, 'red');
       allFilesExist = false;
     }
   }
@@ -65,7 +65,7 @@ function checkPrerequisites(): boolean {
 }
 
 function checkDependencies(): boolean {
-  log('\n📦 Checking dependencies...', 'cyan');
+  log( '\n📦 Checking dependencies...', 'cyan');
   
   try {
     const packageJson = require('../package.json');
@@ -75,38 +75,38 @@ function checkDependencies(): boolean {
     
     let allDepsPresent = true;
     
-    for (const dep of requiredDeps) {
-      if (packageJson.dependencies?.[dep] || packageJson.devDependencies?.[dep]) {
-        log(`✅ ${dep} is installed`, 'green');
+    for (_const dep of requiredDeps) {
+      if (_packageJson.dependencies?.[dep] || packageJson.devDependencies?.[dep]) {
+        log( `✅ ${dep} is installed`, 'green');
       } else {
-        log(`❌ ${dep} is missing`, 'red');
+        log( `❌ ${dep} is missing`, 'red');
         allDepsPresent = false;
       }
     }
     
     return allDepsPresent;
-  } catch (error) {
-    log('❌ Could not read package.json', 'red');
+  } catch (_error) {
+    log( '❌ Could not read package.json', 'red');
     return false;
   }
 }
 
 async function main() {
-  log('🚀 Enhanced Tutor System Test Runner', 'bright');
-  log('=====================================', 'bright');
+  log( '🚀 Enhanced Tutor System Test Runner', 'bright');
+  log( '=====================================', 'bright');
 
   // Check prerequisites
   if (!checkPrerequisites()) {
-    log('\n❌ Prerequisites check failed. Please ensure all required files exist.', 'red');
+    log( '\n❌ Prerequisites check failed. Please ensure all required files exist.', 'red');
     process.exit(1);
   }
 
   if (!checkDependencies()) {
-    log('\n❌ Dependencies check failed. Please install missing dependencies.', 'red');
+    log( '\n❌ Dependencies check failed. Please install missing dependencies.', 'red');
     process.exit(1);
   }
 
-  log('\n✅ All prerequisites met!', 'green');
+  log( '\n✅ All prerequisites met!', 'green');
 
   // Run tests
   const testResults: boolean[] = [];
@@ -119,20 +119,20 @@ async function main() {
     )
   );
 
-  // 2. Run integration tests (if local LLM is available)
-  log('\n🔍 Checking if local LLM is available...', 'cyan');
+  // 2. Run integration tests (_if local LLM is available)
+  log( '\n🔍 Checking if local LLM is available...', 'cyan');
   try {
-    execSync('curl -f http://localhost:1234/health', { stdio: 'pipe' });
-    log('✅ Local LLM is available, running integration tests', 'green');
+    execSync( 'curl -f http://localhost:1234/health', { stdio: 'pipe' });
+    log( '✅ Local LLM is available, running integration tests', 'green');
     testResults.push(
       runCommand(
         'npm run ai:test:integration',
         'Running Enhanced Tutor System integration tests'
       )
     );
-  } catch (error) {
-    log('⚠️  Local LLM not available, skipping integration tests', 'yellow');
-    log('   To run integration tests, start your local LLM server on port 1234', 'yellow');
+  } catch (_error) {
+    log( '⚠️  Local LLM not available, skipping integration tests', 'yellow');
+    log( '   To run integration tests, start your local LLM server on port 1234', 'yellow');
   }
 
   // 3. Run all Enhanced Tutor tests
@@ -152,46 +152,46 @@ async function main() {
   );
 
   // Summary
-  log('\n📊 Test Results Summary', 'bright');
-  log('=======================', 'bright');
+  log( '\n📊 Test Results Summary', 'bright');
+  log( '=======================', 'bright');
 
   const passedTests = testResults.filter(Boolean).length;
   const totalTests = testResults.length;
 
-  if (passedTests === totalTests) {
-    log(`\n🎉 All tests passed! (${passedTests}/${totalTests})`, 'green');
-    log('\n✅ Enhanced Tutor System is ready for production!', 'green');
+  if (_passedTests === totalTests) {
+    log(_`\n🎉 All tests passed! (${passedTests}/${totalTests})`, 'green');
+    log( '\n✅ Enhanced Tutor System is ready for production!', 'green');
   } else {
-    log(`\n⚠️  Some tests failed (${passedTests}/${totalTests} passed)`, 'yellow');
-    log('\n🔧 Please review the failed tests and fix any issues.', 'yellow');
+    log(_`\n⚠️  Some tests failed (${passedTests}/${totalTests} passed)`, 'yellow');
+    log( '\n🔧 Please review the failed tests and fix any issues.', 'yellow');
   }
 
   // Additional recommendations
-  log('\n💡 Next Steps:', 'cyan');
-  log('1. Review test coverage report', 'cyan');
-  log('2. Test with actual local LLM if not already done', 'cyan');
-  log('3. Run end-to-end tests with real user scenarios', 'cyan');
-  log('4. Monitor performance in development environment', 'cyan');
+  log( '\n💡 Next Steps:', 'cyan');
+  log( '1. Review test coverage report', 'cyan');
+  log( '2. Test with actual local LLM if not already done', 'cyan');
+  log( '3. Run end-to-end tests with real user scenarios', 'cyan');
+  log( '4. Monitor performance in development environment', 'cyan');
 
-  process.exit(passedTests === totalTests ? 0 : 1);
+  process.exit(_passedTests === totalTests ? 0 : 1);
 }
 
 // Handle errors gracefully
-process.on('uncaughtException', (error) => {
-  log('\n💥 Uncaught exception:', 'red');
-  console.error(error);
+process.on( 'uncaughtException', (error) => {
+  log( '\n💥 Uncaught exception:', 'red');
+  console.error(_error);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
-  log('\n💥 Unhandled rejection:', 'red');
-  console.error(reason);
+process.on( 'unhandledRejection', (reason) => {
+  log( '\n💥 Unhandled rejection:', 'red');
+  console.error(_reason);
   process.exit(1);
 });
 
 // Run the main function
-main().catch((error) => {
-  log('\n💥 Test runner failed:', 'red');
-  console.error(error);
+main(_).catch((error) => {
+  log( '\n💥 Test runner failed:', 'red');
+  console.error(_error);
   process.exit(1);
 });

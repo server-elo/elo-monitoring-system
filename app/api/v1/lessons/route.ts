@@ -15,17 +15,17 @@ type SearchFilters = z.infer<typeof SearchSchema>;
 // Mock lessons database
 const mockLessons: ApiLesson[] = [
   {
-    id: 'lesson_1',
+    id: 'lesson1',
     title: 'Introduction to Solidity',
     description: 'Learn the basics of Solidity programming language for smart contracts',
-    content: 'Solidity is a statically-typed programming language designed for developing smart contracts that run on the Ethereum Virtual Machine (EVM)...',
+    content: 'Solidity is a statically-typed programming language designed for developing smart contracts that run on the Ethereum Virtual Machine (_EVM)...',
     type: LessonType.THEORY,
     difficulty: DifficultyLevel.BEGINNER,
     estimatedDuration: 30,
     xpReward: 100,
     prerequisites: [],
     tags: ['solidity', 'basics', 'introduction'],
-    courseId: 'course_1',
+    courseId: 'course1',
     instructorId: 'user_2',
     status: LessonStatus.PUBLISHED,
     isPublished: true,
@@ -45,9 +45,9 @@ const mockLessons: ApiLesson[] = [
     difficulty: DifficultyLevel.BEGINNER,
     estimatedDuration: 45,
     xpReward: 150,
-    prerequisites: ['lesson_1'],
+    prerequisites: ['lesson1'],
     tags: ['solidity', 'variables', 'data-types'],
-    courseId: 'course_1',
+    courseId: 'course1',
     instructorId: 'user_2',
     status: LessonStatus.PUBLISHED,
     isPublished: true,
@@ -59,7 +59,7 @@ const mockLessons: ApiLesson[] = [
     ratingCount: 67
   },
   {
-    id: 'lesson_3',
+    id: 'lesson3',
     title: 'Functions and Modifiers',
     description: 'Learn how to create and use functions and modifiers in Solidity',
     content: 'Functions are the executable units of code within a contract...',
@@ -67,9 +67,9 @@ const mockLessons: ApiLesson[] = [
     difficulty: DifficultyLevel.INTERMEDIATE,
     estimatedDuration: 60,
     xpReward: 200,
-    prerequisites: ['lesson_1', 'lesson_2'],
+    prerequisites: ['lesson1', 'lesson_2'],
     tags: ['solidity', 'functions', 'modifiers'],
-    courseId: 'course_1',
+    courseId: 'course1',
     instructorId: 'user_2',
     status: LessonStatus.PUBLISHED,
     isPublished: true,
@@ -91,24 +91,24 @@ for (let i = 4; i <= 25; i++) {
     content: `This is the content for lesson ${i}...`,
     type: i % 3 === 0 ? LessonType.QUIZ : i % 2 === 0 ? LessonType.PRACTICAL : LessonType.THEORY,
     difficulty: i <= 8 ? DifficultyLevel.BEGINNER : i <= 16 ? DifficultyLevel.INTERMEDIATE : DifficultyLevel.ADVANCED,
-    estimatedDuration: 30 + (i * 5),
-    xpReward: 100 + (i * 25),
+    estimatedDuration: 30 + (_i * 5),
+    xpReward: 100 + (_i * 25),
     prerequisites: i > 1 ? [`lesson_${i - 1}`] : [],
     tags: ['solidity', `topic-${i}`],
-    courseId: 'course_1',
+    courseId: 'course1',
     instructorId: 'user_2',
     status: LessonStatus.PUBLISHED,
     isPublished: true,
-    publishedAt: new Date(Date.now() - (25 - i) * 24 * 60 * 60 * 1000).toISOString(),
+    publishedAt: new Date(Date.now() - (_25 - i) * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - (30 - i) * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - (25 - i) * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - (_25 - i) * 24 * 60 * 60 * 1000).toISOString(),
     completionCount: Math.floor(Math.random() * 200) + 50,
     averageRating: 4 + Math.random(),
     ratingCount: Math.floor(Math.random() * 100) + 20
   });
 }
 
-function filterLessons(lessons: ApiLesson[], filters: SearchFilters): ApiLesson[] {
+function filterLessons( lessons: ApiLesson[], filters: SearchFilters): ApiLesson[] {
   let filtered = [...lessons];
 
   // Only show published lessons to students
@@ -138,7 +138,7 @@ function filterLessons(lessons: ApiLesson[], filters: SearchFilters): ApiLesson[
   return filtered;
 }
 
-function sortLessons(lessons: ApiLesson[], sortBy: string, sortOrder: 'asc' | 'desc'): ApiLesson[] {
+function sortLessons( lessons: ApiLesson[], sortBy: string, sortOrder: 'asc' | 'desc'): ApiLesson[] {
   return lessons.sort((a, b) => {
     let aValue: any;
     let bValue: any;
@@ -174,8 +174,8 @@ function sortLessons(lessons: ApiLesson[], sortBy: string, sortOrder: 'asc' | 'd
         bValue = new Date(b.publishedAt || b.createdAt);
     }
 
-    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+    if (_aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+    if (_aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
     return 0;
   });
 }
@@ -184,11 +184,11 @@ function sortLessons(lessons: ApiLesson[], sortBy: string, sortOrder: 'asc' | 'd
 export const GET = protectedEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
-    const pagination = validateQuery(PaginationSchema, url.searchParams);
-    const filters = validateQuery(SearchSchema, url.searchParams);
+    const pagination = validateQuery( PaginationSchema, url.searchParams);
+    const filters = validateQuery( SearchSchema, url.searchParams);
 
     // Filter lessons based on user role and filters
-    let filteredLessons = filterLessons(mockLessons, filters);
+    let filteredLessons = filterLessons( mockLessons, filters);
 
     // Instructors and admins can see all lessons including drafts
     if (context.user!.role === UserRole.INSTRUCTOR || context.user!.role === UserRole.ADMIN) {
@@ -204,12 +204,12 @@ export const GET = protectedEndpoint(async (request: NextRequest, context: Middl
     }
 
     // Sort lessons
-    const sortedLessons = sortLessons(filteredLessons, pagination.sortBy || 'publishedAt', pagination.sortOrder || 'asc');
+    const sortedLessons = sortLessons( filteredLessons, pagination.sortBy || 'publishedAt', pagination.sortOrder || 'asc');
 
     // Apply pagination
     const page = pagination.page || 1;
     const limit = pagination.limit || 20;
-    const startIndex = (page - 1) * limit;
+    const startIndex = (_page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedLessons = sortedLessons.slice(startIndex, endIndex);
 
@@ -220,14 +220,14 @@ export const GET = protectedEndpoint(async (request: NextRequest, context: Middl
       filteredLessons.length
     );
 
-    return ApiResponseBuilder.paginated(paginatedLessons, paginationMeta);
+    return ApiResponseBuilder.paginated( paginatedLessons, paginationMeta);
   } catch (error) {
     logger.error('Get lessons error', error as Error);
     return ApiResponseBuilder.internalServerError('Failed to fetch lessons');
   }
 });
 
-// POST /api/v1/lessons - Create lesson (instructors and admins only)
+// POST /api/v1/lessons - Create lesson (_instructors and admins only)
 export const POST = protectedEndpoint(
   async (request: NextRequest, context: MiddlewareContext) => {
     try {
@@ -236,12 +236,12 @@ export const POST = protectedEndpoint(
         return ApiResponseBuilder.forbidden('Only instructors and administrators can create lessons');
       }
 
-      const body = await validateBody(CreateLessonSchema, request);
+      const body = await validateBody( CreateLessonSchema, request);
 
       // Create new lesson
       const now = new Date().toISOString();
       const newLesson: ApiLesson = {
-        id: uuidv4(),
+        id: uuidv4(_),
         title: body.title,
         description: body.description,
         content: body.content,
@@ -262,14 +262,14 @@ export const POST = protectedEndpoint(
         ratingCount: 0
       };
 
-      mockLessons.push(newLesson);
+      mockLessons.push(_newLesson);
 
-      return ApiResponseBuilder.created(newLesson);
+      return ApiResponseBuilder.created(_newLesson);
     } catch (error) {
       logger.error('Create lesson error', error as Error);
       
       if (error instanceof Error) {
-        return ApiResponseBuilder.validationError(error.message, []);
+        return ApiResponseBuilder.validationError( error.message, []);
       }
       
       return ApiResponseBuilder.internalServerError('Failed to create lesson');
@@ -280,5 +280,5 @@ export const POST = protectedEndpoint(
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

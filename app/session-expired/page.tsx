@@ -19,13 +19,13 @@ import { AuthErrorBoundary } from '@/components/errors/SpecializedErrorBoundarie
 import { AuthModal } from '@/components/auth/AuthModal';
 
 export default function SessionExpiredPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { isAuthenticated, refreshSession } = useAuth();
-  const [sessionManager] = useState(() => SessionManager.getInstance());
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [refreshAttempted, setRefreshAttempted] = useState(false);
+  const router = useRouter(_);
+  const searchParams = useSearchParams(_);
+  const { isAuthenticated, refreshSession } = useAuth(_);
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
+  const [showAuthModal, setShowAuthModal] = useState(_false);
+  const [isRefreshing, setIsRefreshing] = useState(_false);
+  const [refreshAttempted, setRefreshAttempted] = useState(_false);
 
   const returnUrl = searchParams.get('returnUrl');
   const reason = searchParams.get('reason') || 'expired';
@@ -33,8 +33,8 @@ export default function SessionExpiredPage() {
   // Auto-redirect if user is already authenticated
   useEffect(() => {
     if (isAuthenticated && !refreshAttempted) {
-      const redirectUrl = returnUrl ? decodeURIComponent(returnUrl) : '/dashboard';
-      router.push(redirectUrl);
+      const redirectUrl = returnUrl ? decodeURIComponent(_returnUrl) : '/dashboard';
+      router.push(_redirectUrl);
     }
   }, [isAuthenticated, returnUrl, router, refreshAttempted]);
 
@@ -43,58 +43,58 @@ export default function SessionExpiredPage() {
     const attemptRefresh = async () => {
       if (refreshAttempted) return;
       
-      setRefreshAttempted(true);
-      setIsRefreshing(true);
+      setRefreshAttempted(_true);
+      setIsRefreshing(_true);
 
       try {
         // Check if we have a stored session that might be refreshable
-        const hasStoredSession = sessionManager.loadFromStorage();
+        const hasStoredSession = sessionManager.loadFromStorage(_);
         
         if (hasStoredSession) {
-          const success = await refreshSession();
+          const success = await refreshSession(_);
           if (success) {
             // Session refreshed successfully, redirect
-            const redirectUrl = returnUrl ? decodeURIComponent(returnUrl) : '/dashboard';
-            router.push(redirectUrl);
+            const redirectUrl = returnUrl ? decodeURIComponent(_returnUrl) : '/dashboard';
+            router.push(_redirectUrl);
             return;
           }
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Auto-refresh failed:', error);
       } finally {
-        setIsRefreshing(false);
+        setIsRefreshing(_false);
       }
     };
 
-    attemptRefresh();
+    attemptRefresh(_);
   }, [sessionManager, refreshSession, returnUrl, router, refreshAttempted]);
 
   const handleManualRefresh = async () => {
-    setIsRefreshing(true);
+    setIsRefreshing(_true);
     
     try {
-      const success = await refreshSession();
+      const success = await refreshSession(_);
       if (success) {
-        const redirectUrl = returnUrl ? decodeURIComponent(returnUrl) : '/dashboard';
-        router.push(redirectUrl);
+        const redirectUrl = returnUrl ? decodeURIComponent(_returnUrl) : '/dashboard';
+        router.push(_redirectUrl);
       } else {
         // Refresh failed, show login modal
-        setShowAuthModal(true);
+        setShowAuthModal(_true);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Manual refresh failed:', error);
-      setShowAuthModal(true);
+      setShowAuthModal(_true);
     } finally {
-      setIsRefreshing(false);
+      setIsRefreshing(_false);
     }
   };
 
-  const handleSignIn = () => {
-    setShowAuthModal(true);
+  const handleSignIn = (_) => {
+    setShowAuthModal(_true);
   };
 
-  const getReasonMessage = () => {
-    switch (reason) {
+  const getReasonMessage = (_) => {
+    switch (_reason) {
       case 'expired':
         return 'Your session has expired for security reasons.';
       case 'inactive':
@@ -108,8 +108,8 @@ export default function SessionExpiredPage() {
     }
   };
 
-  const getReasonIcon = () => {
-    switch (reason) {
+  const getReasonIcon = (_) => {
+    switch (_reason) {
       case 'inactive':
         return Clock;
       case 'invalid':
@@ -143,7 +143,7 @@ export default function SessionExpiredPage() {
     );
   }
 
-  const ReasonIcon = getReasonIcon();
+  const ReasonIcon = getReasonIcon(_);
 
   return (
     <AuthErrorBoundary>
@@ -167,7 +167,7 @@ export default function SessionExpiredPage() {
             
             {/* Message */}
             <p className="text-gray-300 mb-6">
-              {getReasonMessage()} Please sign in again to continue your Solidity learning journey.
+              {getReasonMessage(_)} Please sign in again to continue your Solidity learning journey.
             </p>
 
             {/* Session Info */}
@@ -176,17 +176,17 @@ export default function SessionExpiredPage() {
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Reason:</span>
-                  <span className="text-white capitalize">{reason.replace('_', ' ')}</span>
+                  <span className="text-white capitalize">{reason.replace('', ' ')}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Time:</span>
-                  <span className="text-white">{new Date().toLocaleTimeString()}</span>
+                  <span className="text-white">{new Date(_).toLocaleTimeString(_)}</span>
                 </div>
                 {returnUrl && (
                   <div className="flex justify-between">
                     <span className="text-gray-400">Destination:</span>
                     <span className="text-white text-xs truncate ml-2">
-                      {decodeURIComponent(returnUrl)}
+                      {decodeURIComponent(_returnUrl)}
                     </span>
                   </div>
                 )}
@@ -222,7 +222,7 @@ export default function SessionExpiredPage() {
 
               {/* Go Home Button */}
               <EnhancedButton
-                onClick={() => router.push('/')}
+                onClick={(_) => router.push('/')}
                 variant="outline"
                 className="w-full border-white/20 text-white hover:bg-white/10"
                 touchTarget
@@ -244,7 +244,7 @@ export default function SessionExpiredPage() {
         {/* Auth Modal */}
         <AuthModal
           isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
+          onClose={(_) => setShowAuthModal(_false)}
           defaultMode="login"
         />
       </div>

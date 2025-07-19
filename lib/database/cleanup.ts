@@ -10,7 +10,7 @@ export interface CleanupOperation {
   estimatedDuration: number; // in seconds
   requiresBackup: boolean;
   dryRunSupported: boolean;
-  execute: (options: CleanupOptions) => Promise<CleanupResult>;
+  execute: (_options: CleanupOptions) => Promise<CleanupResult>;
 }
 
 export enum CleanupCategory {
@@ -68,9 +68,9 @@ export interface CleanupReport {
 export class BackupService {
   private static instance: BackupService;
 
-  static getInstance(): BackupService {
+  static getInstance(_): BackupService {
     if (!BackupService.instance) {
-      BackupService.instance = new BackupService();
+      BackupService.instance = new BackupService(_);
     }
     return BackupService.instance;
   }
@@ -80,11 +80,11 @@ export class BackupService {
     backupName?: string,
     options: { compress?: boolean; includeData?: boolean } = {}
   ): Promise<string> {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const timestamp = new Date(_).toISOString().replace(/[:.]/g, '-');
     const name = backupName || `cleanup_backup_${timestamp}`;
     
     try {
-      logger.info('Creating database backup', {
+      logger.info('Creating database backup', { metadata: {
         backupName: name,
         tables,
         options
@@ -95,22 +95,22 @@ export class BackupService {
       const backupPath = `backups/${name}.sql`;
       
       // Simulate backup creation
-      await this.simulateBackupCreation(tables, backupPath, options);
+      await this.simulateBackupCreation( tables, backupPath, options);
       
-      logger.info('Database backup created successfully', {
+      logger.info('Database backup created successfully', { metadata: {
         backupName: name,
         backupPath,
         tables: tables.length
       });
 
       return backupPath;
-    } catch (error) {
-      logger.error('Failed to create database backup', {
+    } catch (_error) {
+      logger.error('Failed to create database backup', { metadata: {
         backupName: name,
         error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
-    }
+    }});
   }
 
   private async simulateBackupCreation(
@@ -128,27 +128,27 @@ export class BackupService {
     // - mongodump for MongoDB
   }
 
-  async verifyBackup(_backupPath: string): Promise<boolean> {
+  async verifyBackup( backupPath: string): Promise<boolean> {
     try {
       // In production, this would verify the backup integrity
-      logger.info('Verifying backup integrity', { backupPath: _backupPath });
+      logger.info( 'Verifying backup integrity', { metadata: { backupPath: _backupPath });
       
       // Simulate verification
       await new Promise(resolve => setTimeout(resolve, 500));
       
       return true;
-    } catch (error) {
-      logger.error('Backup verification failed', {
+    } catch (_error) {
+      logger.error('Backup verification failed', { metadata: {
         backupPath,
         error: error instanceof Error ? error.message : 'Unknown error'
       });
       return false;
-    }
+    }});
   }
 
-  async restoreBackup(backupPath: string, targetTables?: string[]): Promise<boolean> {
+  async restoreBackup( backupPath: string, targetTables?: string[]): Promise<boolean> {
     try {
-      logger.warn('Starting backup restoration', {
+      logger.warn('Starting backup restoration', { metadata: {
         backupPath,
         targetTables
       });
@@ -156,18 +156,18 @@ export class BackupService {
       // In production, this would restore from the backup
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      logger.info('Backup restoration completed', { backupPath });
+      logger.info( 'Backup restoration completed', { metadata: { backupPath });
       return true;
-    } catch (error) {
-      logger.error('Backup restoration failed', {
+    } catch (_error) {
+      logger.error('Backup restoration failed', { metadata: {
         backupPath,
         error: error instanceof Error ? error.message : 'Unknown error'
       });
       return false;
-    }
+    }});
   }
 
-  async listBackups(): Promise<Array<{
+  async listBackups(_): Promise<Array<{
     name: string;
     path: string;
     size: number;
@@ -186,12 +186,12 @@ export class BackupService {
     ];
   }
 
-  async deleteOldBackups(retentionDays: number = 30): Promise<number> {
+  async deleteOldBackups(_retentionDays: number = 30): Promise<number> {
     try {
-      const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+      const cutoffDate = new Date(_);
+      cutoffDate.setDate(_cutoffDate.getDate() - retentionDays);
 
-      logger.info('Cleaning up old backups', {
+      logger.info('Cleaning up old backups', { metadata: {
         retentionDays,
         cutoffDate: cutoffDate.toISOString()
       });
@@ -199,42 +199,42 @@ export class BackupService {
       // In production, this would delete actual old backup files
       const deletedCount = 0; // Simulate deletion
 
-      logger.info('Old backup cleanup completed', {
+      logger.info('Old backup cleanup completed', { metadata: {
         deletedCount,
         retentionDays
       });
 
       return deletedCount;
-    } catch (error) {
-      logger.error('Failed to clean up old backups', {
+    } catch (_error) {
+      logger.error('Failed to clean up old backups', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error'
       });
       throw error;
-    }
+    }});
   }
 }
 
 // Cleanup Manager
 export class CleanupManager {
   private static instance: CleanupManager;
-  private operations: Map<string, CleanupOperation> = new Map();
+  private operations: Map<string, CleanupOperation> = new Map(_);
   private backupService: BackupService;
   private isRunning: boolean = false;
 
-  constructor() {
-    this.backupService = BackupService.getInstance();
+  constructor(_) {
+    this.backupService = BackupService.getInstance(_);
   }
 
-  static getInstance(): CleanupManager {
+  static getInstance(_): CleanupManager {
     if (!CleanupManager.instance) {
-      CleanupManager.instance = new CleanupManager();
+      CleanupManager.instance = new CleanupManager(_);
     }
     return CleanupManager.instance;
   }
 
-  registerOperation(operation: CleanupOperation): void {
-    this.operations.set(operation.id, operation);
-    logger.debug('Cleanup operation registered', {
+  registerOperation(_operation: CleanupOperation): void {
+    this.operations.set( operation.id, operation);
+    logger.debug('Cleanup operation registered', { metadata: {
       operationId: operation.id,
       name: operation.name,
       category: operation.category,
@@ -242,17 +242,17 @@ export class CleanupManager {
     });
   }
 
-  getOperation(id: string): CleanupOperation | undefined {
-    return this.operations.get(id);
+  getOperation(_id: string): CleanupOperation | undefined {
+    return this.operations.get(_id);
   }
 
-  getOperationsByCategory(category: CleanupCategory): CleanupOperation[] {
-    return Array.from(this.operations.values())
+  getOperationsByCategory(_category: CleanupCategory): CleanupOperation[] {
+    return Array.from(_this.operations.values())
       .filter(op => op.category === category);
   }
 
-  getOperationsBySeverity(severity: CleanupSeverity): CleanupOperation[] {
-    return Array.from(this.operations.values())
+  getOperationsBySeverity(_severity: CleanupSeverity): CleanupOperation[] {
+    return Array.from(_this.operations.values())
       .filter(op => op.severity === severity);
   }
 
@@ -260,20 +260,20 @@ export class CleanupManager {
     operationId: string,
     options: CleanupOptions
   ): Promise<CleanupResult> {
-    const operation = this.operations.get(operationId);
+    const operation = this.operations.get(_operationId);
     if (!operation) {
-      throw new Error(`Cleanup operation not found: ${operationId}`);
+      throw new Error(_`Cleanup operation not found: ${operationId}`);
     }
 
-    if (this.isRunning && !options.force) {
+    if (_this.isRunning && !options.force) {
       throw new Error('Another cleanup operation is already running');
     }
 
     this.isRunning = true;
-    const startTime = Date.now();
+    const startTime = Date.now(_);
 
     try {
-      logger.info('Starting cleanup operation', {
+      logger.info('Starting cleanup operation', { metadata: {
         operationId,
         name: operation.name,
         dryRun: options.dryRun,
@@ -282,22 +282,22 @@ export class CleanupManager {
 
       // Create backup if required and not in dry run mode
       let backupPath: string | undefined;
-      if (operation.requiresBackup && !options.dryRun) {
-        const tables = this.getAffectedTables(operation);
+      if (_operation.requiresBackup && !options.dryRun) {
+        const tables = this.getAffectedTables(_operation);
         backupPath = await this.backupService.createBackup(
           tables,
-          `${operation.id}_${Date.now()}`
+          `${operation.id}_${Date.now(_)}`
         );
-      }
+      }});
 
       // Execute the operation
-      const result = await operation.execute(options);
+      const result = await operation.execute(_options);
       result.backupCreated = backupPath;
-      result.duration = Date.now() - startTime;
+      result.duration = Date.now(_) - startTime;
 
       // Log the result
-      if (result.success) {
-        logger.info('Cleanup operation completed successfully', {
+      if (_result.success) {
+        logger.info('Cleanup operation completed successfully', { metadata: {
           operationId,
           itemsProcessed: result.itemsProcessed,
           itemsAffected: result.itemsAffected,
@@ -305,12 +305,12 @@ export class CleanupManager {
           dryRun: options.dryRun
         });
       } else {
-        logger.error('Cleanup operation failed', {
+        logger.error('Cleanup operation failed', { metadata: {
           operationId,
           errors: result.errors,
           duration: result.duration
         });
-      }
+      }});
 
       // Audit log for non-dry-run operations
       if (!options.dryRun && options.userId) {
@@ -329,9 +329,9 @@ export class CleanupManager {
       }
 
       return result;
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      logger.error('Cleanup operation failed with exception', {
+    } catch (_error) {
+      const duration = Date.now(_) - startTime;
+      logger.error('Cleanup operation failed with exception', { metadata: {
         operationId,
         error: error instanceof Error ? error.message : 'Unknown error',
         duration
@@ -349,28 +349,28 @@ export class CleanupManager {
       };
     } finally {
       this.isRunning = false;
-    }
+    }});
   }
 
   async executeBatch(
     operationIds: string[],
     options: CleanupOptions
   ): Promise<CleanupReport> {
-    const reportId = `cleanup_${Date.now()}`;
-    const startTime = Date.now();
+    const reportId = `cleanup_${Date.now(_)}`;
+    const startTime = Date.now(_);
     const results: CleanupResult[] = [];
 
-    logger.info('Starting batch cleanup operations', {
+    logger.info('Starting batch cleanup operations', { metadata: {
       reportId,
       operationCount: operationIds.length,
       dryRun: options.dryRun
     });
 
-    for (const operationId of operationIds) {
+    for (_const operationId of operationIds) {
       try {
-        const result = await this.executeOperation(operationId, options);
-        results.push(result);
-      } catch (error) {
+        const result = await this.executeOperation( operationId, options);
+        results.push(_result);
+      } catch (_error) {
         results.push({
           success: false,
           operation: operationId,
@@ -381,20 +381,20 @@ export class CleanupManager {
           warnings: [],
           details: {}
         });
-      }
+      }});
     }
 
-    const totalDuration = Date.now() - startTime;
-    const totalItemsProcessed = results.reduce((sum, r) => sum + r.itemsProcessed, 0);
-    const totalItemsAffected = results.reduce((sum, r) => sum + r.itemsAffected, 0);
-    const totalErrors = results.reduce((sum, r) => sum + r.errors.length, 0);
-    const totalWarnings = results.reduce((sum, r) => sum + r.warnings.length, 0);
+    const totalDuration = Date.now(_) - startTime;
+    const totalItemsProcessed = results.reduce( (sum, r) => sum + r.itemsProcessed, 0);
+    const totalItemsAffected = results.reduce( (sum, r) => sum + r.itemsAffected, 0);
+    const totalErrors = results.reduce( (sum, r) => sum + r.errors.length, 0);
+    const totalWarnings = results.reduce( (sum, r) => sum + r.warnings.length, 0);
     const successfulOperations = results.filter(r => r.success).length;
 
     let status: 'SUCCESS' | 'PARTIAL_SUCCESS' | 'FAILED';
-    if (successfulOperations === results.length) {
+    if (_successfulOperations === results.length) {
       status = 'SUCCESS';
-    } else if (successfulOperations > 0) {
+    } else if (_successfulOperations > 0) {
       status = 'PARTIAL_SUCCESS';
     } else {
       status = 'FAILED';
@@ -402,7 +402,7 @@ export class CleanupManager {
 
     const report: CleanupReport = {
       id: reportId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
       operations: results,
       totalDuration,
       totalItemsProcessed,
@@ -412,7 +412,7 @@ export class CleanupManager {
       status
     };
 
-    logger.info('Batch cleanup operations completed', {
+    logger.info('Batch cleanup operations completed', { metadata: {
       reportId,
       status,
       totalOperations: results.length,
@@ -422,9 +422,9 @@ export class CleanupManager {
     });
 
     return report;
-  }
+  }});
 
-  private getAffectedTables(operation: CleanupOperation): string[] {
+  private getAffectedTables(_operation: CleanupOperation): string[] {
     // Map operations to affected database tables
     const tableMap: Record<CleanupCategory, string[]> = {
       [CleanupCategory.ORPHANED_DATA]: ['achievements', 'progress', 'leaderboards', 'lessons'],
@@ -439,12 +439,12 @@ export class CleanupManager {
     return tableMap[operation.category] || [];
   }
 
-  isOperationRunning(): boolean {
+  isOperationRunning(_): boolean {
     return this.isRunning;
   }
 
-  getRegisteredOperations(): CleanupOperation[] {
-    return Array.from(this.operations.values());
+  getRegisteredOperations(_): CleanupOperation[] {
+    return Array.from(_this.operations.values());
   }
 }
 
@@ -454,13 +454,13 @@ export class SafetyUtils {
     operation: CleanupOperation,
     options: CleanupOptions
   ): Promise<boolean> {
-    if (options.force) {
+    if (_options.force) {
       return true;
     }
 
     // In a real implementation, this would prompt for user confirmation
     // For now, we'll simulate based on severity
-    switch (operation.severity) {
+    switch (_operation.severity) {
       case CleanupSeverity.LOW:
         return true;
       case CleanupSeverity.MEDIUM:
@@ -473,29 +473,29 @@ export class SafetyUtils {
     }
   }
 
-  static validateOptions(options: CleanupOptions): string[] {
+  static validateOptions(_options: CleanupOptions): string[] {
     const errors: string[] = [];
 
-    if (options.batchSize <= 0) {
+    if (_options.batchSize <= 0) {
       errors.push('Batch size must be greater than 0');
     }
 
-    if (options.maxExecutionTime <= 0) {
+    if (_options.maxExecutionTime <= 0) {
       errors.push('Max execution time must be greater than 0');
     }
 
-    if (options.batchSize > 10000) {
+    if (_options.batchSize > 10000) {
       errors.push('Batch size too large (max: 10000)');
     }
 
-    if (options.maxExecutionTime > 3600) {
+    if (_options.maxExecutionTime > 3600) {
       errors.push('Max execution time too long (max: 1 hour)');
     }
 
     return errors;
   }
 
-  static estimateImpact(operation: CleanupOperation): {
+  static estimateImpact(_operation: CleanupOperation): {
     estimatedItems: number;
     estimatedDuration: number;
     riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
@@ -511,5 +511,5 @@ export class SafetyUtils {
 }
 
 // Export singleton instances
-export const cleanupManager = CleanupManager.getInstance();
-export const backupService = BackupService.getInstance();
+export const cleanupManager = CleanupManager.getInstance(_);
+export const backupService = BackupService.getInstance(_);

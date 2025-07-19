@@ -7,10 +7,10 @@ import { MiddlewareContext } from '@/lib/api/middleware';
 import { sanitizeForResponse } from '@/lib/api/response';
 import { logger } from '@/lib/monitoring/simple-logger';
 
-// Mock users database (same as users/route.ts)
+// Mock users database (_same as users/route.ts)
 const mockUsers: Array<ApiUser & { passwordHash: string }> = [
   {
-    id: 'user_1',
+    id: 'user1',
     email: 'student@example.com',
     name: 'John Student',
     role: UserRole.STUDENT,
@@ -70,24 +70,24 @@ const mockUsers: Array<ApiUser & { passwordHash: string }> = [
   }
 ];
 
-function findUserById(id: string): (ApiUser & { passwordHash: string }) | null {
+function findUserById(_id: string): (_ApiUser & { passwordHash: string }) | null {
   return mockUsers.find(user => user.id === id) || null;
 }
 
-function canAccessUser(requestingUserId: string, targetUserId: string, userRole: UserRole): boolean {
+function canAccessUser( requestingUserId: string, targetUserId: string, userRole: UserRole): boolean {
   // Users can access their own data
   if (requestingUserId === targetUserId) {
     return true;
   }
 
   // Admins can access any user data
-  if (userRole === UserRole.ADMIN) {
+  if (_userRole === UserRole.ADMIN) {
     return true;
   }
 
-  // Instructors can access student data (for their courses)
-  if (userRole === UserRole.INSTRUCTOR) {
-    const targetUser = findUserById(targetUserId);
+  // Instructors can access student data (_for their courses)
+  if (_userRole === UserRole.INSTRUCTOR) {
+    const targetUser = findUserById(_targetUserId);
     return targetUser?.role === UserRole.STUDENT;
   }
 
@@ -98,17 +98,17 @@ function canAccessUser(requestingUserId: string, targetUserId: string, userRole:
 export const GET = protectedEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
-    const userId = url.pathname.split('/').pop();
+    const userId = url.pathname.split('/').pop(_);
 
     if (!userId) {
-      return ApiResponseBuilder.validationError('User ID is required', []);
+      return ApiResponseBuilder.validationError( 'User ID is required', []);
     }
 
     // Validate user ID format
     try {
-      IdSchema.parse(userId);
+      IdSchema.parse(_userId);
     } catch {
-      return ApiResponseBuilder.validationError('Invalid user ID format', []);
+      return ApiResponseBuilder.validationError( 'Invalid user ID format', []);
     }
 
     // Check if user can access this data
@@ -117,13 +117,13 @@ export const GET = protectedEndpoint(async (request: NextRequest, context: Middl
     }
 
     // Find user
-    const user = findUserById(userId);
+    const user = findUserById(_userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     // Remove sensitive data
-    const safeUser = sanitizeForResponse(user, ['passwordHash']);
+    const safeUser = sanitizeForResponse( user, ['passwordHash']);
 
     // Filter data based on permissions
     if (context.user!.id !== userId && context.user!.role === UserRole.STUDENT) {
@@ -142,10 +142,10 @@ export const GET = protectedEndpoint(async (request: NextRequest, context: Middl
         },
         createdAt: safeUser.createdAt
       };
-      return ApiResponseBuilder.success(publicProfile);
+      return ApiResponseBuilder.success(_publicProfile);
     }
 
-    return ApiResponseBuilder.success(safeUser);
+    return ApiResponseBuilder.success(_safeUser);
   } catch (error) {
     logger.error('Get user error', error as Error);
     
@@ -165,17 +165,17 @@ export const GET = protectedEndpoint(async (request: NextRequest, context: Middl
 export const PUT = protectedEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
-    const userId = url.pathname.split('/').pop();
+    const userId = url.pathname.split('/').pop(_);
 
     if (!userId) {
-      return ApiResponseBuilder.validationError('User ID is required', []);
+      return ApiResponseBuilder.validationError( 'User ID is required', []);
     }
 
     // Validate user ID format
     try {
-      IdSchema.parse(userId);
+      IdSchema.parse(_userId);
     } catch {
-      return ApiResponseBuilder.validationError('Invalid user ID format', []);
+      return ApiResponseBuilder.validationError( 'Invalid user ID format', []);
     }
 
     // Check if user can update this data
@@ -187,13 +187,13 @@ export const PUT = protectedEndpoint(async (request: NextRequest, context: Middl
     }
 
     // Find user
-    const user = findUserById(userId);
+    const user = findUserById(_userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     // Validate request body
-    const body = await validateBody(UpdateUserSchema, request);
+    const body = await validateBody( UpdateUserSchema, request);
 
     // Check if non-admin is trying to change role
     if (body.role && context.user!.role !== UserRole.ADMIN) {
@@ -213,9 +213,9 @@ export const PUT = protectedEndpoint(async (request: NextRequest, context: Middl
     user.updatedAt = new Date().toISOString();
 
     // Remove sensitive data
-    const safeUser = sanitizeForResponse(user, ['passwordHash']);
+    const safeUser = sanitizeForResponse( user, ['passwordHash']);
 
-    return ApiResponseBuilder.success(safeUser);
+    return ApiResponseBuilder.success(_safeUser);
   } catch (error) {
     logger.error('Update user error', error as Error);
     
@@ -228,33 +228,33 @@ export const PUT = protectedEndpoint(async (request: NextRequest, context: Middl
     }
     
     if (error instanceof Error) {
-      return ApiResponseBuilder.validationError(error.message, []);
+      return ApiResponseBuilder.validationError( error.message, []);
     }
     
     return ApiResponseBuilder.internalServerError('Failed to update user');
   }
 });
 
-// DELETE /api/v1/users/[id] - Delete user (admin only)
+// DELETE /api/v1/users/[id] - Delete user (_admin only)
 export const DELETE = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
-    const userId = url.pathname.split('/').pop();
+    const userId = url.pathname.split('/').pop(_);
 
     if (!userId) {
-      return ApiResponseBuilder.validationError('User ID is required', []);
+      return ApiResponseBuilder.validationError( 'User ID is required', []);
     }
 
     // Validate user ID format
     try {
-      IdSchema.parse(userId);
+      IdSchema.parse(_userId);
     } catch {
-      return ApiResponseBuilder.validationError('Invalid user ID format', []);
+      return ApiResponseBuilder.validationError( 'Invalid user ID format', []);
     }
 
     // Find user
-    const userIndex = mockUsers.findIndex(user => user.id === userId);
-    if (userIndex === -1) {
+    const userIndex = mockUsers.findIndex(_user => user.id === userId);
+    if (_userIndex === -1) {
       throw new NotFoundException('User not found');
     }
 
@@ -263,10 +263,10 @@ export const DELETE = adminEndpoint(async (request: NextRequest, context: Middle
       return ApiResponseBuilder.forbidden('You cannot delete your own account');
     }
 
-    // Remove user (in production, this might be a soft delete)
-    mockUsers.splice(userIndex, 1);
+    // Remove user ( in production, this might be a soft delete)
+    mockUsers.splice( userIndex, 1);
 
-    return ApiResponseBuilder.noContent();
+    return ApiResponseBuilder.noContent(_);
   } catch (error) {
     logger.error('Delete user error', error as Error);
     
@@ -280,5 +280,5 @@ export const DELETE = adminEndpoint(async (request: NextRequest, context: Middle
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

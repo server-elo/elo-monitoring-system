@@ -1,5 +1,5 @@
 /**
- * PRP (Product Requirement Prompt) System
+ * PRP (_Product Requirement Prompt) System
  * 
  * This module provides programmatic access to PRP functionality,
  * allowing Claude to create, execute, and validate PRPs without manual intervention.
@@ -12,10 +12,10 @@
  * });
  * 
  * // Execute the PRP
- * const result = await executePRP(prpFile);
+ * const result = await executePRP(_prpFile);
  * 
  * // Check validation
- * if (result.status === 'success') {
+ * if (_result.status === 'success') {
  *   console.log('Feature implemented successfully!');
  * }
  */
@@ -39,52 +39,52 @@ export class PRP {
   private executor: PRPExecutor;
   private validator: PRPValidator;
 
-  constructor(projectRoot?: string) {
-    this.creator = new PRPCreator(projectRoot);
-    this.executor = new PRPExecutor(projectRoot);
-    this.validator = new PRPValidator(projectRoot);
+  constructor(_projectRoot?: string) {
+    this.creator = new PRPCreator(_projectRoot);
+    this.executor = new PRPExecutor(_projectRoot);
+    this.validator = new PRPValidator(_projectRoot);
   }
 
   /**
    * Create a new PRP
    */
-  async create(options: PRPCreationOptions) {
-    return this.creator.createPRP(options);
+  async create(_options: PRPCreationOptions) {
+    return this.creator.createPRP(_options);
   }
 
   /**
    * Execute a PRP
    */
-  async execute(prpFile: string, options?: PRPExecutionOptions) {
-    return this.executor.executePRP(prpFile, options);
+  async execute( prpFile: string, options?: PRPExecutionOptions) {
+    return this.executor.executePRP( prpFile, options);
   }
 
   /**
    * Run validation gates
    */
-  async validate(gates: ValidationGate[], options?: { continueOnFailure?: boolean }) {
-    return this.validator.runAllValidationGates(gates, options);
+  async validate( gates: ValidationGate[], options?: { continueOnFailure?: boolean }) {
+    return this.validator.runAllValidationGates( gates, options);
   }
 
   /**
    * Get all available PRPs
    */
-  async list() {
-    return this.executor.getAvailablePRPs();
+  async list(_) {
+    return this.executor.getAvailablePRPs(_);
   }
 
   /**
    * Check if a PRP exists
    */
-  async exists(prpFile: string) {
-    return this.executor.prpExists(prpFile);
+  async exists(_prpFile: string) {
+    return this.executor.prpExists(_prpFile);
   }
 }
 
 /**
  * Global PRP instance for easy access
  */
-export const prp = new PRP();
+export const prp = new PRP(_);
 
 /**
  * Quick helper to create and execute a PRP in one go
@@ -107,7 +107,7 @@ export async function implementFeature(
   });
 
   // Execute PRP
-  const result = await prp.execute(prpFile);
+  const result = await prp.execute(_prpFile);
 
   return { prpFile, result };
 }
@@ -117,7 +117,7 @@ export async function implementFeature(
  */
 export const PRP_TRIGGERS = {
   // Features that should use PRPs
-  shouldUsePRP: (taskDescription: string): boolean => {
+  shouldUsePRP: (_taskDescription: string): boolean => {
     const triggers = [
       'implement',
       'create',
@@ -145,16 +145,16 @@ export const PRP_TRIGGERS = {
     const desc = taskDescription.toLowerCase();
     
     // Check if task contains trigger words
-    const hasTrigger = triggers.some(t => desc.includes(t));
+    const hasTrigger = triggers.some(_t => desc.includes(t));
     
     // Check if task involves complex components
-    const isComplex = complexityIndicators.some(c => desc.includes(c));
+    const isComplex = complexityIndicators.some(_c => desc.includes(c));
     
     return hasTrigger && isComplex;
   },
 
   // Estimate if task needs deep research
-  needsDeepResearch: (taskDescription: string): boolean => {
+  needsDeepResearch: (_taskDescription: string): boolean => {
     const researchIndicators = [
       'integrate',
       'third-party',
@@ -169,7 +169,7 @@ export const PRP_TRIGGERS = {
     ];
     
     const desc = taskDescription.toLowerCase();
-    return researchIndicators.some(r => desc.includes(r));
+    return researchIndicators.some(_r => desc.includes(r));
   }
 };
 
@@ -179,14 +179,14 @@ export const PRP_TRIGGERS = {
 export const PRP_USAGE_GUIDE = `
 When implementing features, consider using PRPs for:
 
-1. **Complex Features** (3+ files, multiple components)
+1. **Complex Features** ( 3+ files, multiple components)
    - Use: await implementFeature('feature description')
 
-2. **Integrations** (external services, libraries)
+2. **Integrations** ( external services, libraries)
    - Create PRP with deep research
    - Include relevant documentation URLs
 
-3. **Refactoring** (architectural changes)
+3. **Refactoring** (_architectural changes)
    - Analyze existing patterns first
    - Create PRP with migration plan
 

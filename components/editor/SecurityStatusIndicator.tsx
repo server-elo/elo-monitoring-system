@@ -38,69 +38,69 @@ export const SecurityStatusIndicator: React.FC<SecurityStatusIndicatorProps> = (
   responseTime = 0,
   className = ''
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(_false);
 
   // Auto-collapse after 5 seconds
   useEffect(() => {
     if (isExpanded) {
-      const timer = setTimeout(() => setIsExpanded(false), 5000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => setIsExpanded(_false), 5000);
+      return (_) => clearTimeout(_timer);
     }
   }, [isExpanded]);
 
-  const getSecurityIcon = () => {
+  const getSecurityIcon = (_) => {
     if (isScanning) return Activity;
-    if (securityScore >= 90) return ShieldCheck;
-    if (securityScore >= 70) return Shield;
+    if (_securityScore >= 90) return ShieldCheck;
+    if (_securityScore >= 70) return Shield;
     return ShieldAlert;
   };
 
-  const getSecurityColor = () => {
+  const getSecurityColor = (_) => {
     if (isScanning) return 'text-blue-400';
-    if (securityScore >= 90) return 'text-green-400';
-    if (securityScore >= 70) return 'text-yellow-400';
+    if (_securityScore >= 90) return 'text-green-400';
+    if (_securityScore >= 70) return 'text-yellow-400';
     return 'text-red-400';
   };
 
-  const getLLMStatusIcon = () => {
-    switch (llmStatus) {
+  const getLLMStatusIcon = (_) => {
+    switch (_llmStatus) {
       case 'connected': return Wifi;
       case 'disconnected': return WifiOff;
       default: return Activity;
     }
   };
 
-  const getLLMStatusColor = () => {
-    switch (llmStatus) {
+  const getLLMStatusColor = (_) => {
+    switch (_llmStatus) {
       case 'connected': return 'text-green-400';
       case 'disconnected': return 'text-red-400';
       default: return 'text-yellow-400';
     }
   };
 
-  const getScanSourceLabel = () => {
-    switch (scanSource) {
+  const getScanSourceLabel = (_) => {
+    switch (_scanSource) {
       case 'local-llm': return 'Local AI';
       case 'fallback': return 'Cloud AI';
       default: return 'Pattern';
     }
   };
 
-  const SecurityIcon = getSecurityIcon();
-  const LLMIcon = getLLMStatusIcon();
+  const SecurityIcon = getSecurityIcon(_);
+  const LLMIcon = getLLMStatusIcon(_);
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn( 'relative', className)}>
       {/* Main Status Indicator */}
       <motion.div
         className="flex items-center space-x-2 px-3 py-2 bg-black/20 backdrop-blur-sm rounded-lg border border-white/10 cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={(_) => setIsExpanded(!isExpanded)}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
         {/* Security Status */}
         <motion.div
-          className={cn('flex items-center space-x-1', getSecurityColor())}
+          className={cn( 'flex items-center space-x-1', getSecurityColor())}
           animate={isScanning ? { rotate: 360 } : {}}
           transition={{ duration: 2, repeat: isScanning ? Infinity : 0, ease: 'linear' }}
         >
@@ -123,7 +123,7 @@ export const SecurityStatusIndicator: React.FC<SecurityStatusIndicatorProps> = (
 
         {/* LLM Status */}
         <motion.div
-          className={cn('flex items-center', getLLMStatusColor())}
+          className={cn( 'flex items-center', getLLMStatusColor())}
           animate={llmStatus === 'checking' ? { opacity: [0.5, 1, 0.5] } : {}}
           transition={{ duration: 1.5, repeat: llmStatus === 'checking' ? Infinity : 0 }}
         >
@@ -153,7 +153,7 @@ export const SecurityStatusIndicator: React.FC<SecurityStatusIndicatorProps> = (
               {/* Security Score */}
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-300">Security Score</span>
-                <div className={cn('flex items-center space-x-1', getSecurityColor())}>
+                <div className={cn( 'flex items-center space-x-1', getSecurityColor())}>
                   <SecurityIcon className="w-4 h-4" />
                   <span className="font-medium">{securityScore}/100</span>
                 </div>
@@ -175,9 +175,9 @@ export const SecurityStatusIndicator: React.FC<SecurityStatusIndicatorProps> = (
               {/* LLM Status */}
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-300">AI Engine</span>
-                <div className={cn('flex items-center space-x-1', getLLMStatusColor())}>
+                <div className={cn( 'flex items-center space-x-1', getLLMStatusColor())}>
                   <LLMIcon className="w-4 h-4" />
-                  <span className="text-sm">{getScanSourceLabel()}</span>
+                  <span className="text-sm">{getScanSourceLabel(_)}</span>
                 </div>
               </div>
 
@@ -186,7 +186,7 @@ export const SecurityStatusIndicator: React.FC<SecurityStatusIndicatorProps> = (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-300">Last Scan</span>
                   <span className="text-sm text-gray-400">
-                    {new Date(lastScanTime).toLocaleTimeString()}
+                    {new Date(_lastScanTime).toLocaleTimeString(_)}
                   </span>
                 </div>
               )}
@@ -210,7 +210,7 @@ export const SecurityStatusIndicator: React.FC<SecurityStatusIndicatorProps> = (
                   ) : llmStatus === 'connected' ? (
                     'Real-time AI security analysis active'
                   ) : llmStatus === 'disconnected' ? (
-                    'Using pattern-based analysis (AI offline)'
+                    'Using pattern-based analysis (_AI offline)'
                   ) : (
                     'Checking AI connection...'
                   )}

@@ -30,15 +30,15 @@ interface CollaborationConnectionOptions {
   maxReconnectAttempts?: number;
   reconnectDelay?: number;
   enableOfflineMode?: boolean;
-  onConnectionChange?: (state: ConnectionState) => void;
-  onOperationReceived?: (operation: TextOperation) => void;
-  onUserPresenceUpdate?: (users: CollaborationUser[]) => void;
-  onChatMessage?: (message: { id: string; userId: string; content: string; timestamp: Date; type: 'text' | 'code' }) => void;
-  onCompilationResult?: (result: { success: boolean; errors: string[]; warnings: string[]; bytecode?: string; gasEstimate?: number }) => void;
-  onError?: (error: Error) => void;
+  onConnectionChange?: (_state: ConnectionState) => void;
+  onOperationReceived?: (_operation: TextOperation) => void;
+  onUserPresenceUpdate?: (_users: CollaborationUser[]) => void;
+  onChatMessage?: (_message: { id: string; userId: string; content: string; timestamp: Date; type: 'text' | 'code' }) => void;
+  onCompilationResult?: (_result: { success: boolean; errors: string[]; warnings: string[]; bytecode?: string; gasEstimate?: number }) => void;
+  onError?: (_error: Error) => void;
 }
 
-export function useCollaborationConnection(options: CollaborationConnectionOptions) {
+export function useCollaborationConnection(_options: CollaborationConnectionOptions) {
   const [connectionState, setConnectionState] = useState<ConnectionState>({
     status: 'disconnected',
     latency: 0,
@@ -49,9 +49,9 @@ export function useCollaborationConnection(options: CollaborationConnectionOptio
     isRecovering: false
   });
 
-  const clientRef = useRef<CollaborationClient | null>(null);
-  const connectionManagerRef = useRef<ConnectionManager | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const clientRef = useRef<CollaborationClient | null>(_null);
+  const connectionManagerRef = useRef<ConnectionManager | null>(_null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(_null);
   const reconnectAttemptsRef = useRef(0);
 
   // Initialize collaboration client and connection manager
@@ -62,32 +62,32 @@ export function useCollaborationConnection(options: CollaborationConnectionOptio
       options.sessionId
     );
 
-    const connectionManager = new ConnectionManager(client);
+    const connectionManager = new ConnectionManager(_client);
 
     // Setup event handlers
     client.onConnectionStatus((status) => {
-      setConnectionState(prev => ({ ...prev, status }));
-      handleConnectionStatusChange(status);
+      setConnectionState( prev => ({ ...prev, status }));
+      handleConnectionStatusChange(_status);
     });
 
     client.onOperation((operation) => {
-      options.onOperationReceived?.(operation);
+      options.onOperationReceived?.(_operation);
     });
 
     client.onPresence((users) => {
-      options.onUserPresenceUpdate?.(users);
+      options.onUserPresenceUpdate?.(_users);
     });
 
     client.onChat((message) => {
-      options.onChatMessage?.(message);
+      options.onChatMessage?.(_message);
     });
 
     client.onCompilation((result) => {
-      options.onCompilationResult?.(result);
+      options.onCompilationResult?.(_result);
     });
 
     client.onErrorEvent((error) => {
-      options.onError?.(error);
+      options.onError?.(_error);
     });
 
     // Setup connection manager handlers
@@ -99,7 +99,7 @@ export function useCollaborationConnection(options: CollaborationConnectionOptio
       }));
     });
 
-    connectionManager.onOfflineChange((isOffline, queueSize) => {
+    connectionManager.onOfflineChange( (isOffline, queueSize) => {
       setConnectionState(prev => ({
         ...prev,
         isOffline,
@@ -122,100 +122,100 @@ export function useCollaborationConnection(options: CollaborationConnectionOptio
 
     connectionManager.onDataLossDetected((lostOperations) => {
       console.warn('Data loss detected:', lostOperations);
-      options.onError?.(new Error(`${lostOperations.length} operations could not be recovered`));
+      options.onError?.(_new Error(`${lostOperations.length} operations could not be recovered`));
     });
 
     clientRef.current = client;
     connectionManagerRef.current = connectionManager;
 
-    return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
+    return (_) => {
+      if (_reconnectTimeoutRef.current) {
+        clearTimeout(_reconnectTimeoutRef.current);
       }
-      connectionManager.dispose();
-      client.disconnect();
+      connectionManager.dispose(_);
+      client.disconnect(_);
     };
   }, [options.wsUrl, options.userId, options.sessionId]);
 
   // Handle connection status changes
   const handleConnectionStatusChange = useCallback((status: ConnectionStatus) => {
-    switch (status) {
+    switch (_status) {
       case 'connected':
         reconnectAttemptsRef.current = 0;
         setConnectionState(prev => ({
           ...prev,
           isRecovering: false,
           recoveryProgress: undefined,
-          lastSyncTime: new Date()
+          lastSyncTime: new Date(_)
         }));
         break;
 
       case 'disconnected':
       case 'error':
-        if (options.autoReconnect && reconnectAttemptsRef.current < (options.maxReconnectAttempts || 5)) {
-          scheduleReconnect();
+        if (_options.autoReconnect && reconnectAttemptsRef.current < (options.maxReconnectAttempts || 5)) {
+          scheduleReconnect(_);
         }
         break;
 
       case 'reconnecting':
-        setConnectionState(prev => ({ ...prev, isRecovering: true }));
+        setConnectionState( prev => ({ ...prev, isRecovering: true }));
         break;
     }
 
     // Notify parent component
-    options.onConnectionChange?.(connectionState);
+    options.onConnectionChange?.(_connectionState);
   }, [options, connectionState]);
 
   // Schedule automatic reconnection
   const scheduleReconnect = useCallback(() => {
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
+    if (_reconnectTimeoutRef.current) {
+      clearTimeout(_reconnectTimeoutRef.current);
     }
 
-    const delay = (options.reconnectDelay || 1000) * Math.pow(2, reconnectAttemptsRef.current);
+    const delay = (_options.reconnectDelay || 1000) * Math.pow( 2, reconnectAttemptsRef.current);
     
-    reconnectTimeoutRef.current = setTimeout(async () => {
+    reconnectTimeoutRef.current = setTimeout( async () => {
       reconnectAttemptsRef.current++;
       try {
-        await connect();
-      } catch (error) {
+        await connect(_);
+      } catch (_error) {
         console.error('Auto-reconnect failed:', error);
-        if (reconnectAttemptsRef.current < (options.maxReconnectAttempts || 5)) {
-          scheduleReconnect();
+        if (_reconnectAttemptsRef.current < (options.maxReconnectAttempts || 5)) {
+          scheduleReconnect(_);
         }
       }
     }, delay);
   }, [options.reconnectDelay, options.maxReconnectAttempts]);
 
   // Connect to collaboration server
-  const connect = useCallback(async () => {
+  const connect = useCallback( async () => {
     if (!clientRef.current) return;
 
     try {
-      setConnectionState(prev => ({ ...prev, status: 'connecting' }));
-      await clientRef.current.connect();
-    } catch (error) {
-      setConnectionState(prev => ({ ...prev, status: 'error' }));
+      setConnectionState( prev => ({ ...prev, status: 'connecting' }));
+      await clientRef.current.connect(_);
+    } catch (_error) {
+      setConnectionState( prev => ({ ...prev, status: 'error' }));
       throw error;
     }
   }, []);
 
   // Disconnect from collaboration server
   const disconnect = useCallback(() => {
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
+    if (_reconnectTimeoutRef.current) {
+      clearTimeout(_reconnectTimeoutRef.current);
     }
-    clientRef.current?.disconnect();
+    clientRef.current?.disconnect(_);
   }, []);
 
   // Send operation with offline support
-  const sendOperation = useCallback(async (operation: TextOperation) => {
+  const sendOperation = useCallback( async (operation: TextOperation) => {
     if (!connectionManagerRef.current) return;
 
-    if (options.enableOfflineMode) {
-      await connectionManagerRef.current.sendOperationWithFallback(operation);
-    } else if (clientRef.current?.isConnected()) {
-      clientRef.current.sendOperation(operation);
+    if (_options.enableOfflineMode) {
+      await connectionManagerRef.current.sendOperationWithFallback(_operation);
+    } else if (_clientRef.current?.isConnected()) {
+      clientRef.current.sendOperation(_operation);
     } else {
       throw new Error('Not connected and offline mode is disabled');
     }
@@ -223,32 +223,32 @@ export function useCollaborationConnection(options: CollaborationConnectionOptio
 
   // Send cursor update
   const sendCursorUpdate = useCallback((cursor: { line: number; column: number; selection?: { start: { line: number; column: number }; end: { line: number; column: number } } }) => {
-    clientRef.current?.sendCursorUpdate(cursor);
+    clientRef.current?.sendCursorUpdate(_cursor);
   }, []);
 
   // Send presence update
   const sendPresenceUpdate = useCallback((status: 'online' | 'idle' | 'offline') => {
-    clientRef.current?.sendPresenceUpdate(status);
+    clientRef.current?.sendPresenceUpdate(_status);
   }, []);
 
   // Send chat message
-  const sendChatMessage = useCallback((content: string, type: 'text' | 'file' = 'text') => {
-    clientRef.current?.sendChatMessage(content, type);
+  const sendChatMessage = useCallback( (content: string, type: 'text' | 'file' = 'text') => {
+    clientRef.current?.sendChatMessage( content, type);
   }, []);
 
   // Send compilation request
   const sendCompilationRequest = useCallback((code: string) => {
-    clientRef.current?.sendCompilationRequest(code);
+    clientRef.current?.sendCompilationRequest(_code);
   }, []);
 
   // Manual reconnection
-  const reconnect = useCallback(async () => {
+  const reconnect = useCallback( async () => {
     reconnectAttemptsRef.current = 0;
-    await connect();
+    await connect(_);
   }, [connect]);
 
   // Force synchronization
-  const forceSync = useCallback(async () => {
+  const forceSync = useCallback( async () => {
     if (!connectionManagerRef.current) {
       throw new Error('Connection manager not available');
     }
@@ -265,14 +265,14 @@ export function useCollaborationConnection(options: CollaborationConnectionOptio
     }));
 
     try {
-      await connectionManagerRef.current.forceSync();
+      await connectionManagerRef.current.forceSync(_);
       setConnectionState(prev => ({
         ...prev,
         isRecovering: false,
         recoveryProgress: undefined,
-        lastSyncTime: new Date()
+        lastSyncTime: new Date(_)
       }));
-    } catch (error) {
+    } catch (_error) {
       setConnectionState(prev => ({
         ...prev,
         isRecovering: false,
@@ -284,7 +284,7 @@ export function useCollaborationConnection(options: CollaborationConnectionOptio
 
   // Clear offline data
   const clearOfflineData = useCallback(() => {
-    connectionManagerRef.current?.clearRecoveryState();
+    connectionManagerRef.current?.clearRecoveryState(_);
     setConnectionState(prev => ({
       ...prev,
       offlineQueueSize: 0,
@@ -294,35 +294,35 @@ export function useCollaborationConnection(options: CollaborationConnectionOptio
 
   // Get connection statistics
   const getConnectionStats = useCallback(() => {
-    return connectionManagerRef.current?.getConnectionStats() || {
+    return connectionManagerRef.current?.getConnectionStats(_) || {
       health: {
         latency: 0,
         packetsLost: 0,
         reconnectCount: 0,
-        lastSuccessfulPing: new Date(),
+        lastSuccessfulPing: new Date(_),
         connectionQuality: 'excellent' as const
       },
       offlineQueueSize: 0,
-      lastSync: new Date(),
+      lastSync: new Date(_),
       isOffline: false
     };
   }, []);
 
   // Check if connected
   const isConnected = useCallback(() => {
-    return clientRef.current?.isConnected() || false;
+    return clientRef.current?.isConnected(_) || false;
   }, []);
 
   // Get current status
   const getStatus = useCallback(() => {
-    return clientRef.current?.getConnectionStatus() || 'disconnected';
+    return clientRef.current?.getConnectionStatus(_) || 'disconnected';
   }, []);
 
   return {
     // State
     connectionState,
-    isConnected: isConnected(),
-    status: getStatus(),
+    isConnected: isConnected(_),
+    status: getStatus(_),
 
     // Actions
     connect,

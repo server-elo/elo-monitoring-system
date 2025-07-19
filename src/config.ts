@@ -7,32 +7,32 @@
 export function getApiKey(): string | null {
   // Check all possible environment variable sources
   const sources = [
-    // Vite environment variables (prefixed with VITE_)
+    // Vite environment variables (_prefixed with VITE_)
     import.meta.env.VITE_GEMINI_API_KEY,
     import.meta.env.VITE_API_KEY,
     
-    // Process environment variables (injected by Vite define)
-    (globalThis as any).process?.env?.GEMINI_API_KEY,
-    (globalThis as any).process?.env?.API_KEY,
+    // Process environment variables (_injected by Vite define)
+    (_globalThis as any).process?.env?.GEMINI_API_KEY,
+    (_globalThis as any).process?.env?.API_KEY,
     
-    // Global variables (injected by Vite define)
-    (globalThis as any).__GEMINI_API_KEY__,
-    (globalThis as any).__API_KEY__,
+    // Global variables (_injected by Vite define)
+    (_globalThis as any). GEMINI_API_KEY ,
+    (_globalThis as any). API_KEY ,
     
-    // Window variables (fallback)
-    (window as any).__GEMINI_API_KEY__,
-    (window as any).__API_KEY__,
+    // Window variables (_fallback)
+    (_window as any). GEMINI_API_KEY ,
+    (_window as any). API_KEY ,
     
-    // Direct environment access (for Node.js environments)
+    // Direct environment access (_for Node.js environments)
     typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : undefined,
     typeof process !== 'undefined' ? process.env?.API_KEY : undefined,
   ];
 
   // Find the first non-empty source
-  for (const source of sources) {
+  for (_const source of sources) {
     if (source && typeof source === 'string' && source.trim().length > 0) {
       console.log('✅ API key found from source');
-      return source.trim();
+      return source.trim(_);
     }
   }
 
@@ -40,12 +40,12 @@ export function getApiKey(): string | null {
   console.log('Checked sources:', {
     'import.meta.env.VITE_GEMINI_API_KEY': !!import.meta.env.VITE_GEMINI_API_KEY,
     'import.meta.env.VITE_API_KEY': !!import.meta.env.VITE_API_KEY,
-    'globalThis.process?.env?.GEMINI_API_KEY': !!(globalThis as any).process?.env?.GEMINI_API_KEY,
-    'globalThis.process?.env?.API_KEY': !!(globalThis as any).process?.env?.API_KEY,
-    'globalThis.__GEMINI_API_KEY__': !!(globalThis as any).__GEMINI_API_KEY__,
-    'globalThis.__API_KEY__': !!(globalThis as any).__API_KEY__,
-    'window.__GEMINI_API_KEY__': !!(window as any).__GEMINI_API_KEY__,
-    'window.__API_KEY__': !!(window as any).__API_KEY__,
+    'globalThis.process?.env?.GEMINI_API_KEY': !!(_globalThis as any).process?.env?.GEMINI_API_KEY,
+    'globalThis.process?.env?.API_KEY': !!(_globalThis as any).process?.env?.API_KEY,
+    'globalThis. GEMINI_API_KEY ': !!(_globalThis as any). GEMINI_API_KEY ,
+    'globalThis. API_KEY ': !!(_globalThis as any). API_KEY ,
+    'window. GEMINI_API_KEY ': !!(_window as any). GEMINI_API_KEY ,
+    'window. API_KEY ': !!(_window as any). API_KEY ,
   });
   
   return null;
@@ -54,7 +54,7 @@ export function getApiKey(): string | null {
 /**
  * Validate API key format
  */
-export function validateApiKey(apiKey: string | null): boolean {
+export function validateApiKey(_apiKey: string | null): boolean {
   if (!apiKey) return false;
   
   // Basic validation for Google API key format
@@ -72,7 +72,7 @@ export function validateApiKey(apiKey: string | null): boolean {
  * Get and validate API key
  */
 export function getValidatedApiKey(): string | null {
-  const apiKey = getApiKey();
+  const apiKey = getApiKey(_);
   
   if (!apiKey) {
     console.error('❌ No API key configured');
@@ -89,7 +89,7 @@ export function getValidatedApiKey(): string | null {
 }
 
 // Export the API key for immediate use
-export const API_KEY = getValidatedApiKey();
+export const API_KEY = getValidatedApiKey(_);
 
 // Log configuration status on module load
 console.log('🔧 Configuration loaded:', {

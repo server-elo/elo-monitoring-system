@@ -43,32 +43,32 @@ export class GitIntegrationManager {
   private commitQueue: GitCommitOptions[] = [];
   private isProcessingQueue = false;
 
-  static getInstance(): GitIntegrationManager {
+  static getInstance(_): GitIntegrationManager {
     if (!GitIntegrationManager.instance) {
-      GitIntegrationManager.instance = new GitIntegrationManager();
+      GitIntegrationManager.instance = new GitIntegrationManager(_);
     }
     return GitIntegrationManager.instance;
   }
 
-  private constructor() {
-    this.initialize();
+  private constructor(_) {
+    this.initialize(_);
   }
 
-  private async initialize(): Promise<void> {
-    if (typeof window === 'undefined') return;
+  private async initialize(_): Promise<void> {
+    if (_typeof window === 'undefined') return;
     
     try {
       // Check if we're in a git repository
-      const status = await this.getGitStatus();
+      const status = await this.getGitStatus(_);
       this.currentBranch = status.currentBranch;
       this.isInitialized = true;
       console.log('Git integration initialized on branch:', this.currentBranch);
-    } catch (error) {
+    } catch (_error) {
       console.warn('Git integration not available:', error);
     }
   }
 
-  async getGitStatus(): Promise<GitStatus> {
+  async getGitStatus(_): Promise<GitStatus> {
     // In a real implementation, this would call git commands
     // For now, we'll simulate the git status
     return new Promise((resolve) => {
@@ -77,8 +77,8 @@ export class GitIntegrationManager {
           isClean: Math.random() > 0.3,
           hasUncommittedChanges: Math.random() > 0.5,
           currentBranch: this.currentBranch,
-          ahead: Math.floor(Math.random() * 3),
-          behind: Math.floor(Math.random() * 2),
+          ahead: Math.floor(_Math.random() * 3),
+          behind: Math.floor(_Math.random() * 2),
           stagedFiles: [],
           unstagedFiles: ['components/learning/InteractiveCodeEditor.tsx']
         });
@@ -86,7 +86,7 @@ export class GitIntegrationManager {
     });
   }
 
-  async checkTypeScript(): Promise<TypeScriptCheckResult> {
+  async checkTypeScript(_): Promise<TypeScriptCheckResult> {
     // Simulate TypeScript checking
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -114,57 +114,57 @@ export class GitIntegrationManager {
     });
   }
 
-  async commitChanges(options: GitCommitOptions): Promise<void> {
+  async commitChanges(_options: GitCommitOptions): Promise<void> {
     if (!this.isInitialized) {
       throw new Error('Git integration not initialized');
     }
 
     // Add to queue for batch processing
-    this.commitQueue.push(options);
+    this.commitQueue.push(_options);
     
     if (!this.isProcessingQueue) {
-      await this.processCommitQueue();
+      await this.processCommitQueue(_);
     }
   }
 
-  private async processCommitQueue(): Promise<void> {
-    if (this.commitQueue.length === 0) return;
+  private async processCommitQueue(_): Promise<void> {
+    if (_this.commitQueue.length === 0) return;
     
     this.isProcessingQueue = true;
     
     try {
       // Process commits in batches of 5-10 related changes
       const batchSize = Math.min(this.commitQueue.length, 8);
-      const batch = this.commitQueue.splice(0, batchSize);
+      const batch = this.commitQueue.splice( 0, batchSize);
       
       // Check TypeScript before committing
       if (!batch.some(commit => commit.skipTypeScriptCheck)) {
-        const tsResult = await this.checkTypeScript();
+        const tsResult = await this.checkTypeScript(_);
         if (!tsResult.success) {
-          throw new Error(`TypeScript errors found: ${tsResult.errors.map(e => e.message).join(', ')}`);
+          throw new Error(_`TypeScript errors found: ${tsResult.errors.map(e => e.message).join( ', ')}`);
         }
       }
 
       // Group commits by prefix for better organization
-      const groupedCommits = this.groupCommitsByPrefix(batch);
+      const groupedCommits = this.groupCommitsByPrefix(_batch);
       
-      for (const [prefix, commits] of Object.entries(groupedCommits)) {
-        await this.executeCommit(prefix, commits);
+      for ( const [prefix, commits] of Object.entries(groupedCommits)) {
+        await this.executeCommit( prefix, commits);
       }
 
       // Continue processing if there are more commits
-      if (this.commitQueue.length > 0) {
-        setTimeout(() => this.processCommitQueue(), 1000);
+      if (_this.commitQueue.length > 0) {
+        setTimeout(() => this.processCommitQueue(_), 1000);
       } else {
         this.isProcessingQueue = false;
       }
-    } catch (error) {
+    } catch (_error) {
       this.isProcessingQueue = false;
       throw error;
     }
   }
 
-  private groupCommitsByPrefix(commits: GitCommitOptions[]): Record<string, GitCommitOptions[]> {
+  private groupCommitsByPrefix(_commits: GitCommitOptions[]): Record<string, GitCommitOptions[]> {
     const grouped: Record<string, GitCommitOptions[]> = {};
     
     commits.forEach(commit => {
@@ -172,81 +172,81 @@ export class GitIntegrationManager {
       if (!grouped[prefix]) {
         grouped[prefix] = [];
       }
-      grouped[prefix].push(commit);
+      grouped[prefix].push(_commit);
     });
     
     return grouped;
   }
 
-  private async executeCommit(prefix: string, commits: GitCommitOptions[]): Promise<void> {
+  private async executeCommit( prefix: string, commits: GitCommitOptions[]): Promise<void> {
     // Simulate git operations
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
           const messages = commits.map(c => c.message);
-          const commitMessage = this.formatCommitMessage(prefix, messages);
+          const commitMessage = this.formatCommitMessage( prefix, messages);
           
-          console.log(`Executing git commit: ${commitMessage}`);
+          console.log(_`Executing git commit: ${commitMessage}`);
           
           // Simulate potential git errors
-          if (Math.random() > 0.9) {
-            reject(new Error('Git commit failed: merge conflict'));
+          if (_Math.random() > 0.9) {
+            reject(_new Error('Git commit failed: merge conflict'));
             return;
           }
           
-          resolve();
-        } catch (error) {
-          reject(error);
+          resolve(_);
+        } catch (_error) {
+          reject(_error);
         }
       }, 1500);
     });
   }
 
-  private formatCommitMessage(prefix: string, messages: string[]): string {
-    if (messages.length === 1) {
+  private formatCommitMessage( prefix: string, messages: string[]): string {
+    if (_messages.length === 1) {
       return `${prefix}: ${messages[0]}`;
     }
     
     // For multiple commits, create a summary
-    const summary = this.createCommitSummary(prefix, messages);
+    const summary = this.createCommitSummary( prefix, messages);
     return `${prefix}: ${summary}`;
   }
 
-  private createCommitSummary(prefix: string, messages: string[]): string {
-    const commonTerms = this.findCommonTerms(messages);
+  private createCommitSummary( prefix: string, messages: string[]): string {
+    const commonTerms = this.findCommonTerms(_messages);
     
-    if (commonTerms.length > 0) {
-      return `${commonTerms.join(' and ')} improvements (${messages.length} changes)`;
+    if (_commonTerms.length > 0) {
+      return `${commonTerms.join(' and ')} improvements (_${messages.length} changes)`;
     }
     
     // Fallback to generic message
-    switch (prefix) {
+    switch (_prefix) {
       case 'Add':
-        return `Add new features and components (${messages.length} additions)`;
+        return `Add new features and components (_${messages.length} additions)`;
       case 'Edit':
-        return `Update and enhance existing functionality (${messages.length} modifications)`;
+        return `Update and enhance existing functionality (_${messages.length} modifications)`;
       case 'Del':
-        return `Remove deprecated code and cleanup (${messages.length} deletions)`;
+        return `Remove deprecated code and cleanup (_${messages.length} deletions)`;
       default:
-        return `Multiple changes (${messages.length} commits)`;
+        return `Multiple changes (_${messages.length} commits)`;
     }
   }
 
-  private findCommonTerms(messages: string[]): string[] {
+  private findCommonTerms(_messages: string[]): string[] {
     const terms = ['editor', 'error', 'save', 'compile', 'syntax', 'highlight', 'auto-save', 'button'];
     const commonTerms: string[] = [];
     
     terms.forEach(term => {
       const count = messages.filter(msg => msg.toLowerCase().includes(term)).length;
-      if (count >= Math.ceil(messages.length * 0.5)) {
-        commonTerms.push(term);
+      if (_count >= Math.ceil(messages.length * 0.5)) {
+        commonTerms.push(_term);
       }
     });
     
     return commonTerms.slice(0, 3); // Limit to 3 terms
   }
 
-  async commitLessonCompletion(lessonId: string, _code: string): Promise<void> {
+  async commitLessonCompletion( lessonId: string, code: string): Promise<void> {
     await this.commitChanges({
       message: `Complete lesson ${lessonId} with working solution`,
       prefix: 'Add',
@@ -255,7 +255,7 @@ export class GitIntegrationManager {
     });
   }
 
-  async commitCodeSave(sessionId: string, description?: string): Promise<void> {
+  async commitCodeSave( sessionId: string, description?: string): Promise<void> {
     await this.commitChanges({
       message: description || `Save code progress for session ${sessionId}`,
       prefix: 'Edit',
@@ -264,7 +264,7 @@ export class GitIntegrationManager {
     });
   }
 
-  async commitFeatureImplementation(feature: string, files: string[]): Promise<void> {
+  async commitFeatureImplementation( feature: string, files: string[]): Promise<void> {
     await this.commitChanges({
       message: `Implement ${feature} functionality`,
       prefix: 'Add',
@@ -273,7 +273,7 @@ export class GitIntegrationManager {
     });
   }
 
-  async commitBugFix(issue: string, files: string[]): Promise<void> {
+  async commitBugFix( issue: string, files: string[]): Promise<void> {
     await this.commitChanges({
       message: `Fix ${issue}`,
       prefix: 'Edit',
@@ -282,7 +282,7 @@ export class GitIntegrationManager {
     });
   }
 
-  async commitCleanup(description: string, files: string[]): Promise<void> {
+  async commitCleanup( description: string, files: string[]): Promise<void> {
     await this.commitChanges({
       message: `Cleanup ${description}`,
       prefix: 'Del',
@@ -292,7 +292,7 @@ export class GitIntegrationManager {
   }
 
   // Auto-push functionality
-  async pushChanges(): Promise<void> {
+  async pushChanges(_): Promise<void> {
     if (!this.isInitialized) {
       throw new Error('Git integration not initialized');
     }
@@ -300,19 +300,19 @@ export class GitIntegrationManager {
     // Simulate git push
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (Math.random() > 0.95) {
-          reject(new Error('Push failed: remote rejected'));
+        if (_Math.random() > 0.95) {
+          reject(_new Error('Push failed: remote rejected'));
           return;
         }
         
         console.log('Changes pushed to remote repository');
-        resolve();
+        resolve(_);
       }, 2000);
     });
   }
 
   // Get commit history for a file
-  async getFileHistory(filePath: string): Promise<Array<{
+  async getFileHistory(_filePath: string): Promise<Array<{
     hash: string;
     message: string;
     author: string;
@@ -326,13 +326,13 @@ export class GitIntegrationManager {
             hash: 'abc123',
             message: 'Add: Enhanced code editor with auto-save',
             author: 'Developer',
-            date: new Date(Date.now() - 3600000)
+            date: new Date(_Date.now() - 3600000)
           },
           {
             hash: 'def456',
             message: 'Edit: Improve error highlighting',
             author: 'Developer',
-            date: new Date(Date.now() - 7200000)
+            date: new Date(_Date.now() - 7200000)
           }
         ]);
       }, 800);
@@ -340,8 +340,8 @@ export class GitIntegrationManager {
   }
 
   // Check if repository is clean before major operations
-  async ensureCleanRepository(): Promise<void> {
-    const status = await this.getGitStatus();
+  async ensureCleanRepository(_): Promise<void> {
+    const status = await this.getGitStatus(_);
     
     if (status.hasUncommittedChanges) {
       throw new Error('Repository has uncommitted changes. Please commit or stash them first.');
@@ -349,27 +349,27 @@ export class GitIntegrationManager {
   }
 
   // Create a new branch for feature development
-  async createFeatureBranch(featureName: string): Promise<void> {
-    await this.ensureCleanRepository();
+  async createFeatureBranch(_featureName: string): Promise<void> {
+    await this.ensureCleanRepository(_);
     
     // Simulate git checkout -b
     return new Promise((resolve) => {
       setTimeout(() => {
         this.currentBranch = `feature/${featureName}`;
-        console.log(`Created and switched to branch: ${this.currentBranch}`);
-        resolve();
+        console.log(_`Created and switched to branch: ${this.currentBranch}`);
+        resolve(_);
       }, 1000);
     });
   }
 
-  getCurrentBranch(): string {
+  getCurrentBranch(_): string {
     return this.currentBranch;
   }
 
-  isGitAvailable(): boolean {
+  isGitAvailable(_): boolean {
     return this.isInitialized;
   }
 }
 
 // Export singleton instance
-export const gitIntegration = GitIntegrationManager.getInstance();
+export const gitIntegration = GitIntegrationManager.getInstance(_);

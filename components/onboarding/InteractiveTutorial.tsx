@@ -15,8 +15,8 @@ import { TutorialStep } from './OnboardingFlow';
 interface InteractiveTutorialProps {
   steps: TutorialStep[];
   isActive: boolean;
-  onComplete: () => void;
-  onSkip: () => void;
+  onComplete: (_) => void;
+  onSkip: (_) => void;
   title: string;
 }
 
@@ -28,9 +28,9 @@ export const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({
   title: _title,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [highlightedElement, setHighlightedElement] = useState<HTMLElement | null>(null);
+  const [highlightedElement, setHighlightedElement] = useState<HTMLElement | null>(_null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(_null);
 
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
@@ -38,10 +38,10 @@ export const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({
   useEffect(() => {
     if (!isActive || !currentStepData) return;
 
-    const targetElement = document.querySelector(currentStepData.target) as HTMLElement;
+    const targetElement = document.querySelector(_currentStepData.target) as HTMLElement;
     if (targetElement) {
-      setHighlightedElement(targetElement);
-      calculateTooltipPosition(targetElement);
+      setHighlightedElement(_targetElement);
+      calculateTooltipPosition(_targetElement);
       
       // Scroll element into view
       targetElement.scrollIntoView({ 
@@ -54,18 +54,18 @@ export const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({
       targetElement.classList.add('tutorial-highlight');
       
       // Announce to screen readers
-      announceStep();
+      announceStep(_);
     }
 
-    return () => {
+    return (_) => {
       if (targetElement) {
         targetElement.classList.remove('tutorial-highlight');
       }
     };
   }, [currentStep, isActive, currentStepData]);
 
-  const calculateTooltipPosition = (element: HTMLElement) => {
-    const rect = element.getBoundingClientRect();
+  const calculateTooltipPosition = (_element: HTMLElement) => {
+    const rect = element.getBoundingClientRect(_);
     const viewport = {
       width: window.innerWidth,
       height: window.innerHeight,
@@ -74,7 +74,7 @@ export const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({
     let x = 0;
     let y = 0;
 
-    switch (currentStepData.position) {
+    switch (_currentStepData.position) {
       case 'top':
         x = rect.left + rect.width / 2;
         y = rect.top - 20;
@@ -97,57 +97,57 @@ export const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({
     const tooltipWidth = 320;
     const tooltipHeight = 200;
 
-    if (x - tooltipWidth / 2 < 20) x = tooltipWidth / 2 + 20;
-    if (x + tooltipWidth / 2 > viewport.width - 20) x = viewport.width - tooltipWidth / 2 - 20;
-    if (y - tooltipHeight < 20) y = tooltipHeight + 20;
-    if (y + tooltipHeight > viewport.height - 20) y = viewport.height - tooltipHeight - 20;
+    if (_x - tooltipWidth / 2 < 20) x = tooltipWidth / 2 + 20;
+    if (_x + tooltipWidth / 2 > viewport.width - 20) x = viewport.width - tooltipWidth / 2 - 20;
+    if (_y - tooltipHeight < 20) y = tooltipHeight + 20;
+    if (_y + tooltipHeight > viewport.height - 20) y = viewport.height - tooltipHeight - 20;
 
-    setTooltipPosition({ x, y });
+    setTooltipPosition( { x, y });
   };
 
-  const announceStep = () => {
+  const announceStep = (_) => {
     const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.setAttribute('aria-atomic', 'true');
+    announcement.setAttribute( 'aria-live', 'polite');
+    announcement.setAttribute( 'aria-atomic', 'true');
     announcement.className = 'sr-only';
     announcement.textContent = `Tutorial step ${currentStep + 1} of ${steps.length}: ${currentStepData.title}. ${currentStepData.description}`;
     
-    document.body.appendChild(announcement);
+    document.body.appendChild(_announcement);
     
     setTimeout(() => {
-      document.body.removeChild(announcement);
+      document.body.removeChild(_announcement);
     }, 1000);
   };
 
-  const handleNext = () => {
+  const handleNext = (_) => {
     if (isLastStep) {
-      onComplete();
+      onComplete(_);
     } else {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep(_prev => prev + 1);
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+  const handlePrevious = (_) => {
+    if (_currentStep > 0) {
+      setCurrentStep(_prev => prev - 1);
     }
   };
 
   // Element click handling is done inline in the overlay
-  // const _handleElementClick = () => {
-  //   if (currentStepData.action === 'click') {
+  // const _handleElementClick = (_) => {
+  //   if (_currentStepData.action === 'click') {
   //     // Simulate the expected action
-  //     setTimeout(handleNext, 500);
+  //     setTimeout( handleNext, 500);
   //   }
   // };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      onSkip();
-    } else if (event.key === 'ArrowRight' || event.key === 'Enter') {
-      handleNext();
-    } else if (event.key === 'ArrowLeft') {
-      handlePrevious();
+  const handleKeyDown = (_event: React.KeyboardEvent) => {
+    if (_event.key === 'Escape') {
+      onSkip(_);
+    } else if (_event.key === 'ArrowRight' || event.key === 'Enter') {
+      handleNext(_);
+    } else if (_event.key === 'ArrowLeft') {
+      handlePrevious(_);
     }
   };
 
@@ -173,11 +173,11 @@ export const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({
           animate={{ opacity: 1 }}
           className="fixed z-50 pointer-events-none"
           style={{
-            left: highlightedElement.getBoundingClientRect().left - 8,
-            top: highlightedElement.getBoundingClientRect().top - 8,
-            width: highlightedElement.getBoundingClientRect().width + 16,
-            height: highlightedElement.getBoundingClientRect().height + 16,
-            boxShadow: '0 0 0 4px rgba(59, 130, 246, 0.5), 0 0 0 9999px rgba(0, 0, 0, 0.5)',
+            left: highlightedElement.getBoundingClientRect(_).left - 8,
+            top: highlightedElement.getBoundingClientRect(_).top - 8,
+            width: highlightedElement.getBoundingClientRect(_).width + 16,
+            height: highlightedElement.getBoundingClientRect(_).height + 16,
+            boxShadow: '0 0 0 4px rgba( 59, 130, 246, 0.5), 0 0 0 9999px rgba( 0, 0, 0, 0.5)',
             borderRadius: '8px',
           }}
         />
@@ -304,7 +304,7 @@ export const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({
           content: '';
           position: absolute;
           inset: -4px;
-          border: 2px solid rgb(59, 130, 246);
+          border: 2px solid rgb( 59, 130, 246);
           border-radius: 8px;
           pointer-events: none;
           animation: tutorial-pulse 2s infinite;

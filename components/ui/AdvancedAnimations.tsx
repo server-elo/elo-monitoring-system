@@ -16,14 +16,14 @@ const TiltGlassCard: React.FC<TiltGlassCardProps> = ({
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
+  const mouseXSpring = useSpring(_x);
+  const mouseYSpring = useSpring(_y);
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['17.5deg', '-17.5deg']);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-17.5deg', '17.5deg']);
+  const rotateX = useTransform( mouseYSpring, [-0.5, 0.5], ['17.5deg', '-17.5deg']);
+  const rotateY = useTransform( mouseXSpring, [-0.5, 0.5], ['-17.5deg', '17.5deg']);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+  const handleMouseMove = (_e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect(_);
     const width = rect.width;
     const height = rect.height;
     const mouseX = e.clientX - rect.left;
@@ -32,11 +32,11 @@ const TiltGlassCard: React.FC<TiltGlassCardProps> = ({
     const xPct = mouseX / width - 0.5;
     const yPct = mouseY / height - 0.5;
 
-    x.set(xPct);
-    y.set(yPct);
+    x.set(_xPct);
+    y.set(_yPct);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (_) => {
     x.set(0);
     y.set(0);
   };
@@ -77,7 +77,7 @@ const TiltGlassCard: React.FC<TiltGlassCardProps> = ({
       
       {/* Floating particles effect */}
       <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(_6)].map( (_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-white/40 rounded-full"
@@ -102,7 +102,7 @@ const TiltGlassCard: React.FC<TiltGlassCardProps> = ({
       {/* Content */}
       <div
         style={{
-          transform: 'translateZ(75px)',
+          transform: 'translateZ(_75px)',
           transformStyle: 'preserve-3d',
         }}
         className="relative z-10"
@@ -116,7 +116,7 @@ const TiltGlassCard: React.FC<TiltGlassCardProps> = ({
 // Morphing Neumorphic Button
 interface MorphButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (_) => void;
   variant?: 'primary' | 'secondary';
   size?: 'sm' | 'md' | 'lg';
 }
@@ -127,8 +127,8 @@ const MorphButton: React.FC<MorphButtonProps> = ({
   variant = 'primary',
   size = 'md',
 }) => {
-  const [isPressed, setIsPressed] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(_false);
+  const [isHovered, setIsHovered] = useState(_false);
 
   const variants = {
     primary: 'bg-brand-primary-200 text-brand-primary-800',
@@ -151,18 +151,18 @@ const MorphButton: React.FC<MorphButtonProps> = ({
       `}
       style={{
         boxShadow: isPressed
-          ? 'inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(255,255,255,0.8)'
+          ? 'inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(_255,255,255,0.8)'
           : isHovered
-          ? '8px 8px 16px rgba(0,0,0,0.2), -8px -8px 16px rgba(255,255,255,0.9)'
-          : '6px 6px 12px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.8)',
+          ? '8px 8px 16px rgba(0,0,0,0.2), -8px -8px 16px rgba(_255,255,255,0.9)'
+          : '6px 6px 12px rgba(0,0,0,0.15), -6px -6px 12px rgba(_255,255,255,0.8)',
       }}
-      onMouseDown={() => setIsPressed(true)}
-      onMouseUp={() => setIsPressed(false)}
-      onMouseLeave={() => {
-        setIsPressed(false);
-        setIsHovered(false);
+      onMouseDown={(_) => setIsPressed(_true)}
+      onMouseUp={(_) => setIsPressed(_false)}
+      onMouseLeave={(_) => {
+        setIsPressed(_false);
+        setIsHovered(_false);
       }}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={(_) => setIsHovered(_true)}
       onClick={onClick}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -198,7 +198,7 @@ const MorphButton: React.FC<MorphButtonProps> = ({
 };
 
 // Liquid Glass Loading Animation
-const LiquidGlassLoader: React.FC = () => {
+const LiquidGlassLoader: React.FC = (_) => {
   return (
     <div className="relative w-24 h-24 mx-auto">
       {/* Glass container */}
@@ -217,7 +217,7 @@ const LiquidGlassLoader: React.FC = () => {
         />
         
         {/* Bubbles */}
-        {[...Array(3)].map((_, i) => (
+        {[...Array(3)].map( (_, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-white/40 rounded-full"
@@ -283,9 +283,9 @@ const FloatingGlassPanel: React.FC<FloatingGlassPanelProps> = ({
         className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-brand-primary-500/10 rounded-2xl"
         animate={{
           background: [
-            'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(139,92,246,0.1) 100%)',
-            'linear-gradient(135deg, rgba(139,92,246,0.1) 0%, transparent 50%, rgba(255,255,255,0.2) 100%)',
-            'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(139,92,246,0.1) 100%)',
+            'linear-gradient( 135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(139,92,246,0.1) 100%)',
+            'linear-gradient( 135deg, rgba(139,92,246,0.1) 0%, transparent 50%, rgba(_255,255,255,0.2) 100%)',
+            'linear-gradient( 135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(139,92,246,0.1) 100%)',
           ],
         }}
         transition={{
@@ -327,7 +327,7 @@ const NeumorphicProgressRing: React.FC<ProgressRingProps> = ({
   strokeWidth = 8,
   color = '#8B5CF6',
 }) => {
-  const radius = (size - strokeWidth) / 2;
+  const radius = (_size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDasharray = `${circumference} ${circumference}`;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
@@ -338,7 +338,7 @@ const NeumorphicProgressRing: React.FC<ProgressRingProps> = ({
       style={{
         width: size,
         height: size,
-        boxShadow: 'inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(255,255,255,0.8)',
+        boxShadow: 'inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(_255,255,255,0.8)',
       }}
     >
       <svg

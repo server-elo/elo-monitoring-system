@@ -18,92 +18,92 @@ import {
   expectValidErrorResponse,
 } from '../utils/assertionHelpers';
 
-// Mock validation schemas (based on actual app schemas)
+// Mock validation schemas (_based on actual app schemas)
 const userRegistrationSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  username: z.string()
+  email: z.string(_).email('Invalid email format'),
+  username: z.string(_)
     .min(3, 'Username must be at least 3 characters')
     .max(30, 'Username must be at most 30 characters')
-    .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens, and underscores'),
-  firstName: z.string()
+    .regex( /^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens, and underscores'),
+  firstName: z.string(_)
     .min(1, 'First name is required')
     .max(50, 'First name must be at most 50 characters')
-    .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'First name contains invalid characters'),
-  lastName: z.string()
+    .regex( /^[a-zA-ZÀ-ÿ\s'-]+$/, 'First name contains invalid characters'),
+  lastName: z.string(_)
     .min(1, 'Last name is required')
     .max(50, 'Last name must be at most 50 characters')
-    .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'Last name contains invalid characters'),
-  password: z.string()
+    .regex( /^[a-zA-ZÀ-ÿ\s'-]+$/, 'Last name contains invalid characters'),
+  password: z.string(_)
     .min(8, 'Password must be at least 8 characters')
     .max(128, 'Password must be at most 128 characters')
-    .regex(/(?=.*[a-z])/, 'Password must contain at least one lowercase letter')
-    .regex(/(?=.*[A-Z])/, 'Password must contain at least one uppercase letter')
-    .regex(/(?=.*\d)/, 'Password must contain at least one number')
-    .regex(/(?=.*[@$!%*?&])/, 'Password must contain at least one special character'),
+    .regex(_/(?=.*[a-z])/, 'Password must contain at least one lowercase letter')
+    .regex(_/(?=.*[A-Z])/, 'Password must contain at least one uppercase letter')
+    .regex(_/(?=.*\d)/, 'Password must contain at least one number')
+    .regex(_/(?=.*[@$!%*?&])/, 'Password must contain at least one special character'),
 });
 
 const courseCreationSchema = z.object({
-  title: z.string()
+  title: z.string(_)
     .min(1, 'Title is required')
     .max(200, 'Title must be at most 200 characters'),
-  description: z.string()
+  description: z.string(_)
     .min(10, 'Description must be at least 10 characters')
     .max(2000, 'Description must be at most 2000 characters'),
-  difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
-  category: z.string()
+  difficulty: z.enum( ['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
+  category: z.string(_)
     .min(1, 'Category is required')
     .max(100, 'Category must be at most 100 characters'),
-  estimatedDuration: z.number()
+  estimatedDuration: z.number(_)
     .min(5, 'Duration must be at least 5 minutes')
     .max(480, 'Duration must be at most 8 hours'),
-  xpReward: z.number()
+  xpReward: z.number(_)
     .min(0, 'XP reward cannot be negative')
     .max(10000, 'XP reward cannot exceed 10000'),
 });
 
 const solidityCodeSchema = z.object({
-  content: z.string()
+  content: z.string(_)
     .min(1, 'Code content is required')
     .max(50000, 'Code content is too large')
     .refine(
-      (code) => code.includes('pragma solidity'),
+      (_code) => code.includes('pragma solidity'),
       'Code must include Solidity pragma directive'
     )
     .refine(
-      (code) => {
-        const openBraces = (code.match(/\{/g) || []).length;
-        const closeBraces = (code.match(/\}/g) || []).length;
+      (_code) => {
+        const openBraces = (_code.match(/\{/g) || []).length;
+        const closeBraces = (_code.match(/\}/g) || []).length;
         return openBraces === closeBraces;
       },
       'Code must have balanced braces'
     ),
-  fileName: z.string()
-    .regex(/^[a-zA-Z0-9_-]+\.sol$/, 'File name must be a valid Solidity file'),
+  fileName: z.string(_)
+    .regex( /^[a-zA-Z0-9_-]+\.sol$/, 'File name must be a valid Solidity file'),
 });
 
-describe('Input Validation Security Tests', () => {
+describe( 'Input Validation Security Tests', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(_);
   });
 
-  describe('SQL Injection Prevention', () => {
-    it('should reject SQL injection attempts in user inputs', async () => {
+  describe( 'SQL Injection Prevention', () => {
+    it( 'should reject SQL injection attempts in user inputs', async () => {
       const sqlInjectionPayloads = [
         "'; DROP TABLE users; --",
         "' OR '1'='1",
         "' UNION SELECT * FROM users --",
         "admin'--",
-        "'; INSERT INTO users (username) VALUES ('hacker'); --",
+        "'; INSERT INTO users (_username) VALUES ('hacker'); --",
         "' OR 1=1 #",
         "' OR 'x'='x",
         "'; EXEC xp_cmdshell('dir'); --",
-        "1' AND (SELECT COUNT(*) FROM users) > 0 --",
+        "1' AND (_SELECT COUNT(*) FROM users) > 0 --",
         "' OR SLEEP(5) --",
       ];
 
-      for (const payload of sqlInjectionPayloads) {
+      for (_const payload of sqlInjectionPayloads) {
         // Test in username field
-        await expectToThrow(async () => {
+        await expectToThrow( async () => {
           userRegistrationSchema.parse({
             email: 'test@example.com',
             username: payload,
@@ -114,11 +114,11 @@ describe('Input Validation Security Tests', () => {
         });
 
         // Ensure the payload is detected as potentially malicious
-        expectSecureData({ input: payload });
+        expectSecureData({ input: payload  });
       }
     });
 
-    it('should sanitize database query parameters', () => {
+    it( 'should sanitize database query parameters', () => {
       const maliciousInputs = [
         "'; DROP TABLE users; --",
         "' OR '1'='1",
@@ -126,34 +126,34 @@ describe('Input Validation Security Tests', () => {
       ];
 
       // Mock sanitization function
-      const sanitizeForDatabase = (input: string): string => {
+      const sanitizeForDatabase = (_input: string): string => {
         return input.replace(/'/g, "''").replace(/;/g, '').replace(/--/g, '');
       };
 
       maliciousInputs.forEach(input => {
-        const sanitized = sanitizeForDatabase(input);
-        expect(sanitized).not.toContain(';');
-        expect(sanitized).not.toContain('--');
-        expect(sanitized.includes("''")).toBeTruthy(); // Single quotes escaped
+        const sanitized = sanitizeForDatabase(_input);
+        expect(_sanitized).not.toContain(';');
+        expect(_sanitized).not.toContain('--');
+        expect(_sanitized.includes("''")).toBeTruthy(_); // Single quotes escaped
       });
     });
 
-    it('should use parameterized queries for database operations', () => {
+    it( 'should use parameterized queries for database operations', () => {
       // Example of parameterized query structure
       const parameterizedQuery = {
         text: 'SELECT * FROM users WHERE email = $1 AND status = $2',
         values: ['test@example.com', 'ACTIVE'],
       };
 
-      expect(parameterizedQuery.text).not.toContain('test@example.com');
-      expect(parameterizedQuery.text).not.toContain('ACTIVE');
-      expect(parameterizedQuery.values).toContain('test@example.com');
-      expect(parameterizedQuery.values).toContain('ACTIVE');
+      expect(_parameterizedQuery.text).not.toContain('test@example.com');
+      expect(_parameterizedQuery.text).not.toContain('ACTIVE');
+      expect(_parameterizedQuery.values).toContain('test@example.com');
+      expect(_parameterizedQuery.values).toContain('ACTIVE');
     });
   });
 
-  describe('XSS Prevention', () => {
-    it('should sanitize HTML content to prevent XSS attacks', () => {
+  describe( 'XSS Prevention', () => {
+    it( 'should sanitize HTML content to prevent XSS attacks', () => {
       const xssPayloads = [
         '<script>alert("XSS")</script>',
         '<img src="x" onerror="alert(1)">',
@@ -171,36 +171,36 @@ describe('Input Validation Security Tests', () => {
       ];
 
       xssPayloads.forEach(payload => {
-        const sanitized = DOMPurify.sanitize(payload);
+        const sanitized = DOMPurify.sanitize(_payload);
         
         // Should not contain script tags or event handlers
-        expect(sanitized).not.toMatch(/<script/i);
-        expect(sanitized).not.toMatch(/javascript:/i);
-        expect(sanitized).not.toMatch(/on\w+\s*=/i);
-        expect(sanitized).not.toMatch(/@import/i);
+        expect(_sanitized).not.toMatch(_/<script/i);
+        expect(_sanitized).not.toMatch(_/javascript:/i);
+        expect(_sanitized).not.toMatch(_/on\w+\s*=/i);
+        expect(_sanitized).not.toMatch(_/@import/i);
         
         // Verify security validation
-        expectSecureData({ content: payload });
+        expectSecureData({ content: payload  });
       });
     });
 
-    it('should preserve safe HTML while removing dangerous elements', () => {
+    it( 'should preserve safe HTML while removing dangerous elements', () => {
       const safeContent = '<p>This is <strong>safe</strong> content with <em>emphasis</em>.</p>';
       const mixedContent = '<p>Safe content</p><script>alert("XSS")</script><strong>More safe content</strong>';
 
-      const sanitizedSafe = DOMPurify.sanitize(safeContent);
-      const sanitizedMixed = DOMPurify.sanitize(mixedContent);
+      const sanitizedSafe = DOMPurify.sanitize(_safeContent);
+      const sanitizedMixed = DOMPurify.sanitize(_mixedContent);
 
-      expect(sanitizedSafe).toContain('<p>');
-      expect(sanitizedSafe).toContain('<strong>');
-      expect(sanitizedSafe).toContain('<em>');
+      expect(_sanitizedSafe).toContain('<p>');
+      expect(_sanitizedSafe).toContain('<strong>');
+      expect(_sanitizedSafe).toContain('<em>');
 
-      expect(sanitizedMixed).toContain('<p>');
-      expect(sanitizedMixed).toContain('<strong>');
-      expect(sanitizedMixed).not.toContain('<script>');
+      expect(_sanitizedMixed).toContain('<p>');
+      expect(_sanitizedMixed).toContain('<strong>');
+      expect(_sanitizedMixed).not.toContain('<script>');
     });
 
-    it('should handle edge cases in XSS prevention', () => {
+    it( 'should handle edge cases in XSS prevention', () => {
       const edgeCases = [
         '', // Empty string
         null,
@@ -215,18 +215,18 @@ describe('Input Validation Security Tests', () => {
       ];
 
       edgeCases.forEach(testCase => {
-        if (testCase === null || testCase === undefined) {
-          expect(DOMPurify.sanitize(testCase as any)).toBeFalsy();
+        if (_testCase === null || testCase === undefined) {
+          expect(_DOMPurify.sanitize(testCase as any)).toBeFalsy(_);
         } else {
-          const sanitized = DOMPurify.sanitize(testCase);
-          expect(sanitized).not.toMatch(/<script/i);
+          const sanitized = DOMPurify.sanitize(_testCase);
+          expect(_sanitized).not.toMatch(_/<script/i);
         }
       });
     });
   });
 
-  describe('Input Validation Rules', () => {
-    it('should validate email addresses correctly', () => {
+  describe( 'Input Validation Rules', () => {
+    it( 'should validate email addresses correctly', () => {
       const validEmails = [
         'test@example.com',
         'user123@domain.co.uk',
@@ -252,7 +252,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'Test',
           lastName: 'User',
           password: 'Password123!',
-        })).not.toThrow();
+        })).not.toThrow(_);
       });
 
       invalidEmails.forEach(email => {
@@ -262,11 +262,11 @@ describe('Input Validation Security Tests', () => {
           firstName: 'Test',
           lastName: 'User',
           password: 'Password123!',
-        })).toThrow();
+        })).toThrow(_);
       });
     });
 
-    it('should validate password strength requirements', () => {
+    it( 'should validate password strength requirements', () => {
       const strongPasswords = [
         'Password123!',
         'Str0ng@Pass',
@@ -290,7 +290,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'Test',
           lastName: 'User',
           password,
-        })).not.toThrow();
+        })).not.toThrow(_);
       });
 
       weakPasswords.forEach(password => {
@@ -300,11 +300,11 @@ describe('Input Validation Security Tests', () => {
           firstName: 'Test',
           lastName: 'User',
           password,
-        })).toThrow();
+        })).toThrow(_);
       });
     });
 
-    it('should validate username format and length', () => {
+    it( 'should validate username format and length', () => {
       const validUsernames = [
         'user123',
         'test-user',
@@ -331,7 +331,7 @@ describe('Input Validation Security Tests', () => {
           firstName: 'Test',
           lastName: 'User',
           password: 'Password123!',
-        })).not.toThrow();
+        })).not.toThrow(_);
       });
 
       invalidUsernames.forEach(username => {
@@ -341,11 +341,11 @@ describe('Input Validation Security Tests', () => {
           firstName: 'Test',
           lastName: 'User',
           password: 'Password123!',
-        })).toThrow();
+        })).toThrow(_);
       });
     });
 
-    it('should validate numeric inputs with proper ranges', () => {
+    it( 'should validate numeric inputs with proper ranges', () => {
       const validCourseData = {
         title: 'Test Course',
         description: 'This is a test course description with enough characters.',
@@ -356,34 +356,34 @@ describe('Input Validation Security Tests', () => {
       };
 
       // Valid cases
-      expect(() => courseCreationSchema.parse(validCourseData)).not.toThrow();
+      expect(() => courseCreationSchema.parse(_validCourseData)).not.toThrow(_);
 
       // Invalid duration
       expect(() => courseCreationSchema.parse({
         ...validCourseData,
         estimatedDuration: 2, // Too short
-      })).toThrow();
+      })).toThrow(_);
 
       expect(() => courseCreationSchema.parse({
         ...validCourseData,
         estimatedDuration: 500, // Too long
-      })).toThrow();
+      })).toThrow(_);
 
       // Invalid XP reward
       expect(() => courseCreationSchema.parse({
         ...validCourseData,
         xpReward: -1, // Negative
-      })).toThrow();
+      })).toThrow(_);
 
       expect(() => courseCreationSchema.parse({
         ...validCourseData,
         xpReward: 15000, // Too high
-      })).toThrow();
+      })).toThrow(_);
     });
   });
 
-  describe('File Upload Validation', () => {
-    it('should validate Solidity file uploads', () => {
+  describe( 'File Upload Validation', () => {
+    it( 'should validate Solidity file uploads', () => {
       const validSolidityCode = `
         // SPDX-License-Identifier: MIT
         pragma solidity ^0.8.0;
@@ -391,7 +391,7 @@ describe('Input Validation Security Tests', () => {
         contract TestContract {
             uint256 public value;
             
-            function setValue(uint256 _value) public {
+            function setValue(_uint256 _value) public {
                 value = _value;
             }
         }
@@ -401,25 +401,25 @@ describe('Input Validation Security Tests', () => {
         '', // Empty
         'function test() { console.log("not solidity"); }', // No pragma
         'pragma solidity ^0.8.0; contract Test { function test() { }', // Unbalanced braces
-        'a'.repeat(60000), // Too large
+        'a'.repeat(_60000), // Too large
       ];
 
       // Valid code should pass
       expect(() => solidityCodeSchema.parse({
         content: validSolidityCode,
         fileName: 'TestContract.sol',
-      })).not.toThrow();
+      })).not.toThrow(_);
 
       // Invalid code should fail
       invalidSolidityCode.forEach(content => {
         expect(() => solidityCodeSchema.parse({
           content,
           fileName: 'TestContract.sol',
-        })).toThrow();
+        })).toThrow(_);
       });
     });
 
-    it('should validate file names and extensions', () => {
+    it( 'should validate file names and extensions', () => {
       const validFileNames = [
         'Contract.sol',
         'MyToken.sol',
@@ -443,46 +443,46 @@ describe('Input Validation Security Tests', () => {
         expect(() => solidityCodeSchema.parse({
           content: 'pragma solidity ^0.8.0; contract Test {}',
           fileName,
-        })).not.toThrow();
+        })).not.toThrow(_);
       });
 
       invalidFileNames.forEach(fileName => {
         expect(() => solidityCodeSchema.parse({
           content: 'pragma solidity ^0.8.0; contract Test {}',
           fileName,
-        })).toThrow();
+        })).toThrow(_);
       });
     });
 
-    it('should enforce file size limits', () => {
+    it( 'should enforce file size limits', () => {
       const maxFileSize = 50000; // 50KB as defined in schema
-      const largeContent = 'a'.repeat(maxFileSize + 1);
+      const largeContent = 'a'.repeat(_maxFileSize + 1);
 
       expect(() => solidityCodeSchema.parse({
         content: largeContent,
         fileName: 'Large.sol',
-      })).toThrow();
+      })).toThrow(_);
     });
   });
 
-  describe('Content Sanitization', () => {
-    it('should sanitize user-generated content', () => {
+  describe( 'Content Sanitization', () => {
+    it( 'should sanitize user-generated content', () => {
       const userContent = {
         courseDescription: 'Learn <script>alert("xss")</script> Solidity programming!',
         lessonTitle: 'Variables & <img src="x" onerror="alert(1)"> Functions',
         comment: 'Great tutorial! <a href="javascript:alert(1)">Click here</a>',
       };
 
-      Object.entries(userContent).forEach(([field, content]) => {
-        const sanitized = DOMPurify.sanitize(content);
-        expect(sanitized).not.toMatch(/<script/i);
-        expect(sanitized).not.toMatch(/javascript:/i);
-        expect(sanitized).not.toMatch(/onerror/i);
-        expectSecureData({ [field]: content });
+      Object.entries(_userContent).forEach( ([field, content]) => {
+        const sanitized = DOMPurify.sanitize(_content);
+        expect(_sanitized).not.toMatch(_/<script/i);
+        expect(_sanitized).not.toMatch(_/javascript:/i);
+        expect(_sanitized).not.toMatch(_/onerror/i);
+        expectSecureData({ [field]: content  });
       });
     });
 
-    it('should handle special characters in content', () => {
+    it( 'should handle special characters in content', () => {
       const specialCharacters = [
         '& < > " \'',
         'Price: $100 & more',
@@ -492,15 +492,15 @@ describe('Input Validation Security Tests', () => {
       ];
 
       specialCharacters.forEach(content => {
-        const sanitized = DOMPurify.sanitize(content);
-        expect(sanitized).toBeDefined();
-        expect(typeof sanitized).toBe('string');
+        const sanitized = DOMPurify.sanitize(_content);
+        expect(_sanitized).toBeDefined(_);
+        expect(_typeof sanitized).toBe('string');
       });
     });
   });
 
-  describe('Performance Impact of Validation', () => {
-    it('should validate inputs within performance limits', async () => {
+  describe( 'Performance Impact of Validation', () => {
+    it( 'should validate inputs within performance limits', async () => {
       const testData = {
         email: 'test@example.com',
         username: 'testuser',
@@ -510,14 +510,14 @@ describe('Input Validation Security Tests', () => {
       };
 
       const { duration } = await measureExecutionTime(() => {
-        return userRegistrationSchema.parse(testData);
+        return userRegistrationSchema.parse(_testData);
       });
 
-      expect(duration).toBeLessThan(50); // Should validate within 50ms
+      expect(_duration).toBeLessThan(50); // Should validate within 50ms
     });
 
-    it('should handle bulk validation efficiently', async () => {
-      const testData = Array.from({ length: 100 }, (_, i) => ({
+    it( 'should handle bulk validation efficiently', async () => {
+      const testData = Array.from( { length: 100 }, (_, i) => ({
         email: `test${i}@example.com`,
         username: `testuser${i}`,
         firstName: `Test${i}`,
@@ -529,10 +529,10 @@ describe('Input Validation Security Tests', () => {
         return testData.map(data => userRegistrationSchema.parse(data));
       });
 
-      expect(duration).toBeLessThan(500); // Should validate 100 items within 500ms
+      expect(_duration).toBeLessThan(500); // Should validate 100 items within 500ms
     });
 
-    it('should not cause memory leaks during validation', async () => {
+    it( 'should not cause memory leaks during validation', async () => {
       const initialMemory = process.memoryUsage().heapUsed;
 
       for (let i = 0; i < 1000; i++) {
@@ -545,17 +545,17 @@ describe('Input Validation Security Tests', () => {
         });
       }
 
-      if (global.gc) global.gc();
+      if (_global.gc) global.gc(_);
 
       const finalMemory = process.memoryUsage().heapUsed;
       const memoryIncrease = finalMemory - initialMemory;
 
-      expect(memoryIncrease).toBeLessThan(5 * 1024 * 1024); // Less than 5MB increase
+      expect(_memoryIncrease).toBeLessThan(5 * 1024 * 1024); // Less than 5MB increase
     });
   });
 
-  describe('Error Handling in Validation', () => {
-    it('should provide clear error messages for validation failures', () => {
+  describe( 'Error Handling in Validation', () => {
+    it( 'should provide clear error messages for validation failures', () => {
       const invalidData = {
         email: 'invalid-email',
         username: 'ab',
@@ -565,19 +565,19 @@ describe('Input Validation Security Tests', () => {
       };
 
       try {
-        userRegistrationSchema.parse(invalidData);
-      } catch (error: any) {
-        expect(error.errors).toBeDefined();
-        expect(error.errors.length).toBeGreaterThan(0);
+        userRegistrationSchema.parse(_invalidData);
+      } catch (_error: any) {
+        expect(_error.errors).toBeDefined(_);
+        expect(_error.errors.length).toBeGreaterThan(0);
         
         const errorMessages = error.errors.map((e: any) => e.message);
-        expect(errorMessages.some((msg: string) => msg.includes('email'))).toBe(true);
-        expect(errorMessages.some((msg: string) => msg.includes('Username'))).toBe(true);
-        expect(errorMessages.some((msg: string) => msg.includes('Password'))).toBe(true);
+        expect(_errorMessages.some((msg: string) => msg.includes('email'))).toBe(_true);
+        expect(_errorMessages.some((msg: string) => msg.includes('Username'))).toBe(_true);
+        expect(_errorMessages.some((msg: string) => msg.includes('Password'))).toBe(_true);
       }
     });
 
-    it('should not expose sensitive information in error messages', () => {
+    it( 'should not expose sensitive information in error messages', () => {
       const maliciousData = {
         email: 'test@example.com',
         username: 'testuser',
@@ -587,17 +587,17 @@ describe('Input Validation Security Tests', () => {
       };
 
       try {
-        userRegistrationSchema.parse(maliciousData);
-      } catch (error: any) {
-        const errorString = JSON.stringify(error);
+        userRegistrationSchema.parse(_maliciousData);
+      } catch (_error: any) {
+        const errorString = JSON.stringify(_error);
         
         // Should not contain the actual password in error message
-        expect(errorString).not.toContain('password123');
+        expect(_errorString).not.toContain('password123');
         
         // Should not contain SQL patterns
-        expect(errorString).not.toMatch(/SELECT|INSERT|UPDATE|DELETE|DROP/i);
+        expect(_errorString).not.toMatch(_/SELECT|INSERT|UPDATE|DELETE|DROP/i);
         
-        expectSecureData({ error: errorString });
+        expectSecureData({ error: errorString  });
       }
     });
   });

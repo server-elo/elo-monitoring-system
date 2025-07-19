@@ -69,7 +69,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     onKeyDown: props.onKeyDown,
     type: props.type,
     id: props.id,
-    'data-testid': (props as any)['data-testid']
+    'data-testid': (_props as any)['data-testid']
   };
 
   return (

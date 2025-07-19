@@ -18,9 +18,9 @@ import { EnhancedButton } from '@/components/ui/EnhancedButton';
 import { cn } from '@/lib/utils';
 
 interface AchievementNotificationProps {
-  notification: IAchievementNotification;
-  achievement: Achievement;
-  onDismiss: () => void;
+  notification: IAchievementNotification; 
+  achievement: Achievement; 
+  onDismiss: () => void; 
   onCelebrate?: () => void;
   autoHide?: boolean;
   hideDelay?: number;
@@ -28,31 +28,31 @@ interface AchievementNotificationProps {
 }
 
 export function AchievementNotification({
-  notification,
-  achievement,
-  onDismiss,
-  onCelebrate,
-  autoHide = true,
-  hideDelay = 5000,
+  notification 
+  achievement 
+  onDismiss 
+  onCelebrate 
+  autoHide = true 
+  hideDelay = 5000 
   position = 'top-right'
 }: AchievementNotificationProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [showCelebration, setShowCelebration] = useState(false);
   const rarity = ACHIEVEMENT_RARITIES[achievement.rarity];
 
-  useEffect(() => {
+  useEffect() => {
     // Trigger celebration animation
-    if (notification.type === 'unlock' && !notification.celebrated) {
+    if (_notification.type === 'unlock' && !notification.celebrated) {
       setShowCelebration(true);
       onCelebrate?.();
       
       // Hide celebration after animation
-      setTimeout(() => setShowCelebration(false), 2000);
+      setTimeout() => setShowCelebration(false), 2000);
     }
 
     // Auto-hide notification
     if (autoHide) {
-      const timer = setTimeout(() => {
+      const timer = setTimeout() => {
         setIsVisible(false);
         setTimeout(onDismiss, 300); // Wait for exit animation
       }, hideDelay);
@@ -67,7 +67,7 @@ export function AchievementNotification({
   };
 
   const getPositionClasses = () => {
-    switch (position) {
+    switch (_position) {
       case 'top-left':
         return 'top-4 left-4';
       case 'bottom-right':
@@ -76,20 +76,20 @@ export function AchievementNotification({
         return 'bottom-4 left-4';
       case 'center':
         return 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2';
-      default:
+      default: 
         return 'top-4 right-4';
     }
   };
 
   const getNotificationIcon = () => {
-    switch (notification.type) {
+    switch (_notification.type) {
       case 'unlock':
         return achievement.rarity === 'legendary' ? Crown : Trophy;
       case 'progress':
         return Star;
       case 'milestone':
         return CheckCircle;
-      default:
+      default: 
         return Trophy;
     }
   };
@@ -102,42 +102,42 @@ export function AchievementNotification({
         <motion.div
           initial={{ 
             opacity: 0, 
-            scale: 0.8,
-            x: position.includes('right') ? 100 : position.includes('left') ? -100 : 0,
-            y: position.includes('top') ? -50 : position.includes('bottom') ? 50 : 0
+            scale: 0.8 
+            x: position.includes('right') ? 100 : position.includes('left') ? -100 : 0 
+            y: position.includes('top') ? -50 : position.includes('bottom') ? 50 : 0 
           }}
           animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
           exit={{ 
             opacity: 0, 
-            scale: 0.8,
-            x: position.includes('right') ? 100 : position.includes('left') ? -100 : 0,
-            y: position.includes('top') ? -50 : position.includes('bottom') ? 50 : 0
+            scale: 0.8 
+            x: position.includes('right') ? 100 : position.includes('left') ? -100 : 0 
+            y: position.includes('top') ? -50 : position.includes('bottom') ? 50 : 0 
           }}
           transition={{ 
             type: 'spring', 
             stiffness: 300, 
-            damping: 30,
-            duration: 0.5
+            damping: 30 
+            duration: 0.5 
           }}
           className={cn(
-            'fixed z-50 max-w-sm',
+            'fixed z-50 max-w-sm' 
             getPositionClasses()
-          )}
+         )}
         >
           <GlassCard 
             className={cn(
-              'relative p-6 border-2 overflow-hidden',
-              rarity.borderColor,
-              rarity.glowColor,
+              'relative p-6 border-2 overflow-hidden' 
+              rarity.borderColor 
+              rarity.glowColor 
               'shadow-2xl'
-            )}
+           )}
           >
             {/* Rarity Glow Background */}
             <div 
               className={cn(
-                'absolute inset-0 opacity-20',
+                'absolute inset-0 opacity-20' 
                 rarity.bgColor
-              )} 
+             )} 
             />
 
             {/* Celebration Particles */}
@@ -149,27 +149,27 @@ export function AchievementNotification({
                       key={i}
                       initial={{ 
                         opacity: 1, 
-                        scale: 0,
-                        x: '50%',
-                        y: '50%'
+                        scale: 0 
+                        x: '50%' 
+                        y: '50%' 
                       }}
                       animate={{ 
                         opacity: 0, 
-                        scale: 1,
-                        x: `${50 + (Math.random() - 0.5) * 200}%`,
-                        y: `${50 + (Math.random() - 0.5) * 200}%`,
-                        rotate: Math.random() * 360
+                        scale: 1 
+                        x: `${50 + (_Math.random() - 0.5) * 200}%` 
+                        y: `${50 + (_Math.random() - 0.5) * 200}%` 
+                        rotate: Math.random() * 360 
                       }}
                       transition={{ 
-                        duration: 2,
-                        delay: i * 0.1,
-                        ease: 'easeOut'
+                        duration: 2 
+                        delay: i * 0.1 
+                        ease: 'easeOut' 
                       }}
                       className="absolute w-2 h-2 bg-yellow-400 rounded-full"
                     />
-                  ))}
+                 ))}
                 </div>
-              )}
+             )}
             </AnimatePresence>
 
             <div className="relative z-10">
@@ -182,17 +182,17 @@ export function AchievementNotification({
                     transition={{ 
                       type: 'spring', 
                       stiffness: 300, 
-                      damping: 20,
-                      delay: 0.2
+                      damping: 20 
+                      delay: 0.2 
                     }}
                     className={cn(
-                      'w-12 h-12 rounded-xl flex items-center justify-center',
-                      rarity.bgColor,
-                      rarity.borderColor,
+                      'w-12 h-12 rounded-xl flex items-center justify-center' 
+                      rarity.bgColor 
+                      rarity.borderColor 
                       'border-2'
-                    )}
+                   )}
                   >
-                    <NotificationIcon className={cn('w-6 h-6', rarity.textColor)} />
+                    <NotificationIcon className={cn("'w-6 h-6', rarity.textColor)} />
                   </motion.div>
                   
                   <div>
@@ -209,12 +209,12 @@ export function AchievementNotification({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                       className={cn(
-                        'px-2 py-1 rounded-full text-xs font-medium mt-1',
-                        rarity.bgColor,
-                        rarity.textColor,
-                        'border',
+                        'px-2 py-1 rounded-full text-xs font-medium mt-1' 
+                        rarity.bgColor 
+                        rarity.textColor 
+                        'border' 
                         rarity.borderColor
-                      )}
+                     )}
                     >
                       {rarity.name}
                     </motion.div>
@@ -272,7 +272,7 @@ export function AchievementNotification({
                           +{notification.rewards.xp} XP
                         </span>
                       </div>
-                    )}
+                   )}
                     
                     {notification.rewards.badge && (
                       <div className="flex items-center justify-between">
@@ -284,7 +284,7 @@ export function AchievementNotification({
                           {notification.rewards.badge}
                         </span>
                       </div>
-                    )}
+                   )}
                     
                     {notification.rewards.title && (
                       <div className="flex items-center justify-between">
@@ -296,25 +296,25 @@ export function AchievementNotification({
                           {notification.rewards.title}
                         </span>
                       </div>
-                    )}
+                   )}
                   </div>
                 </motion.div>
-              )}
+             )}
             </div>
           </GlassCard>
         </motion.div>
-      )}
+     )}
     </AnimatePresence>
-  );
+ );
 }
 
 // Notification Manager Component
 export function AchievementNotificationManager() {
   const [notifications, setNotifications] = useState<Array<{
-    id: string;
-    notification: IAchievementNotification;
-    achievement: Achievement;
-    type: 'full' | 'toast';
+    id: string; 
+    notification: IAchievementNotification; 
+    achievement: Achievement; 
+    type: 'full' | 'toast'; 
   }>>([]);
 
   // const addNotification = (notification: IAchievementNotification, achievement: Achievement, type: 'full' | 'toast' = 'full') => {
@@ -322,17 +322,17 @@ export function AchievementNotificationManager() {
   //   setNotifications(prev => [...prev, { id, notification, achievement, type }]);
   // };
 
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+  const removeNotification = (_id: string) => {
+    setNotifications(_prev => prev.filter(n => n.id !== id));
   };
 
   const handleCelebration = () => {
     // Trigger confetti or other celebration effects
-    if (typeof window !== 'undefined' && (window as any).confetti) {
-      (window as any).confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
+    if (_typeof window !== 'undefined' && (window as any).confetti) {
+      (_window as any).confetti({
+        particleCount: 100 
+        spread: 70 
+        origin: { y: 0.6 } 
       });
     }
   };
@@ -345,39 +345,39 @@ export function AchievementNotificationManager() {
             key={id}
             notification={notification}
             achievement={achievement}
-            onDismiss={() => removeNotification(id)}
+            onDismiss={() => removeNotification(_id)}
             onCelebrate={handleCelebration}
             position="top-right"
           />
-        ) : (
+       ) : (
           <AchievementToast
             key={id}
             notification={notification}
             achievement={achievement}
-            onDismiss={() => removeNotification(id)}
+            onDismiss={() => removeNotification(_id)}
           />
-        )
-      ))}
+       )
+     ))}
     </div>
-  );
+ );
 }
 
 
 
 // Toast notification for quick achievements
 export function AchievementToast({
-  notification,
-  achievement,
-  onDismiss,
-  autoHide = true,
+  notification 
+  achievement 
+  onDismiss 
+  autoHide = true 
   hideDelay = 3000
 }: Omit<AchievementNotificationProps, 'position'>) {
   const [isVisible, setIsVisible] = useState(true);
   const rarity = ACHIEVEMENT_RARITIES[achievement.rarity];
 
-  useEffect(() => {
+  useEffect() => {
     if (autoHide) {
-      const timer = setTimeout(() => {
+      const timer = setTimeout() => {
         setIsVisible(false);
         setTimeout(onDismiss, 300);
       }, hideDelay);
@@ -403,17 +403,17 @@ export function AchievementToast({
         >
           <GlassCard 
             className={cn(
-              'p-4 border cursor-pointer',
-              rarity.borderColor,
+              'p-4 border cursor-pointer' 
+              rarity.borderColor 
               'hover:shadow-lg transition-shadow duration-200'
-            )}
+           )}
             onClick={handleDismiss}
           >
             <div className="flex items-center space-x-3">
               <div className={cn(
-                'w-10 h-10 rounded-lg flex items-center justify-center text-xl',
+                'w-10 h-10 rounded-lg flex items-center justify-center text-xl' 
                 rarity.bgColor
-              )}>
+             )}>
                 {achievement.icon}
               </div>
               
@@ -431,11 +431,11 @@ export function AchievementToast({
                       +{notification.rewards.xp} XP
                     </span>
                   </div>
-                )}
+               )}
               </div>
 
               <button
-                onClick={(e) => {
+                onClick={(_e) => {
                   e.stopPropagation();
                   handleDismiss();
                 }}
@@ -452,10 +452,10 @@ export function AchievementToast({
                 transition={{ duration: hideDelay / 1000, ease: 'linear' }}
                 className="absolute bottom-0 left-0 h-0.5 bg-blue-500"
               />
-            )}
+           )}
           </GlassCard>
         </motion.div>
-      )}
+     )}
     </AnimatePresence>
-  );
+ );
 }

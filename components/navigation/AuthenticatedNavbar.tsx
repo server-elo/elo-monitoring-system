@@ -22,11 +22,11 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { AuthModal } from '@/components/auth/AuthModal';
 import Link from 'next/link';
 
-export const AuthenticatedNavbar: React.FC = () => {
-  const { user, isAuthenticated, logout } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
+export const AuthenticatedNavbar: React.FC = (_) => {
+  const { user, isAuthenticated, logout } = useAuth(_);
+  const [showAuthModal, setShowAuthModal] = useState(_false);
+  const [showMobileMenu, setShowMobileMenu] = useState(_false);
+  const [showUserMenu, setShowUserMenu] = useState(_false);
 
   const navigationItems = [
     { name: 'Home', href: '/', icon: Home },
@@ -39,8 +39,8 @@ export const AuthenticatedNavbar: React.FC = () => {
   ];
 
   const handleLogout = async () => {
-    await logout();
-    setShowUserMenu(false);
+    await logout(_);
+    setShowUserMenu(_false);
   };
 
   return (
@@ -89,7 +89,7 @@ export const AuthenticatedNavbar: React.FC = () => {
               {isAuthenticated && user ? (
                 <div className="relative">
                   <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    onClick={(_) => setShowUserMenu(!showUserMenu)}
                     className="flex items-center space-x-2 p-2 rounded-lg hover:bg-white/10 transition-colors"
                   >
                     {user.image ? (
@@ -133,7 +133,7 @@ export const AuthenticatedNavbar: React.FC = () => {
                         <div className="p-2">
                           <Link
                             href="/profile"
-                            onClick={() => setShowUserMenu(false)}
+                            onClick={(_) => setShowUserMenu(_false)}
                             className="flex items-center space-x-2 w-full px-3 py-2 text-gray-300 hover:bg-white/10 rounded-lg transition-colors"
                           >
                             <User className="w-4 h-4" />
@@ -142,7 +142,7 @@ export const AuthenticatedNavbar: React.FC = () => {
                           
                           <Link
                             href="/settings"
-                            onClick={() => setShowUserMenu(false)}
+                            onClick={(_) => setShowUserMenu(_false)}
                             className="flex items-center space-x-2 w-full px-3 py-2 text-gray-300 hover:bg-white/10 rounded-lg transition-colors"
                           >
                             <Settings className="w-4 h-4" />
@@ -163,7 +163,7 @@ export const AuthenticatedNavbar: React.FC = () => {
                 </div>
               ) : (
                 <button
-                  onClick={() => setShowAuthModal(true)}
+                  onClick={(_) => setShowAuthModal(_true)}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
                 >
                   Sign In
@@ -172,7 +172,7 @@ export const AuthenticatedNavbar: React.FC = () => {
 
               {/* Mobile Menu Button */}
               <button
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                onClick={(_) => setShowMobileMenu(!showMobileMenu)}
                 className="md:hidden p-2 text-gray-400 hover:text-white transition-colors min-h-[44px] min-w-[44px] touch-manipulation"
                 aria-label={showMobileMenu ? 'Close menu' : 'Open menu'}
                 aria-expanded={showMobileMenu}
@@ -198,7 +198,7 @@ export const AuthenticatedNavbar: React.FC = () => {
                   <Link
                     key={item.name}
                     href={item.href}
-                    onClick={() => setShowMobileMenu(false)}
+                    onClick={(_) => setShowMobileMenu(_false)}
                     className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-white/10 rounded-lg transition-colors min-h-[44px] touch-manipulation active:bg-white/20"
                   >
                     <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -214,7 +214,7 @@ export const AuthenticatedNavbar: React.FC = () => {
       {/* Auth Modal */}
       <AuthModal
         isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
+        onClose={(_) => setShowAuthModal(_false)}
       />
     </>
   );

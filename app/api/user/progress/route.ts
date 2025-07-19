@@ -7,7 +7,7 @@ import { logger } from '@/lib/api/logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -18,18 +18,18 @@ export async function GET(_request: NextRequest) {
     // Get user profile with progress data
     const userProfile = await prisma.userProfile.findUnique({
       where: { userId: session.user.id },
-      include: {
-        user: {
-          include: {
-            progress: {
-              include: {
+      include: { 
+        user: { 
+          include: { 
+            progress: { 
+              include: { 
                 course: true,
                 module: true,
                 lesson: true,
               },
             },
-            achievements: {
-              include: {
+            achievements: { 
+              include: { 
                 achievement: true,
               },
             },
@@ -46,27 +46,27 @@ export async function GET(_request: NextRequest) {
     const totalProgress = userProfile.user.progress;
     const completedLessons = totalProgress.filter((p: any) => p.status === 'COMPLETED').length;
     const totalLessons = totalProgress.length;
-    const completionRate = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+    const completionRate = totalLessons > 0 ? (_completedLessons / totalLessons) * 100 : 0;
 
     // Get project statistics
     const projectStats = await prisma.projectSubmission.findMany({
       where: { userId: session.user.id },
-      select: {
+      select: { 
         status: true,
-        score: true
+        score: true 
       }
     });
 
     const completedProjects = projectStats.filter(p => p.status === 'APPROVED').length;
     
-    // Get challenge statistics (using PersonalizedChallenge model)
+    // Get challenge statistics (_using PersonalizedChallenge model)
     const challengeStats = await prisma.personalizedChallenge.findMany({
-      where: { 
+      where: {  
         userId: session.user.id,
-        isCompleted: true
+        isCompleted: true 
       },
-      select: {
-        bestScore: true
+      select: { 
+        bestScore: true 
       }
     });
 
@@ -74,33 +74,33 @@ export async function GET(_request: NextRequest) {
 
     // Get course progress
     const courseProgress = await prisma.course.findMany({
-      include: {
-        modules: {
-          include: {
+      include: { 
+        modules: { 
+          include: { 
             lessons: true,
           },
         },
-        progress: {
+        progress: { 
           where: { userId: session.user.id },
         },
       },
     });
 
     const progressData = {
-      profile: {
+      profile: { 
         totalXP: userProfile.totalXP,
         currentLevel: userProfile.currentLevel,
         streak: userProfile.streak,
       },
-      stats: {
+      stats: { 
         completionRate,
         completedLessons,
         totalLessons,
         completedProjects,
         challengesWon,
-        rank: Math.floor(userProfile.totalXP / 1000) + 1 // Simple ranking system
+        rank: Math.floor(userProfile.totalXP / 1000) + 1 // Simple ranking system 
       },
-      achievements: userProfile.user.achievements.map((ua: any) => ({
+      achievements: userProfile.user.achievements.map((ua: any) => ({ 
         id: ua.achievement.id,
         title: ua.achievement.title,
         description: ua.achievement.description,
@@ -108,7 +108,7 @@ export async function GET(_request: NextRequest) {
         unlockedAt: ua.unlockedAt,
         isCompleted: ua.isCompleted,
       })),
-      courses: courseProgress.map((course: any) => ({
+      courses: courseProgress.map((course: any) => ({ 
         id: course.id,
         title: course.title,
         description: course.description,
@@ -116,7 +116,7 @@ export async function GET(_request: NextRequest) {
         totalModules: course.modules.length,
         totalLessons: course.modules.reduce((acc: any, module: any) => acc + module.lessons.length, 0),
         completedLessons: course.progress.filter((p: any) => p.status === 'COMPLETED').length,
-        progress: course.progress.length > 0
+        progress: course.progress.length > 0 
           ? (course.progress.filter((p: any) => p.status === 'COMPLETED').length / course.progress.length) * 100
           : 0,
       })),
@@ -124,16 +124,16 @@ export async function GET(_request: NextRequest) {
 
     return NextResponse.json(progressData);
   } catch (error) {
-    logger.error('Error fetching user progress', {
+    logger.error('Error fetching user progress', { metadata: {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      operation: 'get-user-progress'
+      operation: 'get-user-progress' 
     }, error instanceof Error ? error : undefined);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -141,7 +141,7 @@ export async function POST(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, progress, type = 'lesson' } = await _request.json();
+    const { id, progress, type = 'lesson' } = await request.json();
 
     if (!id || progress === undefined) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -149,21 +149,21 @@ export async function POST(_request: NextRequest) {
 
     // Update or create progress record
     const progressRecord = await prisma.userProgress.upsert({
-      where: {
-        userId_courseId_moduleId_lessonId: {
+      where: { 
+        userIdcourseId_moduleId_lessonId: { 
           userId: session.user.id,
           courseId: type === 'course' ? id : null,
           moduleId: type === 'module' ? id : null,
           lessonId: type === 'lesson' ? id : null,
         },
       },
-      update: {
+      update: { 
         status: progress >= 100 ? 'COMPLETED' : progress > 0 ? 'IN_PROGRESS' : 'NOT_STARTED',
         score: progress,
         completedAt: progress >= 100 ? new Date() : null,
         updatedAt: new Date(),
       },
-      create: {
+      create: { 
         userId: session.user.id,
         courseId: type === 'course' ? id : null,
         moduleId: type === 'module' ? id : null,
@@ -194,7 +194,7 @@ export async function POST(_request: NextRequest) {
 
         await prisma.userProfile.update({
           where: { userId: session.user.id },
-          data: {
+          data: { 
             streak: newStreak,
             lastActiveDate: today,
           },
@@ -204,10 +204,10 @@ export async function POST(_request: NextRequest) {
 
     return NextResponse.json({ success: true, progress: progressRecord });
   } catch (error) {
-    logger.error('Error updating progress', {
+    logger.error('Error updating progress', { metadata: {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      operation: 'update-user-progress'
+      operation: 'update-user-progress' 
     }, error instanceof Error ? error : undefined);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

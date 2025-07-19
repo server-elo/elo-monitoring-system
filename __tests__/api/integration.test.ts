@@ -19,10 +19,10 @@ interface TestContext {
   studentUser: TestUser;
 }
 
-describe('API Integration Tests', () => {
+describe( 'API Integration Tests', () => {
   let context: TestContext;
 
-  beforeAll(async () => {
+  beforeAll( async () => {
     // Setup test users
     context = {
       adminUser: {
@@ -43,21 +43,21 @@ describe('API Integration Tests', () => {
     };
 
     // Register and authenticate test users
-    await setupTestUsers(context);
+    await setupTestUsers(_context);
   });
 
-  afterAll(async () => {
+  afterAll( async () => {
     // Cleanup test data
-    await cleanupTestData(context);
+    await cleanupTestData(_context);
   });
 
-  beforeEach(async () => {
+  beforeEach( async () => {
     // Refresh tokens if needed
-    await refreshTokensIfNeeded(context);
+    await refreshTokensIfNeeded(_context);
   });
 
-  describe('Authentication Flow', () => {
-    it('should complete full authentication flow', async () => {
+  describe( 'Authentication Flow', () => {
+    it( 'should complete full authentication flow', async () => {
       const testEmail = 'flowtest@example.com';
       const testPassword = 'FlowTestPassword123!';
       const testName = 'Flow Test User';
@@ -77,11 +77,11 @@ describe('API Integration Tests', () => {
         })
       });
 
-      expect(registerResponse.status).toBe(201);
-      const registerData = await registerResponse.json();
-      expect(registerData.success).toBe(true);
-      expect(registerData.data.user.email).toBe(testEmail);
-      expect(registerData.data.tokens.accessToken).toBeTruthy();
+      expect(_registerResponse.status).toBe(_201);
+      const registerData = await registerResponse.json(_);
+      expect(_registerData.success).toBe(_true);
+      expect(_registerData.data.user.email).toBe(_testEmail);
+      expect(_registerData.data.tokens.accessToken).toBeTruthy(_);
 
       const { accessToken, refreshToken } = registerData.data.tokens;
 
@@ -92,9 +92,9 @@ describe('API Integration Tests', () => {
         }
       });
 
-      expect(profileResponse.status).toBe(200);
-      const profileData = await profileResponse.json();
-      expect(profileData.data.email).toBe(testEmail);
+      expect(_profileResponse.status).toBe(200);
+      const profileData = await profileResponse.json(_);
+      expect(_profileData.data.email).toBe(_testEmail);
 
       // 3. Refresh token
       const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
@@ -107,10 +107,10 @@ describe('API Integration Tests', () => {
         })
       });
 
-      expect(refreshResponse.status).toBe(200);
-      const refreshData = await refreshResponse.json();
-      expect(refreshData.data.tokens.accessToken).toBeTruthy();
-      expect(refreshData.data.tokens.accessToken).not.toBe(accessToken);
+      expect(_refreshResponse.status).toBe(200);
+      const refreshData = await refreshResponse.json(_);
+      expect(_refreshData.data.tokens.accessToken).toBeTruthy(_);
+      expect(_refreshData.data.tokens.accessToken).not.toBe(_accessToken);
 
       // 4. Login with credentials
       const loginResponse = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -124,14 +124,14 @@ describe('API Integration Tests', () => {
         })
       });
 
-      expect(loginResponse.status).toBe(200);
-      const loginData = await loginResponse.json();
-      expect(loginData.data.user.email).toBe(testEmail);
+      expect(_loginResponse.status).toBe(200);
+      const loginData = await loginResponse.json(_);
+      expect(_loginData.data.user.email).toBe(_testEmail);
     });
   });
 
-  describe('User Management Flow', () => {
-    it('should handle complete user lifecycle', async () => {
+  describe( 'User Management Flow', () => {
+    it( 'should handle complete user lifecycle', async () => {
       // 1. Admin creates a new user
       const newUserData = {
         email: 'lifecycle@example.com',
@@ -146,11 +146,11 @@ describe('API Integration Tests', () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${context.adminUser.accessToken}`
         },
-        body: JSON.stringify(newUserData)
+        body: JSON.stringify(_newUserData)
       });
 
-      expect(createResponse.status).toBe(201);
-      const createData = await createResponse.json();
+      expect(_createResponse.status).toBe(_201);
+      const createData = await createResponse.json(_);
       const userId = createData.data.id;
 
       // 2. Retrieve user details
@@ -160,9 +160,9 @@ describe('API Integration Tests', () => {
         }
       });
 
-      expect(getUserResponse.status).toBe(200);
-      const userData = await getUserResponse.json();
-      expect(userData.data.email).toBe(newUserData.email);
+      expect(_getUserResponse.status).toBe(200);
+      const userData = await getUserResponse.json(_);
+      expect(_userData.data.email).toBe(_newUserData.email);
 
       // 3. Update user information
       const updateData = {
@@ -176,25 +176,25 @@ describe('API Integration Tests', () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${context.adminUser.accessToken}`
         },
-        body: JSON.stringify(updateData)
+        body: JSON.stringify(_updateData)
       });
 
-      expect(updateResponse.status).toBe(200);
-      const updatedData = await updateResponse.json();
-      expect(updatedData.data.name).toBe(updateData.name);
-      expect(updatedData.data.role).toBe(updateData.role);
+      expect(_updateResponse.status).toBe(200);
+      const updatedData = await updateResponse.json(_);
+      expect(_updatedData.data.name).toBe(_updateData.name);
+      expect(_updatedData.data.role).toBe(_updateData.role);
 
-      // 4. List users (should include new user)
+      // 4. List users (_should include new user)
       const listResponse = await fetch(`${API_BASE_URL}/users?search=${newUserData.email}`, {
         headers: {
           'Authorization': `Bearer ${context.adminUser.accessToken}`
         }
       });
 
-      expect(listResponse.status).toBe(200);
-      const listData = await listResponse.json();
-      expect(listData.data.length).toBeGreaterThan(0);
-      expect(listData.data.some((user: any) => user.id === userId)).toBe(true);
+      expect(_listResponse.status).toBe(200);
+      const listData = await listResponse.json(_);
+      expect(_listData.data.length).toBeGreaterThan(0);
+      expect(_listData.data.some((user: any) => user.id === userId)).toBe(_true);
 
       // 5. Delete user
       const deleteResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
@@ -204,7 +204,7 @@ describe('API Integration Tests', () => {
         }
       });
 
-      expect(deleteResponse.status).toBe(204);
+      expect(_deleteResponse.status).toBe(_204);
 
       // 6. Verify user is deleted
       const verifyDeleteResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
@@ -213,12 +213,12 @@ describe('API Integration Tests', () => {
         }
       });
 
-      expect(verifyDeleteResponse.status).toBe(404);
+      expect(_verifyDeleteResponse.status).toBe(_404);
     });
   });
 
-  describe('Lesson Management Flow', () => {
-    it('should handle lesson creation and management', async () => {
+  describe( 'Lesson Management Flow', () => {
+    it( 'should handle lesson creation and management', async () => {
       // 1. Instructor creates a lesson
       const lessonData = {
         title: 'Integration Test Lesson',
@@ -230,7 +230,7 @@ describe('API Integration Tests', () => {
         xpReward: 100,
         prerequisites: [],
         tags: ['test', 'integration'],
-        courseId: 'course_1'
+        courseId: 'course1'
       };
 
       const createLessonResponse = await fetch(`${API_BASE_URL}/lessons`, {
@@ -239,11 +239,11 @@ describe('API Integration Tests', () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${context.instructorUser.accessToken}`
         },
-        body: JSON.stringify(lessonData)
+        body: JSON.stringify(_lessonData)
       });
 
-      expect(createLessonResponse.status).toBe(201);
-      const lessonCreateData = await createLessonResponse.json();
+      expect(_createLessonResponse.status).toBe(_201);
+      const lessonCreateData = await createLessonResponse.json(_);
       const lessonId = lessonCreateData.data.id;
 
       // 2. Student retrieves lessons list
@@ -253,9 +253,9 @@ describe('API Integration Tests', () => {
         }
       });
 
-      expect(lessonsResponse.status).toBe(200);
-      const lessonsData = await lessonsResponse.json();
-      expect(Array.isArray(lessonsData.data)).toBe(true);
+      expect(_lessonsResponse.status).toBe(200);
+      const lessonsData = await lessonsResponse.json(_);
+      expect(_Array.isArray(lessonsData.data)).toBe(_true);
 
       // 3. Student searches for specific lesson
       const searchResponse = await fetch(`${API_BASE_URL}/lessons?search=Integration Test`, {
@@ -264,9 +264,9 @@ describe('API Integration Tests', () => {
         }
       });
 
-      expect(searchResponse.status).toBe(200);
-      const searchData = await searchResponse.json();
-      expect(searchData.data.some((lesson: any) => lesson.id === lessonId)).toBe(true);
+      expect(_searchResponse.status).toBe(200);
+      const searchData = await searchResponse.json(_);
+      expect(_searchData.data.some((lesson: any) => lesson.id === lessonId)).toBe(_true);
 
       // 4. Filter lessons by difficulty
       const filterResponse = await fetch(`${API_BASE_URL}/lessons?difficulty=BEGINNER`, {
@@ -275,15 +275,15 @@ describe('API Integration Tests', () => {
         }
       });
 
-      expect(filterResponse.status).toBe(200);
-      const filterData = await filterResponse.json();
-      expect(filterData.data.every((lesson: any) => lesson.difficulty === 'BEGINNER')).toBe(true);
+      expect(_filterResponse.status).toBe(200);
+      const filterData = await filterResponse.json(_);
+      expect(_filterData.data.every((lesson: any) => lesson.difficulty === 'BEGINNER')).toBe(_true);
     });
   });
 
-  describe('Permission and Authorization Tests', () => {
-    it('should enforce role-based access control', async () => {
-      // 1. Student tries to create a lesson (should fail)
+  describe( 'Permission and Authorization Tests', () => {
+    it( 'should enforce role-based access control', async () => {
+      // 1. Student tries to create a lesson (_should fail)
       const lessonData = {
         title: 'Unauthorized Lesson',
         description: 'This should not be created',
@@ -292,7 +292,7 @@ describe('API Integration Tests', () => {
         difficulty: 'BEGINNER',
         estimatedDuration: 30,
         xpReward: 100,
-        courseId: 'course_1'
+        courseId: 'course1'
       };
 
       const unauthorizedCreateResponse = await fetch(`${API_BASE_URL}/lessons`, {
@@ -301,28 +301,28 @@ describe('API Integration Tests', () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${context.studentUser.accessToken}`
         },
-        body: JSON.stringify(lessonData)
+        body: JSON.stringify(_lessonData)
       });
 
-      expect(unauthorizedCreateResponse.status).toBe(403);
+      expect(_unauthorizedCreateResponse.status).toBe(_403);
 
-      // 2. Student tries to access admin endpoint (should fail)
+      // 2. Student tries to access admin endpoint (_should fail)
       const adminEndpointResponse = await fetch(`${API_BASE_URL}/users`, {
         headers: {
           'Authorization': `Bearer ${context.studentUser.accessToken}`
         }
       });
 
-      expect(adminEndpointResponse.status).toBe(403);
+      expect(_adminEndpointResponse.status).toBe(_403);
 
-      // 3. Instructor tries to access admin endpoint (should fail)
+      // 3. Instructor tries to access admin endpoint (_should fail)
       const instructorAdminResponse = await fetch(`${API_BASE_URL}/users`, {
         headers: {
           'Authorization': `Bearer ${context.instructorUser.accessToken}`
         }
       });
 
-      expect(instructorAdminResponse.status).toBe(403);
+      expect(_instructorAdminResponse.status).toBe(_403);
 
       // 4. Admin can access all endpoints
       const adminUsersResponse = await fetch(`${API_BASE_URL}/users`, {
@@ -331,10 +331,10 @@ describe('API Integration Tests', () => {
         }
       });
 
-      expect(adminUsersResponse.status).toBe(200);
+      expect(_adminUsersResponse.status).toBe(200);
     });
 
-    it('should handle token expiration and refresh', async () => {
+    it( 'should handle token expiration and refresh', async () => {
       // This test would require manipulating token expiration times
       // For now, we'll test the refresh mechanism
       const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
@@ -347,14 +347,14 @@ describe('API Integration Tests', () => {
         })
       });
 
-      expect(refreshResponse.status).toBe(200);
-      const refreshData = await refreshResponse.json();
-      expect(refreshData.data.tokens.accessToken).toBeTruthy();
+      expect(_refreshResponse.status).toBe(200);
+      const refreshData = await refreshResponse.json(_);
+      expect(_refreshData.data.tokens.accessToken).toBeTruthy(_);
     });
   });
 
-  describe('Rate Limiting Tests', () => {
-    it('should enforce rate limits on authentication endpoints', async () => {
+  describe( 'Rate Limiting Tests', () => {
+    it( 'should enforce rate limits on authentication endpoints', async () => {
       const requests = [];
       
       // Make multiple rapid requests to trigger rate limit
@@ -373,33 +373,33 @@ describe('API Integration Tests', () => {
         );
       }
 
-      const responses = await Promise.all(requests);
+      const responses = await Promise.all(_requests);
       const rateLimitedResponses = responses.filter(r => r.status === 429);
       
-      expect(rateLimitedResponses.length).toBeGreaterThan(0);
+      expect(_rateLimitedResponses.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Health Check Tests', () => {
-    it('should return system health status', async () => {
-      const healthResponse = await fetch(`${API_BASE_URL}/health`);
+  describe( 'Health Check Tests', () => {
+    it( 'should return system health status', async () => {
+      const healthResponse = await fetch(_`${API_BASE_URL}/health`);
       
-      expect(healthResponse.status).toBe(200);
-      const healthData = await healthResponse.json();
+      expect(_healthResponse.status).toBe(200);
+      const healthData = await healthResponse.json(_);
       
-      expect(healthData.data.status).toMatch(/^(healthy|degraded|unhealthy)$/);
-      expect(healthData.data.services).toBeDefined();
-      expect(healthData.data.services.database).toBeDefined();
-      expect(healthData.data.uptime).toBeGreaterThan(0);
-      expect(healthData.data.version).toBeTruthy();
+      expect(_healthData.data.status).toMatch(_/^(healthy|degraded|unhealthy)$/);
+      expect(_healthData.data.services).toBeDefined(_);
+      expect(_healthData.data.services.database).toBeDefined(_);
+      expect(_healthData.data.uptime).toBeGreaterThan(0);
+      expect(_healthData.data.version).toBeTruthy(_);
     });
   });
 });
 
 // Helper functions
-async function setupTestUsers(context: TestContext): Promise<void> {
+async function setupTestUsers(_context: TestContext): Promise<void> {
   // Register and authenticate each test user
-  for (const [role, user] of Object.entries(context)) {
+  for ( const [role, user] of Object.entries(context)) {
     try {
       // Try to register the user
       const registerResponse = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -416,8 +416,8 @@ async function setupTestUsers(context: TestContext): Promise<void> {
         })
       });
 
-      if (registerResponse.status === 201) {
-        const registerData = await registerResponse.json();
+      if (_registerResponse.status === 201) {
+        const registerData = await registerResponse.json(_);
         user.id = registerData.data.user.id;
         user.accessToken = registerData.data.tokens.accessToken;
         user.refreshToken = registerData.data.tokens.refreshToken;
@@ -434,23 +434,23 @@ async function setupTestUsers(context: TestContext): Promise<void> {
           })
         });
 
-        if (loginResponse.status === 200) {
-          const loginData = await loginResponse.json();
+        if (_loginResponse.status === 200) {
+          const loginData = await loginResponse.json(_);
           user.id = loginData.data.user.id;
           user.accessToken = loginData.data.tokens.accessToken;
           user.refreshToken = loginData.data.tokens.refreshToken;
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.error(`Failed to setup test user ${role}:`, error);
     }
   }
 }
 
-async function refreshTokensIfNeeded(context: TestContext): Promise<void> {
+async function refreshTokensIfNeeded(_context: TestContext): Promise<void> {
   // Check if tokens need refreshing and refresh them
-  for (const user of Object.values(context)) {
-    if (user.refreshToken) {
+  for (_const user of Object.values(context)) {
+    if (_user.refreshToken) {
       try {
         const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
           method: 'POST',
@@ -462,19 +462,19 @@ async function refreshTokensIfNeeded(context: TestContext): Promise<void> {
           })
         });
 
-        if (refreshResponse.status === 200) {
-          const refreshData = await refreshResponse.json();
+        if (_refreshResponse.status === 200) {
+          const refreshData = await refreshResponse.json(_);
           user.accessToken = refreshData.data.tokens.accessToken;
           user.refreshToken = refreshData.data.tokens.refreshToken;
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to refresh token:', error);
       }
     }
   }
 }
 
-async function cleanupTestData(context: TestContext): Promise<void> {
+async function cleanupTestData(_context: TestContext): Promise<void> {
   // Clean up test data if needed
   // This would typically involve deleting test users and data
   console.log('Cleaning up test data...');

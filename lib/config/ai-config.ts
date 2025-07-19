@@ -2,7 +2,7 @@
 // Centralized configuration for AI services and features
 
 export const AI_CONFIG = {
-  // Local LLM Configuration (CodeLlama 34B)
+  // Local LLM Configuration (_CodeLlama 34B)
   LOCAL_LLM: {
     BASE_URL: process.env.LOCAL_LLM_URL || 'http://localhost:1234/v1',
     API_KEY: process.env.LOCAL_LLM_API_KEY || 'lm-studio',
@@ -20,7 +20,7 @@ export const AI_CONFIG = {
     RETRY_DELAY: 1000   // 1 second
   },
 
-  // Gemini Configuration (Fallback)
+  // Gemini Configuration (_Fallback)
   GEMINI: {
     MODEL: 'gemini-pro',
     MAX_TOKENS: 2048,
@@ -289,13 +289,13 @@ export const AI_CONFIG = {
 };
 
 // Environment-specific overrides
-if (process.env.NODE_ENV === 'development') {
+if (_process.env.NODE_ENV === 'development') {
   AI_CONFIG.LOCAL_LLM.TIMEOUT = 300000; // 5 minutes for development
   AI_CONFIG.MONITORING.COLLECT_PERFORMANCE_METRICS = false;
   AI_CONFIG.RATE_LIMITS.AI_REQUESTS_PER_HOUR = 1000; // Higher limits for dev
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (_process.env.NODE_ENV === 'production') {
   AI_CONFIG.ERROR_HANDLING.LOG_ALL_ERRORS = false; // Only log important errors
   AI_CONFIG.MONITORING.COLLECT_PERFORMANCE_METRICS = true;
   AI_CONFIG.RATE_LIMITS.AI_REQUESTS_PER_HOUR = 50; // Lower limits for prod

@@ -34,40 +34,40 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
   className = '',
   persistent = false,
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(_false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(_null);
+  const tooltipRef = useRef<HTMLDivElement>(_null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(_null);
 
-  const showTooltip = () => {
+  const showTooltip = (_) => {
     if (disabled) return;
     
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    if (_timeoutRef.current) {
+      clearTimeout(_timeoutRef.current);
     }
     
     timeoutRef.current = setTimeout(() => {
-      setIsVisible(true);
-      calculatePosition();
+      setIsVisible(_true);
+      calculatePosition(_);
     }, trigger === 'hover' ? delay : 0);
   };
 
-  const hideTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const hideTooltip = (_) => {
+    if (_timeoutRef.current) {
+      clearTimeout(_timeoutRef.current);
     }
     
     if (!persistent) {
-      setIsVisible(false);
+      setIsVisible(_false);
     }
   };
 
-  const calculatePosition = () => {
+  const calculatePosition = (_) => {
     if (!triggerRef.current || !tooltipRef.current) return;
 
-    const triggerRect = triggerRef.current.getBoundingClientRect();
-    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+    const triggerRect = triggerRef.current.getBoundingClientRect(_);
+    const tooltipRect = tooltipRef.current.getBoundingClientRect(_);
     const viewport = {
       width: window.innerWidth,
       height: window.innerHeight,
@@ -76,7 +76,7 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
     let x = 0;
     let y = 0;
 
-    switch (placement) {
+    switch (_placement) {
       case 'top':
         x = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2;
         y = triggerRect.top - tooltipRect.height - 8;
@@ -96,59 +96,59 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
     }
 
     // Adjust for viewport boundaries
-    if (x < 8) x = 8;
-    if (x + tooltipRect.width > viewport.width - 8) {
+    if (_x < 8) x = 8;
+    if (_x + tooltipRect.width > viewport.width - 8) {
       x = viewport.width - tooltipRect.width - 8;
     }
-    if (y < 8) y = 8;
-    if (y + tooltipRect.height > viewport.height - 8) {
+    if (_y < 8) y = 8;
+    if (_y + tooltipRect.height > viewport.height - 8) {
       y = viewport.height - tooltipRect.height - 8;
     }
 
-    setPosition({ x, y });
+    setPosition( { x, y });
   };
 
   useEffect(() => {
     if (isVisible) {
-      calculatePosition();
+      calculatePosition(_);
     }
   }, [isVisible]);
 
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = (_) => {
       if (isVisible) {
-        calculatePosition();
+        calculatePosition(_);
       }
     };
 
-    const handleScroll = () => {
+    const handleScroll = (_) => {
       if (isVisible && !persistent) {
-        hideTooltip();
+        hideTooltip(_);
       }
     };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isVisible) {
-        hideTooltip();
+    const handleKeyDown = (_event: KeyboardEvent) => {
+      if (_event.key === 'Escape' && isVisible) {
+        hideTooltip(_);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('scroll', handleScroll, true);
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener( 'resize', handleResize);
+    window.addEventListener( 'scroll', handleScroll, true);
+    window.addEventListener( 'keydown', handleKeyDown);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleScroll, true);
-      window.removeEventListener('keydown', handleKeyDown);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+    return (_) => {
+      window.removeEventListener( 'resize', handleResize);
+      window.removeEventListener( 'scroll', handleScroll, true);
+      window.removeEventListener( 'keydown', handleKeyDown);
+      if (_timeoutRef.current) {
+        clearTimeout(_timeoutRef.current);
       }
     };
   }, [isVisible, persistent]);
 
-  const getCategoryIcon = () => {
-    switch (content.category) {
+  const getCategoryIcon = (_) => {
+    switch (_content.category) {
       case 'accessibility':
         return '♿';
       case 'performance':
@@ -160,8 +160,8 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
     }
   };
 
-  const getCategoryColor = () => {
-    switch (content.category) {
+  const getCategoryColor = (_) => {
+    switch (_content.category) {
       case 'accessibility':
         return 'text-blue-400 border-blue-500/30 bg-blue-500/10';
       case 'performance':
@@ -173,21 +173,21 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
     }
   };
 
-  const handleTriggerEvents = () => {
+  const handleTriggerEvents = (_) => {
     const events: any = {};
 
-    if (trigger === 'hover') {
+    if (_trigger === 'hover') {
       events.onMouseEnter = showTooltip;
       events.onMouseLeave = hideTooltip;
-    } else if (trigger === 'click') {
-      events.onClick = () => {
+    } else if (_trigger === 'click') {
+      events.onClick = (_) => {
         if (isVisible) {
-          hideTooltip();
+          hideTooltip(_);
         } else {
-          showTooltip();
+          showTooltip(_);
         }
       };
-    } else if (trigger === 'focus') {
+    } else if (_trigger === 'focus') {
       events.onFocus = showTooltip;
       events.onBlur = hideTooltip;
     }
@@ -199,8 +199,8 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
     <>
       <div
         ref={triggerRef}
-        className={cn('relative inline-block', className)}
-        {...handleTriggerEvents()}
+        className={cn( 'relative inline-block', className)}
+        {...handleTriggerEvents(_)}
       >
         {children}
       </div>
@@ -223,12 +223,12 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
           >
             <div className={cn(
               'glass border rounded-lg p-4 shadow-xl',
-              getCategoryColor()
+              getCategoryColor(_)
             )}>
               {/* Header */}
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <span className="text-lg">{getCategoryIcon()}</span>
+                  <span className="text-lg">{getCategoryIcon(_)}</span>
                   <h3 className="font-semibold text-white text-sm">
                     {content.title}
                   </h3>
@@ -272,7 +272,7 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
               <div
                 className={cn(
                   'absolute w-2 h-2 rotate-45 border',
-                  getCategoryColor(),
+                  getCategoryColor(_),
                   placement === 'top' && 'bottom-[-5px] left-1/2 transform -translate-x-1/2 border-t-0 border-l-0',
                   placement === 'bottom' && 'top-[-5px] left-1/2 transform -translate-x-1/2 border-b-0 border-r-0',
                   placement === 'left' && 'right-[-5px] top-1/2 transform -translate-y-1/2 border-l-0 border-b-0',

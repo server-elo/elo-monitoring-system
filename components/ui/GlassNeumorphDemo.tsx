@@ -16,10 +16,10 @@ import {
   NeumorphicProgress 
 } from './Neumorphism';
 
-const GlassNeumorphDemo: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [toggleValue, setToggleValue] = useState(false);
-  const [progressValue, setProgressValue] = useState(65);
+const GlassNeumorphDemo: React.FC = (_) => {
+  const [isModalOpen, setIsModalOpen] = useState(_false);
+  const [toggleValue, setToggleValue] = useState(_false);
+  const [progressValue, setProgressValue] = useState(_65);
   const [inputValue, setInputValue] = useState('');
 
   return (
@@ -90,7 +90,7 @@ const GlassNeumorphDemo: React.FC = () => {
               <GlassButton 
                 variant="secondary" 
                 size="sm"
-                onClick={() => setIsModalOpen(true)}
+                onClick={(_) => setIsModalOpen(_true)}
               >
                 Open Modal
               </GlassButton>
@@ -110,7 +110,7 @@ const GlassNeumorphDemo: React.FC = () => {
                 type="email"
                 placeholder="Enter your email"
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={(_e) => setInputValue(_e.target.value)}
               />
               <GlassInput
                 label="Password"
@@ -137,7 +137,7 @@ const GlassNeumorphDemo: React.FC = () => {
               header={<h3 className="text-xl font-semibold text-gray-800">Soft Card</h3>}
               hover={true}
               clickable={true}
-              onClick={() => console.log('Card clicked')}
+              onClick={(_) => console.log('Card clicked')}
             >
               <p className="text-gray-600 mb-4">
                 This neumorphic card has a soft, extruded appearance with tactile shadows.
@@ -165,13 +165,13 @@ const GlassNeumorphDemo: React.FC = () => {
                 <div className="flex gap-2">
                   <NeumorphicButton 
                     size="sm" 
-                    onClick={() => setProgressValue(Math.max(0, progressValue - 10))}
+                    onClick={(_) => setProgressValue( Math.max(0, progressValue - 10))}
                   >
                     -
                   </NeumorphicButton>
                   <NeumorphicButton 
                     size="sm" 
-                    onClick={() => setProgressValue(Math.min(100, progressValue + 10))}
+                    onClick={(_) => setProgressValue( Math.min(100, progressValue + 10))}
                   >
                     +
                   </NeumorphicButton>
@@ -287,7 +287,7 @@ const GlassNeumorphDemo: React.FC = () => {
       {/* Glass Modal */}
       <GlassModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={(_) => setIsModalOpen(_false)}
         title="Glass Modal"
         size="md"
       >
@@ -298,13 +298,13 @@ const GlassNeumorphDemo: React.FC = () => {
           <div className="flex gap-3 justify-end">
             <GlassButton 
               variant="secondary" 
-              onClick={() => setIsModalOpen(false)}
+              onClick={(_) => setIsModalOpen(_false)}
             >
               Cancel
             </GlassButton>
             <GlassButton 
               variant="primary"
-              onClick={() => setIsModalOpen(false)}
+              onClick={(_) => setIsModalOpen(_false)}
             >
               Confirm
             </GlassButton>

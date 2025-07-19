@@ -24,16 +24,16 @@ export function Skeleton({
   'aria-label': ariaLabel,
   delay = 0
 }: SkeletonProps) {
-  const [isVisible, setIsVisible] = useState(delay === 0);
-  const { settings } = useSettings();
+  const [isVisible, setIsVisible] = useState(_delay === 0);
+  const { settings } = useSettings(_);
 
   // Respect user's reduced motion preference
   const shouldAnimate = !settings?.accessibility?.reduceMotion && animation !== 'none';
 
   useEffect(() => {
-    if (delay > 0) {
-      const timer = setTimeout(() => setIsVisible(true), delay);
-      return () => clearTimeout(timer);
+    if (_delay > 0) {
+      const timer = setTimeout(() => setIsVisible(_true), delay);
+      return (_) => clearTimeout(_timer);
     }
   }, [delay]);
 
@@ -281,11 +281,11 @@ export function DashboardSkeleton() {
   );
 }
 
-// List Skeleton (for course lists, etc.)
-export function ListSkeleton({ items = 5 }: { items?: number }) {
+// List Skeleton ( for course lists, etc.)
+export function ListSkeleton(_{ items = 5 }: { items?: number }) {
   return (
     <div className="space-y-4">
-      {Array.from({ length: items }).map((_, i) => (
+      {Array.from({ length: items  }).map( (_, i) => (
         <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
           <div className="flex items-center space-x-4">
             <Skeleton className="w-16 h-16 rounded-lg" />
@@ -307,13 +307,13 @@ export function ListSkeleton({ items = 5 }: { items?: number }) {
 }
 
 // Table Skeleton
-export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
+export function TableSkeleton( { rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
   return (
     <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden">
       {/* Header */}
       <div className="border-b border-white/10 p-4">
-        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
-          {Array.from({ length: columns }).map((_, i) => (
+        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat( ${columns}, 1fr)` }}>
+          {Array.from({ length: columns  }).map( (_, i) => (
             <Skeleton key={i} className="h-4 w-20" />
           ))}
         </div>
@@ -321,10 +321,10 @@ export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; column
 
       {/* Rows */}
       <div className="divide-y divide-white/10">
-        {Array.from({ length: rows }).map((_, i) => (
+        {Array.from({ length: rows  }).map( (_, i) => (
           <div key={i} className="p-4">
-            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
-              {Array.from({ length: columns }).map((_, j) => (
+            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat( ${columns}, 1fr)` }}>
+              {Array.from({ length: columns  }).map( (_, j) => (
                 <Skeleton key={j} className="h-4 w-full" />
               ))}
             </div>
@@ -349,7 +349,7 @@ export function ProgressiveLoader({
   error?: Error | null;
   children: React.ReactNode;
   skeleton?: React.ReactNode;
-  onRetry?: () => void;
+  onRetry?: (_) => void;
   loadingText?: string;
   errorText?: string;
 }) {

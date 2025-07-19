@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 
 interface CheckboxProps {
   checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
+  onCheckedChange: (_checked: boolean) => void;
   disabled?: boolean;
   className?: string;
   id?: string;
@@ -19,7 +19,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   id,
   'aria-label': ariaLabel
 }) => {
-  const handleChange = () => {
+  const handleChange = (_) => {
     if (!disabled) {
       onCheckedChange(!checked);
     }

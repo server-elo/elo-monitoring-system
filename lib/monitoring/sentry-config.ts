@@ -29,18 +29,18 @@ export function configureSentry(): void {
       release: env.NEXT_PUBLIC_APP_VERSION,
       
       // Performance monitoring
-      tracesSampleRate: getTracesSampleRate(),
-      profilesSampleRate: getProfilesSampleRate(),
+      tracesSampleRate: getTracesSampleRate(_),
+      profilesSampleRate: getProfilesSampleRate(_),
       
       // Error filtering and enhancement
       beforeSend: enhanceErrorEvent,
       beforeSendTransaction: filterTransactions,
       
       // Advanced integrations
-      integrations: getIntegrations(),
+      integrations: getIntegrations(_),
       
       // Transport configuration
-      transport: getTransportConfig(),
+      transport: getTransportConfig(_),
       
       // Source maps configuration
       enableTracing: true,
@@ -78,31 +78,31 @@ export function configureSentry(): void {
     });
 
     // Set up additional user context
-    setupUserContext();
+    setupUserContext(_);
     
     // Configure custom error boundaries
-    setupErrorBoundaries();
+    setupErrorBoundaries(_);
     
-    logger.info('Sentry monitoring initialized successfully', {
+    logger.info('Sentry monitoring initialized successfully', { metadata: {
       environment: env.NODE_ENV,
       release: env.NEXT_PUBLIC_APP_VERSION,
-      tracesSampleRate: getTracesSampleRate()
+      tracesSampleRate: getTracesSampleRate(_)
     });
 
-  } catch (error) {
-    logger.error('Failed to initialize Sentry', {
+  } catch (_error) {
+    logger.error('Failed to initialize Sentry', { metadata: {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined
     });
-  }
+  }});
 }
 
 /**
  * Get appropriate traces sample rate based on environment
  */
 function getTracesSampleRate(): number {
-  if (env.NODE_ENV === 'development') return 1.0;
-  if (env.NODE_ENV === 'staging') return 0.5;
+  if (_env.NODE_ENV === 'development') return 1.0;
+  if (_env.NODE_ENV === 'staging') return 0.5;
   return 0.1; // Production: sample 10% of transactions
 }
 
@@ -110,19 +110,19 @@ function getTracesSampleRate(): number {
  * Get appropriate profiles sample rate based on environment
  */
 function getProfilesSampleRate(): number {
-  if (env.NODE_ENV === 'development') return 1.0;
-  if (env.NODE_ENV === 'staging') return 0.2;
+  if (_env.NODE_ENV === 'development') return 1.0;
+  if (_env.NODE_ENV === 'staging') return 0.2;
   return 0.05; // Production: sample 5% of profiles
 }
 
 /**
  * Enhanced error event processing
  */
-function enhanceErrorEvent(event: Sentry.Event, hint: Sentry.EventHint): Sentry.Event | null {
+function enhanceErrorEvent( event: Sentry.Event, hint: Sentry.EventHint): Sentry.Event | null {
   const error = hint.originalException;
   
   // Filter out non-critical errors
-  if (shouldIgnoreError(error)) {
+  if (_shouldIgnoreError(error)) {
     return null;
   }
   
@@ -131,29 +131,29 @@ function enhanceErrorEvent(event: Sentry.Event, hint: Sentry.EventHint): Sentry.
     ...event.tags,
     errorBoundary: hint.mechanism === 'react' ? 'true' : 'false',
     userAgent: typeof window !== 'undefined' ? navigator.userAgent : 'server',
-    timestamp: new Date().toISOString()
+    timestamp: new Date(_).toISOString()
   };
   
   // Enhance stack traces
-  if (event.exception?.values?.[0]) {
+  if (_event.exception?.values?.[0]) {
     event.exception.values[0].stacktrace?.frames?.forEach((frame: any) => {
       // Mark third-party code
-      if (frame.filename?.includes('node_modules')) {
+      if (_frame.filename?.includes('node_modules')) {
         frame.in_app = false;
       }
       
       // Remove sensitive information
-      if (frame.vars) {
-        frame.vars = sanitizeVariables(frame.vars);
+      if (_frame.vars) {
+        frame.vars = sanitizeVariables(_frame.vars);
       }
     });
   }
   
   // Add breadcrumb enhancement
-  if (event.breadcrumbs) {
+  if (_event.breadcrumbs) {
     event.breadcrumbs = event.breadcrumbs.map(breadcrumb => ({
       ...breadcrumb,
-      data: sanitizeData(breadcrumb.data || {})
+      data: sanitizeData(_breadcrumb.data || {})
     }));
   }
   
@@ -163,7 +163,7 @@ function enhanceErrorEvent(event: Sentry.Event, hint: Sentry.EventHint): Sentry.
 /**
  * Filter transaction events for performance
  */
-function filterTransactions(event: Sentry.Event): Sentry.Event | null {
+function filterTransactions(_event: Sentry.Event): Sentry.Event | null {
   // In development, sample heavily to reduce noise
   if (!isProduction && Math.random() > 0.1) {
     return null;
@@ -181,7 +181,7 @@ function filterTransactions(event: Sentry.Event): Sentry.Event | null {
       '/sw.js'
     ];
     
-    if (ignoredPatterns.some(pattern => transactionName.includes(pattern))) {
+    if (_ignoredPatterns.some(pattern => transactionName.includes(pattern))) {
       return null;
     }
   }
@@ -193,7 +193,7 @@ function filterTransactions(event: Sentry.Event): Sentry.Event | null {
  * Configure Sentry integrations
  */
 function getIntegrations(): Sentry.Integration[] {
-  const defaultIntegrations = Sentry.getDefaultIntegrations({});
+  const defaultIntegrations = Sentry.getDefaultIntegrations({  });
   
   // Filter out problematic integrations
   const filteredIntegrations = defaultIntegrations.filter(integration => {
@@ -233,8 +233,8 @@ function getTransportConfig() {
   return {
     // Custom transport options for reliability
     bufferSize: 30,
-    recordDroppedEvent: (reason: string, category: string) => {
-      logger.warn('Sentry event dropped', { reason, category });
+    recordDroppedEvent: ( reason: string, category: string) => {
+      logger.warn('Sentry event dropped', { metadata: { reason, category });
     }
   };
 }
@@ -244,9 +244,9 @@ function getTransportConfig() {
  */
 function setupUserContext(): void {
   // This will be called from auth contexts to set user information
-  if (typeof window !== 'undefined') {
+  if (_typeof window !== 'undefined') {
     // Client-side user context setup
-    window.addEventListener('auth-state-change', (event: any) => {
+    window.addEventListener( 'auth-state-change', (event: any) => {
       const { user } = event.detail || {};
       
       Sentry.setUser({
@@ -265,8 +265,8 @@ function setupUserContext(): void {
  */
 function setupErrorBoundaries(): void {
   // Add global error handlers
-  if (typeof window !== 'undefined') {
-    window.addEventListener('unhandledrejection', (event) => {
+  if (_typeof window !== 'undefined') {
+    window.addEventListener( 'unhandledrejection', (event) => {
       Sentry.captureException(event.reason, {
         tags: { errorType: 'unhandledRejection' },
         contexts: {
@@ -282,7 +282,7 @@ function setupErrorBoundaries(): void {
 /**
  * Check if error should be ignored
  */
-function shouldIgnoreError(error: any): boolean {
+function shouldIgnoreError(_error: any): boolean {
   if (!error) return false;
   
   const message = error.message || error.toString();
@@ -300,18 +300,18 @@ function shouldIgnoreError(error: any): boolean {
     'The user aborted a request'
   ];
   
-  return ignoredPatterns.some(pattern => message.includes(pattern));
+  return ignoredPatterns.some(_pattern => message.includes(pattern));
 }
 
 /**
  * Sanitize variables in stack traces
  */
-function sanitizeVariables(vars: Record<string, any>): Record<string, any> {
+function sanitizeVariables( vars: Record<string, any>): Record<string, any> {
   const sanitized: Record<string, any> = {};
   
-  for (const [key, value] of Object.entries(vars)) {
+  for ( const [key, value] of Object.entries(vars)) {
     // Remove sensitive data
-    if (key.toLowerCase().includes('password') ||
+    if (_key.toLowerCase().includes('password') ||
         key.toLowerCase().includes('token') ||
         key.toLowerCase().includes('secret') ||
         key.toLowerCase().includes('key')) {
@@ -327,11 +327,11 @@ function sanitizeVariables(vars: Record<string, any>): Record<string, any> {
 /**
  * Sanitize breadcrumb data
  */
-function sanitizeData(data: Record<string, any>): Record<string, any> {
+function sanitizeData( data: Record<string, any>): Record<string, any> {
   const sanitized: Record<string, any> = {};
   
-  for (const [key, value] of Object.entries(data)) {
-    if (typeof value === 'string' && value.length > 200) {
+  for ( const [key, value] of Object.entries(data)) {
+    if (_typeof value === 'string' && value.length > 200) {
       sanitized[key] = value.substring(0, 200) + '...';
     } else {
       sanitized[key] = value;
@@ -348,20 +348,20 @@ export const sentryUtils = {
   /**
    * Report user action with context
    */
-  reportUserAction: (action: string, data?: Record<string, any>) => {
+  reportUserAction: ( action: string, data?: Record<string, any>) => {
     Sentry.addBreadcrumb({
       message: `User action: ${action}`,
       category: 'user',
       level: 'info',
-      data: sanitizeData(data || {})
+      data: sanitizeData(_data || {})
     });
   },
   
   /**
    * Report performance issue
    */
-  reportPerformanceIssue: (name: string, duration: number, context?: Record<string, any>) => {
-    if (duration > 1000) { // Report slow operations
+  reportPerformanceIssue: ( name: string, duration: number, context?: Record<string, any>) => {
+    if (_duration > 1000) { // Report slow operations
       Sentry.captureMessage(`Performance issue: ${name}`, {
         level: 'warning',
         tags: {
@@ -384,7 +384,7 @@ export const sentryUtils = {
   /**
    * Report feature usage
    */
-  reportFeatureUsage: (feature: string, success: boolean, metadata?: Record<string, any>) => {
+  reportFeatureUsage: ( feature: string, success: boolean, metadata?: Record<string, any>) => {
     Sentry.addBreadcrumb({
       message: `Feature used: ${feature}`,
       category: 'feature',
@@ -392,7 +392,7 @@ export const sentryUtils = {
       data: {
         feature,
         success,
-        ...sanitizeData(metadata || {})
+        ...sanitizeData(_metadata || {})
       }
     });
   },
@@ -406,14 +406,14 @@ export const sentryUtils = {
     role?: string;
     subscription?: string;
   }) => {
-    Sentry.setUser(user);
+    Sentry.setUser(_user);
   },
   
   /**
    * Add custom tags
    */
-  addTags: (tags: Record<string, string>) => {
-    Sentry.setTags(tags);
+  addTags: ( tags: Record<string, string>) => {
+    Sentry.setTags(_tags);
   }
 };
 

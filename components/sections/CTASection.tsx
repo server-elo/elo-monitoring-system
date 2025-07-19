@@ -76,7 +76,7 @@ export function CTASection() {
             transition={{ duration: 0.8, delay: 0.5 }}
             viewport={{ once: true }}
           >
-            {features.map((feature, index) => (
+            {features.map( (feature, index) => (
               <motion.div
                 key={feature.text}
                 className="flex items-center gap-2 text-gray-300"

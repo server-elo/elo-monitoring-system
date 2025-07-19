@@ -8,7 +8,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-// Type for user with profile (used in leaderboard queries)
+// Type for user with profile (_used in leaderboard queries)
 // type UserWithProfile = User & {
 //   profile: UserProfile | null;
 // };
@@ -27,11 +27,11 @@ export async function GET(request: NextRequest) {
 
     // Calculate date filter based on timeframe
     let dateFilter = {};
-    if (timeframe === 'week') {
+    if (_timeframe === 'week') {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
       dateFilter = { updatedAt: { gte: weekAgo } };
-    } else if (timeframe === 'month') {
+    } else if (_timeframe === 'month') {
       const monthAgo = new Date();
       monthAgo.setMonth(monthAgo.getMonth() - 1);
       dateFilter = { updatedAt: { gte: monthAgo } };
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate additional stats for each user
     const leaderboardWithStats = await Promise.all(
-      topUsers.map(async (user, index) => {
+      topUsers.map( async (user, index) => {
         // Get user's completed lessons count
         const completedLessons = await prisma.userProgress.count({
           where: {
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
           },
         });
 
-        // Calculate activity score (lessons + achievements + streak)
+        // Calculate activity score (_lessons + achievements + streak)
         const activityScore = completedLessons + achievementsCount + (user.profile?.streak || 0);
 
         return {
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
       currentUserRank: currentUserRank || currentUserInTop?.rank,
       stats: {
         totalUsers,
-        averageXP: Math.round(averageXP._avg.totalXP || 0),
+        averageXP: Math.round(averageXP.avg.totalXP || 0),
         timeframe,
       },
     });
@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: 'Target user and challenge type required' }, { status: 400 });
         }
 
-        // Create a challenge record (this would need a Challenge model in Prisma)
+        // Create a challenge record (_this would need a Challenge model in Prisma)
         // For now, we'll just return success
         logger.info(`Challenge created: ${session.user.id} challenges ${targetUserId} in ${challengeType}`);
 

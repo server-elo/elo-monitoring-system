@@ -15,10 +15,10 @@ import { MobileCodeEditor } from '@/components/editor/MobileCodeEditor';
 
 // Dynamic import for desktop editor
 const DesktopEditor = dynamic(
-  () => import('@monaco-editor/react').then(mod => mod.default),
+  (_) => import('@monaco-editor/react').then(_mod => mod.default),
   { 
     ssr: false,
-    loading: () => (
+    loading: (_) => (
       <div className="flex items-center justify-center h-96 bg-gray-900 rounded-lg">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -39,22 +39,22 @@ pragma solidity ^0.8.0;
 contract SimpleStorage {
     uint256 private storedData;
     
-    event ValueChanged(uint256 newValue);
+    event ValueChanged(_uint256 newValue);
     
     /**
      * @dev Store a value
      * @param x The value to store
      */
-    function set(uint256 x) public {
+    function set(_uint256 x) public {
         storedData = x;
-        emit ValueChanged(x);
+        emit ValueChanged(_x);
     }
     
     /**
      * @dev Retrieve the stored value
      * @return The stored value
      */
-    function get() public view returns (uint256) {
+    function get() public view returns (_uint256) {
         return storedData;
     }
 }`;
@@ -71,18 +71,18 @@ interface CompilationResult {
 }
 
 export function MobileOptimizedCodeLab() {
-  const [code, setCode] = useState(DEFAULT_CODE);
-  const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
-  const [isCompiling, setIsCompiling] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const editorRef = useRef<any>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [code, setCode] = useState(_DEFAULT_CODE);
+  const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(_null);
+  const [isCompiling, setIsCompiling] = useState(_false);
+  const [isSaving, setIsSaving] = useState(_false);
+  const editorRef = useRef<any>(_null);
+  const fileInputRef = useRef<HTMLInputElement>(_null);
   
-  const { isMobile, isTablet } = useMobileDetect();
-  const { toast } = useToast();
+  const { isMobile, isTablet } = useMobileDetect(_);
+  const { toast } = useToast(_);
 
   // Use mobile editor for mobile devices and tablets in portrait mode
-  const useMobileEditor = isMobile || (isTablet && window.innerHeight > window.innerWidth);
+  const useMobileEditor = isMobile || (_isTablet && window.innerHeight > window.innerWidth);
 
   const handleCompile = async () => {
     if (!code.trim()) {
@@ -94,20 +94,20 @@ export function MobileOptimizedCodeLab() {
       return;
     }
 
-    setIsCompiling(true);
+    setIsCompiling(_true);
     try {
       const response = await fetch('/api/compile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code  }),
       });
 
-      const result = await response.json();
-      setCompilationResult(result);
+      const result = await response.json(_);
+      setCompilationResult(_result);
 
-      if (result.success) {
+      if (_result.success) {
         toast({
           title: "Compilation successful!",
           description: `Gas estimate: ${result.gasEstimate || 'N/A'}`,
@@ -119,7 +119,7 @@ export function MobileOptimizedCodeLab() {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Compilation error",
         description: "Failed to compile contract. Please try again.",
@@ -127,40 +127,40 @@ export function MobileOptimizedCodeLab() {
       });
       console.error('Compilation error:', error);
     } finally {
-      setIsCompiling(false);
+      setIsCompiling(_false);
     }
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
+    setIsSaving(_true);
     try {
       // In a real app, this would save to backend/localStorage
-      localStorage.setItem('savedContract', code);
-      localStorage.setItem('savedContractDate', new Date().toISOString());
+      localStorage.setItem( 'savedContract', code);
+      localStorage.setItem( 'savedContractDate', new Date().toISOString());
       
       toast({
         title: "Code saved!",
         description: "Your contract has been saved locally.",
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Save failed",
         description: "Failed to save your code. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setIsSaving(false);
+      setIsSaving(_false);
     }
   };
 
-  const handleDownload = () => {
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  const handleDownload = (_) => {
+    const blob = new Blob( [code], { type: 'text/plain' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'contract.sol';
-    a.click();
-    URL.revokeObjectURL(url);
+    a.click(_);
+    URL.revokeObjectURL(_url);
     
     toast({
       title: "Contract downloaded!",
@@ -168,42 +168,42 @@ export function MobileOptimizedCodeLab() {
     });
   };
 
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = (_event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
+    const reader = new FileReader(_);
+    reader.onload = (_e) => {
       const content = e.target?.result as string;
-      setCode(content);
+      setCode(_content);
       toast({
         title: "File uploaded!",
         description: `Loaded ${file.name}`,
       });
     };
-    reader.readAsText(file);
+    reader.readAsText(_file);
   };
 
   const handleShare = async () => {
-    if (navigator.share) {
+    if (_navigator.share) {
       try {
         await navigator.share({
           title: 'Solidity Contract',
           text: 'Check out my Solidity contract!',
           url: window.location.href,
         });
-      } catch (error) {
+      } catch (_error) {
         console.log('Share cancelled or failed:', error);
       }
     } else {
       // Fallback: copy to clipboard
       try {
-        await navigator.clipboard.writeText(code);
+        await navigator.clipboard.writeText(_code);
         toast({
           title: "Code copied!",
           description: "Contract code copied to clipboard.",
         });
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: "Copy failed",
           description: "Failed to copy code to clipboard.",
@@ -217,12 +217,12 @@ export function MobileOptimizedCodeLab() {
   useEffect(() => {
     const savedCode = localStorage.getItem('savedContract');
     if (savedCode) {
-      setCode(savedCode);
+      setCode(_savedCode);
       const savedDate = localStorage.getItem('savedContractDate');
       if (savedDate) {
         toast({
           title: "Code restored",
-          description: `Last saved: ${new Date(savedDate).toLocaleString()}`,
+          description: `Last saved: ${new Date(_savedDate).toLocaleString(_)}`,
         });
       }
     }
@@ -267,7 +267,7 @@ export function MobileOptimizedCodeLab() {
                   {compilationResult.success ? 'Compilation Successful' : 'Compilation Failed'}
                 </h3>
                 <button
-                  onClick={() => setCompilationResult(null)}
+                  onClick={(_) => setCompilationResult(_null)}
                   className="p-2 rounded-lg hover:bg-gray-800"
                 >
                   <X className="w-5 h-5" />
@@ -276,7 +276,7 @@ export function MobileOptimizedCodeLab() {
               
               {compilationResult.errors && compilationResult.errors.length > 0 && (
                 <div className="space-y-2 mb-4">
-                  {compilationResult.errors.map((error, index) => (
+                  {compilationResult.errors.map( (error, index) => (
                     <div key={index} className="p-3 bg-red-900/20 border border-red-700 rounded-lg">
                       <p className="text-sm text-red-400">{error}</p>
                     </div>
@@ -295,9 +295,9 @@ export function MobileOptimizedCodeLab() {
                   {compilationResult.securityIssues && compilationResult.securityIssues.length > 0 && (
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium text-yellow-400">Security Issues</h4>
-                      {compilationResult.securityIssues.map((issue, index) => (
+                      {compilationResult.securityIssues.map( (issue, index) => (
                         <div key={index} className="p-3 bg-yellow-900/20 border border-yellow-700 rounded-lg">
-                          <p className="text-sm text-yellow-400">{JSON.stringify(issue)}</p>
+                          <p className="text-sm text-yellow-400">{JSON.stringify(_issue)}</p>
                         </div>
                       ))}
                     </div>
@@ -345,7 +345,7 @@ export function MobileOptimizedCodeLab() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={(_) => fileInputRef.current?.click(_)}
                   className="border-gray-700 hover:bg-gray-800"
                 >
                   <Upload className="w-4 h-4 mr-2" />
@@ -379,8 +379,8 @@ export function MobileOptimizedCodeLab() {
                   language="solidity"
                   theme="vs-dark"
                   value={code}
-                  onChange={(value) => setCode(value || '')}
-                  onMount={(editor) => {
+                  onChange={(_value) => setCode(_value || '')}
+                  onMount={(_editor) => {
                     editorRef.current = editor;
                   }}
                   options={{
@@ -432,7 +432,7 @@ export function MobileOptimizedCodeLab() {
               <CardContent>
                 {compilationResult.errors && compilationResult.errors.length > 0 && (
                   <div className="space-y-2 mb-4">
-                    {compilationResult.errors.map((error, index) => (
+                    {compilationResult.errors.map( (error, index) => (
                       <div key={index} className="p-2 bg-red-900/20 border border-red-700 rounded text-sm text-red-400">
                         {error}
                       </div>
@@ -451,9 +451,9 @@ export function MobileOptimizedCodeLab() {
                     {compilationResult.securityIssues && compilationResult.securityIssues.length > 0 && (
                       <div>
                         <h4 className="text-sm font-medium text-yellow-400 mb-2">Security Issues</h4>
-                        {compilationResult.securityIssues.map((issue, index) => (
+                        {compilationResult.securityIssues.map( (issue, index) => (
                           <div key={index} className="p-2 bg-yellow-900/20 border border-yellow-700 rounded mb-2">
-                            <p className="text-sm text-yellow-400">{JSON.stringify(issue)}</p>
+                            <p className="text-sm text-yellow-400">{JSON.stringify(_issue)}</p>
                           </div>
                         ))}
                       </div>

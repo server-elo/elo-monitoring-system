@@ -70,8 +70,8 @@ export interface ProjectFeedback {
 }
 
 export class ProjectBasedLearning {
-  private projects: Map<string, LearningProject> = new Map();
-  private userProgress: Map<string, ProjectProgress[]> = new Map();
+  private projects: Map<string, LearningProject> = new Map(_);
+  private userProgress: Map<string, ProjectProgress[]> = new Map(_);
   private securityScanner: SecurityScanner;
   private gasAnalyzer: GasOptimizationAnalyzer;
 
@@ -81,21 +81,21 @@ export class ProjectBasedLearning {
   ) {
     this.securityScanner = securityScanner;
     this.gasAnalyzer = gasAnalyzer;
-    this.initializeProjects();
+    this.initializeProjects(_);
   }
 
-  async getRecommendedProjects(userId: string): Promise<LearningProject[]> {
-    const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
-    const userLevel = this.calculateUserLevel(profile);
+  async getRecommendedProjects(_userId: string): Promise<LearningProject[]> {
+    const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
+    const userLevel = this.calculateUserLevel(_profile);
     
-    return Array.from(this.projects.values())
-      .filter(project => this.isProjectAppropriate(project, profile, userLevel))
-      .sort((a, b) => b.industryRelevance - a.industryRelevance)
+    return Array.from(_this.projects.values())
+      .filter( project => this.isProjectAppropriate(project, profile, userLevel))
+      .sort( (a, b) => b.industryRelevance - a.industryRelevance)
       .slice(0, 5);
   }
 
-  async startProject(userId: string, projectId: string): Promise<ProjectProgress> {
-    const project = this.projects.get(projectId);
+  async startProject( userId: string, projectId: string): Promise<ProjectProgress> {
+    const project = this.projects.get(_projectId);
     if (!project) throw new Error('Project not found');
 
     const progress: ProjectProgress = {
@@ -108,12 +108,12 @@ export class ProjectBasedLearning {
       qualityScores: {},
       feedback: [],
       nextSteps: [project.milestones[0].description],
-      estimatedCompletion: new Date(Date.now() + project.estimatedDuration * 60 * 60 * 1000)
+      estimatedCompletion: new Date(_Date.now() + project.estimatedDuration * 60 * 60 * 1000)
     };
 
-    const userProgressList = this.userProgress.get(userId) || [];
+    const userProgressList = this.userProgress.get(_userId) || [];
     userProgressList.push(progress);
-    this.userProgress.set(userId, userProgressList);
+    this.userProgress.set( userId, userProgressList);
 
     return progress;
   }
@@ -128,7 +128,7 @@ export class ProjectBasedLearning {
       testResults?: any;
     }
   ): Promise<ProjectFeedback> {
-    const project = this.projects.get(projectId);
+    const project = this.projects.get(_projectId);
     const milestone = project?.milestones.find(m => m.id === milestoneId);
     
     if (!project || !milestone) {
@@ -137,8 +137,8 @@ export class ProjectBasedLearning {
 
     // Analyze submission
     const [securityAnalysis, gasAnalysis] = await Promise.all([
-      this.securityScanner.performAnalysis(),
-      this.gasAnalyzer.analyzeGasUsage(userId)
+      this.securityScanner.performAnalysis(_),
+      this.gasAnalyzer.analyzeGasUsage(_userId)
     ]);
 
     // Calculate scores based on evaluation criteria
@@ -152,20 +152,20 @@ export class ProjectBasedLearning {
     // Generate feedback
     const feedback: ProjectFeedback = {
       milestoneId,
-      score: this.calculateOverallScore(scores, milestone.evaluation),
-      strengths: this.identifyStrengths(scores, submission),
-      improvements: this.identifyImprovements(scores, securityAnalysis, gasAnalysis),
-      suggestions: await this.generateSuggestions(userId, submission, scores),
-      timestamp: new Date()
+      score: this.calculateOverallScore( scores, milestone.evaluation),
+      strengths: this.identifyStrengths( scores, submission),
+      improvements: this.identifyImprovements( scores, securityAnalysis, gasAnalysis),
+      suggestions: await this.generateSuggestions( userId, submission, scores),
+      timestamp: new Date(_)
     };
 
     // Update user progress
-    await this.updateProgress(userId, projectId, milestoneId, feedback);
+    await this.updateProgress( userId, projectId, milestoneId, feedback);
 
     return feedback;
   }
 
-  private initializeProjects(): void {
+  private initializeProjects(_): void {
     // DeFi Project: Decentralized Exchange
     const dexProject: LearningProject = {
       id: 'defi-dex-basic',
@@ -243,7 +243,7 @@ export class ProjectBasedLearning {
       mentorshipAvailable: true
     };
 
-    this.projects.set(dexProject.id, dexProject);
+    this.projects.set( dexProject.id, dexProject);
 
     // NFT Project: Digital Art Marketplace
     const nftProject: LearningProject = {
@@ -294,28 +294,28 @@ export class ProjectBasedLearning {
       mentorshipAvailable: true
     };
 
-    this.projects.set(nftProject.id, nftProject);
+    this.projects.set( nftProject.id, nftProject);
   }
 
-  private calculateUserLevel(profile: any): number {
-    const skillValues = Object.values(profile.skillLevels);
-    return skillValues.reduce((sum: number, level: number) => sum + level, 0) / skillValues.length;
+  private calculateUserLevel(_profile: any): number {
+    const skillValues = Object.values(_profile.skillLevels);
+    return skillValues.reduce( (sum: number, level: number) => sum + level, 0) / skillValues.length;
   }
 
-  private isProjectAppropriate(project: LearningProject, profile: any, userLevel: number): boolean {
+  private isProjectAppropriate( project: LearningProject, profile: any, userLevel: number): boolean {
     // Check prerequisites
     const hasPrerequisites = project.prerequisites.every(prereq =>
       profile.skillLevels[prereq] >= 60
     );
 
     // Check difficulty match
-    const difficultyMatch = this.isDifficultyAppropriate(project.difficulty, userLevel);
+    const difficultyMatch = this.isDifficultyAppropriate( project.difficulty, userLevel);
 
     return hasPrerequisites && difficultyMatch;
   }
 
-  private isDifficultyAppropriate(difficulty: string, userLevel: number): boolean {
-    switch (difficulty) {
+  private isDifficultyAppropriate( difficulty: string, userLevel: number): boolean {
+    switch (_difficulty) {
       case 'beginner': return userLevel >= 20 && userLevel <= 60;
       case 'intermediate': return userLevel >= 50 && userLevel <= 85;
       case 'advanced': return userLevel >= 75;
@@ -330,16 +330,16 @@ export class ProjectBasedLearning {
     gasAnalysis: any
   ): Record<string, number> {
     return {
-      functionality: this.evaluateFunctionality(submission),
+      functionality: this.evaluateFunctionality(_submission),
       security: securityAnalysis?.overallScore || 0,
-      gasOptimization: this.calculateGasScore(gasAnalysis),
-      codeQuality: this.evaluateCodeQuality(submission.code),
-      documentation: this.evaluateDocumentation(submission.documentation),
-      testing: this.evaluateTesting(submission.testResults)
+      gasOptimization: this.calculateGasScore(_gasAnalysis),
+      codeQuality: this.evaluateCodeQuality(_submission.code),
+      documentation: this.evaluateDocumentation(_submission.documentation),
+      testing: this.evaluateTesting(_submission.testResults)
     };
   }
 
-  private calculateOverallScore(scores: Record<string, number>, criteria: EvaluationCriteria): number {
+  private calculateOverallScore( scores: Record<string, number>, criteria: EvaluationCriteria): number {
     const weightedScore = 
       (scores.functionality * criteria.functionality +
        scores.security * criteria.security +
@@ -348,24 +348,24 @@ export class ProjectBasedLearning {
        scores.documentation * criteria.documentation +
        scores.testing * criteria.testing) / 100;
 
-    return Math.round(weightedScore);
+    return Math.round(_weightedScore);
   }
 
-  private evaluateFunctionality(submission: any): number {
+  private evaluateFunctionality(_submission: any): number {
     // Simplified functionality evaluation
     return submission.code.length > 100 ? 80 : 60;
   }
 
-  private calculateGasScore(gasAnalysis: any): number {
+  private calculateGasScore(_gasAnalysis: any): number {
     if (!gasAnalysis) return 50;
     const optimizationCount = gasAnalysis.optimizations?.length || 0;
     return Math.max(50, 100 - (optimizationCount * 10));
   }
 
-  private evaluateCodeQuality(code: string): number {
+  private evaluateCodeQuality(_code: string): number {
     // Simplified code quality metrics
     const hasComments = code.includes('//') || code.includes('/*');
-    const hasProperNaming = /[a-z][A-Z]/.test(code); // camelCase check
+    const hasProperNaming = /[a-z][A-Z]/.test(_code); // camelCase check
     const hasStructure = code.includes('contract') && code.includes('function');
     
     let score = 50;
@@ -376,17 +376,17 @@ export class ProjectBasedLearning {
     return Math.min(100, score);
   }
 
-  private evaluateDocumentation(documentation: string): number {
+  private evaluateDocumentation(_documentation: string): number {
     if (!documentation) return 0;
-    if (documentation.length < 100) return 30;
-    if (documentation.length < 500) return 70;
+    if (_documentation.length < 100) return 30;
+    if (_documentation.length < 500) return 70;
     return 90;
   }
 
-  private evaluateTesting(testResults: any): number {
+  private evaluateTesting(_testResults: any): number {
     if (!testResults) return 0;
     const passRate = testResults.passed / testResults.total;
-    return Math.round(passRate * 100);
+    return Math.round(_passRate * 100);
   }
 }
 
@@ -397,6 +397,6 @@ interface ProjectResource {
 }
 
 export const projectBasedLearning = new ProjectBasedLearning(
-  new SecurityScanner({} as any, ''),
-  new GasOptimizationAnalyzer({} as any)
+  new SecurityScanner( {} as any, ''),
+  new GasOptimizationAnalyzer(_{} as any)
 );

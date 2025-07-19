@@ -66,8 +66,8 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 };
 
 // Monaco Editor loading skeleton
-export const MonacoEditorSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={cn('w-full h-96 glass border border-white/10 rounded-lg p-4', className)}>
+export const MonacoEditorSkeleton: React.FC<{ className?: string }> = ({ className = ''  }) => (
+  <div className={cn( 'w-full h-96 glass border border-white/10 rounded-lg p-4', className)}>
     <div className="flex items-center justify-between mb-4">
       <div className="flex space-x-2">
         <Skeleton className="w-16 h-6 rounded" />
@@ -81,7 +81,7 @@ export const MonacoEditorSkeleton: React.FC<{ className?: string }> = ({ classNa
       </div>
     </div>
     <div className="space-y-2">
-      {Array.from({ length: 12 }, (_, i) => (
+      {Array.from( { length: 12 }, (_, i) => (
         <div key={i} className="flex space-x-2">
           <Skeleton className="w-6 h-4 rounded" />
           <Skeleton className={`h-4 rounded ${i % 3 === 0 ? 'w-3/4' : i % 3 === 1 ? 'w-1/2' : 'w-2/3'}`} />
@@ -92,8 +92,8 @@ export const MonacoEditorSkeleton: React.FC<{ className?: string }> = ({ classNa
 );
 
 // Dashboard card skeleton
-export const DashboardCardSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={cn('glass border border-white/10 rounded-xl p-6', className)}>
+export const DashboardCardSkeleton: React.FC<{ className?: string }> = ({ className = ''  }) => (
+  <div className={cn( 'glass border border-white/10 rounded-xl p-6', className)}>
     <div className="flex items-center justify-between mb-4">
       <Skeleton className="w-24 h-6 rounded" />
       <Skeleton className="w-8 h-8 rounded-full" />
@@ -108,8 +108,8 @@ export const DashboardCardSkeleton: React.FC<{ className?: string }> = ({ classN
 );
 
 // Lesson card skeleton
-export const LessonCardSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={cn('glass border border-white/10 rounded-xl p-6', className)}>
+export const LessonCardSkeleton: React.FC<{ className?: string }> = ({ className = ''  }) => (
+  <div className={cn( 'glass border border-white/10 rounded-xl p-6', className)}>
     <div className="flex items-start space-x-4 mb-4">
       <Skeleton className="w-12 h-12 rounded-lg" />
       <div className="flex-1">
@@ -129,8 +129,8 @@ export const LessonCardSkeleton: React.FC<{ className?: string }> = ({ className
 );
 
 // User profile skeleton
-export const UserProfileSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={cn('glass border border-white/10 rounded-xl p-6', className)}>
+export const UserProfileSkeleton: React.FC<{ className?: string }> = ({ className = ''  }) => (
+  <div className={cn( 'glass border border-white/10 rounded-xl p-6', className)}>
     <div className="flex items-center space-x-4 mb-6">
       <Skeleton className="w-16 h-16 rounded-full" />
       <div className="flex-1">
@@ -160,11 +160,11 @@ export const ChatMessageSkeleton: React.FC<{ isUser?: boolean; className?: strin
   isUser = false, 
   className = '' 
 }) => (
-  <div className={cn('flex space-x-3 mb-4', isUser && 'flex-row-reverse space-x-reverse', className)}>
+  <div className={cn( 'flex space-x-3 mb-4', isUser && 'flex-row-reverse space-x-reverse', className)}>
     <Skeleton className="w-8 h-8 rounded-full flex-shrink-0" />
-    <div className={cn('flex-1 max-w-xs', isUser && 'flex flex-col items-end')}>
-      <Skeleton className={cn('h-4 rounded mb-1', isUser ? 'w-16 ml-auto' : 'w-20')} />
-      <div className={cn('glass border border-white/10 rounded-lg p-3', isUser && 'bg-blue-600/20')}>
+    <div className={cn( 'flex-1 max-w-xs', isUser && 'flex flex-col items-end')}>
+      <Skeleton className={cn( 'h-4 rounded mb-1', isUser ? 'w-16 ml-auto' : 'w-20')} />
+      <div className={cn( 'glass border border-white/10 rounded-lg p-3', isUser && 'bg-blue-600/20')}>
         <Skeleton className="w-full h-4 rounded mb-2" />
         <Skeleton className="w-3/4 h-4 rounded" />
       </div>
@@ -173,8 +173,8 @@ export const ChatMessageSkeleton: React.FC<{ isUser?: boolean; className?: strin
 );
 
 // Achievement card skeleton
-export const AchievementCardSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={cn('glass border border-white/10 rounded-xl p-4', className)}>
+export const AchievementCardSkeleton: React.FC<{ className?: string }> = ({ className = ''  }) => (
+  <div className={cn( 'glass border border-white/10 rounded-xl p-4', className)}>
     <div className="flex items-center space-x-3 mb-3">
       <Skeleton className="w-10 h-10 rounded-full" />
       <div className="flex-1">
@@ -191,8 +191,8 @@ export const AchievementCardSkeleton: React.FC<{ className?: string }> = ({ clas
 );
 
 // Navigation skeleton
-export const NavigationSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <nav className={cn('glass border-b border-white/10 h-16', className)}>
+export const NavigationSkeleton: React.FC<{ className?: string }> = ({ className = ''  }) => (
+  <nav className={cn( 'glass border-b border-white/10 h-16', className)}>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
       <div className="flex justify-between items-center h-full">
         <div className="flex items-center space-x-2">
@@ -200,7 +200,7 @@ export const NavigationSkeleton: React.FC<{ className?: string }> = ({ className
           <Skeleton className="w-32 h-6 rounded" />
         </div>
         <div className="hidden md:flex items-center space-x-6">
-          {Array.from({ length: 4 }, (_, i) => (
+          {Array.from( { length: 4 }, (_, i) => (
             <Skeleton key={i} className="w-16 h-6 rounded" />
           ))}
         </div>
@@ -223,19 +223,19 @@ export const TableSkeleton: React.FC<{
   columns = 4, 
   className = '' 
 }) => (
-  <div className={cn('glass border border-white/10 rounded-lg overflow-hidden', className)}>
+  <div className={cn( 'glass border border-white/10 rounded-lg overflow-hidden', className)}>
     <div className="p-4 border-b border-white/10">
-      <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
-        {Array.from({ length: columns }, (_, i) => (
+      <div className="grid gap-4" style={{ gridTemplateColumns: `repeat( ${columns}, 1fr)` }}>
+        {Array.from( { length: columns }, (_, i) => (
           <Skeleton key={i} className="h-5 rounded" />
         ))}
       </div>
     </div>
     <div className="divide-y divide-white/10">
-      {Array.from({ length: rows }, (_, rowIndex) => (
+      {Array.from( { length: rows }, (_, rowIndex) => (
         <div key={rowIndex} className="p-4">
-          <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
-            {Array.from({ length: columns }, (_, colIndex) => (
+          <div className="grid gap-4" style={{ gridTemplateColumns: `repeat( ${columns}, 1fr)` }}>
+            {Array.from( { length: columns }, (_, colIndex) => (
               <Skeleton key={colIndex} className="h-4 rounded" />
             ))}
           </div>
@@ -246,8 +246,8 @@ export const TableSkeleton: React.FC<{
 );
 
 // Page skeleton with layout
-export const PageSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={cn('min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900', className)}>
+export const PageSkeleton: React.FC<{ className?: string }> = ({ className = ''  }) => (
+  <div className={cn( 'min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900', className)}>
     <NavigationSkeleton />
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -255,7 +255,7 @@ export const PageSkeleton: React.FC<{ className?: string }> = ({ className = '' 
         <Skeleton className="w-96 h-5 rounded" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Array.from({ length: 6 }, (_, i) => (
+        {Array.from( { length: 6 }, (_, i) => (
           <DashboardCardSkeleton key={i} />
         ))}
       </div>

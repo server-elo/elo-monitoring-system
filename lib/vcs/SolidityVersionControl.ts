@@ -102,37 +102,37 @@ export interface Repository {
  */
 export class SolidityVersionControl extends EventEmitter {
   private repository: Repository;
-  private stagingArea: Map<string, string> = new Map();
-  private workingDirectory: Map<string, string> = new Map();
+  private stagingArea: Map<string, string> = new Map(_);
+  private workingDirectory: Map<string, string> = new Map(_);
 
-  constructor(repositoryId: string, repositoryName: string) {
-    super();
+  constructor( repositoryId: string, repositoryName: string) {
+    super(_);
     
     this.repository = {
       id: repositoryId,
       name: repositoryName,
       description: '',
       defaultBranch: 'main',
-      branches: new Map(),
-      commits: new Map(),
-      mergeRequests: new Map(),
-      files: new Map(),
+      branches: new Map(_),
+      commits: new Map(_),
+      mergeRequests: new Map(_),
+      files: new Map(_),
       head: '',
       currentBranch: 'main'
     };
 
     // Create initial branch
-    this.createBranch('main', null, true);
+    this.createBranch( 'main', null, true);
   }
 
   /**
    * Initialize repository with initial commit
    */
-  async initialize(initialFiles: Record<string, string> = {}): Promise<string> {
+  async initialize( initialFiles: Record<string, string> = {}): Promise<string> {
     // Add initial files
-    Object.entries(initialFiles).forEach(([path, content]) => {
-      this.workingDirectory.set(path, content);
-      this.repository.files.set(path, content);
+    Object.entries(_initialFiles).forEach( ([path, content]) => {
+      this.workingDirectory.set( path, content);
+      this.repository.files.set( path, content);
     });
 
     // Create initial commit
@@ -145,68 +145,68 @@ export class SolidityVersionControl extends EventEmitter {
     this.repository.head = commitId;
     this.repository.branches.get('main')!.commitId = commitId;
 
-    this.emit('repository-initialized', { repositoryId: this.repository.id, commitId });
+    this.emit( 'repository-initialized', { repositoryId: this.repository.id, commitId });
     return commitId;
   }
 
   /**
    * Add files to staging area
    */
-  add(paths: string[] | string): void {
-    const pathArray = Array.isArray(paths) ? paths : [paths];
+  add(_paths: string[] | string): void {
+    const pathArray = Array.isArray(_paths) ? paths : [paths];
     
     pathArray.forEach(path => {
-      const content = this.workingDirectory.get(path);
-      if (content !== undefined) {
-        this.stagingArea.set(path, content);
+      const content = this.workingDirectory.get(_path);
+      if (_content !== undefined) {
+        this.stagingArea.set( path, content);
       }
     });
 
-    this.emit('files-staged', { paths: pathArray });
+    this.emit( 'files-staged', { paths: pathArray });
   }
 
   /**
    * Remove files from staging area
    */
-  unstage(paths: string[] | string): void {
-    const pathArray = Array.isArray(paths) ? paths : [paths];
+  unstage(_paths: string[] | string): void {
+    const pathArray = Array.isArray(_paths) ? paths : [paths];
     
     pathArray.forEach(path => {
-      this.stagingArea.delete(path);
+      this.stagingArea.delete(_path);
     });
 
-    this.emit('files-unstaged', { paths: pathArray });
+    this.emit( 'files-unstaged', { paths: pathArray });
   }
 
   /**
    * Commit staged changes
    */
-  async commit(message: string, author: Commit['author']): Promise<string> {
-    if (this.stagingArea.size === 0) {
+  async commit( message: string, author: Commit['author']): Promise<string> {
+    if (_this.stagingArea.size === 0) {
       throw new Error('No changes staged for commit');
     }
 
-    const commitId = this.generateCommitId();
+    const commitId = this.generateCommitId(_);
     const changes: FileChange[] = [];
 
     // Generate changes from staging area
-    for (const [path, content] of this.stagingArea) {
-      const oldContent = this.repository.files.get(path);
+    for ( const [path, content] of this.stagingArea) {
+      const oldContent = this.repository.files.get(_path);
       const change: FileChange = {
         type: oldContent ? 'modified' : 'added',
         path,
         content,
         oldContent,
-        hunks: this.generateDiffHunks(oldContent || '', content)
+        hunks: this.generateDiffHunks( oldContent || '', content)
       };
-      changes.push(change);
+      changes.push(_change);
     }
 
     const commit: Commit = {
       id: commitId,
       message,
       author,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       parentIds: this.repository.head ? [this.repository.head] : [],
       changes,
       metadata: {
@@ -216,28 +216,28 @@ export class SolidityVersionControl extends EventEmitter {
     };
 
     // Update repository state
-    this.repository.commits.set(commitId, commit);
+    this.repository.commits.set( commitId, commit);
     this.repository.head = commitId;
-    this.repository.branches.get(this.repository.currentBranch)!.commitId = commitId;
+    this.repository.branches.get(_this.repository.currentBranch)!.commitId = commitId;
 
     // Update files
-    for (const [path, content] of this.stagingArea) {
-      this.repository.files.set(path, content);
+    for ( const [path, content] of this.stagingArea) {
+      this.repository.files.set( path, content);
     }
 
     // Clear staging area
-    this.stagingArea.clear();
+    this.stagingArea.clear(_);
 
-    this.emit('commit-created', { commit });
+    this.emit( 'commit-created', { commit });
     return commitId;
   }
 
   /**
    * Create a new branch
    */
-  createBranch(name: string, fromCommit?: string | null, isDefault = false): void {
-    if (this.repository.branches.has(name)) {
-      throw new Error(`Branch ${name} already exists`);
+  createBranch( name: string, fromCommit?: string | null, isDefault = false): void {
+    if (_this.repository.branches.has(name)) {
+      throw new Error(_`Branch ${name} already exists`);
     }
 
     const commitId = fromCommit || this.repository.head || '';
@@ -246,40 +246,40 @@ export class SolidityVersionControl extends EventEmitter {
       commitId,
       isDefault,
       isProtected: isDefault,
-      lastActivity: Date.now(),
+      lastActivity: Date.now(_),
       author: 'current-user' // Would be actual user in real implementation
     };
 
-    this.repository.branches.set(name, branch);
+    this.repository.branches.set( name, branch);
     
     if (isDefault) {
       this.repository.defaultBranch = name;
     }
 
-    this.emit('branch-created', { branch });
+    this.emit( 'branch-created', { branch });
   }
 
   /**
    * Switch to a different branch
    */
-  async checkout(branchName: string): Promise<void> {
-    const branch = this.repository.branches.get(branchName);
+  async checkout(_branchName: string): Promise<void> {
+    const branch = this.repository.branches.get(_branchName);
     if (!branch) {
-      throw new Error(`Branch ${branchName} does not exist`);
+      throw new Error(_`Branch ${branchName} does not exist`);
     }
 
     // Check for uncommitted changes
-    if (this.hasUncommittedChanges()) {
+    if (_this.hasUncommittedChanges()) {
       throw new Error('You have uncommitted changes. Please commit or stash them first.');
     }
 
     // Update working directory to match branch
-    const commit = this.repository.commits.get(branch.commitId);
+    const commit = this.repository.commits.get(_branch.commitId);
     if (commit) {
-      this.workingDirectory.clear();
+      this.workingDirectory.clear(_);
       commit.changes.forEach(change => {
-        if (change.type !== 'deleted' && change.content) {
-          this.workingDirectory.set(change.path, change.content);
+        if (_change.type !== 'deleted' && change.content) {
+          this.workingDirectory.set( change.path, change.content);
         }
       });
     }
@@ -287,30 +287,30 @@ export class SolidityVersionControl extends EventEmitter {
     this.repository.currentBranch = branchName;
     this.repository.head = branch.commitId;
 
-    this.emit('branch-switched', { branchName, commitId: branch.commitId });
+    this.emit( 'branch-switched', { branchName, commitId: branch.commitId });
   }
 
   /**
    * Merge branches
    */
-  async merge(sourceBranch: string, targetBranch: string, message?: string): Promise<string> {
-    const source = this.repository.branches.get(sourceBranch);
-    const target = this.repository.branches.get(targetBranch);
+  async merge( sourceBranch: string, targetBranch: string, message?: string): Promise<string> {
+    const source = this.repository.branches.get(_sourceBranch);
+    const target = this.repository.branches.get(_targetBranch);
 
     if (!source || !target) {
       throw new Error('Source or target branch does not exist');
     }
 
     // Check for conflicts
-    const conflicts = await this.detectConflicts(sourceBranch, targetBranch);
-    if (conflicts.length > 0) {
-      throw new Error(`Merge conflicts detected in ${conflicts.length} files`);
+    const conflicts = await this.detectConflicts( sourceBranch, targetBranch);
+    if (_conflicts.length > 0) {
+      throw new Error(_`Merge conflicts detected in ${conflicts.length} files`);
     }
 
     // Create merge commit
-    const mergeCommitId = this.generateCommitId();
-    const sourceCommit = this.repository.commits.get(source.commitId);
-    const targetCommit = this.repository.commits.get(target.commitId);
+    const mergeCommitId = this.generateCommitId(_);
+    const sourceCommit = this.repository.commits.get(_source.commitId);
+    const targetCommit = this.repository.commits.get(_target.commitId);
 
     if (!sourceCommit || !targetCommit) {
       throw new Error('Invalid commit references');
@@ -318,20 +318,20 @@ export class SolidityVersionControl extends EventEmitter {
 
     // Combine changes
     const mergedChanges: FileChange[] = [];
-    const mergedFiles = new Map<string, string>();
+    const mergedFiles = new Map<string, string>(_);
 
     // Apply target changes first
     targetCommit.changes.forEach(change => {
-      if (change.content) {
-        mergedFiles.set(change.path, change.content);
+      if (_change.content) {
+        mergedFiles.set( change.path, change.content);
       }
     });
 
     // Apply source changes
     sourceCommit.changes.forEach(change => {
-      if (change.content) {
-        mergedFiles.set(change.path, change.content);
-        mergedChanges.push(change);
+      if (_change.content) {
+        mergedFiles.set( change.path, change.content);
+        mergedChanges.push(_change);
       }
     });
 
@@ -343,7 +343,7 @@ export class SolidityVersionControl extends EventEmitter {
         email: 'system@soliditylearning.com',
         id: 'system'
       },
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       parentIds: [source.commitId, target.commitId],
       changes: mergedChanges,
       metadata: {
@@ -352,15 +352,15 @@ export class SolidityVersionControl extends EventEmitter {
       }
     };
 
-    this.repository.commits.set(mergeCommitId, mergeCommit);
-    this.repository.branches.get(targetBranch)!.commitId = mergeCommitId;
+    this.repository.commits.set( mergeCommitId, mergeCommit);
+    this.repository.branches.get(_targetBranch)!.commitId = mergeCommitId;
 
     // Update files
-    mergedFiles.forEach((content, path) => {
-      this.repository.files.set(path, content);
+    mergedFiles.forEach( (content, path) => {
+      this.repository.files.set( path, content);
     });
 
-    this.emit('branches-merged', { sourceBranch, targetBranch, mergeCommitId });
+    this.emit( 'branches-merged', { sourceBranch, targetBranch, mergeCommitId });
     return mergeCommitId;
   }
 
@@ -374,8 +374,8 @@ export class SolidityVersionControl extends EventEmitter {
     targetBranch: string,
     author: MergeRequest['author']
   ): string {
-    const id = this.generateMergeRequestId();
-    const sourceCommits = this.getCommitsBetweenBranches(sourceBranch, targetBranch);
+    const id = this.generateMergeRequestId(_);
+    const sourceCommits = this.getCommitsBetweenBranches( sourceBranch, targetBranch);
 
     const mergeRequest: MergeRequest = {
       id,
@@ -388,32 +388,32 @@ export class SolidityVersionControl extends EventEmitter {
       commits: sourceCommits.map(c => c.id),
       reviewers: [],
       approvals: [],
-      createdAt: Date.now(),
-      updatedAt: Date.now()
+      createdAt: Date.now(_),
+      updatedAt: Date.now(_)
     };
 
-    this.repository.mergeRequests.set(id, mergeRequest);
-    this.emit('merge-request-created', { mergeRequest });
+    this.repository.mergeRequests.set( id, mergeRequest);
+    this.emit( 'merge-request-created', { mergeRequest });
     return id;
   }
 
   /**
    * Get commit history
    */
-  getCommitHistory(branchName?: string, limit = 50): Commit[] {
-    const branch = branchName ? this.repository.branches.get(branchName) : 
-                   this.repository.branches.get(this.repository.currentBranch);
+  getCommitHistory( branchName?: string, limit = 50): Commit[] {
+    const branch = branchName ? this.repository.branches.get(_branchName) : 
+                   this.repository.branches.get(_this.repository.currentBranch);
     
     if (!branch) return [];
 
     const commits: Commit[] = [];
     let currentCommitId = branch.commitId;
     
-    while (currentCommitId && commits.length < limit) {
-      const commit = this.repository.commits.get(currentCommitId);
+    while (_currentCommitId && commits.length < limit) {
+      const commit = this.repository.commits.get(_currentCommitId);
       if (!commit) break;
       
-      commits.push(commit);
+      commits.push(_commit);
       currentCommitId = commit.parentIds[0]; // Follow first parent
     }
 
@@ -423,9 +423,9 @@ export class SolidityVersionControl extends EventEmitter {
   /**
    * Get file diff between commits
    */
-  getDiff(fromCommit: string, toCommit: string, filePath?: string): FileChange[] {
-    const fromCommitObj = this.repository.commits.get(fromCommit);
-    const toCommitObj = this.repository.commits.get(toCommit);
+  getDiff( fromCommit: string, toCommit: string, filePath?: string): FileChange[] {
+    const fromCommitObj = this.repository.commits.get(_fromCommit);
+    const toCommitObj = this.repository.commits.get(_toCommit);
 
     if (!fromCommitObj || !toCommitObj) {
       throw new Error('Invalid commit references');
@@ -433,30 +433,30 @@ export class SolidityVersionControl extends EventEmitter {
 
     // Simple diff implementation
     const changes: FileChange[] = [];
-    const fromFiles = new Map<string, string>();
-    const toFiles = new Map<string, string>();
+    const fromFiles = new Map<string, string>(_);
+    const toFiles = new Map<string, string>(_);
 
     // Build file maps
     fromCommitObj.changes.forEach(change => {
-      if (change.content) {
-        fromFiles.set(change.path, change.content);
+      if (_change.content) {
+        fromFiles.set( change.path, change.content);
       }
     });
 
     toCommitObj.changes.forEach(change => {
-      if (change.content) {
-        toFiles.set(change.path, change.content);
+      if (_change.content) {
+        toFiles.set( change.path, change.content);
       }
     });
 
     // Compare files
-    const allPaths = new Set([...fromFiles.keys(), ...toFiles.keys()]);
+    const allPaths = new Set([...fromFiles.keys(), ...toFiles.keys(_)]);
     
-    for (const path of allPaths) {
+    for (_const path of allPaths) {
       if (filePath && path !== filePath) continue;
 
-      const fromContent = fromFiles.get(path);
-      const toContent = toFiles.get(path);
+      const fromContent = fromFiles.get(_path);
+      const toContent = toFiles.get(_path);
 
       if (!fromContent && toContent) {
         // File added
@@ -464,7 +464,7 @@ export class SolidityVersionControl extends EventEmitter {
           type: 'added',
           path,
           content: toContent,
-          hunks: this.generateDiffHunks('', toContent)
+          hunks: this.generateDiffHunks( '', toContent)
         });
       } else if (fromContent && !toContent) {
         // File deleted
@@ -472,7 +472,7 @@ export class SolidityVersionControl extends EventEmitter {
           type: 'deleted',
           path,
           oldContent: fromContent,
-          hunks: this.generateDiffHunks(fromContent, '')
+          hunks: this.generateDiffHunks( fromContent, '')
         });
       } else if (fromContent && toContent && fromContent !== toContent) {
         // File modified
@@ -481,7 +481,7 @@ export class SolidityVersionControl extends EventEmitter {
           path,
           content: toContent,
           oldContent: fromContent,
-          hunks: this.generateDiffHunks(fromContent, toContent)
+          hunks: this.generateDiffHunks( fromContent, toContent)
         });
       }
     }
@@ -490,60 +490,60 @@ export class SolidityVersionControl extends EventEmitter {
   }
 
   // Helper methods
-  private generateCommitId(): string {
-    return `commit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  private generateCommitId(_): string {
+    return `commit_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private generateMergeRequestId(): string {
-    return `mr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  private generateMergeRequestId(_): string {
+    return `mr_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private hasUncommittedChanges(): boolean {
-    return this.stagingArea.size > 0 || this.hasWorkingDirectoryChanges();
+  private hasUncommittedChanges(_): boolean {
+    return this.stagingArea.size > 0 || this.hasWorkingDirectoryChanges(_);
   }
 
-  private hasWorkingDirectoryChanges(): boolean {
-    for (const [path, content] of this.workingDirectory) {
-      const repoContent = this.repository.files.get(path);
-      if (repoContent !== content) {
+  private hasWorkingDirectoryChanges(_): boolean {
+    for ( const [path, content] of this.workingDirectory) {
+      const repoContent = this.repository.files.get(_path);
+      if (_repoContent !== content) {
         return true;
       }
     }
     return false;
   }
 
-  private async detectConflicts(sourceBranch: string, targetBranch: string): Promise<ConflictInfo[]> {
+  private async detectConflicts( sourceBranch: string, targetBranch: string): Promise<ConflictInfo[]> {
     // Simplified conflict detection
     const conflicts: ConflictInfo[] = [];
     
-    const source = this.repository.branches.get(sourceBranch);
-    const target = this.repository.branches.get(targetBranch);
+    const source = this.repository.branches.get(_sourceBranch);
+    const target = this.repository.branches.get(_targetBranch);
     
     if (!source || !target) return conflicts;
 
-    const sourceCommit = this.repository.commits.get(source.commitId);
-    const targetCommit = this.repository.commits.get(target.commitId);
+    const sourceCommit = this.repository.commits.get(_source.commitId);
+    const targetCommit = this.repository.commits.get(_target.commitId);
     
     if (!sourceCommit || !targetCommit) return conflicts;
 
     // Check for conflicting changes to the same files
-    const sourceFiles = new Map<string, string>();
-    const targetFiles = new Map<string, string>();
+    const sourceFiles = new Map<string, string>(_);
+    const targetFiles = new Map<string, string>(_);
 
     sourceCommit.changes.forEach(change => {
-      if (change.content) {
-        sourceFiles.set(change.path, change.content);
+      if (_change.content) {
+        sourceFiles.set( change.path, change.content);
       }
     });
 
     targetCommit.changes.forEach(change => {
-      if (change.content) {
-        targetFiles.set(change.path, change.content);
+      if (_change.content) {
+        targetFiles.set( change.path, change.content);
       }
     });
 
-    for (const [path, sourceContent] of sourceFiles) {
-      const targetContent = targetFiles.get(path);
+    for ( const [path, sourceContent] of sourceFiles) {
+      const targetContent = targetFiles.get(_path);
       if (targetContent && targetContent !== sourceContent) {
         conflicts.push({
           path,
@@ -558,16 +558,16 @@ export class SolidityVersionControl extends EventEmitter {
     return conflicts;
   }
 
-  private getCommitsBetweenBranches(sourceBranch: string, targetBranch: string): Commit[] {
+  private getCommitsBetweenBranches( sourceBranch: string, targetBranch: string): Commit[] {
     // Simplified implementation - get commits in source that aren't in target
-    const sourceCommits = this.getCommitHistory(sourceBranch);
-    const targetCommits = this.getCommitHistory(targetBranch);
-    const targetCommitIds = new Set(targetCommits.map(c => c.id));
+    const sourceCommits = this.getCommitHistory(_sourceBranch);
+    const targetCommits = this.getCommitHistory(_targetBranch);
+    const targetCommitIds = new Set(_targetCommits.map(c => c.id));
     
     return sourceCommits.filter(commit => !targetCommitIds.has(commit.id));
   }
 
-  private generateDiffHunks(oldContent: string, newContent: string): DiffHunk[] {
+  private generateDiffHunks( oldContent: string, newContent: string): DiffHunk[] {
     // Simplified diff generation
     const oldLines = oldContent.split('\n');
     const newLines = newContent.split('\n');
@@ -579,7 +579,7 @@ export class SolidityVersionControl extends EventEmitter {
       const oldLine = oldLines[i];
       const newLine = newLines[i];
 
-      if (oldLine === newLine) {
+      if (_oldLine === newLine) {
         lines.push({
           type: 'context',
           content: oldLine || '',
@@ -622,19 +622,19 @@ export class SolidityVersionControl extends EventEmitter {
   }
 
   // Public getters
-  get currentBranch(): string {
+  get currentBranch(_): string {
     return this.repository.currentBranch;
   }
 
-  get branches(): Branch[] {
-    return Array.from(this.repository.branches.values());
+  get branches(_): Branch[] {
+    return Array.from(_this.repository.branches.values());
   }
 
-  get mergeRequests(): MergeRequest[] {
-    return Array.from(this.repository.mergeRequests.values());
+  get mergeRequests(_): MergeRequest[] {
+    return Array.from(_this.repository.mergeRequests.values());
   }
 
-  get repositoryInfo(): Omit<Repository, 'commits' | 'files'> {
+  get repositoryInfo(_): Omit<Repository, 'commits' | 'files'> {
     return {
       id: this.repository.id,
       name: this.repository.name,

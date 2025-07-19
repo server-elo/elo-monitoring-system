@@ -13,11 +13,11 @@ import { sanitize, validate } from '@/lib/security/validation';
 // Using extended Prisma client from wrapper
 
 interface FeedbackSubmission {
-  type: 'rating' | 'survey' | 'bug_report' | 'feature_request' | 'usability';
+  type: 'rating' | 'survey' | 'bug_report' | 'featurerequest' | 'usability'; 
   rating?: number;
-  category: string;
-  title: string;
-  description: string;
+  category: string; 
+  title: string; 
+  description: string; 
   severity?: 'low' | 'medium' | 'high' | 'critical';
   steps?: string[];
   expectedBehavior?: string;
@@ -28,144 +28,144 @@ interface FeedbackSubmission {
     email?: string;
     allowFollowUp?: boolean;
   };
-  metadata: {
-    page: string;
-    userAgent: string;
-    timestamp: string;
-    sessionId: string;
+  metadata: { 
+    page: string; 
+    userAgent: string; 
+    timestamp: string; 
+    sessionId: string; 
     userId?: string;
   };
 }
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   const startTime = Date.now();
   
   try {
-    const body = await _request.json();
+    const body = await request.json();
     
     // Validate and sanitize input
     const validationResult = validateFeedbackSubmission(body);
     if (!validationResult.isValid) {
       return NextResponse.json(
-        { error: 'Invalid feedback data', details: validationResult.errors },
+        { error: 'Invalid feedback data', details: validationResult.errors } 
         { status: 400 }
-      );
+     );
     }
 
     const feedbackData = validationResult.data as FeedbackSubmission;
     
     // Sanitize text fields
     const sanitizedFeedback = {
-      ...feedbackData,
-      title: sanitize.text(feedbackData.title),
-      description: sanitize.text(feedbackData.description),
-      expectedBehavior: feedbackData.expectedBehavior ? sanitize.text(feedbackData.expectedBehavior) : undefined,
-      actualBehavior: feedbackData.actualBehavior ? sanitize.text(feedbackData.actualBehavior) : undefined,
-      steps: feedbackData.steps?.map(step => sanitize.text(step)),
+      ...feedbackData 
+      title: sanitize.text(feedbackData.title) 
+      description: sanitize.text(feedbackData.description) 
+      expectedBehavior: feedbackData.expectedBehavior ? sanitize.text(feedbackData.expectedBehavior) : undefined 
+      actualBehavior: feedbackData.actualBehavior ? sanitize.text(feedbackData.actualBehavior) : undefined 
+      steps: feedbackData.steps?.map(step => sanitize.text(step)) 
     };
 
     // Determine priority based on type and severity
     const priority = determinePriority(sanitizedFeedback);
     
-    // Create feedback record (mock implementation)
+    // Create feedback record (_mock implementation)
     const feedback = {
-      id: `feedback_${Date.now()}`,
-      type: sanitizedFeedback.type,
-      category: sanitizedFeedback.category,
-      title: sanitizedFeedback.title,
-      description: sanitizedFeedback.description,
-      rating: sanitizedFeedback.rating,
-      severity: sanitizedFeedback.severity,
-      priority: priority,
-      steps: sanitizedFeedback.steps || [],
-      expectedBehavior: sanitizedFeedback.expectedBehavior,
-      actualBehavior: sanitizedFeedback.actualBehavior,
-      browserInfo: sanitizedFeedback.metadata.userAgent,
-      screenRecording: sanitizedFeedback.screenRecording || false,
-      contactEmail: sanitizedFeedback.contactInfo?.email,
-      allowFollowUp: sanitizedFeedback.contactInfo?.allowFollowUp || false,
-      page: sanitizedFeedback.metadata.page,
-      sessionId: sanitizedFeedback.metadata.sessionId,
-      userId: sanitizedFeedback.metadata.userId,
-      timestamp: new Date(sanitizedFeedback.metadata.timestamp),
+      id: `feedback_${Date.now()}` 
+      type: sanitizedFeedback.type 
+      category: sanitizedFeedback.category 
+      title: sanitizedFeedback.title 
+      description: sanitizedFeedback.description 
+      rating: sanitizedFeedback.rating 
+      severity: sanitizedFeedback.severity 
+      priority: priority 
+      steps: sanitizedFeedback.steps || [] 
+      expectedBehavior: sanitizedFeedback.expectedBehavior 
+      actualBehavior: sanitizedFeedback.actualBehavior 
+      browserInfo: sanitizedFeedback.metadata.userAgent 
+      screenRecording: sanitizedFeedback.screenRecording || false 
+      contactEmail: sanitizedFeedback.contactInfo?.email 
+      allowFollowUp: sanitizedFeedback.contactInfo?.allowFollowUp || false 
+      page: sanitizedFeedback.metadata.page 
+      sessionId: sanitizedFeedback.metadata.sessionId 
+      userId: sanitizedFeedback.metadata.userId 
+      timestamp: new Date(sanitizedFeedback.metadata.timestamp) ,
       ipAddress: 'unknown', // getClientIP(request) would be used in production
-      userAgent: sanitizedFeedback.metadata.userAgent,
-      assignedTeam: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      userAgent: sanitizedFeedback.metadata.userAgent 
+      assignedTeam: null 
+      createdAt: new Date() 
+      updatedAt: new Date() 
     };
 
     // In production, this would be:
     // const feedback = await prisma.feedback.create({
     //   data: {
-    //     type: sanitizedFeedback.type,
-    //     category: sanitizedFeedback.category,
-    //     title: sanitizedFeedback.title,
-    //     description: sanitizedFeedback.description,
-    //     rating: sanitizedFeedback.rating,
-    //     severity: sanitizedFeedback.severity,
-    //     priority,
-    //     steps: sanitizedFeedback.steps || [],
-    //     expectedBehavior: sanitizedFeedback.expectedBehavior,
-    //     actualBehavior: sanitizedFeedback.actualBehavior,
-    //     browserInfo: sanitizedFeedback.metadata.userAgent,
-    //     screenRecording: sanitizedFeedback.screenRecording || false,
-    //     contactEmail: sanitizedFeedback.contactInfo?.email,
-    //     allowFollowUp: sanitizedFeedback.contactInfo?.allowFollowUp || false,
-    //     page: sanitizedFeedback.metadata.page,
-    //     sessionId: sanitizedFeedback.metadata.sessionId,
-    //     userId: sanitizedFeedback.metadata.userId,
-    //     timestamp: new Date(sanitizedFeedback.metadata.timestamp),
-    //     ipAddress: getClientIP(request),
-    //     userAgent: sanitizedFeedback.metadata.userAgent,
-    //   },
+    //     type: sanitizedFeedback.type 
+    //     category: sanitizedFeedback.category 
+    //     title: sanitizedFeedback.title 
+    //     description: sanitizedFeedback.description 
+    //     rating: sanitizedFeedback.rating 
+    //     severity: sanitizedFeedback.severity 
+    //     priority 
+    //     steps: sanitizedFeedback.steps || [] 
+    //     expectedBehavior: sanitizedFeedback.expectedBehavior 
+    //     actualBehavior: sanitizedFeedback.actualBehavior 
+    //     browserInfo: sanitizedFeedback.metadata.userAgent 
+    //     screenRecording: sanitizedFeedback.screenRecording || false 
+    //     contactEmail: sanitizedFeedback.contactInfo?.email 
+    //     allowFollowUp: sanitizedFeedback.contactInfo?.allowFollowUp || false 
+    //     page: sanitizedFeedback.metadata.page 
+    //     sessionId: sanitizedFeedback.metadata.sessionId 
+    //     userId: sanitizedFeedback.metadata.userId 
+    //     timestamp: new Date(sanitizedFeedback.metadata.timestamp) ,
+    //     ipAddress: getClientIP(request) 
+    //     userAgent: sanitizedFeedback.metadata.userAgent 
+    //   } 
     // });
 
     // Process feedback for immediate actions
-    await processFeedback(feedback);
+    await processFeedback(_feedback);
     
     // Track analytics
     analytics.trackEvent('feedback_submitted', {
-      type: sanitizedFeedback.type,
-      category: sanitizedFeedback.category,
-      priority,
-      hasScreenRecording: sanitizedFeedback.screenRecording,
-      rating: sanitizedFeedback.rating,
+      type: sanitizedFeedback.type 
+      category: sanitizedFeedback.category 
+      priority 
+      hasScreenRecording: sanitizedFeedback.screenRecording 
+      rating: sanitizedFeedback.rating 
     }, sanitizedFeedback.metadata.userId);
 
     // Log feedback submission
-    logger.info('Feedback submitted', {
-      userId: sanitizedFeedback.metadata.userId || 'anonymous',
-      sessionId: sanitizedFeedback.metadata.sessionId,
-      metadata: {
-        feedbackId: feedback.id,
-        type: sanitizedFeedback.type,
-        category: sanitizedFeedback.category,
-        priority,
-      },
+    logger.info('Feedback submitted', { metadata: {
+      userId: sanitizedFeedback.metadata.userId || 'anonymous' 
+      sessionId: sanitizedFeedback.metadata.sessionId 
+      metadata: { 
+        feedbackId: feedback.id 
+        type: sanitizedFeedback.type 
+        category: sanitizedFeedback.category 
+        priority 
+      } 
     });
 
     const responseTime = Date.now() - startTime;
     
     return NextResponse.json({
-      success: true,
-      id: feedback.id,
-      priority,
-      message: 'Feedback submitted successfully',
-      responseTime,
+      success: true 
+      id: feedback.id 
+      priority 
+      message: 'Feedback submitted successfully' 
+      responseTime 
     });
   } catch (error) {
     const responseTime = Date.now() - startTime;
     
     logger.error('Failed to submit feedback', error as Error, {
-      metadata: { responseTime },
+      metadata: { responseTime } 
     });
 
     return NextResponse.json(
-      { error: 'Failed to submit feedback' },
+      { error: 'Failed to submit feedback' } 
       { status: 500 }
-    );
-  }
+   );
+  });
 }
 
 /**
@@ -175,7 +175,7 @@ function validateFeedbackSubmission(data: any): { isValid: boolean; data?: any; 
   const errors: string[] = [];
 
   // Required fields
-  if (!data.type || !['rating', 'survey', 'bug_report', 'feature_request', 'usability'].includes(data.type)) {
+  if (!data.type || !['rating', 'survey', 'bug_report', 'featurerequest', 'usability'].includes(data.type)) {
     errors.push('Invalid or missing feedback type');
   }
 
@@ -239,16 +239,16 @@ function validateFeedbackSubmission(data: any): { isValid: boolean; data?: any; 
   }
 
   return {
-    isValid: errors.length === 0,
-    data: errors.length === 0 ? data : undefined,
-    errors: errors.length > 0 ? errors : undefined,
+    isValid: errors.length === 0 
+    data: errors.length === 0 ? data : undefined 
+    errors: errors.length > 0 ? errors : undefined 
   };
 }
 
 /**
  * Determine feedback priority based on type and content
  */
-function determinePriority(feedback: FeedbackSubmission): 'low' | 'medium' | 'high' | 'critical' {
+function determinePriority(_feedback: FeedbackSubmission): 'low' | 'medium' | 'high' | 'critical' {
   // Critical priority conditions
   if (feedback.severity === 'critical') {
     return 'critical';
@@ -287,7 +287,7 @@ function determinePriority(feedback: FeedbackSubmission): 'low' | 'medium' | 'hi
     return 'medium';
   }
 
-  if (feedback.type === 'feature_request') {
+  if (feedback.type === 'featurerequest') {
     return 'medium';
   }
 
@@ -298,14 +298,14 @@ function determinePriority(feedback: FeedbackSubmission): 'low' | 'medium' | 'hi
 /**
  * Process feedback for immediate actions
  */
-async function processFeedback(feedback: any) {
+async function processFeedback(_feedback: any) {
   // Send immediate notifications for critical issues
   if (feedback.priority === 'critical') {
-    await sendCriticalFeedbackAlert(feedback);
+    await sendCriticalFeedbackAlert(_feedback);
   }
 
   // Auto-assign to appropriate team based on category
-  await autoAssignFeedback(feedback);
+  await autoAssignFeedback(_feedback);
 
   // Update UAT session if applicable
   if (feedback.sessionId) {
@@ -316,23 +316,23 @@ async function processFeedback(feedback: any) {
 /**
  * Send alert for critical feedback
  */
-async function sendCriticalFeedbackAlert(feedback: any) {
+async function sendCriticalFeedbackAlert(_feedback: any) {
   try {
     // In production, this would send alerts via email, Slack, etc.
     logger.error('Critical feedback received', undefined, {
-      metadata: {
-        feedbackId: feedback.id,
-        title: feedback.title,
-        category: feedback.category,
-        page: feedback.page,
-      },
+      metadata: { 
+        feedbackId: feedback.id 
+        title: feedback.title 
+        category: feedback.category 
+        page: feedback.page 
+      } 
     });
 
     // Track critical feedback in analytics
     analytics.trackEvent('critical_feedback_received', {
-      feedbackId: feedback.id,
-      category: feedback.category,
-      type: feedback.type,
+      feedbackId: feedback.id 
+      category: feedback.category 
+      type: feedback.type 
     });
   } catch (error) {
     logger.error('Failed to send critical feedback alert', error as Error);
@@ -342,14 +342,14 @@ async function sendCriticalFeedbackAlert(feedback: any) {
 /**
  * Auto-assign feedback to appropriate team
  */
-async function autoAssignFeedback(feedback: any) {
+async function autoAssignFeedback(_feedback: any) {
   const assignmentRules = {
-    'collaboration': 'collaboration-team',
-    'ai-tutoring': 'ai-team',
-    'authentication': 'security-team',
-    'performance': 'performance-team',
-    'mobile': 'mobile-team',
-    'general': 'product-team',
+    'collaboration': 'collaboration-team' 
+    'ai-tutoring': 'ai-team' 
+    'authentication': 'security-team' 
+    'performance': 'performance-team' 
+    'mobile': 'mobile-team' 
+    'general': 'product-team' 
   };
 
   const assignedTeam = assignmentRules[feedback.category as keyof typeof assignmentRules] || 'product-team';
@@ -357,13 +357,13 @@ async function autoAssignFeedback(feedback: any) {
   try {
     // Mock update - in production this would be:
     // await prisma.feedback.update({
-    //   where: { id: feedback.id },
-    //   data: { assignedTeam },
+    //   where: { id: feedback.id } 
+    //   data: { assignedTeam } 
     // });
     logger.info(`Feedback ${feedback.id} assigned to team: ${assignedTeam}`);
   } catch (error) {
     logger.error('Failed to auto-assign feedback', error as Error, {
-      metadata: { feedbackId: feedback.id },
+      metadata: { feedbackId: feedback.id } 
     });
   }
 }
@@ -371,27 +371,27 @@ async function autoAssignFeedback(feedback: any) {
 /**
  * Update UAT session with feedback
  */
-async function updateUATSession(feedback: any) {
+async function updateUATSession(_feedback: any) {
   try {
     // Find the UAT session
     // Mock session handling - in production this would be:
     // const session = await prisma.uATSession.findFirst({
-    //   where: { id: feedback.sessionId },
+    //   where: { id: feedback.sessionId } 
     // });
     // if (session && session.id) {
     //   await prisma.uATSession.update({
-    //     where: { id: session.id },
+    //     where: { id: session.id } 
     //     data: {
-    //       feedbackCount: { increment: 1 },
-    //       lastFeedbackAt: new Date(),
-    //     },
+    //       feedbackCount: { increment: 1 } 
+    //       lastFeedbackAt: new Date() 
+    //     } 
     //   });
     // }
     logger.info(`Session ${feedback.sessionId} feedback count updated`);
   } catch (error) {
     logger.error('Failed to update UAT session', error as Error, {
-      sessionId: feedback.sessionId,
-      metadata: { feedbackId: feedback.id },
+      sessionId: feedback.sessionId 
+      metadata: { feedbackId: feedback.id } 
     });
   }
 }

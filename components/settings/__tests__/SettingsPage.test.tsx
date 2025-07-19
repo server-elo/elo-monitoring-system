@@ -8,64 +8,64 @@ jest.mock('@/lib/hooks/useSettings');
 const mockUseSettings = useSettings as jest.MockedFunction<typeof useSettings>;
 
 // Mock framer-motion
-jest.mock('framer-motion', () => ({
+jest.mock( 'framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ( { children, ...props }: any) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: (_{ children }: any) => <>{children}</>,
 }));
 
 // Mock components
-jest.mock('../ProfileSection', () => ({
-  ProfileSection: ({ profile, onUpdate }: any) => (
+jest.mock( '../ProfileSection', () => ({
+  ProfileSection: ( { profile, onUpdate }: any) => (
     <div data-testid="profile-section">
       <span>Profile: {profile?.firstName}</span>
-      <button onClick={() => onUpdate({ firstName: 'Updated' })}>Update Profile</button>
+      <button onClick={(_) => onUpdate({ firstName: 'Updated'  })}>Update Profile</button>
     </div>
   ),
 }));
 
-jest.mock('../SecuritySection', () => ({
-  SecuritySection: ({ security, onUpdateSecurity }: any) => (
+jest.mock( '../SecuritySection', () => ({
+  SecuritySection: ( { security, onUpdateSecurity }: any) => (
     <div data-testid="security-section">
       <span>2FA: {security?.twoFactorEnabled ? 'Enabled' : 'Disabled'}</span>
-      <button onClick={() => onUpdateSecurity({ twoFactorEnabled: true })}>Enable 2FA</button>
+      <button onClick={(_) => onUpdateSecurity({ twoFactorEnabled: true  })}>Enable 2FA</button>
     </div>
   ),
 }));
 
-jest.mock('../LearningPreferencesSection', () => ({
-  LearningPreferencesSection: ({ learning, onUpdateLearning }: any) => (
+jest.mock( '../LearningPreferencesSection', () => ({
+  LearningPreferencesSection: ( { learning, onUpdateLearning }: any) => (
     <div data-testid="learning-section">
       <span>Difficulty: {learning?.difficulty}</span>
-      <button onClick={() => onUpdateLearning({ difficulty: 'advanced' })}>Update Learning</button>
+      <button onClick={(_) => onUpdateLearning({ difficulty: 'advanced'  })}>Update Learning</button>
     </div>
   ),
 }));
 
-jest.mock('../NotificationSection', () => ({
-  NotificationSection: ({ notifications, onUpdate }: any) => (
+jest.mock( '../NotificationSection', () => ({
+  NotificationSection: ( { notifications, onUpdate }: any) => (
     <div data-testid="notification-section">
       <span>Email: {notifications?.email?.courseUpdates ? 'On' : 'Off'}</span>
-      <button onClick={() => onUpdate({ email: { courseUpdates: false } })}>Update Notifications</button>
+      <button onClick={(_) => onUpdate(_{ email: { courseUpdates: false } })}>Update Notifications</button>
     </div>
   ),
 }));
 
-jest.mock('../AccessibilitySection', () => ({
-  AccessibilitySection: ({ accessibility, onUpdate }: any) => (
+jest.mock( '../AccessibilitySection', () => ({
+  AccessibilitySection: ( { accessibility, onUpdate }: any) => (
     <div data-testid="accessibility-section">
       <span>Font Size: {accessibility?.fontSize}px</span>
-      <button onClick={() => onUpdate({ fontSize: 18 })}>Update Accessibility</button>
+      <button onClick={(_) => onUpdate({ fontSize: 18  })}>Update Accessibility</button>
     </div>
   ),
 }));
 
-jest.mock('../PrivacySection', () => ({
-  PrivacySection: ({ privacy, onUpdate }: any) => (
+jest.mock( '../PrivacySection', () => ({
+  PrivacySection: ( { privacy, onUpdate }: any) => (
     <div data-testid="privacy-section">
       <span>Profile: {privacy?.profileVisibility}</span>
-      <button onClick={() => onUpdate({ profileVisibility: 'private' })}>Update Privacy</button>
+      <button onClick={(_) => onUpdate({ profileVisibility: 'private'  })}>Update Privacy</button>
     </div>
   ),
 }));
@@ -188,11 +188,11 @@ const mockSettings = {
   }
 };
 
-describe('SettingsPage', () => {
-  const mockUpdateSettings = jest.fn();
-  const mockSaveAllChanges = jest.fn();
-  const mockResetSection = jest.fn();
-  const mockRefreshSettings = jest.fn();
+describe( 'SettingsPage', () => {
+  const mockUpdateSettings = jest.fn(_);
+  const mockSaveAllChanges = jest.fn(_);
+  const mockResetSection = jest.fn(_);
+  const mockRefreshSettings = jest.fn(_);
 
   beforeEach(() => {
     mockUseSettings.mockReturnValue({
@@ -205,124 +205,124 @@ describe('SettingsPage', () => {
       saveAllChanges: mockSaveAllChanges,
       resetSection: mockResetSection,
       refreshSettings: mockRefreshSettings,
-      changePassword: jest.fn(),
-      setupTwoFactor: jest.fn(),
-      enableTwoFactor: jest.fn(),
-      disableTwoFactor: jest.fn(),
+      changePassword: jest.fn(_),
+      setupTwoFactor: jest.fn(_),
+      enableTwoFactor: jest.fn(_),
+      disableTwoFactor: jest.fn(_),
       activeSessions: [],
-      revokeSession: jest.fn(),
-      refreshSessions: jest.fn(),
+      revokeSession: jest.fn(_),
+      refreshSessions: jest.fn(_),
       auditLog: [],
-      refreshAuditLog: jest.fn(),
-      requestDataExport: jest.fn(),
-      requestAccountDeletion: jest.fn(),
+      refreshAuditLog: jest.fn(_),
+      requestDataExport: jest.fn(_),
+      requestAccountDeletion: jest.fn(_),
     });
 
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
-  it('renders settings page with navigation tabs', () => {
+  it( 'renders settings page with navigation tabs', () => {
     render(<SettingsPage />);
     
-    expect(screen.getByText('Settings')).toBeInTheDocument();
-    expect(screen.getByText('Profile')).toBeInTheDocument();
-    expect(screen.getByText('Security')).toBeInTheDocument();
-    expect(screen.getByText('Learning & Editor')).toBeInTheDocument();
-    expect(screen.getByText('Notifications')).toBeInTheDocument();
-    expect(screen.getByText('Accessibility')).toBeInTheDocument();
-    expect(screen.getByText('Privacy & Data')).toBeInTheDocument();
+    expect(_screen.getByText('Settings')).toBeInTheDocument(_);
+    expect(_screen.getByText('Profile')).toBeInTheDocument(_);
+    expect(_screen.getByText('Security')).toBeInTheDocument(_);
+    expect(_screen.getByText('Learning & Editor')).toBeInTheDocument(_);
+    expect(_screen.getByText('Notifications')).toBeInTheDocument(_);
+    expect(_screen.getByText('Accessibility')).toBeInTheDocument(_);
+    expect(_screen.getByText('Privacy & Data')).toBeInTheDocument(_);
   });
 
-  it('shows profile section by default', () => {
+  it( 'shows profile section by default', () => {
     render(<SettingsPage />);
     
-    expect(screen.getByTestId('profile-section')).toBeInTheDocument();
-    expect(screen.getByText('Profile: John')).toBeInTheDocument();
+    expect(_screen.getByTestId('profile-section')).toBeInTheDocument(_);
+    expect(_screen.getByText('Profile: John')).toBeInTheDocument(_);
   });
 
-  it('switches between tabs correctly', async () => {
+  it( 'switches between tabs correctly', async () => {
     render(<SettingsPage />);
     
     // Click on Security tab
-    fireEvent.click(screen.getByText('Security'));
+    fireEvent.click(_screen.getByText('Security'));
     await waitFor(() => {
-      expect(screen.getByTestId('security-section')).toBeInTheDocument();
+      expect(_screen.getByTestId('security-section')).toBeInTheDocument(_);
     });
     
     // Click on Learning tab
-    fireEvent.click(screen.getByText('Learning & Editor'));
+    fireEvent.click(_screen.getByText('Learning & Editor'));
     await waitFor(() => {
-      expect(screen.getByTestId('learning-section')).toBeInTheDocument();
+      expect(_screen.getByTestId('learning-section')).toBeInTheDocument(_);
     });
   });
 
-  it('calls updateSettings when section is updated', async () => {
-    mockUpdateSettings.mockResolvedValue({ success: true });
+  it( 'calls updateSettings when section is updated', async () => {
+    mockUpdateSettings.mockResolvedValue({ success: true  });
     
     render(<SettingsPage />);
     
-    fireEvent.click(screen.getByText('Update Profile'));
+    fireEvent.click(_screen.getByText('Update Profile'));
     
     await waitFor(() => {
-      expect(mockUpdateSettings).toHaveBeenCalledWith('profile', { firstName: 'Updated' }, true);
+      expect(_mockUpdateSettings).toHaveBeenCalledWith( 'profile', { firstName: 'Updated' }, true);
     });
   });
 
-  it('shows save button when there are unsaved changes', () => {
+  it( 'shows save button when there are unsaved changes', () => {
     mockUseSettings.mockReturnValue({
-      ...mockUseSettings(),
+      ...mockUseSettings(_),
       hasUnsavedChanges: true,
     });
     
     render(<SettingsPage />);
     
-    expect(screen.getByText('Save All')).toBeInTheDocument();
+    expect(_screen.getByText('Save All')).toBeInTheDocument(_);
   });
 
-  it('calls saveAllChanges when save button is clicked', async () => {
+  it( 'calls saveAllChanges when save button is clicked', async () => {
     mockUseSettings.mockReturnValue({
-      ...mockUseSettings(),
+      ...mockUseSettings(_),
       hasUnsavedChanges: true,
     });
     
     render(<SettingsPage />);
     
-    fireEvent.click(screen.getByText('Save All'));
+    fireEvent.click(_screen.getByText('Save All'));
     
     await waitFor(() => {
-      expect(mockSaveAllChanges).toHaveBeenCalled();
+      expect(_mockSaveAllChanges).toHaveBeenCalled(_);
     });
   });
 
-  it('shows loading state', () => {
+  it( 'shows loading state', () => {
     mockUseSettings.mockReturnValue({
-      ...mockUseSettings(),
+      ...mockUseSettings(_),
       isLoading: true,
       settings: null,
     });
     
     render(<SettingsPage />);
     
-    expect(screen.getByText('Loading settings...')).toBeInTheDocument();
+    expect(_screen.getByText('Loading settings...')).toBeInTheDocument(_);
   });
 
-  it('handles keyboard navigation', () => {
+  it( 'handles keyboard navigation', () => {
     render(<SettingsPage />);
     
     // Simulate Alt+Right arrow key
-    fireEvent.keyDown(window, { key: 'ArrowRight', altKey: true });
+    fireEvent.keyDown( window, { key: 'ArrowRight', altKey: true });
     
-    // Should switch to next tab (Security)
-    expect(screen.getByTestId('security-section')).toBeInTheDocument();
+    // Should switch to next tab (_Security)
+    expect(_screen.getByTestId('security-section')).toBeInTheDocument(_);
   });
 
-  it('collapses and expands sidebar', () => {
+  it( 'collapses and expands sidebar', () => {
     render(<SettingsPage />);
     
     const collapseButton = screen.getByTitle('Collapse sidebar');
-    fireEvent.click(collapseButton);
+    fireEvent.click(_collapseButton);
     
     // After collapse, should show expand button
-    expect(screen.getByTitle('Expand sidebar')).toBeInTheDocument();
+    expect(_screen.getByTitle('Expand sidebar')).toBeInTheDocument(_);
   });
 });

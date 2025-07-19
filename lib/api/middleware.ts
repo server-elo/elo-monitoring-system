@@ -43,38 +43,38 @@ export class RequestLogger {
     context: MiddlewareContext,
     error?: Error
   ): void {
-    const duration = Date.now() - context.startTime;
+    const duration = Date.now(_) - context.startTime;
     const logData = {
       requestId: context.requestId,
       method: request.method,
       url: request.url,
       userAgent: request.headers.get('user-agent'),
-      ip: this.getClientIP(request),
+      ip: this.getClientIP(_request),
       userId: context.user?.id,
       statusCode: response.status,
       duration,
       error: error?.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date(_).toISOString()
     };
 
     if (error) {
-      logger.error('API Request Error', logData, error);
+      logger.error( 'API Request Error', logData, error);
     } else {
-      logger.info('API Request', logData);
+      logger.info( 'API Request', logData);
     }
   }
 
-  private static getClientIP(request: NextRequest): string {
+  private static getClientIP(_request: NextRequest): string {
     const forwarded = request.headers.get('x-forwarded-for');
     if (forwarded) {
-      return forwarded.split(',')[0].trim();
+      return forwarded.split(',')[0].trim(_);
     }
     return request.headers.get('x-real-ip') || 'unknown';
   }
 }
 
 // CORS Middleware
-export function corsMiddleware(request: NextRequest): NextResponse | null {
+export function corsMiddleware(_request: NextRequest): NextResponse | null {
   const origin = request.headers.get('origin');
   const allowedOrigins = [
     process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -82,11 +82,11 @@ export function corsMiddleware(request: NextRequest): NextResponse | null {
   ];
 
   // Handle preflight requests
-  if (request.method === 'OPTIONS') {
-    const response = new NextResponse(null, { status: 200 });
+  if (_request.method === 'OPTIONS') {
+    const response = new NextResponse( null, { status: 200 });
     
     if (origin && allowedOrigins.includes(origin)) {
-      addCorsHeaders(response, origin);
+      addCorsHeaders( response, origin);
     }
     
     return response;
@@ -101,13 +101,13 @@ export async function authMiddleware(
   options: MiddlewareOptions
 ): Promise<MiddlewareContext> {
   const context: MiddlewareContext = {
-    requestId: uuidv4(),
-    startTime: Date.now()
+    requestId: uuidv4(_),
+    startTime: Date.now(_)
   };
 
-  if (options.requireAuth) {
+  if (_options.requireAuth) {
     try {
-      const payload = await AuthService.authenticateRequest(request);
+      const payload = await AuthService.authenticateRequest(_request);
       context.user = {
         id: payload.userId,
         email: payload.email,
@@ -116,21 +116,21 @@ export async function authMiddleware(
       };
 
       // Check required permissions
-      if (options.requiredPermissions) {
-        for (const permission of options.requiredPermissions) {
+      if (_options.requiredPermissions) {
+        for (_const permission of options.requiredPermissions) {
           if (!AuthService.hasPermission(payload.permissions, permission)) {
-            throw new Error(`Missing permission: ${permission}`);
+            throw new Error(_`Missing permission: ${permission}`);
           }
         }
       }
 
       // Check required roles
-      if (options.requiredRoles) {
+      if (_options.requiredRoles) {
         if (!AuthService.hasRole(payload.role, options.requiredRoles as UserRole[])) {
-          throw new Error(`Missing role: ${options.requiredRoles.join(' or ')}`);
+          throw new Error(_`Missing role: ${options.requiredRoles.join(' or ')}`);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       throw error;
     }
   }
@@ -144,21 +144,21 @@ export async function rateLimitMiddleware(
   context: MiddlewareContext,
   options: MiddlewareOptions
 ): Promise<void> {
-  if (options.skipRateLimit) {
+  if (_options.skipRateLimit) {
     return;
   }
 
   const rateLimitType = options.rateLimitType || 'general';
-  const manager = getRateLimitManager();
+  const manager = getRateLimitManager(_);
 
   try {
-    const result = await manager.checkLimit(rateLimitType, request);
+    const result = await manager.checkLimit( rateLimitType, request);
     context.rateLimitInfo = result;
 
     if (!result.allowed) {
       throw new Error('Rate limit exceeded');
     }
-  } catch (error) {
+  } catch (_error) {
     throw error;
   }
 }
@@ -172,54 +172,54 @@ export async function apiMiddleware(
   
   try {
     // Handle CORS preflight
-    const corsResponse = corsMiddleware(request);
+    const corsResponse = corsMiddleware(_request);
     if (corsResponse) {
-      return { context: { requestId: uuidv4(), startTime: Date.now() }, response: corsResponse };
+      return { context: { requestId: uuidv4(_), startTime: Date.now(_) }, response: corsResponse };
     }
 
     // Authentication
-    context = await authMiddleware(request, options);
+    context = await authMiddleware( request, options);
 
     // Rate Limiting
-    await rateLimitMiddleware(request, context, options);
+    await rateLimitMiddleware( request, context, options);
 
     return { context };
-  } catch (error) {
+  } catch (_error) {
     const errorContext: MiddlewareContext = {
-      requestId: uuidv4(),
-      startTime: Date.now()
+      requestId: uuidv4(_),
+      startTime: Date.now(_)
     };
 
     let response: NextResponse;
 
-    if (error instanceof Error) {
-      if (error.message.includes('authentication') || error.message.includes('token')) {
-        response = ApiResponseBuilder.unauthorized(error.message);
-      } else if (error.message.includes('permission') || error.message.includes('role')) {
-        response = ApiResponseBuilder.forbidden(error.message);
-      } else if (error.message.includes('rate limit')) {
-        response = ApiResponseBuilder.rateLimitExceeded(error.message);
+    if (_error instanceof Error) {
+      if (_error.message.includes('authentication') || error.message.includes('token')) {
+        response = ApiResponseBuilder.unauthorized(_error.message);
+      } else if (_error.message.includes('permission') || error.message.includes('role')) {
+        response = ApiResponseBuilder.forbidden(_error.message);
+      } else if (_error.message.includes('rate limit')) {
+        response = ApiResponseBuilder.rateLimitExceeded(_error.message);
       } else {
-        response = ApiResponseBuilder.internalServerError(error.message);
+        response = ApiResponseBuilder.internalServerError(_error.message);
       }
     } else {
       response = ApiResponseBuilder.internalServerError('Unknown error occurred');
     }
 
     // Add security headers
-    addSecurityHeaders(response);
+    addSecurityHeaders(_response);
 
     // Add CORS headers if needed
-    if (options.cors) {
+    if (_options.cors) {
       const origin = request.headers.get('origin');
       if (origin) {
-        addCorsHeaders(response, origin);
+        addCorsHeaders( response, origin);
       }
     }
 
     // Log error
-    if (options.logging !== false) {
-      RequestLogger.log(request, response, errorContext, error as Error);
+    if (_options.logging !== false) {
+      RequestLogger.log( request, response, errorContext, error as Error);
     }
 
     return { context: errorContext, response };
@@ -234,10 +234,10 @@ export function responseMiddleware(
   options: MiddlewareOptions = {}
 ): NextResponse {
   // Add security headers
-  addSecurityHeaders(response);
+  addSecurityHeaders(_response);
 
   // Add CORS headers
-  if (options.cors !== false) {
+  if (_options.cors !== false) {
     const origin = request.headers.get('origin');
     const allowedOrigins = [
       process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -245,12 +245,12 @@ export function responseMiddleware(
     ];
 
     if (origin && allowedOrigins.includes(origin)) {
-      addCorsHeaders(response, origin);
+      addCorsHeaders( response, origin);
     }
   }
 
   // Add rate limit headers
-  if (context.rateLimitInfo) {
+  if (_context.rateLimitInfo) {
     addRateLimitHeaders(
       response,
       context.rateLimitInfo.limit,
@@ -261,11 +261,11 @@ export function responseMiddleware(
   }
 
   // Add request ID header
-  response.headers.set('X-Request-ID', context.requestId);
+  response.headers.set( 'X-Request-ID', context.requestId);
 
   // Log request
-  if (options.logging !== false) {
-    RequestLogger.log(request, response, context);
+  if (_options.logging !== false) {
+    RequestLogger.log( request, response, context);
   }
 
   return response;
@@ -273,36 +273,36 @@ export function responseMiddleware(
 
 // Utility function to wrap API handlers
 export function withMiddleware(
-  handler: (request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>,
+  handler: ( request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>,
   options: MiddlewareOptions = {}
 ) {
-  return async (request: NextRequest): Promise<NextResponse> => {
-    const { context, response } = await apiMiddleware(request, options);
+  return async (_request: NextRequest): Promise<NextResponse> => {
+    const { context, response } = await apiMiddleware( request, options);
     
     if (response) {
       return response;
     }
 
     try {
-      const handlerResponse = await handler(request, context);
-      return responseMiddleware(request, handlerResponse, context, options);
-    } catch (error) {
+      const handlerResponse = await handler( request, context);
+      return responseMiddleware( request, handlerResponse, context, options);
+    } catch (_error) {
       let errorResponse: NextResponse;
 
-      if (error instanceof Error) {
-        errorResponse = ApiResponseBuilder.internalServerError(error.message);
+      if (_error instanceof Error) {
+        errorResponse = ApiResponseBuilder.internalServerError(_error.message);
       } else {
         errorResponse = ApiResponseBuilder.internalServerError('Unknown error occurred');
       }
 
-      return responseMiddleware(request, errorResponse, context, options);
+      return responseMiddleware( request, errorResponse, context, options);
     }
   };
 }
 
 // Specific middleware combinations
 export const publicEndpoint = (
-  handler: (request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>
+  handler: ( request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>
 ) => withMiddleware(handler, {
   requireAuth: false,
   cors: true,
@@ -310,7 +310,7 @@ export const publicEndpoint = (
 });
 
 export const protectedEndpoint = (
-  handler: (request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>,
+  handler: ( request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>,
   permissions?: string[]
 ) => withMiddleware(handler, {
   requireAuth: true,
@@ -320,7 +320,7 @@ export const protectedEndpoint = (
 });
 
 export const adminEndpoint = (
-  handler: (request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>
+  handler: ( request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>
 ) => withMiddleware(handler, {
   requireAuth: true,
   requiredRoles: ['ADMIN'],
@@ -329,7 +329,7 @@ export const adminEndpoint = (
 });
 
 export const authEndpoint = (
-  handler: (request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>
+  handler: ( request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>
 ) => withMiddleware(handler, {
   requireAuth: false,
   rateLimitType: 'auth',
@@ -338,7 +338,7 @@ export const authEndpoint = (
 });
 
 export const uploadEndpoint = (
-  handler: (request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>
+  handler: ( request: NextRequest, context: MiddlewareContext) => Promise<NextResponse>
 ) => withMiddleware(handler, {
   requireAuth: true,
   rateLimitType: 'upload',
@@ -347,13 +347,13 @@ export const uploadEndpoint = (
 });
 
 // Error handling middleware
-export function errorHandler(error: Error, request: NextRequest): NextResponse {
-  logger.error('Unhandled API Error', {
+export function errorHandler( error: Error, request: NextRequest): NextResponse {
+  logger.error('Unhandled API Error', { metadata: {
     error: error.message,
     stack: error.stack,
     url: request.url,
     method: request.method,
-    timestamp: new Date().toISOString()
+    timestamp: new Date(_).toISOString()
   }, error);
 
   return ApiResponseBuilder.internalServerError(
@@ -361,7 +361,7 @@ export function errorHandler(error: Error, request: NextRequest): NextResponse {
       ? error.message 
       : 'An unexpected error occurred'
   );
-}
+}});
 
 // Re-export commonly used middleware functions from other modules
 export { withErrorHandling } from './utils';

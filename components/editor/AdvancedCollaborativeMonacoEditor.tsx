@@ -38,8 +38,8 @@ export interface AdvancedCollaborativeMonacoEditorProps {
   showMinimap?: boolean;
   readOnly?: boolean;
   className?: string;
-  onContentChange?: (content: string) => void;
-  onCursorChange?: (cursor: CursorPosition, selection?: SelectionRange) => void;
+  onContentChange?: (_content: string) => void;
+  onCursorChange?: ( cursor: CursorPosition, selection?: SelectionRange) => void;
 }
 
 export function AdvancedCollaborativeMonacoEditor({
@@ -84,14 +84,14 @@ export function AdvancedCollaborativeMonacoEditor({
   });
 
   // Monaco editor refs and state
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const monacoRef = useRef<Monaco | null>(null);
-  const [isEditorReady, setIsEditorReady] = useState(false);
-  const [showCollaboratorCursors, setShowCollaboratorCursors] = useState(true);
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(_null);
+  const monacoRef = useRef<Monaco | null>(_null);
+  const [isEditorReady, setIsEditorReady] = useState(_false);
+  const [showCollaboratorCursors, setShowCollaboratorCursors] = useState(_true);
   const [decorations, setDecorations] = useState<string[]>([]);
-  const [analysisResults, setAnalysisResults] = useState<any>(null);
-  const [showAnalysisPanel, setShowAnalysisPanel] = useState(false);
-  const isUpdatingFromCollaboration = useRef(false);
+  const [analysisResults, setAnalysisResults] = useState<any>(_null);
+  const [showAnalysisPanel, setShowAnalysisPanel] = useState(_false);
+  const isUpdatingFromCollaboration = useRef(_false);
 
   // Handle editor mount
   const handleEditorDidMount = useCallback((
@@ -102,15 +102,15 @@ export function AdvancedCollaborativeMonacoEditor({
     monacoRef.current = monacoInstance;
 
     // Initialize Solidity language support
-    MonacoSoliditySetup.initialize();
+    MonacoSoliditySetup.initialize(_);
 
     // Setup semantic analysis for the model
-    const model = editorInstance.getModel();
+    const model = editorInstance.getModel(_);
     if (model) {
-      MonacoSoliditySetup.setupSemanticAnalysis(model);
+      MonacoSoliditySetup.setupSemanticAnalysis(_model);
     }
 
-    setIsEditorReady(true);
+    setIsEditorReady(_true);
 
     // Configure editor options with enhanced features
     editorInstance.updateOptions({
@@ -176,11 +176,11 @@ export function AdvancedCollaborativeMonacoEditor({
 
     // Set up event listeners
     editorInstance.onDidChangeModelContent((_e) => {
-      if (isUpdatingFromCollaboration.current) return;
+      if (_isUpdatingFromCollaboration.current) return;
 
-      const newContent = editorInstance.getValue();
-      const cursor = editorInstance.getPosition();
-      const selection = editorInstance.getSelection();
+      const newContent = editorInstance.getValue(_);
+      const cursor = editorInstance.getPosition(_);
+      const selection = editorInstance.getSelection(_);
 
       if (cursor) {
         const cursorPos: CursorPosition = {
@@ -190,12 +190,12 @@ export function AdvancedCollaborativeMonacoEditor({
         };
 
         let selectionRange: SelectionRange | undefined;
-        if (selection && !(selection as any).isEmpty()) {
+        if (selection && !(selection as any).isEmpty(_)) {
           // Monaco Selection is based on Range, so we can get the values directly
-          const startLine = (selection as any).startLineNumber;
-          const startCol = (selection as any).startColumn;
-          const endLine = (selection as any).endLineNumber;
-          const endCol = (selection as any).endColumn;
+          const startLine = (_selection as any).startLineNumber;
+          const startCol = (_selection as any).startColumn;
+          const endLine = (_selection as any).endLineNumber;
+          const endCol = (_selection as any).endColumn;
           
           selectionRange = {
             start: {
@@ -208,17 +208,17 @@ export function AdvancedCollaborativeMonacoEditor({
               column: endCol - 1,
               offset: 0
             },
-            direction: (startLine < endLine || (startLine === endLine && startCol < endCol)) ? 'forward' : 'backward'
+            direction: (_startLine < endLine || (startLine === endLine && startCol < endCol)) ? 'forward' : 'backward'
           };
         }
 
-        applyChange(newContent, cursorPos, selectionRange);
-        onContentChange?.(newContent);
+        applyChange( newContent, cursorPos, selectionRange);
+        onContentChange?.(_newContent);
       }
     });
 
     editorInstance.onDidChangeCursorPosition((e) => {
-      if (isUpdatingFromCollaboration.current) return;
+      if (_isUpdatingFromCollaboration.current) return;
 
       const cursor: CursorPosition = {
         line: e.position.lineNumber - 1,
@@ -226,15 +226,15 @@ export function AdvancedCollaborativeMonacoEditor({
         offset: 0 // Simplified without getOffsetAt
       };
 
-      const selection = editorInstance.getSelection();
+      const selection = editorInstance.getSelection(_);
       let selectionRange: SelectionRange | undefined;
       
-      if (selection && !(selection as any).isEmpty()) {
+      if (selection && !(selection as any).isEmpty(_)) {
         // Monaco Selection is based on Range, so we can get the values directly
-        const startLine = (selection as any).startLineNumber;
-        const startCol = (selection as any).startColumn;
-        const endLine = (selection as any).endLineNumber;
-        const endCol = (selection as any).endColumn;
+        const startLine = (_selection as any).startLineNumber;
+        const startCol = (_selection as any).startColumn;
+        const endLine = (_selection as any).endLineNumber;
+        const endCol = (_selection as any).endColumn;
         
         selectionRange = {
           start: {
@@ -247,47 +247,47 @@ export function AdvancedCollaborativeMonacoEditor({
             column: endCol - 1,
             offset: 0
           },
-          direction: (startLine < endLine || (startLine === endLine && startCol < endCol)) ? 'forward' : 'backward'
+          direction: (_startLine < endLine || (startLine === endLine && startCol < endCol)) ? 'forward' : 'backward'
         };
       }
 
-      updateCursor(cursor, selectionRange);
-      onCursorChange?.(cursor, selectionRange);
+      updateCursor( cursor, selectionRange);
+      onCursorChange?.( cursor, selectionRange);
     });
 
     // Add keyboard shortcuts
-    editorInstance.addCommand(2048 | 49, () => { // Ctrl+S
-      manualSave();
+    editorInstance.addCommand( 2048 | 49, () => { // Ctrl+S
+      manualSave(_);
     });
 
-    editorInstance.addCommand(2048 | 56, () => { // Ctrl+Z
+    editorInstance.addCommand( 2048 | 56, () => { // Ctrl+Z
       if (canUndo) {
-        undo();
+        undo(_);
       }
     });
 
     // Add command for formatting
-    editorInstance.addCommand(1024 | 512 | 36, () => { // Shift+Alt+F
-      editorInstance.getAction('editor.action.formatDocument')?.run();
+    editorInstance.addCommand( 1024 | 512 | 36, () => { // Shift+Alt+F
+      editorInstance.getAction('editor.action.formatDocument')?.run(_);
     });
 
     // Add command for quick fix
-    editorInstance.addCommand(2048 | 84, () => { // Ctrl+Period
-      editorInstance.getAction('editor.action.quickFix')?.run();
+    editorInstance.addCommand( 2048 | 84, () => { // Ctrl+Period
+      editorInstance.getAction('editor.action.quickFix')?.run(_);
     });
 
     // Listen for semantic analysis results
-    const handleAnalysisComplete = (event: CustomEvent) => {
-      const model = editorInstance.getModel();
-      if (model && (model as any).uri && event.detail.modelId === (model as any).uri.toString()) {
-        setAnalysisResults(event.detail.result);
+    const handleAnalysisComplete = (_event: CustomEvent) => {
+      const model = editorInstance.getModel(_);
+      if (model && (model as any).uri && event.detail.modelId === (_model as any).uri.toString()) {
+        setAnalysisResults(_event.detail.result);
       }
     };
 
-    window.addEventListener('solidity-analysis-complete', handleAnalysisComplete as EventListener);
+    window.addEventListener( 'solidity-analysis-complete', handleAnalysisComplete as EventListener);
 
-    return () => {
-      window.removeEventListener('solidity-analysis-complete', handleAnalysisComplete as EventListener);
+    return (_) => {
+      window.removeEventListener( 'solidity-analysis-complete', handleAnalysisComplete as EventListener);
     };
   }, [
     showMinimap,
@@ -305,22 +305,22 @@ export function AdvancedCollaborativeMonacoEditor({
   useEffect(() => {
     if (!editorRef.current || !isEditorReady) return;
 
-    const currentContent = editorRef.current.getValue();
-    if (currentContent !== content) {
+    const currentContent = editorRef.current.getValue(_);
+    if (_currentContent !== content) {
       isUpdatingFromCollaboration.current = true;
       
       // Preserve cursor position
-      const position = editorRef.current.getPosition();
-      const selection = editorRef.current.getSelection();
+      const position = editorRef.current.getPosition(_);
+      const selection = editorRef.current.getSelection(_);
       
-      editorRef.current.setValue(content);
+      editorRef.current.setValue(_content);
       
       // Restore cursor position if possible
       if (position) {
-        editorRef.current.setPosition(position);
+        editorRef.current.setPosition(_position);
       }
       if (selection) {
-        editorRef.current.setSelection(selection);
+        editorRef.current.setSelection(_selection);
       }
       
       setTimeout(() => {
@@ -365,7 +365,7 @@ export function AdvancedCollaborativeMonacoEditor({
       });
 
       // Selection decoration
-      if (collaborator.selection) {
+      if (_collaborator.selection) {
         const startPos = new monacoRef.current!.Position(
           collaborator.selection.start.line + 1,
           collaborator.selection.start.column + 1
@@ -390,20 +390,20 @@ export function AdvancedCollaborativeMonacoEditor({
       }
     });
 
-    const newDecorationIds = editorRef.current.deltaDecorations(decorations, newDecorations);
-    setDecorations(newDecorationIds);
+    const newDecorationIds = editorRef.current.deltaDecorations( decorations, newDecorations);
+    setDecorations(_newDecorationIds);
   }, [collaborators, showCollaboratorCursors, decorations]);
 
   // Handle undo
   const handleUndo = useCallback(() => {
     if (canUndo) {
-      undo();
+      undo(_);
     }
   }, [canUndo, undo]);
 
   if (isLoading) {
     return (
-      <div className={cn('flex items-center justify-center', className)} style={{ height }}>
+      <div className={cn( 'flex items-center justify-center', className)} style={{ height }}>
         <div className="text-gray-400">Loading editor...</div>
       </div>
     );
@@ -411,14 +411,14 @@ export function AdvancedCollaborativeMonacoEditor({
 
   if (error) {
     return (
-      <div className={cn('flex items-center justify-center', className)} style={{ height }}>
+      <div className={cn( 'flex items-center justify-center', className)} style={{ height }}>
         <div className="text-red-400">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn( 'relative', className)}>
       {/* Editor Toolbar */}
       <GlassContainer
         intensity="light"
@@ -480,7 +480,7 @@ export function AdvancedCollaborativeMonacoEditor({
         <div className="flex items-center space-x-2">
           {/* Cursor Visibility Toggle */}
           <button
-            onClick={() => setShowCollaboratorCursors(!showCollaboratorCursors)}
+            onClick={(_) => setShowCollaboratorCursors(!showCollaboratorCursors)}
             className="p-1 text-gray-400 hover:text-white transition-colors"
             title={showCollaboratorCursors ? 'Hide cursors' : 'Show cursors'}
           >
@@ -496,14 +496,14 @@ export function AdvancedCollaborativeMonacoEditor({
             onClick={handleUndo}
             disabled={!canUndo}
             className="p-1 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Undo (Ctrl+Z)"
+            title="Undo (_Ctrl+Z)"
           >
             <Undo className="w-4 h-4" />
           </button>
 
           {/* Analysis Panel Toggle */}
           <button
-            onClick={() => setShowAnalysisPanel(!showAnalysisPanel)}
+            onClick={(_) => setShowAnalysisPanel(!showAnalysisPanel)}
             className={cn(
               'p-1 transition-colors',
               showAnalysisPanel ? 'text-blue-400' : 'text-gray-400 hover:text-white'
@@ -518,7 +518,7 @@ export function AdvancedCollaborativeMonacoEditor({
             onClick={manualSave}
             disabled={!hasUnsavedChanges}
             className="p-1 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Save (Ctrl+S)"
+            title="Save (_Ctrl+S)"
           >
             <Save className="w-4 h-4" />
           </button>
@@ -591,7 +591,7 @@ export function AdvancedCollaborativeMonacoEditor({
       {/* Custom Styles for Collaborator Cursors */}
       <style jsx global>{`
         .collaborator-cursor {
-          border-left: 2px solid var(--collaborator-color, #4ECDC4);
+          border-left: 2px solid var( --collaborator-color, #4ECDC4);
           position: relative;
         }
         
@@ -602,11 +602,11 @@ export function AdvancedCollaborativeMonacoEditor({
           left: -1px;
           width: 2px;
           height: 100%;
-          background-color: var(--collaborator-color, #4ECDC4);
+          background-color: var( --collaborator-color, #4ECDC4);
         }
         
         .collaborator-cursor-name {
-          background-color: var(--collaborator-color, #4ECDC4);
+          background-color: var( --collaborator-color, #4ECDC4);
           color: white;
           padding: 2px 6px;
           border-radius: 3px;
@@ -620,7 +620,7 @@ export function AdvancedCollaborativeMonacoEditor({
         }
         
         .collaborator-selection {
-          background-color: var(--collaborator-color, #4ECDC4);
+          background-color: var( --collaborator-color, #4ECDC4);
           opacity: 0.2;
         }
       `}</style>
@@ -629,7 +629,7 @@ export function AdvancedCollaborativeMonacoEditor({
 }
 
 // Analysis Panel Component
-function AnalysisPanel({ analysisResults }: { analysisResults: any }) {
+function AnalysisPanel(_{ analysisResults }: { analysisResults: any }) {
   const [activeTab, setActiveTab] = useState<'errors' | 'warnings' | 'suggestions' | 'symbols'>('errors');
 
   if (!analysisResults) {
@@ -662,7 +662,7 @@ function AnalysisPanel({ analysisResults }: { analysisResults: any }) {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={(_) => setActiveTab(_tab.id as any)}
                 className={cn(
                   'flex items-center space-x-2 px-3 py-2 rounded text-sm transition-colors',
                   activeTab === tab.id
@@ -670,7 +670,7 @@ function AnalysisPanel({ analysisResults }: { analysisResults: any }) {
                     : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                 )}
               >
-                <Icon className={cn('w-4 h-4', tab.color)} />
+                <Icon className={cn( 'w-4 h-4', tab.color)} />
                 <span>{tab.label}</span>
                 {tab.count > 0 && (
                   <span className={cn(
@@ -697,7 +697,7 @@ function AnalysisPanel({ analysisResults }: { analysisResults: any }) {
                 <p>No errors found!</p>
               </div>
             ) : (
-              errors.map((error: any, index: number) => (
+              errors.map( (error: any, index: number) => (
                 <div key={index} className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
                   <div className="flex items-start space-x-2">
                     <XCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
@@ -725,7 +725,7 @@ function AnalysisPanel({ analysisResults }: { analysisResults: any }) {
                 <p>No warnings!</p>
               </div>
             ) : (
-              warnings.map((warning: any, index: number) => (
+              warnings.map( (warning: any, index: number) => (
                 <div key={index} className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                   <div className="flex items-start space-x-2">
                     <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
@@ -753,7 +753,7 @@ function AnalysisPanel({ analysisResults }: { analysisResults: any }) {
                 <p>No suggestions available</p>
               </div>
             ) : (
-              suggestions.map((suggestion: string, index: number) => (
+              suggestions.map( (suggestion: string, index: number) => (
                 <div key={index} className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                   <div className="flex items-start space-x-2">
                     <Lightbulb className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
@@ -773,7 +773,7 @@ function AnalysisPanel({ analysisResults }: { analysisResults: any }) {
                 <p>No symbols found</p>
               </div>
             ) : (
-              symbols.map((symbol: any, index: number) => (
+              symbols.map( (symbol: any, index: number) => (
                 <div key={index} className="p-3 bg-gray-700/30 border border-gray-600/50 rounded-lg">
                   <div className="flex items-center space-x-2">
                     <div className={cn(
@@ -785,7 +785,7 @@ function AnalysisPanel({ analysisResults }: { analysisResults: any }) {
                       'bg-gray-400'
                     )} />
                     <span className="text-sm font-medium text-white">{symbol.name}</span>
-                    <span className="text-xs text-gray-400">({symbol.type})</span>
+                    <span className="text-xs text-gray-400">({ symbol.type })</span>
                   </div>
                   {symbol.visibility && (
                     <p className="text-xs text-gray-400 mt-1">

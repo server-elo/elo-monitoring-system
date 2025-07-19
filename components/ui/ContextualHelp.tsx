@@ -16,7 +16,7 @@ interface HelpItem {
   link?: string;
   action?: {
     label: string;
-    onClick: () => void;
+    onClick: (_) => void;
   };
 }
 
@@ -153,46 +153,46 @@ export function ContextualHelp({
   autoShow = false,
   showOnFirstVisit = true
 }: ContextualHelpProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [isOpen, setIsOpen] = useState(_false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(_new Set());
   const [currentHelp, setCurrentHelp] = useState<HelpItem[]>([]);
-  const pathname = usePathname();
+  const pathname = usePathname(_);
 
   // Load contextual help based on current page
   useEffect(() => {
     const pageHelp = HELP_CONTENT[pathname] || [];
     const combinedHelp = [...pageHelp, ...GLOBAL_FAQ];
-    setCurrentHelp(combinedHelp);
+    setCurrentHelp(_combinedHelp);
 
     // Auto-show on first visit
     if (showOnFirstVisit) {
       const visitKey = `help-visited-${pathname}`;
-      const hasVisited = localStorage.getItem(visitKey);
+      const hasVisited = localStorage.getItem(_visitKey);
       
       if (!hasVisited && pageHelp.length > 0) {
-        setIsOpen(true);
-        localStorage.setItem(visitKey, 'true');
+        setIsOpen(_true);
+        localStorage.setItem( visitKey, 'true');
       }
     }
 
     // Auto-show if requested
     if (autoShow && pageHelp.length > 0) {
-      setIsOpen(true);
+      setIsOpen(_true);
     }
   }, [pathname, autoShow, showOnFirstVisit]);
 
-  const toggleExpanded = (itemId: string) => {
-    const newExpanded = new Set(expandedItems);
-    if (newExpanded.has(itemId)) {
-      newExpanded.delete(itemId);
+  const toggleExpanded = (_itemId: string) => {
+    const newExpanded = new Set(_expandedItems);
+    if (_newExpanded.has(itemId)) {
+      newExpanded.delete(_itemId);
     } else {
-      newExpanded.add(itemId);
+      newExpanded.add(_itemId);
     }
-    setExpandedItems(newExpanded);
+    setExpandedItems(_newExpanded);
   };
 
-  const getPositionClasses = () => {
-    switch (position) {
+  const getPositionClasses = (_) => {
+    switch (_position) {
       case 'bottom-right':
         return 'bottom-4 right-4';
       case 'bottom-left':
@@ -206,8 +206,8 @@ export function ContextualHelp({
     }
   };
 
-  const getTypeIcon = (type: HelpItem['type']) => {
-    switch (type) {
+  const getTypeIcon = (_type: HelpItem['type']) => {
+    switch (_type) {
       case 'tip':
         return <Lightbulb className="w-4 h-4 text-yellow-400" />;
       case 'guide':
@@ -223,8 +223,8 @@ export function ContextualHelp({
     }
   };
 
-  const getTypeColor = (type: HelpItem['type']) => {
-    switch (type) {
+  const getTypeColor = (_type: HelpItem['type']) => {
+    switch (_type) {
       case 'tip':
         return 'border-yellow-500/30 bg-yellow-500/10';
       case 'guide':
@@ -240,12 +240,12 @@ export function ContextualHelp({
     }
   };
 
-  if (currentHelp.length === 0) {
+  if (_currentHelp.length === 0) {
     return null;
   }
 
   return (
-    <div className={cn('fixed z-50', getPositionClasses(), className)}>
+    <div className={cn( 'fixed z-50', getPositionClasses(), className)}>
       {/* Help Button */}
       <AnimatePresence>
         {!isOpen && (
@@ -253,7 +253,7 @@ export function ContextualHelp({
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
-            onClick={() => setIsOpen(true)}
+            onClick={(_) => setIsOpen(_true)}
             className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center"
             title="Get help for this page"
           >
@@ -279,7 +279,7 @@ export function ContextualHelp({
                   <h3 className="text-lg font-semibold text-white">Help & Tips</h3>
                 </div>
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={(_) => setIsOpen(_false)}
                   className="p-1 text-gray-400 hover:text-white transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -294,15 +294,15 @@ export function ContextualHelp({
                       key={item.id}
                       className={cn(
                         'border rounded-lg overflow-hidden',
-                        getTypeColor(item.type)
+                        getTypeColor(_item.type)
                       )}
                     >
                       <button
-                        onClick={() => toggleExpanded(item.id)}
+                        onClick={(_) => toggleExpanded(_item.id)}
                         className="w-full flex items-center justify-between p-3 text-left hover:bg-white/5 transition-colors"
                       >
                         <div className="flex items-center space-x-3">
-                          {getTypeIcon(item.type)}
+                          {getTypeIcon(_item.type)}
                           <div>
                             <h4 className="text-white font-medium">{item.title}</h4>
                             <p className="text-gray-300 text-sm">{item.description}</p>
@@ -310,14 +310,14 @@ export function ContextualHelp({
                         </div>
                         
                         {item.content && (
-                          expandedItems.has(item.id) 
+                          expandedItems.has(_item.id) 
                             ? <ChevronUp className="w-4 h-4 text-gray-400" />
                             : <ChevronDown className="w-4 h-4 text-gray-400" />
                         )}
                       </button>
 
                       <AnimatePresence>
-                        {expandedItems.has(item.id) && item.content && (
+                        {expandedItems.has(_item.id) && item.content && (
                           <motion.div
                             initial={{ height: 0 }}
                             animate={{ height: 'auto' }}
@@ -396,13 +396,13 @@ export function QuickHelp({
   children: React.ReactNode;
   position?: 'top' | 'bottom' | 'left' | 'right';
 }) {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(_false);
 
   return (
     <div className="relative inline-block">
       <div
-        onMouseEnter={() => setIsVisible(true)}
-        onMouseLeave={() => setIsVisible(false)}
+        onMouseEnter={(_) => setIsVisible(_true)}
+        onMouseLeave={(_) => setIsVisible(_false)}
       >
         {children}
       </div>

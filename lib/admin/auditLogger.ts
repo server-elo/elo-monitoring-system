@@ -8,16 +8,16 @@ export class AuditLogger {
   private maxLogs = 10000; // Keep last 10k logs in memory
   private retentionPeriod = 365 * 24 * 60 * 60 * 1000; // 1 year in milliseconds
 
-  static getInstance(): AuditLogger {
+  static getInstance(_): AuditLogger {
     if (!AuditLogger.instance) {
-      AuditLogger.instance = new AuditLogger();
+      AuditLogger.instance = new AuditLogger(_);
     }
     return AuditLogger.instance;
   }
 
-  constructor() {
-    this.loadLogsFromStorage();
-    this.startCleanupTimer();
+  constructor(_) {
+    this.loadLogsFromStorage(_);
+    this.startCleanupTimer(_);
   }
 
   // Log an admin action
@@ -31,11 +31,11 @@ export class AuditLogger {
     severity?: 'low' | 'medium' | 'high' | 'critical';
     category?: 'user' | 'content' | 'system' | 'security';
   }): Promise<string> {
-    const currentUser = this.getCurrentUser();
+    const currentUser = this.getCurrentUser(_);
     
     const log: AuditLog = {
-      id: this.generateLogId(),
-      timestamp: new Date(),
+      id: this.generateLogId(_),
+      timestamp: new Date(_),
       userId: currentUser?.id || 'unknown',
       userName: currentUser?.name || 'Unknown User',
       action: params.action,
@@ -43,17 +43,17 @@ export class AuditLogger {
       resourceId: params.resourceId,
       beforeState: params.beforeState,
       afterState: params.afterState,
-      ipAddress: this.getClientIP(),
+      ipAddress: this.getClientIP(_),
       userAgent: navigator.userAgent,
-      sessionId: this.getSessionId(),
+      sessionId: this.getSessionId(_),
       severity: params.severity || 'medium',
       category: params.category || 'system',
       success: true,
       metadata: params.metadata || {}
     };
 
-    this.addLog(log);
-    await this.persistLog(log);
+    this.addLog(_log);
+    await this.persistLog(_log);
     
     return log.id;
   }
@@ -68,19 +68,19 @@ export class AuditLogger {
     severity?: 'low' | 'medium' | 'high' | 'critical';
     category?: 'user' | 'content' | 'system' | 'security';
   }): Promise<string> {
-    const currentUser = this.getCurrentUser();
+    const currentUser = this.getCurrentUser(_);
     
     const log: AuditLog = {
-      id: this.generateLogId(),
-      timestamp: new Date(),
+      id: this.generateLogId(_),
+      timestamp: new Date(_),
       userId: currentUser?.id || 'unknown',
       userName: currentUser?.name || 'Unknown User',
       action: params.action,
       resource: params.resource,
       resourceId: params.resourceId,
-      ipAddress: this.getClientIP(),
+      ipAddress: this.getClientIP(_),
       userAgent: navigator.userAgent,
-      sessionId: this.getSessionId(),
+      sessionId: this.getSessionId(_),
       severity: params.severity || 'high',
       category: params.category || 'system',
       success: false,
@@ -88,8 +88,8 @@ export class AuditLogger {
       metadata: params.metadata || {}
     };
 
-    this.addLog(log);
-    await this.persistLog(log);
+    this.addLog(_log);
+    await this.persistLog(_log);
     
     return log.id;
   }
@@ -118,37 +118,37 @@ export class AuditLogger {
     let filteredLogs = [...this.logs];
 
     // Apply filters
-    if (params.startDate) {
+    if (_params.startDate) {
       filteredLogs = filteredLogs.filter(log => log.timestamp >= params.startDate!);
     }
-    if (params.endDate) {
+    if (_params.endDate) {
       filteredLogs = filteredLogs.filter(log => log.timestamp <= params.endDate!);
     }
-    if (params.userId) {
+    if (_params.userId) {
       filteredLogs = filteredLogs.filter(log => log.userId === params.userId);
     }
-    if (params.action) {
+    if (_params.action) {
       filteredLogs = filteredLogs.filter(log => log.action.includes(params.action!));
     }
-    if (params.resource) {
+    if (_params.resource) {
       filteredLogs = filteredLogs.filter(log => log.resource === params.resource);
     }
-    if (params.severity) {
+    if (_params.severity) {
       filteredLogs = filteredLogs.filter(log => log.severity === params.severity);
     }
-    if (params.category) {
+    if (_params.category) {
       filteredLogs = filteredLogs.filter(log => log.category === params.category);
     }
-    if (params.success !== undefined) {
+    if (_params.success !== undefined) {
       filteredLogs = filteredLogs.filter(log => log.success === params.success);
     }
-    if (params.search) {
+    if (_params.search) {
       const searchLower = params.search.toLowerCase();
       filteredLogs = filteredLogs.filter(log => 
         log.action.toLowerCase().includes(searchLower) ||
         log.resource.toLowerCase().includes(searchLower) ||
         log.userName.toLowerCase().includes(searchLower) ||
-        (log.errorMessage && log.errorMessage.toLowerCase().includes(searchLower))
+        (_log.errorMessage && log.errorMessage.toLowerCase().includes(searchLower))
       );
     }
 
@@ -156,16 +156,16 @@ export class AuditLogger {
     const sortBy = params.sortBy || 'timestamp';
     const sortOrder = params.sortOrder || 'desc';
     
-    filteredLogs.sort((a, b) => {
+    filteredLogs.sort( (a, b) => {
       let aValue: any = a[sortBy];
       let bValue: any = b[sortBy];
       
-      if (sortBy === 'timestamp') {
-        aValue = aValue.getTime();
-        bValue = bValue.getTime();
+      if (_sortBy === 'timestamp') {
+        aValue = aValue.getTime(_);
+        bValue = bValue.getTime(_);
       }
       
-      if (sortOrder === 'asc') {
+      if (_sortOrder === 'asc') {
         return aValue > bValue ? 1 : -1;
       } else {
         return aValue < bValue ? 1 : -1;
@@ -175,7 +175,7 @@ export class AuditLogger {
     // Apply pagination
     const page = params.page || 1;
     const limit = params.limit || 50;
-    const startIndex = (page - 1) * limit;
+    const startIndex = (_page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedLogs = filteredLogs.slice(startIndex, endIndex);
 
@@ -183,7 +183,7 @@ export class AuditLogger {
       logs: paginatedLogs,
       total: filteredLogs.length,
       page,
-      totalPages: Math.ceil(filteredLogs.length / limit)
+      totalPages: Math.ceil(_filteredLogs.length / limit)
     };
   }
 
@@ -193,7 +193,7 @@ export class AuditLogger {
     endDate?: Date;
     filters?: any;
   } = {}): string {
-    const { logs } = this.getLogs(params);
+    const { logs } = this.getLogs(_params);
     
     const headers = [
       'Timestamp',
@@ -233,8 +233,8 @@ export class AuditLogger {
     endDate?: Date;
     filters?: any;
   } = {}): string {
-    const { logs } = this.getLogs(params);
-    return JSON.stringify(logs, null, 2);
+    const { logs } = this.getLogs(_params);
+    return JSON.stringify( logs, null, 2);
   }
 
   // Get audit statistics
@@ -250,7 +250,7 @@ export class AuditLogger {
     topActions: Array<{ action: string; count: number }>;
     topUsers: Array<{ userId: string; userName: string; count: number }>;
   } {
-    const { logs } = this.getLogs(params);
+    const { logs } = this.getLogs(_params);
 
     const stats = {
       totalLogs: logs.length,
@@ -264,32 +264,32 @@ export class AuditLogger {
 
     // Calculate breakdowns
     logs.forEach(log => {
-      stats.severityBreakdown[log.severity] = (stats.severityBreakdown[log.severity] || 0) + 1;
-      stats.categoryBreakdown[log.category] = (stats.categoryBreakdown[log.category] || 0) + 1;
+      stats.severityBreakdown[log.severity] = (_stats.severityBreakdown[log.severity] || 0) + 1;
+      stats.categoryBreakdown[log.category] = (_stats.categoryBreakdown[log.category] || 0) + 1;
     });
 
     // Calculate top actions
-    const actionCounts = logs.reduce((acc, log) => {
-      acc[log.action] = (acc[log.action] || 0) + 1;
+    const actionCounts = logs.reduce( (acc, log) => {
+      acc[log.action] = (_acc[log.action] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    stats.topActions = Object.entries(actionCounts)
-      .sort(([, a], [, b]) => b - a)
+    stats.topActions = Object.entries(_actionCounts)
+      .sort( ([, a], [, b]) => b - a)
       .slice(0, 10)
-      .map(([action, count]) => ({ action, count }));
+      .map( ([action, count]) => ( { action, count }));
 
     // Calculate top users
-    const userCounts = logs.reduce((acc, log) => {
+    const userCounts = logs.reduce( (acc, log) => {
       const key = `${log.userId}:${log.userName}`;
-      acc[key] = (acc[key] || 0) + 1;
+      acc[key] = (_acc[key] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    stats.topUsers = Object.entries(userCounts)
-      .sort(([, a], [, b]) => b - a)
+    stats.topUsers = Object.entries(_userCounts)
+      .sort( ([, a], [, b]) => b - a)
       .slice(0, 10)
-      .map(([userKey, count]) => {
+      .map( ([userKey, count]) => {
         const [userId, userName] = userKey.split(':');
         return { userId, userName, count };
       });
@@ -298,98 +298,98 @@ export class AuditLogger {
   }
 
   // Private methods
-  private addLog(log: AuditLog): void {
-    this.logs.unshift(log); // Add to beginning for chronological order
+  private addLog(_log: AuditLog): void {
+    this.logs.unshift(_log); // Add to beginning for chronological order
     
     // Trim logs if we exceed max
-    if (this.logs.length > this.maxLogs) {
+    if (_this.logs.length > this.maxLogs) {
       this.logs = this.logs.slice(0, this.maxLogs);
     }
     
-    this.saveLogsToStorage();
+    this.saveLogsToStorage(_);
   }
 
-  private async persistLog(log: AuditLog): Promise<void> {
+  private async persistLog(_log: AuditLog): Promise<void> {
     try {
       // In a real implementation, this would send to your audit log API
       console.log('Audit log persisted:', log);
       
       // For demo purposes, we'll just store in localStorage
       // In production, this should be sent to a secure audit log service
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to persist audit log:', error);
     }
   }
 
-  private generateLogId(): string {
-    return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  private generateLogId(_): string {
+    return `audit_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private getCurrentUser(): { id: string; name: string } | null {
+  private getCurrentUser(_): { id: string; name: string } | null {
     // In a real implementation, get from auth context
     return {
-      id: 'admin_1',
+      id: 'admin1',
       name: 'Admin User'
     };
   }
 
-  private getClientIP(): string {
+  private getClientIP(_): string {
     // In a real implementation, this would get the actual client IP
     return '127.0.0.1';
   }
 
-  private getSessionId(): string {
+  private getSessionId(_): string {
     // In a real implementation, get from session management
-    return `session_${Date.now()}`;
+    return `session_${Date.now(_)}`;
   }
 
-  private loadLogsFromStorage(): void {
+  private loadLogsFromStorage(_): void {
     try {
       const stored = localStorage.getItem('admin_audit_logs');
       if (stored) {
-        const parsed = JSON.parse(stored);
+        const parsed = JSON.parse(_stored);
         this.logs = parsed.map((log: any) => ({
           ...log,
-          timestamp: new Date(log.timestamp)
+          timestamp: new Date(_log.timestamp)
         }));
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load audit logs from storage:', error);
       this.logs = [];
     }
   }
 
-  private saveLogsToStorage(): void {
+  private saveLogsToStorage(_): void {
     try {
-      localStorage.setItem('admin_audit_logs', JSON.stringify(this.logs));
-    } catch (error) {
+      localStorage.setItem( 'admin_audit_logs', JSON.stringify(this.logs));
+    } catch (_error) {
       console.error('Failed to save audit logs to storage:', error);
     }
   }
 
-  private startCleanupTimer(): void {
+  private startCleanupTimer(_): void {
     // Clean up old logs every hour
     setInterval(() => {
-      this.cleanupOldLogs();
+      this.cleanupOldLogs(_);
     }, 60 * 60 * 1000);
   }
 
-  private cleanupOldLogs(): void {
-    const cutoffDate = new Date(Date.now() - this.retentionPeriod);
+  private cleanupOldLogs(_): void {
+    const cutoffDate = new Date(_Date.now() - this.retentionPeriod);
     const initialCount = this.logs.length;
     
     this.logs = this.logs.filter(log => log.timestamp > cutoffDate);
     
-    if (this.logs.length < initialCount) {
-      console.log(`Cleaned up ${initialCount - this.logs.length} old audit logs`);
-      this.saveLogsToStorage();
+    if (_this.logs.length < initialCount) {
+      console.log(_`Cleaned up ${initialCount - this.logs.length} old audit logs`);
+      this.saveLogsToStorage(_);
     }
   }
 
-  // Clear all logs (admin only)
-  clearAllLogs(): void {
+  // Clear all logs (_admin only)
+  clearAllLogs(_): void {
     this.logs = [];
-    this.saveLogsToStorage();
+    this.saveLogsToStorage(_);
     this.logAction({
       action: 'audit_logs_cleared',
       resource: 'audit_system',
@@ -401,11 +401,11 @@ export class AuditLogger {
 }
 
 // Singleton instance
-export const auditLogger = AuditLogger.getInstance();
+export const auditLogger = AuditLogger.getInstance(_);
 
 // Convenience functions for common audit actions
 export const auditActions = {
-  userCreated: (userId: string, userData: any) => 
+  userCreated: ( userId: string, userData: any) => 
     auditLogger.logAction({
       action: 'user_created',
       resource: 'user',
@@ -415,7 +415,7 @@ export const auditActions = {
       category: 'user'
     }),
 
-  userUpdated: (userId: string, beforeState: any, afterState: any) =>
+  userUpdated: ( userId: string, beforeState: any, afterState: any) =>
     auditLogger.logAction({
       action: 'user_updated',
       resource: 'user',
@@ -426,7 +426,7 @@ export const auditActions = {
       category: 'user'
     }),
 
-  userDeleted: (userId: string, userData: any) =>
+  userDeleted: ( userId: string, userData: any) =>
     auditLogger.logAction({
       action: 'user_deleted',
       resource: 'user',
@@ -436,7 +436,7 @@ export const auditActions = {
       category: 'user'
     }),
 
-  contentCreated: (contentId: string, contentData: any) =>
+  contentCreated: ( contentId: string, contentData: any) =>
     auditLogger.logAction({
       action: 'content_created',
       resource: 'content',
@@ -446,7 +446,7 @@ export const auditActions = {
       category: 'content'
     }),
 
-  contentUpdated: (contentId: string, beforeState: any, afterState: any) =>
+  contentUpdated: ( contentId: string, beforeState: any, afterState: any) =>
     auditLogger.logAction({
       action: 'content_updated',
       resource: 'content',
@@ -457,7 +457,7 @@ export const auditActions = {
       category: 'content'
     }),
 
-  contentDeleted: (contentId: string, contentData: any) =>
+  contentDeleted: ( contentId: string, contentData: any) =>
     auditLogger.logAction({
       action: 'content_deleted',
       resource: 'content',
@@ -467,7 +467,7 @@ export const auditActions = {
       category: 'content'
     }),
 
-  securityEvent: (eventType: string, details: any) =>
+  securityEvent: ( eventType: string, details: any) =>
     auditLogger.logAction({
       action: `security_${eventType}`,
       resource: 'security',
@@ -477,7 +477,7 @@ export const auditActions = {
       category: 'security'
     }),
 
-  systemConfigChanged: (configKey: string, beforeValue: any, afterValue: any) =>
+  systemConfigChanged: ( configKey: string, beforeValue: any, afterValue: any) =>
     auditLogger.logAction({
       action: 'system_config_changed',
       resource: 'system_config',

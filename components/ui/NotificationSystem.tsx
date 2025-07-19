@@ -38,7 +38,7 @@ export type NotificationVariant = 'toast' | 'banner' | 'inline';
 
 export interface NotificationAction {
   label: string;
-  onClick: () => void;
+  onClick: (_) => void;
   variant?: 'primary' | 'secondary' | 'danger';
   disabled?: boolean;
 }
@@ -111,31 +111,31 @@ interface NotificationContextType {
   unreadCount: number;
 
   // Notification actions
-  addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => string;
-  removeNotification: (id: string) => void;
-  markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
-  clearAll: () => void;
-  clearHistory: () => void;
+  addNotification: ( notification: Omit<Notification, 'id' | 'timestamp'>) => string;
+  removeNotification: (_id: string) => void;
+  markAsRead: (_id: string) => void;
+  markAllAsRead: (_) => void;
+  clearAll: (_) => void;
+  clearHistory: (_) => void;
 
   // Group management
-  toggleGroup: (groupId: string) => void;
-  dismissGroup: (groupId: string) => void;
+  toggleGroup: (_groupId: string) => void;
+  dismissGroup: (_groupId: string) => void;
 
   // Preferences
   preferences: NotificationPreferences;
-  updatePreferences: (preferences: Partial<NotificationPreferences>) => void;
+  updatePreferences: (_preferences: Partial<NotificationPreferences>) => void;
 
   // Quick notification methods
-  showSuccess: (title: string, message: string, options?: Partial<Notification>) => string;
-  showError: (title: string, message: string, options?: Partial<Notification>) => string;
-  showInfo: (title: string, message: string, options?: Partial<Notification>) => string;
-  showWarning: (title: string, message: string, options?: Partial<Notification>) => string;
-  showAchievement: (title: string, message: string, metadata?: NotificationMetadata) => string;
-  showXPGain: (xp: number, message?: string) => string;
-  showLevelUp: (level: number, message?: string) => string;
-  showCollaboration: (message: string, user?: string) => string;
-  showBanner: (title: string, message: string, type?: NotificationType) => string;
+  showSuccess: ( title: string, message: string, options?: Partial<Notification>) => string;
+  showError: ( title: string, message: string, options?: Partial<Notification>) => string;
+  showInfo: ( title: string, message: string, options?: Partial<Notification>) => string;
+  showWarning: ( title: string, message: string, options?: Partial<Notification>) => string;
+  showAchievement: ( title: string, message: string, metadata?: NotificationMetadata) => string;
+  showXPGain: ( xp: number, message?: string) => string;
+  showLevelUp: ( level: number, message?: string) => string;
+  showCollaboration: ( message: string, user?: string) => string;
+  showBanner: ( title: string, message: string, type?: NotificationType) => string;
 
   // Celebration methods
   showCelebration: (config: {
@@ -146,19 +146,19 @@ interface NotificationContextType {
     level?: number;
     badge?: string;
   }) => void;
-  showQuickSuccess: (message?: string, icon?: React.ComponentType<{ className?: string }>) => void;
-  triggerConfetti: (particleCount?: number) => void;
+  showQuickSuccess: ( message?: string, icon?: React.ComponentType<{ className?: string }>) => void;
+  triggerConfetti: (_particleCount?: number) => void;
 
   // State management
   isPaused: boolean;
-  togglePause: () => void;
+  togglePause: (_) => void;
   isHistoryOpen: boolean;
-  toggleHistory: () => void;
+  toggleHistory: (_) => void;
   isPreferencesOpen: boolean;
-  togglePreferences: () => void;
+  togglePreferences: (_) => void;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const NotificationContext = createContext<NotificationContextType | undefined>(_undefined);
 
 // Default notification preferences
 const DEFAULT_PREFERENCES: NotificationPreferences = {
@@ -184,12 +184,12 @@ const DEFAULT_PREFERENCES: NotificationPreferences = {
 };
 
 // Utility functions
-const generateId = (): string => {
-  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+const generateId = (_): string => {
+  return Date.now(_).toString() + Math.random().toString(36).substr(2, 9);
 };
 
-const getGroupKey = (notification: Partial<Notification>): string => {
-  if (notification.metadata?.groupKey) {
+const getGroupKey = (_notification: Partial<Notification>): string => {
+  if (_notification.metadata?.groupKey) {
     return notification.metadata.groupKey;
   }
   return `${notification.type}-${notification.title}`;
@@ -202,21 +202,21 @@ const shouldGroupNotifications = (
   return (
     existing.type === incoming.type &&
     existing.title === incoming.title &&
-    getGroupKey(existing) === getGroupKey(incoming) &&
-    Date.now() - existing.timestamp < 30000 // Group within 30 seconds
+    getGroupKey(_existing) === getGroupKey(_incoming) &&
+    Date.now(_) - existing.timestamp < 30000 // Group within 30 seconds
   );
 };
 
 // Throttling utility
 class NotificationThrottle {
-  private counts = new Map<string, { count: number; lastReset: number }>();
+  private counts = new Map<string, { count: number; lastReset: number }>(_);
   private readonly maxPerMinute = 5;
   private readonly resetInterval = 60000; // 1 minute
 
-  canShow(type: NotificationType): boolean {
-    const now = Date.now();
+  canShow(_type: NotificationType): boolean {
+    const now = Date.now(_);
     const key = type;
-    const current = this.counts.get(key) || { count: 0, lastReset: now };
+    const current = this.counts.get(_key) || { count: 0, lastReset: now };
 
     // Reset count if interval has passed
     if (now - current.lastReset >= this.resetInterval) {
@@ -224,26 +224,26 @@ class NotificationThrottle {
       current.lastReset = now;
     }
 
-    if (current.count >= this.maxPerMinute) {
+    if (_current.count >= this.maxPerMinute) {
       return false;
     }
 
     current.count++;
-    this.counts.set(key, current);
+    this.counts.set( key, current);
     return true;
   }
 
-  reset(): void {
-    this.counts.clear();
+  reset(_): void {
+    this.counts.clear(_);
   }
 }
 
-export function NotificationProvider({ children }: { children: React.ReactNode }) {
+export function NotificationProvider(_{ children }: { children: React.ReactNode }) {
   // Core state
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [groups, setGroups] = useState<NotificationGroup[]>([]);
   const [history, setHistory] = useState<Notification[]>([]);
-  const [preferences, setPreferences] = useState<NotificationPreferences>(DEFAULT_PREFERENCES);
+  const [preferences, setPreferences] = useState<NotificationPreferences>(_DEFAULT_PREFERENCES);
 
   // Celebration state
   const [celebrationConfig, setCelebrationConfig] = useState<{
@@ -254,33 +254,33 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     xp?: number;
     level?: number;
     badge?: string;
-  } | null>(null);
+  } | null>(_null);
   const [quickSuccessConfig, setQuickSuccessConfig] = useState<{
     trigger: boolean;
     message: string;
     icon?: React.ComponentType<{ className?: string }>;
-  }>({ trigger: false, message: '' });
-  const [confettiTrigger, setConfettiTrigger] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  }>( { trigger: false, message: '' });
+  const [confettiTrigger, setConfettiTrigger] = useState(_false);
+  const [isPaused, setIsPaused] = useState(_false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(_false);
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(_false);
 
   // Refs and utilities
-  const throttle = useRef(new NotificationThrottle());
+  const throttle = useRef(_new NotificationThrottle());
   // Queue functionality is handled by state management
   // const queueRef = useRef<Notification[]>([]);
-  const liveRegionRef = useRef<HTMLDivElement>(null);
-  const timeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const liveRegionRef = useRef<HTMLDivElement>(_null);
+  const timeoutsRef = useRef<Map<string, NodeJS.Timeout>>(_new Map());
 
   // Load preferences from localStorage on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem('notification-preferences');
       if (saved) {
-        const parsed = JSON.parse(saved);
-        setPreferences({ ...DEFAULT_PREFERENCES, ...parsed });
+        const parsed = JSON.parse(_saved);
+        setPreferences( { ...DEFAULT_PREFERENCES, ...parsed });
       }
-    } catch (error) {
+    } catch (_error) {
       console.warn('Failed to load notification preferences:', error);
     }
   }, []);
@@ -288,8 +288,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Save preferences to localStorage when changed
   useEffect(() => {
     try {
-      localStorage.setItem('notification-preferences', JSON.stringify(preferences));
-    } catch (error) {
+      localStorage.setItem( 'notification-preferences', JSON.stringify(preferences));
+    } catch (_error) {
       console.warn('Failed to save notification preferences:', error);
     }
   }, [preferences]);
@@ -299,10 +299,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     try {
       const saved = localStorage.getItem('notification-history');
       if (saved) {
-        const parsed = JSON.parse(saved);
-        setHistory(parsed.slice(-100)); // Keep last 100 notifications
+        const parsed = JSON.parse(_saved);
+        setHistory(_parsed.slice(-100)); // Keep last 100 notifications
       }
-    } catch (error) {
+    } catch (_error) {
       console.warn('Failed to load notification history:', error);
     }
   }, []);
@@ -310,8 +310,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Save history to localStorage when changed
   useEffect(() => {
     try {
-      localStorage.setItem('notification-history', JSON.stringify(history));
-    } catch (error) {
+      localStorage.setItem( 'notification-history', JSON.stringify(history));
+    } catch (_error) {
       console.warn('Failed to save notification history:', error);
     }
   }, [history]);
@@ -319,7 +319,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Computed values
   const unreadCount = useMemo(() => {
     return notifications.filter(n => !n.read).length +
-           groups.reduce((sum, g) => sum + g.notifications.filter(n => !n.read).length, 0);
+           groups.reduce( (sum, g) => sum + g.notifications.filter(n => !n.read).length, 0);
   }, [notifications, groups]);
 
   const addNotification = useCallback((
@@ -336,12 +336,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     // Check throttling
     if (!throttle.current.canShow(notification.type)) {
-      console.warn(`Notification throttled: ${notification.type}`);
+      console.warn(_`Notification throttled: ${notification.type}`);
       return '';
     }
 
-    const id = generateId();
-    const timestamp = Date.now();
+    const id = generateId(_);
+    const timestamp = Date.now(_);
     const newNotification: Notification = {
       ...notification,
       id,
@@ -354,12 +354,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     };
 
     // Add to history immediately
-    setHistory(prev => [...prev.slice(-99), newNotification]);
+    setHistory(_prev => [...prev.slice(-99), newNotification]);
 
     // Check for grouping
-    if (preferences.groupSimilar) {
+    if (_preferences.groupSimilar) {
       const existingGroup = groups.find(g =>
-        shouldGroupNotifications(g.latestNotification, newNotification)
+        shouldGroupNotifications( g.latestNotification, newNotification)
       );
 
       if (existingGroup) {
@@ -375,7 +375,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         ));
 
         // Announce grouped notification
-        announceNotification(newNotification, true);
+        announceNotification( newNotification, true);
         return id;
       }
     }
@@ -384,8 +384,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setNotifications(prev => {
       const updated = [...prev, newNotification];
       // Limit visible notifications
-      if (updated.length > preferences.maxVisible) {
-        return updated.slice(-preferences.maxVisible);
+      if (_updated.length > preferences.maxVisible) {
+        return updated.slice(_-preferences.maxVisible);
       }
       return updated;
     });
@@ -393,48 +393,48 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     // Auto-remove notification after duration
     if (!newNotification.persistent && newNotification.duration && newNotification.duration > 0) {
       const timeout = setTimeout(() => {
-        removeNotification(id);
+        removeNotification(_id);
       }, newNotification.duration);
 
-      timeoutsRef.current.set(id, timeout);
+      timeoutsRef.current.set( id, timeout);
     }
 
     // Play notification sound and vibration
-    if (typePrefs.sound && preferences.soundEnabled) {
-      playNotificationSound(newNotification.type);
+    if (_typePrefs.sound && preferences.soundEnabled) {
+      playNotificationSound(_newNotification.type);
     }
 
-    if (typePrefs.vibration && preferences.vibrationEnabled && 'vibrate' in navigator) {
-      const vibrationPattern = getVibrationPattern(newNotification.type);
-      navigator.vibrate(vibrationPattern);
+    if (_typePrefs.vibration && preferences.vibrationEnabled && 'vibrate' in navigator) {
+      const vibrationPattern = getVibrationPattern(_newNotification.type);
+      navigator.vibrate(_vibrationPattern);
     }
 
     // Announce to screen readers
-    announceNotification(newNotification);
+    announceNotification(_newNotification);
 
     return id;
   }, [preferences, isPaused, groups]);
 
   // Announcement helper
-  const announceNotification = useCallback((notification: Notification, isGrouped = false) => {
+  const announceNotification = useCallback( (notification: Notification, isGrouped = false) => {
     if (!liveRegionRef.current) return;
 
     const priority = notification.metadata?.priority === 'critical' ? 'assertive' : 'polite';
-    const groupText = isGrouped ? ' (grouped)' : '';
+    const groupText = isGrouped ? ' (_grouped)' : '';
     const message = `${notification.type} notification: ${notification.title}. ${notification.message}${groupText}`;
 
-    announceToScreenReader(message, priority);
+    announceToScreenReader( message, priority);
   }, []);
 
   const removeNotification = useCallback((id: string) => {
     // Clear timeout if exists
-    const timeout = timeoutsRef.current.get(id);
+    const timeout = timeoutsRef.current.get(_id);
     if (timeout) {
-      clearTimeout(timeout);
-      timeoutsRef.current.delete(id);
+      clearTimeout(_timeout);
+      timeoutsRef.current.delete(_id);
     }
 
-    setNotifications(prev => prev.filter(n => n.id !== id));
+    setNotifications(_prev => prev.filter(n => n.id !== id));
   }, []);
 
   const markAsRead = useCallback((id: string) => {
@@ -450,17 +450,17 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }, []);
 
   const markAllAsRead = useCallback(() => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications( prev => prev.map(n => ({ ...n, read: true })));
     setGroups(prev => prev.map(g => ({
       ...g,
-      notifications: g.notifications.map(n => ({ ...n, read: true }))
+      notifications: g.notifications.map( n => ({ ...n, read: true }))
     })));
   }, []);
 
   const clearAll = useCallback(() => {
     // Clear all timeouts
-    timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
-    timeoutsRef.current.clear();
+    timeoutsRef.current.forEach(_timeout => clearTimeout(timeout));
+    timeoutsRef.current.clear(_);
 
     setNotifications([]);
     setGroups([]);
@@ -470,7 +470,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setHistory([]);
     try {
       localStorage.removeItem('notification-history');
-    } catch (error) {
+    } catch (_error) {
       console.warn('Failed to clear notification history:', error);
     }
   }, []);
@@ -482,27 +482,27 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }, []);
 
   const dismissGroup = useCallback((groupId: string) => {
-    setGroups(prev => prev.filter(g => g.id !== groupId));
+    setGroups(_prev => prev.filter(g => g.id !== groupId));
   }, []);
 
   const updatePreferences = useCallback((newPreferences: Partial<NotificationPreferences>) => {
-    setPreferences(prev => ({ ...prev, ...newPreferences }));
+    setPreferences( prev => ({ ...prev, ...newPreferences }));
   }, []);
 
   const togglePause = useCallback(() => {
-    setIsPaused(prev => !prev);
+    setIsPaused(_prev => !prev);
   }, []);
 
   const toggleHistory = useCallback(() => {
-    setIsHistoryOpen(prev => !prev);
+    setIsHistoryOpen(_prev => !prev);
   }, []);
 
   const togglePreferences = useCallback(() => {
-    setIsPreferencesOpen(prev => !prev);
+    setIsPreferencesOpen(_prev => !prev);
   }, []);
 
   // Quick notification methods
-  const showSuccess = useCallback((title: string, message: string, options?: Partial<Notification>) => {
+  const showSuccess = useCallback( (title: string, message: string, options?: Partial<Notification>) => {
     return addNotification({
       type: 'success',
       title,
@@ -511,7 +511,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [addNotification]);
 
-  const showError = useCallback((title: string, message: string, options?: Partial<Notification>) => {
+  const showError = useCallback( (title: string, message: string, options?: Partial<Notification>) => {
     return addNotification({
       type: 'error',
       title,
@@ -520,7 +520,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [addNotification]);
 
-  const showInfo = useCallback((title: string, message: string, options?: Partial<Notification>) => {
+  const showInfo = useCallback( (title: string, message: string, options?: Partial<Notification>) => {
     return addNotification({
       type: 'info',
       title,
@@ -529,7 +529,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [addNotification]);
 
-  const showWarning = useCallback((title: string, message: string, options?: Partial<Notification>) => {
+  const showWarning = useCallback( (title: string, message: string, options?: Partial<Notification>) => {
     return addNotification({
       type: 'warning',
       title,
@@ -538,7 +538,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [addNotification]);
 
-  const showAchievement = useCallback((title: string, message: string, metadata?: NotificationMetadata) => {
+  const showAchievement = useCallback( (title: string, message: string, metadata?: NotificationMetadata) => {
     return addNotification({
       type: 'achievement',
       title,
@@ -548,7 +548,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [addNotification]);
 
-  const showXPGain = useCallback((xp: number, message?: string) => {
+  const showXPGain = useCallback( (xp: number, message?: string) => {
     return addNotification({
       type: 'xp',
       title: `+${xp} XP Gained!`,
@@ -558,7 +558,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [addNotification]);
 
-  const showLevelUp = useCallback((level: number, message?: string) => {
+  const showLevelUp = useCallback( (level: number, message?: string) => {
     return addNotification({
       type: 'level-up',
       title: 'Level Up!',
@@ -568,7 +568,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [addNotification]);
 
-  const showCollaboration = useCallback((message: string, user?: string) => {
+  const showCollaboration = useCallback( (message: string, user?: string) => {
     return addNotification({
       type: 'collaboration',
       title: 'Collaboration Update',
@@ -578,7 +578,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [addNotification]);
 
-  const showBanner = useCallback((title: string, message: string, type: NotificationType = 'info') => {
+  const showBanner = useCallback( (title: string, message: string, type: NotificationType = 'info') => {
     return addNotification({
       type,
       variant: 'banner',
@@ -604,7 +604,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, []);
 
-  const showQuickSuccess = useCallback((message: string = 'Success!', icon?: React.ComponentType<{ className?: string }>) => {
+  const showQuickSuccess = useCallback( (message: string = 'Success!', icon?: React.ComponentType<{ className?: string }>) => {
     setQuickSuccessConfig({
       trigger: true,
       message,
@@ -613,23 +613,23 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     // Reset trigger after animation
     setTimeout(() => {
-      setQuickSuccessConfig(prev => ({ ...prev, trigger: false }));
+      setQuickSuccessConfig( prev => ({ ...prev, trigger: false }));
     }, 2000);
   }, []);
 
   const triggerConfetti = useCallback((_particleCount: number = 50) => {
-    setConfettiTrigger(true);
-    setTimeout(() => setConfettiTrigger(false), 100);
+    setConfettiTrigger(_true);
+    setTimeout(() => setConfettiTrigger(_false), 100);
   }, []);
 
-  const playNotificationSound = (type: Notification['type']) => {
+  const playNotificationSound = (_type: Notification['type']) => {
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+      const audioContext = new (_window.AudioContext || (window as any).webkitAudioContext)(_);
+      const oscillator = audioContext.createOscillator(_);
+      const gainNode = audioContext.createGain(_);
 
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      oscillator.connect(_gainNode);
+      gainNode.connect(_audioContext.destination);
 
       // Different frequencies for different notification types
       const frequencies = {
@@ -645,28 +645,28 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
       const freqs = frequencies[type] || [440];
       
-      freqs.forEach((freq, index) => {
+      freqs.forEach( (freq, index) => {
         setTimeout(() => {
-          const osc = audioContext.createOscillator();
-          const gain = audioContext.createGain();
+          const osc = audioContext.createOscillator(_);
+          const gain = audioContext.createGain(_);
           
-          osc.connect(gain);
-          gain.connect(audioContext.destination);
+          osc.connect(_gain);
+          gain.connect(_audioContext.destination);
           
-          osc.frequency.setValueAtTime(freq, audioContext.currentTime);
-          gain.gain.setValueAtTime(0.1, audioContext.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+          osc.frequency.setValueAtTime( freq, audioContext.currentTime);
+          gain.gain.setValueAtTime( 0.1, audioContext.currentTime);
+          gain.gain.exponentialRampToValueAtTime( 0.01, audioContext.currentTime + 0.2);
           
-          osc.start(audioContext.currentTime);
-          osc.stop(audioContext.currentTime + 0.2);
+          osc.start(_audioContext.currentTime);
+          osc.stop(_audioContext.currentTime + 0.2);
         }, index * 100);
       });
-    } catch (error) {
+    } catch (_error) {
       // Fallback: silent operation
     }
   };
 
-  const getVibrationPattern = (type: Notification['type']): number[] => {
+  const getVibrationPattern = (_type: Notification['type']): number[] => {
     const patterns = {
       success: [100],
       error: [200, 100, 200],
@@ -761,7 +761,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       {celebrationConfig && (
         <CelebrationModal
           isOpen={celebrationConfig.isOpen}
-          onClose={() => setCelebrationConfig(null)}
+          onClose={(_) => setCelebrationConfig(_null)}
           type={celebrationConfig.type}
           title={celebrationConfig.title}
           description={celebrationConfig.description}
@@ -783,7 +783,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 }
 
 export function useNotifications() {
-  const context = useContext(NotificationContext);
+  const context = useContext(_NotificationContext);
   if (!context) {
     throw new Error('useNotifications must be used within a NotificationProvider');
   }
@@ -803,14 +803,14 @@ function EnhancedNotificationContainer() {
     isPaused,
     togglePause,
     unreadCount
-  } = useNotifications();
+  } = useNotifications(_);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [focusedIndex, setFocusedIndex] = useState(-1);
-  const reducedMotion = respectsReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(_null);
+  const [focusedIndex, setFocusedIndex] = useState(_-1);
+  const reducedMotion = respectsReducedMotion(_);
 
   // Position classes based on preferences
-  const getPositionClasses = (position: NotificationPosition): string => {
+  const getPositionClasses = (_position: NotificationPosition): string => {
     const positions = {
       'top-right': 'top-4 right-4',
       'top-left': 'top-4 left-4',
@@ -824,48 +824,48 @@ function EnhancedNotificationContainer() {
 
   // Keyboard navigation
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (_event: KeyboardEvent) => {
       if (!containerRef.current) return;
 
       const totalItems = notifications.length + groups.length;
 
-      switch (event.key) {
+      switch (_event.key) {
         case 'ArrowDown':
-          event.preventDefault();
-          setFocusedIndex(prev => (prev + 1) % totalItems);
+          event.preventDefault(_);
+          setFocusedIndex(_prev => (prev + 1) % totalItems);
           break;
         case 'ArrowUp':
-          event.preventDefault();
-          setFocusedIndex(prev => (prev - 1 + totalItems) % totalItems);
+          event.preventDefault(_);
+          setFocusedIndex(_prev => (prev - 1 + totalItems) % totalItems);
           break;
         case 'Enter':
         case ' ':
-          event.preventDefault();
-          if (focusedIndex >= 0) {
-            if (focusedIndex < notifications.length) {
-              markAsRead(notifications[focusedIndex].id);
+          event.preventDefault(_);
+          if (_focusedIndex >= 0) {
+            if (_focusedIndex < notifications.length) {
+              markAsRead(_notifications[focusedIndex].id);
             } else {
               const groupIndex = focusedIndex - notifications.length;
-              if (groups[groupIndex]) {
-                toggleGroup(groups[groupIndex].id);
+              if (_groups[groupIndex]) {
+                toggleGroup(_groups[groupIndex].id);
               }
             }
           }
           break;
         case 'Escape':
-          event.preventDefault();
-          setFocusedIndex(-1);
+          event.preventDefault(_);
+          setFocusedIndex(_-1);
           break;
         case 'Delete':
         case 'Backspace':
-          event.preventDefault();
-          if (focusedIndex >= 0) {
-            if (focusedIndex < notifications.length) {
-              removeNotification(notifications[focusedIndex].id);
+          event.preventDefault(_);
+          if (_focusedIndex >= 0) {
+            if (_focusedIndex < notifications.length) {
+              removeNotification(_notifications[focusedIndex].id);
             } else {
               const groupIndex = focusedIndex - notifications.length;
-              if (groups[groupIndex]) {
-                dismissGroup(groups[groupIndex].id);
+              if (_groups[groupIndex]) {
+                dismissGroup(_groups[groupIndex].id);
               }
             }
           }
@@ -873,10 +873,10 @@ function EnhancedNotificationContainer() {
       }
     };
 
-    if (containerRef.current) {
-      containerRef.current.addEventListener('keydown', handleKeyDown);
-      return () => {
-        containerRef.current?.removeEventListener('keydown', handleKeyDown);
+    if (_containerRef.current) {
+      containerRef.current.addEventListener( 'keydown', handleKeyDown);
+      return (_) => {
+        containerRef.current?.removeEventListener( 'keydown', handleKeyDown);
       };
     }
   }, [notifications, groups, focusedIndex, removeNotification, markAsRead, toggleGroup, dismissGroup]);
@@ -896,7 +896,7 @@ function EnhancedNotificationContainer() {
         ref={containerRef}
         className={cn(
           'fixed z-50 space-y-2 max-w-sm',
-          getPositionClasses(preferences.position)
+          getPositionClasses(_preferences.position)
         )}
         role="region"
         aria-label="Notifications"
@@ -936,7 +936,7 @@ function EnhancedNotificationContainer() {
 
         {/* Notifications and groups */}
         <AnimatePresence mode="popLayout">
-          {visibleItems.map((item, index) => {
+          {visibleItems.map( (item, index) => {
             const isGroup = 'count' in item;
             const isFocused = index === focusedIndex;
 
@@ -946,8 +946,8 @@ function EnhancedNotificationContainer() {
                   key={item.id}
                   group={item as NotificationGroup}
                   isFocused={isFocused}
-                  onToggle={() => toggleGroup(item.id)}
-                  onDismiss={() => dismissGroup(item.id)}
+                  onToggle={(_) => toggleGroup(_item.id)}
+                  onDismiss={(_) => dismissGroup(_item.id)}
                   reducedMotion={reducedMotion}
                 />
               );
@@ -957,8 +957,8 @@ function EnhancedNotificationContainer() {
                   key={item.id}
                   notification={item as Notification}
                   isFocused={isFocused}
-                  onRemove={() => removeNotification(item.id)}
-                  onMarkRead={() => markAsRead(item.id)}
+                  onRemove={(_) => removeNotification(_item.id)}
+                  onMarkRead={(_) => markAsRead(_item.id)}
                   reducedMotion={reducedMotion}
                 />
               );
@@ -983,24 +983,24 @@ const NotificationCard = React.memo(({
 }: {
   notification: Notification;
   isFocused?: boolean;
-  onRemove: () => void;
-  onMarkRead: () => void;
+  onRemove: (_) => void;
+  onMarkRead: (_) => void;
   reducedMotion?: boolean;
 }) => {
-  const [_isHovered, setIsHovered] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const [_isHovered, setIsHovered] = useState(_false);
+  const cardRef = useRef<HTMLDivElement>(_null);
 
   // Focus management
   useEffect(() => {
     if (isFocused && cardRef.current) {
-      cardRef.current.focus();
+      cardRef.current.focus(_);
     }
   }, [isFocused]);
 
-  const getIcon = () => {
+  const getIcon = (_) => {
     const iconProps = { className: "w-5 h-5" };
     
-    switch (notification.type) {
+    switch (_notification.type) {
       case 'success':
         return <CheckCircle {...iconProps} className="w-5 h-5 text-green-400" />;
       case 'error':
@@ -1022,7 +1022,7 @@ const NotificationCard = React.memo(({
     }
   };
 
-  const getBackgroundColor = () => {
+  const getBackgroundColor = (_) => {
     const colors = {
       success: 'from-green-500/20 to-green-600/20 border-green-500/30',
       error: 'from-red-500/20 to-red-600/20 border-red-500/30',
@@ -1055,13 +1055,13 @@ const NotificationCard = React.memo(({
       initial="hidden"
       animate="visible"
       exit="exit"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={(_) => setIsHovered(_true)}
+      onMouseLeave={(_) => setIsHovered(_false)}
       className={cn(
         'relative p-4 rounded-lg backdrop-blur-md border shadow-lg',
         'bg-gradient-to-r focus:outline-none focus:ring-2 focus:ring-blue-500/50',
         'transition-all duration-200',
-        getBackgroundColor(),
+        getBackgroundColor(_),
         isFocused && 'ring-2 ring-blue-500/50',
         !notification.read && 'border-l-4 border-l-blue-500'
       )}
@@ -1072,7 +1072,7 @@ const NotificationCard = React.memo(({
       tabIndex={0}
     >
       {/* Special effects for achievements and level-ups */}
-      {(notification.type === 'achievement' || notification.type === 'level-up') && (
+      {(_notification.type === 'achievement' || notification.type === 'level-up') && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-lg"
           animate={{
@@ -1088,7 +1088,7 @@ const NotificationCard = React.memo(({
 
       <div className="flex items-start space-x-3">
         <div className="flex-shrink-0 mt-0.5">
-          {getIcon()}
+          {getIcon(_)}
         </div>
         
         <div className="flex-1 min-w-0">
@@ -1098,7 +1098,7 @@ const NotificationCard = React.memo(({
           >
             {notification.title}
             {!notification.read && (
-              <span className="sr-only"> (unread)</span>
+              <span className="sr-only"> (_unread)</span>
             )}
           </h4>
           <p
@@ -1133,7 +1133,7 @@ const NotificationCard = React.memo(({
           )}
           
           {/* Action buttons */}
-          {(notification.action || notification.actions) && (
+          {(_notification.action || notification.actions) && (
             <div className="mt-2 flex flex-wrap gap-2">
               {notification.action && (
                 <button
@@ -1152,7 +1152,7 @@ const NotificationCard = React.memo(({
                   {notification.action.label}
                 </button>
               )}
-              {notification.actions?.map((action, index) => (
+              {notification.actions?.map( (action, index) => (
                 <button
                   key={index}
                   onClick={action.onClick}
@@ -1223,23 +1223,23 @@ const NotificationGroup = React.memo(({
 }: {
   group: NotificationGroup;
   isFocused?: boolean;
-  onToggle: () => void;
-  onDismiss: () => void;
+  onToggle: (_) => void;
+  onDismiss: (_) => void;
   reducedMotion?: boolean;
 }) => {
-  const groupRef = useRef<HTMLDivElement>(null);
-  const { markAsRead, removeNotification } = useNotifications();
+  const groupRef = useRef<HTMLDivElement>(_null);
+  const { markAsRead, removeNotification } = useNotifications(_);
 
   useEffect(() => {
     if (isFocused && groupRef.current) {
-      groupRef.current.focus();
+      groupRef.current.focus(_);
     }
   }, [isFocused]);
 
-  const getIcon = () => {
+  const getIcon = (_) => {
     const iconProps = { className: "w-5 h-5" };
 
-    switch (group.type) {
+    switch (_group.type) {
       case 'success':
         return <CheckCircle {...iconProps} className="w-5 h-5 text-green-400" />;
       case 'error':
@@ -1261,7 +1261,7 @@ const NotificationGroup = React.memo(({
     }
   };
 
-  const getBackgroundColor = () => {
+  const getBackgroundColor = (_) => {
     const colors = {
       success: 'from-green-500/20 to-green-600/20 border-green-500/30',
       error: 'from-red-500/20 to-red-600/20 border-red-500/30',
@@ -1299,7 +1299,7 @@ const NotificationGroup = React.memo(({
         'relative p-4 rounded-lg backdrop-blur-md border shadow-lg',
         'bg-gradient-to-r focus:outline-none focus:ring-2 focus:ring-blue-500/50',
         'transition-all duration-200 cursor-pointer',
-        getBackgroundColor(),
+        getBackgroundColor(_),
         isFocused && 'ring-2 ring-blue-500/50'
       )}
       role="button"
@@ -1307,22 +1307,22 @@ const NotificationGroup = React.memo(({
       aria-label={`${group.count} ${group.type} notifications. Click to ${group.collapsed ? 'expand' : 'collapse'}`}
       tabIndex={0}
       onClick={onToggle}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onToggle();
+      onKeyDown={(_e) => {
+        if (_e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault(_);
+          onToggle(_);
         }
       }}
     >
       <div className="flex items-start space-x-3">
         <div className="flex-shrink-0 mt-0.5">
-          {getIcon()}
+          {getIcon(_)}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold text-white">
-              {group.title} ({group.count})
+              {group.title} ({ group.count })
             </h4>
             <span className="text-xs text-gray-400">
               {group.collapsed ? 'Expand' : 'Collapse'}
@@ -1350,9 +1350,9 @@ const NotificationGroup = React.memo(({
                   <div className="flex items-center space-x-1 ml-2">
                     {!notification.read && (
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          markAsRead(notification.id);
+                        onClick={(_e) => {
+                          e.stopPropagation(_);
+                          markAsRead(_notification.id);
                         }}
                         className="text-blue-400 hover:text-blue-300"
                         aria-label={`Mark as read: ${notification.message}`}
@@ -1361,9 +1361,9 @@ const NotificationGroup = React.memo(({
                       </button>
                     )}
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeNotification(notification.id);
+                      onClick={(_e) => {
+                        e.stopPropagation(_);
+                        removeNotification(_notification.id);
                       }}
                       className="text-gray-400 hover:text-white"
                       aria-label={`Remove: ${notification.message}`}
@@ -1383,9 +1383,9 @@ const NotificationGroup = React.memo(({
         </div>
 
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDismiss();
+          onClick={(_e) => {
+            e.stopPropagation(_);
+            onDismiss(_);
           }}
           className="flex-shrink-0 text-gray-400 hover:text-white transition-colors p-1"
           aria-label={`Dismiss ${group.title} group`}
@@ -1399,8 +1399,8 @@ const NotificationGroup = React.memo(({
 
 // Banner Notifications Component
 function BannerNotifications() {
-  const { notifications, removeNotification, markAsRead, preferences } = useNotifications();
-  const reducedMotion = respectsReducedMotion();
+  const { notifications, removeNotification, markAsRead, preferences } = useNotifications(_);
+  const reducedMotion = respectsReducedMotion(_);
 
   const bannerNotifications = notifications.filter(n => n.variant === 'banner');
 
@@ -1415,8 +1415,8 @@ function BannerNotifications() {
           <BannerCard
             key={notification.id}
             notification={notification}
-            onRemove={() => removeNotification(notification.id)}
-            onMarkRead={() => markAsRead(notification.id)}
+            onRemove={(_) => removeNotification(_notification.id)}
+            onMarkRead={(_) => markAsRead(_notification.id)}
             reducedMotion={reducedMotion}
           />
         ))}
@@ -1433,14 +1433,14 @@ const BannerCard = React.memo(({
   reducedMotion = false
 }: {
   notification: Notification;
-  onRemove: () => void;
-  onMarkRead: () => void;
+  onRemove: (_) => void;
+  onMarkRead: (_) => void;
   reducedMotion?: boolean;
 }) => {
-  const getIcon = () => {
+  const getIcon = (_) => {
     const iconProps = { className: "w-5 h-5" };
 
-    switch (notification.type) {
+    switch (_notification.type) {
       case 'success':
         return <CheckCircle {...iconProps} className="w-5 h-5 text-green-400" />;
       case 'error':
@@ -1458,7 +1458,7 @@ const BannerCard = React.memo(({
     }
   };
 
-  const getBackgroundColor = () => {
+  const getBackgroundColor = (_) => {
     const colors = {
       success: 'bg-green-500/90 border-green-400',
       error: 'bg-red-500/90 border-red-400',
@@ -1497,7 +1497,7 @@ const BannerCard = React.memo(({
       exit="exit"
       className={cn(
         'w-full p-4 backdrop-blur-md border-b shadow-lg',
-        getBackgroundColor()
+        getBackgroundColor(_)
       )}
       role="alert"
       aria-live={notification.metadata?.priority === 'critical' ? 'assertive' : 'polite'}
@@ -1505,14 +1505,14 @@ const BannerCard = React.memo(({
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="flex-shrink-0">
-            {getIcon()}
+            {getIcon(_)}
           </div>
 
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-semibold text-white">
               {notification.title}
               {!notification.read && (
-                <span className="sr-only"> (unread)</span>
+                <span className="sr-only"> (_unread)</span>
               )}
             </h4>
             <p className="text-sm text-white/90">
@@ -1572,9 +1572,9 @@ function NotificationControlPanel() {
     togglePreferences,
     preferences,
     clearAll
-  } = useNotifications();
+  } = useNotifications(_);
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(_false);
 
   if (!preferences.enabled) {
     return null;
@@ -1589,7 +1589,7 @@ function NotificationControlPanel() {
       >
         {/* Main Control Button */}
         <button
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={(_) => setIsExpanded(!isExpanded)}
           className={cn(
             'relative p-3 rounded-full backdrop-blur-md border shadow-lg transition-all duration-200',
             'bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/30',
@@ -1679,7 +1679,7 @@ function NotificationControlPanel() {
 
                 {/* Sound Toggle */}
                 <button
-                  onClick={() => {
+                  onClick={(_) => {
                     // This would be handled by preferences, but we can add a quick toggle
                   }}
                   className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-white/10 transition-colors text-left"

@@ -18,7 +18,7 @@ export interface XPGain {
 
 interface XPNotificationProps {
   xpGain: XPGain;
-  onComplete: () => void;
+  onComplete: (_) => void;
   duration?: number;
   className?: string;
 }
@@ -29,19 +29,19 @@ export function XPNotification({
   duration = 3000,
   className 
 }: XPNotificationProps) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(_true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(onComplete, 500); // Wait for exit animation
+      setIsVisible(_false);
+      setTimeout( onComplete, 500); // Wait for exit animation
     }, duration);
 
-    return () => clearTimeout(timer);
+    return (_) => clearTimeout(_timer);
   }, [duration, onComplete]);
 
-  const getSourceIcon = () => {
-    switch (xpGain.source) {
+  const getSourceIcon = (_) => {
+    switch (_xpGain.source) {
       case 'lesson':
         return BookOpen;
       case 'quiz':
@@ -57,10 +57,10 @@ export function XPNotification({
     }
   };
 
-  const getSourceColor = () => {
-    if (xpGain.color) return xpGain.color;
+  const getSourceColor = (_) => {
+    if (_xpGain.color) return xpGain.color;
     
-    switch (xpGain.source) {
+    switch (_xpGain.source) {
       case 'lesson':
         return 'text-blue-400';
       case 'quiz':
@@ -76,8 +76,8 @@ export function XPNotification({
     }
   };
 
-  const SourceIcon = xpGain.icon || getSourceIcon();
-  const colorClass = getSourceColor();
+  const SourceIcon = xpGain.icon || getSourceIcon(_);
+  const colorClass = getSourceColor(_);
 
   return (
     <AnimatePresence>
@@ -94,7 +94,7 @@ export function XPNotification({
             opacity: 1, 
             scale: 1, 
             y: -50,
-            x: (xpGain.position?.x || 0) + (Math.random() - 0.5) * 40
+            x: (_xpGain.position?.x || 0) + (_Math.random() - 0.5) * 40
           }}
           exit={{ 
             opacity: 0, 
@@ -114,7 +114,7 @@ export function XPNotification({
           style={{
             left: xpGain.position?.x || '50%',
             top: xpGain.position?.y || '50%',
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate( -50%, -50%)'
           }}
         >
           <div className="relative">
@@ -157,7 +157,7 @@ export function XPNotification({
                   'border border-current'
                 )}
               >
-                <SourceIcon className={cn('w-4 h-4', colorClass)} />
+                <SourceIcon className={cn( 'w-4 h-4', colorClass)} />
               </motion.div>
 
               {/* XP Amount */}
@@ -167,7 +167,7 @@ export function XPNotification({
                 transition={{ delay: 0.3 }}
                 className="flex items-center space-x-2"
               >
-                <span className={cn('text-2xl font-bold', colorClass)}>
+                <span className={cn( 'text-2xl font-bold', colorClass)}>
                   +{xpGain.amount}
                 </span>
                 <span className="text-sm font-medium text-white">XP</span>
@@ -187,7 +187,7 @@ export function XPNotification({
             </motion.div>
 
             {/* Sparkle Effects */}
-            {[...Array(6)].map((_, i) => (
+            {[...Array(_6)].map( (_, i) => (
               <motion.div
                 key={i}
                 initial={{ 
@@ -199,8 +199,8 @@ export function XPNotification({
                 animate={{ 
                   opacity: [0, 1, 0], 
                   scale: [0, 1, 0],
-                  x: (Math.random() - 0.5) * 80,
-                  y: (Math.random() - 0.5) * 80
+                  x: (_Math.random() - 0.5) * 80,
+                  y: (_Math.random() - 0.5) * 80
                 }}
                 transition={{ 
                   duration: 1.5,
@@ -229,41 +229,41 @@ interface XPNotificationManagerProps {
   className?: string;
 }
 
-export function XPNotificationManager({ className }: XPNotificationManagerProps) {
+export function XPNotificationManager(_{ className }: XPNotificationManagerProps) {
   const [notifications, setNotifications] = useState<XPGain[]>([]);
 
   // Function to add new XP notification
-  const addXPNotification = (xpGain: Omit<XPGain, 'id' | 'timestamp'>) => {
+  const addXPNotification = ( xpGain: Omit<XPGain, 'id' | 'timestamp'>) => {
     const notification: XPGain = {
       ...xpGain,
-      id: `xp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `xp_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date()
     };
     
-    setNotifications(prev => [...prev, notification]);
+    setNotifications( prev => [...prev, notification]);
   };
 
   // Function to remove notification
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+  const removeNotification = (_id: string) => {
+    setNotifications(_prev => prev.filter(n => n.id !== id));
   };
 
   // Expose addXPNotification globally for easy access
   useEffect(() => {
-    (window as any).addXPNotification = addXPNotification;
+    (_window as any).addXPNotification = addXPNotification;
     
-    return () => {
-      delete (window as any).addXPNotification;
+    return (_) => {
+      delete (_window as any).addXPNotification;
     };
   }, []);
 
   return (
-    <div className={cn('fixed inset-0 pointer-events-none z-50', className)}>
+    <div className={cn( 'fixed inset-0 pointer-events-none z-50', className)}>
       {notifications.map(notification => (
         <XPNotification
           key={notification.id}
           xpGain={notification}
-          onComplete={() => removeNotification(notification.id)}
+          onComplete={(_) => removeNotification(_notification.id)}
         />
       ))}
     </div>
@@ -272,9 +272,9 @@ export function XPNotificationManager({ className }: XPNotificationManagerProps)
 
 // Hook for triggering XP notifications
 export function useXPNotifications() {
-  const triggerXPNotification = (xpGain: Omit<XPGain, 'id' | 'timestamp'>) => {
-    if (typeof window !== 'undefined' && (window as any).addXPNotification) {
-      (window as any).addXPNotification(xpGain);
+  const triggerXPNotification = ( xpGain: Omit<XPGain, 'id' | 'timestamp'>) => {
+    if (_typeof window !== 'undefined' && (window as any).addXPNotification) {
+      (_window as any).addXPNotification(_xpGain);
     }
   };
 

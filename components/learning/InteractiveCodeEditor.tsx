@@ -72,10 +72,10 @@ interface CollaborationUser {
 
 interface InteractiveCodeEditorProps {
   initialCode?: string;
-  onCodeChange?: (code: string) => void;
-  onCompile?: (result: CompilationResult) => void;
-  onSubmitSolution?: (code: string, result: CompilationResult) => Promise<void>;
-  onLessonComplete?: (lessonId: string, xpReward: number) => Promise<void>;
+  onCodeChange?: (_code: string) => void;
+  onCompile?: (_result: CompilationResult) => void;
+  onSubmitSolution?: ( code: string, result: CompilationResult) => Promise<void>;
+  onLessonComplete?: ( lessonId: string, xpReward: number) => Promise<void>;
   readOnly?: boolean;
   theme?: 'light' | 'dark';
   showMinimap?: boolean;
@@ -102,7 +102,7 @@ interface InteractiveCodeEditorProps {
     difficulty: 'beginner' | 'intermediate' | 'advanced';
   }>;
   currentStepId?: string;
-  onStepComplete?: (stepId: string, xpEarned: number) => void;
+  onStepComplete?: ( stepId: string, xpEarned: number) => void;
   className?: string;
 }
 
@@ -117,30 +117,30 @@ contract HelloWorld {
     string private message;
     address public owner;
 
-    event MessageChanged(string newMessage, address changedBy);
+    event MessageChanged( string newMessage, address changedBy);
 
-    constructor() {
+    constructor(_) {
         message = "Hello, Blockchain World!";
         owner = msg.sender;
     }
 
-    function setMessage(string memory _newMessage) public {
-        require(bytes(_newMessage).length > 0, "Message cannot be empty");
+    function setMessage(_string memory _newMessage) public {
+        require(_bytes(_newMessage).length > 0, "Message cannot be empty");
         message = _newMessage;
-        emit MessageChanged(_newMessage, msg.sender);
+        emit MessageChanged( _newMessage, msg.sender);
     }
 
-    function getMessage() public view returns (string memory) {
+    function getMessage() public view returns (_string memory) {
         return message;
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this function");
+    modifier onlyOwner(_) {
+        require( msg.sender == owner, "Only owner can call this function");
         _;
     }
 
-    function changeOwner(address _newOwner) public onlyOwner {
-        require(_newOwner != address(0), "Invalid address");
+    function changeOwner(_address _newOwner) public onlyOwner {
+        require( newOwner != address(0), "Invalid address");
         owner = _newOwner;
     }
 }`;
@@ -158,12 +158,12 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyToken is ERC20, Ownable {
-    constructor() ERC20("MyToken", "MTK") {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+    constructor(_) ERC20( "MyToken", "MTK") {
+        _mint( msg.sender, 1000000 * 10 ** decimals());
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
+    function mint( address to, uint256 amount) public onlyOwner {
+        _mint( to, amount);
     }
 }`
   },
@@ -183,15 +183,15 @@ contract MyNFT is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() ERC721("MyNFT", "MNFT") {}
+    constructor(_) ERC721( "MyNFT", "MNFT") {}
 
-    function mintNFT(address recipient, string memory tokenURI)
-        public onlyOwner returns (uint256)
+    function mintNFT( address recipient, string memory tokenURI)
+        public onlyOwner returns (_uint256)
     {
-        _tokenIds.increment();
-        uint256 newItemId = _tokenIds.current();
-        _mint(recipient, newItemId);
-        _setTokenURI(newItemId, tokenURI);
+        _tokenIds.increment(_);
+        uint256 newItemId = _tokenIds.current(_);
+        _mint( recipient, newItemId);
+        _setTokenURI( newItemId, tokenURI);
         return newItemId;
     }
 }`
@@ -205,7 +205,7 @@ contract MyNFT is ERC721, Ownable {
 pragma solidity ^0.8.0;
 
 contract MultiSigWallet {
-    event Deposit(address indexed sender, uint amount, uint balance);
+    event Deposit( address indexed sender, uint amount, uint balance);
     event SubmitTransaction(
         address indexed owner,
         uint indexed txIndex,
@@ -213,12 +213,12 @@ contract MultiSigWallet {
         uint value,
         bytes data
     );
-    event ConfirmTransaction(address indexed owner, uint indexed txIndex);
-    event RevokeConfirmation(address indexed owner, uint indexed txIndex);
-    event ExecuteTransaction(address indexed owner, uint indexed txIndex);
+    event ConfirmTransaction( address indexed owner, uint indexed txIndex);
+    event RevokeConfirmation( address indexed owner, uint indexed txIndex);
+    event ExecuteTransaction( address indexed owner, uint indexed txIndex);
 
     address[] public owners;
-    mapping(address => bool) public isOwner;
+    mapping(_address => bool) public isOwner;
     uint public numConfirmationsRequired;
 
     struct Transaction {
@@ -229,52 +229,52 @@ contract MultiSigWallet {
         uint numConfirmations;
     }
 
-    mapping(uint => mapping(address => bool)) public isConfirmed;
+    mapping(_uint => mapping(address => bool)) public isConfirmed;
     Transaction[] public transactions;
 
-    modifier onlyOwner() {
-        require(isOwner[msg.sender], "not owner");
+    modifier onlyOwner(_) {
+        require( isOwner[msg.sender], "not owner");
         _;
     }
 
-    modifier txExists(uint _txIndex) {
-        require(_txIndex < transactions.length, "tx does not exist");
+    modifier txExists(_uint _txIndex) {
+        require( _txIndex < transactions.length, "tx does not exist");
         _;
     }
 
-    modifier notExecuted(uint _txIndex) {
+    modifier notExecuted(_uint _txIndex) {
         require(!transactions[_txIndex].executed, "tx already executed");
         _;
     }
 
-    modifier notConfirmed(uint _txIndex) {
+    modifier notConfirmed(_uint _txIndex) {
         require(!isConfirmed[_txIndex][msg.sender], "tx already confirmed");
         _;
     }
 
-    constructor(address[] memory _owners, uint _numConfirmationsRequired) {
-        require(_owners.length > 0, "owners required");
+    constructor( address[] memory _owners, uint _numConfirmationsRequired) {
+        require( _owners.length > 0, "owners required");
         require(
             _numConfirmationsRequired > 0 &&
                 _numConfirmationsRequired <= _owners.length,
             "invalid number of required confirmations"
         );
 
-        for (uint i = 0; i < _owners.length; i++) {
+        for (_uint i = 0; i < _owners.length; i++) {
             address owner = _owners[i];
 
-            require(owner != address(0), "invalid owner");
+            require(_owner != address(0), "invalid owner");
             require(!isOwner[owner], "owner not unique");
 
             isOwner[owner] = true;
-            owners.push(owner);
+            owners.push(_owner);
         }
 
         numConfirmationsRequired = _numConfirmationsRequired;
     }
 
-    receive() external payable {
-        emit Deposit(msg.sender, msg.value, address(this).balance);
+    receive(_) external payable {
+        emit Deposit( msg.sender, msg.value, address(this).balance);
     }
 }`
   }
@@ -308,44 +308,44 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
   onStepComplete,
   className = ''
 }) => {
-  const [code, setCode] = useState(initialCode);
-  const [_isCompiling, setIsCompiling] = useState(false);
-  const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
-  const [showCollaboration, setShowCollaboration] = useState(false);
-  const [showDebugger, setShowDebugger] = useState(false);
-  const [showTesting, setShowTesting] = useState(false);
-  const [editorTheme, setEditorTheme] = useState(theme);
+  const [code, setCode] = useState(_initialCode);
+  const [_isCompiling, setIsCompiling] = useState(_false);
+  const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(_null);
+  const [showSettings, setShowSettings] = useState(_false);
+  const [showTemplates, setShowTemplates] = useState(_false);
+  const [showCollaboration, setShowCollaboration] = useState(_false);
+  const [showDebugger, setShowDebugger] = useState(_false);
+  const [showTesting, setShowTesting] = useState(_false);
+  const [editorTheme, setEditorTheme] = useState(_theme);
   const [fontSize, setFontSize] = useState(14);
-  const [showToast, setShowToast] = useState(false);
+  const [showToast, setShowToast] = useState(_false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning'>('success');
   const [breakpoints, setBreakpoints] = useState<DebugBreakpoint[]>([]);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(_false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
-  const [showMinimapState, setShowMinimap] = useState(showMinimap);
-  const [showVersionControl, setShowVersionControl] = useState(false);
+  const [showMinimapState, setShowMinimap] = useState(_showMinimap);
+  const [showVersionControl, setShowVersionControl] = useState(_false);
   const [codeVersions, setCodeVersions] = useState<Array<{id: string, timestamp: Date, code: string, message: string}>>([]);
-  const [showCodePreview, setShowCodePreview] = useState(false);
-  const [isMaximized, setIsMaximized] = useState(false);
-  const [_isSubmitting, setIsSubmitting] = useState(false);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showCodePreview, setShowCodePreview] = useState(_false);
+  const [isMaximized, setIsMaximized] = useState(_false);
+  const [_isSubmitting, setIsSubmitting] = useState(_false);
+  const [showResetConfirm, setShowResetConfirm] = useState(_false);
   const [_syntaxErrors, setSyntaxErrors] = useState<EditorError[]>([]);
   const [_syntaxWarnings, setSyntaxWarnings] = useState<EditorError[]>([]);
-  const [realTimeErrors, setRealTimeErrors] = useState<{ errors: number; warnings: number; info: number }>({ errors: 0, warnings: 0, info: 0 });
-  const [showCollaborationPanel, setShowCollaborationPanel] = useState(false);
-  const [collaborativeEditor, setCollaborativeEditor] = useState<CollaborativeEditor | null>(null);
-  const [showSessionRecovery, setShowSessionRecovery] = useState(false);
+  const [realTimeErrors, setRealTimeErrors] = useState<{ errors: number; warnings: number; info: number }>( { errors: 0, warnings: 0, info: 0 });
+  const [showCollaborationPanel, setShowCollaborationPanel] = useState(_false);
+  const [collaborativeEditor, setCollaborativeEditor] = useState<CollaborativeEditor | null>(_null);
+  const [showSessionRecovery, setShowSessionRecovery] = useState(_false);
 
-  const editorRef = useRef<any>(null);
-  const errorHighlightingRef = useRef<ErrorHighlightingManager | null>(null);
-  const syntaxCheckerRef = useRef<RealTimeSyntaxChecker | null>(null);
-  const advancedConfigRef = useRef<AdvancedEditorConfig | null>(null);
-  const accessibilityManagerRef = useRef<EditorAccessibilityManager | null>(null);
+  const editorRef = useRef<any>(_null);
+  const errorHighlightingRef = useRef<ErrorHighlightingManager | null>(_null);
+  const syntaxCheckerRef = useRef<RealTimeSyntaxChecker | null>(_null);
+  const advancedConfigRef = useRef<AdvancedEditorConfig | null>(_null);
+  const accessibilityManagerRef = useRef<EditorAccessibilityManager | null>(_null);
 
   // Collaboration context
-  const collaboration = enableCollaboration ? useCollaboration() : null;
+  const collaboration = enableCollaboration ? useCollaboration(_) : null;
 
   // Enhanced auto-save with IndexedDB
   const autoSave = useAutoSave({
@@ -354,18 +354,18 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
     language: 'solidity',
     enabled: enableAutoSave,
     debounceMs: 2500,
-    onSaveStatusChange: (status) => {
+    onSaveStatusChange: (_status) => {
       if (status.status === 'saved') {
-        showToastMessage('Code auto-saved', 'success');
+        showToastMessage( 'Code auto-saved', 'success');
       } else if (status.status === 'error') {
-        showToastMessage(`Auto-save failed: ${status.error}`, 'error');
+        showToastMessage( `Auto-save failed: ${status.error}`, 'error');
       }
     }
   });
 
   // Error handling and learning context
-  const { showApiError, showFormError } = useError();
-  const { completeLesson, addXP: _addXP } = useLearning();
+  const { showApiError, showFormError } = useError(_);
+  const { completeLesson, addXP: _addXP } = useLearning(_);
 
   // Git integration for automatic commits
   const git = useAutoGit({
@@ -376,45 +376,45 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
   });
 
   // Lesson progress tracking
-  const lessonProgress = useLessonProgress(lessonId || 'default-lesson');
+  const lessonProgress = useLessonProgress(_lessonId || 'default-lesson');
 
   // Track time spent in editor and monitor performance
   useEffect(() => {
     // Start performance monitoring
-    performanceMonitor.startMonitoring();
+    performanceMonitor.startMonitoring(_);
 
     const interval = setInterval(() => {
       lessonProgress.updateTimeSpent(1); // Update every second
 
       // Monitor editor performance
-      const summary = performanceMonitor.getPerformanceSummary();
-      if (summary.currentFPS < 30) {
-        logger.warn('Editor performance degraded:', { summary });
+      const summary = performanceMonitor.getPerformanceSummary(_);
+      if (_summary.currentFPS < 30) {
+        logger.warn('Editor performance degraded:', { metadata: { summary });
       }
     }, 1000);
 
-    return () => {
-      clearInterval(interval);
-      performanceMonitor.cleanup();
+    return (_) => {
+      clearInterval(_interval);
+      performanceMonitor.cleanup(_);
     };
   }, [lessonProgress]);
 
   // Enhanced auto-save functionality with IndexedDB
   useEffect(() => {
-    if (code !== initialCode) {
-      autoSave.saveCode(code);
+    if (_code !== initialCode) {
+      autoSave.saveCode(_code);
     }
   }, [code, autoSave, initialCode]);
 
   // Load saved code on mount
   useEffect(() => {
     const loadSavedCode = async () => {
-      const savedCode = await autoSave.loadCode();
+      const savedCode = await autoSave.loadCode(_);
       if (savedCode && savedCode !== initialCode) {
-        setCode(savedCode);
+        setCode(_savedCode);
       }
     };
-    loadSavedCode();
+    loadSavedCode(_);
   }, [autoSave, initialCode]);
 
   // Initialize collaboration if enabled
@@ -423,7 +423,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
       const initializeCollaboration = async () => {
         try {
           // Start collaboration session
-          await collaboration.actions.startCollaboration(collaborationSessionId, lessonId);
+          await collaboration.actions.startCollaboration( collaborationSessionId, lessonId);
 
           // Initialize collaborative editor
           const collaborativeEditorInstance = new CollaborativeEditor(
@@ -441,93 +441,93 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             }
           );
 
-          await collaborativeEditorInstance.initialize();
-          setCollaborativeEditor(collaborativeEditorInstance);
+          await collaborativeEditorInstance.initialize(_);
+          setCollaborativeEditor(_collaborativeEditorInstance);
 
           // Setup event handlers
           collaborativeEditorInstance.onUserJoin((user) => {
-            showToastMessage(`${user.name} joined the session`, 'success');
+            showToastMessage( `${user.name} joined the session`, 'success');
           });
 
           collaborativeEditorInstance.onUserLeave((_userId) => {
-            showToastMessage('User left the session', 'warning');
+            showToastMessage( 'User left the session', 'warning');
           });
 
           collaborativeEditorInstance.onConnectionStatus((status) => {
             if (status === 'disconnected' || status === 'error') {
-              setShowSessionRecovery(true);
+              setShowSessionRecovery(_true);
             }
           });
 
           collaborativeEditorInstance.onCompilation((result) => {
-            setCompilationResult(result);
+            setCompilationResult(_result);
           });
 
-        } catch (error) {
-          logger.error('Failed to initialize collaboration:', {}, error as Error);
-          showToastMessage('Failed to start collaboration session', 'error');
+        } catch (_error) {
+          logger.error( 'Failed to initialize collaboration:', { metadata: {}, error as Error);
+          showToastMessage( 'Failed to start collaboration session', 'error');
         }
       };
 
-      initializeCollaboration();
+      initializeCollaboration(_);
     }
 
-    return () => {
+    return (_) => {
       if (collaborativeEditor) {
-        collaborativeEditor.dispose();
+        collaborativeEditor.dispose(_);
       }
     };
   }, [enableCollaboration, collaborationSessionId, collaboration, lessonId, collaborativeEditor]);
 
   // Cleanup on unmount
   useEffect(() => {
-    return () => {
-      if (syntaxCheckerRef.current) {
-        syntaxCheckerRef.current.dispose();
+    return (_) => {
+      if (_syntaxCheckerRef.current) {
+        syntaxCheckerRef.current.dispose(_);
       }
-      if (errorHighlightingRef.current) {
-        errorHighlightingRef.current.clearErrors();
+      if (_errorHighlightingRef.current) {
+        errorHighlightingRef.current.clearErrors(_);
       }
-      if (accessibilityManagerRef.current) {
-        accessibilityManagerRef.current.dispose();
+      if (_accessibilityManagerRef.current) {
+        accessibilityManagerRef.current.dispose(_);
       }
     };
   }, []);
 
-  const showToastMessage = useCallback((message: string, type: 'success' | 'error' | 'warning') => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const showToastMessage = useCallback( (message: string, type: 'success' | 'error' | 'warning') => {
+    setToastMessage(_message);
+    setToastType(_type);
+    setShowToast(_true);
+    setTimeout(() => setShowToast(_false), 3000);
   }, []);
 
-  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monacoInstance: any) => {
+  const handleEditorDidMount = ( editor: monaco.editor.IStandaloneCodeEditor, monacoInstance: any) => {
     editorRef.current = editor;
 
     // Initialize error highlighting and syntax checking
-    errorHighlightingRef.current = new ErrorHighlightingManager(editor, monacoInstance);
+    errorHighlightingRef.current = new ErrorHighlightingManager( editor, monacoInstance);
     syntaxCheckerRef.current = new RealTimeSyntaxChecker((result) => {
       const allErrors = [...result.errors, ...result.warnings, ...result.suggestions];
-      setSyntaxErrors(result.errors);
-      setSyntaxWarnings(result.warnings);
+      setSyntaxErrors(_result.errors);
+      setSyntaxWarnings(_result.warnings);
 
       // Update error highlighting
-      if (errorHighlightingRef.current) {
-        errorHighlightingRef.current.updateErrorMarkers(allErrors);
-        setRealTimeErrors(errorHighlightingRef.current.getErrorCounts());
+      if (_errorHighlightingRef.current) {
+        errorHighlightingRef.current.updateErrorMarkers(_allErrors);
+        setRealTimeErrors(_errorHighlightingRef.current.getErrorCounts());
       }
     });
 
     // Install error highlighting styles
-    ErrorHighlightingManager.installErrorStyles();
+    ErrorHighlightingManager.installErrorStyles(_);
 
     // Initialize advanced editor configuration
     if (enableAdvancedFeatures) {
-      advancedConfigRef.current = new AdvancedEditorConfig(monacoInstance, editor);
-      advancedConfigRef.current.configureSolidityLanguage();
-      advancedConfigRef.current.configureThemes();
-      advancedConfigRef.current.configureKeyboardShortcuts();
-      advancedConfigRef.current.configureResponsiveDesign();
+      advancedConfigRef.current = new AdvancedEditorConfig( monacoInstance, editor);
+      advancedConfigRef.current.configureSolidityLanguage(_);
+      advancedConfigRef.current.configureThemes(_);
+      advancedConfigRef.current.configureKeyboardShortcuts(_);
+      advancedConfigRef.current.configureResponsiveDesign(_);
     }
 
     // Initialize accessibility manager
@@ -537,13 +537,13 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
         keyboardNavigation: true,
         screenReaderSupport: true,
         fontSize: fontSize,
-        lineHeight: Math.round(fontSize * 1.4)
+        lineHeight: Math.round(_fontSize * 1.4)
       });
     }
 
-    // Configure Solidity language support (fallback if advanced features disabled)
+    // Configure Solidity language support (_fallback if advanced features disabled)
     if (!enableAdvancedFeatures) {
-      monacoInstance.languages.register({ id: 'solidity' });
+      monacoInstance.languages.register({ id: 'solidity'  });
     }
     
     // Set up Solidity syntax highlighting
@@ -571,7 +571,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
 
     // Set up auto-completion
     monacoInstance.languages.registerCompletionItemProvider('solidity', {
-      provideCompletionItems: () => ({
+      provideCompletionItems: (_) => ({
         suggestions: [
           {
             label: 'contract',
@@ -582,13 +582,13 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
           {
             label: 'function',
             kind: monacoInstance.languages.CompletionItemKind.Keyword,
-            insertText: 'function ${1:functionName}(${2:parameters}) ${3:public} ${4:returns (${5:returnType})} {\n\t$0\n}',
+            insertText: 'function ${1:functionName}(_${2:parameters}) ${3:public} ${4:returns (_${5:returnType})} {\n\t$0\n}',
             insertTextRules: monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
           },
           {
             label: 'require',
             kind: monacoInstance.languages.CompletionItemKind.Function,
-            insertText: 'require(${1:condition}, "${2:error message}");',
+            insertText: 'require( ${1:condition}, "${2:error message}");',
             insertTextRules: monacoInstance.languages.CompletionItemInsertTextRule.InsertAsSnippet,
           },
         ]
@@ -596,25 +596,25 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
     });
   };
 
-  const handleCodeChange = (value: string | undefined) => {
-    if (value !== undefined) {
+  const handleCodeChange = (_value: string | undefined) => {
+    if (_value !== undefined) {
       // Measure code change performance
       const endTiming = performanceMonitor.startTiming('code_change');
 
-      setCode(value);
-      onCodeChange?.(value);
+      setCode(_value);
+      onCodeChange?.(_value);
 
       // Trigger real-time syntax checking
-      if (syntaxCheckerRef.current) {
-        syntaxCheckerRef.current.checkSyntax(value, 800); // 800ms debounce
+      if (_syntaxCheckerRef.current) {
+        syntaxCheckerRef.current.checkSyntax( value, 800); // 800ms debounce
       }
 
-      endTiming();
+      endTiming(_);
     }
   };
 
   const compileCode = async () => {
-    setIsCompiling(true);
+    setIsCompiling(_true);
 
     // Measure compilation performance
     const endTiming = performanceMonitor.startTiming('code_compilation');
@@ -622,52 +622,52 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
     try {
       // Use the actual Solidity compiler
       const { SolidityCompiler } = await import('../../lib/compiler/SolidityCompiler');
-      const compiler = SolidityCompiler.getInstance();
-      const result = await compiler.compile(code);
+      const compiler = SolidityCompiler.getInstance(_);
+      const result = await compiler.compile(_code);
 
-      if (result.success) {
+      if (_result.success) {
         const compilationResult: CompilationResult = {
           success: true,
           errors: [],
-          warnings: (result.warnings || []).map((warn: any) => ({
+          warnings: (_result.warnings || []).map((warn: any) => ({
             line: warn.line || 1,
             column: warn.column || 1,
             message: typeof warn === 'string' ? warn : warn.message || 'Warning',
             severity: 'warning' as const
           })),
           bytecode: result.bytecode || '0x608060405234801561001057600080fd5b50...',
-          gasEstimate: Math.floor(Math.random() * 500000 + 200000),
-          deploymentCost: Math.floor(Math.random() * 300000 + 150000),
+          gasEstimate: Math.floor(_Math.random() * 500000 + 200000),
+          deploymentCost: Math.floor(_Math.random() * 300000 + 150000),
           abi: result.abi || []
         };
 
-        setCompilationResult(compilationResult);
-        onCompile?.(compilationResult);
+        setCompilationResult(_compilationResult);
+        onCompile?.(_compilationResult);
 
         // Clear compilation errors from highlighting but keep syntax errors
-        if (errorHighlightingRef.current) {
-          const syntaxResult = syntaxCheckerRef.current?.checkSyntaxImmediate(code);
+        if (_errorHighlightingRef.current) {
+          const syntaxResult = syntaxCheckerRef.current?.checkSyntaxImmediate(_code);
           if (syntaxResult) {
             const allErrors = [...syntaxResult.errors, ...syntaxResult.warnings, ...syntaxResult.suggestions];
-            errorHighlightingRef.current.updateErrorMarkers(allErrors);
+            errorHighlightingRef.current.updateErrorMarkers(_allErrors);
           }
         }
 
         // Check if current step should be completed on successful compilation
         if (enableProgressTracking && lessonSteps.length > 0) {
-          const currentStep = lessonProgress.getCurrentStep(lessonSteps);
+          const currentStep = lessonProgress.getCurrentStep(_lessonSteps);
           if (currentStep && !lessonProgress.isStepCompleted(currentStep.id)) {
             // Auto-complete step if it's a compilation step
-            if (currentStep.title.toLowerCase().includes('compile') ||
+            if (_currentStep.title.toLowerCase().includes('compile') ||
                 currentStep.description.toLowerCase().includes('compile')) {
-              await lessonProgress.completeStep(currentStep.id, lessonSteps);
-              onStepComplete?.(currentStep.id, currentStep.xpReward);
-              showToastMessage(`Step completed: ${currentStep.title} (+${currentStep.xpReward} XP)`, 'success');
+              await lessonProgress.completeStep( currentStep.id, lessonSteps);
+              onStepComplete?.( currentStep.id, currentStep.xpReward);
+              showToastMessage(_`Step completed: ${currentStep.title} (+${currentStep.xpReward} XP)`, 'success');
             }
           }
         }
 
-        showToastMessage('Compilation successful!', 'success');
+        showToastMessage( 'Compilation successful!', 'success');
       } else {
         const errorResult: CompilationResult = {
           success: false,
@@ -685,11 +685,11 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
           })) || []
         };
 
-        setCompilationResult(errorResult);
-        onCompile?.(errorResult);
+        setCompilationResult(_errorResult);
+        onCompile?.(_errorResult);
 
         // Update error highlighting with compilation errors
-        if (errorHighlightingRef.current) {
+        if (_errorHighlightingRef.current) {
           const compilationErrors: EditorError[] = [
             ...errorResult.errors.map(err => ({
               line: err.line,
@@ -708,18 +708,18 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
           ];
 
           // Combine with syntax errors
-          const syntaxResult = syntaxCheckerRef.current?.checkSyntaxImmediate(code);
+          const syntaxResult = syntaxCheckerRef.current?.checkSyntaxImmediate(_code);
           const allErrors = syntaxResult ?
             [...compilationErrors, ...syntaxResult.errors, ...syntaxResult.warnings, ...syntaxResult.suggestions] :
             compilationErrors;
 
-          errorHighlightingRef.current.updateErrorMarkers(allErrors);
-          setRealTimeErrors(errorHighlightingRef.current.getErrorCounts());
+          errorHighlightingRef.current.updateErrorMarkers(_allErrors);
+          setRealTimeErrors(_errorHighlightingRef.current.getErrorCounts());
         }
 
-        showToastMessage('Compilation failed with errors', 'error');
+        showToastMessage( 'Compilation failed with errors', 'error');
       }
-    } catch (error) {
+    } catch (_error) {
       const errorResult: CompilationResult = {
         success: false,
         errors: [
@@ -733,49 +733,49 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
         warnings: []
       };
 
-      setCompilationResult(errorResult);
-      showToastMessage('Compilation failed', 'error');
+      setCompilationResult(_errorResult);
+      showToastMessage( 'Compilation failed', 'error');
     } finally {
-      setIsCompiling(false);
-      endTiming();
+      setIsCompiling(_false);
+      endTiming(_);
     }
   };
 
-  const saveCode = () => {
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  const saveCode = (_) => {
+    const blob = new Blob( [code], { type: 'text/plain' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'contract.sol';
-    a.click();
-    URL.revokeObjectURL(url);
-    showToastMessage('Code saved to file', 'success');
+    a.click(_);
+    URL.revokeObjectURL(_url);
+    showToastMessage( 'Code saved to file', 'success');
   };
 
-  const loadCode = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const loadCode = (_event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
+      const reader = new FileReader(_);
+      reader.onload = (_e) => {
         const content = e.target?.result as string;
-        setCode(content);
-        showToastMessage('Code loaded from file', 'success');
+        setCode(_content);
+        showToastMessage( 'Code loaded from file', 'success');
       };
-      reader.readAsText(file);
+      reader.readAsText(_file);
     }
   };
 
-  const loadTemplate = (templateId: string) => {
+  const loadTemplate = (_templateId: string) => {
     const template = codeTemplates.find(t => t.id === templateId);
     if (template) {
-      setCode(template.code);
-      setSelectedTemplate(templateId);
-      setShowTemplates(false);
-      showToastMessage(`Template "${template.name}" loaded`, 'success');
+      setCode(_template.code);
+      setSelectedTemplate(_templateId);
+      setShowTemplates(_false);
+      showToastMessage( `Template "${template.name}" loaded`, 'success');
     }
   };
 
-  const toggleBreakpoint = (line: number) => {
+  const toggleBreakpoint = (_line: number) => {
     setBreakpoints(prev => {
       const existing = prev.find(bp => bp.line === line);
       if (existing) {
@@ -788,146 +788,146 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(code);
-      showToastMessage('Code copied to clipboard', 'success');
-    } catch (err) {
-      showToastMessage('Failed to copy code', 'error');
+      await navigator.clipboard.writeText(_code);
+      showToastMessage( 'Code copied to clipboard', 'success');
+    } catch (_err) {
+      showToastMessage( 'Failed to copy code', 'error');
     }
   };
 
   const resetCode = async () => {
     if (showResetConfirm) {
       try {
-        await autoSave.resetCode();
-        setCode(defaultSolidityCode);
-        setCompilationResult(null);
+        await autoSave.resetCode(_);
+        setCode(_defaultSolidityCode);
+        setCompilationResult(_null);
         setBreakpoints([]);
-        setShowResetConfirm(false);
-        showToastMessage('Code reset to default', 'success');
-      } catch (error) {
-        showApiError('Failed to reset code', { error });
+        setShowResetConfirm(_false);
+        showToastMessage( 'Code reset to default', 'success');
+      } catch (_error) {
+        showApiError( 'Failed to reset code', { error });
       }
     } else {
-      setShowResetConfirm(true);
-      setTimeout(() => setShowResetConfirm(false), 5000); // Auto-hide after 5 seconds
+      setShowResetConfirm(_true);
+      setTimeout(() => setShowResetConfirm(_false), 5000); // Auto-hide after 5 seconds
     }
   };
 
   const submitSolution = async () => {
     if (!compilationResult) {
-      showFormError('compilation', 'Please compile your code first');
+      showFormError( 'compilation', 'Please compile your code first');
       return;
     }
 
     if (!compilationResult.success) {
-      showFormError('compilation', 'Code must compile successfully before submission');
+      showFormError( 'compilation', 'Code must compile successfully before submission');
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(_true);
     try {
       // Check TypeScript build before submission
-      if (git.isGitAvailable) {
-        const tsCheck = await git.checkTypeScript();
+      if (_git.isGitAvailable) {
+        const tsCheck = await git.checkTypeScript(_);
         if (!tsCheck) {
-          showFormError('typescript', 'TypeScript errors detected. Please fix them before submission.');
+          showFormError( 'typescript', 'TypeScript errors detected. Please fix them before submission.');
           return;
         }
       }
 
       // Call the submission handler if provided
       if (onSubmitSolution) {
-        await onSubmitSolution(code, compilationResult);
+        await onSubmitSolution( code, compilationResult);
       }
 
       // Complete current step if using progress tracking
       if (enableProgressTracking && lessonSteps.length > 0) {
-        const currentStep = lessonProgress.getCurrentStep(lessonSteps);
+        const currentStep = lessonProgress.getCurrentStep(_lessonSteps);
         if (currentStep && !lessonProgress.isStepCompleted(currentStep.id)) {
-          await lessonProgress.completeStep(currentStep.id, lessonSteps);
-          onStepComplete?.(currentStep.id, currentStep.xpReward);
+          await lessonProgress.completeStep( currentStep.id, lessonSteps);
+          onStepComplete?.( currentStep.id, currentStep.xpReward);
         }
       }
 
       // Complete lesson and award XP if lesson context is available
       if (lessonId && onLessonComplete) {
-        await onLessonComplete(lessonId, xpReward);
+        await onLessonComplete( lessonId, xpReward);
       } else if (lessonId) {
         // Fallback to learning context
-        await completeLesson(lessonId, xpReward);
+        await completeLesson( lessonId, xpReward);
       }
 
       // Force save the final solution
-      await autoSave.saveCode(code, true);
+      await autoSave.saveCode( code, true);
 
       // Auto-commit lesson completion with enhanced commit manager
       if (lessonId && git.isGitAvailable) {
         try {
-          await commitManager.commitLessonCompletion(lessonId, code);
-          showToastMessage('Solution committed to git repository', 'success');
-        } catch (gitError) {
-          logger.warn('Git commit failed', { error: gitError as Error });
+          await commitManager.commitLessonCompletion( lessonId, code);
+          showToastMessage( 'Solution committed to git repository', 'success');
+        } catch (_gitError) {
+          logger.warn('Git commit failed', { metadata: { error: gitError as Error });
           // Don't fail the submission if git fails
         }
       }
 
-      showToastMessage(`Solution submitted successfully! +${xpReward} XP`, 'success');
-    } catch (error) {
-      showApiError('Failed to submit solution', { error });
+      showToastMessage( `Solution submitted successfully! +${xpReward} XP`, 'success');
+    } catch (_error) {
+      showApiError( 'Failed to submit solution', { error });
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(_false);
     }
   };
 
   const saveVersion = async () => {
     const newVersion = {
-      id: Date.now().toString(),
+      id: Date.now(_).toString(),
       timestamp: new Date(),
       code,
-      message: `Version saved at ${new Date().toLocaleTimeString()}`
+      message: `Version saved at ${new Date().toLocaleTimeString(_)}`
     };
-    setCodeVersions(prev => [newVersion, ...prev.slice(0, 9)]); // Keep last 10 versions
+    setCodeVersions( prev => [newVersion, ...prev.slice(0, 9)]); // Keep last 10 versions
 
     // Auto-commit code save with enhanced commit manager
-    if (git.isGitAvailable) {
+    if (_git.isGitAvailable) {
       try {
-        await commitManager.commitCodeSave(sessionId, `Save code version: ${newVersion.message}`);
-        showToastMessage('Code version saved and committed', 'success');
-      } catch (gitError) {
-        logger.warn('Git commit failed', { error: gitError as Error });
+        await commitManager.commitCodeSave( sessionId, `Save code version: ${newVersion.message}`);
+        showToastMessage( 'Code version saved and committed', 'success');
+      } catch (_gitError) {
+        logger.warn('Git commit failed', { metadata: { error: gitError as Error });
         showToastMessage('Code version saved (git commit failed)', 'warning');
       }
     } else {
-      showToastMessage('Code version saved', 'success');
+      showToastMessage( 'Code version saved', 'success');
     }
   };
 
-  const toggleMaximize = () => {
+  const toggleMaximize = (_) => {
     setIsMaximized(!isMaximized);
-    showToastMessage(isMaximized ? 'Editor minimized' : 'Editor maximized', 'success');
+    showToastMessage( isMaximized ? 'Editor minimized' : 'Editor maximized', 'success');
   };
 
-  const shareCode = () => {
-    copyToClipboard();
-    showToastMessage('Code ready to share!', 'success');
+  const shareCode = (_) => {
+    copyToClipboard(_);
+    showToastMessage( 'Code ready to share!', 'success');
   };
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = (_) => {
     setIsFullscreen(!isFullscreen);
   };
 
   const runTests = async () => {
-    setShowTesting(true);
-    showToastMessage('Running tests...', 'warning');
+    setShowTesting(_true);
+    showToastMessage( 'Running tests...', 'warning');
 
     try {
       // Use the actual compiler to validate the code first
       const { SolidityCompiler } = await import('../../lib/compiler/SolidityCompiler');
-      const compiler = SolidityCompiler.getInstance();
-      const result = await compiler.compile(code);
+      const compiler = SolidityCompiler.getInstance(_);
+      const result = await compiler.compile(_code);
 
       if (!result.success) {
-        showToastMessage('Tests failed: Code does not compile', 'error');
+        showToastMessage( 'Tests failed: Code does not compile', 'error');
         return;
       }
 
@@ -944,16 +944,16 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
       const totalTests = testResults.length;
 
       setTimeout(() => {
-        if (passedTests === totalTests) {
-          showToastMessage(`All ${totalTests} tests passed! 🎉`, 'success');
+        if (_passedTests === totalTests) {
+          showToastMessage( `All ${totalTests} tests passed! 🎉`, 'success');
         } else {
-          showToastMessage(`${passedTests}/${totalTests} tests passed`, 'warning');
+          showToastMessage( `${passedTests}/${totalTests} tests passed`, 'warning');
         }
-        setShowTesting(false);
+        setShowTesting(_false);
       }, 2000);
-    } catch (error) {
-      showToastMessage('Test execution failed', 'error');
-      setShowTesting(false);
+    } catch (_error) {
+      showToastMessage( 'Test execution failed', 'error');
+      setShowTesting(_false);
     }
   };
 
@@ -968,14 +968,14 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             isCompleted: false,
             isActive: step.id === currentStepId
           }))}
-          currentStepId={currentStepId || lessonProgress.getCurrentStep(lessonSteps)?.id}
+          currentStepId={currentStepId || lessonProgress.getCurrentStep(_lessonSteps)?.id}
           onStepComplete={async (stepId, xpEarned) => {
-            await lessonProgress.completeStep(stepId, lessonSteps);
-            onStepComplete?.(stepId, xpEarned);
+            await lessonProgress.completeStep( stepId, lessonSteps);
+            onStepComplete?.( stepId, xpEarned);
           }}
           onLessonComplete={async (lessonId, totalXp) => {
             if (onLessonComplete) {
-              await onLessonComplete(lessonId, totalXp);
+              await onLessonComplete( lessonId, totalXp);
             }
           }}
           className="mb-4"
@@ -1010,11 +1010,11 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                 debounceMs: 500,
                 successDuration: 1500,
                 errorDuration: 3000,
-                onSuccess: () => {
-                  showToastMessage('Compilation successful!', 'success');
+                onSuccess: (_) => {
+                  showToastMessage( 'Compilation successful!', 'success');
                 },
-                onError: (_error) => {
-                  showToastMessage('Compilation failed', 'error');
+                onError: ( error) => {
+                  showToastMessage( 'Compilation failed', 'error');
                 }
               }}
             >
@@ -1035,7 +1035,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
 
             <AsyncSaveButton
               onSave={async () => {
-                saveVersion();
+                saveVersion(_);
               }}
               variant="outline"
               className="border-green-500/30 text-green-600 hover:bg-green-500/10"
@@ -1043,8 +1043,8 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
               asyncOptions={{
                 debounceMs: 300,
                 successDuration: 1500,
-                onSuccess: () => {
-                  showToastMessage('Version saved successfully', 'success');
+                onSuccess: (_) => {
+                  showToastMessage( 'Version saved successfully', 'success');
                 }
               }}
             />
@@ -1073,7 +1073,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
 
             {enableTemplates && (
               <Button
-                onClick={() => setShowTemplates(!showTemplates)}
+                onClick={(_) => setShowTemplates(!showTemplates)}
                 variant="outline"
                 className="border-purple-500/30 text-purple-600 hover:bg-purple-500/10"
               >
@@ -1092,10 +1092,10 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             </Button>
 
             {/* Error Navigation */}
-            {(realTimeErrors.errors > 0 || realTimeErrors.warnings > 0) && (
+            {(_realTimeErrors.errors > 0 || realTimeErrors.warnings > 0) && (
               <div className="flex items-center space-x-1 border border-white/20 rounded-lg p-1">
                 <Button
-                  onClick={() => errorHighlightingRef.current?.goToPreviousError()}
+                  onClick={(_) => errorHighlightingRef.current?.goToPreviousError(_)}
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0"
@@ -1103,7 +1103,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <ChevronUp className="w-4 h-4" />
                 </Button>
                 <Button
-                  onClick={() => errorHighlightingRef.current?.goToNextError()}
+                  onClick={(_) => errorHighlightingRef.current?.goToNextError(_)}
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0"
@@ -1134,7 +1134,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             </Button>
 
             <Button
-              onClick={() => setShowVersionControl(!showVersionControl)}
+              onClick={(_) => setShowVersionControl(!showVersionControl)}
               variant="outline"
               className="border-purple-500/30 text-purple-600 hover:bg-purple-500/10"
             >
@@ -1143,7 +1143,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             </Button>
 
             <Button
-              onClick={() => setShowCodePreview(!showCodePreview)}
+              onClick={(_) => setShowCodePreview(!showCodePreview)}
               variant="outline"
               className="border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10"
             >
@@ -1165,11 +1165,11 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   debounceMs: 500,
                   successDuration: 2000,
                   errorDuration: 4000,
-                  onSuccess: () => {
-                    showToastMessage('Solution submitted successfully!', 'success');
+                  onSuccess: (_) => {
+                    showToastMessage( 'Solution submitted successfully!', 'success');
                   },
-                  onError: (_error: Error) => {
-                    showToastMessage('Submission failed', 'error');
+                  onError: ( error: Error) => {
+                    showToastMessage( 'Submission failed', 'error');
                   }
                 }}
               />
@@ -1203,7 +1203,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                 )}
                 {compilationResult.gasEstimate && (
                   <span className="text-xs text-gray-500">
-                    Gas: {compilationResult.gasEstimate.toLocaleString()}
+                    Gas: {compilationResult.gasEstimate.toLocaleString(_)}
                   </span>
                 )}
               </div>
@@ -1211,7 +1211,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
 
             {enableCollaboration && (
               <Button
-                onClick={() => setShowCollaboration(!showCollaboration)}
+                onClick={(_) => setShowCollaboration(!showCollaboration)}
                 variant="outline"
                 size="sm"
                 className="border-blue-500/30 text-blue-600 hover:bg-blue-500/10"
@@ -1239,7 +1239,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
 
             {enableDebugging && (
               <Button
-                onClick={() => setShowDebugger(!showDebugger)}
+                onClick={(_) => setShowDebugger(!showDebugger)}
                 variant="outline"
                 size="sm"
                 className="border-red-500/30 text-red-600 hover:bg-red-500/10"
@@ -1270,7 +1270,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             {enableAccessibility && (
               <div className="flex items-center space-x-1 border border-white/20 rounded-lg p-1">
                 <Button
-                  onClick={() => accessibilityManagerRef.current?.increaseFontSize()}
+                  onClick={(_) => accessibilityManagerRef.current?.increaseFontSize(_)}
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0"
@@ -1280,7 +1280,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <ZoomIn className="w-4 h-4" />
                 </Button>
                 <Button
-                  onClick={() => accessibilityManagerRef.current?.decreaseFontSize()}
+                  onClick={(_) => accessibilityManagerRef.current?.decreaseFontSize(_)}
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0"
@@ -1290,7 +1290,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <ZoomOut className="w-4 h-4" />
                 </Button>
                 <Button
-                  onClick={() => accessibilityManagerRef.current?.toggleHighContrast()}
+                  onClick={(_) => accessibilityManagerRef.current?.toggleHighContrast(_)}
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0"
@@ -1300,8 +1300,8 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <Contrast className="w-4 h-4" />
                 </Button>
                 <Button
-                  onClick={() => {
-                    const shortcuts = accessibilityManagerRef.current?.getShortcuts();
+                  onClick={(_) => {
+                    const shortcuts = accessibilityManagerRef.current?.getShortcuts(_);
                     if (shortcuts) {
                       accessibilityManagerRef.current?.announce(
                         'Keyboard shortcuts available. Press F1 for full list.',
@@ -1321,7 +1321,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             )}
 
             <Button
-              onClick={() => setShowSettings(!showSettings)}
+              onClick={(_) => setShowSettings(!showSettings)}
               variant="outline"
               size="sm"
               className="border-white/30 text-gray-700 dark:text-gray-300"
@@ -1356,7 +1356,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                       : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
-                  onClick={() => loadTemplate(template.id)}
+                  onClick={(_) => loadTemplate(_template.id)}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-medium text-sm">{template.name}</h4>
@@ -1398,10 +1398,10 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                 onClick={async () => {
                   try {
                     const sessionId = Math.random().toString(36).substring(2, 11);
-                    await navigator.clipboard.writeText(`${window.location.origin}/collaborate/${sessionId}`);
-                    showToastMessage('Collaboration link copied to clipboard!', 'success');
-                  } catch (error) {
-                    showToastMessage('Failed to copy collaboration link', 'error');
+                    await navigator.clipboard.writeText(_`${window.location.origin}/collaborate/${sessionId}`);
+                    showToastMessage( 'Collaboration link copied to clipboard!', 'success');
+                  } catch (_error) {
+                    showToastMessage( 'Failed to copy collaboration link', 'error');
                   }
                 }}
               >
@@ -1410,7 +1410,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
               </Button>
 
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Active Users ({collaborationUsers.length})</h4>
+                <h4 className="text-sm font-medium">Active Users ({ collaborationUsers.length })</h4>
                 {collaborationUsers.length === 0 ? (
                   <p className="text-xs text-gray-500">No active collaborators</p>
                 ) : (
@@ -1421,7 +1421,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                         user.status === 'idle' ? 'bg-yellow-500' : 'bg-gray-500'
                       }`}></div>
                       <span>{user.name}</span>
-                      <span className="text-xs text-gray-500">({user.role})</span>
+                      <span className="text-xs text-gray-500">({ user.role })</span>
                     </div>
                   ))
                 )}
@@ -1432,9 +1432,9 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   size="sm"
                   variant="outline"
                   className="w-full text-xs"
-                  onClick={() => {
+                  onClick={(_) => {
                     // Simulate real-time sync
-                    showToastMessage('Code synchronized with collaborators', 'success');
+                    showToastMessage( 'Code synchronized with collaborators', 'success');
                   }}
                 >
                   <GitBranch className="w-3 h-3 mr-1" />
@@ -1462,12 +1462,12 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
 
             <div className="space-y-3">
               <div className="text-sm">
-                <h4 className="font-medium mb-2">Breakpoints ({breakpoints.length})</h4>
+                <h4 className="font-medium mb-2">Breakpoints ({ breakpoints.length })</h4>
                 {breakpoints.length === 0 ? (
                   <p className="text-gray-500">Click line numbers to set breakpoints</p>
                 ) : (
                   <div className="space-y-1">
-                    {breakpoints.map((bp, index) => (
+                    {breakpoints.map( (bp, index) => (
                       <div key={index} className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <div className={`w-2 h-2 rounded-full ${bp.enabled ? 'bg-red-500' : 'bg-gray-400'}`}></div>
@@ -1476,7 +1476,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => toggleBreakpoint(bp.line)}
+                          onClick={(_) => toggleBreakpoint(_bp.line)}
                           className="text-xs"
                         >
                           Remove
@@ -1492,8 +1492,8 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <Button
                     size="sm"
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white text-xs"
-                    onClick={() => {
-                      showToastMessage('Debug session started', 'success');
+                    onClick={(_) => {
+                      showToastMessage( 'Debug session started', 'success');
                     }}
                   >
                     <Zap className="w-3 h-3 mr-1" />
@@ -1504,9 +1504,9 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                     size="sm"
                     variant="outline"
                     className="w-full text-xs"
-                    onClick={() => {
+                    onClick={(_) => {
                       setBreakpoints([]);
-                      showToastMessage('All breakpoints cleared', 'success');
+                      showToastMessage( 'All breakpoints cleared', 'success');
                     }}
                   >
                     Clear All
@@ -1534,7 +1534,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                 <label className="block text-sm font-medium mb-2">Theme</label>
                 <select
                   value={editorTheme}
-                  onChange={(e) => setEditorTheme(e.target.value as 'light' | 'dark')}
+                  onChange={(_e) => setEditorTheme(_e.target.value as 'light' | 'dark')}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700"
                 >
                   <option value="light">Light</option>
@@ -1549,7 +1549,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   min="12"
                   max="20"
                   value={fontSize}
-                  onChange={(e) => setFontSize(Number(e.target.value))}
+                  onChange={(_e) => setFontSize(_Number(e.target.value))}
                   className="w-full"
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">{fontSize}px</span>
@@ -1560,7 +1560,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <input
                     type="checkbox"
                     checked={showMinimapState}
-                    onChange={(e) => setShowMinimap(e.target.checked)}
+                    onChange={(_e) => setShowMinimap(_e.target.checked)}
                     className="rounded"
                   />
                   <span className="text-sm flex items-center">
@@ -1573,9 +1573,9 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <input
                     type="checkbox"
                     checked={!readOnly}
-                    onChange={(e) => {
+                    onChange={(_e) => {
                       // This would typically be controlled by parent component
-                      showToastMessage(e.target.checked ? 'Editor enabled' : 'Editor disabled', 'success');
+                      showToastMessage( e.target.checked ? 'Editor enabled' : 'Editor disabled', 'success');
                     }}
                     className="rounded"
                   />
@@ -1611,7 +1611,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
               </Button>
 
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Saved Versions ({codeVersions.length})</h4>
+                <h4 className="text-sm font-medium">Saved Versions ({ codeVersions.length })</h4>
                 {codeVersions.length === 0 ? (
                   <p className="text-xs text-gray-500">No versions saved yet</p>
                 ) : (
@@ -1620,16 +1620,16 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium">{version.message}</span>
                         <span className="text-xs text-gray-500">
-                          {version.timestamp.toLocaleTimeString()}
+                          {version.timestamp.toLocaleTimeString(_)}
                         </span>
                       </div>
                       <div className="flex space-x-2">
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => {
-                            setCode(version.code);
-                            showToastMessage('Version restored', 'success');
+                          onClick={(_) => {
+                            setCode(_version.code);
+                            showToastMessage( 'Version restored', 'success');
                           }}
                           className="text-xs"
                         >
@@ -1638,9 +1638,9 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => {
-                            navigator.clipboard.writeText(version.code);
-                            showToastMessage('Version copied to clipboard', 'success');
+                          onClick={(_) => {
+                            navigator.clipboard.writeText(_version.code);
+                            showToastMessage( 'Version copied to clipboard', 'success');
                           }}
                           className="text-xs"
                         >
@@ -1694,8 +1694,8 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                 <Button
                   size="sm"
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs"
-                  onClick={() => {
-                    showToastMessage('Running comprehensive tests...', 'success');
+                  onClick={(_) => {
+                    showToastMessage( 'Running comprehensive tests...', 'success');
                   }}
                 >
                   <TestTube className="w-3 h-3 mr-1" />
@@ -1758,7 +1758,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             {compilationResult.errors.length > 0 && (
               <div className="mb-4">
                 <h4 className="text-red-500 font-medium mb-2">Errors:</h4>
-                {compilationResult.errors.map((error, index) => (
+                {compilationResult.errors.map( (error, index) => (
                   <div key={index} className="text-sm text-red-400 mb-1">
                     Line {error.line}: {error.message}
                   </div>
@@ -1769,7 +1769,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             {compilationResult.warnings.length > 0 && (
               <div className="mb-4">
                 <h4 className="text-yellow-500 font-medium mb-2">Warnings:</h4>
-                {compilationResult.warnings.map((warning, index) => (
+                {compilationResult.warnings.map( (warning, index) => (
                   <div key={index} className="text-sm text-yellow-400 mb-1">
                     Line {warning.line}: {warning.message}
                   </div>
@@ -1787,7 +1787,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <div className="text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex justify-between">
                       <span>Estimated Gas:</span>
-                      <span>{compilationResult.gasEstimate.toLocaleString()}</span>
+                      <span>{compilationResult.gasEstimate.toLocaleString(_)}</span>
                     </div>
                   </div>
                 )}
@@ -1796,7 +1796,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
                   <div className="text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex justify-between">
                       <span>Deployment Cost:</span>
-                      <span>{compilationResult.deploymentCost.toLocaleString()} gas</span>
+                      <span>{compilationResult.deploymentCost.toLocaleString(_)} gas</span>
                     </div>
                   </div>
                 )}
@@ -1829,11 +1829,11 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
               currentUserId={collaboration.state.currentUser?.id || ''}
               sessionDuration={collaboration.state.sessionDuration}
               isConnected={collaboration.state.isConnected}
-              onUserAction={(userId, action) => {
-                if (action === 'kick') {
-                  collaboration.actions.kickUser(userId);
-                } else if (action === 'promote') {
-                  collaboration.actions.promoteUser(userId, 'instructor');
+              onUserAction={( userId, action) => {
+                if (_action === 'kick') {
+                  collaboration.actions.kickUser(_userId);
+                } else if (_action === 'promote') {
+                  collaboration.actions.promoteUser( userId, 'instructor');
                 }
               }}
               compact={!showCollaborationPanel}
@@ -1847,7 +1847,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
               latency={collaboration.state.latency}
               pendingOperations={collaboration.state.offlineQueueSize}
               onReconnect={collaboration.actions.reconnect}
-              onTroubleshoot={() => setShowSessionRecovery(true)}
+              onTroubleshoot={(_) => setShowSessionRecovery(_true)}
               compact={!showCollaborationPanel}
             />
           </div>
@@ -1891,12 +1891,12 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
             onReconnect={collaboration.actions.reconnect}
             onForceSync={collaboration.actions.forceSync}
             onClearOfflineData={collaboration.actions.clearOfflineData}
-            onDismiss={() => setShowSessionRecovery(false)}
+            onDismiss={(_) => setShowSessionRecovery(_false)}
           />
 
           {/* Collaboration Toggle Button */}
           <Button
-            onClick={() => setShowCollaborationPanel(!showCollaborationPanel)}
+            onClick={(_) => setShowCollaborationPanel(!showCollaborationPanel)}
             className="fixed bottom-4 right-1/2 transform translate-x-1/2 z-40 bg-blue-600 hover:bg-blue-700"
             size="sm"
           >
@@ -1912,7 +1912,7 @@ export const InteractiveCodeEditor: React.FC<InteractiveCodeEditorProps> = ({
           <CustomToast
             message={toastMessage}
             type={toastType}
-            onClose={() => setShowToast(false)}
+            onClose={(_) => setShowToast(_false)}
           />
         )}
       </AnimatePresence>

@@ -15,20 +15,20 @@ import { cn } from '@/lib/utils';
 import { withAuthErrorBoundary } from '@/lib/components/ErrorBoundaryHOCs';
 
 function RegisterPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useRouter(_);
+  const searchParams = useSearchParams(_);
   const returnUrl = searchParams.get('returnUrl') || '/dashboard';
   
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [isCheckingSession, setIsCheckingSession] = useState(true);
+  const [showPassword, setShowPassword] = useState(_false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(_false);
+  const [isLoading, setIsLoading] = useState(_false);
+  const [authError, setAuthError] = useState<string | null>(_null);
+  const [success, setSuccess] = useState<string | null>(_null);
+  const [isCheckingSession, setIsCheckingSession] = useState(_true);
 
   // Form setup
   const form = useForm<RegistrationData>({
-    resolver: zodResolver(registrationSchema),
+    resolver: zodResolver(_registrationSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -42,25 +42,25 @@ function RegisterPage() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const session = await getSession();
+        const session = await getSession(_);
         if (session) {
-          router.replace(returnUrl);
+          router.replace(_returnUrl);
           return;
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Session check failed:', error);
       } finally {
-        setIsCheckingSession(false);
+        setIsCheckingSession(_false);
       }
     };
 
-    checkSession();
+    checkSession(_);
   }, [router, returnUrl]);
 
-  const handleSubmit = async (data: RegistrationData) => {
-    setIsLoading(true);
-    setAuthError(null);
-    setSuccess(null);
+  const handleSubmit = async (_data: RegistrationData) => {
+    setIsLoading(_true);
+    setAuthError(_null);
+    setSuccess(_null);
 
     try {
       // Create account
@@ -74,10 +74,10 @@ function RegisterPage() {
         }),
       });
 
-      const result = await response.json();
+      const result = await response.json(_);
 
       if (!response.ok) {
-        setAuthError(result.message || 'Registration failed. Please try again.');
+        setAuthError(_result.message || 'Registration failed. Please try again.');
         return;
       }
 
@@ -85,27 +85,27 @@ function RegisterPage() {
       
       // Auto-redirect to login after a short delay
       setTimeout(() => {
-        router.push(`/auth/login${returnUrl !== '/dashboard' ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`);
+        router.push(_`/auth/login${returnUrl !== '/dashboard' ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`);
       }, 2000);
 
-    } catch (error) {
+    } catch (_error) {
       console.error('Registration error:', error);
       setAuthError('An unexpected error occurred. Please try again.');
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
-  const handleOAuthSignIn = async (provider: string) => {
-    setIsLoading(true);
-    setAuthError(null);
+  const handleOAuthSignIn = async (_provider: string) => {
+    setIsLoading(_true);
+    setAuthError(_null);
 
     try {
-      await signIn(provider, { callbackUrl: returnUrl });
-    } catch (error) {
+      await signIn( provider, { callbackUrl: returnUrl });
+    } catch (_error) {
       console.error(`${provider} sign-in error:`, error);
-      setAuthError(`${provider} sign-in failed. Please try again.`);
-      setIsLoading(false);
+      setAuthError(_`${provider} sign-in failed. Please try again.`);
+      setIsLoading(_false);
     }
   };
 
@@ -171,7 +171,7 @@ function RegisterPage() {
                     severity: 'critical',
                     category: 'auth',
                     context: 'inline',
-                    timestamp: new Date(),
+                    timestamp: new Date(_),
                     userMessage: authError,
                     actionable: false,
                     retryable: false
@@ -184,7 +184,7 @@ function RegisterPage() {
             {/* OAuth Providers */}
             <div className="space-y-3 mb-6">
               <button
-                onClick={() => handleOAuthSignIn('github')}
+                onClick={(_) => handleOAuthSignIn('github')}
                 disabled={isLoading || !!success}
                 className={cn(
                   "w-full flex items-center justify-center space-x-3 p-4 rounded-lg",
@@ -199,7 +199,7 @@ function RegisterPage() {
               </button>
 
               <button
-                onClick={() => handleOAuthSignIn('google')}
+                onClick={(_) => handleOAuthSignIn('google')}
                 disabled={isLoading || !!success}
                 className={cn(
                   "w-full flex items-center justify-center space-x-3 p-4 rounded-lg",
@@ -225,7 +225,7 @@ function RegisterPage() {
             </div>
 
             {/* Registration Form */}
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(_handleSubmit)} className="space-y-4">
               {/* Name Field */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
@@ -307,7 +307,7 @@ function RegisterPage() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={(_) => setShowPassword(!showPassword)}
                     disabled={isLoading || !!success}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 disabled:opacity-50"
                   >
@@ -344,7 +344,7 @@ function RegisterPage() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={(_) => setShowConfirmPassword(!showConfirmPassword)}
                     disabled={isLoading || !!success}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 disabled:opacity-50"
                   >
@@ -361,8 +361,8 @@ function RegisterPage() {
               {/* Submit Button */}
               <AsyncSubmitButton
                 onSubmit={async () => {
-                  const data = form.getValues();
-                  await handleSubmit(data);
+                  const data = form.getValues(_);
+                  await handleSubmit(_data);
                 }}
                 submitText="Create Account"
                 loadingText="Creating Account..."
@@ -382,7 +382,7 @@ function RegisterPage() {
               <p className="text-gray-400 text-sm">
                 Already have an account?{' '}
                 <button
-                  onClick={() => router.push(`/auth/login${returnUrl !== '/dashboard' ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`)}
+                  onClick={(_) => router.push(_`/auth/login${returnUrl !== '/dashboard' ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`)}
                   className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 >
                   Sign in

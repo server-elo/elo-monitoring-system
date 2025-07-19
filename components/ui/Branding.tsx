@@ -35,7 +35,7 @@ const Logo: React.FC<LogoProps> = ({
     tap: { scale: 0.95 },
   };
 
-  const LogoIcon = () => (
+  const LogoIcon = (_) => (
     <motion.div
       className="relative"
       variants={animated ? iconVariants : {}}
@@ -60,7 +60,7 @@ const Logo: React.FC<LogoProps> = ({
         />
         <motion.path
           d="M20 12L28 20L20 28L12 20L20 12Z"
-          fill="url(#gradient)"
+          fill="url(_#gradient)"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
@@ -91,7 +91,7 @@ const Logo: React.FC<LogoProps> = ({
     </motion.div>
   );
 
-  const LogoText = () => (
+  const LogoText = (_) => (
     <motion.span
       className={`font-bold text-gradient ${textSizes[size]}`}
       initial={animated ? { opacity: 0, x: -20 } : {}}
@@ -102,11 +102,11 @@ const Logo: React.FC<LogoProps> = ({
     </motion.span>
   );
 
-  if (variant === 'icon') {
+  if (_variant === 'icon') {
     return <LogoIcon />;
   }
 
-  if (variant === 'text') {
+  if (_variant === 'text') {
     return <LogoText />;
   }
 
@@ -119,7 +119,7 @@ const Logo: React.FC<LogoProps> = ({
 };
 
 // Brand Colors Showcase
-const BrandColors: React.FC = () => {
+const BrandColors: React.FC = (_) => {
   const colors = [
     { name: 'Primary', class: 'bg-brand-primary-500', hex: '#8b5cf6' },
     { name: 'Accent', class: 'bg-brand-accent-500', hex: '#d946ef' },
@@ -131,7 +131,7 @@ const BrandColors: React.FC = () => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-      {colors.map((color, index) => (
+      {colors.map( (color, index) => (
         <motion.div
           key={color.name}
           className="text-center"
@@ -149,7 +149,7 @@ const BrandColors: React.FC = () => {
 };
 
 // Typography Showcase
-const Typography: React.FC = () => {
+const Typography: React.FC = (_) => {
   const textStyles = [
     { name: 'Heading 1', class: 'text-4xl font-bold', text: 'The quick brown fox' },
     { name: 'Heading 2', class: 'text-3xl font-bold', text: 'The quick brown fox' },
@@ -163,7 +163,7 @@ const Typography: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {textStyles.map((style, index) => (
+      {textStyles.map( (style, index) => (
         <motion.div
           key={style.name}
           initial={{ opacity: 0, x: -20 }}
@@ -185,7 +185,7 @@ interface IconProps {
   className?: string;
 }
 
-const Icon: React.FC<IconProps> = ({ name, size = 'md', className = '' }) => {
+const Icon: React.FC<IconProps> = ( { name, size = 'md', className = '' }) => {
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-5 h-5',
@@ -243,7 +243,7 @@ const Icon: React.FC<IconProps> = ({ name, size = 'md', className = '' }) => {
 };
 
 // Animated Background
-const AnimatedBackground: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AnimatedBackground: React.FC<{ children: React.ReactNode }> = ({ children  }) => {
   return (
     <div className="relative overflow-hidden">
       {/* Animated gradient orbs */}

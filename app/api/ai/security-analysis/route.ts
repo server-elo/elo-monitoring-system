@@ -6,7 +6,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { enhancedTutor } from '@/lib/ai/EnhancedTutorSystem';
 import { prisma } from '@/lib/prisma';
-// ;
 import { logger } from '@/lib/monitoring/simple-logger';
 import { withRateLimit, getClientIP } from '@/lib/utils/rateLimiter';
 import {
@@ -344,12 +343,12 @@ export async function GET(request: NextRequest) {
       const stats = {
         totalAnalyses: analyses.length,
         averageScore: analyses.length > 0 
-          ? analyses.reduce((sum: number, a: any) => sum + a.overallScore, 0) / analyses.length 
+          ? analyses.reduce((sum: number, a) => sum + a.overallScore, 0) / analyses.length 
           : 0,
         averageAnalysisTime: analyses.length > 0
-          ? analyses.reduce((sum: number, a: any) => sum + a.analysisTime, 0) / analyses.length
+          ? analyses.reduce((sum: number, a) => sum + a.analysisTime, 0) / analyses.length
           : 0,
-        recentTrend: analyses.slice(0, 5).map((a: any) => a.overallScore)
+        recentTrend: analyses.slice(0, 5).map((a) => a.overallScore)
       };
 
       return NextResponse.json({ 
@@ -454,7 +453,7 @@ export async function PATCH(request: NextRequest) {
           analysis,
           success: true
         });
-      } catch (_error) {
+      } catch (error) {
         results.push({
           code: code.substring(0, 100) + '...',
           error: 'Analysis failed',

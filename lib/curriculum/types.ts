@@ -1,7 +1,7 @@
 // Curriculum and learning path types
 
-export type LessonStatus = 'locked' | 'available' | 'in_progress' | 'completed';
-export type ModuleStatus = 'locked' | 'available' | 'in_progress' | 'completed';
+export type LessonStatus = 'locked' | 'available' | 'inprogress' | 'completed';
+export type ModuleStatus = 'locked' | 'available' | 'inprogress' | 'completed';
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 export type LessonType = 'theory' | 'practical' | 'quiz' | 'project' | 'assessment';
 
@@ -174,7 +174,7 @@ export interface LearningAnalytics {
 
 export interface CurriculumFilter {
   difficulty?: DifficultyLevel[];
-  status?: (LessonStatus | ModuleStatus)[];
+  status?: (_LessonStatus | ModuleStatus)[];
   category?: string[];
   tags?: string[];
   type?: LessonType[];
@@ -186,44 +186,44 @@ export interface CurriculumFilter {
 
 export interface CurriculumManager {
   // Data loading
-  loadUserProgress(userId: string): Promise<UserCurriculumProgress>;
+  loadUserProgress(_userId: string): Promise<UserCurriculumProgress>;
   saveUserProgress(progress: UserCurriculumProgress): Promise<void>;
   
   // Progress tracking
-  updateLessonProgress(userId: string, lessonId: string, progress: Partial<LessonProgress>): Promise<void>;
-  completeLesson(userId: string, lessonId: string, score?: number): Promise<void>;
-  startLesson(userId: string, lessonId: string): Promise<void>;
+  updateLessonProgress( userId: string, lessonId: string, progress: Partial<LessonProgress>): Promise<void>;
+  completeLesson( userId: string, lessonId: string, score?: number): Promise<void>;
+  startLesson( userId: string, lessonId: string): Promise<void>;
   
   // Module management
-  getModule(moduleId: string): Module | null;
-  getAllModules(): Module[];
-  getModulesForPath(pathId: string): Module[];
+  getModule(_moduleId: string): Module | null;
+  getAllModules(_): Module[];
+  getModulesForPath(_pathId: string): Module[];
   
   // Prerequisite checking
-  checkPrerequisites(userId: string, itemId: string): Promise<boolean>;
-  getUnmetPrerequisites(userId: string, itemId: string): Promise<Prerequisite[]>;
-  unlockContent(userId: string, itemId: string): Promise<void>;
+  checkPrerequisites( userId: string, itemId: string): Promise<boolean>;
+  getUnmetPrerequisites( userId: string, itemId: string): Promise<Prerequisite[]>;
+  unlockContent( userId: string, itemId: string): Promise<void>;
   
   // Recommendations
-  getRecommendations(userId: string): Promise<CurriculumRecommendation[]>;
-  getNextLesson(userId: string): Promise<Lesson | null>;
+  getRecommendations(_userId: string): Promise<CurriculumRecommendation[]>;
+  getNextLesson(_userId: string): Promise<Lesson | null>;
   
   // Analytics
-  getAnalytics(userId: string, timeframe?: LearningAnalytics['timeframe']): Promise<LearningAnalytics>;
-  updateAnalytics(userId: string, activity: any): Promise<void>;
+  getAnalytics( userId: string, timeframe?: LearningAnalytics['timeframe']): Promise<LearningAnalytics>;
+  updateAnalytics( userId: string, activity: any): Promise<void>;
   
   // Learning paths
-  getLearningPaths(): LearningPath[];
-  setUserPath(userId: string, pathId: string): Promise<void>;
+  getLearningPaths(_): LearningPath[];
+  setUserPath( userId: string, pathId: string): Promise<void>;
   
   // Filtering and search
-  filterContent(filter: CurriculumFilter): Promise<{
+  filterContent(_filter: CurriculumFilter): Promise<{
     modules: Module[];
     lessons: Lesson[];
   }>;
 }
 
 // Utility types
-export type ProgressUpdateHandler = (userId: string, itemId: string, progress: number) => void;
-export type CompletionHandler = (userId: string, itemId: string, type: 'lesson' | 'module') => void;
-export type UnlockHandler = (userId: string, itemId: string, type: 'lesson' | 'module') => void;
+export type ProgressUpdateHandler = ( userId: string, itemId: string, progress: number) => void;
+export type CompletionHandler = ( userId: string, itemId: string, type: 'lesson' | 'module') => void;
+export type UnlockHandler = ( userId: string, itemId: string, type: 'lesson' | 'module') => void;

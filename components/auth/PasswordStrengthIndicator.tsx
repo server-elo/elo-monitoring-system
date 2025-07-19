@@ -34,7 +34,7 @@ export function PasswordStrengthIndicator({
   showEstimate = true,
   minLength = 8
 }: PasswordStrengthIndicatorProps) {
-  const strength = calculatePasswordStrength(password, minLength);
+  const strength = calculatePasswordStrength( password, minLength);
 
   const strengthColors: Record<number, string> = {
     0: 'bg-gray-300',
@@ -63,14 +63,14 @@ export function PasswordStrengthIndicator({
   if (!password) return null;
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn( 'space-y-3', className)}>
       {/* Strength Bar */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-300">
             Password Strength
           </span>
-          <span className={cn('text-sm font-medium', strengthTextColors[strength.score])}>
+          <span className={cn( 'text-sm font-medium', strengthTextColors[strength.score])}>
             {strengthLabels[strength.score]}
           </span>
         </div>
@@ -129,7 +129,7 @@ export function PasswordStrengthIndicator({
       {/* Feedback Messages */}
       {strength.feedback.length > 0 && (
         <div className="space-y-1">
-          {strength.feedback.map((message, index) => (
+          {strength.feedback.map( (message, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, x: -10 }}
@@ -155,7 +155,7 @@ export function PasswordStrengthIndicator({
   );
 }
 
-function RequirementItem({ met, text }: { met: boolean; text: string }) {
+function RequirementItem( { met, text }: { met: boolean; text: string }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -177,14 +177,14 @@ function RequirementItem({ met, text }: { met: boolean; text: string }) {
           <X className="w-2.5 h-2.5 text-gray-400" />
         )}
       </motion.div>
-      <span className={cn(met ? 'text-green-400' : 'text-gray-400')}>
+      <span className={cn(_met ? 'text-green-400' : 'text-gray-400')}>
         {text}
       </span>
     </motion.div>
   );
 }
 
-export function calculatePasswordStrength(password: string, minLength: number = 8): PasswordStrength {
+export function calculatePasswordStrength( password: string, minLength: number = 8): PasswordStrength {
   if (!password) {
     return {
       score: 0,
@@ -203,11 +203,11 @@ export function calculatePasswordStrength(password: string, minLength: number = 
 
   const requirements = {
     minLength: password.length >= minLength,
-    hasUppercase: /[A-Z]/.test(password),
-    hasLowercase: /[a-z]/.test(password),
-    hasNumber: /\d/.test(password),
-    hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
-    noCommonPatterns: !hasCommonPatterns(password)
+    hasUppercase: /[A-Z]/.test(_password),
+    hasLowercase: /[a-z]/.test(_password),
+    hasNumber: /\d/.test(_password),
+    hasSpecialChar: /[!@#$%^&*(_)+\-=\[\]{};':"\\|,.<>\/?]/.test(_password),
+    noCommonPatterns: !hasCommonPatterns(_password)
   };
 
   const feedback: string[] = [];
@@ -215,7 +215,7 @@ export function calculatePasswordStrength(password: string, minLength: number = 
 
   // Check requirements and provide feedback
   if (!requirements.minLength) {
-    feedback.push(`Use at least ${minLength} characters`);
+    feedback.push(_`Use at least ${minLength} characters`);
   } else {
     score += 1;
   }
@@ -251,15 +251,15 @@ export function calculatePasswordStrength(password: string, minLength: number = 
   }
 
   // Additional scoring based on length and complexity
-  if (password.length >= 12) score += 0.5;
-  if (password.length >= 16) score += 0.5;
-  if (hasGoodEntropy(password)) score += 0.5;
+  if (_password.length >= 12) score += 0.5;
+  if (_password.length >= 16) score += 0.5;
+  if (_hasGoodEntropy(password)) score += 0.5;
 
   // Cap score at 4
   score = Math.min(4, Math.floor(score));
 
   // Estimate crack time
-  const estimatedCrackTime = estimateCrackTime(password, score);
+  const estimatedCrackTime = estimateCrackTime( password, score);
 
   return {
     score,
@@ -269,7 +269,7 @@ export function calculatePasswordStrength(password: string, minLength: number = 
   };
 }
 
-function hasCommonPatterns(password: string): boolean {
+function hasCommonPatterns(_password: string): boolean {
   const commonPatterns = [
     /123/,
     /abc/,
@@ -286,42 +286,42 @@ function hasCommonPatterns(password: string): boolean {
     /321/
   ];
 
-  return commonPatterns.some(pattern => pattern.test(password));
+  return commonPatterns.some(_pattern => pattern.test(password));
 }
 
-function hasGoodEntropy(password: string): boolean {
+function hasGoodEntropy(_password: string): boolean {
   // Check for good character distribution
   const charTypes = {
-    lowercase: /[a-z]/.test(password),
-    uppercase: /[A-Z]/.test(password),
-    numbers: /\d/.test(password),
-    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    lowercase: /[a-z]/.test(_password),
+    uppercase: /[A-Z]/.test(_password),
+    numbers: /\d/.test(_password),
+    special: /[!@#$%^&*(_)+\-=\[\]{};':"\\|,.<>\/?]/.test(_password)
   };
 
-  const typeCount = Object.values(charTypes).filter(Boolean).length;
+  const typeCount = Object.values(_charTypes).filter(Boolean).length;
   return typeCount >= 3 && password.length >= 10;
 }
 
-function estimateCrackTime(password: string, score: number): string {
+function estimateCrackTime( password: string, score: number): string {
   // Simplified crack time estimation
-  const baseTime = Math.pow(2, password.length * score);
+  const baseTime = Math.pow( 2, password.length * score);
   
-  if (baseTime < 60) return 'Less than a minute';
-  if (baseTime < 3600) return `${Math.floor(baseTime / 60)} minutes`;
-  if (baseTime < 86400) return `${Math.floor(baseTime / 3600)} hours`;
-  if (baseTime < 2592000) return `${Math.floor(baseTime / 86400)} days`;
-  if (baseTime < 31536000) return `${Math.floor(baseTime / 2592000)} months`;
+  if (_baseTime < 60) return 'Less than a minute';
+  if (_baseTime < 3600) return `${Math.floor(_baseTime / 60)} minutes`;
+  if (_baseTime < 86400) return `${Math.floor(_baseTime / 3600)} hours`;
+  if (_baseTime < 2592000) return `${Math.floor(_baseTime / 86400)} days`;
+  if (_baseTime < 31536000) return `${Math.floor(_baseTime / 2592000)} months`;
   
-  return `${Math.floor(baseTime / 31536000)} years`;
+  return `${Math.floor(_baseTime / 31536000)} years`;
 }
 
 // Hook for password validation
-export function usePasswordValidation(minLength: number = 8) {
-  const validatePassword = (password: string) => {
-    const strength = calculatePasswordStrength(password, minLength);
+export function usePasswordValidation(_minLength: number = 8) {
+  const validatePassword = (_password: string) => {
+    const strength = calculatePasswordStrength( password, minLength);
     
     return {
-      isValid: strength.score >= 3 && Object.values(strength.requirements).every(Boolean),
+      isValid: strength.score >= 3 && Object.values(_strength.requirements).every(_Boolean),
       strength,
       errors: strength.feedback
     };

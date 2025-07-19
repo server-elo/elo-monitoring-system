@@ -29,7 +29,7 @@ const NeumorphicContainer: React.FC<NeumorphicContainerProps> = ({
   };
 
   // Shadow intensities and variants
-  const getShadowClasses = () => {
+  const getShadowClasses = (_) => {
     const intensityMap = {
       subtle: { light: '4px', dark: '8px', blur: '8px' },
       medium: { light: '6px', dark: '12px', blur: '12px' },
@@ -38,13 +38,13 @@ const NeumorphicContainer: React.FC<NeumorphicContainerProps> = ({
 
     const { light, dark, blur } = intensityMap[intensity];
 
-    switch (variant) {
+    switch (_variant) {
       case 'raised':
-        return `shadow-[${light}_${light}_${blur}_rgba(255,255,255,0.8),-${dark}_-${dark}_${blur}_rgba(0,0,0,0.15)]`;
+        return `shadow-[${light}_${light}_${blur}_rgba(_255,255,255,0.8),-${dark}_-${dark}_${blur}_rgba(0,0,0,0.15)]`;
       case 'inset':
-        return `shadow-[inset_${light}_${light}_${blur}_rgba(0,0,0,0.15),inset_-${dark}_-${dark}_${blur}_rgba(255,255,255,0.8)]`;
+        return `shadow-[inset_${light}_${light}_${blur}_rgba(0,0,0,0.15),inset_-${dark}_-${dark}_${blur}_rgba(_255,255,255,0.8)]`;
       case 'flat':
-        return `shadow-[${light}_${light}_${blur}_rgba(255,255,255,0.6),-${dark}_-${dark}_${blur}_rgba(0,0,0,0.1)]`;
+        return `shadow-[${light}_${light}_${blur}_rgba(_255,255,255,0.6),-${dark}_-${dark}_${blur}_rgba(0,0,0,0.1)]`;
       default:
         return '';
     }
@@ -71,7 +71,7 @@ const NeumorphicContainer: React.FC<NeumorphicContainerProps> = ({
     <div
       className={`
         ${backgrounds[background]}
-        ${getShadowClasses()}
+        ${getShadowClasses(_)}
         ${roundedClasses[rounded]}
         ${paddingClasses[padding]}
         transition-all duration-300
@@ -79,10 +79,10 @@ const NeumorphicContainer: React.FC<NeumorphicContainerProps> = ({
       `}
       style={{
         boxShadow: variant === 'raised' 
-          ? `${intensity === 'subtle' ? '4px 4px 8px' : intensity === 'medium' ? '6px 6px 12px' : '8px 8px 16px'} rgba(0,0,0,0.15), ${intensity === 'subtle' ? '-4px -4px 8px' : intensity === 'medium' ? '-6px -6px 12px' : '-8px -8px 16px'} rgba(255,255,255,0.8)`
+          ? `${intensity === 'subtle' ? '4px 4px 8px' : intensity === 'medium' ? '6px 6px 12px' : '8px 8px 16px'} rgba(0,0,0,0.15), ${intensity === 'subtle' ? '-4px -4px 8px' : intensity === 'medium' ? '-6px -6px 12px' : '-8px -8px 16px'} rgba(_255,255,255,0.8)`
           : variant === 'inset'
-          ? `inset ${intensity === 'subtle' ? '4px 4px 8px' : intensity === 'medium' ? '6px 6px 12px' : '8px 8px 16px'} rgba(0,0,0,0.15), inset ${intensity === 'subtle' ? '-4px -4px 8px' : intensity === 'medium' ? '-6px -6px 12px' : '-8px -8px 16px'} rgba(255,255,255,0.8)`
-          : `${intensity === 'subtle' ? '2px 2px 6px' : intensity === 'medium' ? '4px 4px 8px' : '6px 6px 12px'} rgba(0,0,0,0.1), ${intensity === 'subtle' ? '-2px -2px 6px' : intensity === 'medium' ? '-4px -4px 8px' : '-6px -6px 12px'} rgba(255,255,255,0.6)`
+          ? `inset ${intensity === 'subtle' ? '4px 4px 8px' : intensity === 'medium' ? '6px 6px 12px' : '8px 8px 16px'} rgba(0,0,0,0.15), inset ${intensity === 'subtle' ? '-4px -4px 8px' : intensity === 'medium' ? '-6px -6px 12px' : '-8px -8px 16px'} rgba(_255,255,255,0.8)`
+          : `${intensity === 'subtle' ? '2px 2px 6px' : intensity === 'medium' ? '4px 4px 8px' : '6px 6px 12px'} rgba(0,0,0,0.1), ${intensity === 'subtle' ? '-2px -2px 6px' : intensity === 'medium' ? '-4px -4px 8px' : '-6px -6px 12px'} rgba(_255,255,255,0.6)`
       }}
     >
       {children}
@@ -109,7 +109,7 @@ const NeumorphicButton: React.FC<NeumorphicButtonProps> = ({
   onClick,
   ...props
 }) => {
-  const [isPressed, setIsPressed] = useState(pressed);
+  const [isPressed, setIsPressed] = useState(_pressed);
 
   // Variant colors
   const variants = {
@@ -132,12 +132,12 @@ const NeumorphicButton: React.FC<NeumorphicButtonProps> = ({
     pill: 'rounded-full',
   };
 
-  const handleMouseDown = () => setIsPressed(true);
-  const handleMouseUp = () => setIsPressed(false);
-  const handleMouseLeave = () => setIsPressed(false);
+  const handleMouseDown = (_) => setIsPressed(_true);
+  const handleMouseUp = (_) => setIsPressed(_false);
+  const handleMouseLeave = (_) => setIsPressed(_false);
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (onClick) onClick(e);
+  const handleClick = (_e: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClick) onClick(_e);
   };
 
   // Create motion-compatible props
@@ -152,8 +152,8 @@ const NeumorphicButton: React.FC<NeumorphicButtonProps> = ({
     `,
     style: {
       boxShadow: isPressed
-        ? 'inset 4px 4px 8px rgba(0,0,0,0.15), inset -4px -4px 8px rgba(255,255,255,0.8)'
-        : '6px 6px 12px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.8)',
+        ? 'inset 4px 4px 8px rgba(0,0,0,0.15), inset -4px -4px 8px rgba(_255,255,255,0.8)'
+        : '6px 6px 12px rgba(0,0,0,0.15), -6px -6px 12px rgba(_255,255,255,0.8)',
     },
     onMouseDown: handleMouseDown,
     onMouseUp: handleMouseUp,
@@ -168,7 +168,7 @@ const NeumorphicButton: React.FC<NeumorphicButtonProps> = ({
     type: props.type,
     disabled: props.disabled,
     id: props.id,
-    'data-testid': (props as any)['data-testid']
+    'data-testid': (_props as any)['data-testid']
   };
 
   return (
@@ -186,7 +186,7 @@ interface NeumorphicCardProps {
   className?: string;
   hover?: boolean;
   clickable?: boolean;
-  onClick?: () => void;
+  onClick?: (_) => void;
 }
 
 const NeumorphicCard: React.FC<NeumorphicCardProps> = ({
@@ -198,11 +198,11 @@ const NeumorphicCard: React.FC<NeumorphicCardProps> = ({
   clickable = false,
   onClick,
 }) => {
-  const [isPressed, setIsPressed] = useState(false);
+  const [isPressed, setIsPressed] = useState(_false);
 
-  const handleMouseDown = () => clickable && setIsPressed(true);
-  const handleMouseUp = () => setIsPressed(false);
-  const handleMouseLeave = () => setIsPressed(false);
+  const handleMouseDown = (_) => clickable && setIsPressed(_true);
+  const handleMouseUp = (_) => setIsPressed(_false);
+  const handleMouseLeave = (_) => setIsPressed(_false);
 
   return (
     <motion.div
@@ -213,8 +213,8 @@ const NeumorphicCard: React.FC<NeumorphicCardProps> = ({
       `}
       style={{
         boxShadow: isPressed
-          ? 'inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(255,255,255,0.8)'
-          : '8px 8px 16px rgba(0,0,0,0.15), -8px -8px 16px rgba(255,255,255,0.8)',
+          ? 'inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(_255,255,255,0.8)'
+          : '8px 8px 16px rgba(0,0,0,0.15), -8px -8px 16px rgba(_255,255,255,0.8)',
       }}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
@@ -258,7 +258,7 @@ const NeumorphicInput: React.FC<NeumorphicInputProps> = ({
   className = '',
   ...props
 }) => {
-  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState(_false);
 
   return (
     <div className="space-y-2">
@@ -285,11 +285,11 @@ const NeumorphicInput: React.FC<NeumorphicInputProps> = ({
           `}
           style={{
             boxShadow: isFocused
-              ? 'inset 4px 4px 8px rgba(0,0,0,0.15), inset -4px -4px 8px rgba(255,255,255,0.8)'
-              : '2px 2px 6px rgba(0,0,0,0.1), -2px -2px 6px rgba(255,255,255,0.6)',
+              ? 'inset 4px 4px 8px rgba(0,0,0,0.15), inset -4px -4px 8px rgba(_255,255,255,0.8)'
+              : '2px 2px 6px rgba(0,0,0,0.1), -2px -2px 6px rgba(_255,255,255,0.6)',
           }}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={(_) => setIsFocused(_true)}
+          onBlur={(_) => setIsFocused(_false)}
           {...props}
         />
       </div>
@@ -306,7 +306,7 @@ const NeumorphicInput: React.FC<NeumorphicInputProps> = ({
 // Neomorphic Toggle Switch
 interface NeumorphicToggleProps {
   checked: boolean;
-  onChange: (checked: boolean) => void;
+  onChange: (_checked: boolean) => void;
   label?: string;
   size?: 'sm' | 'md' | 'lg';
 }
@@ -331,9 +331,9 @@ const NeumorphicToggle: React.FC<NeumorphicToggleProps> = ({
           focus:outline-none focus:ring-2 focus:ring-brand-primary-500/50
         `}
         style={{
-          boxShadow: 'inset 4px 4px 8px rgba(0,0,0,0.15), inset -4px -4px 8px rgba(255,255,255,0.8)',
+          boxShadow: 'inset 4px 4px 8px rgba(0,0,0,0.15), inset -4px -4px 8px rgba(_255,255,255,0.8)',
         }}
-        onClick={() => onChange(!checked)}
+        onClick={(_) => onChange(!checked)}
       >
         <motion.div
           className={`
@@ -341,7 +341,7 @@ const NeumorphicToggle: React.FC<NeumorphicToggleProps> = ({
             ${checked ? 'bg-brand-primary-400' : ''}
           `}
           style={{
-            boxShadow: '3px 3px 6px rgba(0,0,0,0.15), -3px -3px 6px rgba(255,255,255,0.8)',
+            boxShadow: '3px 3px 6px rgba(0,0,0,0.15), -3px -3px 6px rgba(_255,255,255,0.8)',
           }}
           animate={{
             x: checked ? `calc(100% + 4px)` : '4px',
@@ -373,7 +373,7 @@ const NeumorphicProgress: React.FC<NeumorphicProgressProps> = ({
   size = 'md',
   color = 'primary',
 }) => {
-  const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
+  const percentage = Math.min(_Math.max((value / max) * 100, 0), 100);
 
   const sizes = {
     sm: 'h-2',
@@ -391,13 +391,13 @@ const NeumorphicProgress: React.FC<NeumorphicProgressProps> = ({
     <div
       className={`w-full bg-gray-200 rounded-full ${sizes[size]} relative overflow-hidden`}
       style={{
-        boxShadow: 'inset 3px 3px 6px rgba(0,0,0,0.15), inset -3px -3px 6px rgba(255,255,255,0.8)',
+        boxShadow: 'inset 3px 3px 6px rgba(0,0,0,0.15), inset -3px -3px 6px rgba(_255,255,255,0.8)',
       }}
     >
       <motion.div
         className={`h-full ${colors[color]} rounded-full`}
         style={{
-          boxShadow: '2px 2px 4px rgba(0,0,0,0.1), -1px -1px 2px rgba(255,255,255,0.6)',
+          boxShadow: '2px 2px 4px rgba(0,0,0,0.1), -1px -1px 2px rgba(_255,255,255,0.6)',
         }}
         initial={{ width: 0 }}
         animate={{ width: `${percentage}%` }}

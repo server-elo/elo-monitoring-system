@@ -6,7 +6,7 @@ const preview: Preview = {
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
-        color: /(background|color)$/i,
+        color: /(_background|color)$/i,
         date: /Date$/,
       },
     },
@@ -26,7 +26,7 @@ const preview: Preview = {
         },
         {
           name: 'glassmorphism',
-          value: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          value: 'linear-gradient( 135deg, #667eea 0%, #764ba2 100%)',
         },
       ],
     },
@@ -112,7 +112,7 @@ const preview: Preview = {
     },
   },
   decorators: [
-    (Story, context) => {
+    ( Story, context) => {
       const theme = context.globals.theme;
       const accessibility = context.globals.accessibility;
       
@@ -127,8 +127,8 @@ const preview: Preview = {
             minHeight: '100vh',
             padding: '1rem',
             background: theme === 'dark' 
-              ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-              : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+              ? 'linear-gradient( 135deg, #0f172a 0%, #1e293b 100%)'
+              : 'linear-gradient( 135deg, #f8fafc 0%, #e2e8f0 100%)',
           }}
         >
           <Story />

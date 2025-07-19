@@ -30,16 +30,16 @@ export interface CollaborativeEditorState {
 /**
  * Advanced hook for collaborative editing with real-time synchronization
  */
-export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborativeEditorOptions) {
-  const { data: session } = useSession();
+export function useAdvancedCollaborativeEditor(_options: UseAdvancedCollaborativeEditorOptions) {
+  const { data: session } = useSession(_);
   const { 
     sendNotificationToRoom: _sendNotificationToRoom, 
     joinRoom, 
     leaveRoom, 
     sendCollaborationEvent,
     isConnected 
-  } = useNotificationSocket();
-  const { showWarning, showError, showInfo } = useNotifications();
+  } = useNotificationSocket(_);
+  const { showWarning, showError, showInfo } = useNotifications(_);
 
   // State
   const [state, setState] = useState<CollaborativeEditorState>({
@@ -54,9 +54,9 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
   });
 
   // Refs
-  const editorRef = useRef<AdvancedCollaborativeEditor | null>(null);
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
-  const lastSavedContentRef = useRef<string>(options.initialContent || '');
+  const editorRef = useRef<AdvancedCollaborativeEditor | null>(_null);
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>(_);
+  const lastSavedContentRef = useRef<string>(_options.initialContent || '');
 
   // Initialize editor
   useEffect(() => {
@@ -69,22 +69,22 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
     );
 
     // Set conflict resolution strategy
-    if (options.conflictResolution) {
-      editor.setConflictResolutionStrategy(options.conflictResolution);
+    if (_options.conflictResolution) {
+      editor.setConflictResolutionStrategy(_options.conflictResolution);
     }
 
     // Set up event listeners
-    editor.on('change', handleChange);
-    editor.on('cursor', handleCursorChange);
-    editor.on('conflict', handleConflict);
-    editor.on('collaborator-joined', handleCollaboratorJoined);
-    editor.on('collaborator-left', handleCollaboratorLeft);
-    editor.on('collaborator-inactive', handleCollaboratorInactive);
+    editor.on( 'change', handleChange);
+    editor.on( 'cursor', handleCursorChange);
+    editor.on( 'conflict', handleConflict);
+    editor.on( 'collaborator-joined', handleCollaboratorJoined);
+    editor.on( 'collaborator-left', handleCollaboratorLeft);
+    editor.on( 'collaborator-inactive', handleCollaboratorInactive);
 
     editorRef.current = editor;
 
     // Join collaboration room
-    joinRoom(options.documentId);
+    joinRoom(_options.documentId);
 
     // Update state
     setState(prev => ({
@@ -93,11 +93,11 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
       isConnected: isConnected
     }));
 
-    return () => {
-      editor.destroy();
-      leaveRoom(options.documentId);
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
+    return (_) => {
+      editor.destroy(_);
+      leaveRoom(_options.documentId);
+      if (_autoSaveTimeoutRef.current) {
+        clearTimeout(_autoSaveTimeoutRef.current);
       }
     };
   }, [session?.user?.id, options.documentId, options.initialContent]);
@@ -130,15 +130,15 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
     });
 
     // Auto-save if enabled
-    if (options.autoSave) {
-      scheduleAutoSave(event.newContent);
+    if (_options.autoSave) {
+      scheduleAutoSave(_event.newContent);
     }
 
     // Show conflict notification if any
-    if (event.conflicts && event.conflicts.length > 0) {
+    if (_event.conflicts && event.conflicts.length > 0) {
       showWarning(
         'Editing Conflict Detected',
-        `${event.conflicts.length} conflict(s) were automatically resolved`,
+        `${event.conflicts.length} conflict(_s) were automatically resolved`,
         {
           duration: 5000,
           metadata: {
@@ -166,7 +166,7 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
       conflicts: [...prev.conflicts, ...event.conflicts]
     }));
 
-    if (event.resolution === 'manual') {
+    if (_event.resolution === 'manual') {
       showError(
         'Manual Conflict Resolution Required',
         'Please review and resolve the editing conflicts',
@@ -174,7 +174,7 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
           persistent: true,
           action: {
             label: 'View Conflicts',
-            onClick: () => {
+            onClick: (_) => {
               // Open conflict resolution UI
               console.log('Opening conflict resolution UI');
             }
@@ -233,19 +233,19 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
 
   // Auto-save functionality
   const scheduleAutoSave = useCallback((content: string) => {
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
+    if (_autoSaveTimeoutRef.current) {
+      clearTimeout(_autoSaveTimeoutRef.current);
     }
 
     autoSaveTimeoutRef.current = setTimeout(() => {
-      saveContent(content);
+      saveContent(_content);
     }, options.autoSaveInterval || 2000);
   }, [options.autoSaveInterval]);
 
-  const saveContent = useCallback(async (content: string) => {
+  const saveContent = useCallback( async (content: string) => {
     try {
       // Implement your save logic here
-      // await saveDocument(options.documentId, content);
+      // await saveDocument( options.documentId, content);
       
       lastSavedContentRef.current = content;
       setState(prev => ({
@@ -254,7 +254,7 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
       }));
 
       console.log('Document auto-saved');
-    } catch (error) {
+    } catch (_error) {
       console.error('Auto-save failed:', error);
       showError(
         'Auto-save Failed',
@@ -262,7 +262,7 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
         {
           action: {
             label: 'Retry',
-            onClick: () => saveContent(content)
+            onClick: (_) => saveContent(_content)
           }
         }
       );
@@ -284,7 +284,7 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
         selection,
         session?.user?.id
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to apply change:', error);
       setState(prev => ({
         ...prev,
@@ -310,22 +310,22 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
     if (!editorRef.current) return null;
 
     try {
-      return editorRef.current.undo();
-    } catch (error) {
+      return editorRef.current.undo(_);
+    } catch (_error) {
       console.error('Undo failed:', error);
-      showError('Undo Failed', 'Could not undo the last change');
+      showError( 'Undo Failed', 'Could not undo the last change');
       return null;
     }
   }, [showError]);
 
-  const manualSave = useCallback(async () => {
+  const manualSave = useCallback( async () => {
     if (!state.hasUnsavedChanges) return;
 
     try {
-      await saveContent(state.content);
-      showInfo('Saved', 'Document saved successfully');
-    } catch (error) {
-      showError('Save Failed', 'Could not save the document');
+      await saveContent(_state.content);
+      showInfo( 'Saved', 'Document saved successfully');
+    } catch (_error) {
+      showError( 'Save Failed', 'Could not save the document');
     }
   }, [state.content, state.hasUnsavedChanges, saveContent, showInfo, showError]);
 
@@ -334,19 +334,19 @@ export function useAdvancedCollaborativeEditor(options: UseAdvancedCollaborative
     setState(prev => ({
       ...prev,
       conflicts: prev.conflicts.filter(conflict => 
-        !resolutions.some(resolution => resolution.id === conflict.id)
+        !resolutions.some(_resolution => resolution.id === conflict.id)
       )
     }));
 
-    showInfo('Conflicts Resolved', 'All conflicts have been resolved');
+    showInfo( 'Conflicts Resolved', 'All conflicts have been resolved');
   }, [showInfo]);
 
   const getActiveCollaborators = useCallback(() => {
-    return editorRef.current?.getActiveCollaborators() || [];
+    return editorRef.current?.getActiveCollaborators(_) || [];
   }, []);
 
   const getDocumentState = useCallback(() => {
-    return editorRef.current?.getDocumentState();
+    return editorRef.current?.getDocumentState(_);
   }, []);
 
   return {

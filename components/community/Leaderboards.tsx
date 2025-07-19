@@ -23,20 +23,20 @@ interface LeaderboardsProps {
 
 interface LeaderboardFiltersProps {
   filters: LeaderboardFilters;
-  onFiltersChange: (filters: LeaderboardFilters) => void;
+  onFiltersChange: (_filters: LeaderboardFilters) => void;
   categories: LeaderboardCategory[];
   isLoading: boolean;
 }
 
-function LeaderboardFilters({ filters, onFiltersChange, categories, isLoading }: LeaderboardFiltersProps) {
-  const [showAdvanced, setShowAdvanced] = useState(false);
+function LeaderboardFilters( { filters, onFiltersChange, categories, isLoading }: LeaderboardFiltersProps) {
+  const [showAdvanced, setShowAdvanced] = useState(_false);
 
   return (
     <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">Filters</h3>
         <Button
-          onClick={() => setShowAdvanced(!showAdvanced)}
+          onClick={(_) => setShowAdvanced(!showAdvanced)}
           variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-white"
@@ -52,7 +52,7 @@ function LeaderboardFilters({ filters, onFiltersChange, categories, isLoading }:
           <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
           <select
             value={filters.category}
-            onChange={(e) => onFiltersChange({ ...filters, category: e.target.value })}
+            onChange={(_e) => onFiltersChange( { ...filters, category: e.target.value })}
             disabled={isLoading}
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400 disabled:opacity-50"
           >
@@ -69,7 +69,7 @@ function LeaderboardFilters({ filters, onFiltersChange, categories, isLoading }:
           <label className="block text-sm font-medium text-gray-300 mb-2">Timeframe</label>
           <select
             value={filters.timeframe}
-            onChange={(e) => onFiltersChange({ ...filters, timeframe: e.target.value as any })}
+            onChange={(_e) => onFiltersChange( { ...filters, timeframe: e.target.value as any })}
             disabled={isLoading}
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400 disabled:opacity-50"
           >
@@ -85,7 +85,7 @@ function LeaderboardFilters({ filters, onFiltersChange, categories, isLoading }:
           <label className="block text-sm font-medium text-gray-300 mb-2">User Role</label>
           <select
             value={filters.userRole || 'all'}
-            onChange={(e) => onFiltersChange({ ...filters, userRole: e.target.value === 'all' ? undefined : e.target.value as any })}
+            onChange={(_e) => onFiltersChange( { ...filters, userRole: e.target.value === 'all' ? undefined : e.target.value as any })}
             disabled={isLoading}
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400 disabled:opacity-50"
           >
@@ -103,7 +103,7 @@ function LeaderboardFilters({ filters, onFiltersChange, categories, isLoading }:
             <input
               type="text"
               value={filters.search || ''}
-              onChange={(e) => onFiltersChange({ ...filters, search: e.target.value || undefined })}
+              onChange={(_e) => onFiltersChange( { ...filters, search: e.target.value || undefined })}
               placeholder="Search users..."
               disabled={isLoading}
               className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 disabled:opacity-50"
@@ -127,7 +127,7 @@ function LeaderboardFilters({ filters, onFiltersChange, categories, isLoading }:
                 <label className="block text-sm font-medium text-gray-300 mb-2">Region</label>
                 <select
                   value={filters.region || ''}
-                  onChange={(e) => onFiltersChange({ ...filters, region: e.target.value || undefined })}
+                  onChange={(_e) => onFiltersChange( { ...filters, region: e.target.value || undefined })}
                   disabled={isLoading}
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400 disabled:opacity-50"
                 >
@@ -145,7 +145,7 @@ function LeaderboardFilters({ filters, onFiltersChange, categories, isLoading }:
                 <input
                   type="number"
                   value={filters.minXP || ''}
-                  onChange={(e) => onFiltersChange({ ...filters, minXP: e.target.value ? parseInt(e.target.value) : undefined })}
+                  onChange={(_e) => onFiltersChange( { ...filters, minXP: e.target.value ? parseInt(e.target.value) : undefined })}
                   placeholder="0"
                   disabled={isLoading}
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 disabled:opacity-50"
@@ -158,7 +158,7 @@ function LeaderboardFilters({ filters, onFiltersChange, categories, isLoading }:
                 <input
                   type="number"
                   value={filters.maxXP || ''}
-                  onChange={(e) => onFiltersChange({ ...filters, maxXP: e.target.value ? parseInt(e.target.value) : undefined })}
+                  onChange={(_e) => onFiltersChange( { ...filters, maxXP: e.target.value ? parseInt(e.target.value) : undefined })}
                   placeholder="No limit"
                   disabled={isLoading}
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 disabled:opacity-50"
@@ -179,21 +179,21 @@ interface LeaderboardUserCardProps {
   index: number;
 }
 
-function LeaderboardUserCard({ user, currentUserId, category, index }: LeaderboardUserCardProps) {
+function LeaderboardUserCard( { user, currentUserId, category, index }: LeaderboardUserCardProps) {
   const isCurrentUser = user.id === currentUserId;
-  const rankChange = LeaderboardUtils.calculateRankChange(user.rank, user.previousRank);
+  const rankChange = LeaderboardUtils.calculateRankChange( user.rank, user.previousRank);
 
-  const getRankChangeIcon = () => {
-    if (rankChange > 0) return <TrendingUp className="w-4 h-4 text-green-400" />;
-    if (rankChange < 0) return <TrendingDown className="w-4 h-4 text-red-400" />;
+  const getRankChangeIcon = (_) => {
+    if (_rankChange > 0) return <TrendingUp className="w-4 h-4 text-green-400" />;
+    if (_rankChange < 0) return <TrendingDown className="w-4 h-4 text-red-400" />;
     return <Minus className="w-4 h-4 text-gray-400" />;
   };
 
-  const getValueForCategory = () => {
-    switch (category.sortBy) {
-      case 'xpTotal': return LeaderboardUtils.formatXP(user.xpTotal);
-      case 'xpWeekly': return LeaderboardUtils.formatXP(user.xpWeekly);
-      case 'xpDaily': return LeaderboardUtils.formatXP(user.xpDaily);
+  const getValueForCategory = (_) => {
+    switch (_category.sortBy) {
+      case 'xpTotal': return LeaderboardUtils.formatXP(_user.xpTotal);
+      case 'xpWeekly': return LeaderboardUtils.formatXP(_user.xpWeekly);
+      case 'xpDaily': return LeaderboardUtils.formatXP(_user.xpDaily);
       case 'currentStreak': return `${user.currentStreak} days`;
       case 'completionRate': return `${user.completionRate}%`;
       case 'contributionScore': return user.contributionScore.toString();
@@ -216,17 +216,17 @@ function LeaderboardUserCard({ user, currentUserId, category, index }: Leaderboa
       <div className="flex items-center space-x-4">
         {/* Rank */}
         <div className="flex flex-col items-center">
-          <div className={cn('text-2xl font-bold', LeaderboardUtils.getRankColor(user.rank))}>
-            {LeaderboardUtils.getRankIcon(user.rank)}
+          <div className={cn( 'text-2xl font-bold', LeaderboardUtils.getRankColor(user.rank))}>
+            {LeaderboardUtils.getRankIcon(_user.rank)}
           </div>
           {rankChange !== 0 && (
             <div className="flex items-center space-x-1 text-xs">
-              {getRankChangeIcon()}
+              {getRankChangeIcon(_)}
               <span className={cn(
                 'font-medium',
                 rankChange > 0 ? 'text-green-400' : 'text-red-400'
               )}>
-                {Math.abs(rankChange)}
+                {Math.abs(_rankChange)}
               </span>
             </div>
           )}
@@ -258,13 +258,13 @@ function LeaderboardUserCard({ user, currentUserId, category, index }: Leaderboa
             <span className="text-xs text-gray-400 capitalize">{user.role}</span>
           </div>
           <div className="flex items-center space-x-4 mt-1 text-sm text-gray-400">
-            <span>{getValueForCategory()}</span>
+            <span>{getValueForCategory(_)}</span>
             <span>•</span>
             <span>{user.lessonsCompleted} lessons</span>
             {user.currentStreak > 0 && (
               <>
                 <span>•</span>
-                <span className={LeaderboardUtils.getStreakColor(user.currentStreak)}>
+                <span className={LeaderboardUtils.getStreakColor(_user.currentStreak)}>
                   {user.currentStreak} day streak
                 </span>
               </>
@@ -294,12 +294,12 @@ function LeaderboardUserCard({ user, currentUserId, category, index }: Leaderboa
   );
 }
 
-export function Leaderboards({ className }: LeaderboardsProps) {
-  const { user } = useAuth();
+export function Leaderboards(_{ className }: LeaderboardsProps) {
+  const { user } = useAuth(_);
   const [categories, setCategories] = useState<LeaderboardCategory[]>([]);
-  const [currentCategory, setCurrentCategory] = useState<LeaderboardCategory | null>(null);
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardResponse | null>(null);
-  const [filters, setFilters] = useState<LeaderboardFilters>(leaderboardManager.getDefaultFilters());
+  const [currentCategory, setCurrentCategory] = useState<LeaderboardCategory | null>(_null);
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardResponse | null>(_null);
+  const [filters, setFilters] = useState<LeaderboardFilters>(_leaderboardManager.getDefaultFilters());
   const [loading, setLoading] = useState<LoadingState>({
     leaderboards: true,
     statistics: false,
@@ -307,69 +307,69 @@ export function Leaderboards({ className }: LeaderboardsProps) {
     refresh: false
   });
   const [page, setPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(_false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(_null);
+  const loadMoreRef = useRef<HTMLDivElement>(_null);
 
   // Load initial data
   useEffect(() => {
-    loadCategories();
-    setupRealTimeUpdates();
+    loadCategories(_);
+    setupRealTimeUpdates(_);
   }, []);
 
   // Load leaderboard when filters change
   useEffect(() => {
     if (currentCategory) {
-      loadLeaderboard(true);
+      loadLeaderboard(_true);
     }
   }, [filters, currentCategory]);
 
   // Setup infinite scroll
   useEffect(() => {
-    if (loadMoreRef.current && hasNextPage && !loading.leaderboards) {
+    if (_loadMoreRef.current && hasNextPage && !loading.leaderboards) {
       observerRef.current = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting) {
-            loadMoreUsers();
+        (_entries) => {
+          if (_entries[0].isIntersecting) {
+            loadMoreUsers(_);
           }
         },
         { threshold: 0.1 }
       );
       
-      observerRef.current.observe(loadMoreRef.current);
+      observerRef.current.observe(_loadMoreRef.current);
     }
 
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+    return (_) => {
+      if (_observerRef.current) {
+        observerRef.current.disconnect(_);
       }
     };
   }, [hasNextPage, loading.leaderboards]);
 
   const loadCategories = async () => {
     try {
-      const categoriesData = await leaderboardManager.getLeaderboardCategories();
-      setCategories(categoriesData);
+      const categoriesData = await leaderboardManager.getLeaderboardCategories(_);
+      setCategories(_categoriesData);
       
-      if (categoriesData.length > 0) {
+      if (_categoriesData.length > 0) {
         const defaultCategory = categoriesData.find(c => c.id === filters.category) || categoriesData[0];
-        setCurrentCategory(defaultCategory);
-        setFilters(prev => ({ ...prev, category: defaultCategory.id }));
+        setCurrentCategory(_defaultCategory);
+        setFilters( prev => ({ ...prev, category: defaultCategory.id }));
       }
-    } catch (error) {
-      logger.error('Failed to load categories:', {}, error as Error);
+    } catch (_error) {
+      logger.error( 'Failed to load categories:', { metadata: {}, error as Error);
       // Use default categories as fallback
-      const defaultCategories = leaderboardManager.getDefaultCategories();
-      setCategories(defaultCategories);
-      setCurrentCategory(defaultCategories[0]);
+      const defaultCategories = leaderboardManager.getDefaultCategories(_);
+      setCategories(_defaultCategories);
+      setCurrentCategory(_defaultCategories[0]);
     }
   };
 
-  const loadLeaderboard = async (reset: boolean = false) => {
+  const loadLeaderboard = async (_reset: boolean = false) => {
     if (!currentCategory) return;
 
-    setLoading(prev => ({ ...prev, leaderboards: true }));
+    setLoading( prev => ({ ...prev, leaderboards: true }));
     
     try {
       const currentPage = reset ? 1 : page;
@@ -381,7 +381,7 @@ export function Leaderboards({ className }: LeaderboardsProps) {
       );
 
       if (reset) {
-        setLeaderboardData(data);
+        setLeaderboardData(_data);
         setPage(1);
       } else {
         setLeaderboardData(prev => prev ? {
@@ -390,34 +390,34 @@ export function Leaderboards({ className }: LeaderboardsProps) {
         } : data);
       }
       
-      setHasNextPage(data.hasNextPage);
-      setLastUpdated(data.lastUpdated);
-    } catch (error) {
-      logger.error('Failed to load leaderboard:', {}, error as Error);
+      setHasNextPage(_data.hasNextPage);
+      setLastUpdated(_data.lastUpdated);
+    } catch (_error) {
+      logger.error( 'Failed to load leaderboard:', { metadata: {}, error as Error);
     } finally {
-      setLoading(prev => ({ ...prev, leaderboards: false }));
+      setLoading( prev => ({ ...prev, leaderboards: false }));
     }
   };
 
   const loadMoreUsers = async () => {
     if (!hasNextPage || loading.leaderboards) return;
     
-    setPage(prev => prev + 1);
-    await loadLeaderboard(false);
+    setPage(_prev => prev + 1);
+    await loadLeaderboard(_false);
   };
 
-  const setupRealTimeUpdates = () => {
+  const setupRealTimeUpdates = (_) => {
     const unsubscribe = leaderboardManager.subscribeToUpdates((event) => {
       // Refresh leaderboard when relevant updates occur
       if (currentCategory && shouldRefreshForEvent(event)) {
-        loadLeaderboard(true);
+        loadLeaderboard(_true);
       }
     });
 
     return unsubscribe;
   };
 
-  const shouldRefreshForEvent = (event: any): boolean => {
+  const shouldRefreshForEvent = (_event: any): boolean => {
     // Determine if this event should trigger a leaderboard refresh
     return event.type === 'xp_gained' || 
            event.type === 'lesson_completed' || 
@@ -427,32 +427,32 @@ export function Leaderboards({ className }: LeaderboardsProps) {
   const handleRefresh = async () => {
     if (!currentCategory) return;
     
-    setLoading(prev => ({ ...prev, refresh: true }));
+    setLoading( prev => ({ ...prev, refresh: true }));
     
     try {
-      await leaderboardManager.refreshLeaderboard(currentCategory.id, filters);
-      await loadLeaderboard(true);
-    } catch (error) {
-      logger.error('Failed to refresh leaderboard:', {}, error as Error);
+      await leaderboardManager.refreshLeaderboard( currentCategory.id, filters);
+      await loadLeaderboard(_true);
+    } catch (_error) {
+      logger.error( 'Failed to refresh leaderboard:', { metadata: {}, error as Error);
     } finally {
-      setLoading(prev => ({ ...prev, refresh: false }));
+      setLoading( prev => ({ ...prev, refresh: false }));
     }
   };
 
-  const handleFiltersChange = (newFilters: LeaderboardFilters) => {
-    setFilters(newFilters);
+  const handleFiltersChange = (_newFilters: LeaderboardFilters) => {
+    setFilters(_newFilters);
     
     // Update current category if category filter changed
-    if (newFilters.category !== filters.category) {
+    if (_newFilters.category !== filters.category) {
       const newCategory = categories.find(c => c.id === newFilters.category);
       if (newCategory) {
-        setCurrentCategory(newCategory);
+        setCurrentCategory(_newCategory);
       }
     }
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn( 'space-y-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -463,7 +463,7 @@ export function Leaderboards({ className }: LeaderboardsProps) {
         </div>
         <div className="flex items-center space-x-3">
           <div className="text-sm text-gray-400">
-            Last updated: {lastUpdated.toLocaleTimeString()}
+            Last updated: {lastUpdated.toLocaleTimeString(_)}
           </div>
           <Button
             onClick={handleRefresh}
@@ -471,7 +471,7 @@ export function Leaderboards({ className }: LeaderboardsProps) {
             variant="outline"
             className="border-white/20 text-white hover:bg-white/10"
           >
-            <RefreshCw className={cn('w-4 h-4 mr-2', loading.refresh && 'animate-spin')} />
+            <RefreshCw className={cn( 'w-4 h-4 mr-2', loading.refresh && 'animate-spin')} />
             Refresh
           </Button>
         </div>
@@ -490,7 +490,7 @@ export function Leaderboards({ className }: LeaderboardsProps) {
         {categories.map(category => (
           <button
             key={category.id}
-            onClick={() => handleFiltersChange({ ...filters, category: category.id })}
+            onClick={(_) => handleFiltersChange( { ...filters, category: category.id })}
             className={cn(
               'flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap',
               currentCategory?.id === category.id
@@ -525,7 +525,7 @@ export function Leaderboards({ className }: LeaderboardsProps) {
         ) : leaderboardData && leaderboardData.users.length > 0 ? (
           <div className="p-6">
             <div className="space-y-3">
-              {leaderboardData.users.map((leaderboardUser, index) => (
+              {leaderboardData.users.map( (leaderboardUser, index) => (
                 <LeaderboardUserCard
                   key={leaderboardUser.id}
                   user={leaderboardUser}

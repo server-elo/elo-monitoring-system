@@ -53,8 +53,8 @@ export class SecurityScanner {
   private userId: string;
   private isScanning: boolean = false;
   private lastAnalysisResult: SecurityScanResult | null = null;
-  private analysisCache = new Map<string, SecurityScanResult>();
-  private listeners: Array<(result: SecurityScanResult) => void> = [];
+  private analysisCache = new Map<string, SecurityScanResult>(_);
+  private listeners: Array<(_result: SecurityScanResult) => void> = [];
 
   // Configuration options
   private config = {
@@ -129,12 +129,12 @@ export class SecurityScanner {
       gasImpact: 100
     },
     {
-      pattern: /require\s*\(\s*[^,]+\s*\)/g,
+      pattern: /require\s*\(_\s*[^,]+\s*\)/g,
       type: 'best-practice',
       severity: 'low' as const,
       title: 'Error Message Missing',
-      message: 'require() statements should include error messages',
-      suggestion: 'Add descriptive error message: require(condition, "Error message")',
+      message: 'require(_) statements should include error messages',
+      suggestion: 'Add descriptive error message: require( condition, "Error message")',
       category: 'best-practice' as const,
       confidence: 0.8,
       autoFixAvailable: true
@@ -176,26 +176,26 @@ export class SecurityScanner {
 
 
   // Setup event listeners for real-time scanning
-  private setupEventListeners(): void {
+  private setupEventListeners(_): void {
     this.model.onDidChangeContent(() => {
-      if (this.config.enableRealtime) {
-        this.scheduleAnalysis();
+      if (_this.config.enableRealtime) {
+        this.scheduleAnalysis(_);
       }
     });
 
     // Listen for cursor position changes to update hover tooltips
     this.editor.onDidChangeCursorPosition((e) => {
-      this.updateHoverTooltips(e.position);
+      this.updateHoverTooltips(_e.position);
     });
   }
 
   // Setup hover provider for security tooltips
-  private setupHoverProvider(): void {
+  private setupHoverProvider(_): void {
     if (!this.config.enableHoverTooltips) return;
 
     monaco.languages.registerHoverProvider('solidity', {
-      provideHover: (model, position) => {
-        const issue = this.getIssueAtPosition(position);
+      provideHover: ( model, position) => {
+        const issue = this.getIssueAtPosition(_position);
         if (!issue) return null;
 
         return {
@@ -217,16 +217,16 @@ export class SecurityScanner {
   }
 
   // Setup code action provider for auto-fixes
-  private setupCodeActionProvider(): void {
+  private setupCodeActionProvider(_): void {
     if (!this.config.enableAutoFix) return;
 
     monaco.languages.registerCodeActionProvider('solidity', {
-      provideCodeActions: (model, range, context) => {
+      provideCodeActions: ( model, range, context) => {
         const actions: monaco.languages.CodeAction[] = [];
 
-        for (const marker of context.markers) {
-          const issue = this.findIssueById(marker.code as string);
-          if (issue?.autoFixAvailable) {
+        for (_const marker of context.markers) {
+          const issue = this.findIssueById(_marker.code as string);
+          if (_issue?.autoFixAvailable) {
             actions.push({
               title: `Fix: ${issue.title}`,
               kind: 'quickfix',
@@ -240,7 +240,7 @@ export class SecurityScanner {
                       issue.endLine,
                       issue.endColumn
                     ),
-                    text: this.generateAutoFix(issue)
+                    text: this.generateAutoFix(_issue)
                   }
                 }]
               }
@@ -248,7 +248,7 @@ export class SecurityScanner {
           }
         }
 
-        return { actions, dispose: () => {} };
+        return { actions, dispose: (_) => {} };
       }
     });
   }
@@ -259,107 +259,107 @@ export class SecurityScanner {
     config?: Partial<typeof this.config>
   ) {
     this.editor = editor;
-    this.model = editor.getModel()!;
+    this.model = editor.getModel(_)!;
     this.userId = userId;
 
     if (config) {
       this.config = { ...this.config, ...config };
     }
 
-    this.setupEventListeners();
-    this.setupMarkerService();
-    this.setupHoverProvider();
-    this.setupCodeActionProvider();
+    this.setupEventListeners(_);
+    this.setupMarkerService(_);
+    this.setupHoverProvider(_);
+    this.setupCodeActionProvider(_);
   }
 
-  private setupEventListeners(): void {
+  private setupEventListeners(_): void {
     // Listen for content changes
     this.model.onDidChangeContent(() => {
-      this.scheduleSecurityScan();
+      this.scheduleSecurityScan(_);
     });
 
     // Listen for cursor position changes to show contextual help
     this.editor.onDidChangeCursorPosition((e) => {
-      this.showContextualSecurity(e.position);
+      this.showContextualSecurity(_e.position);
     });
   }
 
-  private setupMarkerService(): void {
+  private setupMarkerService(_): void {
     // Register custom marker service for security issues
-    monaco.editor.setModelMarkers(this.model, 'security-scanner', []);
+    monaco.editor.setModelMarkers( this.model, 'security-scanner', []);
   }
 
-  private scheduleSecurityScan(): void {
+  private scheduleSecurityScan(_): void {
     // Clear existing timeout
-    if (this.scanTimeout) {
-      clearTimeout(this.scanTimeout);
+    if (_this.scanTimeout) {
+      clearTimeout(_this.scanTimeout);
     }
 
     // Schedule new scan
     this.scanTimeout = setTimeout(() => {
-      this.performSecurityScan();
+      this.performSecurityScan(_);
     }, this.scanDelay);
   }
 
-  private async performSecurityScan(): Promise<SecurityScanResult> {
-    if (this.isScanning) return { issues: [], overallScore: 100, scanTime: 0, suggestions: [] };
+  private async performSecurityScan(_): Promise<SecurityScanResult> {
+    if (_this.isScanning) return { issues: [], overallScore: 100, scanTime: 0, suggestions: [] };
     
     this.isScanning = true;
-    const startTime = Date.now();
-    const code = this.model.getValue();
+    const startTime = Date.now(_);
+    const code = this.model.getValue(_);
     
     try {
       // Quick pattern-based scan for immediate feedback
-      const patternIssues = this.scanPatterns(code);
+      const patternIssues = this.scanPatterns(_code);
       
-      // AI-powered deep scan for complex issues (adaptive throttling)
+      // AI-powered deep scan for complex issues (_adaptive throttling)
       let aiIssues: SecurityIssue[] = [];
-      const now = Date.now();
+      const now = Date.now(_);
       const timeSinceLastScan = now - this.lastScanTime;
 
       // Adaptive throttling based on local LLM availability
-      const isLocalLLMAvailable = await this.checkLocalLLMHealth();
+      const isLocalLLMAvailable = await this.checkLocalLLMHealth(_);
       const minScanInterval = isLocalLLMAvailable ? 2000 : 5000; // 2s for local, 5s for fallback
 
-      if (timeSinceLastScan > minScanInterval && code.length > 50) {
-        console.log(`🔄 Starting AI security scan (${isLocalLLMAvailable ? 'local' : 'fallback'} mode)`);
-        aiIssues = await this.performAIScan(code);
+      if (_timeSinceLastScan > minScanInterval && code.length > 50) {
+        console.log(_`🔄 Starting AI security scan (${isLocalLLMAvailable ? 'local' : 'fallback'} mode)`);
+        aiIssues = await this.performAIScan(_code);
         this.lastScanTime = now;
-      } else if (timeSinceLastScan <= minScanInterval) {
-        console.log(`⏳ AI scan throttled (${Math.ceil((minScanInterval - timeSinceLastScan) / 1000)}s remaining)`);
+      } else if (_timeSinceLastScan <= minScanInterval) {
+        console.log(_`⏳ AI scan throttled (${Math.ceil((minScanInterval - timeSinceLastScan) / 1000)}s remaining)`);
       }
 
       const allIssues = [...patternIssues, ...aiIssues];
-      const scanTime = Date.now() - startTime;
+      const scanTime = Date.now(_) - startTime;
       
       // Calculate overall security score
-      const overallScore = this.calculateSecurityScore(allIssues);
+      const overallScore = this.calculateSecurityScore(_allIssues);
       
       // Update editor with findings
-      this.updateEditorMarkers(allIssues);
-      this.updateEditorDecorations(allIssues);
+      this.updateEditorMarkers(_allIssues);
+      this.updateEditorDecorations(_allIssues);
       
       const result: SecurityScanResult = {
         issues: allIssues,
         overallScore,
         scanTime,
-        suggestions: this.generateSuggestions(allIssues)
+        suggestions: this.generateSuggestions(_allIssues)
       };
 
       // Emit scan complete event
-      this.onScanComplete(result);
+      this.onScanComplete(_result);
       
       return result;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Security scan failed:', error);
-      return { issues: [], overallScore: 100, scanTime: Date.now() - startTime, suggestions: [] };
+      return { issues: [], overallScore: 100, scanTime: Date.now(_) - startTime, suggestions: [] };
     } finally {
       this.isScanning = false;
     }
   }
 
-  private scanPatterns(code: string): SecurityIssue[] {
+  private scanPatterns(_code: string): SecurityIssue[] {
     const issues: SecurityIssue[] = [];
     const lines = code.split('\n');
     
@@ -367,11 +367,11 @@ export class SecurityScanner {
     this.securityPatterns.forEach(pattern => {
       let match;
       while ((match = pattern.pattern.exec(code)) !== null) {
-        const position = this.getLineColumnFromIndex(code, match.index);
-        const endPosition = this.getLineColumnFromIndex(code, match.index + match[0].length);
+        const position = this.getLineColumnFromIndex( code, match.index);
+        const endPosition = this.getLineColumnFromIndex( code, match.index + match[0].length);
         
         issues.push({
-          id: `pattern_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          id: `pattern_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`,
           type: pattern.type,
           severity: pattern.severity,
           title: pattern.title,
@@ -392,10 +392,10 @@ export class SecurityScanner {
     return issues;
   }
 
-  private async performAIScan(code: string): Promise<SecurityIssue[]> {
+  private async performAIScan(_code: string): Promise<SecurityIssue[]> {
     try {
       // Check if local LLM is available for faster analysis
-      const isLocalLLMAvailable = await this.checkLocalLLMHealth();
+      const isLocalLLMAvailable = await this.checkLocalLLMHealth(_);
 
       if (isLocalLLMAvailable) {
         console.log('🚀 Using local LLM for real-time security analysis');
@@ -403,17 +403,17 @@ export class SecurityScanner {
         console.log('⚡ Using fallback analysis (local LLM unavailable)');
       }
 
-      const startTime = Date.now();
-      const analysis = await enhancedTutor.analyzeCodeSecurity(code, this.userId);
-      const analysisTime = Date.now() - startTime;
+      const startTime = Date.now(_);
+      const analysis = await enhancedTutor.analyzeCodeSecurity( code, this.userId);
+      const analysisTime = Date.now(_) - startTime;
 
       // Log performance metrics
-      console.log(`🔍 Security analysis completed in ${analysisTime}ms using ${isLocalLLMAvailable ? 'local LLM' : 'fallback'}`);
+      console.log(_`🔍 Security analysis completed in ${analysisTime}ms using ${isLocalLLMAvailable ? 'local LLM' : 'fallback'}`);
 
       return analysis.vulnerabilities.map(vuln => ({
-        id: `ai_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `ai_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`,
         type: vuln.type,
-        severity: this.mapSeverity(vuln.severity),
+        severity: this.mapSeverity(_vuln.severity),
         message: vuln.description,
         line: vuln.line || 1,
         column: 1,
@@ -426,26 +426,26 @@ export class SecurityScanner {
         source: isLocalLLMAvailable ? 'local-llm' : 'fallback'
       }));
 
-    } catch (error) {
+    } catch (_error) {
       console.error('AI security scan failed:', error);
       return [];
     }
   }
 
-  private async checkLocalLLMHealth(): Promise<boolean> {
+  private async checkLocalLLMHealth(_): Promise<boolean> {
     try {
       const response = await fetch('http://localhost:1234/v1/models', {
         method: 'GET',
         signal: AbortSignal.timeout(1000) // Quick health check
       });
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
 
-  private mapSeverity(severity: string): 'info' | 'warning' | 'error' {
-    switch (severity.toLowerCase()) {
+  private mapSeverity(_severity: string): 'info' | 'warning' | 'error' {
+    switch (_severity.toLowerCase()) {
       case 'critical':
       case 'high':
         return 'error';
@@ -457,19 +457,19 @@ export class SecurityScanner {
     }
   }
 
-  private getLineColumnFromIndex(text: string, index: number): { line: number; column: number } {
-    const lines = text.substring(0, index).split('\n');
+  private getLineColumnFromIndex( text: string, index: number): { line: number; column: number } {
+    const lines = text.substring( 0, index).split('\n');
     return {
       line: lines.length,
       column: lines[lines.length - 1].length + 1
     };
   }
 
-  private calculateSecurityScore(issues: SecurityIssue[]): number {
+  private calculateSecurityScore(_issues: SecurityIssue[]): number {
     let score = 100;
     
     issues.forEach(issue => {
-      switch (issue.severity) {
+      switch (_issue.severity) {
         case 'error':
           score -= 20;
           break;
@@ -485,9 +485,9 @@ export class SecurityScanner {
     return Math.max(0, score);
   }
 
-  private updateEditorMarkers(issues: SecurityIssue[]): void {
+  private updateEditorMarkers(_issues: SecurityIssue[]): void {
     const markers: monaco.editor.IMarkerData[] = issues.map(issue => ({
-      severity: this.getMonacoSeverity(issue.severity),
+      severity: this.getMonacoSeverity(_issue.severity),
       startLineNumber: issue.line,
       startColumn: issue.column,
       endLineNumber: issue.endLine,
@@ -496,15 +496,15 @@ export class SecurityScanner {
       source: 'Security Scanner'
     }));
 
-    monaco.editor.setModelMarkers(this.model, 'security-scanner', markers);
+    monaco.editor.setModelMarkers( this.model, 'security-scanner', markers);
     this.markers = markers;
   }
 
-  private updateEditorDecorations(issues: SecurityIssue[]): void {
+  private updateEditorDecorations(_issues: SecurityIssue[]): void {
     const decorations: monaco.editor.IModelDeltaDecoration[] = issues
       .filter(issue => issue.severity === 'error')
       .map(issue => ({
-        range: new monaco.Range(issue.line, issue.column, issue.endLine, issue.endColumn),
+        range: new monaco.Range( issue.line, issue.column, issue.endLine, issue.endColumn),
         options: {
           className: 'security-error-decoration',
           hoverMessage: { value: `🚨 **${issue.message}**\n\n💡 ${issue.suggestion}` },
@@ -515,11 +515,11 @@ export class SecurityScanner {
         }
       }));
 
-    this.decorations = this.editor.deltaDecorations(this.decorations, decorations);
+    this.decorations = this.editor.deltaDecorations( this.decorations, decorations);
   }
 
-  private getMonacoSeverity(severity: SecurityIssue['severity']): monaco.MarkerSeverity {
-    switch (severity) {
+  private getMonacoSeverity(_severity: SecurityIssue['severity']): monaco.MarkerSeverity {
+    switch (_severity) {
       case 'error':
         return monaco.MarkerSeverity.Error;
       case 'warning':
@@ -530,51 +530,51 @@ export class SecurityScanner {
     }
   }
 
-  private generateSuggestions(issues: SecurityIssue[]): string[] {
-    const suggestions = new Set<string>();
+  private generateSuggestions(_issues: SecurityIssue[]): string[] {
+    const suggestions = new Set<string>(_);
     
     issues.forEach(issue => {
-      suggestions.add(issue.suggestion);
+      suggestions.add(_issue.suggestion);
     });
 
-    return Array.from(suggestions);
+    return Array.from(_suggestions);
   }
 
-  private showContextualSecurity(position: monaco.Position): void {
-    const line = this.model.getLineContent(position.lineNumber);
+  private showContextualSecurity(_position: monaco.Position): void {
+    const line = this.model.getLineContent(_position.lineNumber);
     
     // Show contextual security tips based on current line
     this.securityPatterns.forEach(pattern => {
-      if (pattern.pattern.test(line)) {
+      if (_pattern.pattern.test(line)) {
         // Could show hover widget or status bar message
-        console.log(`Security tip: ${pattern.suggestion}`);
+        console.log(_`Security tip: ${pattern.suggestion}`);
       }
       pattern.pattern.lastIndex = 0; // Reset regex
     });
   }
 
-  private onScanComplete(result: SecurityScanResult): void {
+  private onScanComplete(_result: SecurityScanResult): void {
     // Emit custom event for components to listen to
-    const event = new CustomEvent('securityScanComplete', { detail: result });
-    document.dispatchEvent(event);
+    const event = new CustomEvent( 'securityScanComplete', { detail: result });
+    document.dispatchEvent(_event);
   }
 
   // Public methods
-  public async scanNow(): Promise<SecurityScanResult> {
-    return this.performSecurityScan();
+  public async scanNow(_): Promise<SecurityScanResult> {
+    return this.performSecurityScan(_);
   }
 
   // Alias for compatibility with AICodeReviewer
-  public async performAnalysis(): Promise<SecurityScanResult> {
-    return this.performSecurityScan();
+  public async performAnalysis(_): Promise<SecurityScanResult> {
+    return this.performSecurityScan(_);
   }
 
-  public getLastScanResult(): SecurityScanResult | null {
+  public getLastScanResult(_): SecurityScanResult | null {
     return {
       issues: this.markers.map(marker => ({
         id: `marker_${marker.startLineNumber}_${marker.startColumn}`,
         type: 'marker',
-        severity: this.getIssueSeverity(marker.severity),
+        severity: this.getIssueSeverity(_marker.severity),
         message: marker.message || '',
         line: marker.startLineNumber,
         column: marker.startColumn,
@@ -589,8 +589,8 @@ export class SecurityScanner {
     };
   }
 
-  private getIssueSeverity(severity: monaco.MarkerSeverity): SecurityIssue['severity'] {
-    switch (severity) {
+  private getIssueSeverity(_severity: monaco.MarkerSeverity): SecurityIssue['severity'] {
+    switch (_severity) {
       case monaco.MarkerSeverity.Error:
         return 'error';
       case monaco.MarkerSeverity.Warning:
@@ -602,27 +602,27 @@ export class SecurityScanner {
   }
 
   // Enhanced analysis with AI integration
-  private async runAIAnalysis(code: string): Promise<SecurityIssue[]> {
+  private async runAIAnalysis(_code: string): Promise<SecurityIssue[]> {
     if (!this.config.enableAIAnalysis || code.length > this.config.maxCodeLength) {
       return [];
     }
 
     try {
-      const analysis = await enhancedTutor.analyzeCodeSecurity(code, this.userId);
-      return this.convertAIAnalysisToIssues(analysis);
-    } catch (error) {
+      const analysis = await enhancedTutor.analyzeCodeSecurity( code, this.userId);
+      return this.convertAIAnalysisToIssues(_analysis);
+    } catch (_error) {
       console.error('AI analysis failed:', error);
       return [];
     }
   }
 
   // Convert AI analysis to security issues
-  private convertAIAnalysisToIssues(analysis: any): SecurityIssue[] {
+  private convertAIAnalysisToIssues(_analysis: any): SecurityIssue[] {
     const issues: SecurityIssue[] = [];
 
     // Process vulnerabilities
-    if (analysis.vulnerabilities) {
-      analysis.vulnerabilities.forEach((vuln: any, index: number) => {
+    if (_analysis.vulnerabilities) {
+      analysis.vulnerabilities.forEach( (vuln: any, index: number) => {
         issues.push({
           id: `ai-vuln-${index}`,
           type: 'vulnerability',
@@ -642,8 +642,8 @@ export class SecurityScanner {
     }
 
     // Process gas optimizations
-    if (analysis.gasOptimizations) {
-      analysis.gasOptimizations.forEach((opt: any, index: number) => {
+    if (_analysis.gasOptimizations) {
+      analysis.gasOptimizations.forEach( (opt: any, index: number) => {
         issues.push({
           id: `ai-gas-${index}`,
           type: 'gas-optimization',
@@ -667,16 +667,16 @@ export class SecurityScanner {
   }
 
   // Pattern-based analysis
-  private runPatternAnalysis(code: string): SecurityIssue[] {
+  private runPatternAnalysis(_code: string): SecurityIssue[] {
     const issues: SecurityIssue[] = [];
     const lines = code.split('\n');
 
-    this.securityPatterns.forEach((pattern, patternIndex) => {
-      lines.forEach((line, lineIndex) => {
-        const matches = line.match(pattern.pattern);
+    this.securityPatterns.forEach( (pattern, patternIndex) => {
+      lines.forEach( (line, lineIndex) => {
+        const matches = line.match(_pattern.pattern);
         if (matches) {
-          matches.forEach((match, matchIndex) => {
-            const column = line.indexOf(match) + 1;
+          matches.forEach( (match, matchIndex) => {
+            const column = line.indexOf(_match) + 1;
             issues.push({
               id: `pattern-${patternIndex}-${lineIndex}-${matchIndex}`,
               type: pattern.type,
@@ -702,38 +702,38 @@ export class SecurityScanner {
   }
 
   // Merge and deduplicate issues
-  private mergeIssues(patternIssues: SecurityIssue[], aiIssues: SecurityIssue[]): SecurityIssue[] {
+  private mergeIssues( patternIssues: SecurityIssue[], aiIssues: SecurityIssue[]): SecurityIssue[] {
     const allIssues = [...patternIssues, ...aiIssues];
-    const uniqueIssues = new Map<string, SecurityIssue>();
+    const uniqueIssues = new Map<string, SecurityIssue>(_);
 
     allIssues.forEach(issue => {
       const key = `${issue.line}-${issue.type}-${issue.severity}`;
-      if (!uniqueIssues.has(key) || (uniqueIssues.get(key)?.confidence || 0) < (issue.confidence || 0)) {
-        uniqueIssues.set(key, issue);
+      if (!uniqueIssues.has(key) || (_uniqueIssues.get(key)?.confidence || 0) < (_issue.confidence || 0)) {
+        uniqueIssues.set( key, issue);
       }
     });
 
-    return Array.from(uniqueIssues.values());
+    return Array.from(_uniqueIssues.values());
   }
 
   // Filter issues by severity threshold
-  private filterIssuesBySeverity(issues: SecurityIssue[]): SecurityIssue[] {
+  private filterIssuesBySeverity(_issues: SecurityIssue[]): SecurityIssue[] {
     const severityOrder = ['low', 'medium', 'high', 'critical'];
-    const thresholdIndex = severityOrder.indexOf(this.config.severityThreshold);
+    const thresholdIndex = severityOrder.indexOf(_this.config.severityThreshold);
 
     return issues.filter(issue => {
-      const issueIndex = severityOrder.indexOf(issue.severity);
+      const issueIndex = severityOrder.indexOf(_issue.severity);
       return issueIndex >= thresholdIndex;
     });
   }
 
   // Calculate overall security score
-  private calculateOverallScore(issues: SecurityIssue[]): number {
-    if (issues.length === 0) return 100;
+  private calculateOverallScore(_issues: SecurityIssue[]): number {
+    if (_issues.length === 0) return 100;
 
     let score = 100;
     issues.forEach(issue => {
-      switch (issue.severity) {
+      switch (_issue.severity) {
         case 'critical': score -= 25; break;
         case 'high': score -= 15; break;
         case 'medium': score -= 10; break;
@@ -745,78 +745,78 @@ export class SecurityScanner {
   }
 
   // Generate suggestions based on issues
-  private generateSuggestions(issues: SecurityIssue[]): string[] {
-    const suggestions = new Set<string>();
+  private generateSuggestions(_issues: SecurityIssue[]): string[] {
+    const suggestions = new Set<string>(_);
 
     issues.forEach(issue => {
-      if (issue.suggestion) {
-        suggestions.add(issue.suggestion);
+      if (_issue.suggestion) {
+        suggestions.add(_issue.suggestion);
       }
     });
 
-    return Array.from(suggestions);
+    return Array.from(_suggestions);
   }
 
   // Missing methods implementation
-  private async getAnalysisHistory(userId: string): Promise<any[]> {
+  private async getAnalysisHistory(_userId: string): Promise<any[]> {
     // Implementation would fetch from database
     return [];
   }
 
-  private async calculateSkillLevels(userId: string, sessions: any[]): Promise<Record<string, number>> {
+  private async calculateSkillLevels( userId: string, sessions: any[]): Promise<Record<string, number>> {
     // Implementation would calculate skill levels
     return {};
   }
 
-  private identifyStrengthAreas(analysisHistory: any[]): string[] {
+  private identifyStrengthAreas(_analysisHistory: any[]): string[] {
     // Implementation would identify strength areas
     return [];
   }
 
-  private calculateSessionParameters(sessions: any[]): { attentionSpan: number; optimalSessionLength: number } {
+  private calculateSessionParameters(_sessions: any[]): { attentionSpan: number; optimalSessionLength: number } {
     return { attentionSpan: 30, optimalSessionLength: 45 };
   }
 
-  private getLatestScores(analysisHistory: any[]): { security: number; gasOptimization: number; codeQuality: number } {
+  private getLatestScores(_analysisHistory: any[]): { security: number; gasOptimization: number; codeQuality: number } {
     return { security: 0, gasOptimization: 0, codeQuality: 0 };
   }
 
-  private async saveLearningProfile(profile: any): Promise<void> {
+  private async saveLearningProfile(_profile: any): Promise<void> {
     // Implementation would save to database
   }
 
-  private async getAdaptationHistory(userId: string): Promise<any[]> {
+  private async getAdaptationHistory(_userId: string): Promise<any[]> {
     return [];
   }
 
-  private async saveLearningPath(path: any): Promise<void> {
+  private async saveLearningPath(_path: any): Promise<void> {
     // Implementation would save to database
   }
 
-  private async selectNextConcepts(profile: any): Promise<any[]> {
+  private async selectNextConcepts(_profile: any): Promise<any[]> {
     return [];
   }
 
-  private createMilestones(conceptNodes: any[], profile: any): any[] {
+  private createMilestones( conceptNodes: any[], profile: any): any[] {
     return [];
   }
 
-  private calculateCurrentLevel(skillLevels: Record<string, number>): number {
-    const levels = Object.values(skillLevels);
-    return levels.length > 0 ? levels.reduce((sum, level) => sum + level, 0) / levels.length : 0;
+  private calculateCurrentLevel( skillLevels: Record<string, number>): number {
+    const levels = Object.values(_skillLevels);
+    return levels.length > 0 ? levels.reduce( (sum, level) => sum + level, 0) / levels.length : 0;
   }
 
-  private calculateRecommendedDifficulty(profile: any): number {
+  private calculateRecommendedDifficulty(_profile: any): number {
     return 0.5;
   }
 
-  private estimateCompletionTime(conceptNodes: any[], profile: any): number {
+  private estimateCompletionTime( conceptNodes: any[], profile: any): number {
     return 60; // minutes
   }
 
-  private parseExerciseFromAI(content: string, concept: any): any {
+  private parseExerciseFromAI( content: string, concept: any): any {
     return {
-      id: `exercise-${Date.now()}`,
+      id: `exercise-${Date.now(_)}`,
       type: 'coding',
       concept: concept.name,
       difficulty: concept.difficulty,
@@ -826,20 +826,20 @@ export class SecurityScanner {
     };
   }
 
-  private async evaluateAdaptationTriggers(userId: string): Promise<void> {
+  private async evaluateAdaptationTriggers(_userId: string): Promise<void> {
     // Implementation would check if adaptation is needed
   }
 
-  private calculateMasteryScore(performance: any): number {
+  private calculateMasteryScore(_performance: any): number {
     return 0.5;
   }
 
-  private async getLearningProfile(userId: string): Promise<any> {
+  private async getLearningProfile(_userId: string): Promise<any> {
     return { preferredDifficulty: 'adaptive', learningVelocity: 1.0 };
   }
 
-  private getTargetAccuracy(difficulty: string): number {
-    switch (difficulty) {
+  private getTargetAccuracy(_difficulty: string): number {
+    switch (_difficulty) {
       case 'gradual': return 0.8;
       case 'challenge': return 0.6;
       case 'adaptive': return 0.7;
@@ -847,12 +847,12 @@ export class SecurityScanner {
     }
   }
 
-  private async recordAdaptation(userId: string, oldDifficulty: number, newDifficulty: number, performance: any): Promise<void> {
+  private async recordAdaptation( userId: string, oldDifficulty: number, newDifficulty: number, performance: any): Promise<void> {
     // Implementation would record adaptation
   }
 
   // Missing helper methods
-  private getIssueAtPosition(position: monaco.Position): SecurityIssue | null {
+  private getIssueAtPosition(_position: monaco.Position): SecurityIssue | null {
     return this.markers.find(marker => 
       marker.startLineNumber === position.lineNumber &&
       marker.startColumn <= position.column &&
@@ -872,14 +872,14 @@ export class SecurityScanner {
     } : null;
   }
 
-  private findIssueById(id: string): SecurityIssue | null {
+  private findIssueById(_id: string): SecurityIssue | null {
     // Implementation would depend on how issues are stored
     return null;
   }
 
-  private generateAutoFix(issue: SecurityIssue): string {
+  private generateAutoFix(_issue: SecurityIssue): string {
     // Basic auto-fix implementation
-    switch (issue.type) {
+    switch (_issue.type) {
       case 'tx.origin':
         return 'msg.sender';
       default:
@@ -887,25 +887,25 @@ export class SecurityScanner {
     }
   }
 
-  private scheduleAnalysis(): void {
-    if (this.scanTimeout) {
-      clearTimeout(this.scanTimeout);
+  private scheduleAnalysis(_): void {
+    if (_this.scanTimeout) {
+      clearTimeout(_this.scanTimeout);
     }
     this.scanTimeout = setTimeout(() => {
-      this.performSecurityScan();
+      this.performSecurityScan(_);
     }, this.scanDelay);
   }
 
-  private updateHoverTooltips(position: monaco.Position): void {
+  private updateHoverTooltips(_position: monaco.Position): void {
     // Implementation for hover tooltips
   }
 
   // Update visual indicators in the editor
-  private updateVisualIndicators(result: SecurityScanResult): void {
+  private updateVisualIndicators(_result: SecurityScanResult): void {
     if (!this.config.enableVisualIndicators) return;
 
     // Clear existing decorations
-    this.decorations = this.editor.deltaDecorations(this.decorations, []);
+    this.decorations = this.editor.deltaDecorations( this.decorations, []);
 
     // Create new decorations
     const newDecorations: monaco.editor.IModelDeltaDecoration[] = [];
@@ -914,18 +914,18 @@ export class SecurityScanner {
     result.issues.forEach(issue => {
       // Add decoration for visual highlighting
       newDecorations.push({
-        range: new monaco.Range(issue.line, issue.column, issue.endLine, issue.endColumn),
+        range: new monaco.Range( issue.line, issue.column, issue.endLine, issue.endColumn),
         options: {
           className: `security-${issue.severity}`,
           hoverMessage: { value: `**${issue.title}**: ${issue.message}` },
-          minimap: { color: this.getSeverityColor(issue.severity), position: 2 },
-          overviewRuler: { color: this.getSeverityColor(issue.severity), position: 2 }
+          minimap: { color: this.getSeverityColor(_issue.severity), position: 2 },
+          overviewRuler: { color: this.getSeverityColor(_issue.severity), position: 2 }
         }
       });
 
       // Add marker for problems panel
       markers.push({
-        severity: this.getSeverityMarkerLevel(issue.severity),
+        severity: this.getSeverityMarkerLevel(_issue.severity),
         startLineNumber: issue.line,
         startColumn: issue.column,
         endLineNumber: issue.endLine,
@@ -936,13 +936,13 @@ export class SecurityScanner {
     });
 
     // Apply decorations and markers
-    this.decorations = this.editor.deltaDecorations([], newDecorations);
-    monaco.editor.setModelMarkers(this.model, 'security-scanner', markers);
+    this.decorations = this.editor.deltaDecorations( [], newDecorations);
+    monaco.editor.setModelMarkers( this.model, 'security-scanner', markers);
   }
 
   // Helper methods
-  private getSeverityColor(severity: string): string {
-    switch (severity) {
+  private getSeverityColor(_severity: string): string {
+    switch (_severity) {
       case 'critical': return '#ff0000';
       case 'high': return '#ff6600';
       case 'medium': return '#ffaa00';
@@ -951,8 +951,8 @@ export class SecurityScanner {
     }
   }
 
-  private getSeverityMarkerLevel(severity: string): monaco.MarkerSeverity {
-    switch (severity) {
+  private getSeverityMarkerLevel(_severity: string): monaco.MarkerSeverity {
+    switch (_severity) {
       case 'critical':
       case 'high': return monaco.MarkerSeverity.Error;
       case 'medium': return monaco.MarkerSeverity.Warning;
@@ -962,32 +962,32 @@ export class SecurityScanner {
   }
 
   // Public API methods
-  public addListener(callback: (result: SecurityScanResult) => void): void {
-    this.listeners.push(callback);
+  public addListener(_callback: (result: SecurityScanResult) => void): void {
+    this.listeners.push(_callback);
   }
 
-  public removeListener(callback: (result: SecurityScanResult) => void): void {
-    const index = this.listeners.indexOf(callback);
-    if (index > -1) {
-      this.listeners.splice(index, 1);
+  public removeListener(_callback: (result: SecurityScanResult) => void): void {
+    const index = this.listeners.indexOf(_callback);
+    if (_index > -1) {
+      this.listeners.splice( index, 1);
     }
   }
 
-  private notifyListeners(result: SecurityScanResult): void {
+  private notifyListeners(_result: SecurityScanResult): void {
     this.listeners.forEach(callback => {
       try {
-        callback(result);
-      } catch (error) {
+        callback(_result);
+      } catch (_error) {
         console.error('Listener callback error:', error);
       }
     });
   }
 
-  public getLastResult(): SecurityScanResult | null {
+  public getLastResult(_): SecurityScanResult | null {
     return this.lastAnalysisResult;
   }
 
-  public updateConfig(newConfig: Partial<typeof this.config>): void {
+  public updateConfig(_newConfig: Partial<typeof this.config>): void {
     this.config = { ...this.config, ...newConfig };
   }
 
@@ -1003,9 +1003,9 @@ export class SecurityScanner {
       Description: ${issue.message}
       Current Learning Concept: ${context.currentConcept}
 
-      Previous similar mistakes: ${context.previousMistakes.map(m => m.title).join(', ')}
+      Previous similar mistakes: ${context.previousMistakes.map(m => m.title).join( ', ')}
 
-      Learning objectives: ${context.learningObjectives.join(', ')}
+      Learning objectives: ${context.learningObjectives.join( ', ')}
 
       Provide a ${context.preferredExplanationStyle} explanation that:
       1. Connects to their current learning level
@@ -1023,13 +1023,13 @@ export class SecurityScanner {
     return response.content;
   }
 
-  public createProgressiveHints(issue: SecurityIssue): ProgressiveHint[] {
+  public createProgressiveHints(_issue: SecurityIssue): ProgressiveHint[] {
     const hints: ProgressiveHint[] = [];
 
     // Level 1: Socratic question
     hints.push({
       level: 1,
-      content: `What do you think might happen if ${this.getVulnerabilityContext(issue)}?`,
+      content: `What do you think might happen if ${this.getVulnerabilityContext(_issue)}?`,
       type: 'question'
     });
 
@@ -1043,14 +1043,14 @@ export class SecurityScanner {
     // Level 3: Specific hint
     hints.push({
       level: 3,
-      content: `Look at line ${issue.line}. ${this.getSpecificHint(issue)}`,
+      content: `Look at line ${issue.line}. ${this.getSpecificHint(_issue)}`,
       type: 'hint'
     });
 
     // Level 4: Example
     hints.push({
       level: 4,
-      content: this.generateSecurityExample(issue),
+      content: this.generateSecurityExample(_issue),
       type: 'example'
     });
 
@@ -1064,7 +1064,7 @@ export class SecurityScanner {
     return hints;
   }
 
-  public suggestRelatedConcepts(issue: SecurityIssue): ConceptLink[] {
+  public suggestRelatedConcepts(_issue: SecurityIssue): ConceptLink[] {
     const concepts: ConceptLink[] = [];
 
     // Map security issues to learning concepts
@@ -1081,17 +1081,17 @@ export class SecurityScanner {
       ]
     };
 
-    const issueType = this.categorizeIssue(issue);
+    const issueType = this.categorizeIssue(_issue);
     const relatedConcepts = conceptMappings[issueType] || [];
 
     return relatedConcepts.map(concept => ({
       ...concept,
-      description: this.getConceptDescription(concept.concept),
-      learningResource: this.getLearningResourceUrl(concept.concept)
+      description: this.getConceptDescription(_concept.concept),
+      learningResource: this.getLearningResourceUrl(_concept.concept)
     }));
   }
 
-  private getVulnerabilityContext(issue: SecurityIssue): string {
+  private getVulnerabilityContext(_issue: SecurityIssue): string {
     // Generate contextual questions based on issue type
     const contexts = {
       'reentrancy': 'an external contract calls back into your function before it finishes executing',
@@ -1102,7 +1102,7 @@ export class SecurityScanner {
     return contexts[issue.type] || 'this security issue is exploited by an attacker';
   }
 
-  private getSpecificHint(issue: SecurityIssue): string {
+  private getSpecificHint(_issue: SecurityIssue): string {
     const hints = {
       'reentrancy': 'Check if external calls are made before state changes',
       'access-control': 'Verify if proper access modifiers are used',
@@ -1112,7 +1112,7 @@ export class SecurityScanner {
     return hints[issue.type] || 'Review the security implications of this code';
   }
 
-  private generateSecurityExample(issue: SecurityIssue): string {
+  private generateSecurityExample(_issue: SecurityIssue): string {
     const examples = {
       'reentrancy': `
         // Vulnerable:
@@ -1131,12 +1131,12 @@ export class SecurityScanner {
       `,
       'access-control': `
         // Vulnerable:
-        function setOwner(address newOwner) external {
+        function setOwner(_address newOwner) external {
           owner = newOwner;
         }
 
         // Secure:
-        function setOwner(address newOwner) external onlyOwner {
+        function setOwner(_address newOwner) external onlyOwner {
           owner = newOwner;
         }
       `
@@ -1145,14 +1145,14 @@ export class SecurityScanner {
     return examples[issue.type] || 'Example not available for this issue type';
   }
 
-  private categorizeIssue(issue: SecurityIssue): string {
-    if (issue.title.toLowerCase().includes('reentrancy')) return 'reentrancy';
-    if (issue.title.toLowerCase().includes('access')) return 'access-control';
-    if (issue.title.toLowerCase().includes('overflow')) return 'overflow';
+  private categorizeIssue(_issue: SecurityIssue): string {
+    if (_issue.title.toLowerCase().includes('reentrancy')) return 'reentrancy';
+    if (_issue.title.toLowerCase().includes('access')) return 'access-control';
+    if (_issue.title.toLowerCase().includes('overflow')) return 'overflow';
     return 'general';
   }
 
-  private getConceptDescription(concept: string): string {
+  private getConceptDescription(_concept: string): string {
     const descriptions = {
       'checks-effects-interactions': 'A pattern to prevent reentrancy by ordering operations correctly',
       'mutex-patterns': 'Using locks to prevent concurrent execution',
@@ -1162,22 +1162,22 @@ export class SecurityScanner {
     return descriptions[concept] || 'Learn more about this security concept';
   }
 
-  private getLearningResourceUrl(concept: string): string {
+  private getLearningResourceUrl(_concept: string): string {
     return `/learn/concepts/${concept}`;
   }
 
-  public dispose(): void {
-    if (this.scanTimeout) {
-      clearTimeout(this.scanTimeout);
+  public dispose(_): void {
+    if (_this.scanTimeout) {
+      clearTimeout(_this.scanTimeout);
     }
 
     // Clear decorations and markers
-    this.editor.deltaDecorations(this.decorations, []);
-    monaco.editor.setModelMarkers(this.model, 'security-scanner', []);
+    this.editor.deltaDecorations( this.decorations, []);
+    monaco.editor.setModelMarkers( this.model, 'security-scanner', []);
 
     // Clear listeners
     this.listeners = [];
-    this.analysisCache.clear();
+    this.analysisCache.clear(_);
   }
 }
 
@@ -1186,5 +1186,5 @@ export function createSecurityScanner(
   editor: monaco.editor.IStandaloneCodeEditor,
   userId: string
 ): SecurityScanner {
-  return new SecurityScanner(editor, userId);
+  return new SecurityScanner( editor, userId);
 }

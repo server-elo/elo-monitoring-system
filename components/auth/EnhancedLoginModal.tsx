@@ -11,7 +11,7 @@ import { signIn } from 'next-auth/react';
 
 interface EnhancedLoginModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   redirectTo?: string;
 }
 
@@ -67,11 +67,11 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
   onClose,
   redirectTo = '/'
 }) => {
-  const { login } = useAuth();
-  const [isLoading, setIsLoading] = useState<string | null>(null);
-  const [showEmailForm, setShowEmailForm] = useState(false);
+  const { login } = useAuth(_);
+  const [isLoading, setIsLoading] = useState<string | null>(_null);
+  const [showEmailForm, setShowEmailForm] = useState(_false);
   const [email, setEmail] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(_false);
   const [userPreferences, setUserPreferences] = useState({
     preferredRoute: redirectTo,
     lastVisitedPages: [] as string[],
@@ -79,7 +79,7 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
   });
 
   // Navigation and preference handling
-  const saveUserPreferences = (loginMethod: string) => {
+  const saveUserPreferences = (_loginMethod: string) => {
     const preferences = {
       ...userPreferences,
       loginHistory: [
@@ -89,17 +89,17 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
     };
 
     if (rememberMe) {
-      localStorage.setItem('userPreferences', JSON.stringify(preferences));
-      localStorage.setItem('preferredRoute', redirectTo);
-      localStorage.setItem('rememberLogin', 'true');
+      localStorage.setItem( 'userPreferences', JSON.stringify(preferences));
+      localStorage.setItem( 'preferredRoute', redirectTo);
+      localStorage.setItem( 'rememberLogin', 'true');
     } else {
-      sessionStorage.setItem('currentSession', JSON.stringify(preferences));
+      sessionStorage.setItem( 'currentSession', JSON.stringify(preferences));
     }
 
-    setUserPreferences(preferences);
+    setUserPreferences(_preferences);
   };
 
-  const handlePostLoginNavigation = () => {
+  const handlePostLoginNavigation = (_) => {
     // Save current page to history before redirecting
     const currentPath = window.location.pathname;
     const updatedHistory = [currentPath, ...userPreferences.lastVisitedPages].slice(0, 5);
@@ -109,7 +109,7 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
       lastVisitedPages: updatedHistory
     };
 
-    setUserPreferences(updatedPreferences);
+    setUserPreferences(_updatedPreferences);
 
     // Determine redirect destination
     let destination = redirectTo;
@@ -121,10 +121,10 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
     }
 
     // Check for return URL in query params
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(_window.location.search);
     const returnUrl = urlParams.get('returnUrl');
     if (returnUrl) {
-      destination = decodeURIComponent(returnUrl);
+      destination = decodeURIComponent(_returnUrl);
     }
 
     // Navigate to destination
@@ -135,31 +135,31 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
     }, 500); // Small delay for better UX
   };
 
-  const handleProviderLogin = async (providerId: string) => {
-    setIsLoading(providerId);
+  const handleProviderLogin = async (_providerId: string) => {
+    setIsLoading(_providerId);
     try {
       // Use NextAuth signIn directly for OAuth providers
-      if (providerId === 'github' || providerId === 'google') {
-        await signIn(providerId, { callbackUrl: redirectTo });
+      if (_providerId === 'github' || providerId === 'google') {
+        await signIn( providerId, { callbackUrl: redirectTo });
       } else {
-        await login(providerId);
+        await login(_providerId);
       }
 
       // Save preferences and handle navigation
-      saveUserPreferences(providerId);
-      handlePostLoginNavigation();
+      saveUserPreferences(_providerId);
+      handlePostLoginNavigation(_);
 
       // Close modal after successful login
-      onClose();
-    } catch (error) {
+      onClose(_);
+    } catch (_error) {
       console.error('Login failed:', error);
     } finally {
-      setIsLoading(null);
+      setIsLoading(_null);
     }
   };
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEmailLogin = async (_e: React.FormEvent) => {
+    e.preventDefault(_);
     setIsLoading('email');
     try {
       // In a real app, this would handle email/password login
@@ -167,14 +167,14 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
 
       // Save preferences and handle navigation
       saveUserPreferences('email');
-      handlePostLoginNavigation();
+      handlePostLoginNavigation(_);
 
       // Close modal after successful login
-      onClose();
-    } catch (error) {
+      onClose(_);
+    } catch (_error) {
       console.error('Email login failed:', error);
     } finally {
-      setIsLoading(null);
+      setIsLoading(_null);
     }
   };
 
@@ -194,7 +194,7 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(_e) => e.stopPropagation(_)}
         >
           <Card className="bg-white/10 backdrop-blur-md border border-white/20">
             <div className="grid md:grid-cols-2 min-h-[600px]">
@@ -224,7 +224,7 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
                 </div>
 
                 <div className="space-y-6">
-                  {features.map((feature, index) => (
+                  {features.map( (feature, index) => (
                     <motion.div
                       key={feature.title}
                       initial={{ opacity: 0, x: -20 }}
@@ -277,7 +277,7 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
                   {/* Recent Login History */}
                   {userPreferences.loginHistory.length > 0 && (
                     <div className="mt-3 text-xs text-gray-500">
-                      Last login: {new Date(userPreferences.loginHistory[userPreferences.loginHistory.length - 1]?.timestamp).toLocaleDateString()}
+                      Last login: {new Date(_userPreferences.loginHistory[userPreferences.loginHistory.length - 1]?.timestamp).toLocaleDateString(_)}
                     </div>
                   )}
                 </div>
@@ -289,11 +289,11 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
                         key={provider.id}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          if (provider.id === 'email') {
-                            setShowEmailForm(true);
+                        onClick={(_) => {
+                          if (_provider.id === 'email') {
+                            setShowEmailForm(_true);
                           } else {
-                            handleProviderLogin(provider.id);
+                            handleProviderLogin(_provider.id);
                           }
                         }}
                         disabled={isLoading === provider.id}
@@ -347,7 +347,7 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
                       <input
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(_e) => setEmail(_e.target.value)}
                         placeholder="Enter your email"
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                         required
@@ -371,7 +371,7 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
                         <input
                           type="checkbox"
                           checked={rememberMe}
-                          onChange={(e) => setRememberMe(e.target.checked)}
+                          onChange={(_e) => setRememberMe(_e.target.checked)}
                           className="rounded border-white/20 bg-white/10 text-purple-600 focus:ring-purple-500"
                         />
                         <span className="ml-2 text-sm text-gray-400">Remember me</span>
@@ -395,7 +395,7 @@ export const EnhancedLoginModal: React.FC<EnhancedLoginModalProps> = ({
 
                     <button
                       type="button"
-                      onClick={() => setShowEmailForm(false)}
+                      onClick={(_) => setShowEmailForm(_false)}
                       className="w-full text-sm text-gray-400 hover:text-white transition-colors"
                     >
                       ← Back to other options

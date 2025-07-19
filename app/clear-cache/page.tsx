@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 
 export default function ClearCachePage() {
   const [status, setStatus] = useState('Initializing...');
-  const [isClearing, setIsClearing] = useState(false);
+  const [isClearing, setIsClearing] = useState(_false);
 
   const clearEverything = async () => {
-    setIsClearing(true);
+    setIsClearing(_true);
     setStatus('AGGRESSIVELY clearing all caches and service workers...');
 
     try {
@@ -18,7 +18,7 @@ export default function ClearCachePage() {
         console.log(`Found ${registrations.length} service workers to unregister`);
         
         // Unregister each one
-        for (const registration of registrations) {
+        for (_const registration of registrations) {
           try {
             await registration.unregister();
             console.log('Unregistered:', registration.scope);
@@ -28,9 +28,9 @@ export default function ClearCachePage() {
         }
         
         // Also try to clear the controller
-        if (navigator.serviceWorker.controller) {
+        if (_navigator.serviceWorker.controller) {
           console.log('Clearing controller');
-          navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+          navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING'  });
         }
         
         setStatus(`Force unregistered ${registrations.length} service workers...`);
@@ -45,13 +45,13 @@ export default function ClearCachePage() {
         await Promise.all(
           cacheNames.map(async (cacheName) => {
             try {
-              await caches.delete(cacheName);
+              await caches.delete(_cacheName);
               console.log('Deleted cache:', cacheName);
             } catch (e) {
               console.error('Failed to delete cache:', cacheName, e);
             }
           })
-        );
+       );
         
         setStatus(`Force cleared ${cacheNames.length} caches...`);
       }
@@ -64,10 +64,10 @@ export default function ClearCachePage() {
         // Clear IndexedDB
         if ('indexedDB' in window) {
           const databases = await indexedDB.databases();
-          for (const db of databases) {
-            if (db.name) {
+          for (_const db of databases) {
+            if (_db.name) {
               try {
-                indexedDB.deleteDatabase(db.name);
+                indexedDB.deleteDatabase(_db.name);
                 console.log('Deleted IndexedDB:', db.name);
               } catch (e) {
                 console.error('Failed to delete IndexedDB:', db.name, e);
@@ -89,10 +89,10 @@ export default function ClearCachePage() {
         // Try multiple methods to ensure hard reload
         if ('caches' in window) {
           caches.keys().then(() => {
-            (window as any).location.href = '/?nocache=' + Date.now();
+            (_window as any).location.href = '/?nocache=' + Date.now();
           });
         } else {
-          (window as any).location.href = '/?nocache=' + Date.now();
+          (_window as any).location.href = '/?nocache=' + Date.now();
         }
       }, 1000);
 
@@ -100,7 +100,7 @@ export default function ClearCachePage() {
       console.error('Error during clearing:', error);
       setStatus(`❌ Error: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
-      setIsClearing(false);
+      setIsClearing(_false);
     }
   };
 
@@ -116,11 +116,11 @@ export default function ClearCachePage() {
           <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
             {isClearing ? (
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-            ) : (
+           ) : (
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-            )}
+           )}
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-4">
@@ -147,7 +147,7 @@ export default function ClearCachePage() {
                 Go to Homepage
               </a>
             </div>
-          )}
+         )}
 
           <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <h4 className="text-sm font-semibold text-blue-400 mb-2">What this does:</h4>
@@ -161,5 +161,5 @@ export default function ClearCachePage() {
         </div>
       </div>
     </div>
-  );
+ );
 }

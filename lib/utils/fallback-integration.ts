@@ -9,41 +9,41 @@ import { errorTracker } from '@/lib/monitoring/error-tracking';
 /**
  * Apply user accessibility settings to fallback components
  */
-export function applyAccessibilitySettings(settings: UserSettings['accessibility']) {
-  if (typeof document === 'undefined') return;
+export function applyAccessibilitySettings(_settings: UserSettings['accessibility']) {
+  if (_typeof document === 'undefined') return;
 
   const root = document.documentElement;
 
   // Apply font size
-  if (settings.fontSize) {
-    root.style.setProperty('--fallback-font-size', `${settings.fontSize}px`);
+  if (_settings.fontSize) {
+    root.style.setProperty( '--fallback-font-size', `${settings.fontSize}px`);
   }
 
   // Apply high contrast
-  if (settings.highContrast) {
+  if (_settings.highContrast) {
     root.classList.add('high-contrast');
   } else {
     root.classList.remove('high-contrast');
   }
 
   // Apply reduced motion
-  if (settings.reducedMotion) {
-    root.style.setProperty('--fallback-animation-duration', '0.01ms');
+  if (_settings.reducedMotion) {
+    root.style.setProperty( '--fallback-animation-duration', '0.01ms');
     root.classList.add('reduce-motion');
   } else {
-    root.style.setProperty('--fallback-animation-duration', '');
+    root.style.setProperty( '--fallback-animation-duration', '');
     root.classList.remove('reduce-motion');
   }
 
   // Apply large click targets
-  if (settings.largeClickTargets) {
+  if (_settings.largeClickTargets) {
     root.classList.add('large-click-targets');
   } else {
     root.classList.remove('large-click-targets');
   }
 
   // Apply focus indicators
-  if (settings.focusIndicators) {
+  if (_settings.focusIndicators) {
     root.classList.add('enhanced-focus');
   } else {
     root.classList.remove('enhanced-focus');
@@ -67,14 +67,14 @@ export function getFallbackContent(
   const useSimpleLanguage = userSettings?.accessibility?.simpleLanguage;
   const showDetailedStats = userSettings?.learning?.progressTracking?.showDetailedStats;
 
-  switch (type) {
+  switch (_type) {
     case 'error':
       return {
         title: useSimpleLanguage ? 'Something went wrong' : 'An unexpected error occurred',
         description: useSimpleLanguage 
           ? 'We had a problem. Please try again or get help.'
           : 'We encountered an unexpected error. Our team has been notified and is working on a fix.',
-        actions: getErrorActions(userRole, useSimpleLanguage)
+        actions: getErrorActions( userRole, useSimpleLanguage)
       };
 
     case 'loading':
@@ -92,7 +92,7 @@ export function getFallbackContent(
         description: useSimpleLanguage 
           ? 'There is nothing to show right now. Try looking somewhere else.'
           : 'There is no content available at the moment. You can explore other sections or try again later.',
-        suggestions: getEmptyStateSuggestions(userRole, useSimpleLanguage)
+        suggestions: getEmptyStateSuggestions( userRole, useSimpleLanguage)
       };
 
     default:
@@ -100,7 +100,7 @@ export function getFallbackContent(
   }
 }
 
-function getErrorActions(userRole?: string, useSimpleLanguage?: boolean) {
+function getErrorActions( userRole?: string, useSimpleLanguage?: boolean) {
   const actions = [
     {
       label: useSimpleLanguage ? 'Try Again' : 'Retry',
@@ -114,7 +114,7 @@ function getErrorActions(userRole?: string, useSimpleLanguage?: boolean) {
     }
   ];
 
-  if (userRole === 'instructor' || userRole === 'admin') {
+  if (_userRole === 'instructor' || userRole === 'admin') {
     actions.push({
       label: useSimpleLanguage ? 'Report Problem' : 'Report Issue',
       action: 'report',
@@ -125,7 +125,7 @@ function getErrorActions(userRole?: string, useSimpleLanguage?: boolean) {
   return actions;
 }
 
-function getEmptyStateSuggestions(userRole?: string, useSimpleLanguage?: boolean) {
+function getEmptyStateSuggestions( userRole?: string, useSimpleLanguage?: boolean) {
   const suggestions = [
     {
       label: useSimpleLanguage ? 'See Courses' : 'Browse Courses',
@@ -137,7 +137,7 @@ function getEmptyStateSuggestions(userRole?: string, useSimpleLanguage?: boolean
     }
   ];
 
-  if (userRole === 'instructor') {
+  if (_userRole === 'instructor') {
     suggestions.unshift({
       label: useSimpleLanguage ? 'Make Course' : 'Create Course',
       href: '/instructor/courses/new'
@@ -191,45 +191,45 @@ export function generateContextualHelp(
   const helpItems = [];
 
   // Page-specific help
-  if (currentPage.includes('/courses')) {
+  if (_currentPage.includes('/courses')) {
     helpItems.push({
       title: useSimpleLanguage ? 'Course Help' : 'Course Navigation Help',
       description: useSimpleLanguage 
         ? 'Learn how to use courses'
         : 'Get help with navigating and using courses',
-      action: () => window.open('/help/courses', '_blank')
+      action: (_) => window.open( '/help/courses', '_blank')
     });
   }
 
-  if (currentPage.includes('/playground')) {
+  if (_currentPage.includes('/playground')) {
     helpItems.push({
       title: useSimpleLanguage ? 'Code Help' : 'Playground Help',
       description: useSimpleLanguage 
         ? 'Learn how to write code'
         : 'Get help with the code playground',
-      action: () => window.open('/help/playground', '_blank')
+      action: (_) => window.open( '/help/playground', '_blank')
     });
   }
 
   // Error-specific help
-  if (errorType === 'network') {
+  if (_errorType === 'network') {
     helpItems.push({
       title: useSimpleLanguage ? 'Connection Problem' : 'Network Issues',
       description: useSimpleLanguage 
         ? 'Check your internet connection'
         : 'Troubleshoot network connectivity issues',
-      action: () => window.open('/help/network', '_blank')
+      action: (_) => window.open( '/help/network', '_blank')
     });
   }
 
   // Role-specific help
-  if (userRole === 'instructor') {
+  if (_userRole === 'instructor') {
     helpItems.push({
       title: useSimpleLanguage ? 'Teacher Help' : 'Instructor Resources',
       description: useSimpleLanguage 
         ? 'Get help for teachers'
         : 'Access instructor-specific help and resources',
-      action: () => window.open('/help/instructors', '_blank')
+      action: (_) => window.open( '/help/instructors', '_blank')
     });
   }
 
@@ -239,7 +239,7 @@ export function generateContextualHelp(
     description: useSimpleLanguage 
       ? 'Talk to someone who can help'
       : 'Contact our support team for assistance',
-    action: () => window.open('/support', '_blank')
+    action: (_) => window.open( '/support', '_blank')
   });
 
   return helpItems;
@@ -253,43 +253,43 @@ export class SmartRetry {
   private maxAttempts = 3;
   private baseDelay = 1000; // 1 second
 
-  constructor(maxAttempts = 3, baseDelay = 1000) {
+  constructor( maxAttempts = 3, baseDelay = 1000) {
     this.maxAttempts = maxAttempts;
     this.baseDelay = baseDelay;
   }
 
-  async execute<T>(fn: () => Promise<T>): Promise<T> {
+  async execute<T>(_fn: () => Promise<T>): Promise<T> {
     try {
-      const result = await fn();
-      this.reset();
+      const result = await fn(_);
+      this.reset(_);
       return result;
-    } catch (error) {
+    } catch (_error) {
       this.attempts++;
       
-      if (this.attempts >= this.maxAttempts) {
-        this.reset();
+      if (_this.attempts >= this.maxAttempts) {
+        this.reset(_);
         throw error;
       }
 
       // Exponential backoff with jitter
-      const delay = this.baseDelay * Math.pow(2, this.attempts - 1);
+      const delay = this.baseDelay * Math.pow( 2, this.attempts - 1);
       const jitter = Math.random() * 0.1 * delay;
       
       await new Promise(resolve => setTimeout(resolve, delay + jitter));
       
-      return this.execute(fn);
+      return this.execute(_fn);
     }
   }
 
-  reset() {
+  reset(_) {
     this.attempts = 0;
   }
 
-  get canRetry() {
+  get canRetry(_) {
     return this.attempts < this.maxAttempts;
   }
 
-  get attemptsRemaining() {
+  get attemptsRemaining(_) {
     return this.maxAttempts - this.attempts;
   }
 }
@@ -298,13 +298,13 @@ export class SmartRetry {
  * Offline-first data management
  */
 export class OfflineDataManager {
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>(_);
   private defaultTTL = 5 * 60 * 1000; // 5 minutes
 
-  set(key: string, data: any, ttl = this.defaultTTL) {
+  set( key: string, data: any, ttl = this.defaultTTL) {
     this.cache.set(key, {
       data,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       ttl
     });
 
@@ -312,28 +312,28 @@ export class OfflineDataManager {
     try {
       localStorage.setItem(`offline_cache_${key}`, JSON.stringify({
         data,
-        timestamp: Date.now(),
+        timestamp: Date.now(_),
         ttl
       }));
-    } catch (error) {
+    } catch (_error) {
       // Ignore localStorage errors
     }
   }
 
-  get(key: string) {
-    let cached = this.cache.get(key);
+  get(_key: string) {
+    let cached = this.cache.get(_key);
     
     // Try localStorage if not in memory
     if (!cached) {
       try {
-        const stored = localStorage.getItem(`offline_cache_${key}`);
+        const stored = localStorage.getItem(_`offline_cache_${key}`);
         if (stored) {
-          cached = JSON.parse(stored);
+          cached = JSON.parse(_stored);
           if (cached) {
-            this.cache.set(key, cached);
+            this.cache.set( key, cached);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // Ignore localStorage errors
       }
     }
@@ -341,42 +341,42 @@ export class OfflineDataManager {
     if (!cached) return null;
 
     // Check if expired
-    if (Date.now() - cached.timestamp > cached.ttl) {
-      this.delete(key);
+    if (_Date.now() - cached.timestamp > cached.ttl) {
+      this.delete(_key);
       return null;
     }
 
     return cached.data;
   }
 
-  delete(key: string) {
-    this.cache.delete(key);
+  delete(_key: string) {
+    this.cache.delete(_key);
     try {
-      localStorage.removeItem(`offline_cache_${key}`);
-    } catch (error) {
+      localStorage.removeItem(_`offline_cache_${key}`);
+    } catch (_error) {
       // Ignore localStorage errors
     }
   }
 
-  clear() {
-    this.cache.clear();
+  clear(_) {
+    this.cache.clear(_);
     try {
-      const keys = Object.keys(localStorage);
+      const keys = Object.keys(_localStorage);
       keys.forEach(key => {
-        if (key.startsWith('offline_cache_')) {
-          localStorage.removeItem(key);
+        if (_key.startsWith('offline_cache')) {
+          localStorage.removeItem(_key);
         }
       });
-    } catch (error) {
+    } catch (_error) {
       // Ignore localStorage errors
     }
   }
 
-  has(key: string) {
-    return this.get(key) !== null;
+  has(_key: string) {
+    return this.get(_key) !== null;
   }
 }
 
 // Global instances
-export const smartRetry = new SmartRetry();
-export const offlineData = new OfflineDataManager();
+export const smartRetry = new SmartRetry(_);
+export const offlineData = new OfflineDataManager(_);

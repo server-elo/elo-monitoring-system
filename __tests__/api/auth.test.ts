@@ -8,28 +8,28 @@ import { AuthService } from '@/lib/api/auth';
 // Mock the auth service
 jest.mock('@/lib/api/auth');
 
-describe('Authentication API Endpoints', () => {
+describe( 'Authentication API Endpoints', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.restoreAllMocks(_);
   });
 
-  describe('POST /api/v1/auth/login', () => {
-    it('should successfully login with valid credentials', async () => {
+  describe( 'POST /api/v1/auth/login', () => {
+    it( 'should successfully login with valid credentials', async () => {
       const mockUser = {
-        id: 'user_1',
+        id: 'user1',
         email: 'test@example.com',
         name: 'Test User',
         role: 'STUDENT',
         status: 'ACTIVE'
       };
 
-      (AuthService.verifyPassword as jest.Mock).mockResolvedValue(true);
-      (AuthService.generateAccessToken as jest.Mock).mockReturnValue('mock-access-token');
-      (AuthService.generateRefreshToken as jest.Mock).mockReturnValue('mock-refresh-token');
+      (_AuthService.verifyPassword as jest.Mock).mockResolvedValue(_true);
+      (_AuthService.generateAccessToken as jest.Mock).mockReturnValue('mock-access-token');
+      (_AuthService.generateRefreshToken as jest.Mock).mockReturnValue('mock-refresh-token');
 
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
@@ -43,18 +43,18 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
-      const data = await response.json();
+      const response = await loginHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-      expect(data.data.tokens.accessToken).toBe('mock-access-token');
-      expect(data.data.tokens.refreshToken).toBe('mock-refresh-token');
-      expect(data.data.user.email).toBe('test@example.com');
+      expect(_response.status).toBe(200);
+      expect(_data.success).toBe(_true);
+      expect(_data.data.tokens.accessToken).toBe('mock-access-token');
+      expect(_data.data.tokens.refreshToken).toBe('mock-refresh-token');
+      expect(_data.data.user.email).toBe('test@example.com');
     });
 
-    it('should return 401 for invalid credentials', async () => {
-      (AuthService.verifyPassword as jest.Mock).mockResolvedValue(false);
+    it( 'should return 401 for invalid credentials', async () => {
+      (_AuthService.verifyPassword as jest.Mock).mockResolvedValue(_false);
 
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
@@ -67,15 +67,15 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
-      const data = await response.json();
+      const response = await loginHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(401);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('UNAUTHORIZED');
+      expect(_response.status).toBe(_401);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('UNAUTHORIZED');
     });
 
-    it('should return 400 for invalid email format', async () => {
+    it( 'should return 400 for invalid email format', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({
@@ -87,17 +87,17 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
-      const data = await response.json();
+      const response = await loginHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
-      expect(data.error.details).toHaveLength(1);
-      expect(data.error.details[0].field).toBe('email');
+      expect(_response.status).toBe(_400);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('VALIDATION_ERROR');
+      expect(_data.error.details).toHaveLength(1);
+      expect(_data.error.details[0].field).toBe('email');
     });
 
-    it('should return 400 for missing password', async () => {
+    it( 'should return 400 for missing password', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({
@@ -108,15 +108,15 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
-      const data = await response.json();
+      const response = await loginHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
+      expect(_response.status).toBe(_400);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('VALIDATION_ERROR');
     });
 
-    it('should handle rate limiting', async () => {
+    it( 'should handle rate limiting', async () => {
       // Mock rate limit exceeded
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
@@ -130,20 +130,20 @@ describe('Authentication API Endpoints', () => {
       });
 
       // Simulate multiple requests to trigger rate limit
-      const promises = Array.from({ length: 15 }, () => loginHandler(request));
-      const responses = await Promise.all(promises);
+      const promises = Array.from( { length: 15 }, () => loginHandler(_request));
+      const responses = await Promise.all(_promises);
 
       // At least one should be rate limited
       const rateLimitedResponse = responses.find(r => r.status === 429);
-      expect(rateLimitedResponse).toBeDefined();
+      expect(_rateLimitedResponse).toBeDefined(_);
     });
   });
 
-  describe('POST /api/v1/auth/register', () => {
-    it('should successfully register a new user', async () => {
-      (AuthService.hashPassword as jest.Mock).mockResolvedValue('hashed-password');
-      (AuthService.generateAccessToken as jest.Mock).mockReturnValue('mock-access-token');
-      (AuthService.generateRefreshToken as jest.Mock).mockReturnValue('mock-refresh-token');
+  describe( 'POST /api/v1/auth/register', () => {
+    it( 'should successfully register a new user', async () => {
+      (_AuthService.hashPassword as jest.Mock).mockResolvedValue('hashed-password');
+      (_AuthService.generateAccessToken as jest.Mock).mockReturnValue('mock-access-token');
+      (_AuthService.generateRefreshToken as jest.Mock).mockReturnValue('mock-refresh-token');
 
       const request = new NextRequest('http://localhost:3000/api/v1/auth/register', {
         method: 'POST',
@@ -159,17 +159,17 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await registerHandler(request);
-      const data = await response.json();
+      const response = await registerHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(201);
-      expect(data.success).toBe(true);
-      expect(data.data.user.email).toBe('newuser@example.com');
-      expect(data.data.user.name).toBe('New User');
-      expect(data.data.tokens.accessToken).toBe('mock-access-token');
+      expect(_response.status).toBe(_201);
+      expect(_data.success).toBe(_true);
+      expect(_data.data.user.email).toBe('newuser@example.com');
+      expect(_data.data.user.name).toBe('New User');
+      expect(_data.data.tokens.accessToken).toBe('mock-access-token');
     });
 
-    it('should return 409 for existing user', async () => {
+    it( 'should return 409 for existing user', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/register', {
         method: 'POST',
         body: JSON.stringify({
@@ -184,15 +184,15 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await registerHandler(request);
-      const data = await response.json();
+      const response = await registerHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(409);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('RESOURCE_CONFLICT');
+      expect(_response.status).toBe(_409);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('RESOURCE_CONFLICT');
     });
 
-    it('should return 400 for password mismatch', async () => {
+    it( 'should return 400 for password mismatch', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/register', {
         method: 'POST',
         body: JSON.stringify({
@@ -207,15 +207,15 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await registerHandler(request);
-      const data = await response.json();
+      const response = await registerHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
+      expect(_response.status).toBe(_400);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('VALIDATION_ERROR');
     });
 
-    it('should return 400 for weak password', async () => {
+    it( 'should return 400 for weak password', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/register', {
         method: 'POST',
         body: JSON.stringify({
@@ -230,15 +230,15 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await registerHandler(request);
-      const data = await response.json();
+      const response = await registerHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
+      expect(_response.status).toBe(_400);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('VALIDATION_ERROR');
     });
 
-    it('should return 400 for not accepting terms', async () => {
+    it( 'should return 400 for not accepting terms', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/register', {
         method: 'POST',
         body: JSON.stringify({
@@ -253,25 +253,25 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await registerHandler(request);
-      const data = await response.json();
+      const response = await registerHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
+      expect(_response.status).toBe(_400);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('VALIDATION_ERROR');
     });
   });
 
-  describe('POST /api/v1/auth/refresh', () => {
-    it('should successfully refresh tokens', async () => {
+  describe( 'POST /api/v1/auth/refresh', () => {
+    it( 'should successfully refresh tokens', async () => {
       const mockPayload = {
-        userId: 'user_1',
+        userId: 'user1',
         tokenVersion: 0
       };
 
-      (AuthService.verifyRefreshToken as jest.Mock).mockReturnValue(mockPayload);
-      (AuthService.generateAccessToken as jest.Mock).mockReturnValue('new-access-token');
-      (AuthService.generateRefreshToken as jest.Mock).mockReturnValue('new-refresh-token');
+      (_AuthService.verifyRefreshToken as jest.Mock).mockReturnValue(_mockPayload);
+      (_AuthService.generateAccessToken as jest.Mock).mockReturnValue('new-access-token');
+      (_AuthService.generateRefreshToken as jest.Mock).mockReturnValue('new-refresh-token');
 
       const request = new NextRequest('http://localhost:3000/api/v1/auth/refresh', {
         method: 'POST',
@@ -283,17 +283,17 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await refreshHandler(request);
-      const data = await response.json();
+      const response = await refreshHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-      expect(data.data.tokens.accessToken).toBe('new-access-token');
-      expect(data.data.tokens.refreshToken).toBe('new-refresh-token');
+      expect(_response.status).toBe(200);
+      expect(_data.success).toBe(_true);
+      expect(_data.data.tokens.accessToken).toBe('new-access-token');
+      expect(_data.data.tokens.refreshToken).toBe('new-refresh-token');
     });
 
-    it('should return 401 for invalid refresh token', async () => {
-      (AuthService.verifyRefreshToken as jest.Mock).mockImplementation(() => {
+    it( 'should return 401 for invalid refresh token', async () => {
+      (_AuthService.verifyRefreshToken as jest.Mock).mockImplementation(() => {
         throw new Error('Invalid refresh token');
       });
 
@@ -307,21 +307,21 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await refreshHandler(request);
-      const data = await response.json();
+      const response = await refreshHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(401);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('UNAUTHORIZED');
+      expect(_response.status).toBe(_401);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('UNAUTHORIZED');
     });
 
-    it('should return 401 for revoked refresh token', async () => {
+    it( 'should return 401 for revoked refresh token', async () => {
       const mockPayload = {
-        userId: 'user_1',
+        userId: 'user1',
         tokenVersion: 0
       };
 
-      (AuthService.verifyRefreshToken as jest.Mock).mockReturnValue(mockPayload);
+      (_AuthService.verifyRefreshToken as jest.Mock).mockReturnValue(_mockPayload);
 
       const request = new NextRequest('http://localhost:3000/api/v1/auth/refresh', {
         method: 'POST',
@@ -333,34 +333,34 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await refreshHandler(request);
-      const data = await response.json();
+      const response = await refreshHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(401);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('UNAUTHORIZED');
+      expect(_response.status).toBe(_401);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('UNAUTHORIZED');
     });
 
-    it('should return 400 for missing refresh token', async () => {
+    it( 'should return 400 for missing refresh token', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/refresh', {
         method: 'POST',
-        body: JSON.stringify({}),
+        body: JSON.stringify({  }),
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
-      const response = await refreshHandler(request);
-      const data = await response.json();
+      const response = await refreshHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
+      expect(_response.status).toBe(_400);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('VALIDATION_ERROR');
     });
   });
 
-  describe('Security Tests', () => {
-    it('should include security headers in responses', async () => {
+  describe( 'Security Tests', () => {
+    it( 'should include security headers in responses', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({
@@ -372,14 +372,14 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
+      const response = await loginHandler(_request);
 
-      expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
-      expect(response.headers.get('X-Frame-Options')).toBe('DENY');
-      expect(response.headers.get('X-XSS-Protection')).toBe('1; mode=block');
+      expect(_response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+      expect(_response.headers.get('X-Frame-Options')).toBe('DENY');
+      expect(_response.headers.get('X-XSS-Protection')).toBe('1; mode=block');
     });
 
-    it('should handle CORS preflight requests', async () => {
+    it( 'should handle CORS preflight requests', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'OPTIONS',
         headers: {
@@ -389,14 +389,14 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
+      const response = await loginHandler(_request);
 
-      expect(response.status).toBe(200);
-      expect(response.headers.get('Access-Control-Allow-Origin')).toBeTruthy();
-      expect(response.headers.get('Access-Control-Allow-Methods')).toBeTruthy();
+      expect(_response.status).toBe(200);
+      expect(_response.headers.get('Access-Control-Allow-Origin')).toBeTruthy(_);
+      expect(_response.headers.get('Access-Control-Allow-Methods')).toBeTruthy(_);
     });
 
-    it('should sanitize input data', async () => {
+    it( 'should sanitize input data', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({
@@ -408,14 +408,14 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
-      const data = await response.json();
+      const response = await loginHandler(_request);
+      const data = await response.json(_);
 
       // Should either sanitize or reject the input
-      expect(response.status).toBeGreaterThanOrEqual(400);
+      expect(_response.status).toBeGreaterThanOrEqual(_400);
     });
 
-    it('should include rate limit headers', async () => {
+    it( 'should include rate limit headers', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({
@@ -427,16 +427,16 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
+      const response = await loginHandler(_request);
 
-      expect(response.headers.get('X-RateLimit-Limit')).toBeTruthy();
-      expect(response.headers.get('X-RateLimit-Remaining')).toBeTruthy();
-      expect(response.headers.get('X-RateLimit-Reset')).toBeTruthy();
+      expect(_response.headers.get('X-RateLimit-Limit')).toBeTruthy(_);
+      expect(_response.headers.get('X-RateLimit-Remaining')).toBeTruthy(_);
+      expect(_response.headers.get('X-RateLimit-Reset')).toBeTruthy(_);
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle malformed JSON', async () => {
+  describe( 'Error Handling', () => {
+    it( 'should handle malformed JSON', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
         body: 'invalid json',
@@ -445,15 +445,15 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
-      const data = await response.json();
+      const response = await loginHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
+      expect(_response.status).toBe(_400);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('VALIDATION_ERROR');
     });
 
-    it('should handle missing content-type header', async () => {
+    it( 'should handle missing content-type header', async () => {
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({
@@ -462,15 +462,15 @@ describe('Authentication API Endpoints', () => {
         })
       });
 
-      const response = await loginHandler(request);
+      const response = await loginHandler(_request);
 
       // Should still work or return appropriate error
-      expect(response.status).toBeGreaterThanOrEqual(200);
+      expect(_response.status).toBeGreaterThanOrEqual(200);
     });
 
-    it('should handle database connection errors gracefully', async () => {
+    it( 'should handle database connection errors gracefully', async () => {
       // Mock database error
-      (AuthService.verifyPassword as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
+      (_AuthService.verifyPassword as jest.Mock).mockRejectedValue(_new Error('Database connection failed'));
 
       const request = new NextRequest('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
@@ -483,12 +483,12 @@ describe('Authentication API Endpoints', () => {
         }
       });
 
-      const response = await loginHandler(request);
-      const data = await response.json();
+      const response = await loginHandler(_request);
+      const data = await response.json(_);
 
-      expect(response.status).toBe(500);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('INTERNAL_SERVER_ERROR');
+      expect(_response.status).toBe(500);
+      expect(_data.success).toBe(_false);
+      expect(_data.error.code).toBe('INTERNAL_SERVER_ERROR');
     });
   });
 });

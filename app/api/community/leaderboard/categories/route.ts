@@ -84,7 +84,7 @@ export async function GET() {
     // 2. Filter categories based on user role
     // 3. Get categories from database with admin-configurable settings
     
-    return NextResponse.json(categories);
+    return NextResponse.json(_categories);
   } catch (error) {
     logger.error('Error fetching leaderboard categories', error as Error);
     return NextResponse.json(

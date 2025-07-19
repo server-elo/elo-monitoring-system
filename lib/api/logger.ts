@@ -47,32 +47,32 @@ export class Logger {
   private logs: LogEntry[] = [];
   private maxLogs: number = 1000;
 
-  constructor(config: Partial<LoggerConfig> = {}) {
-    this.config = { ...DEFAULT_CONFIG, ...config };
+  constructor(_config: Partial<LoggerConfig> = {}) {
+    this.config = { ...DEFAULT_CONFIG, ..._config };
   }
 
-  static getInstance(): Logger {
+  static getInstance(_): Logger {
     if (!Logger.instance) {
-      Logger.instance = new Logger();
+      Logger.instance = new Logger(_);
     }
     return Logger.instance;
   }
 
-  private shouldLog(level: LogLevel): boolean {
-    return level <= this.config.level;
+  private shouldLog(_level: LogLevel): boolean {
+    return _level <= this.config.level;
   }
 
-  private sanitizeData(data: any): any {
-    if (typeof data !== 'object' || data === null) {
-      return data;
+  private sanitizeData(_data: any): any {
+    if (typeof _data !== 'object' || _data === null) {
+      return _data;
     }
 
-    if (Array.isArray(data)) {
-      return data.map(item => this.sanitizeData(item));
+    if (Array.isArray(_data)) {
+      return _data.map(item => this.sanitizeData(item));
     }
 
     const sanitized: any = {};
-    for (const [key, value] of Object.entries(data)) {
+    for (const [key, value] of Object.entries(_data)) {
       if (this.config.sensitiveFields.some(field => 
         key.toLowerCase().includes(field.toLowerCase())
       )) {
@@ -87,42 +87,42 @@ export class Logger {
     return sanitized;
   }
 
-  private formatLog(entry: LogEntry): string {
+  private formatLog(_entry: LogEntry): string {
     if (this.config.format === 'json') {
       return JSON.stringify({
-        level: LogLevel[entry.level],
-        message: entry.message,
-        timestamp: entry.timestamp,
-        requestId: entry.requestId,
-        userId: entry.userId,
-        metadata: entry.metadata,
-        error: entry.error ? {
-          name: entry.error.name,
-          message: entry.error.message,
-          stack: entry.error.stack
+        level: LogLevel[_entry.level],
+        message: _entry.message,
+        timestamp: _entry.timestamp,
+        requestId: _entry.requestId,
+        userId: _entry.userId,
+        metadata: _entry.metadata,
+        error: _entry.error ? {
+          name: _entry.error.name,
+          message: _entry.error.message,
+          stack: _entry.error.stack
         } : undefined
       });
     } else {
-      const levelName = LogLevel[entry.level].padEnd(5);
-      const timestamp = entry.timestamp;
-      const requestId = entry.requestId ? ` [${entry.requestId}]` : '';
-      const userId = entry.userId ? ` [user:${entry.userId}]` : '';
+      const levelName = LogLevel[_entry.level].padEnd(5);
+      const timestamp = _entry.timestamp;
+      const requestId = _entry.requestId ? ` [${_entry.requestId}]` : '';
+      const userId = _entry.userId ? ` [user:${_entry.userId}]` : '';
       
-      let message = `${timestamp} ${levelName}${requestId}${userId} ${entry.message}`;
+      let message = `${timestamp} ${levelName}${requestId}${userId} ${_entry.message}`;
       
-      if (entry.metadata) {
-        message += ` ${JSON.stringify(entry.metadata)}`;
+      if (_entry.metadata) {
+        message += ` ${JSON.stringify(_entry.metadata)}`;
       }
       
-      if (entry.error) {
-        message += `\n${entry.error.stack}`;
+      if (_entry.error) {
+        message += `\n${_entry.error.stack}`;
       }
       
       return message;
     }
   }
 
-  private log(level: LogLevel, message: string, metadata?: Record<string, any>, error?: Error): void {
+  private log( level: LogLevel, message: string, metadata?: Record<string, any>, error?: Error): void {
     if (!this.shouldLog(level)) {
       return;
     }
@@ -162,20 +162,20 @@ export class Logger {
     }
   }
 
-  error(message: string, metadata?: Record<string, any>, error?: Error): void {
-    this.log(LogLevel.ERROR, message, metadata, error);
+  error( message: string, metadata?: Record<string, any>, error?: Error): void {
+    this.log( LogLevel.ERROR, message, metadata, error);
   }
 
-  warn(message: string, metadata?: Record<string, any>): void {
-    this.log(LogLevel.WARN, message, metadata);
+  warn( message: string, metadata?: Record<string, any>): void {
+    this.log( LogLevel.WARN, message, metadata);
   }
 
-  info(message: string, metadata?: Record<string, any>): void {
-    this.log(LogLevel.INFO, message, metadata);
+  info( message: string, metadata?: Record<string, any>): void {
+    this.log( LogLevel.INFO, message, metadata);
   }
 
-  debug(message: string, metadata?: Record<string, any>): void {
-    this.log(LogLevel.DEBUG, message, metadata);
+  debug( message: string, metadata?: Record<string, any>): void {
+    this.log( LogLevel.DEBUG, message, metadata);
   }
 
   // Request/Response logging
@@ -189,20 +189,20 @@ export class Logger {
       method: request.method,
       url: request.url,
       userAgent: request.headers.get('user-agent'),
-      ip: this.getClientIP(request),
-      headers: Object.fromEntries(request.headers.entries())
+      ip: this.getClientIP(_request),
+      headers: Object.fromEntries(_request.headers.entries())
     };
 
-    if (this.config.includeRequestBody && body) {
-      const bodyString = JSON.stringify(body);
-      if (bodyString.length <= this.config.maxBodySize) {
-        metadata.body = this.sanitizeData(body);
+    if (_this.config.includeRequestBody && body) {
+      const bodyString = JSON.stringify(_body);
+      if (_bodyString.length <= this.config.maxBodySize) {
+        metadata.body = this.sanitizeData(_body);
       } else {
         metadata.body = '[BODY_TOO_LARGE]';
       }
     }
 
-    this.info('API Request', { ...metadata, requestId, userId });
+    this.info( 'API Request', { ...metadata, requestId, userId });
   }
 
   logResponse(
@@ -218,13 +218,13 @@ export class Logger {
       url: request.url,
       statusCode: response.status,
       duration: duration ? `${duration}ms` : undefined,
-      headers: Object.fromEntries(response.headers.entries())
+      headers: Object.fromEntries(_response.headers.entries())
     };
 
-    if (this.config.includeResponseBody && body) {
-      const bodyString = JSON.stringify(body);
-      if (bodyString.length <= this.config.maxBodySize) {
-        metadata.body = this.sanitizeData(body);
+    if (_this.config.includeResponseBody && body) {
+      const bodyString = JSON.stringify(_body);
+      if (_bodyString.length <= this.config.maxBodySize) {
+        metadata.body = this.sanitizeData(_body);
       } else {
         metadata.body = '[BODY_TOO_LARGE]';
       }
@@ -233,7 +233,7 @@ export class Logger {
     const level = response.status >= 400 ? LogLevel.WARN : LogLevel.INFO;
     const message = response.status >= 400 ? 'API Error Response' : 'API Response';
     
-    this.log(level, message, { ...metadata, requestId, userId });
+    this.log( level, message, { ...metadata, requestId, userId });
   }
 
   logError(
@@ -251,44 +251,44 @@ export class Logger {
       metadata.method = request.method;
       metadata.url = request.url;
       metadata.userAgent = request.headers.get('user-agent');
-      metadata.ip = this.getClientIP(request);
+      metadata.ip = this.getClientIP(_request);
     }
 
-    this.error('Unhandled Error', { ...metadata, requestId, userId }, error);
+    this.error( 'Unhandled Error', { ...metadata, requestId, userId }, error);
   }
 
-  private getClientIP(request: NextRequest): string {
+  private getClientIP(_request: NextRequest): string {
     const forwarded = request.headers.get('x-forwarded-for');
     if (forwarded) {
-      return forwarded.split(',')[0].trim();
+      return forwarded.split(',')[0].trim(_);
     }
     return request.headers.get('x-real-ip') || 'unknown';
   }
 
   // Get recent logs
-  getRecentLogs(count: number = 100): LogEntry[] {
-    return this.logs.slice(-count);
+  getRecentLogs(_count: number = 100): LogEntry[] {
+    return this.logs.slice(_-count);
   }
 
   // Get logs by level
-  getLogsByLevel(level: LogLevel, count: number = 100): LogEntry[] {
+  getLogsByLevel( level: LogLevel, count: number = 100): LogEntry[] {
     return this.logs
       .filter(log => log.level === level)
-      .slice(-count);
+      .slice(_-count);
   }
 
   // Get logs by request ID
-  getLogsByRequestId(requestId: string): LogEntry[] {
+  getLogsByRequestId(_requestId: string): LogEntry[] {
     return this.logs.filter(log => log.requestId === requestId);
   }
 
   // Clear logs
-  clearLogs(): void {
+  clearLogs(_): void {
     this.logs = [];
   }
 
   // Get log statistics
-  getStats(): {
+  getStats(_): {
     total: number;
     byLevel: Record<string, number>;
     recentErrors: LogEntry[];
@@ -312,7 +312,7 @@ export class Logger {
   }
 
   // Update configuration
-  updateConfig(config: Partial<LoggerConfig>): void {
+  updateConfig(_config: Partial<LoggerConfig>): void {
     this.config = { ...this.config, ...config };
   }
 }
@@ -332,13 +332,13 @@ export class AuditLogger {
     userAgent: string;
   }> = [];
 
-  constructor() {
-    this.logger = Logger.getInstance();
+  constructor(_) {
+    this.logger = Logger.getInstance(_);
   }
 
-  static getInstance(): AuditLogger {
+  static getInstance(_): AuditLogger {
     if (!AuditLogger.instance) {
-      AuditLogger.instance = new AuditLogger();
+      AuditLogger.instance = new AuditLogger(_);
     }
     return AuditLogger.instance;
   }
@@ -358,38 +358,38 @@ export class AuditLogger {
       resourceId,
       changes,
       timestamp: new Date().toISOString(),
-      ip: this.getClientIP(request),
+      ip: this.getClientIP(_request),
       userAgent: request.headers.get('user-agent') || 'unknown'
     };
 
-    this.auditLogs.push(auditEntry);
+    this.auditLogs.push(_auditEntry);
     
     // Also log to main logger
-    this.logger.info('Audit Log', {
+    this.logger.info('Audit Log', { metadata: {
       audit: true,
       ...auditEntry
-    });
+    }});
   }
 
-  private getClientIP(request: NextRequest): string {
+  private getClientIP(_request: NextRequest): string {
     const forwarded = request.headers.get('x-forwarded-for');
     if (forwarded) {
-      return forwarded.split(',')[0].trim();
+      return forwarded.split(',')[0].trim(_);
     }
     return request.headers.get('x-real-ip') || 'unknown';
   }
 
-  getAuditLogs(limit: number = 100): typeof this.auditLogs {
-    return this.auditLogs.slice(-limit);
+  getAuditLogs(_limit: number = 100): typeof this.auditLogs {
+    return this.auditLogs.slice(_-limit);
   }
 
-  getAuditLogsByUser(userId: string, limit: number = 100): typeof this.auditLogs {
+  getAuditLogsByUser( userId: string, limit: number = 100): typeof this.auditLogs {
     return this.auditLogs
       .filter(log => log.userId === userId)
-      .slice(-limit);
+      .slice(_-limit);
   }
 
-  getAuditLogsByResource(resourceType: string, resourceId: string): typeof this.auditLogs {
+  getAuditLogsByResource( resourceType: string, resourceId: string): typeof this.auditLogs {
     return this.auditLogs.filter(log => 
       log.resourceType === resourceType && log.resourceId === resourceId
     );
@@ -397,8 +397,8 @@ export class AuditLogger {
 }
 
 // Singleton instances
-export const logger = Logger.getInstance();
-export const auditLogger = AuditLogger.getInstance();
+export const logger = Logger.getInstance({});
+export const auditLogger = AuditLogger.getInstance({});
 
 // Helper functions
 export function logApiRequest(
@@ -407,7 +407,7 @@ export function logApiRequest(
   userId?: string,
   body?: any
 ): void {
-  logger.logRequest(request, requestId, userId, body);
+  logger.logRequest( request, requestId, userId, body);
 }
 
 export function logApiResponse(
@@ -418,7 +418,7 @@ export function logApiResponse(
   duration?: number,
   body?: any
 ): void {
-  logger.logResponse(request, response, requestId, userId, duration, body);
+  logger.logResponse( request, response, requestId, userId, duration, body);
 }
 
 export function logApiError(
@@ -427,5 +427,5 @@ export function logApiError(
   requestId?: string,
   userId?: string
 ): void {
-  logger.logError(error, request, requestId, userId);
+  logger.logError( error, request, requestId, userId);
 }

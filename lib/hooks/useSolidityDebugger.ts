@@ -21,19 +21,19 @@ export interface DebuggerState {
 
 export interface UseDebuggerOptions {
   autoInitialize?: boolean;
-  onBreakpointHit?: (breakpoint: BreakpointInfo) => void;
-  onExecutionComplete?: (result: StepResult) => void;
-  onError?: (error: string) => void;
+  onBreakpointHit?: (_breakpoint: BreakpointInfo) => void;
+  onExecutionComplete?: (_result: StepResult) => void;
+  onError?: (_error: string) => void;
 }
 
 /**
  * Hook for managing Solidity debugging sessions
  */
-export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
+export function useSolidityDebugger(_options: UseDebuggerOptions = {}) {
   const { autoInitialize = true, onBreakpointHit: _onBreakpointHit, onExecutionComplete, onError } = options;
   
-  const debuggerRef = useRef<SolidityDebugger | null>(null);
-  const { showSuccess, showError, showInfo, showWarning } = useNotifications();
+  const debuggerRef = useRef<SolidityDebugger | null>(_null);
+  const { showSuccess, showError, showInfo, showWarning } = useNotifications(_);
   
   const [state, setState] = useState<DebuggerState>({
     isInitialized: false,
@@ -49,100 +49,100 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
     if (!autoInitialize) return;
 
     const initializeDebugger = async () => {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
+      setState( prev => ({ ...prev, isLoading: true, error: null }));
       
       try {
-        const solidityDebugger = new SolidityDebugger();
+        const solidityDebugger = new SolidityDebugger(_);
         
         // Set up event listeners
-        solidityDebugger.on('initialized', () => {
+        solidityDebugger.on( 'initialized', () => {
           setState(prev => ({
             ...prev,
             isInitialized: true,
             isLoading: false
           }));
-          showSuccess('Debugger Ready', 'Solidity debugger initialized successfully');
+          showSuccess( 'Debugger Ready', 'Solidity debugger initialized successfully');
         });
 
-        solidityDebugger.on('session-started', ({ sessionId }) => {
+        solidityDebugger.on( 'session-started', ({ sessionId }) => {
           setState(prev => ({
             ...prev,
             activeSessionId: sessionId
           }));
-          showInfo('Debug Session Started', `Session ${sessionId} is now active`);
+          showInfo( 'Debug Session Started', `Session ${sessionId} is now active`);
         });
 
-        solidityDebugger.on('session-stopped', ({ sessionId }) => {
+        solidityDebugger.on( 'session-stopped', ({ sessionId }) => {
           setState(prev => ({
             ...prev,
             activeSessionId: prev.activeSessionId === sessionId ? null : prev.activeSessionId,
             executionState: null,
             breakpoints: []
           }));
-          showInfo('Debug Session Stopped', `Session ${sessionId} has been terminated`);
+          showInfo( 'Debug Session Stopped', `Session ${sessionId} has been terminated`);
         });
 
-        solidityDebugger.on('breakpoint-set', ({ breakpoint }) => {
+        solidityDebugger.on( 'breakpoint-set', ({ breakpoint }) => {
           setState(prev => ({
             ...prev,
             breakpoints: [...prev.breakpoints.filter(bp => bp.line !== breakpoint.line), breakpoint]
           }));
         });
 
-        solidityDebugger.on('breakpoint-removed', ({ breakpoint }) => {
+        solidityDebugger.on( 'breakpoint-removed', ({ breakpoint }) => {
           setState(prev => ({
             ...prev,
             breakpoints: prev.breakpoints.filter(bp => bp.id !== breakpoint.id)
           }));
         });
 
-        solidityDebugger.on('step-completed', ({ result }) => {
+        solidityDebugger.on( 'step-completed', ({ result }) => {
           setState(prev => ({
             ...prev,
             executionState: result.newState
           }));
-          onExecutionComplete?.(result);
+          onExecutionComplete?.(_result);
         });
 
-        solidityDebugger.on('execution-paused', () => {
-          showWarning('Execution Paused', 'Debug execution has been paused');
+        solidityDebugger.on( 'execution-paused', () => {
+          showWarning( 'Execution Paused', 'Debug execution has been paused');
         });
 
-        solidityDebugger.on('execution-continued', () => {
-          showInfo('Execution Continued', 'Debug execution is continuing');
+        solidityDebugger.on( 'execution-continued', () => {
+          showInfo( 'Execution Continued', 'Debug execution is continuing');
         });
 
-        solidityDebugger.on('error', ({ message, error }) => {
+        solidityDebugger.on( 'error', ({ message, error }) => {
           const errorMessage = `${message}: ${error?.message || 'Unknown error'}`;
           setState(prev => ({
             ...prev,
             error: errorMessage,
             isLoading: false
           }));
-          showError('Debugger Error', errorMessage);
-          onError?.(errorMessage);
+          showError( 'Debugger Error', errorMessage);
+          onError?.(_errorMessage);
         });
 
         debuggerRef.current = solidityDebugger;
-        await solidityDebugger.initialize();
+        await solidityDebugger.initialize(_);
         
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to initialize debugger';
         setState(prev => ({ 
           ...prev, 
           error: errorMessage, 
           isLoading: false 
         }));
-        showError('Initialization Failed', errorMessage);
-        onError?.(errorMessage);
+        showError( 'Initialization Failed', errorMessage);
+        onError?.(_errorMessage);
       }
     };
 
-    initializeDebugger();
+    initializeDebugger(_);
 
-    return () => {
-      if (debuggerRef.current) {
-        debuggerRef.current.removeAllListeners();
+    return (_) => {
+      if (_debuggerRef.current) {
+        debuggerRef.current.removeAllListeners(_);
       }
     };
   }, [autoInitialize, showSuccess, showError, showInfo, showWarning, onExecutionComplete, onError]);
@@ -156,11 +156,11 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
     abi: any[]
   ): Promise<string | null> => {
     if (!debuggerRef.current || !state.isInitialized) {
-      showError('Debugger Not Ready', 'Please wait for debugger to initialize');
+      showError( 'Debugger Not Ready', 'Please wait for debugger to initialize');
       return null;
     }
 
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    setState( prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const sessionId = await debuggerRef.current.startSession(
@@ -171,7 +171,7 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
         abi
       );
 
-      const executionState = debuggerRef.current.getExecutionState(sessionId);
+      const executionState = debuggerRef.current.getExecutionState(_sessionId);
       setState(prev => ({
         ...prev,
         activeSessionId: sessionId,
@@ -180,29 +180,29 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
       }));
 
       return sessionId;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to start debug session';
       setState(prev => ({ 
         ...prev, 
         error: errorMessage, 
         isLoading: false 
       }));
-      showError('Session Start Failed', errorMessage);
+      showError( 'Session Start Failed', errorMessage);
       return null;
     }
   }, [state.isInitialized, showError]);
 
   // Stop debugging session
-  const stopSession = useCallback(async (): Promise<void> => {
+  const stopSession = useCallback( async (): Promise<void> => {
     if (!debuggerRef.current || !state.activeSessionId) {
       return;
     }
 
     try {
-      await debuggerRef.current.stopSession(state.activeSessionId);
-    } catch (error) {
+      await debuggerRef.current.stopSession(_state.activeSessionId);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to stop debug session';
-      showError('Session Stop Failed', errorMessage);
+      showError( 'Session Stop Failed', errorMessage);
     }
   }, [state.activeSessionId, showError]);
 
@@ -213,7 +213,7 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
     logMessage?: string
   ): string | null => {
     if (!debuggerRef.current || !state.activeSessionId) {
-      showError('No Active Session', 'Please start a debug session first');
+      showError( 'No Active Session', 'Please start a debug session first');
       return null;
     }
 
@@ -224,9 +224,9 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
         condition,
         logMessage
       );
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to set breakpoint';
-      showError('Breakpoint Error', errorMessage);
+      showError( 'Breakpoint Error', errorMessage);
       return null;
     }
   }, [state.activeSessionId, showError]);
@@ -237,10 +237,10 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
     }
 
     try {
-      debuggerRef.current.removeBreakpoint(state.activeSessionId, line);
-    } catch (error) {
+      debuggerRef.current.removeBreakpoint( state.activeSessionId, line);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to remove breakpoint';
-      showError('Breakpoint Error', errorMessage);
+      showError( 'Breakpoint Error', errorMessage);
     }
   }, [state.activeSessionId, showError]);
 
@@ -250,70 +250,70 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
     }
 
     try {
-      debuggerRef.current.toggleBreakpoint(state.activeSessionId, line);
-    } catch (error) {
+      debuggerRef.current.toggleBreakpoint( state.activeSessionId, line);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to toggle breakpoint';
-      showError('Breakpoint Error', errorMessage);
+      showError( 'Breakpoint Error', errorMessage);
     }
   }, [state.activeSessionId, showError]);
 
   // Execution control
-  const stepInto = useCallback(async (): Promise<StepResult | null> => {
+  const stepInto = useCallback( async (): Promise<StepResult | null> => {
     if (!debuggerRef.current || !state.activeSessionId) {
-      showError('No Active Session', 'Please start a debug session first');
+      showError( 'No Active Session', 'Please start a debug session first');
       return null;
     }
 
     try {
-      return await debuggerRef.current.stepInto(state.activeSessionId);
-    } catch (error) {
+      return await debuggerRef.current.stepInto(_state.activeSessionId);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Step into failed';
-      showError('Step Error', errorMessage);
+      showError( 'Step Error', errorMessage);
       return null;
     }
   }, [state.activeSessionId, showError]);
 
-  const stepOver = useCallback(async (): Promise<StepResult | null> => {
+  const stepOver = useCallback( async (): Promise<StepResult | null> => {
     if (!debuggerRef.current || !state.activeSessionId) {
-      showError('No Active Session', 'Please start a debug session first');
+      showError( 'No Active Session', 'Please start a debug session first');
       return null;
     }
 
     try {
-      return await debuggerRef.current.stepOver(state.activeSessionId);
-    } catch (error) {
+      return await debuggerRef.current.stepOver(_state.activeSessionId);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Step over failed';
-      showError('Step Error', errorMessage);
+      showError( 'Step Error', errorMessage);
       return null;
     }
   }, [state.activeSessionId, showError]);
 
-  const stepOut = useCallback(async (): Promise<StepResult | null> => {
+  const stepOut = useCallback( async (): Promise<StepResult | null> => {
     if (!debuggerRef.current || !state.activeSessionId) {
-      showError('No Active Session', 'Please start a debug session first');
+      showError( 'No Active Session', 'Please start a debug session first');
       return null;
     }
 
     try {
-      return await debuggerRef.current.stepOut(state.activeSessionId);
-    } catch (error) {
+      return await debuggerRef.current.stepOut(_state.activeSessionId);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Step out failed';
-      showError('Step Error', errorMessage);
+      showError( 'Step Error', errorMessage);
       return null;
     }
   }, [state.activeSessionId, showError]);
 
-  const continueExecution = useCallback(async (): Promise<StepResult | null> => {
+  const continueExecution = useCallback( async (): Promise<StepResult | null> => {
     if (!debuggerRef.current || !state.activeSessionId) {
-      showError('No Active Session', 'Please start a debug session first');
+      showError( 'No Active Session', 'Please start a debug session first');
       return null;
     }
 
     try {
-      return await debuggerRef.current.continue(state.activeSessionId);
-    } catch (error) {
+      return await debuggerRef.current.continue(_state.activeSessionId);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Continue execution failed';
-      showError('Execution Error', errorMessage);
+      showError( 'Execution Error', errorMessage);
       return null;
     }
   }, [state.activeSessionId, showError]);
@@ -324,38 +324,38 @@ export function useSolidityDebugger(options: UseDebuggerOptions = {}) {
     }
 
     try {
-      debuggerRef.current.pause(state.activeSessionId);
-    } catch (error) {
+      debuggerRef.current.pause(_state.activeSessionId);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Pause execution failed';
-      showError('Execution Error', errorMessage);
+      showError( 'Execution Error', errorMessage);
     }
   }, [state.activeSessionId, showError]);
 
   // Variable inspection
-  const getVariableValue = useCallback(async (variableName: string): Promise<VariableInfo | null> => {
+  const getVariableValue = useCallback( async (variableName: string): Promise<VariableInfo | null> => {
     if (!debuggerRef.current || !state.activeSessionId) {
       return null;
     }
 
     try {
-      return await debuggerRef.current.getVariableValue(state.activeSessionId, variableName);
-    } catch (error) {
+      return await debuggerRef.current.getVariableValue( state.activeSessionId, variableName);
+    } catch (_error) {
       console.error('Failed to get variable value:', error);
       return null;
     }
   }, [state.activeSessionId]);
 
-  const evaluateExpression = useCallback(async (expression: string): Promise<any> => {
+  const evaluateExpression = useCallback( async (expression: string): Promise<any> => {
     if (!debuggerRef.current || !state.activeSessionId) {
-      showError('No Active Session', 'Please start a debug session first');
+      showError( 'No Active Session', 'Please start a debug session first');
       return null;
     }
 
     try {
-      return await debuggerRef.current.evaluateExpression(state.activeSessionId, expression);
-    } catch (error) {
+      return await debuggerRef.current.evaluateExpression( state.activeSessionId, expression);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Expression evaluation failed';
-      showError('Evaluation Error', errorMessage);
+      showError( 'Evaluation Error', errorMessage);
       return null;
     }
   }, [state.activeSessionId, showError]);

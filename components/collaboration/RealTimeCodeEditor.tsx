@@ -42,12 +42,12 @@ const CURSOR_COLORS = [
 
 export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
   sessionId, // Used for session-specific tracking and analytics
-  initialCode = '// Welcome to collaborative coding!\n// Start typing to see real-time collaboration in action\n\npragma solidity ^0.8.0;\n\ncontract HelloWorld {\n    string public message;\n    \n    constructor() {\n        message = "Hello, World!";\n    }\n    \n    function setMessage(string memory _newMessage) public {\n        message = _newMessage;\n    }\n}',
+  initialCode = '// Welcome to collaborative coding!\n// Start typing to see real-time collaboration in action\n\npragma solidity ^0.8.0;\n\ncontract HelloWorld {\n    string public message;\n    \n    constructor(_) {\n        message = "Hello, World!";\n    }\n    \n    function setMessage(_string memory _newMessage) public {\n        message = _newMessage;\n    }\n}',
   language = 'solidity',
   readOnly = false
 }) => {
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth(_);
+  const { toast } = useToast(_);
   const {
     socket, // Used for real-time communication and event tracking
     isConnected,
@@ -62,25 +62,25 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
     stopTyping,
     sendMessage,
     messages
-  } = useSocket();
+  } = useSocket(_);
 
-  const [code, setCode] = useState(initialCode);
+  const [code, setCode] = useState(_initialCode);
   const [chatMessage, setChatMessage] = useState('');
-  const [showChat, setShowChat] = useState(false);
+  const [showChat, setShowChat] = useState(_false);
   const [cursors, setCursors] = useState<CursorPosition[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(_false);
 
-  const editorRef = useRef<HTMLTextAreaElement>(null);
-  const chatRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(_null);
+  const chatRef = useRef<HTMLDivElement>(_null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(_null);
 
   // Session analytics and tracking using sessionId and socket
-  const trackSessionEvent = useCallback((event: string, data?: Record<string, unknown>) => {
+  const trackSessionEvent = useCallback( (event: string, data?: Record<string, unknown>) => {
     const eventData = {
       sessionId,
       event,
       userId: user?.id,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       socketConnected: isConnected,
       participantCount: participants.length,
       codeLength: code.length,
@@ -88,9 +88,9 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
     };
 
     // Store in localStorage for analytics
-    const events = JSON.parse(localStorage.getItem(`session_${sessionId}_events`) || '[]');
-    events.push(eventData);
-    localStorage.setItem(`session_${sessionId}_events`, JSON.stringify(events.slice(-200)));
+    const events = JSON.parse(_localStorage.getItem(`session_${sessionId}_events`) || '[]');
+    events.push(_eventData);
+    localStorage.setItem( `session_${sessionId}_events`, JSON.stringify(events.slice(-200)));
 
     // Emit to socket for real-time analytics
     if (socket && isConnected) {
@@ -103,26 +103,26 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
   // Enhanced socket connection monitoring
   useEffect(() => {
     if (socket) {
-      const handleConnect = () => {
+      const handleConnect = (_) => {
         trackSessionEvent('socket_connected');
       };
 
-      const handleDisconnect = () => {
+      const handleDisconnect = (_) => {
         trackSessionEvent('socket_disconnected');
       };
 
-      const handleReconnect = () => {
+      const handleReconnect = (_) => {
         trackSessionEvent('socket_reconnected');
       };
 
-      socket.on('connect', handleConnect);
-      socket.on('disconnect', handleDisconnect);
-      socket.on('reconnect', handleReconnect);
+      socket.on( 'connect', handleConnect);
+      socket.on( 'disconnect', handleDisconnect);
+      socket.on( 'reconnect', handleReconnect);
 
-      return () => {
-        socket.off('connect', handleConnect);
-        socket.off('disconnect', handleDisconnect);
-        socket.off('reconnect', handleReconnect);
+      return (_) => {
+        socket.off( 'connect', handleConnect);
+        socket.off( 'disconnect', handleDisconnect);
+        socket.off( 'reconnect', handleReconnect);
       };
     }
   }, [socket, trackSessionEvent]);
@@ -135,8 +135,8 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
     const newLength = newCode.length;
     const changeType = newLength > oldLength ? 'addition' : newLength < oldLength ? 'deletion' : 'modification';
 
-    setCode(newCode);
-    updateCode(newCode);
+    setCode(_newCode);
+    updateCode(_newCode);
 
     // Track code change event
     trackSessionEvent('code_changed', {
@@ -149,21 +149,21 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
 
     // Start typing indicator
     if (!isTyping) {
-      setIsTyping(true);
+      setIsTyping(_true);
       startTyping('code');
-      trackSessionEvent('typing_started', { location: 'code' });
+      trackSessionEvent( 'typing_started', { location: 'code' });
     }
 
     // Clear existing timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
+    if (_typingTimeoutRef.current) {
+      clearTimeout(_typingTimeoutRef.current);
     }
 
     // Stop typing after 1 second of inactivity
     typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
+      setIsTyping(_false);
       stopTyping('code');
-      trackSessionEvent('typing_stopped', { location: 'code' });
+      trackSessionEvent( 'typing_stopped', { location: 'code' });
     }, 1000);
   }, [readOnly, updateCode, isTyping, startTyping, stopTyping, code.length, trackSessionEvent, language]);
 
@@ -173,12 +173,12 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
     
     const textarea = editorRef.current;
     const cursorPosition = textarea.selectionStart;
-    const textBeforeCursor = code.substring(0, cursorPosition);
+    const textBeforeCursor = code.substring( 0, cursorPosition);
     const lines = textBeforeCursor.split('\n');
     const line = lines.length;
     const column = lines[lines.length - 1].length + 1;
     
-    updateCursor(line, column);
+    updateCursor( line, column);
   }, [code, updateCursor, readOnly]);
 
   // Handle text selection
@@ -189,9 +189,9 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     
-    if (start !== end) {
-      const textBeforeStart = code.substring(0, start);
-      const textBeforeEnd = code.substring(0, end);
+    if (_start !== end) {
+      const textBeforeStart = code.substring( 0, start);
+      const textBeforeEnd = code.substring( 0, end);
       
       const startLines = textBeforeStart.split('\n');
       const endLines = textBeforeEnd.split('\n');
@@ -201,7 +201,7 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
       const endLine = endLines.length;
       const endColumn = endLines[endLines.length - 1].length + 1;
       
-      updateSelection(startLine, startColumn, endLine, endColumn);
+      updateSelection( startLine, startColumn, endLine, endColumn);
     }
   }, [code, updateSelection, readOnly]);
 
@@ -209,7 +209,7 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
   useEffect(() => {
     const newCursors: CursorPosition[] = presence
       .filter(p => p.cursor && p.userId !== user?.id)
-      .map((p, index) => ({
+      .map( (p, index) => ({
         line: p.cursor!.line,
         column: p.cursor!.column,
         userId: p.userId,
@@ -217,27 +217,27 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
         color: CURSOR_COLORS[index % CURSOR_COLORS.length]
       }));
     
-    setCursors(newCursors);
+    setCursors(_newCursors);
   }, [presence, user?.id]);
 
   // Sync code from session
   useEffect(() => {
-    if (session?.code && session.code !== code) {
-      setCode(session.code);
+    if (_session?.code && session.code !== code) {
+      setCode(_session.code);
     }
   }, [session?.code]);
 
   // Handle chat message send
-  const handleSendMessage = () => {
-    if (chatMessage.trim()) {
-      sendMessage(chatMessage, 'TEXT');
+  const handleSendMessage = (_) => {
+    if (_chatMessage.trim()) {
+      sendMessage( chatMessage, 'TEXT');
       setChatMessage('');
     }
   };
 
   // Auto-scroll chat to bottom
   useEffect(() => {
-    if (chatRef.current) {
+    if (_chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [messages]);
@@ -250,9 +250,9 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
         body: JSON.stringify({ code, language })
       });
       
-      const result = await response.json();
+      const result = await response.json(_);
       
-      if (result.success) {
+      if (_result.success) {
         toast({
           title: 'Compilation Successful',
           description: 'Your code compiled without errors!',
@@ -264,7 +264,7 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
           variant: 'destructive'
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Compilation Error',
         description: 'Failed to compile code',
@@ -273,14 +273,14 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
     }
   };
 
-  const handleSaveCode = () => {
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  const handleSaveCode = (_) => {
+    const blob = new Blob( [code], { type: 'text/plain' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `contract_${Date.now()}.sol`;
-    a.click();
-    URL.revokeObjectURL(url);
+    a.download = `contract_${Date.now(_)}.sol`;
+    a.click(_);
+    URL.revokeObjectURL(_url);
     
     toast({
       title: 'Code Saved',
@@ -288,8 +288,8 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
     });
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(code);
+  const copyToClipboard = (_) => {
+    navigator.clipboard.writeText(_code);
     toast({
       title: 'Code Copied',
       description: 'Code copied to clipboard!',
@@ -347,7 +347,7 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
           <Button 
             size="sm" 
             variant="outline" 
-            onClick={() => setShowChat(!showChat)}
+            onClick={(_) => setShowChat(!showChat)}
             className={showChat ? 'bg-blue-600 text-white' : ''}
           >
             <MessageCircle className="w-4 h-4" />
@@ -361,7 +361,7 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
           <textarea
             ref={editorRef}
             value={code}
-            onChange={(e) => handleCodeChange(e.target.value)}
+            onChange={(_e) => handleCodeChange(_e.target.value)}
             onSelect={handleSelectionChange}
             onMouseUp={handleCursorChange}
             onKeyUp={handleCursorChange}
@@ -458,7 +458,7 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
                 size="sm"
                 variant="outline"
                 className="w-full justify-start"
-                onClick={() => {
+                onClick={(_) => {
                   // Settings functionality
                   console.log('Open settings');
                 }}
@@ -511,14 +511,14 @@ export const RealTimeCodeEditor: React.FC<RealTimeCodeEditorProps> = ({
                 <div className="flex space-x-2">
                   <Input
                     value={chatMessage}
-                    onChange={(e) => setChatMessage(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSendMessage();
+                    onChange={(_e) => setChatMessage(_e.target.value)}
+                    onKeyPress={(_e) => {
+                      if (_e.key === 'Enter') {
+                        handleSendMessage(_);
                       }
                     }}
-                    onFocus={() => startTyping('chat')}
-                    onBlur={() => stopTyping('chat')}
+                    onFocus={(_) => startTyping('chat')}
+                    onBlur={(_) => stopTyping('chat')}
                     placeholder="Type a message..."
                     className="flex-1 bg-slate-700 border-slate-600 text-white"
                   />

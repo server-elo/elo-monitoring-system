@@ -7,7 +7,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   // Test directory
-  testDir: './__tests__/e2e',
+  testDir: './ tests /e2e',
   
   // Run tests in files in parallel
   fullyParallel: true,
@@ -80,7 +80,7 @@ export default defineConfig({
       use: { 
         ...devices['Desktop Chrome'],
         // Use prepared auth state
-        storageState: '__tests__/e2e/auth/user.json',
+        storageState: ' tests /e2e/auth/user.json',
       },
       dependencies: ['setup'],
     },
@@ -90,7 +90,7 @@ export default defineConfig({
       name: 'firefox',
       use: { 
         ...devices['Desktop Firefox'],
-        storageState: '__tests__/e2e/auth/user.json',
+        storageState: ' tests /e2e/auth/user.json',
       },
       dependencies: ['setup'],
     },
@@ -200,8 +200,8 @@ export default defineConfig({
   },
 
   // Global setup and teardown
-  globalSetup: require.resolve('./__tests__/e2e/global-setup.ts'),
-  globalTeardown: require.resolve('./__tests__/e2e/global-teardown.ts'),
+  globalSetup: require.resolve('./ tests /e2e/global-setup.ts'),
+  globalTeardown: require.resolve('./ tests /e2e/global-teardown.ts'),
 
   // Test timeout
   timeout: 60 * 1000, // 1 minute per test

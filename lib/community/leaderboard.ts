@@ -5,58 +5,58 @@ import { realTimeManager } from './websocket';
 
 export class LeaderboardManager {
   private static instance: LeaderboardManager;
-  private cache = new Map<string, LeaderboardCache>();
+  private cache = new Map<string, LeaderboardCache>(_);
   private cacheTimeout = 30000; // 30 seconds
-  private updateDebounceMap = new Map<string, NodeJS.Timeout>();
+  private updateDebounceMap = new Map<string, NodeJS.Timeout>(_);
   private debounceDelay = 200; // 200ms for real-time updates
 
-  static getInstance(): LeaderboardManager {
+  static getInstance(_): LeaderboardManager {
     if (!LeaderboardManager.instance) {
-      LeaderboardManager.instance = new LeaderboardManager();
+      LeaderboardManager.instance = new LeaderboardManager(_);
     }
     return LeaderboardManager.instance;
   }
 
-  constructor() {
-    this.setupRealTimeUpdates();
-    this.startCacheCleanup();
+  constructor(_) {
+    this.setupRealTimeUpdates(_);
+    this.startCacheCleanup(_);
   }
 
-  private setupRealTimeUpdates(): void {
+  private setupRealTimeUpdates(_): void {
     // Subscribe to real-time leaderboard updates
-    realTimeManager.subscribe('leaderboard_update', (data: LeaderboardEvent) => {
-      this.handleRealTimeUpdate(data);
+    realTimeManager.subscribe( 'leaderboard_update', (data: LeaderboardEvent) => {
+      this.handleRealTimeUpdate(_data);
     });
 
     // Subscribe to user progress updates
-    realTimeManager.subscribe('user_progress', (data: any) => {
-      this.handleUserProgressUpdate(data);
+    realTimeManager.subscribe( 'userprogress', (data: any) => {
+      this.handleUserProgressUpdate(_data);
     });
   }
 
-  private handleRealTimeUpdate(event: LeaderboardEvent): void {
+  private handleRealTimeUpdate(_event: LeaderboardEvent): void {
     // Debounce updates to prevent excessive recalculations
     const debounceKey = `${event.type}_${event.userId}`;
     
-    if (this.updateDebounceMap.has(debounceKey)) {
-      clearTimeout(this.updateDebounceMap.get(debounceKey)!);
+    if (_this.updateDebounceMap.has(debounceKey)) {
+      clearTimeout(_this.updateDebounceMap.get(debounceKey)!);
     }
 
-    this.updateDebounceMap.set(debounceKey, setTimeout(() => {
-      this.processLeaderboardUpdate(event);
-      this.updateDebounceMap.delete(debounceKey);
+    this.updateDebounceMap.set( debounceKey, setTimeout(() => {
+      this.processLeaderboardUpdate(_event);
+      this.updateDebounceMap.delete(_debounceKey);
     }, this.debounceDelay));
   }
 
-  private processLeaderboardUpdate(event: LeaderboardEvent): void {
+  private processLeaderboardUpdate(_event: LeaderboardEvent): void {
     // Invalidate relevant cache entries
-    this.invalidateUserCache(event.userId);
+    this.invalidateUserCache(_event.userId);
     
     // Notify subscribers of the update
-    this.notifyLeaderboardChange(event);
+    this.notifyLeaderboardChange(_event);
   }
 
-  private handleUserProgressUpdate(data: any): void {
+  private handleUserProgressUpdate(_data: any): void {
     // Handle user progress updates that affect leaderboards
     const event: LeaderboardEvent = {
       type: 'xp_gained',
@@ -65,69 +65,69 @@ export class LeaderboardManager {
         xpGained: data.xpEarned,
         lessonId: data.lessonId
       },
-      timestamp: new Date()
+      timestamp: new Date(_)
     };
     
-    this.handleRealTimeUpdate(event);
+    this.handleRealTimeUpdate(_event);
   }
 
-  private invalidateUserCache(_userId: string): void {
+  private invalidateUserCache( userId: string): void {
     // Remove cache entries that might be affected by this user's update
     const keysToRemove: string[] = [];
     
-    this.cache.forEach((_, key) => {
-      if (key.includes('global') || key.includes('weekly') || key.includes('daily')) {
-        keysToRemove.push(key);
+    this.cache.forEach( (_, key) => {
+      if (_key.includes('global') || key.includes('weekly') || key.includes('daily')) {
+        keysToRemove.push(_key);
       }
     });
     
-    keysToRemove.forEach(key => this.cache.delete(key));
+    keysToRemove.forEach(_key => this.cache.delete(key));
   }
 
-  private notifyLeaderboardChange(event: LeaderboardEvent): void {
+  private notifyLeaderboardChange(_event: LeaderboardEvent): void {
     // Emit update to subscribers
-    if (typeof window !== 'undefined') {
+    if (_typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('leaderboardUpdate', { 
         detail: event 
       }));
     }
   }
 
-  private startCacheCleanup(): void {
+  private startCacheCleanup(_): void {
     setInterval(() => {
-      const now = new Date();
+      const now = new Date(_);
       const expiredKeys: string[] = [];
       
-      this.cache.forEach((entry, key) => {
-        if (entry.expiresAt < now) {
-          expiredKeys.push(key);
+      this.cache.forEach( (entry, key) => {
+        if (_entry.expiresAt < now) {
+          expiredKeys.push(_key);
         }
       });
       
-      expiredKeys.forEach(key => this.cache.delete(key));
+      expiredKeys.forEach(_key => this.cache.delete(key));
     }, 60000); // Clean up every minute
   }
 
-  private generateCacheKey(category: string, filters: LeaderboardFilters, page: number): string {
-    const filterString = JSON.stringify(filters);
-    return `leaderboard_${category}_${page}_${btoa(filterString)}`;
+  private generateCacheKey( category: string, filters: LeaderboardFilters, page: number): string {
+    const filterString = JSON.stringify(_filters);
+    return `leaderboard_${category}_${page}_${btoa(_filterString)}`;
   }
 
-  private getCachedData(key: string): LeaderboardResponse | null {
-    const cached = this.cache.get(key);
+  private getCachedData(_key: string): LeaderboardResponse | null {
+    const cached = this.cache.get(_key);
     if (cached && cached.expiresAt > new Date()) {
       return cached.data;
     }
     return null;
   }
 
-  private setCachedData(key: string, data: LeaderboardResponse): void {
-    const expiresAt = new Date(Date.now() + this.cacheTimeout);
+  private setCachedData( key: string, data: LeaderboardResponse): void {
+    const expiresAt = new Date(_Date.now() + this.cacheTimeout);
     this.cache.set(key, {
       key,
       data,
       expiresAt,
-      lastUpdated: new Date()
+      lastUpdated: new Date(_)
     });
   }
 
@@ -138,11 +138,11 @@ export class LeaderboardManager {
     limit: number = 50,
     useCache: boolean = true
   ): Promise<LeaderboardResponse> {
-    const cacheKey = this.generateCacheKey(category, filters, page);
+    const cacheKey = this.generateCacheKey( category, filters, page);
     
     // Check cache first
     if (useCache) {
-      const cached = this.getCachedData(cacheKey);
+      const cached = this.getCachedData(_cacheKey);
       if (cached) {
         return cached;
       }
@@ -163,49 +163,49 @@ export class LeaderboardManager {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch leaderboard: ${response.statusText}`);
+        throw new Error(_`Failed to fetch leaderboard: ${response.statusText}`);
       }
 
-      const data: LeaderboardResponse = await response.json();
+      const data: LeaderboardResponse = await response.json(_);
       
       // Cache the result
       if (useCache) {
-        this.setCachedData(cacheKey, data);
+        this.setCachedData( cacheKey, data);
       }
       
       return data;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching leaderboard:', error);
       throw new CommunityError({
         code: 'LEADERBOARD_FETCH_FAILED',
         message: 'Failed to fetch leaderboard data',
         details: error,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
     }
   }
 
-  async getLeaderboardCategories(): Promise<LeaderboardCategory[]> {
+  async getLeaderboardCategories(_): Promise<LeaderboardCategory[]> {
     try {
       const response = await fetch('/api/community/leaderboard/categories');
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch categories: ${response.statusText}`);
+        throw new Error(_`Failed to fetch categories: ${response.statusText}`);
       }
       
-      return response.json();
-    } catch (error) {
+      return response.json(_);
+    } catch (_error) {
       console.error('Error fetching leaderboard categories:', error);
       throw new CommunityError({
         code: 'LEADERBOARD_FETCH_FAILED',
         message: 'Failed to fetch leaderboard categories',
         details: error,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
     }
   }
 
-  async getUserRank(userId: string, category: string, filters: LeaderboardFilters): Promise<number> {
+  async getUserRank( userId: string, category: string, filters: LeaderboardFilters): Promise<number> {
     try {
       const response = await fetch('/api/community/leaderboard/rank', {
         method: 'POST',
@@ -220,26 +220,26 @@ export class LeaderboardManager {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch user rank: ${response.statusText}`);
+        throw new Error(_`Failed to fetch user rank: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json(_);
       return data.rank;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching user rank:', error);
       return -1;
     }
   }
 
-  async refreshLeaderboard(category: string, filters: LeaderboardFilters): Promise<void> {
+  async refreshLeaderboard( category: string, filters: LeaderboardFilters): Promise<void> {
     // Clear cache for this leaderboard
     const keysToRemove: string[] = [];
-    this.cache.forEach((_, key) => {
-      if (key.includes(`leaderboard_${category}`)) {
-        keysToRemove.push(key);
+    this.cache.forEach( (_, key) => {
+      if (_key.includes(`leaderboard_${category}`)) {
+        keysToRemove.push(_key);
       }
     });
-    keysToRemove.forEach(key => this.cache.delete(key));
+    keysToRemove.forEach(_key => this.cache.delete(key));
 
     // Trigger refresh on server
     try {
@@ -253,35 +253,35 @@ export class LeaderboardManager {
           filters
         })
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error refreshing leaderboard:', error);
     }
   }
 
   // Subscribe to leaderboard updates
-  subscribeToUpdates(callback: (event: LeaderboardEvent) => void): () => void {
-    const handler = (event: CustomEvent) => {
-      callback(event.detail);
+  subscribeToUpdates(_callback: (event: LeaderboardEvent) => void): (_) => void {
+    const handler = (_event: CustomEvent) => {
+      callback(_event.detail);
     };
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('leaderboardUpdate', handler as EventListener);
+    if (_typeof window !== 'undefined') {
+      window.addEventListener( 'leaderboardUpdate', handler as EventListener);
       
-      return () => {
-        window.removeEventListener('leaderboardUpdate', handler as EventListener);
+      return (_) => {
+        window.removeEventListener( 'leaderboardUpdate', handler as EventListener);
       };
     }
     
-    return () => {};
+    return (_) => {};
   }
 
   // Get cache statistics
-  getCacheStats(): { size: number; hitRate: number; entries: number } {
-    const now = new Date();
+  getCacheStats(_): { size: number; hitRate: number; entries: number } {
+    const now = new Date(_);
     let validEntries = 0;
     
     this.cache.forEach((entry) => {
-      if (entry.expiresAt > now) {
+      if (_entry.expiresAt > now) {
         validEntries++;
       }
     });
@@ -294,12 +294,12 @@ export class LeaderboardManager {
   }
 
   // Clear all cache
-  clearCache(): void {
-    this.cache.clear();
+  clearCache(_): void {
+    this.cache.clear(_);
   }
 
   // Get default leaderboard categories
-  getDefaultCategories(): LeaderboardCategory[] {
+  getDefaultCategories(_): LeaderboardCategory[] {
     return [
       {
         id: 'global_xp',
@@ -350,7 +350,7 @@ export class LeaderboardManager {
   }
 
   // Get default filters
-  getDefaultFilters(): LeaderboardFilters {
+  getDefaultFilters(_): LeaderboardFilters {
     return {
       timeframe: 'all-time',
       category: 'global_xp',
@@ -360,39 +360,39 @@ export class LeaderboardManager {
 }
 
 // Export singleton instance
-export const leaderboardManager = LeaderboardManager.getInstance();
+export const leaderboardManager = LeaderboardManager.getInstance(_);
 
 // Utility functions for leaderboard calculations
 export const LeaderboardUtils = {
-  calculateRankChange(currentRank: number, previousRank?: number): number {
+  calculateRankChange( currentRank: number, previousRank?: number): number {
     if (!previousRank) return 0;
     return previousRank - currentRank;
   },
 
-  formatXP(xp: number): string {
-    if (xp >= 1000000) {
-      return `${(xp / 1000000).toFixed(1)}M`;
-    } else if (xp >= 1000) {
-      return `${(xp / 1000).toFixed(1)}K`;
+  formatXP(_xp: number): string {
+    if (_xp >= 1000000) {
+      return `${(_xp / 1000000).toFixed(1)}M`;
+    } else if (_xp >= 1000) {
+      return `${(_xp / 1000).toFixed(1)}K`;
     }
     return xp.toString();
   },
 
-  formatTimeSpent(minutes: number): string {
-    if (minutes >= 1440) { // 24 hours
-      const days = Math.floor(minutes / 1440);
+  formatTimeSpent(_minutes: number): string {
+    if (_minutes >= 1440) { // 24 hours
+      const days = Math.floor(_minutes / 1440);
       const hours = Math.floor((minutes % 1440) / 60);
       return `${days}d ${hours}h`;
-    } else if (minutes >= 60) {
-      const hours = Math.floor(minutes / 60);
+    } else if (_minutes >= 60) {
+      const hours = Math.floor(_minutes / 60);
       const mins = minutes % 60;
       return `${hours}h ${mins}m`;
     }
     return `${minutes}m`;
   },
 
-  getRankIcon(rank: number): string {
-    switch (rank) {
+  getRankIcon(_rank: number): string {
+    switch (_rank) {
       case 1: return '🥇';
       case 2: return '🥈';
       case 3: return '🥉';
@@ -400,20 +400,20 @@ export const LeaderboardUtils = {
     }
   },
 
-  getRankColor(rank: number): string {
-    if (rank === 1) return 'text-yellow-400';
-    if (rank === 2) return 'text-gray-300';
-    if (rank === 3) return 'text-amber-600';
-    if (rank <= 10) return 'text-blue-400';
-    if (rank <= 50) return 'text-green-400';
+  getRankColor(_rank: number): string {
+    if (_rank === 1) return 'text-yellow-400';
+    if (_rank === 2) return 'text-gray-300';
+    if (_rank === 3) return 'text-amber-600';
+    if (_rank <= 10) return 'text-blue-400';
+    if (_rank <= 50) return 'text-green-400';
     return 'text-gray-400';
   },
 
-  getStreakColor(streak: number): string {
-    if (streak >= 30) return 'text-red-400';
-    if (streak >= 14) return 'text-orange-400';
-    if (streak >= 7) return 'text-yellow-400';
-    if (streak >= 3) return 'text-green-400';
+  getStreakColor(_streak: number): string {
+    if (_streak >= 30) return 'text-red-400';
+    if (_streak >= 14) return 'text-orange-400';
+    if (_streak >= 7) return 'text-yellow-400';
+    if (_streak >= 3) return 'text-green-400';
     return 'text-blue-400';
   }
 };

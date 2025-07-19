@@ -27,7 +27,7 @@ interface VisualFeedbackContextType {
       offset?: { x: number; y: number };
     }
   ) => void;
-  showRipple: (element: HTMLElement | null, color?: string) => void;
+  showRipple: ( element: HTMLElement | null, color?: string) => void;
   showFloatingText: (
     element: HTMLElement | null,
     text: string,
@@ -37,12 +37,12 @@ interface VisualFeedbackContextType {
       direction?: 'up' | 'down' | 'left' | 'right';
     }
   ) => void;
-  showPulse: (element: HTMLElement | null, color?: string, intensity?: number) => void;
+  showPulse: ( element: HTMLElement | null, color?: string, intensity?: number) => void;
 }
 
-const VisualFeedbackContext = createContext<VisualFeedbackContextType | undefined>(undefined);
+const VisualFeedbackContext = createContext<VisualFeedbackContextType | undefined>(_undefined);
 
-export function VisualFeedbackProvider({ children }: { children: React.ReactNode }) {
+export function VisualFeedbackProvider(_{ children }: { children: React.ReactNode }) {
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
   const [ripples, setRipples] = useState<Array<{
     id: string;
@@ -80,35 +80,35 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
   ) => {
     if (!element) return;
 
-    const rect = element.getBoundingClientRect();
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    const rect = element.getBoundingClientRect(_);
+    const id = Date.now(_).toString() + Math.random().toString(36).substr(2, 9);
     
     const feedbackItem: FeedbackItem = {
       id,
       type,
       message,
       position: {
-        x: rect.left + rect.width / 2 + (options.offset?.x || 0),
-        y: rect.top + (options.offset?.y || -10)
+        x: rect.left + rect.width / 2 + (_options.offset?.x || 0),
+        y: rect.top + (_options.offset?.y || -10)
       },
       duration: options.duration || 2000,
       icon: options.icon,
       color: options.color
     };
 
-    setFeedbackItems(prev => [...prev, feedbackItem]);
+    setFeedbackItems( prev => [...prev, feedbackItem]);
 
     // Auto-remove after duration
     setTimeout(() => {
-      setFeedbackItems(prev => prev.filter(item => item.id !== id));
+      setFeedbackItems(_prev => prev.filter(item => item.id !== id));
     }, feedbackItem.duration);
   }, []);
 
-  const showRipple = useCallback((element: HTMLElement | null, color = 'rgba(59, 130, 246, 0.3)') => {
+  const showRipple = useCallback( (element: HTMLElement | null, color = 'rgba(59, 130, 246, 0.3)') => {
     if (!element) return;
 
-    const rect = element.getBoundingClientRect();
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    const rect = element.getBoundingClientRect(_);
+    const id = Date.now(_).toString() + Math.random().toString(36).substr(2, 9);
 
     const ripple = {
       id,
@@ -117,11 +117,11 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
       color
     };
 
-    setRipples(prev => [...prev, ripple]);
+    setRipples( prev => [...prev, ripple]);
 
     // Remove ripple after animation
     setTimeout(() => {
-      setRipples(prev => prev.filter(r => r.id !== id));
+      setRipples(_prev => prev.filter(r => r.id !== id));
     }, 600);
   }, []);
 
@@ -136,8 +136,8 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
   ) => {
     if (!element) return;
 
-    const rect = element.getBoundingClientRect();
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    const rect = element.getBoundingClientRect(_);
+    const id = Date.now(_).toString() + Math.random().toString(36).substr(2, 9);
 
     const floatingText = {
       id,
@@ -149,23 +149,23 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
       direction: options.direction || 'up'
     };
 
-    setFloatingTexts(prev => [...prev, floatingText]);
+    setFloatingTexts( prev => [...prev, floatingText]);
 
     // Remove after animation
     setTimeout(() => {
-      setFloatingTexts(prev => prev.filter(t => t.id !== id));
+      setFloatingTexts(_prev => prev.filter(t => t.id !== id));
     }, 2000);
   }, []);
 
   const showPulse = useCallback((
     element: HTMLElement | null,
-    color = 'rgba(59, 130, 246, 0.5)',
+    color = 'rgba( 59, 130, 246, 0.5)',
     intensity = 1
   ) => {
     if (!element) return;
 
-    const rect = element.getBoundingClientRect();
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    const rect = element.getBoundingClientRect(_);
+    const id = Date.now(_).toString() + Math.random().toString(36).substr(2, 9);
 
     const pulse = {
       id,
@@ -175,16 +175,16 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
       intensity
     };
 
-    setPulses(prev => [...prev, pulse]);
+    setPulses( prev => [...prev, pulse]);
 
     // Remove after animation
     setTimeout(() => {
-      setPulses(prev => prev.filter(p => p.id !== id));
+      setPulses(_prev => prev.filter(p => p.id !== id));
     }, 1000);
   }, []);
 
-  const getIcon = (type: FeedbackItem['type']) => {
-    switch (type) {
+  const getIcon = (_type: FeedbackItem['type']) => {
+    switch (_type) {
       case 'success':
         return <Check className="w-4 h-4" />;
       case 'error':
@@ -200,8 +200,8 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
     }
   };
 
-  const getTypeColor = (type: FeedbackItem['type']) => {
-    switch (type) {
+  const getTypeColor = (_type: FeedbackItem['type']) => {
+    switch (_type) {
       case 'success':
         return 'bg-green-500 text-white';
       case 'error':
@@ -242,17 +242,17 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
               style={{
                 left: item.position.x,
                 top: item.position.y,
-                transform: 'translateX(-50%)'
+                transform: 'translateX(_-50%)'
               }}
             >
               <div
                 className={cn(
                   'flex items-center space-x-2 px-3 py-2 rounded-lg shadow-lg backdrop-blur-sm',
-                  item.color ? '' : getTypeColor(item.type)
+                  item.color ? '' : getTypeColor(_item.type)
                 )}
                 style={item.color ? { backgroundColor: item.color } : {}}
               >
-                {item.icon || getIcon(item.type)}
+                {item.icon || getIcon(_item.type)}
                 <span className="text-sm font-medium">{item.message}</span>
               </div>
             </motion.div>
@@ -285,8 +285,8 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
       <div className="fixed inset-0 pointer-events-none z-40">
         <AnimatePresence>
           {floatingTexts.map((text) => {
-            const getAnimation = () => {
-              switch (text.direction) {
+            const getAnimation = (_) => {
+              switch (_text.direction) {
                 case 'up':
                   return { y: [0, -50], opacity: [1, 0] };
                 case 'down':
@@ -300,8 +300,8 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
               }
             };
 
-            const getSizeClass = () => {
-              switch (text.size) {
+            const getSizeClass = (_) => {
+              switch (_text.size) {
                 case 'sm':
                   return 'text-sm';
                 case 'lg':
@@ -316,19 +316,19 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
                 key={text.id}
                 initial={{ opacity: 1, scale: 0.8 }}
                 animate={{
-                  ...getAnimation(),
+                  ...getAnimation(_),
                   scale: [0.8, 1.2, 1]
                 }}
                 transition={{ duration: 2, ease: 'easeOut' }}
                 className={cn(
                   'absolute font-bold pointer-events-none',
-                  getSizeClass()
+                  getSizeClass(_)
                 )}
                 style={{
                   left: text.x,
                   top: text.y,
                   color: text.color,
-                  transform: 'translateX(-50%)',
+                  transform: 'translateX(_-50%)',
                   textShadow: '0 0 10px rgba(0,0,0,0.5)'
                 }}
               >
@@ -366,7 +366,7 @@ export function VisualFeedbackProvider({ children }: { children: React.ReactNode
 }
 
 export function useVisualFeedback() {
-  const context = useContext(VisualFeedbackContext);
+  const context = useContext(_VisualFeedbackContext);
   if (!context) {
     throw new Error('useVisualFeedback must be used within a VisualFeedbackProvider');
   }
@@ -381,25 +381,25 @@ export function FeedbackInput({
   validateOnBlur = true,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & {
-  onSuccess?: () => void;
-  onError?: (error: string) => void;
+  onSuccess?: (_) => void;
+  onError?: (_error: string) => void;
   validateOnBlur?: boolean;
 }) {
-  const { showFeedback, showRipple } = useVisualFeedback();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { showFeedback, showRipple } = useVisualFeedback(_);
+  const inputRef = useRef<HTMLInputElement>(_null);
 
-  const handleFocus = () => {
-    showRipple(inputRef.current, 'rgba(59, 130, 246, 0.2)');
+  const handleFocus = (_) => {
+    showRipple( inputRef.current, 'rgba(59, 130, 246, 0.2)');
   };
 
-  const handleBlur = () => {
+  const handleBlur = (_) => {
     if (validateOnBlur && inputRef.current) {
       const value = inputRef.current.value;
       if (value && props.required) {
-        showFeedback(inputRef.current, 'success', 'Valid input');
-        onSuccess?.();
-      } else if (props.required && !value) {
-        showFeedback(inputRef.current, 'error', 'This field is required');
+        showFeedback( inputRef.current, 'success', 'Valid input');
+        onSuccess?.(_);
+      } else if (_props.required && !value) {
+        showFeedback( inputRef.current, 'error', 'This field is required');
         onError?.('This field is required');
       }
     }
@@ -433,19 +433,19 @@ export function FeedbackButton({
   feedbackMessage?: string;
   showRippleOnClick?: boolean;
 }) {
-  const { showFeedback, showRipple } = useVisualFeedback();
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const { showFeedback, showRipple } = useVisualFeedback(_);
+  const buttonRef = useRef<HTMLButtonElement>(_null);
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (_e: React.MouseEvent<HTMLButtonElement>) => {
     if (showRippleOnClick) {
-      showRipple(buttonRef.current);
+      showRipple(_buttonRef.current);
     }
     
     if (onClick) {
-      onClick(e);
+      onClick(_e);
       // Show feedback after a short delay
       setTimeout(() => {
-        showFeedback(buttonRef.current, feedbackType, feedbackMessage);
+        showFeedback( buttonRef.current, feedbackType, feedbackMessage);
       }, 100);
     }
   };
@@ -453,7 +453,7 @@ export function FeedbackButton({
   return (
     <button
       ref={buttonRef}
-      className={cn('transition-all duration-200', className)}
+      className={cn( 'transition-all duration-200', className)}
       onClick={handleClick}
       {...props}
     >

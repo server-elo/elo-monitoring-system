@@ -10,9 +10,9 @@ import { useSession } from 'next-auth/react';
  * Hook for managing real-time notification events via Socket.io
  */
 export function useNotificationSocket() {
-  const { socket, isConnected } = useSocket();
-  const { data: session } = useSession();
-  const notificationService = useRef<NotificationSocketService | null>(null);
+  const { socket, isConnected } = useSocket(_);
+  const { data: session } = useSession(_);
+  const notificationService = useRef<NotificationSocketService | null>(_null);
   const [connectionStatus, setConnectionStatus] = useState({
     isConnected: false,
     reconnectAttempts: 0,
@@ -29,20 +29,20 @@ export function useNotificationSocket() {
     showXPGain,
     showLevelUp,
     showCollaboration
-  } = useNotifications();
+  } = useNotifications(_);
 
   // Initialize notification service
   useEffect(() => {
     if (socket) {
-      notificationService.current = new NotificationSocketService(socket);
+      notificationService.current = new NotificationSocketService(_socket);
       
       // Set up event handlers
       const unsubscribers: (() => void)[] = [];
 
       // Connection events
       unsubscribers.push(
-        notificationService.current.on('connection:established', () => {
-          setConnectionStatus(prev => ({ ...prev, isConnected: true, reconnectAttempts: 0 }));
+        notificationService.current.on( 'connection:established', () => {
+          setConnectionStatus( prev => ({ ...prev, isConnected: true, reconnectAttempts: 0 }));
           showSuccess('Connected', 'Real-time notifications are now active', {
             duration: 3000,
             metadata: { category: 'connection', priority: 'low' }
@@ -51,8 +51,8 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('connection:lost', (_data: any) => {
-          setConnectionStatus(prev => ({ ...prev, isConnected: false }));
+        notificationService.current.on( 'connection:lost', (_data: any) => {
+          setConnectionStatus( prev => ({ ...prev, isConnected: false }));
           showWarning('Connection Lost', 'Attempting to reconnect...', {
             duration: 5000,
             metadata: { category: 'connection', priority: 'medium' }
@@ -61,7 +61,7 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('connection:error', (_data: any) => {
+        notificationService.current.on( 'connection:error', (_data: any) => {
           showError('Connection Error', 'Failed to connect to real-time services', {
             metadata: { category: 'connection', priority: 'high' }
           });
@@ -69,7 +69,7 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('connection:max_retries_reached', () => {
+        notificationService.current.on( 'connection:max_retries_reached', () => {
           showError(
             'Connection Failed', 
             'Unable to establish real-time connection. Some features may not work properly.',
@@ -78,9 +78,9 @@ export function useNotificationSocket() {
               metadata: { category: 'connection', priority: 'high' },
               action: {
                 label: 'Retry',
-                onClick: () => {
+                onClick: (_) => {
                   if (socket) {
-                    socket.connect();
+                    socket.connect(_);
                   }
                 }
               }
@@ -91,7 +91,7 @@ export function useNotificationSocket() {
 
       // Notification events
       unsubscribers.push(
-        notificationService.current.on('notification:received', (data: any) => {
+        notificationService.current.on( 'notification:received', (data: any) => {
           addNotification({
             type: data.type,
             title: data.title,
@@ -106,9 +106,9 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('notification:personal', (data: any) => {
+        notificationService.current.on( 'notification:personal', (data: any) => {
           // Only show if it's for the current user
-          if (session?.user?.id === data.userId) {
+          if (_session?.user?.id === data.userId) {
             addNotification({
               type: data.type,
               title: data.title,
@@ -125,24 +125,24 @@ export function useNotificationSocket() {
 
       // Collaboration events
       unsubscribers.push(
-        notificationService.current.on('collaboration:user_joined', (data: any) => {
-          if (data.userId !== session?.user?.id) {
-            showCollaboration(`${data.userName} joined the session`, data.userName);
+        notificationService.current.on( 'collaboration:user_joined', (data: any) => {
+          if (_data.userId !== session?.user?.id) {
+            showCollaboration( `${data.userName} joined the session`, data.userName);
           }
         })
       );
 
       unsubscribers.push(
-        notificationService.current.on('collaboration:user_left', (data: any) => {
-          if (data.userId !== session?.user?.id) {
-            showCollaboration(`${data.userName} left the session`, data.userName);
+        notificationService.current.on( 'collaboration:user_left', (data: any) => {
+          if (_data.userId !== session?.user?.id) {
+            showCollaboration( `${data.userName} left the session`, data.userName);
           }
         })
       );
 
       unsubscribers.push(
-        notificationService.current.on('collaboration:code_changed', (data: any) => {
-          if (data.userId !== session?.user?.id) {
+        notificationService.current.on( 'collaboration:code_changed', (data: any) => {
+          if (_data.userId !== session?.user?.id) {
             showInfo(
               'Code Updated',
               `${data.userName} made changes to the code`,
@@ -160,8 +160,8 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('collaboration:chat_message', (data: any) => {
-          if (data.userId !== session?.user?.id) {
+        notificationService.current.on( 'collaboration:chat_message', (data: any) => {
+          if (_data.userId !== session?.user?.id) {
             showInfo(
               'New Message',
               `${data.userName}: ${data.metadata?.message || 'sent a message'}`,
@@ -180,24 +180,24 @@ export function useNotificationSocket() {
 
       // Gamification events
       unsubscribers.push(
-        notificationService.current.on('gamification:xp_gained', (data: any) => {
-          if (data.userId === session?.user?.id) {
-            showXPGain(data.xp, 'Great job! Keep learning!');
+        notificationService.current.on( 'gamification:xp_gained', (data: any) => {
+          if (_data.userId === session?.user?.id) {
+            showXPGain( data.xp, 'Great job! Keep learning!');
           }
         })
       );
 
       unsubscribers.push(
-        notificationService.current.on('gamification:level_up', (data: any) => {
-          if (data.userId === session?.user?.id) {
-            showLevelUp(data.level, `Congratulations! You've reached level ${data.level}!`);
+        notificationService.current.on( 'gamification:level_up', (data: any) => {
+          if (_data.userId === session?.user?.id) {
+            showLevelUp( data.level, `Congratulations! You've reached level ${data.level}!`);
           }
         })
       );
 
       unsubscribers.push(
-        notificationService.current.on('gamification:achievement_unlocked', (data: any) => {
-          if (data.userId === session?.user?.id) {
+        notificationService.current.on( 'gamification:achievement_unlocked', (data: any) => {
+          if (_data.userId === session?.user?.id) {
             showAchievement(
               data.achievement?.title || 'Achievement Unlocked!',
               data.achievement?.description || 'You\'ve unlocked a new achievement!',
@@ -212,8 +212,8 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('gamification:streak_updated', (data: any) => {
-          if (data.userId === session?.user?.id && data.streak && data.streak % 7 === 0) {
+        notificationService.current.on( 'gamification:streak_updated', (data: any) => {
+          if (_data.userId === session?.user?.id && data.streak && data.streak % 7 === 0) {
             showSuccess(
               'Streak Milestone!',
               `Amazing! You've maintained a ${data.streak}-day learning streak!`,
@@ -231,7 +231,7 @@ export function useNotificationSocket() {
 
       // System events
       unsubscribers.push(
-        notificationService.current.on('system:maintenance', (data: any) => {
+        notificationService.current.on( 'system:maintenance', (data: any) => {
           showWarning(data.title, data.message, {
             persistent: true,
             metadata: {
@@ -243,7 +243,7 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('system:update', (data: any) => {
+        notificationService.current.on( 'system:update', (data: any) => {
           showInfo(data.title, data.message, {
             duration: 10000,
             metadata: {
@@ -255,7 +255,7 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('system:announcement', (data: any) => {
+        notificationService.current.on( 'system:announcement', (data: any) => {
           addNotification({
             type: 'info',
             variant: 'banner',
@@ -271,7 +271,7 @@ export function useNotificationSocket() {
       );
 
       unsubscribers.push(
-        notificationService.current.on('system:alert', (data: any) => {
+        notificationService.current.on( 'system:alert', (data: any) => {
           const notificationType = data.severity === 'error' ? 'error' : 
                                   data.severity === 'warning' ? 'warning' : 'info';
           
@@ -289,9 +289,9 @@ export function useNotificationSocket() {
         })
       );
 
-      return () => {
-        unsubscribers.forEach(unsubscribe => unsubscribe());
-        notificationService.current?.destroy();
+      return (_) => {
+        unsubscribers.forEach(_unsubscribe => unsubscribe());
+        notificationService.current?.destroy(_);
       };
     }
   }, [
@@ -310,35 +310,35 @@ export function useNotificationSocket() {
 
   // Update connection status when socket connection changes
   useEffect(() => {
-    if (notificationService.current) {
-      const status = notificationService.current.getConnectionStatus();
-      setConnectionStatus(status);
+    if (_notificationService.current) {
+      const status = notificationService.current.getConnectionStatus(_);
+      setConnectionStatus(_status);
     }
   }, [isConnected]);
 
   // Service methods
-  const sendNotificationToRoom = useCallback((roomId: string, notification: any) => {
-    notificationService.current?.sendNotificationToRoom(roomId, notification);
+  const sendNotificationToRoom = useCallback( (roomId: string, notification: any) => {
+    notificationService.current?.sendNotificationToRoom( roomId, notification);
   }, []);
 
-  const sendPersonalNotification = useCallback((userId: string, notification: any) => {
-    notificationService.current?.sendPersonalNotification(userId, notification);
+  const sendPersonalNotification = useCallback( (userId: string, notification: any) => {
+    notificationService.current?.sendPersonalNotification( userId, notification);
   }, []);
 
   const joinRoom = useCallback((roomId: string) => {
-    notificationService.current?.joinRoom(roomId);
+    notificationService.current?.joinRoom(_roomId);
   }, []);
 
   const leaveRoom = useCallback((roomId: string) => {
-    notificationService.current?.leaveRoom(roomId);
+    notificationService.current?.leaveRoom(_roomId);
   }, []);
 
-  const sendCollaborationEvent = useCallback((action: string, data: any) => {
-    notificationService.current?.sendCollaborationEvent(action as any, data);
+  const sendCollaborationEvent = useCallback( (action: string, data: any) => {
+    notificationService.current?.sendCollaborationEvent( action as any, data);
   }, []);
 
-  const sendGamificationEvent = useCallback((action: string, data: any) => {
-    notificationService.current?.sendGamificationEvent(action as any, data);
+  const sendGamificationEvent = useCallback( (action: string, data: any) => {
+    notificationService.current?.sendGamificationEvent( action as any, data);
   }, []);
 
   return {

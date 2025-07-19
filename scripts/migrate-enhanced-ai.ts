@@ -8,78 +8,78 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(_);
 
 interface MigrationStep {
   name: string;
   description: string;
-  execute: () => Promise<void>;
-  rollback?: () => Promise<void>;
+  execute: (_) => Promise<void>;
+  rollback?: (_) => Promise<void>;
 }
 
 class EnhancedAIMigration {
   private steps: MigrationStep[] = [];
   private completedSteps: string[] = [];
 
-  constructor() {
-    this.initializeMigrationSteps();
+  constructor(_) {
+    this.initializeMigrationSteps(_);
   }
 
-  private initializeMigrationSteps(): void {
+  private initializeMigrationSteps(_): void {
     this.steps = [
       {
         name: 'backup_database',
         description: 'Create database backup before migration',
-        execute: this.backupDatabase.bind(this),
+        execute: this.backupDatabase.bind(_this),
       },
       {
         name: 'validate_schema',
         description: 'Validate current database schema',
-        execute: this.validateCurrentSchema.bind(this),
+        execute: this.validateCurrentSchema.bind(_this),
       },
       {
         name: 'generate_migration',
         description: 'Generate Prisma migration for new models',
-        execute: this.generatePrismaMigration.bind(this),
+        execute: this.generatePrismaMigration.bind(_this),
       },
       {
         name: 'apply_migration',
         description: 'Apply database schema changes',
-        execute: this.applyMigration.bind(this),
+        execute: this.applyMigration.bind(_this),
       },
       {
         name: 'seed_initial_data',
         description: 'Seed initial data for enhanced AI features',
-        execute: this.seedInitialData.bind(this),
+        execute: this.seedInitialData.bind(_this),
       },
       {
         name: 'create_indexes',
         description: 'Create performance indexes for AI features',
-        execute: this.createPerformanceIndexes.bind(this),
+        execute: this.createPerformanceIndexes.bind(_this),
       },
       {
         name: 'validate_migration',
         description: 'Validate migration completed successfully',
-        execute: this.validateMigration.bind(this),
+        execute: this.validateMigration.bind(_this),
       },
     ];
   }
 
-  async runMigration(): Promise<void> {
+  async runMigration(_): Promise<void> {
     console.log('🚀 Starting Enhanced AI Features Migration');
     console.log('=====================================');
 
     try {
-      for (const step of this.steps) {
-        console.log(`\n📋 ${step.description}...`);
+      for (_const step of this.steps) {
+        console.log(_`\n📋 ${step.description}...`);
         
         try {
-          await step.execute();
-          this.completedSteps.push(step.name);
-          console.log(`✅ ${step.name} completed successfully`);
-        } catch (error) {
+          await step.execute(_);
+          this.completedSteps.push(_step.name);
+          console.log(_`✅ ${step.name} completed successfully`);
+        } catch (_error) {
           console.error(`❌ ${step.name} failed:`, error);
-          await this.rollbackMigration();
+          await this.rollbackMigration(_);
           throw error;
         }
       }
@@ -87,9 +87,9 @@ class EnhancedAIMigration {
       console.log('\n🎉 Enhanced AI Features Migration completed successfully!');
       console.log('=====================================');
       
-      await this.printPostMigrationInstructions();
+      await this.printPostMigrationInstructions(_);
       
-    } catch (error) {
+    } catch (_error) {
       console.error('\n💥 Migration failed:', error);
       process.exit(1);
     } finally {
@@ -97,15 +97,15 @@ class EnhancedAIMigration {
     }
   }
 
-  private async backupDatabase(): Promise<void> {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  private async backupDatabase(_): Promise<void> {
+    const timestamp = new Date(_).toISOString().replace(/[:.]/g, '-');
     const backupFile = `backup-${timestamp}.sql`;
-    const backupPath = path.join(process.cwd(), 'backups', backupFile);
+    const backupPath = path.join(_process.cwd(), 'backups', backupFile);
 
     // Ensure backup directory exists
-    const backupDir = path.dirname(backupPath);
+    const backupDir = path.dirname(_backupPath);
     if (!fs.existsSync(backupDir)) {
-      fs.mkdirSync(backupDir, { recursive: true });
+      fs.mkdirSync( backupDir, { recursive: true });
     }
 
     try {
@@ -115,7 +115,7 @@ class EnhancedAIMigration {
         throw new Error('DATABASE_URL environment variable not set');
       }
 
-      const url = new URL(databaseUrl);
+      const url = new URL(_databaseUrl);
       const dbName = url.pathname.slice(1);
       const host = url.hostname;
       const port = url.port || '5432';
@@ -125,21 +125,21 @@ class EnhancedAIMigration {
       // Create pg_dump command
       const dumpCommand = `PGPASSWORD="${password}" pg_dump -h ${host} -p ${port} -U ${username} -d ${dbName} > ${backupPath}`;
       
-      execSync(dumpCommand, { stdio: 'inherit' });
-      console.log(`📦 Database backup created: ${backupPath}`);
+      execSync( dumpCommand, { stdio: 'inherit' });
+      console.log(_`📦 Database backup created: ${backupPath}`);
       
-    } catch (error) {
+    } catch (_error) {
       console.warn('⚠️  Could not create database backup (continuing anyway):', error);
       // Don't fail the migration if backup fails
     }
   }
 
-  private async validateCurrentSchema(): Promise<void> {
+  private async validateCurrentSchema(_): Promise<void> {
     try {
       // Check if required tables exist
       const requiredTables = ['User', 'UserProfile', 'Course'];
       
-      for (const table of requiredTables) {
+      for (_const table of requiredTables) {
         const result = await prisma.$queryRaw`
           SELECT EXISTS (
             SELECT FROM information_schema.tables 
@@ -149,58 +149,58 @@ class EnhancedAIMigration {
         ` as [{ exists: boolean }];
         
         if (!result[0].exists) {
-          throw new Error(`Required table ${table} does not exist`);
+          throw new Error(_`Required table ${table} does not exist`);
         }
       }
 
       console.log('✅ Current schema validation passed');
       
-    } catch (error) {
-      throw new Error(`Schema validation failed: ${error}`);
+    } catch (_error) {
+      throw new Error(_`Schema validation failed: ${error}`);
     }
   }
 
-  private async generatePrismaMigration(): Promise<void> {
+  private async generatePrismaMigration(_): Promise<void> {
     try {
       console.log('🔄 Generating Prisma migration...');
       
       // Generate migration
       execSync('npx prisma migrate dev --name enhanced-ai-features --create-only', {
         stdio: 'inherit',
-        cwd: process.cwd()
+        cwd: process.cwd(_)
       });
       
       console.log('✅ Prisma migration generated');
       
-    } catch (error) {
-      throw new Error(`Failed to generate Prisma migration: ${error}`);
+    } catch (_error) {
+      throw new Error(_`Failed to generate Prisma migration: ${error}`);
     }
   }
 
-  private async applyMigration(): Promise<void> {
+  private async applyMigration(_): Promise<void> {
     try {
       console.log('🔄 Applying database migration...');
       
       // Apply migration
       execSync('npx prisma migrate deploy', {
         stdio: 'inherit',
-        cwd: process.cwd()
+        cwd: process.cwd(_)
       });
       
       // Generate Prisma client
       execSync('npx prisma generate', {
         stdio: 'inherit',
-        cwd: process.cwd()
+        cwd: process.cwd(_)
       });
       
       console.log('✅ Database migration applied successfully');
       
-    } catch (error) {
-      throw new Error(`Failed to apply migration: ${error}`);
+    } catch (_error) {
+      throw new Error(_`Failed to apply migration: ${error}`);
     }
   }
 
-  private async seedInitialData(): Promise<void> {
+  private async seedInitialData(_): Promise<void> {
     try {
       console.log('🌱 Seeding initial data for AI features...');
       
@@ -210,7 +210,7 @@ class EnhancedAIMigration {
           concept: 'Smart Contracts',
           skillLevel: 'BEGINNER',
           textExplanation: 'Smart contracts are self-executing contracts with terms directly written into code.',
-          codeExample: 'pragma solidity ^0.8.20;\n\ncontract SimpleContract {\n    uint256 public value;\n    \n    function setValue(uint256 _value) public {\n        value = _value;\n    }\n}',
+          codeExample: 'pragma solidity ^0.8.20;\n\ncontract SimpleContract {\n    uint256 public value;\n    \n    function setValue(_uint256 _value) public {\n        value = _value;\n    }\n}',
           aiGenerated: true,
           generationModel: 'Enhanced-Tutor'
         },
@@ -224,7 +224,7 @@ class EnhancedAIMigration {
         }
       ];
 
-      for (const content of sampleContent) {
+      for (_const content of sampleContent) {
         await prisma.multiModalContent.upsert({
           where: {
             concept_skillLevel: {
@@ -239,40 +239,40 @@ class EnhancedAIMigration {
 
       console.log('✅ Initial data seeded successfully');
       
-    } catch (error) {
+    } catch (_error) {
       console.warn('⚠️  Could not seed initial data (continuing anyway):', error);
       // Don't fail migration if seeding fails
     }
   }
 
-  private async createPerformanceIndexes(): Promise<void> {
+  private async createPerformanceIndexes(_): Promise<void> {
     try {
       console.log('🔍 Creating performance indexes...');
       
       // Create custom indexes for better performance
       const indexes = [
-        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ai_interaction_user_session ON "AIInteraction" ("userId", "sessionId");',
-        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_security_analysis_user_hash ON "SecurityAnalysis" ("userId", "codeHash");',
-        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_personalized_challenge_user_topic ON "PersonalizedChallenge" ("userId", "topic");',
+        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ai_interaction_user_session ON "AIInteraction" ( "userId", "sessionId");',
+        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_security_analysis_user_hash ON "SecurityAnalysis" ( "userId", "codeHash");',
+        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_personalized_challenge_user_topic ON "PersonalizedChallenge" ( "userId", "topic");',
         'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_job_posting_skills ON "JobPosting" USING GIN ("soliditySkills");',
-        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blockchain_cert_user_type ON "BlockchainCertificate" ("userId", "certificateType");'
+        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blockchain_cert_user_type ON "BlockchainCertificate" ( "userId", "certificateType");'
       ];
 
-      for (const indexQuery of indexes) {
+      for (_const indexQuery of indexes) {
         try {
-          await prisma.$executeRawUnsafe(indexQuery);
-          console.log(`✅ Created index: ${indexQuery.split(' ')[6]}`);
-        } catch (error) {
-          console.warn(`⚠️  Could not create index (may already exist):`, error);
+          await prisma.$executeRawUnsafe(_indexQuery);
+          console.log(_`✅ Created index: ${indexQuery.split(' ')[6]}`);
+        } catch (_error) {
+          console.warn(_`⚠️  Could not create index (may already exist):`, error);
         }
       }
       
-    } catch (error) {
+    } catch (_error) {
       console.warn('⚠️  Could not create all performance indexes (continuing anyway):', error);
     }
   }
 
-  private async validateMigration(): Promise<void> {
+  private async validateMigration(_): Promise<void> {
     try {
       console.log('🔍 Validating migration...');
       
@@ -285,7 +285,7 @@ class EnhancedAIMigration {
         'MultiModalContent'
       ];
       
-      for (const table of newTables) {
+      for (_const table of newTables) {
         const result = await prisma.$queryRaw`
           SELECT EXISTS (
             SELECT FROM information_schema.tables 
@@ -295,15 +295,15 @@ class EnhancedAIMigration {
         ` as [{ exists: boolean }];
         
         if (!result[0].exists) {
-          throw new Error(`New table ${table} was not created`);
+          throw new Error(_`New table ${table} was not created`);
         }
       }
 
       // Test basic operations
-      const testUser = await prisma.user.findFirst();
+      const testUser = await prisma.user.findFirst(_);
       if (testUser) {
         // Try to create AI learning context
-        await prisma.aiLearningContext.upsert({
+        await prisma.aILearningContext.upsert({
           where: { userId: testUser.id },
           update: {},
           create: {
@@ -324,12 +324,12 @@ class EnhancedAIMigration {
         console.log('✅ Test operations completed successfully');
       }
       
-    } catch (error) {
-      throw new Error(`Migration validation failed: ${error}`);
+    } catch (_error) {
+      throw new Error(_`Migration validation failed: ${error}`);
     }
   }
 
-  private async rollbackMigration(): Promise<void> {
+  private async rollbackMigration(_): Promise<void> {
     console.log('\n🔄 Rolling back migration...');
     
     try {
@@ -338,19 +338,19 @@ class EnhancedAIMigration {
         const stepName = this.completedSteps[i];
         const step = this.steps.find(s => s.name === stepName);
         
-        if (step?.rollback) {
-          console.log(`🔄 Rolling back ${stepName}...`);
-          await step.rollback();
-          console.log(`✅ ${stepName} rolled back`);
+        if (_step?.rollback) {
+          console.log(_`🔄 Rolling back ${stepName}...`);
+          await step.rollback(_);
+          console.log(_`✅ ${stepName} rolled back`);
         }
       }
       
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Rollback failed:', error);
     }
   }
 
-  private async printPostMigrationInstructions(): Promise<void> {
+  private async printPostMigrationInstructions(_): Promise<void> {
     console.log('\n📋 Post-Migration Instructions:');
     console.log('================================');
     console.log('1. Restart your application server');
@@ -370,13 +370,13 @@ class EnhancedAIMigration {
 
 // Main execution
 async function main() {
-  const migration = new EnhancedAIMigration();
-  await migration.runMigration();
+  const migration = new EnhancedAIMigration(_);
+  await migration.runMigration(_);
 }
 
 // Run migration if called directly
-if (require.main === module) {
-  main().catch((error) => {
+if (_require.main === module) {
+  main(_).catch((error) => {
     console.error('Migration failed:', error);
     process.exit(1);
   });

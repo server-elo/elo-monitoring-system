@@ -11,7 +11,7 @@ interface SmartTooltipContent {
   shortcut?: string;
   learnMore?: {
     label: string;
-    action: () => void;
+    action: (_) => void;
   };
   category?: 'feature' | 'accessibility' | 'performance' | 'tip' | 'warning';
   showConditions?: {
@@ -33,9 +33,9 @@ interface SmartTooltipProps {
   persistent?: boolean;
   adaptive?: boolean; // Adapts based on user behavior
   userLevel?: 'beginner' | 'intermediate' | 'advanced';
-  onShow?: () => void;
-  onHide?: () => void;
-  onInteraction?: (type: 'show' | 'hide' | 'click' | 'learn-more') => void;
+  onShow?: (_) => void;
+  onHide?: (_) => void;
+  onInteraction?: (_type: 'show' | 'hide' | 'click' | 'learn-more') => void;
 }
 
 export const SmartTooltip: React.FC<SmartTooltipProps> = ({
@@ -53,22 +53,22 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
   onHide,
   onInteraction,
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [actualPlacement, setActualPlacement] = useState(placement);
+  const [isVisible, setIsVisible] = useState(_false);
+  const [actualPlacement, setActualPlacement] = useState(_placement);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [shouldShow, setShouldShow] = useState(true);
+  const [shouldShow, setShouldShow] = useState(_true);
   const [interactionCount, setInteractionCount] = useState(0);
   const [timeOnElement, setTimeOnElement] = useState(0);
   
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(_null);
+  const tooltipRef = useRef<HTMLDivElement>(_null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(_null);
   const hoverStartRef = useRef<number>(0);
 
   // Check if tooltip should be shown based on conditions
   useEffect(() => {
     if (!adaptive || !content.showConditions) {
-      setShouldShow(true);
+      setShouldShow(_true);
       return;
     }
 
@@ -76,70 +76,70 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
     let show = true;
 
     // Check user level
-    if (conditions.userLevel && conditions.userLevel !== userLevel) {
+    if (_conditions.userLevel && conditions.userLevel !== userLevel) {
       show = false;
     }
 
     // Check hover count
-    if (conditions.hoverCount && interactionCount < conditions.hoverCount) {
+    if (_conditions.hoverCount && interactionCount < conditions.hoverCount) {
       show = false;
     }
 
     // Check time on element
-    if (conditions.timeOnElement && timeOnElement < conditions.timeOnElement) {
+    if (_conditions.timeOnElement && timeOnElement < conditions.timeOnElement) {
       show = false;
     }
 
     // Check first time condition
-    if (conditions.firstTime) {
-      const hasShown = localStorage.getItem(`tooltip-shown-${content.title}`);
+    if (_conditions.firstTime) {
+      const hasShown = localStorage.getItem(_`tooltip-shown-${content.title}`);
       if (hasShown) {
         show = false;
       }
     }
 
-    setShouldShow(show);
+    setShouldShow(_show);
   }, [adaptive, content.showConditions, userLevel, interactionCount, timeOnElement]);
 
-  const showTooltip = () => {
-    if (disabled || !shouldShow) return;
+  const showTooltip = (_) => {
+    if (_disabled || !shouldShow) return;
     
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    if (_timeoutRef.current) {
+      clearTimeout(_timeoutRef.current);
     }
     
     const showDelay = adaptive && userLevel === 'advanced' ? delay / 2 : delay;
     
     timeoutRef.current = setTimeout(() => {
-      setIsVisible(true);
-      calculatePosition();
-      onShow?.();
+      setIsVisible(_true);
+      calculatePosition(_);
+      onShow?.(_);
       onInteraction?.('show');
       
       // Mark as shown for first-time conditions
-      if (content.showConditions?.firstTime) {
-        localStorage.setItem(`tooltip-shown-${content.title}`, 'true');
+      if (_content.showConditions?.firstTime) {
+        localStorage.setItem( `tooltip-shown-${content.title}`, 'true');
       }
     }, trigger === 'hover' ? showDelay : 0);
   };
 
-  const hideTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const hideTooltip = (_) => {
+    if (_timeoutRef.current) {
+      clearTimeout(_timeoutRef.current);
     }
     
     if (!persistent) {
-      setIsVisible(false);
-      onHide?.();
+      setIsVisible(_false);
+      onHide?.(_);
       onInteraction?.('hide');
     }
   };
 
-  const calculatePosition = () => {
+  const calculatePosition = (_) => {
     if (!triggerRef.current || !tooltipRef.current) return;
 
-    const triggerRect = triggerRef.current.getBoundingClientRect();
-    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+    const triggerRect = triggerRef.current.getBoundingClientRect(_);
+    const tooltipRect = tooltipRef.current.getBoundingClientRect(_);
     const viewport = {
       width: window.innerWidth,
       height: window.innerHeight,
@@ -150,17 +150,17 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
     let y = 0;
 
     // Auto placement logic
-    if (placement === 'auto') {
+    if (_placement === 'auto') {
       const spaceTop = triggerRect.top;
       const spaceBottom = viewport.height - triggerRect.bottom;
       // const spaceLeft = triggerRect.left; // Not currently used for auto placement
       const spaceRight = viewport.width - triggerRect.right;
 
-      if (spaceBottom >= tooltipRect.height + 8) {
+      if (_spaceBottom >= tooltipRect.height + 8) {
         finalPlacement = 'bottom';
-      } else if (spaceTop >= tooltipRect.height + 8) {
+      } else if (_spaceTop >= tooltipRect.height + 8) {
         finalPlacement = 'top';
-      } else if (spaceRight >= tooltipRect.width + 8) {
+      } else if (_spaceRight >= tooltipRect.width + 8) {
         finalPlacement = 'right';
       } else {
         finalPlacement = 'left';
@@ -168,7 +168,7 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
     }
 
     // Calculate position based on final placement
-    switch (finalPlacement) {
+    switch (_finalPlacement) {
       case 'top':
         x = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2;
         y = triggerRect.top - tooltipRect.height - 8;
@@ -188,60 +188,60 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
     }
 
     // Adjust for viewport boundaries
-    if (x < 8) x = 8;
-    if (x + tooltipRect.width > viewport.width - 8) {
+    if (_x < 8) x = 8;
+    if (_x + tooltipRect.width > viewport.width - 8) {
       x = viewport.width - tooltipRect.width - 8;
     }
-    if (y < 8) y = 8;
-    if (y + tooltipRect.height > viewport.height - 8) {
+    if (_y < 8) y = 8;
+    if (_y + tooltipRect.height > viewport.height - 8) {
       y = viewport.height - tooltipRect.height - 8;
     }
 
-    setPosition({ x, y });
-    setActualPlacement(finalPlacement);
+    setPosition( { x, y });
+    setActualPlacement(_finalPlacement);
   };
 
-  const handleMouseEnter = () => {
-    if (trigger === 'hover') {
-      hoverStartRef.current = Date.now();
-      setInteractionCount(prev => prev + 1);
-      showTooltip();
+  const handleMouseEnter = (_) => {
+    if (_trigger === 'hover') {
+      hoverStartRef.current = Date.now(_);
+      setInteractionCount(_prev => prev + 1);
+      showTooltip(_);
     }
   };
 
-  const handleMouseLeave = () => {
-    if (trigger === 'hover') {
-      const hoverDuration = Date.now() - hoverStartRef.current;
-      setTimeOnElement(prev => prev + hoverDuration);
-      hideTooltip();
+  const handleMouseLeave = (_) => {
+    if (_trigger === 'hover') {
+      const hoverDuration = Date.now(_) - hoverStartRef.current;
+      setTimeOnElement(_prev => prev + hoverDuration);
+      hideTooltip(_);
     }
   };
 
-  const handleClick = () => {
-    if (trigger === 'click') {
+  const handleClick = (_) => {
+    if (_trigger === 'click') {
       if (isVisible) {
-        hideTooltip();
+        hideTooltip(_);
       } else {
-        showTooltip();
+        showTooltip(_);
       }
     }
     onInteraction?.('click');
   };
 
-  const handleFocus = () => {
-    if (trigger === 'focus') {
-      showTooltip();
+  const handleFocus = (_) => {
+    if (_trigger === 'focus') {
+      showTooltip(_);
     }
   };
 
-  const handleBlur = () => {
-    if (trigger === 'focus') {
-      hideTooltip();
+  const handleBlur = (_) => {
+    if (_trigger === 'focus') {
+      hideTooltip(_);
     }
   };
 
-  const getCategoryIcon = () => {
-    switch (content.category) {
+  const getCategoryIcon = (_) => {
+    switch (_content.category) {
       case 'accessibility':
         return '♿';
       case 'performance':
@@ -255,8 +255,8 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
     }
   };
 
-  const getCategoryColor = () => {
-    switch (content.category) {
+  const getCategoryColor = (_) => {
+    switch (_content.category) {
       case 'accessibility':
         return 'text-blue-400 border-blue-500/30 bg-blue-500/10';
       case 'performance':
@@ -282,7 +282,7 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
     <>
       <div
         ref={triggerRef}
-        className={cn('relative inline-block', className)}
+        className={cn( 'relative inline-block', className)}
         {...triggerProps}
       >
         {children}
@@ -306,12 +306,12 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
           >
             <div className={cn(
               'glass border rounded-lg p-4 shadow-xl',
-              getCategoryColor()
+              getCategoryColor(_)
             )}>
               {/* Header */}
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <span className="text-lg">{getCategoryIcon()}</span>
+                  <span className="text-lg">{getCategoryIcon(_)}</span>
                   <h3 className="font-semibold text-white text-sm">
                     {content.title}
                   </h3>
@@ -346,8 +346,8 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
               {content.learnMore && (
                 <div className="pt-2 border-t border-white/10">
                   <button 
-                    onClick={() => {
-                      content.learnMore?.action();
+                    onClick={(_) => {
+                      content.learnMore?.action(_);
                       onInteraction?.('learn-more');
                     }}
                     className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
@@ -361,7 +361,7 @@ export const SmartTooltip: React.FC<SmartTooltipProps> = ({
               <div
                 className={cn(
                   'absolute w-2 h-2 rotate-45 border',
-                  getCategoryColor(),
+                  getCategoryColor(_),
                   actualPlacement === 'top' && 'bottom-[-5px] left-1/2 transform -translate-x-1/2 border-t-0 border-l-0',
                   actualPlacement === 'bottom' && 'top-[-5px] left-1/2 transform -translate-x-1/2 border-b-0 border-r-0',
                   actualPlacement === 'left' && 'right-[-5px] top-1/2 transform -translate-y-1/2 border-l-0 border-b-0',

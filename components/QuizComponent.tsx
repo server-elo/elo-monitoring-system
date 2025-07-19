@@ -4,26 +4,26 @@ import { QuizData, QuizQuestion } from '../types';
 interface QuizComponentProps {
   quizData: QuizData;
   moduleId: string; // To identify which module's quiz is completed
-  onQuizComplete: (moduleId: string) => void; // Callback when quiz is done
+  onQuizComplete: (_moduleId: string) => void; // Callback when quiz is done
 }
 
-const QuizComponent: React.FC<QuizComponentProps> = ({ quizData, moduleId, onQuizComplete }) => {
+const QuizComponent: React.FC<QuizComponentProps> = ( { quizData, moduleId, onQuizComplete }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<{ [questionId: string]: string }>({});
-  const [showFeedback, setShowFeedback] = useState<{ [questionId: string]: boolean }>({});
-  const [quizFinished, setQuizFinished] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [questionId: string]: string }>({  });
+  const [showFeedback, setShowFeedback] = useState<{ [questionId: string]: boolean }>({  });
+  const [quizFinished, setQuizFinished] = useState(_false);
 
   const currentQuestion: QuizQuestion = quizData.questions[currentQuestionIndex];
 
   useEffect(() => {
-    // Reset state if quizData changes (e.g., new module selected)
+    // Reset state if quizData changes ( e.g., new module selected)
     setCurrentQuestionIndex(0);
-    setSelectedAnswers({});
-    setShowFeedback({});
-    setQuizFinished(false);
+    setSelectedAnswers({  });
+    setShowFeedback({  });
+    setQuizFinished(_false);
   }, [quizData]);
 
-  const handleOptionSelect = (optionId: string) => {
+  const handleOptionSelect = (_optionId: string) => {
     if (quizFinished) return;
     setSelectedAnswers(prev => ({
       ...prev,
@@ -35,27 +35,27 @@ const QuizComponent: React.FC<QuizComponentProps> = ({ quizData, moduleId, onQui
     }));
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < quizData.questions.length - 1) {
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+  const handleNextQuestion = (_) => {
+    if (_currentQuestionIndex < quizData.questions.length - 1) {
+      setCurrentQuestionIndex(_prevIndex => prevIndex + 1);
     } else {
       // Last question answered
-      setQuizFinished(true);
-      onQuizComplete(moduleId);
+      setQuizFinished(_true);
+      onQuizComplete(_moduleId);
     }
   };
 
-  const handlePreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prevIndex => prevIndex - 1);
-      setQuizFinished(false); // If they go back, quiz isn't "finished" from this state
+  const handlePreviousQuestion = (_) => {
+    if (_currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(_prevIndex => prevIndex - 1);
+      setQuizFinished(_false); // If they go back, quiz isn't "finished" from this state
     }
   };
   
   const isAttempted = showFeedback[currentQuestion.id];
   const selectedOptionId = selectedAnswers[currentQuestion.id];
 
-  // const allQuestionsAttempted = quizData.questions.every(q => showFeedback[q.id]);
+  // const allQuestionsAttempted = quizData.questions.every(_q => showFeedback[q.id]);
 
   if (!currentQuestion) {
     return <div className="text-brand-text-muted">Loading quiz...</div>;
@@ -84,7 +84,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({ quizData, moduleId, onQui
             } else if (quizFinished) { // Style when quiz is fully finished
                 if (isCorrect) {
                     buttonClass += "bg-green-600/30 border-green-600 text-green-200";
-                } else if (selectedAnswers[currentQuestion.id] === option.id && !isCorrect) { // User selected this wrong answer
+                } else if (_selectedAnswers[currentQuestion.id] === option.id && !isCorrect) { // User selected this wrong answer
                     buttonClass += "bg-red-600/30 border-red-600 text-red-200 opacity-70";
                 }
                  else {
@@ -98,14 +98,14 @@ const QuizComponent: React.FC<QuizComponentProps> = ({ quizData, moduleId, onQui
             return (
               <button
                 key={option.id}
-                onClick={() => !isAttempted && !quizFinished && handleOptionSelect(option.id)}
+                onClick={(_) => !isAttempted && !quizFinished && handleOptionSelect(_option.id)}
                 disabled={isAttempted || quizFinished}
                 className={buttonClass}
                 aria-pressed={isSelected}
               >
                 {option.text}
-                {isAttempted && !quizFinished && isSelected && (isCorrect ? " (Correct!)" : " (Incorrect)")}
-                {isAttempted && !quizFinished && !isSelected && isCorrect && " (Correct Answer)"}
+                {isAttempted && !quizFinished && isSelected && (_isCorrect ? " (Correct!)" : " (_Incorrect)")}
+                {isAttempted && !quizFinished && !isSelected && isCorrect && " (_Correct Answer)"}
               </button>
             );
           })}
@@ -139,10 +139,10 @@ const QuizComponent: React.FC<QuizComponentProps> = ({ quizData, moduleId, onQui
         </span>
         <button
           onClick={handleNextQuestion}
-          disabled={(!isAttempted && !quizFinished) || (currentQuestionIndex === quizData.questions.length - 1 && quizFinished) }
+          disabled={(!isAttempted && !quizFinished) || (_currentQuestionIndex === quizData.questions.length - 1 && quizFinished) }
           className="px-4 py-2 bg-brand-secondary text-white rounded-md hover:bg-brand-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {currentQuestionIndex === quizData.questions.length - 1 ? (quizFinished ? 'Finished' : 'Finish Quiz') : 'Next'}
+          {currentQuestionIndex === quizData.questions.length - 1 ? (_quizFinished ? 'Finished' : 'Finish Quiz') : 'Next'}
         </button>
       </div>
     </div>

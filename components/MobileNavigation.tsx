@@ -6,12 +6,12 @@ import Sidebar from './Sidebar';
 interface MobileNavigationProps {
   modules: LearningModule[];
   selectedModuleId: string | null;
-  onSelectModule: (id: string) => void;
+  onSelectModule: (_id: string) => void;
   completedModuleIds: string[];
   currentView: string;
-  onViewChange: (view: string) => void;
-  onLogout?: () => void;
-  onResetProgress: () => void;
+  onViewChange: (_view: string) => void;
+  onLogout?: (_) => void;
+  onResetProgress: (_) => void;
 }
 
 const MobileNavigation: React.FC<MobileNavigationProps> = ({
@@ -24,43 +24,43 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
   onLogout,
   onResetProgress,
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(_false);
 
   // Close menu when route changes
   useEffect(() => {
-    setIsMenuOpen(false);
+    setIsMenuOpen(_false);
   }, [selectedModuleId, currentView]);
 
   // Close menu on escape key
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsMenuOpen(false);
+    const handleEscape = (_e: KeyboardEvent) => {
+      if (_e.key === 'Escape') {
+        setIsMenuOpen(_false);
       }
     };
 
     if (isMenuOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener( 'keydown', handleEscape);
       // Prevent body scroll when menu is open
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
 
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
+    return (_) => {
+      document.removeEventListener( 'keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
   }, [isMenuOpen]);
 
-  const handleModuleSelect = (moduleId: string) => {
-    onSelectModule(moduleId);
-    setIsMenuOpen(false);
+  const handleModuleSelect = (_moduleId: string) => {
+    onSelectModule(_moduleId);
+    setIsMenuOpen(_false);
   };
 
-  const handleViewChange = (view: string) => {
-    onViewChange(view);
-    setIsMenuOpen(false);
+  const handleViewChange = (_view: string) => {
+    onViewChange(_view);
+    setIsMenuOpen(_false);
   };
 
   return (
@@ -69,7 +69,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
       <header className="md:hidden bg-brand-bg-medium border-b border-brand-bg-light/20 px-4 py-3 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={(_) => setIsMenuOpen(!isMenuOpen)}
             className="p-2 rounded-lg hover:bg-brand-bg-light transition-colors focus-brand"
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMenuOpen}
@@ -82,7 +82,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
         {/* Quick Actions */}
         <div className="flex items-center gap-2">
           <button
-            onClick={() => handleViewChange('achievements')}
+            onClick={(_) => handleViewChange('achievements')}
             className="p-2 rounded-lg hover:bg-brand-bg-light transition-colors focus-brand"
             aria-label="View achievements"
           >
@@ -97,7 +97,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
       {isMenuOpen && (
         <div 
           className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-          onClick={() => setIsMenuOpen(false)}
+          onClick={(_) => setIsMenuOpen(_false)}
           aria-hidden="true"
         />
       )}
@@ -112,7 +112,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
           <div className="p-4 border-b border-brand-bg-light/20 flex items-center justify-between">
             <h1 className="text-xl font-bold text-brand-primary-400">Solidity DevPath</h1>
             <button
-              onClick={() => setIsMenuOpen(false)}
+              onClick={(_) => setIsMenuOpen(_false)}
               className="p-2 rounded-lg hover:bg-brand-bg-light transition-colors focus-brand"
               aria-label="Close menu"
             >
@@ -133,7 +133,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
           {/* Mobile Sidebar Footer */}
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-brand-bg-medium border-t border-brand-bg-light/20 space-y-2">
             <button
-              onClick={() => handleViewChange('achievements')}
+              onClick={(_) => handleViewChange('achievements')}
               className="w-full btn btn-secondary text-sm"
             >
               My Achievements
@@ -146,9 +146,9 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
             </button>
             {onLogout && (
               <button
-                onClick={() => {
-                  onLogout();
-                  setIsMenuOpen(false);
+                onClick={(_) => {
+                  onLogout(_);
+                  setIsMenuOpen(_false);
                 }}
                 className="w-full btn btn-ghost text-sm"
               >

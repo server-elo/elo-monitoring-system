@@ -12,295 +12,295 @@ import { realTimeManager } from './websocket';
 
 export class CommunityStatsManager {
   private static instance: CommunityStatsManager;
-  private cache = new Map<string, { data: any; expiresAt: Date }>();
+  private cache = new Map<string, { data: any; expiresAt: Date }>(_);
   private cacheTimeout = 60000; // 1 minute
   private updateInterval: NodeJS.Timeout | null = null;
-  private subscribers = new Set<(stats: CommunityStats) => void>();
+  private subscribers = new Set<(_stats: CommunityStats) => void>(_);
 
-  static getInstance(): CommunityStatsManager {
+  static getInstance(_): CommunityStatsManager {
     if (!CommunityStatsManager.instance) {
-      CommunityStatsManager.instance = new CommunityStatsManager();
+      CommunityStatsManager.instance = new CommunityStatsManager(_);
     }
     return CommunityStatsManager.instance;
   }
 
-  constructor() {
-    this.setupRealTimeUpdates();
-    this.startPeriodicUpdates();
+  constructor(_) {
+    this.setupRealTimeUpdates(_);
+    this.startPeriodicUpdates(_);
   }
 
-  private setupRealTimeUpdates(): void {
+  private setupRealTimeUpdates(_): void {
     // Subscribe to real-time statistics updates
-    realTimeManager.subscribe('stats_update', (data: Partial<CommunityStats>) => {
-      this.handleStatsUpdate(data);
+    realTimeManager.subscribe( 'stats_update', (data: Partial<CommunityStats>) => {
+      this.handleStatsUpdate(_data);
     });
 
     // Subscribe to events that affect statistics
-    realTimeManager.subscribe('user_progress', (data: any) => {
-      this.handleProgressUpdate(data);
+    realTimeManager.subscribe( 'userprogress', (data: any) => {
+      this.handleProgressUpdate(_data);
     });
 
-    realTimeManager.subscribe('user_registration', (data: any) => {
-      this.handleUserRegistration(data);
+    realTimeManager.subscribe( 'user_registration', (data: any) => {
+      this.handleUserRegistration(_data);
     });
   }
 
-  private handleStatsUpdate(data: Partial<CommunityStats>): void {
+  private handleStatsUpdate(_data: Partial<CommunityStats>): void {
     // Invalidate relevant cache entries
     this.invalidateCache('community_stats');
     
     // Notify subscribers
-    this.notifySubscribers(data);
+    this.notifySubscribers(_data);
   }
 
-  private handleProgressUpdate(_data: any): void {
+  private handleProgressUpdate( data: any): void {
     // Update lesson completion stats
     this.invalidateCache('lesson_stats');
     this.invalidateCache('engagement_stats');
   }
 
-  private handleUserRegistration(_data: any): void {
+  private handleUserRegistration( data: any): void {
     // Update user count stats
     this.invalidateCache('user_stats');
   }
 
-  private startPeriodicUpdates(): void {
+  private startPeriodicUpdates(_): void {
     // Update statistics every minute
     this.updateInterval = setInterval(() => {
-      this.refreshStats();
+      this.refreshStats(_);
     }, 60000);
   }
 
-  private async refreshStats(): Promise<void> {
+  private async refreshStats(_): Promise<void> {
     try {
-      const stats = await this.fetchCommunityStats();
-      this.notifySubscribers(stats);
-    } catch (error) {
+      const stats = await this.fetchCommunityStats(_);
+      this.notifySubscribers(_stats);
+    } catch (_error) {
       console.error('Failed to refresh community stats:', error);
     }
   }
 
-  private notifySubscribers(stats: Partial<CommunityStats>): void {
+  private notifySubscribers(_stats: Partial<CommunityStats>): void {
     this.subscribers.forEach(callback => {
       try {
-        callback(stats as CommunityStats);
-      } catch (error) {
+        callback(_stats as CommunityStats);
+      } catch (_error) {
         console.error('Error in stats subscriber callback:', error);
       }
     });
   }
 
-  private invalidateCache(pattern: string): void {
+  private invalidateCache(_pattern: string): void {
     const keysToRemove: string[] = [];
-    this.cache.forEach((_, key) => {
-      if (key.includes(pattern)) {
-        keysToRemove.push(key);
+    this.cache.forEach( (_, key) => {
+      if (_key.includes(pattern)) {
+        keysToRemove.push(_key);
       }
     });
-    keysToRemove.forEach(key => this.cache.delete(key));
+    keysToRemove.forEach(_key => this.cache.delete(key));
   }
 
-  private getCachedData<T>(key: string): T | null {
-    const cached = this.cache.get(key);
+  private getCachedData<T>(_key: string): T | null {
+    const cached = this.cache.get(_key);
     if (cached && cached.expiresAt > new Date()) {
       return cached.data as T;
     }
     return null;
   }
 
-  private setCachedData<T>(key: string, data: T): void {
-    const expiresAt = new Date(Date.now() + this.cacheTimeout);
-    this.cache.set(key, { data, expiresAt });
+  private setCachedData<T>( key: string, data: T): void {
+    const expiresAt = new Date(_Date.now() + this.cacheTimeout);
+    this.cache.set( key, { data, expiresAt });
   }
 
-  async getCommunityStats(filters?: StatsFilters, useCache: boolean = true): Promise<CommunityStats> {
-    const cacheKey = `community_stats_${JSON.stringify(filters || {})}`;
+  async getCommunityStats( filters?: StatsFilters, useCache: boolean = true): Promise<CommunityStats> {
+    const cacheKey = `community_stats_${JSON.stringify(_filters || {})}`;
     
     if (useCache) {
-      const cached = this.getCachedData<CommunityStats>(cacheKey);
+      const cached = this.getCachedData<CommunityStats>(_cacheKey);
       if (cached) {
         return cached;
       }
     }
 
     try {
-      const stats = await this.fetchCommunityStats(filters);
+      const stats = await this.fetchCommunityStats(_filters);
       
       if (useCache) {
-        this.setCachedData(cacheKey, stats);
+        this.setCachedData( cacheKey, stats);
       }
       
       return stats;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching community stats:', error);
       throw new CommunityError({
         code: 'STATS_FETCH_FAILED',
         message: 'Failed to fetch community statistics',
         details: error,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
     }
   }
 
-  private async fetchCommunityStats(filters?: StatsFilters): Promise<CommunityStats> {
+  private async fetchCommunityStats(_filters?: StatsFilters): Promise<CommunityStats> {
     const response = await fetch('/api/community/stats', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ filters })
+      body: JSON.stringify({ filters  })
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch stats: ${response.statusText}`);
+      throw new Error(_`Failed to fetch stats: ${response.statusText}`);
     }
 
-    return response.json();
+    return response.json(_);
   }
 
-  async getTrendingTopics(limit: number = 10): Promise<TrendingTopic[]> {
+  async getTrendingTopics(_limit: number = 10): Promise<TrendingTopic[]> {
     const cacheKey = `trending_topics_${limit}`;
     
-    const cached = this.getCachedData<TrendingTopic[]>(cacheKey);
+    const cached = this.getCachedData<TrendingTopic[]>(_cacheKey);
     if (cached) {
       return cached;
     }
 
     try {
-      const response = await fetch(`/api/community/trending?limit=${limit}`);
+      const response = await fetch(_`/api/community/trending?limit=${limit}`);
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch trending topics: ${response.statusText}`);
+        throw new Error(_`Failed to fetch trending topics: ${response.statusText}`);
       }
       
-      const topics = await response.json();
-      this.setCachedData(cacheKey, topics);
+      const topics = await response.json(_);
+      this.setCachedData( cacheKey, topics);
       
       return topics;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching trending topics:', error);
       return [];
     }
   }
 
-  async getCommunityMilestones(limit: number = 5): Promise<CommunityMilestone[]> {
+  async getCommunityMilestones(_limit: number = 5): Promise<CommunityMilestone[]> {
     const cacheKey = `community_milestones_${limit}`;
     
-    const cached = this.getCachedData<CommunityMilestone[]>(cacheKey);
+    const cached = this.getCachedData<CommunityMilestone[]>(_cacheKey);
     if (cached) {
       return cached;
     }
 
     try {
-      const response = await fetch(`/api/community/milestones?limit=${limit}`);
+      const response = await fetch(_`/api/community/milestones?limit=${limit}`);
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch milestones: ${response.statusText}`);
+        throw new Error(_`Failed to fetch milestones: ${response.statusText}`);
       }
       
-      const milestones = await response.json();
-      this.setCachedData(cacheKey, milestones);
+      const milestones = await response.json(_);
+      this.setCachedData( cacheKey, milestones);
       
       return milestones;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching community milestones:', error);
       return [];
     }
   }
 
-  async exportStats(options: ExportOptions): Promise<string> {
+  async exportStats(_options: ExportOptions): Promise<string> {
     try {
       const response = await fetch('/api/community/stats/export', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(options)
+        body: JSON.stringify(_options)
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to export stats: ${response.statusText}`);
+        throw new Error(_`Failed to export stats: ${response.statusText}`);
       }
 
-      if (options.format === 'csv') {
-        return response.text();
+      if (_options.format === 'csv') {
+        return response.text(_);
       } else {
-        const data = await response.json();
-        return JSON.stringify(data, null, 2);
+        const data = await response.json(_);
+        return JSON.stringify( data, null, 2);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error exporting stats:', error);
       throw new CommunityError({
         code: 'EXPORT_FAILED',
         message: 'Failed to export statistics',
         details: error,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
     }
   }
 
-  async getEngagementMetrics(timeframe: 'daily' | 'weekly' | 'monthly' = 'weekly'): Promise<any> {
+  async getEngagementMetrics(_timeframe: 'daily' | 'weekly' | 'monthly' = 'weekly'): Promise<any> {
     const cacheKey = `engagement_metrics_${timeframe}`;
     
-    const cached = this.getCachedData(cacheKey);
+    const cached = this.getCachedData(_cacheKey);
     if (cached) {
       return cached;
     }
 
     try {
-      const response = await fetch(`/api/community/engagement?timeframe=${timeframe}`);
+      const response = await fetch(_`/api/community/engagement?timeframe=${timeframe}`);
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch engagement metrics: ${response.statusText}`);
+        throw new Error(_`Failed to fetch engagement metrics: ${response.statusText}`);
       }
       
-      const metrics = await response.json();
-      this.setCachedData(cacheKey, metrics);
+      const metrics = await response.json(_);
+      this.setCachedData( cacheKey, metrics);
       
       return metrics;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching engagement metrics:', error);
       return null;
     }
   }
 
-  async getLearningProgress(timeframe: 'daily' | 'weekly' | 'monthly' = 'weekly'): Promise<any> {
-    const cacheKey = `learning_progress_${timeframe}`;
+  async getLearningProgress(_timeframe: 'daily' | 'weekly' | 'monthly' = 'weekly'): Promise<any> {
+    const cacheKey = `learningprogress_${timeframe}`;
     
-    const cached = this.getCachedData(cacheKey);
+    const cached = this.getCachedData(_cacheKey);
     if (cached) {
       return cached;
     }
 
     try {
-      const response = await fetch(`/api/community/learning-progress?timeframe=${timeframe}`);
+      const response = await fetch(_`/api/community/learning-progress?timeframe=${timeframe}`);
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch learning progress: ${response.statusText}`);
+        throw new Error(_`Failed to fetch learning progress: ${response.statusText}`);
       }
       
-      const progress = await response.json();
-      this.setCachedData(cacheKey, progress);
+      const progress = await response.json(_);
+      this.setCachedData( cacheKey, progress);
       
       return progress;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching learning progress:', error);
       return null;
     }
   }
 
   // Subscribe to real-time stats updates
-  subscribe(callback: (stats: CommunityStats) => void): () => void {
-    this.subscribers.add(callback);
+  subscribe(_callback: (stats: CommunityStats) => void): (_) => void {
+    this.subscribers.add(_callback);
     
-    return () => {
-      this.subscribers.delete(callback);
+    return (_) => {
+      this.subscribers.delete(_callback);
     };
   }
 
   // Get default filters
-  getDefaultFilters(): StatsFilters {
-    const now = new Date();
+  getDefaultFilters(_): StatsFilters {
+    const now = new Date(_);
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     
     return {
@@ -311,71 +311,71 @@ export class CommunityStatsManager {
   }
 
   // Clear all cache
-  clearCache(): void {
-    this.cache.clear();
+  clearCache(_): void {
+    this.cache.clear(_);
   }
 
   // Cleanup
-  destroy(): void {
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
+  destroy(_): void {
+    if (_this.updateInterval) {
+      clearInterval(_this.updateInterval);
       this.updateInterval = null;
     }
-    this.subscribers.clear();
-    this.cache.clear();
+    this.subscribers.clear(_);
+    this.cache.clear(_);
   }
 }
 
 // Export singleton instance
-export const communityStatsManager = CommunityStatsManager.getInstance();
+export const communityStatsManager = CommunityStatsManager.getInstance(_);
 
 // Utility functions for statistics
 export const StatsUtils = {
-  formatNumber(num: number): string {
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(1)}M`;
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`;
+  formatNumber(_num: number): string {
+    if (_num >= 1000000) {
+      return `${(_num / 1000000).toFixed(1)}M`;
+    } else if (_num >= 1000) {
+      return `${(_num / 1000).toFixed(1)}K`;
     }
     return num.toString();
   },
 
-  formatPercentage(value: number, total: number): string {
-    if (total === 0) return '0%';
+  formatPercentage( value: number, total: number): string {
+    if (_total === 0) return '0%';
     return `${((value / total) * 100).toFixed(1)}%`;
   },
 
-  formatDuration(minutes: number): string {
-    if (minutes >= 1440) { // 24 hours
-      const days = Math.floor(minutes / 1440);
+  formatDuration(_minutes: number): string {
+    if (_minutes >= 1440) { // 24 hours
+      const days = Math.floor(_minutes / 1440);
       const hours = Math.floor((minutes % 1440) / 60);
       return `${days}d ${hours}h`;
-    } else if (minutes >= 60) {
-      const hours = Math.floor(minutes / 60);
+    } else if (_minutes >= 60) {
+      const hours = Math.floor(_minutes / 60);
       const mins = minutes % 60;
       return `${hours}h ${mins}m`;
     }
     return `${minutes}m`;
   },
 
-  calculateGrowthRate(current: number, previous: number): number {
-    if (previous === 0) return current > 0 ? 100 : 0;
+  calculateGrowthRate( current: number, previous: number): number {
+    if (_previous === 0) return current > 0 ? 100 : 0;
     return ((current - previous) / previous) * 100;
   },
 
-  formatGrowthRate(rate: number): string {
+  formatGrowthRate(_rate: number): string {
     const sign = rate >= 0 ? '+' : '';
     return `${sign}${rate.toFixed(1)}%`;
   },
 
-  getGrowthColor(rate: number): string {
-    if (rate > 0) return 'text-green-400';
-    if (rate < 0) return 'text-red-400';
+  getGrowthColor(_rate: number): string {
+    if (_rate > 0) return 'text-green-400';
+    if (_rate < 0) return 'text-red-400';
     return 'text-gray-400';
   },
 
-  getTrendIcon(trend: 'up' | 'down' | 'stable'): string {
-    switch (trend) {
+  getTrendIcon(_trend: 'up' | 'down' | 'stable'): string {
+    switch (_trend) {
       case 'up': return '📈';
       case 'down': return '📉';
       case 'stable': return '➡️';
@@ -383,18 +383,18 @@ export const StatsUtils = {
     }
   },
 
-  formatTimeRange(startDate: Date, endDate: Date): string {
-    const start = startDate.toLocaleDateString();
-    const end = endDate.toLocaleDateString();
+  formatTimeRange( startDate: Date, endDate: Date): string {
+    const start = startDate.toLocaleDateString(_);
+    const end = endDate.toLocaleDateString(_);
     
-    if (start === end) {
+    if (_start === end) {
       return start;
     }
     
     return `${start} - ${end}`;
   },
 
-  generateExportFilename(format: 'csv' | 'json', dateRange: { start: Date; end: Date }): string {
+  generateExportFilename( format: 'csv' | 'json', dateRange: { start: Date; end: Date }): string {
     const start = dateRange.start.toISOString().split('T')[0];
     const end = dateRange.end.toISOString().split('T')[0];
     return `community-stats-${start}-to-${end}.${format}`;

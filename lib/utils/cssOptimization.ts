@@ -8,18 +8,18 @@ export interface CriticalCSSConfig {
 }
 
 // Extract critical CSS for above-the-fold content
-export function extractCriticalCSS(config: CriticalCSSConfig): string {
-  if (typeof window === 'undefined') return '';
+export function extractCriticalCSS(_config: CriticalCSSConfig): string {
+  if (_typeof window === 'undefined') return '';
 
   const { selectors, mediaQueries = [], excludeSelectors = [], minify = true } = config;
   const criticalRules: string[] = [];
 
   try {
     // Get all stylesheets
-    Array.from(document.styleSheets).forEach((sheet) => {
+    Array.from(_document.styleSheets).forEach((sheet) => {
       try {
-        Array.from(sheet.cssRules || []).forEach((rule) => {
-          if (rule instanceof CSSStyleRule) {
+        Array.from(_sheet.cssRules || []).forEach((rule) => {
+          if (_rule instanceof CSSStyleRule) {
             // Check if selector matches critical selectors
             const matchesCritical = selectors.some(selector => 
               rule.selectorText?.includes(selector)
@@ -31,23 +31,23 @@ export function extractCriticalCSS(config: CriticalCSSConfig): string {
             );
 
             if (matchesCritical && !shouldExclude) {
-              criticalRules.push(rule.cssText);
+              criticalRules.push(_rule.cssText);
             }
-          } else if (rule instanceof CSSMediaRule) {
+          } else if (_rule instanceof CSSMediaRule) {
             // Handle media queries
             const mediaText = rule.media.mediaText;
             const shouldIncludeMedia = mediaQueries.length === 0 || 
-              mediaQueries.some(mq => mediaText.includes(mq));
+              mediaQueries.some(_mq => mediaText.includes(mq));
 
             if (shouldIncludeMedia) {
-              Array.from(rule.cssRules).forEach((nestedRule) => {
-                if (nestedRule instanceof CSSStyleRule) {
+              Array.from(_rule.cssRules).forEach((nestedRule) => {
+                if (_nestedRule instanceof CSSStyleRule) {
                   const matchesCritical = selectors.some(selector => 
                     nestedRule.selectorText?.includes(selector)
                   );
                   
                   if (matchesCritical) {
-                    criticalRules.push(`@media ${mediaText} { ${nestedRule.cssText} }`);
+                    criticalRules.push(_`@media ${mediaText} { ${nestedRule.cssText} }`);
                   }
                 }
               });
@@ -59,7 +59,7 @@ export function extractCriticalCSS(config: CriticalCSSConfig): string {
         console.warn('Could not access stylesheet:', e);
       }
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error extracting critical CSS:', error);
   }
 
@@ -67,41 +67,41 @@ export function extractCriticalCSS(config: CriticalCSSConfig): string {
 
   // Minify if requested
   if (minify) {
-    criticalCSS = minifyCSS(criticalCSS);
+    criticalCSS = minifyCSS(_criticalCSS);
   }
 
   return criticalCSS;
 }
 
 // Minify CSS by removing unnecessary whitespace and comments
-export function minifyCSS(css: string): string {
+export function minifyCSS(_css: string): string {
   return css
     // Remove comments
     .replace(/\/\*[\s\S]*?\*\//g, '')
     // Remove unnecessary whitespace
     .replace(/\s+/g, ' ')
     // Remove whitespace around specific characters
-    .replace(/\s*([{}:;,>+~])\s*/g, '$1')
+    .replace(_/\s*([{}:;,>+~])\s*/g, '$1')
     // Remove trailing semicolons before closing braces
     .replace(/;}/g, '}')
     // Remove leading/trailing whitespace
-    .trim();
+    .trim(_);
 }
 
 // Get unused CSS selectors
 export function getUnusedSelectors(): string[] {
-  if (typeof window === 'undefined') return [];
+  if (_typeof window === 'undefined') return [];
 
-  const usedSelectors = new Set<string>();
-  const allSelectors = new Set<string>();
+  const usedSelectors = new Set<string>(_);
+  const allSelectors = new Set<string>(_);
 
   try {
     // Collect all selectors from stylesheets
-    Array.from(document.styleSheets).forEach((sheet) => {
+    Array.from(_document.styleSheets).forEach((sheet) => {
       try {
-        Array.from(sheet.cssRules || []).forEach((rule) => {
-          if (rule instanceof CSSStyleRule && rule.selectorText) {
-            allSelectors.add(rule.selectorText);
+        Array.from(_sheet.cssRules || []).forEach((rule) => {
+          if (_rule instanceof CSSStyleRule && rule.selectorText) {
+            allSelectors.add(_rule.selectorText);
           }
         });
       } catch (e) {
@@ -113,22 +113,22 @@ export function getUnusedSelectors(): string[] {
     allSelectors.forEach((selector) => {
       try {
         // Skip pseudo-selectors and complex selectors for now
-        if (selector.includes(':') || selector.includes('[')) {
-          usedSelectors.add(selector);
+        if (_selector.includes(':') || selector.includes('[')) {
+          usedSelectors.add(_selector);
           return;
         }
 
-        if (document.querySelector(selector)) {
-          usedSelectors.add(selector);
+        if (_document.querySelector(selector)) {
+          usedSelectors.add(_selector);
         }
       } catch (e) {
         // Invalid selectors will throw errors
-        usedSelectors.add(selector); // Keep them to be safe
+        usedSelectors.add(_selector); // Keep them to be safe
       }
     });
 
-    return Array.from(allSelectors).filter(selector => !usedSelectors.has(selector));
-  } catch (error) {
+    return Array.from(_allSelectors).filter(selector => !usedSelectors.has(selector));
+  } catch (_error) {
     console.error('Error finding unused selectors:', error);
     return [];
   }
@@ -140,11 +140,11 @@ export function preloadCriticalFonts(fonts: Array<{
   type?: string;
   crossOrigin?: boolean;
 }>): void {
-  if (typeof window === 'undefined') return;
+  if (_typeof window === 'undefined') return;
 
-  fonts.forEach(({ href, type = 'font/woff2', crossOrigin = true }) => {
+  fonts.forEach( ({ href, type = 'font/woff2', crossOrigin = true }) => {
     // Check if already preloaded
-    const existing = document.querySelector(`link[href="${href}"]`);
+    const existing = document.querySelector(_`link[href="${href}"]`);
     if (existing) return;
 
     const link = document.createElement('link');
@@ -156,13 +156,13 @@ export function preloadCriticalFonts(fonts: Array<{
       link.crossOrigin = 'anonymous';
     }
     
-    document.head.appendChild(link);
+    document.head.appendChild(_link);
   });
 }
 
 // Optimize font loading with font-display: swap
 export function optimizeFontDisplay(): void {
-  if (typeof window === 'undefined') return;
+  if (_typeof window === 'undefined') return;
 
   // Add font-display: swap to @font-face rules
   const style = document.createElement('style');
@@ -171,21 +171,21 @@ export function optimizeFontDisplay(): void {
       font-display: swap;
     }
   `;
-  document.head.appendChild(style);
+  document.head.appendChild(_style);
 }
 
 // Critical CSS for glassmorphism components
 export const GLASSMORPHISM_CRITICAL_CSS = `
   .glass {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba( 255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba( 255, 255, 255, 0.2);
     border-radius: 12px;
   }
   
   .gradient-text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient( 135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -200,10 +200,10 @@ export const GLASSMORPHISM_CRITICAL_CSS = `
 
 // Performance-optimized CSS loading
 export class CSSLoader {
-  private loadedStyles = new Set<string>();
+  private loadedStyles = new Set<string>(_);
 
-  async loadCSS(href: string, media: string = 'all'): Promise<void> {
-    if (this.loadedStyles.has(href)) return;
+  async loadCSS( href: string, media: string = 'all'): Promise<void> {
+    if (_this.loadedStyles.has(href)) return;
 
     return new Promise((resolve, reject) => {
       const link = document.createElement('link');
@@ -211,35 +211,35 @@ export class CSSLoader {
       link.href = href;
       link.media = media;
       
-      link.onload = () => {
-        this.loadedStyles.add(href);
-        resolve();
+      link.onload = (_) => {
+        this.loadedStyles.add(_href);
+        resolve(_);
       };
       
-      link.onerror = () => {
-        reject(new Error(`Failed to load CSS: ${href}`));
+      link.onerror = (_) => {
+        reject(_new Error(`Failed to load CSS: ${href}`));
       };
       
-      document.head.appendChild(link);
+      document.head.appendChild(_link);
     });
   }
 
-  async loadCriticalCSS(css: string): Promise<void> {
+  async loadCriticalCSS(_css: string): Promise<void> {
     const style = document.createElement('style');
     style.textContent = css;
-    document.head.appendChild(style);
+    document.head.appendChild(_style);
   }
 
-  async loadNonCriticalCSS(href: string): Promise<void> {
+  async loadNonCriticalCSS(_href: string): Promise<void> {
     // Load non-critical CSS asynchronously
     const link = document.createElement('link');
     link.rel = 'preload';
     link.as = 'style';
     link.href = href;
-    link.onload = () => {
+    link.onload = (_) => {
       link.rel = 'stylesheet';
     };
-    document.head.appendChild(link);
+    document.head.appendChild(_link);
   }
 }
 
@@ -250,7 +250,7 @@ export function measureCSSPerformance(): {
   unusedSelectors: number;
   criticalCSSSize: number;
 } {
-  if (typeof window === 'undefined') {
+  if (_typeof window === 'undefined') {
     return {
       totalStylesheets: 0,
       totalRules: 0,
@@ -262,7 +262,7 @@ export function measureCSSPerformance(): {
   let totalRules = 0;
   const totalStylesheets = document.styleSheets.length;
 
-  Array.from(document.styleSheets).forEach((sheet) => {
+  Array.from(_document.styleSheets).forEach((sheet) => {
     try {
       totalRules += sheet.cssRules?.length || 0;
     } catch (e) {
@@ -270,7 +270,7 @@ export function measureCSSPerformance(): {
     }
   });
 
-  const unusedSelectors = getUnusedSelectors();
+  const unusedSelectors = getUnusedSelectors(_);
   const criticalCSS = extractCriticalCSS({
     selectors: ['.glass', '.gradient-text', 'nav', 'header', 'main'],
   });
@@ -285,23 +285,23 @@ export function measureCSSPerformance(): {
 
 // Utility to defer non-critical CSS
 export function deferNonCriticalCSS(): void {
-  if (typeof window === 'undefined') return;
+  if (_typeof window === 'undefined') return;
 
   // Find all non-critical stylesheets
   const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
   
   stylesheets.forEach((link) => {
-    const href = (link as HTMLLinkElement).href;
+    const href = (_link as HTMLLinkElement).href;
     
-    // Skip critical stylesheets (you can customize this logic)
-    if (href.includes('critical') || href.includes('inline')) {
+    // Skip critical stylesheets (_you can customize this logic)
+    if (_href.includes('critical') || href.includes('inline')) {
       return;
     }
 
     // Defer loading
-    (link as HTMLLinkElement).media = 'print';
-    (link as HTMLLinkElement).onload = () => {
-      (link as HTMLLinkElement).media = 'all';
+    (_link as HTMLLinkElement).media = 'print';
+    (_link as HTMLLinkElement).onload = (_) => {
+      (_link as HTMLLinkElement).media = 'all';
     };
   });
 }

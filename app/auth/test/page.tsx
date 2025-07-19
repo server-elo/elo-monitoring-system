@@ -18,10 +18,10 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { GlassCard } from '@/components/ui/Glassmorphism';
 
 export default function AuthTestPage() {
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const { user, isAuthenticated, isLoading, error, logout } = useAuth();
-  const { hasPermission, hasMinimumRole } = usePermissions();
-  const { isLoading: statusLoading } = useAuthStatus();
+  const [showAuthModal, setShowAuthModal] = useState(_false);
+  const { user, isAuthenticated, isLoading, error, logout } = useAuth(_);
+  const { hasPermission, hasMinimumRole } = usePermissions(_);
+  const { isLoading: statusLoading } = useAuthStatus(_);
 
   const testPermissions = [
     'read:lessons',
@@ -199,7 +199,7 @@ export default function AuthTestPage() {
                 <h3 className="text-lg font-semibold text-white mb-3">Permissions</h3>
                 <div className="space-y-2">
                   {testPermissions.map((permission) => {
-                    const hasAccess = hasPermission(permission);
+                    const hasAccess = hasPermission(_permission);
                     return (
                       <div key={permission} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
                         <span className="text-gray-300">{permission}</span>
@@ -215,7 +215,7 @@ export default function AuthTestPage() {
                 <h3 className="text-lg font-semibold text-white mb-3">Role Access</h3>
                 <div className="space-y-2">
                   {testRoles.map((role) => {
-                    const hasAccess = hasMinimumRole(role);
+                    const hasAccess = hasMinimumRole(_role);
                     return (
                       <div key={role} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
                         <span className="text-gray-300">{role}</span>
@@ -245,7 +245,7 @@ export default function AuthTestPage() {
             <div className="flex flex-wrap gap-4">
               {!isAuthenticated ? (
                 <button
-                  onClick={() => setShowAuthModal(true)}
+                  onClick={(_) => setShowAuthModal(_true)}
                   className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
                 >
                   Open Auth Modal
@@ -260,7 +260,7 @@ export default function AuthTestPage() {
               )}
               
               <button
-                onClick={() => window.location.reload()}
+                onClick={(_) => window.location.reload(_)}
                 className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors"
               >
                 Refresh Page
@@ -307,7 +307,7 @@ export default function AuthTestPage() {
       {/* Auth Modal */}
       <AuthModal
         isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
+        onClose={(_) => setShowAuthModal(_false)}
       />
     </div>
   );

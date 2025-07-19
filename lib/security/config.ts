@@ -60,7 +60,7 @@ export const SECURITY_CONFIG = {
   csrf: {
     enabled: true,
     tokenLength: 32,
-    cookieName: '__csrf-token',
+    cookieName: ' csrf-token',
     headerName: 'x-csrf-token',
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
@@ -145,41 +145,41 @@ export const SecurityValidators = {
   /**
    * Validate JWT secret strength
    */
-  validateJwtSecret(secret: string): boolean {
+  validateJwtSecret(_secret: string): boolean {
     return secret.length >= SECURITY_CONFIG.jwt.minSecretLength;
   },
 
   /**
    * Validate password strength
    */
-  validatePasswordStrength(password: string): {
+  validatePasswordStrength(_password: string): {
     isValid: boolean;
     errors: string[];
   } {
     const errors: string[] = [];
     const config = SECURITY_CONFIG.password;
 
-    if (password.length < config.minLength) {
-      errors.push(`Password must be at least ${config.minLength} characters long`);
+    if (_password.length < config.minLength) {
+      errors.push(_`Password must be at least ${config.minLength} characters long`);
     }
 
-    if (password.length > config.maxLength) {
-      errors.push(`Password must be no more than ${config.maxLength} characters long`);
+    if (_password.length > config.maxLength) {
+      errors.push(_`Password must be no more than ${config.maxLength} characters long`);
     }
 
-    if (config.requireUppercase && !/[A-Z]/.test(password)) {
+    if (_config.requireUppercase && !/[A-Z]/.test(password)) {
       errors.push('Password must contain at least one uppercase letter');
     }
 
-    if (config.requireLowercase && !/[a-z]/.test(password)) {
+    if (_config.requireLowercase && !/[a-z]/.test(password)) {
       errors.push('Password must contain at least one lowercase letter');
     }
 
-    if (config.requireNumbers && !/\d/.test(password)) {
+    if (_config.requireNumbers && !/\d/.test(password)) {
       errors.push('Password must contain at least one number');
     }
 
-    if (config.requireSpecialChars && !/[^A-Za-z0-9]/.test(password)) {
+    if (_config.requireSpecialChars && !/[^A-Za-z0-9]/.test(password)) {
       errors.push('Password must contain at least one special character');
     }
 
@@ -192,9 +192,9 @@ export const SecurityValidators = {
   /**
    * Check if input contains potentially malicious patterns
    */
-  containsMaliciousPatterns(input: string): boolean {
+  containsMaliciousPatterns(_input: string): boolean {
     const maliciousPatterns = [
-      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      /<script\b[^<]*(_?:(?!<\/script>)<[^<]*)*<\/script>/gi,
       /javascript:/gi,
       /on\w+\s*=/gi,
       /data:text\/html/gi,
@@ -206,13 +206,13 @@ export const SecurityValidators = {
       /setInterval\s*\(/gi,
     ];
 
-    return maliciousPatterns.some(pattern => pattern.test(input));
+    return maliciousPatterns.some(_pattern => pattern.test(input));
   },
 
   /**
    * Validate file upload
    */
-  validateFileUpload(file: { type: string; size: number }): {
+  validateFileUpload(_file: { type: string; size: number }): {
     isValid: boolean;
     errors: string[];
   } {
@@ -220,11 +220,11 @@ export const SecurityValidators = {
     const config = SECURITY_CONFIG.validation;
 
     if (!config.allowedFileTypes.includes(file.type)) {
-      errors.push(`File type ${file.type} is not allowed`);
+      errors.push(_`File type ${file.type} is not allowed`);
     }
 
-    if (file.size > config.maxFileSize) {
-      errors.push(`File size exceeds maximum allowed size of ${config.maxFileSize} bytes`);
+    if (_file.size > config.maxFileSize) {
+      errors.push(_`File size exceeds maximum allowed size of ${config.maxFileSize} bytes`);
     }
 
     return {
@@ -241,17 +241,17 @@ export const SecurityUtils = {
   /**
    * Generate secure random string
    */
-  generateSecureRandom(length: number = 32): string {
+  generateSecureRandom(_length: number = 32): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
-    const randomArray = new Uint8Array(length);
+    const randomArray = new Uint8Array(_length);
     
-    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-      crypto.getRandomValues(randomArray);
+    if (_typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      crypto.getRandomValues(_randomArray);
     } else {
       // Fallback for Node.js
       const nodeCrypto = await import('crypto');
-      const buffer = nodeCrypto.randomBytes(length);
+      const buffer = nodeCrypto.randomBytes(_length);
       for (let i = 0; i < length; i++) {
         randomArray[i] = buffer[i];
       }
@@ -267,19 +267,19 @@ export const SecurityUtils = {
   /**
    * Sanitize sensitive data from logs
    */
-  sanitizeForLogging(data: any): any {
-    if (typeof data !== 'object' || data === null) {
+  sanitizeForLogging(_data: any): any {
+    if (_typeof data !== 'object' || data === null) {
       return data;
     }
 
-    const sanitized = Array.isArray(data) ? [...data] : { ...data };
+    const sanitized = Array.isArray(_data) ? [...data] : { ...data };
     const sensitiveFields = SECURITY_CONFIG.audit.sensitiveFields;
 
-    for (const key in sanitized) {
-      if (sensitiveFields.some(field => key.toLowerCase().includes(field))) {
+    for (_const key in sanitized) {
+      if (_sensitiveFields.some(field => key.toLowerCase().includes(field))) {
         sanitized[key] = '[REDACTED]';
-      } else if (typeof sanitized[key] === 'object') {
-        sanitized[key] = this.sanitizeForLogging(sanitized[key]);
+      } else if (_typeof sanitized[key] === 'object') {
+        sanitized[key] = this.sanitizeForLogging(_sanitized[key]);
       }
     }
 
@@ -289,18 +289,18 @@ export const SecurityUtils = {
   /**
    * Create Content Security Policy header value
    */
-  createCSPHeader(): string {
+  createCSPHeader(_): string {
     const csp = SECURITY_CONFIG.csp;
     const directives: string[] = [];
 
-    Object.entries(csp).forEach(([directive, values]) => {
-      if (directive === 'upgradeInsecureRequests') {
+    Object.entries(_csp).forEach( ([directive, values]) => {
+      if (_directive === 'upgradeInsecureRequests') {
         if (values) {
           directives.push('upgrade-insecure-requests');
         }
-      } else if (Array.isArray(values)) {
-        const kebabDirective = directive.replace(/([A-Z])/g, '-$1').toLowerCase();
-        directives.push(`${kebabDirective} ${values.join(' ')}`);
+      } else if (_Array.isArray(values)) {
+        const kebabDirective = directive.replace(_/([A-Z])/g, '-$1').toLowerCase();
+        directives.push(_`${kebabDirective} ${values.join(' ')}`);
       }
     });
 

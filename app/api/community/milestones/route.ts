@@ -5,7 +5,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Mock community milestones data
 const mockMilestones: CommunityMilestone[] = [
   {
-    id: 'milestone_1',
+    id: 'milestone1',
     title: '1000+ Active Users',
     description: 'Community reached 1000 active users this month',
     icon: '👥',
@@ -23,7 +23,7 @@ const mockMilestones: CommunityMilestone[] = [
     type: 'lessons'
   },
   {
-    id: 'milestone_3',
+    id: 'milestone3',
     title: '500K Total XP',
     description: 'Community earned 500,000 total XP points',
     icon: '⭐',
@@ -41,7 +41,7 @@ const mockMilestones: CommunityMilestone[] = [
     type: 'achievements'
   },
   {
-    id: 'milestone_5',
+    id: 'milestone5',
     title: '50 Study Groups Created',
     description: 'Community formed 50 active study groups',
     icon: '👨‍👩‍👧‍👦',
@@ -86,7 +86,7 @@ const mockMilestones: CommunityMilestone[] = [
     type: 'lessons'
   },
   {
-    id: 'milestone_10',
+    id: 'milestone10',
     title: '1K Community Contributions',
     description: 'Community made 1,000 helpful contributions',
     icon: '🤝',
@@ -118,8 +118,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Sort by achievement date (most recent first)
-    filteredMilestones.sort((a, b) => b.achievedAt.getTime() - a.achievedAt.getTime());
+    // Sort by achievement date (_most recent first)
+    filteredMilestones.sort((a, b) => b.achievedAt.getTime(_) - a.achievedAt.getTime(_));
 
     // Apply limit
     const limitedMilestones = filteredMilestones.slice(0, limit);

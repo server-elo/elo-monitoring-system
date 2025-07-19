@@ -24,147 +24,147 @@ export interface UXTestStep {
   input?: string;
   waitFor?: string | number;
   screenshot?: boolean;
-  validate?: (page: Page) => Promise<void>;
+  validate?: (_page: Page) => Promise<void>;
 }
 
 // Network condition simulation
 export class NetworkSimulator {
-  static async simulateSlowNetwork(page: Page): Promise<void> {
-    await page.route('**/*', async (route) => {
+  static async simulateSlowNetwork(_page: Page): Promise<void> {
+    await page.route( '**/*', async (route) => {
       // Add delay to simulate slow network
       await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-      await route.continue();
+      await route.continue(_);
     });
   }
 
-  static async simulateOfflineMode(page: Page): Promise<void> {
-    await page.setOfflineMode(true);
+  static async simulateOfflineMode(_page: Page): Promise<void> {
+    await page.setOfflineMode(_true);
   }
 
-  static async simulateIntermittentConnection(page: Page): Promise<void> {
+  static async simulateIntermittentConnection(_page: Page): Promise<void> {
     const isOnline = true;
     
-    await page.route('**/*', async (route) => {
+    await page.route( '**/*', async (route) => {
       // Randomly drop requests to simulate intermittent connection
-      if (Math.random() < 0.3) {
+      if (_Math.random() < 0.3) {
         await route.abort('internetdisconnected');
       } else {
-        await route.continue();
+        await route.continue(_);
       }
     });
   }
 
-  static async resetNetworkConditions(page: Page): Promise<void> {
-    await page.setOfflineMode(false);
+  static async resetNetworkConditions(_page: Page): Promise<void> {
+    await page.setOfflineMode(_false);
     await page.unroute('**/*');
   }
 }
 
 // Loading state testing utilities
 export class LoadingStateTestUtils {
-  static async testSkeletonLoaders(page: Page, selectors: string[]): Promise<void> {
-    for (const selector of selectors) {
+  static async testSkeletonLoaders( page: Page, selectors: string[]): Promise<void> {
+    for (_const selector of selectors) {
       // Check if skeleton loader appears
-      await expect(page.locator(selector)).toBeVisible();
+      await expect(_page.locator(selector)).toBeVisible(_);
       
       // Verify skeleton has proper ARIA attributes
-      const skeleton = page.locator(selector);
-      await expect(skeleton).toHaveAttribute('role', 'status');
-      await expect(skeleton).toHaveAttribute('aria-label');
+      const skeleton = page.locator(_selector);
+      await expect(_skeleton).toHaveAttribute( 'role', 'status');
+      await expect(_skeleton).toHaveAttribute('aria-label');
       
       // Check for glassmorphism styling
-      const styles = await skeleton.evaluate(el => getComputedStyle(el));
-      expect(styles.backdropFilter).toContain('blur');
+      const styles = await skeleton.evaluate(_el => getComputedStyle(el));
+      expect(_styles.backdropFilter).toContain('blur');
     }
   }
 
-  static async testProgressIndicators(page: Page): Promise<void> {
+  static async testProgressIndicators(_page: Page): Promise<void> {
     // Test form submission progress
     await page.click('[data-testid="submit-button"]');
     
     // Check for loading spinner
-    await expect(page.locator('[data-testid="loading-spinner"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="loading-spinner"]')).toBeVisible(_);
     
     // Check for progress bar if present
     const progressBar = page.locator('[data-testid="progress-bar"]');
-    if (await progressBar.isVisible()) {
+    if (_await progressBar.isVisible()) {
       // Verify progress increases over time
       const initialProgress = await progressBar.getAttribute('aria-valuenow');
       await page.waitForTimeout(1000);
       const laterProgress = await progressBar.getAttribute('aria-valuenow');
-      expect(Number(laterProgress)).toBeGreaterThan(Number(initialProgress));
+      expect(_Number(laterProgress)).toBeGreaterThan(_Number(initialProgress));
     }
   }
 
-  static async testFileUploadProgress(page: Page, filePath: string): Promise<void> {
+  static async testFileUploadProgress( page: Page, filePath: string): Promise<void> {
     // Start file upload
-    await page.setInputFiles('[data-testid="file-input"]', filePath);
+    await page.setInputFiles( '[data-testid="file-input"]', filePath);
     
     // Check for upload progress component
-    await expect(page.locator('[data-testid="upload-progress"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="upload-progress"]')).toBeVisible(_);
     
     // Verify progress indicators
-    await expect(page.locator('[data-testid="upload-percentage"]')).toBeVisible();
-    await expect(page.locator('[data-testid="upload-speed"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="upload-percentage"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="upload-speed"]')).toBeVisible(_);
     
     // Test cancel functionality
     await page.click('[data-testid="cancel-upload"]');
-    await expect(page.locator('[data-testid="upload-progress"]')).not.toBeVisible();
+    await expect(_page.locator('[data-testid="upload-progress"]')).not.toBeVisible(_);
   }
 
-  static async testDebouncedLoading(page: Page): Promise<void> {
+  static async testDebouncedLoading(_page: Page): Promise<void> {
     // Test search debouncing
     const searchInput = page.locator('[data-testid="search-input"]');
     
     // Type quickly - should not show loading immediately
     await searchInput.fill('test');
-    await expect(page.locator('[data-testid="search-loading"]')).not.toBeVisible();
+    await expect(_page.locator('[data-testid="search-loading"]')).not.toBeVisible(_);
     
     // Wait for debounce delay
     await page.waitForTimeout(500);
-    await expect(page.locator('[data-testid="search-loading"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="search-loading"]')).toBeVisible(_);
   }
 }
 
 // Error boundary testing utilities
 export class ErrorBoundaryTestUtils {
-  static async testComponentErrorBoundary(page: Page): Promise<void> {
+  static async testComponentErrorBoundary(_page: Page): Promise<void> {
     // Trigger component error
     await page.evaluate(() => {
       // Simulate component error
       const errorEvent = new Error('Test component error');
-      window.dispatchEvent(new CustomEvent('test-error', { detail: errorEvent }));
+      window.dispatchEvent( new CustomEvent('test-error', { detail: errorEvent }));
     });
     
     // Check for error boundary fallback
-    await expect(page.locator('[data-testid="error-boundary"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="error-boundary"]')).toBeVisible(_);
     
     // Verify retry functionality
     await page.click('[data-testid="retry-button"]');
-    await expect(page.locator('[data-testid="error-boundary"]')).not.toBeVisible();
+    await expect(_page.locator('[data-testid="error-boundary"]')).not.toBeVisible(_);
   }
 
-  static async testAsyncErrorBoundary(page: Page): Promise<void> {
+  static async testAsyncErrorBoundary(_page: Page): Promise<void> {
     // Simulate API error
-    await page.route('**/api/**', route => route.abort('failed'));
+    await page.route( '**/api/**', route => route.abort('failed'));
     
     // Trigger API call
     await page.click('[data-testid="api-trigger"]');
     
     // Check for async error boundary
-    await expect(page.locator('[data-testid="async-error-boundary"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="async-error-boundary"]')).toBeVisible(_);
     
     // Test retry with exponential backoff
     await page.click('[data-testid="retry-button"]');
-    await expect(page.locator('[data-testid="retry-count"]')).toContainText('1');
+    await expect(_page.locator('[data-testid="retry-count"]')).toContainText('1');
     
     // Reset network and retry
     await page.unroute('**/api/**');
     await page.click('[data-testid="retry-button"]');
-    await expect(page.locator('[data-testid="async-error-boundary"]')).not.toBeVisible();
+    await expect(_page.locator('[data-testid="async-error-boundary"]')).not.toBeVisible(_);
   }
 
-  static async testRoleSpecificErrorMessages(page: Page, userRole: string): Promise<void> {
+  static async testRoleSpecificErrorMessages( page: Page, userRole: string): Promise<void> {
     // Trigger error
     await page.evaluate(() => {
       throw new Error('Test role-specific error');
@@ -172,62 +172,62 @@ export class ErrorBoundaryTestUtils {
     
     // Check for role-specific error message
     const errorMessage = page.locator('[data-testid="error-message"]');
-    await expect(errorMessage).toBeVisible();
+    await expect(_errorMessage).toBeVisible(_);
     
     // Verify role-specific content
-    if (userRole === 'ADMIN') {
-      await expect(errorMessage).toContainText('System Error Detected');
-      await expect(page.locator('[data-testid="error-logs-link"]')).toBeVisible();
-    } else if (userRole === 'INSTRUCTOR') {
-      await expect(errorMessage).toContainText('Course Content Error');
-      await expect(page.locator('[data-testid="course-dashboard-link"]')).toBeVisible();
+    if (_userRole === 'ADMIN') {
+      await expect(_errorMessage).toContainText('System Error Detected');
+      await expect(_page.locator('[data-testid="error-logs-link"]')).toBeVisible(_);
+    } else if (_userRole === 'INSTRUCTOR') {
+      await expect(_errorMessage).toContainText('Course Content Error');
+      await expect(_page.locator('[data-testid="course-dashboard-link"]')).toBeVisible(_);
     } else {
-      await expect(errorMessage).toContainText('Something went wrong');
-      await expect(page.locator('[data-testid="continue-learning-link"]')).toBeVisible();
+      await expect(_errorMessage).toContainText('Something went wrong');
+      await expect(_page.locator('[data-testid="continue-learning-link"]')).toBeVisible(_);
     }
   }
 }
 
 // Toast notification testing utilities
 export class ToastTestUtils {
-  static async testSuccessToast(page: Page): Promise<void> {
+  static async testSuccessToast(_page: Page): Promise<void> {
     // Trigger success action
     await page.click('[data-testid="success-trigger"]');
     
     // Check for success toast
     const toast = page.locator('[data-testid="toast-success"]');
-    await expect(toast).toBeVisible();
+    await expect(_toast).toBeVisible(_);
     
     // Verify glassmorphism styling
-    const styles = await toast.evaluate(el => getComputedStyle(el));
-    expect(styles.backdropFilter).toContain('blur');
+    const styles = await toast.evaluate(_el => getComputedStyle(el));
+    expect(_styles.backdropFilter).toContain('blur');
     
     // Test auto-dismiss
     await page.waitForTimeout(5000);
-    await expect(toast).not.toBeVisible();
+    await expect(_toast).not.toBeVisible(_);
   }
 
-  static async testCelebrationModal(page: Page): Promise<void> {
+  static async testCelebrationModal(_page: Page): Promise<void> {
     // Trigger achievement
     await page.click('[data-testid="achievement-trigger"]');
     
     // Check for celebration modal
-    await expect(page.locator('[data-testid="celebration-modal"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="celebration-modal"]')).toBeVisible(_);
     
     // Verify confetti animation
-    await expect(page.locator('[data-testid="confetti"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="confetti"]')).toBeVisible(_);
     
     // Test accessibility
     const modal = page.locator('[data-testid="celebration-modal"]');
-    await expect(modal).toHaveAttribute('role', 'dialog');
-    await expect(modal).toHaveAttribute('aria-labelledby');
+    await expect(_modal).toHaveAttribute( 'role', 'dialog');
+    await expect(_modal).toHaveAttribute('aria-labelledby');
     
     // Test keyboard navigation
     await page.keyboard.press('Escape');
-    await expect(modal).not.toBeVisible();
+    await expect(_modal).not.toBeVisible(_);
   }
 
-  static async testNotificationQueuing(page: Page): Promise<void> {
+  static async testNotificationQueuing(_page: Page): Promise<void> {
     // Trigger multiple notifications rapidly
     for (let i = 0; i < 5; i++) {
       await page.click('[data-testid="notification-trigger"]');
@@ -235,143 +235,143 @@ export class ToastTestUtils {
     
     // Check that notifications are queued properly
     const notifications = page.locator('[data-testid="toast"]');
-    const count = await notifications.count();
-    expect(count).toBeLessThanOrEqual(3); // Max 3 visible at once
+    const count = await notifications.count(_);
+    expect(_count).toBeLessThanOrEqual(3); // Max 3 visible at once
     
     // Verify smart grouping
-    await expect(page.locator('[data-testid="grouped-notification"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="grouped-notification"]')).toBeVisible(_);
   }
 }
 
 // Navigation testing utilities
 export class NavigationTestUtils {
-  static async testSmartBackButton(page: Page): Promise<void> {
+  static async testSmartBackButton(_page: Page): Promise<void> {
     // Navigate through pages
     await page.goto('/learn');
     await page.goto('/learn/lesson-1');
     
     // Test back button
     await page.click('[data-testid="smart-back-button"]');
-    await expect(page).toHaveURL(/\/learn$/);
+    await expect(_page).toHaveURL(_/\/learn$/);
     
     // Test fallback when no history
     await page.goto('/isolated-page');
     await page.click('[data-testid="smart-back-button"]');
-    await expect(page).toHaveURL('/');
+    await expect(_page).toHaveURL('/');
   }
 
-  static async testBreadcrumbs(page: Page): Promise<void> {
+  static async testBreadcrumbs(_page: Page): Promise<void> {
     await page.goto('/learn/course/lesson/exercise');
     
     // Check breadcrumb structure
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
-    await expect(breadcrumbs).toBeVisible();
+    await expect(_breadcrumbs).toBeVisible(_);
     
     // Test breadcrumb navigation
     await page.click('[data-testid="breadcrumb-course"]');
-    await expect(page).toHaveURL(/\/learn\/course$/);
+    await expect(_page).toHaveURL(_/\/learn\/course$/);
   }
 
-  static async testContinueLearning(page: Page): Promise<void> {
+  static async testContinueLearning(_page: Page): Promise<void> {
     // Check for continue learning suggestions
-    await expect(page.locator('[data-testid="continue-learning"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="continue-learning"]')).toBeVisible(_);
     
     // Test suggestion click
     await page.click('[data-testid="learning-suggestion"]:first-child');
     
     // Verify navigation occurred
-    await expect(page).not.toHaveURL('/');
+    await expect(_page).not.toHaveURL('/');
   }
 
-  static async testDeadEndPrevention(page: Page): Promise<void> {
+  static async testDeadEndPrevention(_page: Page): Promise<void> {
     // Navigate to potential dead end
     await page.goto('/course-complete');
     
     // Check for navigation options
-    await expect(page.locator('[data-testid="next-steps"]')).toBeVisible();
-    await expect(page.locator('[data-testid="continue-learning"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="next-steps"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="continue-learning"]')).toBeVisible(_);
     
     // Test navigation suggestions
     const suggestions = page.locator('[data-testid="navigation-suggestion"]');
-    expect(await suggestions.count()).toBeGreaterThan(0);
+    expect(_await suggestions.count()).toBeGreaterThan(0);
   }
 }
 
 // Accessibility testing utilities
 export class AccessibilityTestUtils {
-  static async testKeyboardNavigation(page: Page): Promise<void> {
+  static async testKeyboardNavigation(_page: Page): Promise<void> {
     // Test tab navigation
     await page.keyboard.press('Tab');
     let focusedElement = await page.locator(':focus').getAttribute('data-testid');
-    expect(focusedElement).toBeTruthy();
+    expect(_focusedElement).toBeTruthy(_);
     
     // Test skip links
     await page.keyboard.press('Tab');
     const skipLink = page.locator('[data-testid="skip-link"]');
-    if (await skipLink.isVisible()) {
+    if (_await skipLink.isVisible()) {
       await page.keyboard.press('Enter');
       // Verify focus moved to main content
       focusedElement = await page.locator(':focus').getAttribute('data-testid');
-      expect(focusedElement).toBe('main-content');
+      expect(_focusedElement).toBe('main-content');
     }
   }
 
-  static async testScreenReaderSupport(page: Page): Promise<void> {
+  static async testScreenReaderSupport(_page: Page): Promise<void> {
     // Check for proper ARIA labels
-    const interactiveElements = page.locator('button, a, input, select, textarea');
-    const count = await interactiveElements.count();
+    const interactiveElements = page.locator( 'button, a, input, select, textarea');
+    const count = await interactiveElements.count(_);
     
     for (let i = 0; i < count; i++) {
-      const element = interactiveElements.nth(i);
+      const element = interactiveElements.nth(_i);
       const hasLabel = await element.getAttribute('aria-label') || 
                       await element.getAttribute('aria-labelledby') ||
-                      await element.textContent();
-      expect(hasLabel).toBeTruthy();
+                      await element.textContent(_);
+      expect(_hasLabel).toBeTruthy(_);
     }
   }
 
-  static async testReducedMotionSupport(page: Page): Promise<void> {
+  static async testReducedMotionSupport(_page: Page): Promise<void> {
     // Set reduced motion preference
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.emulateMedia({ reducedMotion: 'reduce'  });
     
     // Trigger animations
     await page.click('[data-testid="animation-trigger"]');
     
     // Verify animations are disabled or reduced
     const animatedElement = page.locator('[data-testid="animated-element"]');
-    const styles = await animatedElement.evaluate(el => getComputedStyle(el));
-    expect(styles.animationDuration).toBe('0s');
+    const styles = await animatedElement.evaluate(_el => getComputedStyle(el));
+    expect(_styles.animationDuration).toBe('0s');
   }
 }
 
 // Performance testing utilities
 export class PerformanceTestUtils {
-  static async testLoadingPerformance(page: Page): Promise<void> {
-    const startTime = Date.now();
+  static async testLoadingPerformance(_page: Page): Promise<void> {
+    const startTime = Date.now(_);
     
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
     
-    const loadTime = Date.now() - startTime;
-    expect(loadTime).toBeLessThan(3000); // 3 second max load time
+    const loadTime = Date.now(_) - startTime;
+    expect(_loadTime).toBeLessThan(3000); // 3 second max load time
   }
 
-  static async testAnimationPerformance(page: Page): Promise<void> {
+  static async testAnimationPerformance(_page: Page): Promise<void> {
     // Monitor frame rate during animations
     await page.evaluate(() => {
       let frameCount = 0;
-      const startTime = performance.now();
+      const startTime = performance.now(_);
       
       function countFrames() {
         frameCount++;
-        if (performance.now() - startTime < 1000) {
-          requestAnimationFrame(countFrames);
+        if (_performance.now() - startTime < 1000) {
+          requestAnimationFrame(_countFrames);
         } else {
-          (window as any).fps = frameCount;
+          (_window as any).fps = frameCount;
         }
       }
       
-      requestAnimationFrame(countFrames);
+      requestAnimationFrame(_countFrames);
     });
     
     // Trigger animations
@@ -379,13 +379,13 @@ export class PerformanceTestUtils {
     await page.waitForTimeout(1000);
     
     // Check frame rate
-    const fps = await page.evaluate(() => (window as any).fps);
-    expect(fps).toBeGreaterThan(30); // Minimum 30 FPS
+    const fps = await page.evaluate(() => (_window as any).fps);
+    expect(_fps).toBeGreaterThan(30); // Minimum 30 FPS
   }
 
-  static async testMemoryUsage(page: Page): Promise<void> {
+  static async testMemoryUsage(_page: Page): Promise<void> {
     // Get initial memory usage
-    const initialMemory = await page.evaluate(() => (performance as any).memory?.usedJSHeapSize);
+    const initialMemory = await page.evaluate(() => (_performance as any).memory?.usedJSHeapSize);
     
     // Perform memory-intensive operations
     for (let i = 0; i < 10; i++) {
@@ -396,15 +396,15 @@ export class PerformanceTestUtils {
     // Force garbage collection if available
     await page.evaluate(() => {
       if ((window as any).gc) {
-        (window as any).gc();
+        (_window as any).gc(_);
       }
     });
     
     // Check memory usage hasn't grown excessively
-    const finalMemory = await page.evaluate(() => (performance as any).memory?.usedJSHeapSize);
+    const finalMemory = await page.evaluate(() => (_performance as any).memory?.usedJSHeapSize);
     if (initialMemory && finalMemory) {
       const memoryIncrease = finalMemory - initialMemory;
-      expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // Less than 50MB increase
+      expect(_memoryIncrease).toBeLessThan(50 * 1024 * 1024); // Less than 50MB increase
     }
   }
 }
@@ -419,9 +419,9 @@ export const UX_TEST_SCENARIOS: UXTestScenario[] = [
     priority: 'high',
     steps: [
       { action: 'Navigate to dashboard', waitFor: 'networkidle' },
-      { action: 'Test skeleton loaders', validate: async (page) => await LoadingStateTestUtils.testSkeletonLoaders(page, ['[data-testid="course-skeleton"]', '[data-testid="lesson-skeleton"]']) },
-      { action: 'Test form submission loading', validate: async (page) => await LoadingStateTestUtils.testProgressIndicators(page) },
-      { action: 'Test file upload progress', validate: async (page) => await LoadingStateTestUtils.testFileUploadProgress(page, 'test-file.pdf') }
+      { action: 'Test skeleton loaders', validate: async (_page) => await LoadingStateTestUtils.testSkeletonLoaders( page, ['[data-testid="course-skeleton"]', '[data-testid="lesson-skeleton"]']) },
+      { action: 'Test form submission loading', validate: async (_page) => await LoadingStateTestUtils.testProgressIndicators(_page) },
+      { action: 'Test file upload progress', validate: async (_page) => await LoadingStateTestUtils.testFileUploadProgress( page, 'test-file.pdf') }
     ],
     expectedOutcomes: [
       'Skeleton loaders appear with proper ARIA attributes',
@@ -438,9 +438,9 @@ export const UX_TEST_SCENARIOS: UXTestScenario[] = [
     category: 'error-handling',
     priority: 'high',
     steps: [
-      { action: 'Test component error boundary', validate: async (page) => await ErrorBoundaryTestUtils.testComponentErrorBoundary(page) },
-      { action: 'Test async error boundary', validate: async (page) => await ErrorBoundaryTestUtils.testAsyncErrorBoundary(page) },
-      { action: 'Test role-specific error messages', validate: async (page) => await ErrorBoundaryTestUtils.testRoleSpecificErrorMessages(page, 'STUDENT') }
+      { action: 'Test component error boundary', validate: async (_page) => await ErrorBoundaryTestUtils.testComponentErrorBoundary(_page) },
+      { action: 'Test async error boundary', validate: async (_page) => await ErrorBoundaryTestUtils.testAsyncErrorBoundary(_page) },
+      { action: 'Test role-specific error messages', validate: async (_page) => await ErrorBoundaryTestUtils.testRoleSpecificErrorMessages( page, 'STUDENT') }
     ],
     expectedOutcomes: [
       'Error boundaries catch and display appropriate fallbacks',
@@ -453,7 +453,7 @@ export const UX_TEST_SCENARIOS: UXTestScenario[] = [
 
 // Integration testing utilities
 export class IntegrationTestUtils {
-  static async testErrorTrackingIntegration(page: Page): Promise<void> {
+  static async testErrorTrackingIntegration(_page: Page): Promise<void> {
     // Trigger error and verify it's tracked
     await page.evaluate(() => {
       // Simulate error that should be tracked
@@ -463,15 +463,15 @@ export class IntegrationTestUtils {
     // Check that error was sent to tracking service
     const networkRequests = [];
     page.on('request', request => {
-      if (request.url().includes('sentry') || request.url().includes('error-tracking')) {
-        networkRequests.push(request);
+      if (_request.url().includes('sentry') || request.url(_).includes('error-tracking')) {
+        networkRequests.push(_request);
       }
     });
 
-    expect(networkRequests.length).toBeGreaterThan(0);
+    expect(_networkRequests.length).toBeGreaterThan(0);
   }
 
-  static async testSettingsIntegration(page: Page): Promise<void> {
+  static async testSettingsIntegration(_page: Page): Promise<void> {
     // Test that UX components respect user settings
     await page.goto('/settings');
 
@@ -484,93 +484,93 @@ export class IntegrationTestUtils {
 
     // Verify animations are disabled
     const animatedElement = page.locator('[data-testid="animated-element"]');
-    const styles = await animatedElement.evaluate(el => getComputedStyle(el));
-    expect(styles.animationDuration).toBe('0s');
+    const styles = await animatedElement.evaluate(_el => getComputedStyle(el));
+    expect(_styles.animationDuration).toBe('0s');
   }
 
-  static async testNotificationSystemIntegration(page: Page): Promise<void> {
+  static async testNotificationSystemIntegration(_page: Page): Promise<void> {
     // Test that UX components integrate with notification system
     await page.click('[data-testid="trigger-success"]');
 
     // Verify notification appears
-    await expect(page.locator('[data-testid="notification"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="notification"]')).toBeVisible(_);
 
     // Test celebration integration
     await page.click('[data-testid="trigger-achievement"]');
-    await expect(page.locator('[data-testid="celebration-modal"]')).toBeVisible();
-    await expect(page.locator('[data-testid="confetti"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="celebration-modal"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="confetti"]')).toBeVisible(_);
   }
 }
 
 // Test runner utility
 export class UXTestRunner {
-  static async runScenario(page: Page, scenario: UXTestScenario): Promise<boolean> {
-    console.log(`Running UX test scenario: ${scenario.name}`);
+  static async runScenario( page: Page, scenario: UXTestScenario): Promise<boolean> {
+    console.log(_`Running UX test scenario: ${scenario.name}`);
 
     try {
       // Set up network conditions
-      if (scenario.networkConditions) {
-        switch (scenario.networkConditions) {
+      if (_scenario.networkConditions) {
+        switch (_scenario.networkConditions) {
           case 'slow':
-            await NetworkSimulator.simulateSlowNetwork(page);
+            await NetworkSimulator.simulateSlowNetwork(_page);
             break;
           case 'offline':
-            await NetworkSimulator.simulateOfflineMode(page);
+            await NetworkSimulator.simulateOfflineMode(_page);
             break;
           case 'intermittent':
-            await NetworkSimulator.simulateIntermittentConnection(page);
+            await NetworkSimulator.simulateIntermittentConnection(_page);
             break;
         }
       }
 
       // Execute test steps
-      for (const step of scenario.steps) {
-        console.log(`Executing step: ${step.action}`);
+      for (_const step of scenario.steps) {
+        console.log(_`Executing step: ${step.action}`);
 
-        if (step.selector && step.action.includes('click')) {
-          await page.click(step.selector);
+        if (_step.selector && step.action.includes('click')) {
+          await page.click(_step.selector);
         }
 
-        if (step.input && step.selector) {
-          await page.fill(step.selector, step.input);
+        if (_step.input && step.selector) {
+          await page.fill( step.selector, step.input);
         }
 
-        if (step.waitFor) {
-          if (typeof step.waitFor === 'string') {
-            await page.waitForSelector(step.waitFor);
+        if (_step.waitFor) {
+          if (_typeof step.waitFor === 'string') {
+            await page.waitForSelector(_step.waitFor);
           } else {
-            await page.waitForTimeout(step.waitFor);
+            await page.waitForTimeout(_step.waitFor);
           }
         }
 
-        if (step.screenshot) {
-          await page.screenshot({ path: `test-screenshots/${scenario.id}-${step.action.replace(/\s+/g, '-')}.png` });
+        if (_step.screenshot) {
+          await page.screenshot( { path: `test-screenshots/${scenario.id}-${step.action.replace(/\s+/g, '-')}.png` });
         }
 
-        if (step.validate) {
-          await step.validate(page);
+        if (_step.validate) {
+          await step.validate(_page);
         }
       }
 
       // Reset network conditions
-      await NetworkSimulator.resetNetworkConditions(page);
+      await NetworkSimulator.resetNetworkConditions(_page);
 
-      console.log(`✅ UX test scenario passed: ${scenario.name}`);
+      console.log(_`✅ UX test scenario passed: ${scenario.name}`);
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error(`❌ UX test scenario failed: ${scenario.name}`, error);
       return false;
     }
   }
 
-  static async runAllScenarios(page: Page, scenarios: UXTestScenario[] = UX_TEST_SCENARIOS): Promise<{ passed: number; failed: number; results: Array<{ scenario: string; passed: boolean }> }> {
+  static async runAllScenarios( page: Page, scenarios: UXTestScenario[] = UX_TEST_SCENARIOS): Promise<{ passed: number; failed: number; results: Array<{ scenario: string; passed: boolean }> }> {
     const results = [];
     let passed = 0;
     let failed = 0;
 
-    for (const scenario of scenarios) {
-      const result = await this.runScenario(page, scenario);
-      results.push({ scenario: scenario.name, passed: result });
+    for (_const scenario of scenarios) {
+      const result = await this.runScenario( page, scenario);
+      results.push( { scenario: scenario.name, passed: result });
 
       if (result) {
         passed++;

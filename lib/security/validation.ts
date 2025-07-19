@@ -10,61 +10,61 @@ import validator from 'validator';
 // Common validation schemas
 export const commonSchemas = {
   // User input schemas
-  email: z.string().email().max(254),
-  password: z.string().min(8).max(128).regex(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+  email: z.string(_).email(_).max(_254),
+  password: z.string(_).min(_8).max(128).regex(
+    /^(_?=.*[a-z])(_?=.*[A-Z])(_?=.*\d)(_?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
     'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'
   ),
-  username: z.string().min(3).max(30).regex(
+  username: z.string(_).min(3).max(30).regex(
     /^[a-zA-Z0-9_-]+$/,
     'Username can only contain letters, numbers, underscores, and hyphens'
   ),
-  displayName: z.string().min(1).max(50).regex(
-    /^[a-zA-Z0-9\s\-_.]+$/,
+  displayName: z.string(_).min(1).max(50).regex(
+    /^[a-zA-Z0-9\s\-.]+$/,
     'Display name contains invalid characters'
   ),
 
   // Content schemas
-  title: z.string().min(1).max(200),
-  description: z.string().max(1000),
-  content: z.string().max(10000),
+  title: z.string(_).min(1).max(200),
+  description: z.string(_).max(1000),
+  content: z.string(_).max(10000),
   
   // Code-related schemas
-  solidityCode: z.string().max(50000).refine(
-    (code) => !containsMaliciousPatterns(code),
+  solidityCode: z.string(_).max(50000).refine(
+    (_code) => !containsMaliciousPatterns(_code),
     'Code contains potentially malicious patterns'
   ),
   
   // Chat and collaboration schemas
-  chatMessage: z.string().min(1).max(1000),
-  sessionName: z.string().min(1).max(100),
+  chatMessage: z.string(_).min(1).max(1000),
+  sessionName: z.string(_).min(1).max(100),
   
   // File upload schemas
-  fileName: z.string().min(1).max(255).regex(
-    /^[a-zA-Z0-9\s\-_.()]+$/,
+  fileName: z.string(_).min(1).max(_255).regex(
+    /^[a-zA-Z0-9\s\-.(_)]+$/,
     'File name contains invalid characters'
   ),
-  fileSize: z.number().min(1).max(10 * 1024 * 1024), // 10MB max
+  fileSize: z.number(_).min(1).max(10 * 1024 * 1024), // 10MB max
   
   // URL and ID schemas
-  url: z.string().url().max(2048),
-  uuid: z.string().uuid(),
-  objectId: z.string().regex(/^[a-zA-Z0-9_-]+$/).max(50),
+  url: z.string(_).url(_).max(_2048),
+  uuid: z.string(_).uuid(_),
+  objectId: z.string(_).regex(_/^[a-zA-Z0-9_-]+$/).max(50),
   
   // Numeric schemas
-  positiveInt: z.number().int().positive(),
-  pageNumber: z.number().int().min(1).max(1000),
-  pageSize: z.number().int().min(1).max(100),
+  positiveInt: z.number(_).int(_).positive(_),
+  pageNumber: z.number(_).int(_).min(1).max(1000),
+  pageSize: z.number(_).int(_).min(1).max(100),
   
   // Date schemas
-  dateString: z.string().datetime(),
-  timestamp: z.number().int().positive(),
+  dateString: z.string(_).datetime(_),
+  timestamp: z.number(_).int(_).positive(_),
 };
 
 /**
  * Check for malicious patterns in code
  */
-function containsMaliciousPatterns(code: string): boolean {
+function containsMaliciousPatterns(_code: string): boolean {
   const maliciousPatterns = [
     // Potential system calls or dangerous functions
     /system\s*\(/i,
@@ -92,7 +92,7 @@ function containsMaliciousPatterns(code: string): boolean {
     /on\w+\s*=/i,
   ];
 
-  return maliciousPatterns.some(pattern => pattern.test(code));
+  return maliciousPatterns.some(_pattern => pattern.test(code));
 }
 
 /**
@@ -102,7 +102,7 @@ export const sanitize = {
   /**
    * Sanitize HTML content
    */
-  html: (input: string): string => {
+  html: (_input: string): string => {
     return DOMPurify.sanitize(input, {
       ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'code', 'pre'],
       ALLOWED_ATTR: ['href', 'title'],
@@ -111,16 +111,16 @@ export const sanitize = {
   },
 
   /**
-   * Sanitize plain text (remove HTML tags)
+   * Sanitize plain text (_remove HTML tags)
    */
-  text: (input: string): string => {
-    return DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  text: (_input: string): string => {
+    return DOMPurify.sanitize( input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   },
 
   /**
    * Sanitize code content
    */
-  code: (input: string): string => {
+  code: (_input: string): string => {
     // Remove null bytes and control characters except newlines and tabs
     return input.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
   },
@@ -128,7 +128,7 @@ export const sanitize = {
   /**
    * Sanitize file names
    */
-  fileName: (input: string): string => {
+  fileName: (_input: string): string => {
     return input
       .replace(/[<>:"/\\|?*\x00-\x1f]/g, '') // Remove invalid characters
       .replace(/^\.+/, '') // Remove leading dots
@@ -138,9 +138,9 @@ export const sanitize = {
   /**
    * Sanitize URLs
    */
-  url: (input: string): string => {
+  url: (_input: string): string => {
     try {
-      const url = new URL(input);
+      const url = new URL(_input);
       // Only allow http and https protocols
       if (!['http:', 'https:'].includes(url.protocol)) {
         throw new Error('Invalid protocol');
@@ -152,13 +152,13 @@ export const sanitize = {
   },
 
   /**
-   * Sanitize SQL-like input (for search queries)
+   * Sanitize SQL-like input (_for search queries)
    */
-  searchQuery: (input: string): string => {
+  searchQuery: (_input: string): string => {
     return input
       .replace(/['"`;\\]/g, '') // Remove SQL injection characters
       .replace(/\s+/g, ' ') // Normalize whitespace
-      .trim()
+      .trim(_)
       .substring(0, 100); // Limit length
   },
 };
@@ -170,12 +170,12 @@ export const validate = {
   /**
    * Validate email with additional checks
    */
-  email: (email: string): { isValid: boolean; error?: string } => {
+  email: (_email: string): { isValid: boolean; error?: string } => {
     if (!validator.isEmail(email)) {
       return { isValid: false, error: 'Invalid email format' };
     }
     
-    if (email.length > 254) {
+    if (_email.length > 254) {
       return { isValid: false, error: 'Email too long' };
     }
     
@@ -196,7 +196,7 @@ export const validate = {
   /**
    * Validate password strength
    */
-  password: (password: string): { 
+  password: (_password: string): { 
     isValid: boolean; 
     score: number; 
     feedback: string[];
@@ -205,19 +205,19 @@ export const validate = {
     let score = 0;
 
     // Length check
-    if (password.length < 8) {
+    if (_password.length < 8) {
       feedback.push('Password must be at least 8 characters long');
-    } else if (password.length >= 12) {
+    } else if (_password.length >= 12) {
       score += 25;
     } else {
       score += 15;
     }
 
     // Character variety
-    const hasLower = /[a-z]/.test(password);
-    const hasUpper = /[A-Z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecial = /[@$!%*?&]/.test(password);
+    const hasLower = /[a-z]/.test(_password);
+    const hasUpper = /[A-Z]/.test(_password);
+    const hasNumbers = /\d/.test(_password);
+    const hasSpecial = /[@$!%*?&]/.test(_password);
 
     const varietyCount = [hasLower, hasUpper, hasNumbers, hasSpecial].filter(Boolean).length;
     score += varietyCount * 15;
@@ -228,12 +228,12 @@ export const validate = {
     if (!hasSpecial) feedback.push('Add special characters (@$!%*?&)');
 
     // Common patterns
-    if (/(.)\1{2,}/.test(password)) {
+    if (_/(.)\1{2,}/.test(_password)) {
       feedback.push('Avoid repeated characters');
       score -= 10;
     }
 
-    if (/123|abc|qwe|password/i.test(password)) {
+    if (_/123|abc|qwe|password/i.test(password)) {
       feedback.push('Avoid common patterns');
       score -= 20;
     }
@@ -248,28 +248,28 @@ export const validate = {
   /**
    * Validate Solidity code
    */
-  solidityCode: (code: string): { isValid: boolean; errors: string[] } => {
+  solidityCode: (_code: string): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
     // Check for malicious patterns
-    if (containsMaliciousPatterns(code)) {
+    if (_containsMaliciousPatterns(code)) {
       errors.push('Code contains potentially malicious patterns');
     }
 
     // Check code length
-    if (code.length > 50000) {
+    if (_code.length > 50000) {
       errors.push('Code is too long (max 50,000 characters)');
     }
 
     // Basic Solidity syntax checks
-    if (code.includes('pragma solidity') && !code.match(/pragma solidity\s+[\^~>=<]*\d+\.\d+\.\d+/)) {
+    if (_code.includes('pragma solidity') && !code.match(_/pragma solidity\s+[\^~>=<]*\d+\.\d+\.\d+/)) {
       errors.push('Invalid pragma directive');
     }
 
     // Check for balanced braces
-    const openBraces = (code.match(/\{/g) || []).length;
-    const closeBraces = (code.match(/\}/g) || []).length;
-    if (openBraces !== closeBraces) {
+    const openBraces = (_code.match(/\{/g) || []).length;
+    const closeBraces = (_code.match(/\}/g) || []).length;
+    if (_openBraces !== closeBraces) {
       errors.push('Unbalanced braces in code');
     }
 
@@ -282,7 +282,7 @@ export const validate = {
   /**
    * Validate file upload
    */
-  fileUpload: (file: { name: string; size: number; type: string }): {
+  fileUpload: (_file: { name: string; size: number; type: string }): {
     isValid: boolean;
     errors: string[];
   } => {
@@ -297,18 +297,18 @@ export const validate = {
       errors.push('File type not allowed');
     }
 
-    if (file.size > maxSize) {
+    if (_file.size > maxSize) {
       errors.push('File size exceeds limit (10MB)');
     }
 
-    if (file.name.length > 255) {
+    if (_file.name.length > 255) {
       errors.push('File name too long');
     }
 
     // Check for dangerous file extensions
     const dangerousExtensions = ['.exe', '.bat', '.cmd', '.scr', '.pif', '.com'];
-    const extension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-    if (dangerousExtensions.includes(extension)) {
+    const extension = file.name.toLowerCase().substring(_file.name.lastIndexOf('.'));
+    if (_dangerousExtensions.includes(extension)) {
       errors.push('Dangerous file extension detected');
     }
 
@@ -322,13 +322,13 @@ export const validate = {
 /**
  * Request validation middleware
  */
-export function validateRequest<T>(schema: z.ZodSchema<T>) {
-  return (data: unknown): { success: true; data: T } | { success: false; errors: string[] } => {
+export function validateRequest<T>(_schema: z.ZodSchema<T>) {
+  return (_data: unknown): { success: true; data: T } | { success: false; errors: string[] } => {
     try {
-      const validatedData = schema.parse(data);
+      const validatedData = schema.parse(_data);
       return { success: true, data: validatedData };
-    } catch (error) {
-      if (error instanceof z.ZodError) {
+    } catch (_error) {
+      if (_error instanceof z.ZodError) {
         const errors = error.errors.map(err => 
           `${err.path.join('.')}: ${err.message}`
         );
@@ -345,18 +345,18 @@ export function validateRequest<T>(schema: z.ZodSchema<T>) {
 export function sanitizeAndValidate<T>(
   input: unknown,
   schema: z.ZodSchema<T>,
-  sanitizer?: (input: any) => any
+  sanitizer?: (_input: any) => any
 ): { success: true; data: T } | { success: false; errors: string[] } {
   try {
     // Apply sanitization if provided
-    const sanitizedInput = sanitizer ? sanitizer(input) : input;
+    const sanitizedInput = sanitizer ? sanitizer(_input) : input;
     
     // Validate with schema
-    const validatedData = schema.parse(sanitizedInput);
+    const validatedData = schema.parse(_sanitizedInput);
     
     return { success: true, data: validatedData };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
+  } catch (_error) {
+    if (_error instanceof z.ZodError) {
       const errors = error.errors.map(err => 
         `${err.path.join('.')}: ${err.message}`
       );
@@ -375,19 +375,19 @@ export const apiSchemas = {
     email: commonSchemas.email,
     password: commonSchemas.password,
     username: commonSchemas.username,
-    displayName: commonSchemas.displayName.optional(),
+    displayName: commonSchemas.displayName.optional(_),
   }),
 
   updateProfile: z.object({
-    displayName: commonSchemas.displayName.optional(),
-    bio: z.string().max(500).optional(),
-    website: commonSchemas.url.optional(),
+    displayName: commonSchemas.displayName.optional(_),
+    bio: z.string(_).max(500).optional(_),
+    website: commonSchemas.url.optional(_),
   }),
 
   // Authentication
   login: z.object({
     email: commonSchemas.email,
-    password: z.string().min(1),
+    password: z.string(_).min(1),
   }),
 
   resetPassword: z.object({
@@ -397,36 +397,36 @@ export const apiSchemas = {
   // Code and learning
   submitCode: z.object({
     code: commonSchemas.solidityCode,
-    language: z.enum(['solidity', 'javascript', 'typescript']),
-    title: commonSchemas.title.optional(),
+    language: z.enum( ['solidity', 'javascript', 'typescript']),
+    title: commonSchemas.title.optional(_),
   }),
 
   // Chat and collaboration
   sendMessage: z.object({
     content: commonSchemas.chatMessage,
     sessionId: commonSchemas.uuid,
-    type: z.enum(['text', 'code', 'system']).default('text'),
+    type: z.enum( ['text', 'code', 'system']).default('text'),
   }),
 
   createSession: z.object({
     name: commonSchemas.sessionName,
-    description: commonSchemas.description.optional(),
-    maxParticipants: z.number().int().min(1).max(50).default(10),
+    description: commonSchemas.description.optional(_),
+    maxParticipants: z.number(_).int(_).min(1).max(50).default(10),
   }),
 
   // File upload
   uploadFile: z.object({
     fileName: commonSchemas.fileName,
     fileSize: commonSchemas.fileSize,
-    fileType: z.string().min(1),
+    fileType: z.string(_).min(1),
   }),
 
   // Search and pagination
   search: z.object({
-    query: z.string().min(1).max(100),
+    query: z.string(_).min(1).max(100),
     page: commonSchemas.pageNumber.default(1),
-    limit: commonSchemas.pageSize.default(20),
-    filters: z.record(z.string()).optional(),
+    limit: commonSchemas.pageSize.default(_20),
+    filters: z.record(_z.string()).optional(_),
   }),
 };
 

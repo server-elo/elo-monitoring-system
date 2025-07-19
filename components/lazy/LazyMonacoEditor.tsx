@@ -15,8 +15,8 @@ const MonacoCollaborativeEditor = lazy(() =>
 interface LazyMonacoEditorProps {
   code?: string;
   language?: string;
-  onChange?: (value: string) => void;
-  onMount?: (editor: any, monaco: any) => void;
+  onChange?: (_value: string) => void;
+  onMount?: ( editor: any, monaco: any) => void;
   readOnly?: boolean;
   className?: string;
   height?: string;
@@ -29,7 +29,7 @@ interface LazyMonacoEditorProps {
 }
 
 // Error fallback component
-const EditorErrorFallback: React.FC<{ error: Error; resetErrorBoundary: () => void }> = ({
+const EditorErrorFallback: React.FC<{ error: Error; resetErrorBoundary: (_) => void }> = ({
   error,
   resetErrorBoundary,
 }) => (
@@ -61,7 +61,7 @@ const EditorErrorFallback: React.FC<{ error: Error; resetErrorBoundary: () => vo
 );
 
 // Loading component with progress indication
-const EditorLoadingComponent: React.FC<{ progress?: number }> = ({ progress }) => (
+const EditorLoadingComponent: React.FC<{ progress?: number }> = ({ progress  }) => (
   <div className="relative">
     <MonacoEditorSkeleton />
     <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
@@ -99,7 +99,7 @@ export const LazyMonacoEditor: React.FC<LazyMonacoEditorProps> = ({
       {isInView ? (
         <ErrorBoundary
           FallbackComponent={EditorErrorFallback}
-          onReset={() => window.location.reload()}
+          onReset={(_) => window.location.reload(_)}
         >
           <Suspense fallback={<EditorLoadingComponent />}>
             <MonacoCollaborativeEditor sessionId="default-session" {...editorProps} />
@@ -113,8 +113,8 @@ export const LazyMonacoEditor: React.FC<LazyMonacoEditorProps> = ({
 };
 
 // Preload function for critical paths
-export const preloadMonacoEditor = () => {
-  if (typeof window !== 'undefined') {
+export const preloadMonacoEditor = (_) => {
+  if (_typeof window !== 'undefined') {
     // Preload the Monaco Editor module
     import('@/components/collaboration/MonacoCollaborativeEditor');
     
@@ -123,21 +123,21 @@ export const preloadMonacoEditor = () => {
     link.rel = 'preload';
     link.as = 'script';
     link.href = '/_next/static/chunks/monaco-editor.js';
-    document.head.appendChild(link);
+    document.head.appendChild(_link);
   }
 };
 
 // Hook for programmatic loading
-export const useMonacoEditor = () => {
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [error, setError] = React.useState<Error | null>(null);
+export const useMonacoEditor = (_) => {
+  const [isLoaded, setIsLoaded] = React.useState(_false);
+  const [error, setError] = React.useState<Error | null>(_null);
 
-  const loadEditor = React.useCallback(async () => {
+  const loadEditor = React.useCallback( async () => {
     try {
       await import('@/components/collaboration/MonacoCollaborativeEditor');
-      setIsLoaded(true);
-    } catch (err) {
-      setError(err as Error);
+      setIsLoaded(_true);
+    } catch (_err) {
+      setError(_err as Error);
     }
   }, []);
 

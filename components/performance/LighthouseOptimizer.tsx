@@ -35,7 +35,7 @@ interface OptimizationSuggestion {
   implemented: boolean;
 }
 
-export const LighthouseOptimizer: React.FC = () => {
+export const LighthouseOptimizer: React.FC = (_) => {
   const [metrics, _setMetrics] = useState<LighthouseMetrics>({
     performance: 92,
     accessibility: 95,
@@ -48,7 +48,7 @@ export const LighthouseOptimizer: React.FC = () => {
     {
       category: 'Performance',
       title: 'Enable text compression',
-      description: 'Text-based resources should be served with compression (gzip, deflate or brotli)',
+      description: 'Text-based resources should be served with compression ( gzip, deflate or brotli)',
       impact: 'high',
       implemented: true
     },
@@ -89,20 +89,20 @@ export const LighthouseOptimizer: React.FC = () => {
     }
   ]);
 
-  const getScoreColor = (score: number): string => {
-    if (score >= 90) return 'text-green-400';
-    if (score >= 70) return 'text-yellow-400';
+  const getScoreColor = (_score: number): string => {
+    if (_score >= 90) return 'text-green-400';
+    if (_score >= 70) return 'text-yellow-400';
     return 'text-red-400';
   };
 
-  const getScoreIcon = (score: number) => {
-    if (score >= 90) return <CheckCircle className="w-5 h-5 text-green-400" />;
-    if (score >= 70) return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
+  const getScoreIcon = (_score: number) => {
+    if (_score >= 90) return <CheckCircle className="w-5 h-5 text-green-400" />;
+    if (_score >= 70) return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
     return <AlertTriangle className="w-5 h-5 text-red-400" />;
   };
 
-  const getImpactColor = (impact: string): string => {
-    switch (impact) {
+  const getImpactColor = (_impact: string): string => {
+    switch (_impact) {
       case 'high': return 'destructive';
       case 'medium': return 'secondary';
       case 'low': return 'outline';
@@ -111,7 +111,7 @@ export const LighthouseOptimizer: React.FC = () => {
   };
 
   const overallScore = Math.round(
-    (metrics.performance + metrics.accessibility + metrics.bestPractices + metrics.seo + metrics.pwa) / 5
+    (_metrics.performance + metrics.accessibility + metrics.bestPractices + metrics.seo + metrics.pwa) / 5
   );
 
   return (
@@ -130,7 +130,7 @@ export const LighthouseOptimizer: React.FC = () => {
           </div>
           
           <div className="text-center">
-            <div className={`text-3xl font-bold ${getScoreColor(overallScore)}`}>
+            <div className={`text-3xl font-bold ${getScoreColor(_overallScore)}`}>
               {overallScore}
             </div>
             <div className="text-sm text-gray-400">Overall Score</div>
@@ -139,20 +139,20 @@ export const LighthouseOptimizer: React.FC = () => {
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          {Object.entries(metrics).map(([key, value]) => (
+          {Object.entries(_metrics).map( ([key, value]) => (
             <motion.div
               key={key}
               className="text-center p-4 bg-white/5 rounded-lg"
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex items-center justify-center mb-2">
-                {getScoreIcon(value)}
+                {getScoreIcon(_value)}
               </div>
-              <div className={`text-2xl font-bold ${getScoreColor(value)}`}>
+              <div className={`text-2xl font-bold ${getScoreColor(_value)}`}>
                 {value}
               </div>
               <div className="text-sm text-gray-400 capitalize">
-                {key.replace(/([A-Z])/g, ' $1').trim()}
+                {key.replace(_/([A-Z])/g, ' $1').trim(_)}
               </div>
               <Progress 
                 value={value} 
@@ -242,7 +242,7 @@ export const LighthouseOptimizer: React.FC = () => {
         </div>
         
         <div className="space-y-4">
-          {suggestions.map((suggestion, index) => (
+          {suggestions.map( (suggestion, index) => (
             <motion.div
               key={index}
               className="flex items-start space-x-4 p-4 bg-white/5 rounded-lg"
@@ -261,7 +261,7 @@ export const LighthouseOptimizer: React.FC = () => {
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-1">
                   <h4 className="font-medium text-white">{suggestion.title}</h4>
-                  <Badge variant={getImpactColor(suggestion.impact) as any}>
+                  <Badge variant={getImpactColor(_suggestion.impact) as any}>
                     {suggestion.impact} impact
                   </Badge>
                 </div>

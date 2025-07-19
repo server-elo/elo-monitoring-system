@@ -56,7 +56,7 @@ interface FeedbackData {
 
 interface FeedbackCollectionSystemProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   context?: {
     page: string;
     feature: string;
@@ -69,7 +69,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
   onClose,
   context
 }) => {
-  const { toast } = useToast();
+  const { toast } = useToast(_);
   const [feedbackType, setFeedbackType] = useState<FeedbackData['type']>('rating');
   const [formData, setFormData] = useState<Partial<FeedbackData>>({
     type: 'rating',
@@ -83,13 +83,13 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
       allowFollowUp: false
     }
   });
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState(_false);
   const [recordingPermissions, setRecordingPermissions] = useState({
     screen: false,
     audio: false,
     camera: false
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(_false);
 
   useEffect(() => {
     if (isOpen) {
@@ -107,30 +107,30 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
     }
   }, [isOpen, context]);
 
-  const handleRatingChange = (value: number[]) => {
-    setFormData(prev => ({ ...prev, rating: value[0] }));
+  const handleRatingChange = (_value: number[]) => {
+    setFormData( prev => ({ ...prev, rating: value[0] }));
   };
 
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = ( field: string, value: any) => {
+    setFormData( prev => ({ ...prev, [field]: value }));
   };
 
-  const handleStepChange = (index: number, value: string) => {
-    const newSteps = [...(formData.steps || [''])];
+  const handleStepChange = ( index: number, value: string) => {
+    const newSteps = [...(_formData.steps || [''])];
     newSteps[index] = value;
-    setFormData(prev => ({ ...prev, steps: newSteps }));
+    setFormData( prev => ({ ...prev, steps: newSteps }));
   };
 
-  const addStep = () => {
+  const addStep = (_) => {
     setFormData(prev => ({ 
       ...prev, 
-      steps: [...(prev.steps || ['']), ''] 
+      steps: [...(_prev.steps || ['']), ''] 
     }));
   };
 
-  const removeStep = (index: number) => {
-    const newSteps = (formData.steps || []).filter((_, i) => i !== index);
-    setFormData(prev => ({ ...prev, steps: newSteps }));
+  const removeStep = (_index: number) => {
+    const newSteps = (_formData.steps || []).filter( (_, i) => i !== index);
+    setFormData( prev => ({ ...prev, steps: newSteps }));
   };
 
   const requestRecordingPermissions = async () => {
@@ -140,16 +140,16 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
         video: true,
         audio: true
       });
-      setRecordingPermissions(prev => ({ ...prev, screen: true, audio: true }));
+      setRecordingPermissions( prev => ({ ...prev, screen: true, audio: true }));
       
-      // Stop the stream immediately (we just wanted permission)
-      screenStream.getTracks().forEach(track => track.stop());
+      // Stop the stream immediately (_we just wanted permission)
+      screenStream.getTracks(_).forEach(_track => track.stop());
       
       toast({
         title: 'Recording Permissions Granted',
         description: 'You can now record your screen for bug reports.',
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Recording Permission Denied',
         description: 'Screen recording is optional but helps us understand issues better.',
@@ -160,18 +160,18 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
 
   const startRecording = async () => {
     if (!recordingPermissions.screen) {
-      await requestRecordingPermissions();
+      await requestRecordingPermissions(_);
       return;
     }
 
     try {
-      setIsRecording(true);
+      setIsRecording(_true);
       toast({
         title: 'Recording Started',
         description: 'Please reproduce the issue you want to report.',
       });
-    } catch (error) {
-      setIsRecording(false);
+    } catch (_error) {
+      setIsRecording(_false);
       toast({
         title: 'Recording Failed',
         description: 'Unable to start screen recording.',
@@ -180,9 +180,9 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
     }
   };
 
-  const stopRecording = () => {
-    setIsRecording(false);
-    setFormData(prev => ({ ...prev, screenRecording: true }));
+  const stopRecording = (_) => {
+    setIsRecording(_false);
+    setFormData( prev => ({ ...prev, screenRecording: true }));
     toast({
       title: 'Recording Stopped',
       description: 'Screen recording will be included with your feedback.',
@@ -199,7 +199,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(_true);
 
     try {
       const response = await fetch('/api/feedback/submit', {
@@ -207,11 +207,11 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(_formData),
       });
 
-      if (response.ok) {
-        const result = await response.json();
+      if (_response.ok) {
+        const result = await response.json(_);
         
         toast({
           title: 'Feedback Submitted',
@@ -230,35 +230,35 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
           contactInfo: { allowFollowUp: false }
         });
         
-        onClose();
+        onClose(_);
       } else {
         throw new Error('Failed to submit feedback');
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Submission Failed',
         description: 'Unable to submit feedback. Please try again.',
         variant: 'destructive'
       });
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(_false);
     }
   };
 
-  const exportFeedbackData = () => {
-    const dataStr = JSON.stringify(formData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
+  const exportFeedbackData = (_) => {
+    const dataStr = JSON.stringify( formData, null, 2);
+    const dataBlob = new Blob( [dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(_dataBlob);
     
     const link = document.createElement('a');
     link.href = url;
-    link.download = `feedback-${Date.now()}.json`;
-    link.click();
+    link.download = `feedback-${Date.now(_)}.json`;
+    link.click(_);
     
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(_url);
   };
 
-  const renderRatingForm = () => (
+  const renderRatingForm = (_) => (
     <div className="space-y-4">
       <div>
         <Label htmlFor="rating">Overall Rating</Label>
@@ -276,7 +276,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
               <Star
                 key={star}
                 className={`w-5 h-5 ${
-                  star <= (formData.rating || 5)
+                  star <= (_formData.rating || 5)
                     ? 'fill-yellow-400 text-yellow-400'
                     : 'text-gray-300'
                 }`}
@@ -290,7 +290,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
         <Label htmlFor="category">Category</Label>
         <select
           value={formData.category}
-          onChange={(e) => handleInputChange('category', e.target.value)}
+          onChange={(_e) => handleInputChange( 'category', e.target.value)}
           className="w-full mt-1 p-2 border rounded-md"
         >
           <option value="general">General Experience</option>
@@ -306,13 +306,13 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
     </div>
   );
 
-  const renderBugReportForm = () => (
+  const renderBugReportForm = (_) => (
     <div className="space-y-4">
       <div>
         <Label htmlFor="severity">Severity</Label>
         <select
           value={formData.severity}
-          onChange={(e) => handleInputChange('severity', e.target.value)}
+          onChange={(_e) => handleInputChange( 'severity', e.target.value)}
           className="w-full mt-1 p-2 border rounded-md"
         >
           <option value="low">Low - Minor issue</option>
@@ -324,20 +324,20 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
 
       <div>
         <Label>Steps to Reproduce</Label>
-        {(formData.steps || ['']).map((step, index) => (
+        {(_formData.steps || ['']).map( (step, index) => (
           <div key={index} className="flex items-center space-x-2 mt-2">
             <Input
               value={step}
-              onChange={(e) => handleStepChange(index, e.target.value)}
+              onChange={(_e) => handleStepChange( index, e.target.value)}
               placeholder={`Step ${index + 1}`}
               className="flex-1"
             />
-            {(formData.steps?.length || 0) > 1 && (
+            {(_formData.steps?.length || 0) > 1 && (
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => removeStep(index)}
+                onClick={(_) => removeStep(_index)}
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -359,7 +359,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
         <Label htmlFor="expected">Expected Behavior</Label>
         <Textarea
           value={formData.expectedBehavior || ''}
-          onChange={(e) => handleInputChange('expectedBehavior', e.target.value)}
+          onChange={(_e) => handleInputChange( 'expectedBehavior', e.target.value)}
           placeholder="What did you expect to happen?"
           className="mt-1"
         />
@@ -369,7 +369,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
         <Label htmlFor="actual">Actual Behavior</Label>
         <Textarea
           value={formData.actualBehavior || ''}
-          onChange={(e) => handleInputChange('actualBehavior', e.target.value)}
+          onChange={(_e) => handleInputChange( 'actualBehavior', e.target.value)}
           placeholder="What actually happened?"
           className="mt-1"
         />
@@ -402,15 +402,15 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
         <Button
           type="button"
           variant="outline"
-          onClick={() => {
+          onClick={(_) => {
             // Toggle voice recording functionality
-            if (recordingPermissions.audio) {
+            if (_recordingPermissions.audio) {
               toast({
                 title: 'Voice Recording',
                 description: 'Voice recording feature coming soon!',
               });
             } else {
-              requestRecordingPermissions();
+              requestRecordingPermissions(_);
             }
           }}
           className="flex items-center space-x-2"
@@ -435,14 +435,14 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
     </div>
   );
 
-  const renderContactForm = () => (
+  const renderContactForm = (_) => (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="email">Email (Optional)</Label>
+        <Label htmlFor="email">Email (_Optional)</Label>
         <Input
           type="email"
           value={formData.contactInfo?.email || ''}
-          onChange={(e) => handleInputChange('contactInfo', {
+          onChange={(_e) => handleInputChange('contactInfo', {
             ...formData.contactInfo,
             email: e.target.value
           })}
@@ -454,7 +454,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
       <div className="flex items-center space-x-2">
         <Checkbox
           checked={formData.contactInfo?.allowFollowUp || false}
-          onCheckedChange={(checked) => handleInputChange('contactInfo', {
+          onCheckedChange={(_checked) => handleInputChange('contactInfo', {
             ...formData.contactInfo,
             allowFollowUp: checked
           })}
@@ -511,14 +511,14 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
                       { type: 'feature_request', label: 'Feature Request', icon: ThumbsUp },
                       { type: 'usability', label: 'Usability Issue', icon: MessageSquare },
                       { type: 'negative_feedback', label: 'Report Issue', icon: ThumbsDown }
-                    ].map(({ type, label, icon: Icon }) => (
+                    ].map( ({ type, label, icon: Icon }) => (
                       <Button
                         key={type}
                         variant={feedbackType === type ? 'default' : 'outline'}
                         size="sm"
-                        onClick={() => {
-                          setFeedbackType(type as FeedbackData['type']);
-                          setFormData(prev => ({ ...prev, type: type as FeedbackData['type'] }));
+                        onClick={(_) => {
+                          setFeedbackType(_type as FeedbackData['type']);
+                          setFormData( prev => ({ ...prev, type: type as FeedbackData['type'] }));
                         }}
                         className="flex items-center space-x-2"
                       >
@@ -534,7 +534,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
                   <Label htmlFor="title">Title</Label>
                   <Input
                     value={formData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    onChange={(_e) => handleInputChange( 'title', e.target.value)}
                     placeholder="Brief summary of your feedback"
                     className="mt-1"
                   />
@@ -544,7 +544,7 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    onChange={(_e) => handleInputChange( 'description', e.target.value)}
                     placeholder="Please provide detailed feedback..."
                     rows={4}
                     className="mt-1"
@@ -552,11 +552,11 @@ export const FeedbackCollectionSystem: React.FC<FeedbackCollectionSystemProps> =
                 </div>
 
                 {/* Type-specific Forms */}
-                {feedbackType === 'rating' && renderRatingForm()}
-                {feedbackType === 'bug_report' && renderBugReportForm()}
+                {feedbackType === 'rating' && renderRatingForm(_)}
+                {feedbackType === 'bug_report' && renderBugReportForm(_)}
 
                 {/* Contact Information */}
-                {renderContactForm()}
+                {renderContactForm(_)}
 
                 {/* Context Information */}
                 <div className="bg-gray-50 p-3 rounded-md">

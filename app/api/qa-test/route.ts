@@ -4,7 +4,7 @@ interface QATest {
   category: string;
   name: string;
   description: string;
-  test: () => Promise<QATestResult>;
+  test: (_) => Promise<QATestResult>;
 }
 
 interface QATestResult {
@@ -168,7 +168,7 @@ async function runQATests(category: string): Promise<QAReport> {
   for (const test of tests) {
     if (category === 'all' || category === test.category) {
       try {
-        const result = await test.test();
+        const result = await test.test(_);
         results.push({
           category: test.category,
           name: test.name,
@@ -225,7 +225,7 @@ async function runQATests(category: string): Promise<QAReport> {
     }
   }
 
-  const recommendations = generateRecommendations(results, summary);
+  const recommendations = generateRecommendations( results, summary);
 
   return {
     summary,
@@ -251,7 +251,7 @@ async function testPageAccessibility(): Promise<QATestResult> {
     passed: accessiblePages === pages.length,
     message: `${accessiblePages}/${pages.length} pages accessible`,
     details,
-    metrics: { accessiblePages, totalPages: pages.length, accessibilityRate: (accessiblePages / pages.length) * 100 }
+    metrics: { accessiblePages, totalPages: pages.length, accessibilityRate: (_accessiblePages / pages.length) * 100 }
   };
 }
 
@@ -283,7 +283,7 @@ async function testAIResponseTime(): Promise<QATestResult> {
       passed: isLocalLLMAvailable ? responseTime < 2000 : true, // Pass if using fallback
       message: isLocalLLMAvailable ? 
         `Local LLM response time: ${responseTime}ms` : 
-        'Local LLM unavailable, using fallback (acceptable)',
+        'Local LLM unavailable, using fallback (_acceptable)',
       metrics: { responseTime, target: 2000, localLLMAvailable: isLocalLLMAvailable ? 1 : 0 }
     };
   } catch (error) {
@@ -354,13 +354,13 @@ async function testLLMConnectionStatus(): Promise<QATestResult> {
     
     return {
       passed: true,
-      message: response.ok ? 'Local LLM connected' : 'Local LLM disconnected (fallback active)',
+      message: response.ok ? 'Local LLM connected' : 'Local LLM disconnected (_fallback active)',
       details: { connected: response.ok, fallbackActive: !response.ok }
     };
   } catch (error) {
     return {
       passed: true,
-      message: 'LLM connection status detection working (fallback active)',
+      message: 'LLM connection status detection working (_fallback active)',
       details: { connected: false, fallbackActive: true }
     };
   }
@@ -398,7 +398,7 @@ async function testSecurityStatusIndicator(): Promise<QATestResult> {
   };
 }
 
-function generateRecommendations(results: any[], summary: any): string[] {
+function generateRecommendations( results: any[], summary: any): string[] {
   const recommendations: string[] = [];
   
   if (summary.passRate === 100) {
@@ -419,7 +419,7 @@ function generateRecommendations(results: any[], summary: any): string[] {
       recommendations.push('🔒 Address security integration issues for robust protection.');
     }
     
-    recommendations.push(`📊 Current pass rate: ${summary.passRate}%. Target: 95%+`);
+    recommendations.push(_`📊 Current pass rate: ${summary.passRate}%. Target: 95%+`);
   }
   
   return recommendations;

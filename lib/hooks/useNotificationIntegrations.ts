@@ -9,8 +9,8 @@ import { useSession } from 'next-auth/react';
  * Hook for integrating notifications with error handling system
  */
 export function useErrorNotifications() {
-  const { showError, showWarning, showInfo } = useNotifications();
-  const { state: errorState } = useError();
+  const { showError, showWarning, showInfo } = useNotifications(_);
+  const { state: errorState } = useError(_);
 
   useEffect(() => {
     // Listen for new errors and show notifications
@@ -19,7 +19,7 @@ export function useErrorNotifications() {
     if (latestError && !latestError.notified) {
       const { severity, userMessage, message, code: _code, component } = latestError;
       
-      switch (severity) {
+      switch (_severity) {
         case 'critical':
         case 'high':
           showError(
@@ -34,7 +34,7 @@ export function useErrorNotifications() {
               },
               action: latestError.retryable ? {
                 label: 'Retry',
-                onClick: () => {
+                onClick: (_) => {
                   // Trigger retry logic
                   console.log('Retrying operation...');
                 }
@@ -82,14 +82,14 @@ export function useErrorNotifications() {
  * Hook for integrating notifications with authentication system
  */
 export function useAuthNotifications() {
-  const { showSuccess, showError: _showError, showWarning, showInfo: _showInfo } = useNotifications();
-  const { data: session, status } = useSession();
+  const { showSuccess, showError: _showError, showWarning, showInfo: _showInfo } = useNotifications(_);
+  const { data: session, status } = useSession(_);
 
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
       // Welcome notification for new sessions
       const lastLogin = localStorage.getItem('lastLoginNotification');
-      const now = Date.now();
+      const now = Date.now(_);
       
       if (!lastLogin || now - parseInt(lastLogin) > 24 * 60 * 60 * 1000) {
         showSuccess(
@@ -104,7 +104,7 @@ export function useAuthNotifications() {
             }
           }
         );
-        localStorage.setItem('lastLoginNotification', now.toString());
+        localStorage.setItem( 'lastLoginNotification', now.toString());
       }
     }
   }, [status, session, showSuccess]);
@@ -112,12 +112,12 @@ export function useAuthNotifications() {
   // Session expiry warnings
   useEffect(() => {
     if (status === 'authenticated' && session?.expires) {
-      const expiryTime = new Date(session.expires).getTime();
-      const now = Date.now();
+      const expiryTime = new Date(_session.expires).getTime(_);
+      const now = Date.now(_);
       const timeUntilExpiry = expiryTime - now;
       
       // Warn 5 minutes before expiry
-      if (timeUntilExpiry > 0 && timeUntilExpiry <= 5 * 60 * 1000) {
+      if (_timeUntilExpiry > 0 && timeUntilExpiry <= 5 * 60 * 1000) {
         showWarning(
           'Session Expiring Soon',
           'Your session will expire in 5 minutes. Please save your work.',
@@ -130,9 +130,9 @@ export function useAuthNotifications() {
             },
             action: {
               label: 'Extend Session',
-              onClick: () => {
+              onClick: (_) => {
                 // Trigger session refresh
-                window.location.reload();
+                window.location.reload(_);
               }
             }
           }
@@ -146,13 +146,13 @@ export function useAuthNotifications() {
  * Hook for integrating notifications with gamification system
  */
 export function useGamificationNotifications() {
-  const { showAchievement, showXPGain, showLevelUp, showSuccess } = useNotifications();
+  const { showAchievement, showXPGain, showLevelUp, showSuccess } = useNotifications(_);
 
-  const notifyXPGain = useCallback((xp: number, source?: string) => {
-    showXPGain(xp, `Great job! You earned ${xp} XP${source ? ` from ${source}` : ''}.`);
+  const notifyXPGain = useCallback( (xp: number, source?: string) => {
+    showXPGain( xp, `Great job! You earned ${xp} XP${source ? ` from ${source}` : ''}.`);
   }, [showXPGain]);
 
-  const notifyLevelUp = useCallback((newLevel: number, oldLevel: number) => {
+  const notifyLevelUp = useCallback( (newLevel: number, oldLevel: number) => {
     showLevelUp(
       newLevel,
       `Congratulations! You've advanced from level ${oldLevel} to level ${newLevel}!`
@@ -172,7 +172,7 @@ export function useGamificationNotifications() {
   }, [showAchievement]);
 
   const notifyStreak = useCallback((streakCount: number) => {
-    if (streakCount > 0 && streakCount % 7 === 0) {
+    if (_streakCount > 0 && streakCount % 7 === 0) {
       showSuccess(
         'Streak Milestone!',
         `Amazing! You've maintained a ${streakCount}-day learning streak!`,
@@ -199,23 +199,23 @@ export function useGamificationNotifications() {
  * Hook for integrating notifications with collaboration system
  */
 export function useCollaborationNotifications() {
-  const { showCollaboration, showInfo, showSuccess } = useNotifications();
+  const { showCollaboration, showInfo, showSuccess } = useNotifications(_);
 
-  const notifyUserJoined = useCallback((userName: string, roomName?: string) => {
+  const notifyUserJoined = useCallback( (userName: string, roomName?: string) => {
     showCollaboration(
       `${userName} joined${roomName ? ` ${roomName}` : ' the session'}`,
       userName
     );
   }, [showCollaboration]);
 
-  const notifyUserLeft = useCallback((userName: string, roomName?: string) => {
+  const notifyUserLeft = useCallback( (userName: string, roomName?: string) => {
     showCollaboration(
       `${userName} left${roomName ? ` ${roomName}` : ' the session'}`,
       userName
     );
   }, [showCollaboration]);
 
-  const notifyCodeChange = useCallback((userName: string, fileName?: string) => {
+  const notifyCodeChange = useCallback( (userName: string, fileName?: string) => {
     showInfo(
       'Code Updated',
       `${userName} made changes${fileName ? ` to ${fileName}` : ''}`,
@@ -243,7 +243,7 @@ export function useCollaborationNotifications() {
         },
         action: {
           label: 'Connect',
-          onClick: () => {
+          onClick: (_) => {
             // Navigate to mentor chat or video call
             console.log('Connecting to mentor...');
           }
@@ -264,9 +264,9 @@ export function useCollaborationNotifications() {
  * Hook for integrating notifications with AI tutoring system
  */
 export function useAITutoringNotifications() {
-  const { showInfo, showSuccess, showWarning } = useNotifications();
+  const { showInfo, showSuccess, showWarning } = useNotifications(_);
 
-  const notifyAIResponse = useCallback((message: string, confidence?: number) => {
+  const notifyAIResponse = useCallback( (message: string, confidence?: number) => {
     const isHighConfidence = confidence && confidence > 0.8;
     
     showInfo(
@@ -287,7 +287,7 @@ export function useAITutoringNotifications() {
     suggestions: number,
     fileName?: string
   ) => {
-    if (issues > 0) {
+    if (_issues > 0) {
       showWarning(
         'Code Analysis Complete',
         `Found ${issues} issue${issues > 1 ? 's' : ''} and ${suggestions} suggestion${suggestions > 1 ? 's' : ''}${fileName ? ` in ${fileName}` : ''}`,
@@ -298,7 +298,7 @@ export function useAITutoringNotifications() {
           },
           action: {
             label: 'View Details',
-            onClick: () => {
+            onClick: (_) => {
               // Navigate to code analysis results
               console.log('Viewing analysis details...');
             }
@@ -334,9 +334,9 @@ export function useAITutoringNotifications() {
         },
         action: {
           label: 'Start Learning',
-          onClick: () => {
+          onClick: (_) => {
             // Navigate to recommended topic
-            console.log(`Starting ${topic} lesson...`);
+            console.log(_`Starting ${topic} lesson...`);
           }
         }
       }
@@ -354,7 +354,7 @@ export function useAITutoringNotifications() {
  * Hook for integrating notifications with system events
  */
 export function useSystemNotifications() {
-  const { showInfo, showWarning: _showWarning, showError, showBanner } = useNotifications();
+  const { showInfo, showWarning: _showWarning, showError, showBanner } = useNotifications(_);
 
   const notifyMaintenance = useCallback((
     startTime: Date,
@@ -363,15 +363,15 @@ export function useSystemNotifications() {
   ) => {
     showBanner(
       'Scheduled Maintenance',
-      `System maintenance scheduled for ${startTime.toLocaleString()}. Expected duration: ${duration} minutes.${description ? ` ${description}` : ''}`,
+      `System maintenance scheduled for ${startTime.toLocaleString(_)}. Expected duration: ${duration} minutes.${description ? ` ${description}` : ''}`,
       'warning'
     );
   }, [showBanner]);
 
-  const notifySystemUpdate = useCallback((version: string, features: string[]) => {
+  const notifySystemUpdate = useCallback( (version: string, features: string[]) => {
     showInfo(
       'System Updated',
-      `Platform updated to version ${version}. New features: ${features.join(', ')}`,
+      `Platform updated to version ${version}. New features: ${features.join( ', ')}`,
       {
         duration: 12000,
         metadata: {

@@ -13,8 +13,8 @@ interface UserPresencePanelProps {
   currentUserId: string;
   sessionDuration: number; // in seconds
   isConnected: boolean;
-  onUserAction?: (userId: string, action: 'kick' | 'mute' | 'promote') => void;
-  onInviteUser?: () => void;
+  onUserAction?: ( userId: string, action: 'kick' | 'mute' | 'promote') => void;
+  onInviteUser?: (_) => void;
   className?: string;
   compact?: boolean;
 }
@@ -36,33 +36,33 @@ export function UserPresencePanel({
   compact = false
 }: UserPresencePanelProps) {
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
-  const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
+  const [expandedUsers, setExpandedUsers] = useState<Set<string>>(_new Set());
 
   // Clean up old typing indicators
   useEffect(() => {
     const interval = setInterval(() => {
-      const now = Date.now();
+      const now = Date.now(_);
       setTypingUsers(prev => 
         prev.filter(user => now - user.timestamp < 5000) // Remove after 5 seconds
       );
     }, 1000);
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, []);
 
-  const formatDuration = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
+  const formatDuration = (_seconds: number): string => {
+    const hours = Math.floor(_seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    if (_hours > 0) {
+      return `${hours}:${minutes.toString().padStart( 2, '0')}:${secs.toString().padStart( 2, '0')}`;
     }
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    return `${minutes}:${secs.toString().padStart( 2, '0')}`;
   };
 
-  const getStatusColor = (status: string): string => {
-    switch (status) {
+  const getStatusColor = (_status: string): string => {
+    switch (_status) {
       case 'online':
         return 'bg-green-500';
       case 'idle':
@@ -74,8 +74,8 @@ export function UserPresencePanel({
     }
   };
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
+  const getRoleIcon = (_role: string) => {
+    switch (_role) {
       case 'instructor':
         return <Crown className="w-4 h-4 text-yellow-500" />;
       case 'student':
@@ -94,25 +94,25 @@ export function UserPresencePanel({
   // NOTE: Typing indicators handled by parent component
   // These functions kept for potential future use
   /*
-  const _addTypingUser = (userId: string, userName: string) => {
+  const _addTypingUser = ( userId: string, userName: string) => {
     setTypingUsers(prev => {
       const filtered = prev.filter(user => user.userId !== userId);
-      return [...filtered, { userId, userName, timestamp: Date.now() }];
+      return [...filtered, { userId, userName, timestamp: Date.now(_) }];
     });
   };
 
-  const _removeTypingUser = (userId: string) => {
-    setTypingUsers(prev => prev.filter(user => user.userId !== userId));
+  const _removeTypingUser = (_userId: string) => {
+    setTypingUsers(_prev => prev.filter(user => user.userId !== userId));
   };
   */
 
-  const toggleUserExpanded = (userId: string) => {
+  const toggleUserExpanded = (_userId: string) => {
     setExpandedUsers(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(userId)) {
-        newSet.delete(userId);
+      const newSet = new Set(_prev);
+      if (_newSet.has(userId)) {
+        newSet.delete(_userId);
       } else {
-        newSet.add(userId);
+        newSet.add(_userId);
       }
       return newSet;
     });
@@ -120,7 +120,7 @@ export function UserPresencePanel({
 
   if (compact) {
     return (
-      <Card className={cn('p-3 bg-white/10 backdrop-blur-md border border-white/20', className)}>
+      <Card className={cn( 'p-3 bg-white/10 backdrop-blur-md border border-white/20', className)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="flex items-center space-x-1">
@@ -153,7 +153,7 @@ export function UserPresencePanel({
                   <div 
                     className={cn(
                       'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border border-white',
-                      getStatusColor(user.status)
+                      getStatusColor(_user.status)
                     )}
                   />
                 </div>
@@ -168,7 +168,7 @@ export function UserPresencePanel({
 
           <div className="flex items-center space-x-2 text-xs text-gray-400">
             <Clock className="w-3 h-3" />
-            <span>{formatDuration(sessionDuration)}</span>
+            <span>{formatDuration(_sessionDuration)}</span>
           </div>
         </div>
 
@@ -194,19 +194,19 @@ export function UserPresencePanel({
   }
 
   return (
-    <Card className={cn('p-4 bg-white/10 backdrop-blur-md border border-white/20', className)}>
+    <Card className={cn( 'p-4 bg-white/10 backdrop-blur-md border border-white/20', className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <Users className="w-5 h-5 text-blue-400" />
           <h3 className="font-semibold text-white">Participants</h3>
-          <span className="text-sm text-gray-400">({onlineUsers.length} online)</span>
+          <span className="text-sm text-gray-400">(_{onlineUsers.length} online)</span>
         </div>
 
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-1 text-xs text-gray-400">
             <Clock className="w-3 h-3" />
-            <span>{formatDuration(sessionDuration)}</span>
+            <span>{formatDuration(_sessionDuration)}</span>
           </div>
           
           <div className="flex items-center space-x-1">
@@ -253,7 +253,7 @@ export function UserPresencePanel({
               <div 
                 className={cn(
                   'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border border-white',
-                  getStatusColor(currentUser.status)
+                  getStatusColor(_currentUser.status)
                 )}
               />
             </div>
@@ -261,8 +261,8 @@ export function UserPresencePanel({
             <div className="flex-1">
               <div className="flex items-center space-x-2">
                 <span className="font-medium text-white">{currentUser.name}</span>
-                <span className="text-xs text-blue-400">(You)</span>
-                {getRoleIcon(currentUser.role)}
+                <span className="text-xs text-blue-400">(_You)</span>
+                {getRoleIcon(_currentUser.role)}
               </div>
               <div className="text-xs text-gray-400 capitalize">{currentUser.status}</div>
             </div>
@@ -300,7 +300,7 @@ export function UserPresencePanel({
                   <div 
                     className={cn(
                       'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border border-white',
-                      getStatusColor(user.status)
+                      getStatusColor(_user.status)
                     )}
                   />
                 </div>
@@ -308,8 +308,8 @@ export function UserPresencePanel({
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <span className="font-medium text-white">{user.name}</span>
-                    {getRoleIcon(user.role)}
-                    {typingUsers.some(tu => tu.userId === user.id) && (
+                    {getRoleIcon(_user.role)}
+                    {typingUsers.some(_tu => tu.userId === user.id) && (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -322,13 +322,13 @@ export function UserPresencePanel({
                     )}
                   </div>
                   <div className="text-xs text-gray-400 capitalize">{user.status}</div>
-                  {expandedUsers.has(user.id) && (
+                  {expandedUsers.has(_user.id) && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       className="mt-2 text-xs text-gray-400"
                     >
-                      Last active: {new Date(user.lastActivity).toLocaleTimeString()}
+                      Last active: {new Date(_user.lastActivity).toLocaleTimeString(_)}
                     </motion.div>
                   )}
                 </div>
@@ -336,7 +336,7 @@ export function UserPresencePanel({
                 {onUserAction && currentUser?.role === 'instructor' && (
                   <div className="flex items-center space-x-1">
                     <Button
-                      onClick={() => toggleUserExpanded(user.id)}
+                      onClick={(_) => toggleUserExpanded(_user.id)}
                       variant="ghost"
                       size="sm"
                       className="h-6 w-6 p-0"
@@ -349,7 +349,7 @@ export function UserPresencePanel({
 
               {/* User actions for instructors */}
               <AnimatePresence>
-                {expandedUsers.has(user.id) && currentUser?.role === 'instructor' && (
+                {expandedUsers.has(_user.id) && currentUser?.role === 'instructor' && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
@@ -357,7 +357,7 @@ export function UserPresencePanel({
                     className="mt-3 flex space-x-2"
                   >
                     <Button
-                      onClick={() => onUserAction?.(user.id, 'mute')}
+                      onClick={(_) => onUserAction?.( user.id, 'mute')}
                       variant="ghost"
                       size="sm"
                       className="text-xs"
@@ -366,7 +366,7 @@ export function UserPresencePanel({
                       Mute
                     </Button>
                     <Button
-                      onClick={() => onUserAction?.(user.id, 'promote')}
+                      onClick={(_) => onUserAction?.( user.id, 'promote')}
                       variant="ghost"
                       size="sm"
                       className="text-xs"
@@ -375,7 +375,7 @@ export function UserPresencePanel({
                       Promote
                     </Button>
                     <Button
-                      onClick={() => onUserAction?.(user.id, 'kick')}
+                      onClick={(_) => onUserAction?.( user.id, 'kick')}
                       variant="ghost"
                       size="sm"
                       className="text-xs text-red-400 hover:text-red-300"

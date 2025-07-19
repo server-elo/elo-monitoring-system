@@ -3,10 +3,10 @@ import { logger } from '@/lib/api/logger';
 
 // Import the local LLM service
 interface LocalLLMService {
-  generateResponse(prompt: string, context?: string): Promise<string>;
-  analyzeCode(code: string): Promise<any>;
-  generateSmartContract(description: string, requirements: string[]): Promise<any>;
-  isHealthy(): Promise<boolean>;
+  generateResponse( prompt: string, context?: string): Promise<string>;
+  analyzeCode(_code: string): Promise<any>;
+  generateSmartContract( description: string, requirements: string[]): Promise<any>;
+  isHealthy(_): Promise<boolean>;
 }
 
 export interface AIResponse {
@@ -51,21 +51,21 @@ export class LearningAssistant {
   private streamingModel: any;
   private localLLM: LocalLLMService | null = null;
 
-  constructor() {
+  constructor(_) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     // Initialize Gemini
     if (apiKey && apiKey !== 'undefined' && apiKey.trim() !== '') {
       try {
-        this.genAI = new GoogleGenerativeAI(apiKey);
-        this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
-        this.streamingModel = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
-        logger.info('LearningAssistant initialized with real Google Generative AI', {
+        this.genAI = new GoogleGenerativeAI(_apiKey);
+        this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro'  });
+        this.streamingModel = this.genAI.getGenerativeModel({ model: 'gemini-pro'  });
+        logger.info('LearningAssistant initialized with real Google Generative AI', { metadata: {
           model: 'gemini-pro',
           apiKeyConfigured: true
         });
-      } catch (error) {
-        logger.error('Failed to initialize Google Generative AI', {
+      } catch (_error) {
+        logger.error('Failed to initialize Google Generative AI', { metadata: {
           error: error instanceof Error ? error.message : 'Unknown error',
           stack: error instanceof Error ? error.stack : undefined
         }, error instanceof Error ? error : undefined);
@@ -74,7 +74,7 @@ export class LearningAssistant {
         this.streamingModel = null as any;
       }
     } else {
-      logger.warn('GEMINI_API_KEY not found. LearningAssistant will use mock responses', {
+      logger.warn('GEMINI_API_KEY not found. LearningAssistant will use mock responses', { metadata: {
         fallbackMode: 'mock-responses',
         geminiAvailable: false
       });
@@ -84,30 +84,30 @@ export class LearningAssistant {
     }
 
     // Initialize Local LLM if available
-    this.initializeLocalLLM();
+    this.initializeLocalLLM(_);
   }
 
-  private async initializeLocalLLM() {
+  private async initializeLocalLLM(_) {
     try {
       // Dynamic import to avoid build errors if the service doesn't exist
       const { LocalLLMService } = await import('./LocalLLMService');
-      this.localLLM = new LocalLLMService();
+      this.localLLM = new LocalLLMService(_);
       
       // Test if local LLM is healthy
-      const isHealthy = await this.localLLM.isHealthy();
+      const isHealthy = await this.localLLM.isHealthy(_);
       if (isHealthy) {
-        logger.info('Local LLM initialized and healthy', {
+        logger.info('Local LLM initialized and healthy', { metadata: {
           localLLMAvailable: true,
           healthStatus: 'healthy'
         });
       } else {
-        logger.warn('Local LLM initialized but not responding', {
+        logger.warn('Local LLM initialized but not responding', { metadata: {
           localLLMAvailable: false,
           healthStatus: 'unhealthy'
         });
         this.localLLM = null;
       }
-    } catch (error) {
+    } catch (_error) {
       logger.warn('Local LLM not available, using Gemini fallback only', {
         error: error.message,
         fallbackMode: 'gemini-only'
@@ -120,27 +120,27 @@ export class LearningAssistant {
   public async askQuestionStream(
     question: string,
     context: LearningContext,
-    onChunk?: (chunk: string) => void
+    onChunk?: (_chunk: string) => void
   ): Promise<AIResponse> {
     try {
-      const prompt = this.buildPrompt(question, context);
+      const prompt = this.buildPrompt( question, context);
 
       // Use streaming model if available
-      if (this.streamingModel && this.genAI) {
+      if (_this.streamingModel && this.genAI) {
         try {
-          const result = await this.streamingModel.generateContentStream(prompt);
+          const result = await this.streamingModel.generateContentStream(_prompt);
           let fullText = '';
 
-          for await (const chunk of result.stream) {
-            const chunkText = chunk.text();
+          for await (_const chunk of result.stream) {
+            const chunkText = chunk.text(_);
             fullText += chunkText;
             if (onChunk) {
-              onChunk(fullText);
+              onChunk(_fullText);
             }
           }
 
-          return this.parseAIResponse(fullText);
-        } catch (streamError) {
+          return this.parseAIResponse(_fullText);
+        } catch (_streamError) {
           logger.warn('Streaming unavailable, using mock response', {
             error: streamError instanceof Error ? streamError.message : 'Unknown error',
             fallbackMode: 'mock-streaming'
@@ -149,19 +149,19 @@ export class LearningAssistant {
       }
 
       // Fallback to simulated streaming
-      const fullResponse = await this.generateMockResponse(question, context);
+      const fullResponse = await this.generateMockResponse( question, context);
 
       if (onChunk) {
         const words = fullResponse.message.split(' ');
         for (let i = 0; i < words.length; i++) {
           await new Promise(resolve => setTimeout(resolve, 50));
-          onChunk(words.slice(0, i + 1).join(' '));
+          onChunk( words.slice(0, i + 1).join(' '));
         }
       }
 
       return fullResponse;
-    } catch (error) {
-      logger.error('AI Assistant streaming error', {
+    } catch (_error) {
+      logger.error('AI Assistant streaming error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'streaming'
@@ -179,16 +179,16 @@ export class LearningAssistant {
     context: LearningContext
   ): Promise<AIResponse> {
     try {
-      const prompt = this.buildPrompt(question, context);
+      const prompt = this.buildPrompt( question, context);
 
       // Use the actual AI model if available, otherwise fallback to mock
-      if (this.genAI && this.model) {
+      if (_this.genAI && this.model) {
         try {
-          const result = await this.model.generateContent(prompt);
+          const result = await this.model.generateContent(_prompt);
           const response = await result.response;
-          const text = response.text();
-          return this.parseAIResponse(text);
-        } catch (aiError) {
+          const text = response.text(_);
+          return this.parseAIResponse(_text);
+        } catch (_aiError) {
           logger.warn('AI service unavailable, using mock response', {
             error: aiError instanceof Error ? aiError.message : 'Unknown error',
             fallbackMode: 'mock-response'
@@ -197,9 +197,9 @@ export class LearningAssistant {
       }
 
       // Fallback to mock response
-      return this.generateMockResponse(question, context);
-    } catch (error) {
-      logger.error('AI Assistant error', {
+      return this.generateMockResponse( question, context);
+    } catch (_error) {
+      logger.error('AI Assistant error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'ask-question'
@@ -217,15 +217,15 @@ export class LearningAssistant {
     code: string,
     context: LearningContext
   ): Promise<AIResponse> {
-    const securityIssues = this.detectSecurityIssues(code);
-    const suggestions = this.generateSecuritySuggestions(securityIssues, context.userLevel);
+    const securityIssues = this.detectSecurityIssues(_code);
+    const suggestions = this.generateSecuritySuggestions( securityIssues, context.userLevel);
 
     return {
       message: `I've analyzed your code for security vulnerabilities. Found ${securityIssues.length} potential issues.`,
       suggestions,
       category: 'security',
       confidence: 0.85,
-      codeExamples: this.generateSecurityExamples(securityIssues),
+      codeExamples: this.generateSecurityExamples(_securityIssues),
       metadata: {
         processingTime: 1200,
         model: 'security-analyzer-v1'
@@ -238,7 +238,7 @@ export class LearningAssistant {
     code: string,
     _context: LearningContext
   ): Promise<AIResponse> {
-    const optimizations = this.findGasOptimizations(code);
+    const optimizations = this.findGasOptimizations(_code);
 
     return {
       message: `I've identified ${optimizations.length} gas optimization opportunities in your code.`,
@@ -283,13 +283,13 @@ Please provide:
 Format your response as a helpful mentor would, encouraging learning while pointing out areas for improvement.
 `;
 
-      const result = await this.model.generateContent(prompt);
+      const result = await this.model.generateContent(_prompt);
       const response = await result.response;
-      const text = response.text();
+      const text = response.text(_);
 
-      return this.parseAIResponse(text);
-    } catch (error) {
-      logger.error('Code review error', {
+      return this.parseAIResponse(_text);
+    } catch (_error) {
+      logger.error('Code review error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'code-review'
@@ -318,13 +318,13 @@ Please provide:
 Make the explanation engaging and easy to understand, with practical examples.
 `;
 
-      const result = await this.model.generateContent(prompt);
+      const result = await this.model.generateContent(_prompt);
       const response = await result.response;
-      const text = response.text();
+      const text = response.text(_);
 
-      return this.parseAIResponse(text);
-    } catch (error) {
-      logger.error('Concept explanation error', {
+      return this.parseAIResponse(_text);
+    } catch (_error) {
+      logger.error('Concept explanation error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'concept-explanation'
@@ -363,13 +363,13 @@ Please provide:
 Be encouraging and educational in your response.
 `;
 
-      const result = await this.model.generateContent(prompt);
+      const result = await this.model.generateContent(_prompt);
       const response = await result.response;
-      const text = response.text();
+      const text = response.text(_);
 
-      return this.parseAIResponse(text);
-    } catch (error) {
-      logger.error('Debug assistance error', {
+      return this.parseAIResponse(_text);
+    } catch (_error) {
+      logger.error('Debug assistance error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'debug-assistance'
@@ -388,7 +388,7 @@ Be encouraging and educational in your response.
 Create a personalized Solidity coding exercise for a ${context.userLevel} level student.
 
 Current lesson context: ${context.currentLesson || 'General practice'}
-Learning goals: ${context.learningGoals?.join(', ') || 'General Solidity skills'}
+Learning goals: ${context.learningGoals?.join( ', ') || 'General Solidity skills'}
 
 Please provide:
 1. Exercise description and requirements
@@ -400,13 +400,13 @@ Please provide:
 Make it engaging and appropriately challenging for their level.
 `;
 
-      const result = await this.model.generateContent(prompt);
+      const result = await this.model.generateContent(_prompt);
       const response = await result.response;
-      const text = response.text();
+      const text = response.text(_);
 
-      return this.parseAIResponse(text);
-    } catch (error) {
-      logger.error('Exercise generation error', {
+      return this.parseAIResponse(_text);
+    } catch (_error) {
+      logger.error('Exercise generation error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'exercise-generation'
@@ -426,8 +426,8 @@ Make it engaging and appropriately challenging for their level.
       const prompt = `
 Create a personalized Solidity learning path based on:
 
-Current Skills: ${currentSkills.join(', ')}
-Learning Goals: ${goals.join(', ')}
+Current Skills: ${currentSkills.join( ', ')}
+Learning Goals: ${goals.join( ', ')}
 Time Available: ${timeAvailable}
 
 Please provide:
@@ -440,13 +440,13 @@ Please provide:
 Make it practical and achievable within their time constraints.
 `;
 
-      const result = await this.model.generateContent(prompt);
+      const result = await this.model.generateContent(_prompt);
       const response = await result.response;
-      const text = response.text();
+      const text = response.text(_);
 
-      return this.parseAIResponse(text);
-    } catch (error) {
-      logger.error('Learning path error', {
+      return this.parseAIResponse(_text);
+    } catch (_error) {
+      logger.error('Learning path error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'learning-path'
@@ -457,7 +457,7 @@ Make it practical and achievable within their time constraints.
     }
   }
 
-  private buildPrompt(question: string, context: LearningContext): string {
+  private buildPrompt( question: string, context: LearningContext): string {
     return `
 You are an expert Solidity instructor and mentor. A ${context.userLevel} level student is asking:
 
@@ -467,7 +467,7 @@ Context:
 - Current lesson: ${context.currentLesson || 'General learning'}
 - Recent code: ${context.recentCode ? 'Yes' : 'No'}
 - Recent errors: ${context.recentErrors?.length || 0}
-- Learning goals: ${context.learningGoals?.join(', ') || 'General Solidity mastery'}
+- Learning goals: ${context.learningGoals?.join( ', ') || 'General Solidity mastery'}
 
 Please provide a helpful, educational response that:
 1. Directly answers their question
@@ -479,36 +479,36 @@ Be supportive, clear, and practical in your response.
 `;
   }
 
-  private parseAIResponse(text: string): AIResponse {
+  private parseAIResponse(_text: string): AIResponse {
     // Basic parsing - in production, you'd want more sophisticated parsing
     const response: AIResponse = {
       message: text,
     };
 
     // Extract code examples if present
-    const codeBlocks = text.match(/```[\s\S]*?```/g);
+    const codeBlocks = text.match(_/```[\s\S]*?```/g);
     if (codeBlocks) {
-      response.codeExamples = codeBlocks.map((block, index) => ({
+      response.codeExamples = codeBlocks.map( (block, index) => ({
         title: `Example ${index + 1}`,
         code: block.replace(/```\w*\n?/, '').replace(/```$/, ''),
         explanation: 'Code example from AI response',
       }));
     }
 
-    // Extract suggestions (lines starting with numbers or bullets)
-    const suggestions = text.match(/^\d+\.\s+.+$/gm) || text.match(/^[-*]\s+.+$/gm);
+    // Extract suggestions (_lines starting with numbers or bullets)
+    const suggestions = text.match(_/^\d+\.\s+.+$/gm) || text.match(_/^[-*]\s+.+$/gm);
     if (suggestions) {
-      response.suggestions = suggestions.map(s => s.replace(/^\d+\.\s+|^[-*]\s+/, ''));
+      response.suggestions = suggestions.map( s => s.replace(/^\d+\.\s+|^[-*]\s+/, ''));
     }
 
     return response;
   }
 
   // Helper methods for mock responses and analysis
-  private async generateMockResponse(question: string, context: LearningContext): Promise<AIResponse> {
+  private async generateMockResponse( question: string, context: LearningContext): Promise<AIResponse> {
     const responses = {
       'what is solidity': {
-        message: 'Solidity is a statically-typed programming language designed for developing smart contracts that run on the Ethereum Virtual Machine (EVM). It was influenced by C++, Python, and JavaScript and is designed to target the EVM.',
+        message: 'Solidity is a statically-typed programming language designed for developing smart contracts that run on the Ethereum Virtual Machine (_EVM). It was influenced by C++, Python, and JavaScript and is designed to target the EVM.',
         suggestions: [
           'Start with basic syntax and data types',
           'Practice with simple smart contracts',
@@ -516,7 +516,7 @@ Be supportive, clear, and practical in your response.
         ],
         codeExamples: [{
           title: 'Hello World Contract',
-          code: `pragma solidity ^0.8.0;\n\ncontract HelloWorld {\n    string public message = "Hello, World!";\n    \n    function setMessage(string memory _message) public {\n        message = _message;\n    }\n}`,
+          code: `pragma solidity ^0.8.0;\n\ncontract HelloWorld {\n    string public message = "Hello, World!";\n    \n    function setMessage(_string memory _message) public {\n        message = _message;\n    }\n}`,
           explanation: 'A simple contract that stores and retrieves a message'
         }],
         confidence: 0.95,
@@ -536,7 +536,7 @@ Be supportive, clear, and practical in your response.
 
     // Find best match or return generic response
     const lowerQuestion = question.toLowerCase();
-    const matchedResponse = Object.entries(responses).find(([key]) =>
+    const matchedResponse = Object.entries(_responses).find(([key]) =>
       lowerQuestion.includes(key)
     )?.[1];
 
@@ -558,8 +558,8 @@ Be supportive, clear, and practical in your response.
     };
 
     return {
-      message: levelResponses[context.userLevel] + ' ' + this.generateContextualResponse(question, context),
-      suggestions: this.generateSuggestions(question, context),
+      message: levelResponses[context.userLevel] + ' ' + this.generateContextualResponse( question, context),
+      suggestions: this.generateSuggestions( question, context),
       confidence: 0.75,
       category: 'explanation',
       metadata: {
@@ -569,7 +569,7 @@ Be supportive, clear, and practical in your response.
     };
   }
 
-  private generateContextualResponse(question: string, _context: LearningContext): string {
+  private generateContextualResponse( question: string, context: LearningContext): string {
     const topics = {
       'function': 'Functions in Solidity are executable units of code that can be called to perform specific tasks.',
       'variable': 'Variables in Solidity store data that can be used and modified throughout your contract.',
@@ -578,14 +578,14 @@ Be supportive, clear, and practical in your response.
       'security': 'Security in smart contracts is crucial as they handle valuable assets and are immutable once deployed.'
     };
 
-    const matchedTopic = Object.entries(topics).find(([key]) =>
+    const matchedTopic = Object.entries(_topics).find(([key]) =>
       question.toLowerCase().includes(key)
     );
 
     return matchedTopic ? matchedTopic[1] : 'This is an important concept in Solidity development that requires careful consideration.';
   }
 
-  private generateSuggestions(_question: string, context: LearningContext): string[] {
+  private generateSuggestions( _question: string, context: LearningContext): string[] {
     const baseSuggestions = [
       'Practice with small examples first',
       'Read the official Solidity documentation',
@@ -613,19 +613,19 @@ Be supportive, clear, and practical in your response.
     return [...baseSuggestions, ...levelSuggestions[context.userLevel]];
   }
 
-  private detectSecurityIssues(code: string): Array<{type: string, line: number, severity: string}> {
+  private detectSecurityIssues(_code: string): Array<{type: string, line: number, severity: string}> {
     const issues: Array<{type: string, line: number, severity: string}> = [];
     const lines = code.split('\n');
 
-    lines.forEach((line, index) => {
-      if (line.includes('call(') && !line.includes('require(')) {
+    lines.forEach( (line, index) => {
+      if (_line.includes('call(') && !line.includes('require(')) {
         issues.push({
           type: 'Unchecked external call',
           line: index + 1,
           severity: 'high'
         });
       }
-      if (line.includes('tx.origin')) {
+      if (_line.includes('tx.origin')) {
         issues.push({
           type: 'tx.origin usage',
           line: index + 1,
@@ -637,14 +637,14 @@ Be supportive, clear, and practical in your response.
     return issues;
   }
 
-  private generateSecuritySuggestions(_issues: any[], userLevel: string): string[] {
+  private generateSecuritySuggestions( _issues: any[], userLevel: string): string[] {
     const suggestions = [
       'Always validate external inputs',
       'Use the checks-effects-interactions pattern',
       'Implement proper access controls'
     ];
 
-    if (userLevel === 'advanced') {
+    if (_userLevel === 'advanced') {
       suggestions.push(
         'Consider formal verification for critical functions',
         'Implement circuit breakers for emergency stops'
@@ -654,15 +654,15 @@ Be supportive, clear, and practical in your response.
     return suggestions;
   }
 
-  private generateSecurityExamples(_issues: any[]): Array<{title: string, code: string, explanation: string}> {
+  private generateSecurityExamples( issues: any[]): Array<{title: string, code: string, explanation: string}> {
     return [{
       title: 'Safe External Call Pattern',
-      code: `// Bad\n(bool success, ) = target.call(data);\n\n// Good\n(bool success, ) = target.call(data);\nrequire(success, "Call failed");`,
+      code: `// Bad\n( bool success, ) = target.call(_data);\n\n// Good\n( bool success, ) = target.call(_data);\nrequire( success, "Call failed");`,
       explanation: 'Always check the return value of external calls'
     }];
   }
 
-  private findGasOptimizations(_code: string): Array<{title: string, suggestion: string, optimizedCode: string, explanation: string}> {
+  private findGasOptimizations( code: string): Array<{title: string, suggestion: string, optimizedCode: string, explanation: string}> {
     return [{
       title: 'Storage Optimization',
       suggestion: 'Pack struct variables to reduce storage slots',
@@ -674,14 +674,14 @@ Be supportive, clear, and practical in your response.
   // Enhanced method to choose the best AI service
   // NOTE: This method is kept for legacy compatibility but is no longer used directly
   // The enhanced tutor system now handles service selection
-  private async selectAIService(): Promise<'local' | 'gemini' | 'mock'> {
+  private async selectAIService(_): Promise<'local' | 'gemini' | 'mock'> {
     // Prefer local LLM for code-related tasks
-    if (this.localLLM) {
+    if (_this.localLLM) {
       try {
-        const isHealthy = await this.localLLM.isHealthy();
+        const isHealthy = await this.localLLM.isHealthy(_);
         if (isHealthy) return 'local';
-      } catch (error) {
-        logger.warn('Local LLM health check failed', {
+      } catch (_error) {
+        logger.warn('Local LLM health check failed', { metadata: {
           error: error instanceof Error ? error.message : 'Unknown error',
           operation: 'health-check'
         });
@@ -689,7 +689,7 @@ Be supportive, clear, and practical in your response.
     }
 
     // Fallback to Gemini
-    if (this.model) return 'gemini';
+    if (_this.model) return 'gemini';
 
     // Last resort: mock responses
     return 'mock';

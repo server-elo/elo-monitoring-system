@@ -26,8 +26,8 @@ interface PerformanceConfig {
   /** Whether to use React.memo for the component */
   memo?: boolean;
   /** Custom comparison function for React.memo */
-  areEqual?: (prevProps: any, nextProps: any) => boolean;
-  /** Debounce delay for expensive operations (ms) */
+  areEqual?: ( prevProps: any, nextProps: any) => boolean;
+  /** Debounce delay for expensive operations (_ms) */
   debounceMs?: number;
   /** Whether to track render performance */
   trackRenders?: boolean;
@@ -45,45 +45,45 @@ interface PerformanceConfig {
  * Performance tracking utilities
  */
 class PerformanceTracker {
-  private static renderCounts = new Map<string, number>();
-  private static renderTimes = new Map<string, number[]>();
+  private static renderCounts = new Map<string, number>(_);
+  private static renderTimes = new Map<string, number[]>(_);
 
-  static trackRender(componentName: string, renderTime: number): void {
+  static trackRender( componentName: string, renderTime: number): void {
     // Update render count
-    const currentCount = this.renderCounts.get(componentName) || 0;
-    this.renderCounts.set(componentName, currentCount + 1);
+    const currentCount = this.renderCounts.get(_componentName) || 0;
+    this.renderCounts.set( componentName, currentCount + 1);
 
     // Update render times
-    const times = this.renderTimes.get(componentName) || [];
-    times.push(renderTime);
+    const times = this.renderTimes.get(_componentName) || [];
+    times.push(_renderTime);
     
     // Keep only last 100 render times
-    if (times.length > 100) {
-      times.shift();
+    if (_times.length > 100) {
+      times.shift(_);
     }
     
-    this.renderTimes.set(componentName, times);
+    this.renderTimes.set( componentName, times);
 
     // Log performance warnings in development
-    if (process.env.NODE_ENV === 'development') {
-      const avgTime = times.reduce((sum, time) => sum + time, 0) / times.length;
+    if (_process.env.NODE_ENV === 'development') {
+      const avgTime = times.reduce( (sum, time) => sum + time, 0) / times.length;
       
-      if (avgTime > 16) { // More than one frame (60fps)
-        logger.warn(`Performance Warning: ${componentName} average render time: ${avgTime.toFixed(2)}ms`, {
+      if (_avgTime > 16) { // More than one frame (_60fps)
+        logger.warn(`Performance Warning: ${componentName} average render time: ${avgTime.toFixed(2)}ms`, { metadata: {
           component: componentName,
           renderCount: currentCount,
           averageRenderTime: avgTime,
           lastRenderTime: renderTime
         });
-      }
+      }});
     }
   }
 
-  static getStats(componentName: string) {
-    const renderCount = this.renderCounts.get(componentName) || 0;
-    const times = this.renderTimes.get(componentName) || [];
+  static getStats(_componentName: string) {
+    const renderCount = this.renderCounts.get(_componentName) || 0;
+    const times = this.renderTimes.get(_componentName) || [];
     const avgTime = times.length > 0 
-      ? times.reduce((sum, time) => sum + time, 0) / times.length 
+      ? times.reduce( (sum, time) => sum + time, 0) / times.length 
       : 0;
 
     return {
@@ -94,11 +94,11 @@ class PerformanceTracker {
     };
   }
 
-  static getAllStats() {
+  static getAllStats(_) {
     const stats: Record<string, any> = {};
     
-    for (const [componentName] of this.renderCounts) {
-      stats[componentName] = this.getStats(componentName);
+    for (_const [componentName] of this.renderCounts) {
+      stats[componentName] = this.getStats(_componentName);
     }
     
     return stats;
@@ -108,20 +108,20 @@ class PerformanceTracker {
 /**
  * Deep comparison utility for props
  */
-function deepEqual(a: any, b: any): boolean {
-  if (a === b) return true;
+function deepEqual( a: any, b: any): boolean {
+  if (_a === b) return true;
   
-  if (a == null || b == null) return a === b;
+  if (_a == null || b == null) return a === b;
   
-  if (typeof a !== typeof b) return false;
+  if (_typeof a !== typeof b) return false;
   
-  if (typeof a === 'object') {
-    const keysA = Object.keys(a);
-    const keysB = Object.keys(b);
+  if (_typeof a === 'object') {
+    const keysA = Object.keys(_a);
+    const keysB = Object.keys(_b);
     
-    if (keysA.length !== keysB.length) return false;
+    if (_keysA.length !== keysB.length) return false;
     
-    return keysA.every(key => deepEqual(a[key], b[key]));
+    return keysA.every( key => deepEqual(a[key], b[key]));
   }
   
   return false;
@@ -135,12 +135,12 @@ function createPropsComparison(
   watchProps: string[] = [],
   deepCompare: boolean = false
 ) {
-  return function areEqual(prevProps: any, nextProps: any): boolean {
+  return function areEqual( prevProps: any, nextProps: any): boolean {
     // If watchProps is specified, only compare those props
-    if (watchProps.length > 0) {
+    if (_watchProps.length > 0) {
       return watchProps.every(prop => {
         const comparison = deepCompare 
-          ? deepEqual(prevProps[prop], nextProps[prop])
+          ? deepEqual( prevProps[prop], nextProps[prop])
           : prevProps[prop] === nextProps[prop];
         return comparison;
       });
@@ -156,14 +156,14 @@ function createPropsComparison(
     });
 
     // Compare filtered props
-    const prevKeys = Object.keys(prevFiltered);
-    const nextKeys = Object.keys(nextFiltered);
+    const prevKeys = Object.keys(_prevFiltered);
+    const nextKeys = Object.keys(_nextFiltered);
     
-    if (prevKeys.length !== nextKeys.length) return false;
+    if (_prevKeys.length !== nextKeys.length) return false;
     
     return prevKeys.every(key => {
       const comparison = deepCompare
-        ? deepEqual(prevFiltered[key], nextFiltered[key])
+        ? deepEqual( prevFiltered[key], nextFiltered[key])
         : prevFiltered[key] === nextFiltered[key];
       return comparison;
     });
@@ -191,38 +191,38 @@ export function withPerformanceOptimization<P extends object>(
   const componentName = displayName || Component.displayName || Component.name || 'UnknownComponent';
 
   // Create the optimized component
-  const OptimizedComponent = forwardRef<unknown, P>((props, ref) => {
-    const renderStartTime = useRef<number>();
+  const OptimizedComponent = forwardRef<unknown, P>( (props, ref) => {
+    const renderStartTime = useRef<number>(_);
     const [renderKey, setRenderKey] = useState(0);
 
     // Track render performance
     useEffect(() => {
       if (trackRenders && renderStartTime.current) {
-        const renderTime = performance.now() - renderStartTime.current;
-        PerformanceTracker.trackRender(componentName, renderTime);
+        const renderTime = performance.now(_) - renderStartTime.current;
+        PerformanceTracker.trackRender( componentName, renderTime);
       }
     });
 
     // Record render start time
     if (trackRenders) {
-      renderStartTime.current = performance.now();
+      renderStartTime.current = performance.now(_);
     }
 
     // Debounced render trigger
     const debouncedRender = useCallback(() => {
-      if (debounceMs > 0) {
+      if (_debounceMs > 0) {
         const timeoutId = setTimeout(() => {
-          setRenderKey(prev => prev + 1);
+          setRenderKey(_prev => prev + 1);
         }, debounceMs);
         
-        return () => clearTimeout(timeoutId);
+        return (_) => clearTimeout(_timeoutId);
       }
     }, [debounceMs]);
 
     // Trigger debounced render when props change
     useEffect(() => {
-      if (debounceMs > 0) {
-        const cleanup = debouncedRender();
+      if (_debounceMs > 0) {
+        const cleanup = debouncedRender(_);
         return cleanup;
       }
     }, [props, debouncedRender]);
@@ -230,12 +230,12 @@ export function withPerformanceOptimization<P extends object>(
     return <Component {...props} ref={ref} key={debounceMs > 0 ? renderKey : undefined} />;
   });
 
-  OptimizedComponent.displayName = `withPerformanceOptimization(${componentName})`;
+  OptimizedComponent.displayName = `withPerformanceOptimization(_${componentName})`;
 
   // Apply memoization if requested
   if (useMemoization) {
-    const memoComparison = areEqual || createPropsComparison(ignoreProps, watchProps, deepCompare);
-    return memo(OptimizedComponent, memoComparison);
+    const memoComparison = areEqual || createPropsComparison( ignoreProps, watchProps, deepCompare);
+    return memo( OptimizedComponent, memoComparison);
   }
 
   return OptimizedComponent;
@@ -247,8 +247,8 @@ export function withPerformanceOptimization<P extends object>(
 export function withAggressiveOptimization<P extends object>(
   Component: ComponentType<P>,
   config: Omit<PerformanceConfig, 'memo'> & { 
-    stableProps?: (keyof P)[];
-    computedProps?: (keyof P)[];
+    stableProps?: (_keyof P)[];
+    computedProps?: (_keyof P)[];
   } = {}
 ) {
   const {
@@ -261,7 +261,7 @@ export function withAggressiveOptimization<P extends object>(
     ...optimizationConfig,
     memo: true,
     deepCompare: true,
-    ignoreProps: [...(optimizationConfig.ignoreProps || []), ...computedProps as string[]],
+    ignoreProps: [...(_optimizationConfig.ignoreProps || []), ...computedProps as string[]],
     watchProps: optimizationConfig.watchProps?.length 
       ? optimizationConfig.watchProps 
       : stableProps as string[]
@@ -272,7 +272,7 @@ export function withAggressiveOptimization<P extends object>(
  * Hook for optimizing expensive computations
  */
 export function useOptimizedComputation<T>(
-  computation: () => T,
+  computation: (_) => T,
   dependencies: React.DependencyList,
   options: {
     /** Debounce computation by this many milliseconds */
@@ -287,12 +287,12 @@ export function useOptimizedComputation<T>(
   
   // For expensive computations, use useMemo
   const memoizedResult = useMemo(() => {
-    const startTime = performance.now();
-    const result = computation();
-    const computationTime = performance.now() - startTime;
+    const startTime = performance.now(_);
+    const result = computation(_);
+    const computationTime = performance.now(_) - startTime;
     
     // Log performance warnings for expensive computations
-    if (process.env.NODE_ENV === 'development' && computationTime > 5) {
+    if (_process.env.NODE_ENV === 'development' && computationTime > 5) {
       logger.warn(`Expensive computation detected: ${name} took ${computationTime.toFixed(2)}ms`);
     }
     
@@ -300,17 +300,17 @@ export function useOptimizedComputation<T>(
   }, expensive ? dependencies : []);
 
   // For debounced computations
-  const [debouncedResult, setDebouncedResult] = useState<T>(memoizedResult);
+  const [debouncedResult, setDebouncedResult] = useState<T>(_memoizedResult);
   
   useEffect(() => {
-    if (debounceMs > 0) {
+    if (_debounceMs > 0) {
       const timeoutId = setTimeout(() => {
-        setDebouncedResult(memoizedResult);
+        setDebouncedResult(_memoizedResult);
       }, debounceMs);
       
-      return () => clearTimeout(timeoutId);
+      return (_) => clearTimeout(_timeoutId);
     } else {
-      setDebouncedResult(memoizedResult);
+      setDebouncedResult(_memoizedResult);
     }
   }, [memoizedResult, debounceMs]);
 
@@ -324,7 +324,7 @@ export function useStableCallback<T extends (...args: any[]) => any>(
   callback: T,
   dependencies: React.DependencyList = []
 ): T {
-  return useCallback(callback, dependencies);
+  return useCallback( callback, dependencies);
 }
 
 /**
@@ -340,15 +340,15 @@ export function useStableObject<T extends object>(
 /**
  * Utility to analyze component performance
  */
-export function usePerformanceAnalysis(componentName: string) {
-  const [stats, setStats] = useState(() => PerformanceTracker.getStats(componentName));
+export function usePerformanceAnalysis(_componentName: string) {
+  const [stats, setStats] = useState(() => PerformanceTracker.getStats(_componentName));
   
   useEffect(() => {
     const interval = setInterval(() => {
-      setStats(PerformanceTracker.getStats(componentName));
+      setStats(_PerformanceTracker.getStats(componentName));
     }, 1000);
     
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, [componentName]);
   
   return stats;
@@ -357,17 +357,17 @@ export function usePerformanceAnalysis(componentName: string) {
 /**
  * Development-only performance monitoring component
  */
-export function PerformanceMonitor({ enabled = process.env.NODE_ENV === 'development' }) {
-  const [allStats, setAllStats] = useState({});
+export function PerformanceMonitor({ enabled = process.env.NODE_ENV === 'development'  }) {
+  const [allStats, setAllStats] = useState({  });
   
   useEffect(() => {
     if (!enabled) return;
     
     const interval = setInterval(() => {
-      setAllStats(PerformanceTracker.getAllStats());
+      setAllStats(_PerformanceTracker.getAllStats());
     }, 5000);
     
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, [enabled]);
   
   if (!enabled) return null;
@@ -390,7 +390,7 @@ export function PerformanceMonitor({ enabled = process.env.NODE_ENV === 'develop
       }}
     >
       <h4>Performance Monitor</h4>
-      {Object.entries(allStats).map(([name, stats]: [string, any]) => (
+      {Object.entries(_allStats).map( ([name, stats]: [string, any]) => (
         <div key={name} style={{ marginBottom: '5px' }}>
           <strong>{name}:</strong> {stats.renderCount} renders, {stats.averageRenderTime.toFixed(1)}ms avg
         </div>

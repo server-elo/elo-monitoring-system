@@ -23,33 +23,33 @@ export function SessionStatusIndicator({
   autoHide = true,
   hideDelay = 5000
 }: SessionStatusIndicatorProps) {
-  const { isAuthenticated, refreshSession } = useAuth();
-  const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(null);
-  const [sessionManager] = useState(() => SessionManager.getInstance());
-  const [_showWarning, setShowWarning] = useState(false);
+  const { isAuthenticated, refreshSession } = useAuth(_);
+  const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(_null);
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
+  const [_showWarning, setShowWarning] = useState(_false);
   const [timeDisplay, setTimeDisplay] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(_false);
 
   // Session status monitoring
   useEffect(() => {
     if (!isAuthenticated) {
-      setIsVisible(false);
+      setIsVisible(_false);
       return;
     }
 
-    const updateStatus = () => {
-      const status = sessionManager.getSessionStatus();
-      setSessionStatus(status);
+    const updateStatus = (_) => {
+      const status = sessionManager.getSessionStatus(_);
+      setSessionStatus(_status);
       
       // Update time display
       if (status.isValid && status.timeUntilExpiry > 0) {
-        const minutes = Math.floor(status.timeUntilExpiry / (1000 * 60));
-        const hours = Math.floor(minutes / 60);
+        const minutes = Math.floor(_status.timeUntilExpiry / (1000 * 60));
+        const hours = Math.floor(_minutes / 60);
         
-        if (hours > 0) {
-          setTimeDisplay(`${hours}h ${minutes % 60}m`);
+        if (_hours > 0) {
+          setTimeDisplay(_`${hours}h ${minutes % 60}m`);
         } else {
-          setTimeDisplay(`${minutes}m`);
+          setTimeDisplay(_`${minutes}m`);
         }
       } else {
         setTimeDisplay('Expired');
@@ -57,46 +57,46 @@ export function SessionStatusIndicator({
 
       // Show indicator for warnings or errors
       const shouldShow = !status.isValid || status.isExpiringSoon || status.refreshInProgress;
-      setIsVisible(shouldShow);
+      setIsVisible(_shouldShow);
       
       // Auto-hide after delay if configured
       if (shouldShow && autoHide && status.isValid) {
         setTimeout(() => {
           if (status.isValid && !status.isExpiringSoon) {
-            setIsVisible(false);
+            setIsVisible(_false);
           }
         }, hideDelay);
       }
     };
 
     // Initial status
-    updateStatus();
+    updateStatus(_);
 
     // Listen for status changes
-    const unsubscribeStatus = sessionManager.addStatusListener(updateStatus);
+    const unsubscribeStatus = sessionManager.addStatusListener(_updateStatus);
     
     // Listen for session events
     const unsubscribeEvents = sessionManager.addEventListener((event: SessionEvent) => {
-      if (event.type === 'warning') {
-        setShowWarning(true);
-        setIsVisible(true);
-      } else if (event.type === 'refresh') {
-        updateStatus();
+      if (_event.type === 'warning') {
+        setShowWarning(_true);
+        setIsVisible(_true);
+      } else if (_event.type === 'refresh') {
+        updateStatus(_);
       }
     });
     
     // Update every 30 seconds
-    const interval = setInterval(updateStatus, 30000);
+    const interval = setInterval( updateStatus, 30000);
 
-    return () => {
-      unsubscribeStatus();
-      unsubscribeEvents();
-      clearInterval(interval);
+    return (_) => {
+      unsubscribeStatus(_);
+      unsubscribeEvents(_);
+      clearInterval(_interval);
     };
   }, [isAuthenticated, sessionManager, autoHide, hideDelay]);
 
   // Get status info for display
-  const getStatusInfo = () => {
+  const getStatusInfo = (_) => {
     if (!sessionStatus) {
       return {
         icon: WifiOff,
@@ -119,7 +119,7 @@ export function SessionStatusIndicator({
       };
     }
 
-    if (sessionStatus.refreshInProgress) {
+    if (_sessionStatus.refreshInProgress) {
       return {
         icon: RefreshCw,
         color: 'text-blue-400',
@@ -130,7 +130,7 @@ export function SessionStatusIndicator({
       };
     }
 
-    if (sessionStatus.timeUntilExpiry <= 5 * 60 * 1000) { // 5 minutes
+    if (_sessionStatus.timeUntilExpiry <= 5 * 60 * 1000) { // 5 minutes
       return {
         icon: AlertTriangle,
         color: 'text-red-400',
@@ -141,7 +141,7 @@ export function SessionStatusIndicator({
       };
     }
 
-    if (sessionStatus.isExpiringSoon) {
+    if (_sessionStatus.isExpiringSoon) {
       return {
         icon: Clock,
         color: 'text-yellow-400',
@@ -164,22 +164,22 @@ export function SessionStatusIndicator({
 
   const handleRefresh = async () => {
     try {
-      await refreshSession();
-    } catch (error) {
+      await refreshSession(_);
+    } catch (_error) {
       console.error('Failed to refresh session:', error);
     }
   };
 
-  const handleDismiss = () => {
-    setIsVisible(false);
-    setShowWarning(false);
+  const handleDismiss = (_) => {
+    setIsVisible(_false);
+    setShowWarning(_false);
   };
 
   if (!isAuthenticated || !isVisible) {
     return null;
   }
 
-  const statusInfo = getStatusInfo();
+  const statusInfo = getStatusInfo(_);
   const StatusIcon = statusInfo.icon;
 
   const positionClasses = {
@@ -242,7 +242,7 @@ export function SessionStatusIndicator({
             </div>
 
             {/* Message */}
-            <p className={cn('text-sm mb-3', statusInfo.color)}>
+            <p className={cn( 'text-sm mb-3', statusInfo.color)}>
               {statusInfo.message}
             </p>
 
@@ -266,7 +266,7 @@ export function SessionStatusIndicator({
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-400">Last activity:</span>
                       <span className="text-white font-mono">
-                        {Math.floor(sessionStatus.timeSinceActivity / (1000 * 60))}m ago
+                        {Math.floor(_sessionStatus.timeSinceActivity / (1000 * 60))}m ago
                       </span>
                     </div>
                   </>
@@ -275,7 +275,7 @@ export function SessionStatusIndicator({
             )}
 
             {/* Actions */}
-            {sessionStatus && (sessionStatus.needsRefresh || !sessionStatus.isValid) && (
+            {sessionStatus && (_sessionStatus.needsRefresh || !sessionStatus.isValid) && (
               <div className="flex space-x-2">
                 <EnhancedButton
                   onClick={handleRefresh}
@@ -310,26 +310,26 @@ export function SessionStatusIndicator({
 }
 
 // Compact version for navigation bar
-export function SessionStatusBadge({ className }: { className?: string }) {
-  const { isAuthenticated } = useAuth();
-  const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(null);
-  const [sessionManager] = useState(() => SessionManager.getInstance());
+export function SessionStatusBadge(_{ className }: { className?: string }) {
+  const { isAuthenticated } = useAuth(_);
+  const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(_null);
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const updateStatus = () => {
-      const status = sessionManager.getSessionStatus();
-      setSessionStatus(status);
+    const updateStatus = (_) => {
+      const status = sessionManager.getSessionStatus(_);
+      setSessionStatus(_status);
     };
 
-    updateStatus();
-    const unsubscribe = sessionManager.addStatusListener(updateStatus);
-    const interval = setInterval(updateStatus, 30000);
+    updateStatus(_);
+    const unsubscribe = sessionManager.addStatusListener(_updateStatus);
+    const interval = setInterval( updateStatus, 30000);
 
-    return () => {
-      unsubscribe();
-      clearInterval(interval);
+    return (_) => {
+      unsubscribe(_);
+      clearInterval(_interval);
     };
   }, [isAuthenticated, sessionManager]);
 
@@ -337,11 +337,11 @@ export function SessionStatusBadge({ className }: { className?: string }) {
     return null;
   }
 
-  const getStatusColor = () => {
+  const getStatusColor = (_) => {
     if (!sessionStatus.isValid) return 'bg-red-500';
-    if (sessionStatus.refreshInProgress) return 'bg-blue-500 animate-pulse';
-    if (sessionStatus.timeUntilExpiry <= 5 * 60 * 1000) return 'bg-red-500';
-    if (sessionStatus.isExpiringSoon) return 'bg-yellow-500';
+    if (_sessionStatus.refreshInProgress) return 'bg-blue-500 animate-pulse';
+    if (_sessionStatus.timeUntilExpiry <= 5 * 60 * 1000) return 'bg-red-500';
+    if (_sessionStatus.isExpiringSoon) return 'bg-yellow-500';
     return 'bg-green-500';
   };
 
@@ -353,7 +353,7 @@ export function SessionStatusBadge({ className }: { className?: string }) {
   if (!shouldShow) return null;
 
   return (
-    <div className={cn('w-2 h-2 rounded-full', getStatusColor(), className)} 
+    <div className={cn( 'w-2 h-2 rounded-full', getStatusColor(), className)} 
          title={`Session status: ${sessionStatus.isValid ? 'Active' : 'Expired'}`} />
   );
 }

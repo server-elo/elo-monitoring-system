@@ -29,15 +29,15 @@ interface LessonProgress {
 
 interface LessonProgressHookReturn {
   progress: LessonProgress | null;
-  isStepCompleted: (stepId: string) => boolean;
-  isStepAccessible: (stepId: string, steps: LessonStep[]) => boolean;
-  getCurrentStep: (steps: LessonStep[]) => LessonStep | null;
-  getNextStep: (steps: LessonStep[]) => LessonStep | null;
-  completeStep: (stepId: string, steps: LessonStep[]) => Promise<void>;
-  resetProgress: () => Promise<void>;
-  updateTimeSpent: (seconds: number) => void;
-  incrementAttempts: () => void;
-  getProgressStats: (steps: LessonStep[]) => {
+  isStepCompleted: (_stepId: string) => boolean;
+  isStepAccessible: ( stepId: string, steps: LessonStep[]) => boolean;
+  getCurrentStep: (_steps: LessonStep[]) => LessonStep | null;
+  getNextStep: (_steps: LessonStep[]) => LessonStep | null;
+  completeStep: ( stepId: string, steps: LessonStep[]) => Promise<void>;
+  resetProgress: (_) => Promise<void>;
+  updateTimeSpent: (_seconds: number) => void;
+  incrementAttempts: (_) => void;
+  getProgressStats: (_steps: LessonStep[]) => {
     completedCount: number;
     totalSteps: number;
     progressPercentage: number;
@@ -47,30 +47,30 @@ interface LessonProgressHookReturn {
   };
 }
 
-export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
-  const [progress, setProgress] = useState<LessonProgress | null>(null);
+export function useLessonProgress(_lessonId: string): LessonProgressHookReturn {
+  const [progress, setProgress] = useState<LessonProgress | null>(_null);
   const [timeTracker, setTimeTracker] = useState<{
     startTime: Date | null;
     totalTime: number;
-  }>({ startTime: null, totalTime: 0 });
+  }>( { startTime: null, totalTime: 0 });
 
-  const { addXP, completeLesson, triggerAchievementEvent } = useLearning();
+  const { addXP, completeLesson, triggerAchievementEvent } = useLearning(_);
 
   // Load progress from localStorage
   useEffect(() => {
-    const loadProgress = () => {
+    const loadProgress = (_) => {
       try {
-        const saved = localStorage.getItem(`lesson_progress_${lessonId}`);
+        const saved = localStorage.getItem(_`lessonprogress_${lessonId}`);
         if (saved) {
-          const data = JSON.parse(saved);
+          const data = JSON.parse(_saved);
           const progressData: LessonProgress = {
             ...data,
-            startedAt: new Date(data.startedAt),
-            completedAt: data.completedAt ? new Date(data.completedAt) : undefined,
-            lastActivity: new Date(data.lastActivity)
+            startedAt: new Date(_data.startedAt),
+            completedAt: data.completedAt ? new Date(_data.completedAt) : undefined,
+            lastActivity: new Date(_data.lastActivity)
           };
           setProgress(progressData);
-          setTimeTracker({ startTime: new Date(), totalTime: progressData.timeSpent });
+          setTimeTracker({ startTime: new Date(), totalTime: progressData.timeSpent  });
         } else {
           // Initialize new progress
           const newProgress: LessonProgress = {
@@ -78,21 +78,21 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
             completedSteps: [],
             currentStepId: null,
             totalXpEarned: 0,
-            startedAt: new Date(),
+            startedAt: new Date(_),
             timeSpent: 0,
             attempts: 0,
-            lastActivity: new Date()
+            lastActivity: new Date(_)
           };
-          setProgress(newProgress);
-          setTimeTracker({ startTime: new Date(), totalTime: 0 });
-          saveProgress(newProgress);
+          setProgress(_newProgress);
+          setTimeTracker({ startTime: new Date(), totalTime: 0  });
+          saveProgress(_newProgress);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to load lesson progress:', error);
       }
     };
 
-    loadProgress();
+    loadProgress(_);
   }, [lessonId]);
 
   // Auto-save progress periodically
@@ -103,14 +103,14 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
       updateTimeSpent(0); // This will trigger a save with updated time
     }, 30000); // Save every 30 seconds
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, [progress]);
 
   // Save progress to localStorage
   const saveProgress = useCallback((progressData: LessonProgress) => {
     try {
-      localStorage.setItem(`lesson_progress_${lessonId}`, JSON.stringify(progressData));
-    } catch (error) {
+      localStorage.setItem( `lessonprogress_${lessonId}`, JSON.stringify(progressData));
+    } catch (_error) {
       console.error('Failed to save lesson progress:', error);
     }
   }, [lessonId]);
@@ -118,9 +118,9 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
   const updateTimeSpent = useCallback((additionalSeconds: number) => {
     if (!progress) return;
 
-    const now = new Date();
+    const now = new Date(_);
     const sessionTime = timeTracker.startTime ? 
-      Math.floor((now.getTime() - timeTracker.startTime.getTime()) / 1000) : 0;
+      Math.floor((now.getTime() - timeTracker.startTime.getTime(_)) / 1000) : 0;
     
     const newTotalTime = timeTracker.totalTime + sessionTime + additionalSeconds;
     
@@ -130,9 +130,9 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
       lastActivity: now
     };
 
-    setProgress(updatedProgress);
-    setTimeTracker({ startTime: now, totalTime: newTotalTime });
-    saveProgress(updatedProgress);
+    setProgress(_updatedProgress);
+    setTimeTracker( { startTime: now, totalTime: newTotalTime });
+    saveProgress(_updatedProgress);
   }, [progress, timeTracker, saveProgress]);
 
   const incrementAttempts = useCallback(() => {
@@ -141,26 +141,26 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
     const updatedProgress = {
       ...progress,
       attempts: progress.attempts + 1,
-      lastActivity: new Date()
+      lastActivity: new Date(_)
     };
 
-    setProgress(updatedProgress);
-    saveProgress(updatedProgress);
+    setProgress(_updatedProgress);
+    saveProgress(_updatedProgress);
   }, [progress, saveProgress]);
 
   const isStepCompleted = useCallback((stepId: string): boolean => {
     return progress?.completedSteps.includes(stepId) || false;
   }, [progress]);
 
-  const isStepAccessible = useCallback((stepId: string, steps: LessonStep[]): boolean => {
+  const isStepAccessible = useCallback( (stepId: string, steps: LessonStep[]): boolean => {
     if (!progress) return false;
 
-    const stepIndex = steps.findIndex(step => step.id === stepId);
-    if (stepIndex === 0) return true; // First step is always accessible
+    const stepIndex = steps.findIndex(_step => step.id === stepId);
+    if (_stepIndex === 0) return true; // First step is always accessible
 
     // Check if previous step is completed
     const previousStep = steps[stepIndex - 1];
-    return previousStep ? isStepCompleted(previousStep.id) : false;
+    return previousStep ? isStepCompleted(_previousStep.id) : false;
   }, [progress, isStepCompleted]);
 
   const getCurrentStep = useCallback((steps: LessonStep[]): LessonStep | null => {
@@ -175,21 +175,21 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
   }, [progress, isStepCompleted]);
 
   const getNextStep = useCallback((steps: LessonStep[]): LessonStep | null => {
-    const currentStep = getCurrentStep(steps);
+    const currentStep = getCurrentStep(_steps);
     if (!currentStep) return null;
 
-    const currentIndex = steps.findIndex(step => step.id === currentStep.id);
+    const currentIndex = steps.findIndex(_step => step.id === currentStep.id);
     return steps[currentIndex + 1] || null;
   }, [getCurrentStep]);
 
-  const completeStep = useCallback(async (stepId: string, steps: LessonStep[]) => {
+  const completeStep = useCallback( async (stepId: string, steps: LessonStep[]) => {
     if (!progress) return;
 
     const step = steps.find(s => s.id === stepId);
     if (!step || isStepCompleted(stepId)) return;
 
     const newCompletedSteps = [...progress.completedSteps, stepId];
-    const nextStep = getNextStep(steps);
+    const nextStep = getNextStep(_steps);
     const isLessonComplete = newCompletedSteps.length === steps.length;
 
     const updatedProgress: LessonProgress = {
@@ -197,15 +197,15 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
       completedSteps: newCompletedSteps,
       currentStepId: nextStep?.id || null,
       totalXpEarned: progress.totalXpEarned + step.xpReward,
-      lastActivity: new Date(),
-      completedAt: isLessonComplete ? new Date() : undefined
+      lastActivity: new Date(_),
+      completedAt: isLessonComplete ? new Date(_) : undefined
     };
 
-    setProgress(updatedProgress);
-    saveProgress(updatedProgress);
+    setProgress(_updatedProgress);
+    saveProgress(_updatedProgress);
 
     // Add XP to learning context
-    addXP(step.xpReward);
+    addXP(_step.xpReward);
 
     // Trigger achievement events - using xp_gain for step completion
     await triggerAchievementEvent({
@@ -221,8 +221,8 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
 
     // Complete lesson if all steps are done
     if (isLessonComplete) {
-      const totalXp = steps.reduce((sum, s) => sum + s.xpReward, 0);
-      await completeLesson(lessonId, totalXp);
+      const totalXp = steps.reduce( (sum, s) => sum + s.xpReward, 0);
+      await completeLesson( lessonId, totalXp);
       
       await triggerAchievementEvent({
         type: 'lesson_complete',
@@ -237,21 +237,21 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
     }
   }, [progress, isStepCompleted, getNextStep, saveProgress, addXP, triggerAchievementEvent, completeLesson, lessonId]);
 
-  const resetProgress = useCallback(async () => {
+  const resetProgress = useCallback( async () => {
     const newProgress: LessonProgress = {
       lessonId,
       completedSteps: [],
       currentStepId: null,
       totalXpEarned: 0,
-      startedAt: new Date(),
+      startedAt: new Date(_),
       timeSpent: 0,
       attempts: 0,
-      lastActivity: new Date()
+      lastActivity: new Date(_)
     };
 
-    setProgress(newProgress);
-    setTimeTracker({ startTime: new Date(), totalTime: 0 });
-    saveProgress(newProgress);
+    setProgress(_newProgress);
+    setTimeTracker({ startTime: new Date(), totalTime: 0  });
+    saveProgress(_newProgress);
   }, [lessonId, saveProgress]);
 
   const getProgressStats = useCallback((steps: LessonStep[]) => {
@@ -261,18 +261,18 @@ export function useLessonProgress(lessonId: string): LessonProgressHookReturn {
         totalSteps: steps.length,
         progressPercentage: 0,
         totalXpEarned: 0,
-        totalPossibleXp: steps.reduce((sum, step) => sum + step.xpReward, 0),
-        estimatedTimeRemaining: steps.reduce((sum, step) => sum + step.estimatedTime, 0)
+        totalPossibleXp: steps.reduce( (sum, step) => sum + step.xpReward, 0),
+        estimatedTimeRemaining: steps.reduce( (sum, step) => sum + step.estimatedTime, 0)
       };
     }
 
     const completedCount = progress.completedSteps.length;
     const totalSteps = steps.length;
-    const progressPercentage = (completedCount / totalSteps) * 100;
-    const totalPossibleXp = steps.reduce((sum, step) => sum + step.xpReward, 0);
+    const progressPercentage = (_completedCount / totalSteps) * 100;
+    const totalPossibleXp = steps.reduce( (sum, step) => sum + step.xpReward, 0);
     
     const remainingSteps = steps.filter(step => !isStepCompleted(step.id));
-    const estimatedTimeRemaining = remainingSteps.reduce((sum, step) => sum + step.estimatedTime, 0);
+    const estimatedTimeRemaining = remainingSteps.reduce( (sum, step) => sum + step.estimatedTime, 0);
 
     return {
       completedCount,

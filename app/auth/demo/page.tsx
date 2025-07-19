@@ -21,7 +21,7 @@ import { GlassCard } from '@/components/ui/Glassmorphism';
 
 export default function AuthDemoPage() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(_false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -180,7 +180,7 @@ export default function AuthDemoPage() {
               🚀 Implemented Features
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {demoFeatures.map((feature, index) => (
+              {demoFeatures.map( (feature, index) => (
                 <motion.div
                   key={feature.title}
                   initial={{ opacity: 0, y: 20 }}
@@ -222,7 +222,7 @@ export default function AuthDemoPage() {
               {/* Mode Toggle */}
               <div className="flex bg-white/10 rounded-lg p-1 mb-6">
                 <button
-                  onClick={() => setAuthMode('login')}
+                  onClick={(_) => setAuthMode('login')}
                   className={`flex-1 py-2 px-4 rounded-md transition-colors ${
                     authMode === 'login' 
                       ? 'bg-blue-600 text-white' 
@@ -232,7 +232,7 @@ export default function AuthDemoPage() {
                   Sign In
                 </button>
                 <button
-                  onClick={() => setAuthMode('register')}
+                  onClick={(_) => setAuthMode('register')}
                   className={`flex-1 py-2 px-4 rounded-md transition-colors ${
                     authMode === 'register' 
                       ? 'bg-blue-600 text-white' 
@@ -278,7 +278,7 @@ export default function AuthDemoPage() {
                       <input
                         type="text"
                         value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        onChange={(_e) => setFormData( {...formData, name: e.target.value})}
                         className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Enter your full name"
                       />
@@ -295,7 +295,7 @@ export default function AuthDemoPage() {
                     <input
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(_e) => setFormData( {...formData, email: e.target.value})}
                       className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Enter your email"
                     />
@@ -311,13 +311,13 @@ export default function AuthDemoPage() {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
+                      onChange={(_e) => setFormData( {...formData, password: e.target.value})}
                       className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={(_) => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -352,7 +352,7 @@ export default function AuthDemoPage() {
               👥 User Roles & Permissions Demo
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {demoUsers.map((user, index) => (
+              {demoUsers.map( (user, index) => (
                 <motion.div
                   key={user.email}
                   initial={{ opacity: 0, y: 20 }}
@@ -373,7 +373,7 @@ export default function AuthDemoPage() {
                   </span>
                   <div className="mt-3 text-xs text-gray-400">
                     <p className="font-medium mb-1">Permissions:</p>
-                    {user.permissions.slice(0, 2).map((perm, i) => (
+                    {user.permissions.slice(0, 2).map( (perm, i) => (
                       <p key={i}>• {perm}</p>
                     ))}
                     {user.permissions.length > 2 && (

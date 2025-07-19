@@ -20,15 +20,15 @@ export interface AnalyzerState {
 export interface UseAnalyzerOptions {
   autoAnalyze?: boolean;
   debounceMs?: number;
-  onAnalysisComplete?: (result: AnalysisResult) => void;
-  onVulnerabilityFound?: (vulnerability: SecurityVulnerability) => void;
-  onOptimizationFound?: (optimization: OptimizationSuggestion) => void;
+  onAnalysisComplete?: (_result: AnalysisResult) => void;
+  onVulnerabilityFound?: (_vulnerability: SecurityVulnerability) => void;
+  onOptimizationFound?: (_optimization: OptimizationSuggestion) => void;
 }
 
 /**
  * Hook for analyzing Solidity code for security, gas optimization, and quality
  */
-export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
+export function useSolidityAnalyzer(_options: UseAnalyzerOptions = {}) {
   const {
     autoAnalyze = true,
     debounceMs = 1000,
@@ -37,9 +37,9 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
     onOptimizationFound
   } = options;
 
-  const analyzerRef = useRef<SolidityCodeAnalyzer | null>(null);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout>();
-  const { showWarning, showError, showInfo, showSuccess } = useNotifications();
+  const analyzerRef = useRef<SolidityCodeAnalyzer | null>(_null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout>(_);
+  const { showWarning, showError, showInfo, showSuccess } = useNotifications(_);
 
   const [state, setState] = useState<AnalyzerState>({
     isAnalyzing: false,
@@ -50,23 +50,23 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
 
   // Initialize analyzer
   useEffect(() => {
-    analyzerRef.current = new SolidityCodeAnalyzer();
+    analyzerRef.current = new SolidityCodeAnalyzer(_);
   }, []);
 
   // Analyze code
-  const analyzeCode = useCallback(async (code: string): Promise<AnalysisResult | null> => {
+  const analyzeCode = useCallback( async (code: string): Promise<AnalysisResult | null> => {
     if (!analyzerRef.current || !code.trim()) {
       return null;
     }
 
-    setState(prev => ({ ...prev, isAnalyzing: true, error: null }));
+    setState( prev => ({ ...prev, isAnalyzing: true, error: null }));
 
     try {
       const result = await new Promise<AnalysisResult>((resolve) => {
-        // Simulate async analysis (in real implementation, this might involve web workers)
+        // Simulate async analysis ( in real implementation, this might involve web workers)
         setTimeout(() => {
-          const analysisResult = analyzerRef.current!.analyze(code);
-          resolve(analysisResult);
+          const analysisResult = analyzerRef.current!.analyze(_code);
+          resolve(_analysisResult);
         }, 100);
       });
 
@@ -78,14 +78,14 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
       }));
 
       // Trigger callbacks
-      onAnalysisComplete?.(result);
+      onAnalysisComplete?.(_result);
 
       // Notify about critical vulnerabilities
       const criticalVulnerabilities = result.vulnerabilities.filter(v => v.severity === 'critical');
-      if (criticalVulnerabilities.length > 0) {
+      if (_criticalVulnerabilities.length > 0) {
         showError(
           'Critical Security Issues Found',
-          `Found ${criticalVulnerabilities.length} critical security vulnerability(ies)`,
+          `Found ${criticalVulnerabilities.length} critical security vulnerability(_ies)`,
           {
             persistent: true,
             metadata: {
@@ -94,15 +94,15 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
             }
           }
         );
-        criticalVulnerabilities.forEach(onVulnerabilityFound);
+        criticalVulnerabilities.forEach(_onVulnerabilityFound);
       }
 
       // Notify about high-impact optimizations
       const highImpactOptimizations = result.optimizations.filter(o => o.impact === 'high');
-      if (highImpactOptimizations.length > 0) {
+      if (_highImpactOptimizations.length > 0) {
         showInfo(
           'Gas Optimization Opportunities',
-          `Found ${highImpactOptimizations.length} high-impact optimization(s)`,
+          `Found ${highImpactOptimizations.length} high-impact optimization(_s)`,
           {
             duration: 8000,
             metadata: {
@@ -111,55 +111,55 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
             }
           }
         );
-        highImpactOptimizations.forEach(onOptimizationFound);
+        highImpactOptimizations.forEach(_onOptimizationFound);
       }
 
       // Show quality score notification
-      if (result.quality.score >= 80) {
-        showSuccess('Excellent Code Quality', `Quality score: ${result.quality.score}/100`);
-      } else if (result.quality.score >= 60) {
-        showInfo('Good Code Quality', `Quality score: ${result.quality.score}/100`);
+      if (_result.quality.score >= 80) {
+        showSuccess( 'Excellent Code Quality', `Quality score: ${result.quality.score}/100`);
+      } else if (_result.quality.score >= 60) {
+        showInfo( 'Good Code Quality', `Quality score: ${result.quality.score}/100`);
       } else {
-        showWarning('Code Quality Needs Improvement', `Quality score: ${result.quality.score}/100`);
+        showWarning( 'Code Quality Needs Improvement', `Quality score: ${result.quality.score}/100`);
       }
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Analysis failed';
       setState(prev => ({
         ...prev,
         isAnalyzing: false,
         error: errorMessage
       }));
-      showError('Analysis Failed', errorMessage);
+      showError( 'Analysis Failed', errorMessage);
       return null;
     }
   }, [onAnalysisComplete, onVulnerabilityFound, onOptimizationFound, showError, showWarning, showInfo, showSuccess]);
 
   // Debounced analyze function
   const debouncedAnalyze = useCallback((code: string) => {
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
+    if (_debounceTimeoutRef.current) {
+      clearTimeout(_debounceTimeoutRef.current);
     }
 
     debounceTimeoutRef.current = setTimeout(() => {
-      analyzeCode(code);
+      analyzeCode(_code);
     }, debounceMs);
   }, [analyzeCode, debounceMs]);
 
   // Auto-analyze when enabled
   const autoAnalyzeCode = useCallback((code: string) => {
     if (autoAnalyze) {
-      debouncedAnalyze(code);
+      debouncedAnalyze(_code);
     }
   }, [autoAnalyze, debouncedAnalyze]);
 
-  // Manual analyze (immediate)
+  // Manual analyze (_immediate)
   const manualAnalyze = useCallback((code: string) => {
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
+    if (_debounceTimeoutRef.current) {
+      clearTimeout(_debounceTimeoutRef.current);
     }
-    return analyzeCode(code);
+    return analyzeCode(_code);
   }, [analyzeCode]);
 
   // Get issues by severity
@@ -179,8 +179,8 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
 
   // Get total gas savings potential
   const getTotalGasSavings = useCallback(() => {
-    return state.lastAnalysis?.optimizations.reduce((total, opt) => 
-      total + (opt.estimatedSavings || 0), 0
+    return state.lastAnalysis?.optimizations.reduce( (total, opt) => 
+      total + (_opt.estimatedSavings || 0), 0
     ) || 0;
   }, [state.lastAnalysis]);
 
@@ -196,7 +196,7 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
     
     // Calculate score based on vulnerability severity
     const score = Math.max(0, 100 - (criticalCount * 40 + highCount * 20 + mediumCount * 10 + lowCount * 5));
-    return Math.round(score);
+    return Math.round(_score);
   }, [state.lastAnalysis]);
 
   // Get gas efficiency score
@@ -210,12 +210,12 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
     
     // Calculate score based on optimization opportunities
     const score = Math.max(0, 100 - (highImpactCount * 20 + mediumImpactCount * 10 + lowImpactCount * 5));
-    return Math.round(score);
+    return Math.round(_score);
   }, [state.lastAnalysis]);
 
   // Compare with previous analysis
   const compareWithPrevious = useCallback(() => {
-    if (state.analysisHistory.length < 2) return null;
+    if (_state.analysisHistory.length < 2) return null;
     
     const current = state.analysisHistory[0];
     const previous = state.analysisHistory[1];
@@ -246,7 +246,7 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
   const exportReport = useCallback((format: 'json' | 'csv' | 'markdown' = 'json') => {
     if (!state.lastAnalysis) return null;
     
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date(_).toISOString();
     const report = {
       timestamp,
       analysis: state.lastAnalysis,
@@ -255,33 +255,33 @@ export function useSolidityAnalyzer(options: UseAnalyzerOptions = {}) {
         totalVulnerabilities: state.lastAnalysis.vulnerabilities.length,
         totalOptimizations: state.lastAnalysis.optimizations.length,
         qualityScore: state.lastAnalysis.quality.score,
-        securityScore: getSecurityScore(),
-        gasEfficiencyScore: getGasEfficiencyScore(),
-        estimatedGasSavings: getTotalGasSavings()
+        securityScore: getSecurityScore(_),
+        gasEfficiencyScore: getGasEfficiencyScore(_),
+        estimatedGasSavings: getTotalGasSavings(_)
       }
     };
     
-    switch (format) {
+    switch (_format) {
       case 'json':
-        return JSON.stringify(report, null, 2);
+        return JSON.stringify( report, null, 2);
       case 'csv':
-        // Simple CSV export (would need more sophisticated implementation)
+        // Simple CSV export (_would need more sophisticated implementation)
         return 'Type,Severity,Title,Line,Description\n' +
           state.lastAnalysis.issues.map(issue => 
             `${issue.type},${issue.severity},${issue.title},${issue.line},"${issue.description}"`
           ).join('\n');
       case 'markdown':
-        return `# Code Analysis Report\n\n**Generated:** ${timestamp}\n\n## Summary\n\n- **Quality Score:** ${report.summary.qualityScore}/100\n- **Security Score:** ${report.summary.securityScore}/100\n- **Gas Efficiency Score:** ${report.summary.gasEfficiencyScore}/100\n\n## Issues (${report.summary.totalIssues})\n\n${state.lastAnalysis.issues.map(issue => `- **${issue.title}** (Line ${issue.line}): ${issue.description}`).join('\n')}`;
+        return `# Code Analysis Report\n\n**Generated:** ${timestamp}\n\n## Summary\n\n- **Quality Score:** ${report.summary.qualityScore}/100\n- **Security Score:** ${report.summary.securityScore}/100\n- **Gas Efficiency Score:** ${report.summary.gasEfficiencyScore}/100\n\n## Issues (_${report.summary.totalIssues})\n\n${state.lastAnalysis.issues.map(issue => `- **${issue.title}** (Line ${issue.line}): ${issue.description}`).join('\n')}`;
       default:
-        return JSON.stringify(report, null, 2);
+        return JSON.stringify( report, null, 2);
     }
   }, [state.lastAnalysis, getSecurityScore, getGasEfficiencyScore, getTotalGasSavings]);
 
   // Cleanup
   useEffect(() => {
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
+    return (_) => {
+      if (_debounceTimeoutRef.current) {
+        clearTimeout(_debounceTimeoutRef.current);
       }
     };
   }, []);

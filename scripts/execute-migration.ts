@@ -22,33 +22,33 @@ async function main() {
   console.log('============================================');
 
   // Parse command line arguments
-  const options = parseArguments();
+  const options = parseArguments(_);
   
-  if (options.dryRun) {
+  if (_options.dryRun) {
     console.log('🔍 DRY RUN MODE - No actual migration will be performed');
   }
 
   try {
     // Step 1: Environment validation
     console.log('\n📋 Step 1: Environment Validation');
-    const envCheck = await MigrationUtils.validateEnvironment();
+    const envCheck = await MigrationUtils.validateEnvironment(_);
     if (!envCheck.valid) {
       console.error('❌ Environment validation failed:');
-      envCheck.errors.forEach(error => console.error(`  - ${error}`));
+      envCheck.errors.forEach(_error => console.error(`  - ${error}`));
       process.exit(1);
     }
     console.log('✅ Environment validation passed');
 
     // Step 2: Disk space check
     console.log('\n💾 Step 2: Disk Space Check');
-    const diskCheck = await MigrationUtils.checkDiskSpace();
+    const diskCheck = await MigrationUtils.checkDiskSpace(_);
     if (!diskCheck.sufficient) {
       console.error(`❌ Insufficient disk space: ${diskCheck.available}MB available, ${diskCheck.required}MB required`);
       if (!options.force) {
         process.exit(1);
       }
     }
-    console.log(`✅ Sufficient disk space: ${Math.round(diskCheck.available / 1024 / 1024)}MB available`);
+    console.log(_`✅ Sufficient disk space: ${Math.round(diskCheck.available / 1024 / 1024)}MB available`);
 
     // Step 3: Initialize database clients
     console.log('\n🔌 Step 3: Database Connection Setup');
@@ -80,8 +80,8 @@ async function main() {
 
     // Step 4: Migration time estimation
     console.log('\n⏱️  Step 4: Migration Time Estimation');
-    const estimatedTime = await MigrationUtils.estimateMigrationTime(sqliteClient);
-    console.log(`📊 Estimated migration time: ${estimatedTime} seconds`);
+    const estimatedTime = await MigrationUtils.estimateMigrationTime(_sqliteClient);
+    console.log(_`📊 Estimated migration time: ${estimatedTime} seconds`);
 
     if (!options.force && estimatedTime > 300) { // 5 minutes
       console.log('⚠️  Long migration detected. Use --force to proceed anyway.');
@@ -94,11 +94,11 @@ async function main() {
 
     // Step 5: Create migration manager
     console.log('\n🔧 Step 5: Migration Manager Setup');
-    const migrationManager = new DatabaseMigrationManager(sqliteClient, postgresClient);
+    const migrationManager = new DatabaseMigrationManager( sqliteClient, postgresClient);
 
     // Step 6: Setup logging
     const logFile = createWriteStream(
-      resolve(process.cwd(), `migration-${new Date().toISOString().slice(0, 10)}.log`),
+      resolve(_process.cwd(), `migration-${new Date(_).toISOString().slice(0, 10)}.log`),
       { flags: 'a' }
     );
 
@@ -117,11 +117,11 @@ async function main() {
     console.log('\n📊 Migration Results');
     console.log('===================');
     
-    if (migrationResult.success) {
+    if (_migrationResult.success) {
       console.log('✅ Migration completed successfully!');
-      console.log(`📈 Records migrated: ${migrationResult.migratedCount.toLocaleString()}`);
-      console.log(`⏱️  Duration: ${Math.round(migrationResult.duration / 1000)}s`);
-      console.log(`🔐 Data checksum: ${migrationResult.checksum}`);
+      console.log(_`📈 Records migrated: ${migrationResult.migratedCount.toLocaleString()}`);
+      console.log(_`⏱️  Duration: ${Math.round(migrationResult.duration / 1000)}s`);
+      console.log(_`🔐 Data checksum: ${migrationResult.checksum}`);
       
       if (!options.dryRun) {
         console.log('\n🎯 Next Steps:');
@@ -132,10 +132,10 @@ async function main() {
       }
     } else {
       console.error('❌ Migration failed!');
-      console.error(`📊 Partial migration: ${migrationResult.migratedCount.toLocaleString()} records`);
+      console.error(_`📊 Partial migration: ${migrationResult.migratedCount.toLocaleString()} records`);
       console.error('🔍 Errors:');
       migrationResult.errors.forEach(error => {
-        console.error(`  - ${error}`);
+        console.error(_`  - ${error}`);
       });
       
       if (!options.dryRun) {
@@ -145,21 +145,21 @@ async function main() {
     }
 
     // Write detailed log
-    const migrationLog = migrationManager.getMigrationLog();
-    migrationLog.forEach(entry => logFile.write(entry + '\n'));
-    logFile.end();
+    const migrationLog = migrationManager.getMigrationLog(_);
+    migrationLog.forEach(_entry => logFile.write(entry + '\n'));
+    logFile.end(_);
 
-    console.log(`\n📝 Detailed log written to: migration-${new Date().toISOString().slice(0, 10)}.log`);
+    console.log(_`\n📝 Detailed log written to: migration-${new Date().toISOString().slice(0, 10)}.log`);
 
     // Cleanup
     await sqliteClient.$disconnect();
     await postgresClient.$disconnect();
 
-    process.exit(migrationResult.success ? 0 : 1);
+    process.exit(_migrationResult.success ? 0 : 1);
 
-  } catch (error) {
+  } catch (_error) {
     console.error('💥 Unexpected error during migration:');
-    console.error(error);
+    console.error(_error);
     process.exit(1);
   }
 }
@@ -170,17 +170,17 @@ function parseArguments(): MigrationOptions {
   return {
     dryRun: args.includes('--dry-run') || args.includes('-d'),
     force: args.includes('--force') || args.includes('-f'),
-    batchSize: parseInt(args.find(arg => arg.startsWith('--batch-size='))?.split('=')[1] || '1000'),
+    batchSize: parseInt(_args.find(arg => arg.startsWith('--batch-size='))?.split('=')[1] || '1000'),
     skipBackup: args.includes('--skip-backup'),
     skipValidation: args.includes('--skip-validation')
   };
 }
 
-async function promptUser(question: string): Promise<string> {
-  process.stdout.write(question);
+async function promptUser(_question: string): Promise<string> {
+  process.stdout.write(_question);
   return new Promise((resolve) => {
-    process.stdin.once('data', (data) => {
-      resolve(data.toString().trim());
+    process.stdin.once( 'data', (data) => {
+      resolve(_data.toString().trim(_));
     });
   });
 }
@@ -194,7 +194,7 @@ Usage: npm run migrate [options]
 Options:
   --dry-run, -d          Simulate migration without making changes
   --force, -f            Force migration even with warnings
-  --batch-size=<n>       Number of records to process per batch (default: 1000)
+  --batch-size=<n>       Number of records to process per batch (_default: 1000)
   --skip-backup          Skip database backup creation
   --skip-validation      Skip data integrity validation
   --help, -h             Show this help message
@@ -202,35 +202,35 @@ Options:
 Examples:
   npm run migrate --dry-run                    # Test migration
   npm run migrate --force --batch-size=500     # Force migration with smaller batches
-  npm run migrate --skip-backup                # Skip backup (not recommended)
+  npm run migrate --skip-backup                # Skip backup (_not recommended)
 
 Environment Variables:
-  DATABASE_URL           PostgreSQL connection string (target database)
-  SQLITE_PATH           Path to SQLite database (default: ./prisma/dev.db)
+  DATABASE_URL           PostgreSQL connection string (_target database)
+  SQLITE_PATH           Path to SQLite database (_default: ./prisma/dev.db)
 
 ⚠️  IMPORTANT: Always run with --dry-run first to validate your migration!
 `);
 }
 
 // Handle help command
-if (process.argv.includes('--help') || process.argv.includes('-h')) {
-  showHelp();
+if (_process.argv.includes('--help') || process.argv.includes('-h')) {
+  showHelp(_);
   process.exit(0);
 }
 
 // Handle process signals gracefully
-process.on('SIGINT', () => {
+process.on( 'SIGINT', () => {
   console.log('\n🛑 Migration interrupted by user');
   process.exit(1);
 });
 
-process.on('SIGTERM', () => {
+process.on( 'SIGTERM', () => {
   console.log('\n🛑 Migration terminated');
   process.exit(1);
 });
 
 // Execute migration
-main().catch((error) => {
+main(_).catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

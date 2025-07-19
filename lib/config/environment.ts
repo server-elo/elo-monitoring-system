@@ -3,166 +3,166 @@ import { z } from 'zod';
 // Environment validation schema
 const envSchema = z.object({
   // Application
-  NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
-  NEXT_PUBLIC_APP_URL: z.string().url(),
-  NEXT_PUBLIC_APP_NAME: z.string().default('Solidity Learning Platform'),
-  NEXT_PUBLIC_APP_VERSION: z.string().default('1.0.0'),
+  NODE_ENV: z.enum( ['development', 'staging', 'production']).default('development'),
+  NEXT_PUBLIC_APP_URL: z.string(_).url(_),
+  NEXT_PUBLIC_APP_NAME: z.string(_).default('Solidity Learning Platform'),
+  NEXT_PUBLIC_APP_VERSION: z.string(_).default('1.0.0'),
 
   // Database
-  DATABASE_URL: z.string().min(1),
-  DATABASE_POOL_MIN: z.coerce.number().min(1).default(2),
-  DATABASE_POOL_MAX: z.coerce.number().min(1).default(10),
-  DATABASE_POOL_TIMEOUT: z.coerce.number().min(1000).default(30000),
+  DATABASE_URL: z.string(_).min(1),
+  DATABASE_POOL_MIN: z.coerce.number(_).min(1).default(_2),
+  DATABASE_POOL_MAX: z.coerce.number(_).min(1).default(10),
+  DATABASE_POOL_TIMEOUT: z.coerce.number(_).min(1000).default(30000),
 
   // Redis
-  REDIS_URL: z.string().min(1),
-  REDIS_PASSWORD: z.string().optional(),
-  REDIS_DB: z.coerce.number().min(0).default(0),
+  REDIS_URL: z.string(_).min(1),
+  REDIS_PASSWORD: z.string(_).optional(_),
+  REDIS_DB: z.coerce.number(_).min(0).default(0),
 
   // Authentication
-  NEXTAUTH_URL: z.string().url(),
-  NEXTAUTH_SECRET: z.string().min(32),
-  SESSION_TIMEOUT: z.coerce.number().min(300).default(86400),
-  SESSION_UPDATE_AGE: z.coerce.number().min(60).default(3600),
-  CSRF_TOKEN_SECRET: z.string().min(32).optional(),
+  NEXTAUTH_URL: z.string(_).url(_),
+  NEXTAUTH_SECRET: z.string(_).min(32),
+  SESSION_TIMEOUT: z.coerce.number(_).min(300).default(_86400),
+  SESSION_UPDATE_AGE: z.coerce.number(_).min(_60).default(3600),
+  CSRF_TOKEN_SECRET: z.string(_).min(32).optional(_),
 
   // OAuth Providers
-  GITHUB_CLIENT_ID: z.string().optional(),
-  GITHUB_CLIENT_SECRET: z.string().optional(),
-  GOOGLE_CLIENT_ID: z.string().optional(),
-  GOOGLE_CLIENT_SECRET: z.string().optional(),
-  DISCORD_CLIENT_ID: z.string().optional(),
-  DISCORD_CLIENT_SECRET: z.string().optional(),
+  GITHUB_CLIENT_ID: z.string(_).optional(_),
+  GITHUB_CLIENT_SECRET: z.string(_).optional(_),
+  GOOGLE_CLIENT_ID: z.string(_).optional(_),
+  GOOGLE_CLIENT_SECRET: z.string(_).optional(_),
+  DISCORD_CLIENT_ID: z.string(_).optional(_),
+  DISCORD_CLIENT_SECRET: z.string(_).optional(_),
 
   // AI Services
-  OPENAI_API_KEY: z.string().optional(),
-  OPENAI_MODEL: z.string().default('gpt-4'),
-  OPENAI_MAX_TOKENS: z.coerce.number().min(1).default(2048),
-  OPENAI_TEMPERATURE: z.coerce.number().min(0).max(2).default(0.7),
-  GOOGLE_GENERATIVE_AI_API_KEY: z.string().optional(),
-  GEMINI_API_KEY: z.string().optional(),
-  GOOGLE_AI_MODEL: z.string().default('gemini-pro'),
+  OPENAI_API_KEY: z.string(_).optional(_),
+  OPENAI_MODEL: z.string(_).default('gpt-4'),
+  OPENAI_MAX_TOKENS: z.coerce.number(_).min(1).default(_2048),
+  OPENAI_TEMPERATURE: z.coerce.number(_).min(0).max(_2).default(0.7),
+  GOOGLE_GENERATIVE_AI_API_KEY: z.string(_).optional(_),
+  GEMINI_API_KEY: z.string(_).optional(_),
+  GOOGLE_AI_MODEL: z.string(_).default('gemini-pro'),
 
   // AI Rate Limiting
-  AI_REQUESTS_PER_MINUTE: z.coerce.number().min(1).default(60),
-  AI_REQUESTS_PER_HOUR: z.coerce.number().min(1).default(1000),
-  AI_REQUESTS_PER_DAY: z.coerce.number().min(1).default(10000),
+  AI_REQUESTS_PER_MINUTE: z.coerce.number(_).min(1).default(_60),
+  AI_REQUESTS_PER_HOUR: z.coerce.number(_).min(1).default(1000),
+  AI_REQUESTS_PER_DAY: z.coerce.number(_).min(1).default(10000),
 
   // Socket.io
-  SOCKET_IO_PORT: z.coerce.number().min(1000).default(3001),
-  SOCKET_IO_CORS_ORIGINS: z.string().default('http://localhost:3000'),
-  SOCKET_IO_MAX_CONNECTIONS: z.coerce.number().min(1).default(1000),
-  SOCKET_IO_CONNECTION_TIMEOUT: z.coerce.number().min(1000).default(60000),
+  SOCKET_IO_PORT: z.coerce.number(_).min(1000).default(3001),
+  SOCKET_IO_CORS_ORIGINS: z.string(_).default('http://localhost:3000'),
+  SOCKET_IO_MAX_CONNECTIONS: z.coerce.number(_).min(1).default(1000),
+  SOCKET_IO_CONNECTION_TIMEOUT: z.coerce.number(_).min(1000).default(_60000),
 
   // Collaboration
-  MAX_COLLABORATION_SESSIONS: z.coerce.number().min(1).default(100),
-  MAX_PARTICIPANTS_PER_SESSION: z.coerce.number().min(1).default(10),
-  SESSION_IDLE_TIMEOUT: z.coerce.number().min(60000).default(1800000),
+  MAX_COLLABORATION_SESSIONS: z.coerce.number(_).min(1).default(100),
+  MAX_PARTICIPANTS_PER_SESSION: z.coerce.number(_).min(1).default(10),
+  SESSION_IDLE_TIMEOUT: z.coerce.number(_).min(_60000).default(1800000),
 
   // Email
-  SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.coerce.number().min(1).optional(),
-  SMTP_SECURE: z.coerce.boolean().default(false),
-  SMTP_USER: z.string().optional(),
-  SMTP_PASSWORD: z.string().optional(),
-  SMTP_FROM_NAME: z.string().optional(),
-  SMTP_FROM_EMAIL: z.string().email().optional(),
-  SENDGRID_API_KEY: z.string().optional(),
-  SENDGRID_FROM_EMAIL: z.string().email().optional(),
+  SMTP_HOST: z.string(_).optional(_),
+  SMTP_PORT: z.coerce.number(_).min(1).optional(_),
+  SMTP_SECURE: z.coerce.boolean(_).default(_false),
+  SMTP_USER: z.string(_).optional(_),
+  SMTP_PASSWORD: z.string(_).optional(_),
+  SMTP_FROM_NAME: z.string(_).optional(_),
+  SMTP_FROM_EMAIL: z.string(_).email(_).optional(_),
+  SENDGRID_API_KEY: z.string(_).optional(_),
+  SENDGRID_FROM_EMAIL: z.string(_).email(_).optional(_),
 
   // File Storage
-  AWS_ACCESS_KEY_ID: z.string().optional(),
-  AWS_SECRET_ACCESS_KEY: z.string().optional(),
-  AWS_REGION: z.string().default('us-east-1'),
-  AWS_S3_BUCKET: z.string().optional(),
-  AWS_S3_BUCKET_URL: z.string().url().optional(),
-  CLOUDINARY_CLOUD_NAME: z.string().optional(),
-  CLOUDINARY_API_KEY: z.string().optional(),
-  CLOUDINARY_API_SECRET: z.string().optional(),
-  MAX_FILE_SIZE: z.coerce.number().min(1).default(10485760),
-  ALLOWED_FILE_TYPES: z.string().default('image/jpeg,image/png,image/gif,text/plain,application/json'),
+  AWS_ACCESS_KEY_ID: z.string(_).optional(_),
+  AWS_SECRET_ACCESS_KEY: z.string(_).optional(_),
+  AWS_REGION: z.string(_).default('us-east-1'),
+  AWS_S3_BUCKET: z.string(_).optional(_),
+  AWS_S3_BUCKET_URL: z.string(_).url(_).optional(_),
+  CLOUDINARY_CLOUD_NAME: z.string(_).optional(_),
+  CLOUDINARY_API_KEY: z.string(_).optional(_),
+  CLOUDINARY_API_SECRET: z.string(_).optional(_),
+  MAX_FILE_SIZE: z.coerce.number(_).min(1).default(10485760),
+  ALLOWED_FILE_TYPES: z.string(_).default('image/jpeg,image/png,image/gif,text/plain,application/json'),
 
   // Blockchain
-  ETHEREUM_RPC_URL: z.string().url().optional(),
-  ETHEREUM_TESTNET_RPC_URL: z.string().url().optional(),
-  INFURA_PROJECT_ID: z.string().optional(),
-  INFURA_PROJECT_SECRET: z.string().optional(),
-  ALCHEMY_API_KEY: z.string().optional(),
-  ALCHEMY_NETWORK: z.string().default('eth-mainnet'),
+  ETHEREUM_RPC_URL: z.string(_).url(_).optional(_),
+  ETHEREUM_TESTNET_RPC_URL: z.string(_).url(_).optional(_),
+  INFURA_PROJECT_ID: z.string(_).optional(_),
+  INFURA_PROJECT_SECRET: z.string(_).optional(_),
+  ALCHEMY_API_KEY: z.string(_).optional(_),
+  ALCHEMY_NETWORK: z.string(_).default('eth-mainnet'),
 
   // Monitoring
-  SENTRY_DSN: z.string().url().optional(),
-  SENTRY_ORG: z.string().optional(),
-  SENTRY_PROJECT: z.string().optional(),
-  SENTRY_AUTH_TOKEN: z.string().optional(),
-  NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
-  NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
-  NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
-  NEXT_PUBLIC_MIXPANEL_TOKEN: z.string().optional(),
+  SENTRY_DSN: z.string(_).url(_).optional(_),
+  SENTRY_ORG: z.string(_).optional(_),
+  SENTRY_PROJECT: z.string(_).optional(_),
+  SENTRY_AUTH_TOKEN: z.string(_).optional(_),
+  NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string(_).optional(_),
+  NEXT_PUBLIC_POSTHOG_KEY: z.string(_).optional(_),
+  NEXT_PUBLIC_POSTHOG_HOST: z.string(_).url(_).optional(_),
+  NEXT_PUBLIC_MIXPANEL_TOKEN: z.string(_).optional(_),
 
   // Rate Limiting
-  RATE_LIMIT_WINDOW_MS: z.coerce.number().min(1000).default(900000),
-  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().min(1).default(100),
-  RATE_LIMIT_SKIP_SUCCESSFUL_REQUESTS: z.coerce.boolean().default(false),
-  API_RATE_LIMIT_PER_MINUTE: z.coerce.number().min(1).default(60),
-  AUTH_RATE_LIMIT_PER_MINUTE: z.coerce.number().min(1).default(5),
-  COLLABORATION_RATE_LIMIT_PER_MINUTE: z.coerce.number().min(1).default(30),
+  RATE_LIMIT_WINDOW_MS: z.coerce.number(_).min(1000).default(_900000),
+  RATE_LIMIT_MAX_REQUESTS: z.coerce.number(_).min(1).default(100),
+  RATE_LIMIT_SKIP_SUCCESSFUL_REQUESTS: z.coerce.boolean(_).default(_false),
+  API_RATE_LIMIT_PER_MINUTE: z.coerce.number(_).min(1).default(_60),
+  AUTH_RATE_LIMIT_PER_MINUTE: z.coerce.number(_).min(1).default(5),
+  COLLABORATION_RATE_LIMIT_PER_MINUTE: z.coerce.number(_).min(1).default(30),
 
   // Security
-  CONTENT_SECURITY_POLICY_REPORT_URI: z.string().url().optional(),
-  HSTS_MAX_AGE: z.coerce.number().min(0).default(31536000),
+  CONTENT_SECURITY_POLICY_REPORT_URI: z.string(_).url(_).optional(_),
+  HSTS_MAX_AGE: z.coerce.number(_).min(0).default(31536000),
 
   // Feature Flags
-  FEATURE_AI_TUTORING: z.coerce.boolean().default(true),
-  FEATURE_COLLABORATION: z.coerce.boolean().default(true),
-  FEATURE_CODE_COMPILATION: z.coerce.boolean().default(true),
-  FEATURE_BLOCKCHAIN_INTEGRATION: z.coerce.boolean().default(true),
-  FEATURE_GAMIFICATION: z.coerce.boolean().default(true),
-  FEATURE_SOCIAL_FEATURES: z.coerce.boolean().default(true),
-  FEATURE_ADVANCED_ANALYTICS: z.coerce.boolean().default(false),
+  FEATURE_AI_TUTORING: z.coerce.boolean(_).default(_true),
+  FEATURE_COLLABORATION: z.coerce.boolean(_).default(_true),
+  FEATURE_CODE_COMPILATION: z.coerce.boolean(_).default(_true),
+  FEATURE_BLOCKCHAIN_INTEGRATION: z.coerce.boolean(_).default(_true),
+  FEATURE_GAMIFICATION: z.coerce.boolean(_).default(_true),
+  FEATURE_SOCIAL_FEATURES: z.coerce.boolean(_).default(_true),
+  FEATURE_ADVANCED_ANALYTICS: z.coerce.boolean(_).default(_false),
 
   // Beta Features
-  BETA_VOICE_CHAT: z.coerce.boolean().default(false),
-  BETA_VIDEO_COLLABORATION: z.coerce.boolean().default(false),
-  BETA_AI_CODE_REVIEW: z.coerce.boolean().default(false),
+  BETA_VOICE_CHAT: z.coerce.boolean(_).default(_false),
+  BETA_VIDEO_COLLABORATION: z.coerce.boolean(_).default(_false),
+  BETA_AI_CODE_REVIEW: z.coerce.boolean(_).default(_false),
 
   // Third-party Integrations
-  GITHUB_APP_ID: z.string().optional(),
-  GITHUB_APP_PRIVATE_KEY: z.string().optional(),
-  GITHUB_WEBHOOK_SECRET: z.string().optional(),
-  STRIPE_PUBLISHABLE_KEY: z.string().optional(),
-  STRIPE_SECRET_KEY: z.string().optional(),
-  STRIPE_WEBHOOK_SECRET: z.string().optional(),
-  DISCORD_BOT_TOKEN: z.string().optional(),
-  DISCORD_GUILD_ID: z.string().optional(),
+  GITHUB_APP_ID: z.string(_).optional(_),
+  GITHUB_APP_PRIVATE_KEY: z.string(_).optional(_),
+  GITHUB_WEBHOOK_SECRET: z.string(_).optional(_),
+  STRIPE_PUBLISHABLE_KEY: z.string(_).optional(_),
+  STRIPE_SECRET_KEY: z.string(_).optional(_),
+  STRIPE_WEBHOOK_SECRET: z.string(_).optional(_),
+  DISCORD_BOT_TOKEN: z.string(_).optional(_),
+  DISCORD_GUILD_ID: z.string(_).optional(_),
 
   // Development & Debugging
-  DEBUG: z.coerce.boolean().default(false),
-  VERBOSE_LOGGING: z.coerce.boolean().default(false),
-  ENABLE_QUERY_LOGGING: z.coerce.boolean().default(false),
-  ENABLE_PERFORMANCE_MONITORING: z.coerce.boolean().default(true),
+  DEBUG: z.coerce.boolean(_).default(_false),
+  VERBOSE_LOGGING: z.coerce.boolean(_).default(_false),
+  ENABLE_QUERY_LOGGING: z.coerce.boolean(_).default(_false),
+  ENABLE_PERFORMANCE_MONITORING: z.coerce.boolean(_).default(_true),
 
   // Health Check
-  HEALTH_CHECK_ENDPOINT: z.string().default('/api/health'),
-  HEALTH_CHECK_TIMEOUT: z.coerce.number().min(1000).default(5000),
+  HEALTH_CHECK_ENDPOINT: z.string(_).default('/api/health'),
+  HEALTH_CHECK_TIMEOUT: z.coerce.number(_).min(1000).default(5000),
 
   // Caching
-  CACHE_TTL: z.coerce.number().min(60).default(3600),
-  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+  CACHE_TTL: z.coerce.number(_).min(_60).default(3600),
+  LOG_LEVEL: z.enum( ['debug', 'info', 'warn', 'error']).default('info'),
 
   // Session Security
-  SESSION_COOKIE_SECURE: z.coerce.boolean().default(false),
-  SESSION_COOKIE_SAME_SITE: z.enum(['strict', 'lax', 'none']).default('lax'),
-  SESSION_COOKIE_HTTP_ONLY: z.coerce.boolean().default(true),
-  SESSION_COOKIE_MAX_AGE: z.coerce.number().min(300).default(43200),
+  SESSION_COOKIE_SECURE: z.coerce.boolean(_).default(_false),
+  SESSION_COOKIE_SAME_SITE: z.enum( ['strict', 'lax', 'none']).default('lax'),
+  SESSION_COOKIE_HTTP_ONLY: z.coerce.boolean(_).default(_true),
+  SESSION_COOKIE_MAX_AGE: z.coerce.number(_).min(300).default(_43200),
 });
 
 // Parse and validate environment variables
 function parseEnv() {
   try {
-    return envSchema.parse(process.env);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
+    return envSchema.parse(_process.env);
+  } catch (_error) {
+    if (_error instanceof z.ZodError) {
       const missingVars = error.errors
         .filter(err => err.code === 'invalid_type' && err.received === 'undefined')
         .map(err => err.path.join('.'));
@@ -173,11 +173,11 @@ function parseEnv() {
 
       console.error('❌ Environment validation failed:');
       
-      if (missingVars.length > 0) {
+      if (_missingVars.length > 0) {
         console.error('Missing required variables:', missingVars);
       }
       
-      if (invalidVars.length > 0) {
+      if (_invalidVars.length > 0) {
         console.error('Invalid variables:', invalidVars);
       }
       
@@ -188,7 +188,7 @@ function parseEnv() {
 }
 
 // Export validated environment configuration
-export const env = parseEnv();
+export const env = parseEnv(_);
 
 // Environment utilities
 export const isProduction = env.NODE_ENV === 'production';
@@ -322,7 +322,7 @@ export function validateCriticalConfig() {
   }
 
   // Check AI services if enabled
-  if (features.aiTutoring && !env.OPENAI_API_KEY && !env.GOOGLE_GENERATIVE_AI_API_KEY && !env.GEMINI_API_KEY) {
+  if (_features.aiTutoring && !env.OPENAI_API_KEY && !env.GOOGLE_GENERATIVE_AI_API_KEY && !env.GEMINI_API_KEY) {
     errors.push('AI tutoring is enabled but no AI API key is configured');
   }
 
@@ -341,9 +341,9 @@ export function validateCriticalConfig() {
     }
   }
 
-  if (errors.length > 0) {
+  if (_errors.length > 0) {
     console.error('❌ Critical configuration errors:');
-    errors.forEach(error => console.error(`  - ${error}`));
+    errors.forEach(_error => console.error(`  - ${error}`));
     process.exit(1);
   }
 

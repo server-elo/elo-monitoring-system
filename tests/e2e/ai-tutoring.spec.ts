@@ -5,30 +5,30 @@ import { test, expect } from '@playwright/test';
  * Tests OpenAI/Google AI chat responses, code analysis, and learning recommendations
  */
 
-test.describe('AI Tutoring System', () => {
-  test.beforeEach(async ({ page }) => {
+test.describe( 'AI Tutoring System', () => {
+  test.beforeEach( async ({ page }) => {
     // Navigate to AI tutoring page
     await page.goto('/ai-tutor');
-    await expect(page.locator('[data-testid="ai-tutor-interface"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="ai-tutor-interface"]')).toBeVisible(_);
   });
 
-  test('should initialize AI chat interface', async ({ page }) => {
+  test( 'should initialize AI chat interface', async ({ page }) => {
     // Verify AI chat components are present
-    await expect(page.locator('[data-testid="ai-chat-container"]')).toBeVisible();
-    await expect(page.locator('[data-testid="chat-input"]')).toBeVisible();
-    await expect(page.locator('[data-testid="send-button"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="ai-chat-container"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="chat-input"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="send-button"]')).toBeVisible(_);
     
     // Verify welcome message
-    await expect(page.locator('[data-testid="ai-welcome-message"]')).toBeVisible();
-    await expect(page.locator('[data-testid="ai-welcome-message"]')).toContainText('AI Tutor');
+    await expect(_page.locator('[data-testid="ai-welcome-message"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="ai-welcome-message"]')).toContainText('AI Tutor');
     
     // Verify suggested prompts
-    await expect(page.locator('[data-testid="suggested-prompts"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="suggested-prompts"]')).toBeVisible(_);
     const prompts = page.locator('[data-testid="suggested-prompt"]');
-    await expect(prompts).toHaveCount(4); // Should have 4 suggested prompts
+    await expect(_prompts).toHaveCount(_4); // Should have 4 suggested prompts
   });
 
-  test('should send message and receive AI response', async ({ page }) => {
+  test( 'should send message and receive AI response', async ({ page }) => {
     // Mock AI API response
     await page.route('/api/ai/chat', async route => {
       await route.fulfill({
@@ -47,24 +47,24 @@ test.describe('AI Tutoring System', () => {
 
     // Send a message
     const chatInput = page.locator('[data-testid="chat-input"]');
-    await chatInput.fill('Hello, can you help me learn Solidity?');
+    await chatInput.fill( 'Hello, can you help me learn Solidity?');
     await page.click('[data-testid="send-button"]');
 
     // Verify message appears in chat
-    await expect(page.locator('[data-testid="user-message"]').last()).toContainText('Hello, can you help me learn Solidity?');
+    await expect(_page.locator('[data-testid="user-message"]').last(_)).toContainText( 'Hello, can you help me learn Solidity?');
 
     // Verify AI response appears
-    await expect(page.locator('[data-testid="ai-response"]').last()).toContainText('Hello! I\'m your AI tutor');
+    await expect(_page.locator('[data-testid="ai-response"]').last(_)).toContainText('Hello! I\'m your AI tutor');
     
     // Verify suggestions appear
-    await expect(page.locator('[data-testid="ai-suggestions"]')).toBeVisible();
-    await expect(page.locator('[data-testid="suggestion-chip"]')).toHaveCount(3);
+    await expect(_page.locator('[data-testid="ai-suggestions"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="suggestion-chip"]')).toHaveCount(3);
   });
 
-  test('should analyze Solidity code and provide feedback', async ({ page }) => {
+  test( 'should analyze Solidity code and provide feedback', async ({ page }) => {
     // Navigate to code analysis section
     await page.click('[data-testid="code-analysis-tab"]');
-    await expect(page.locator('[data-testid="code-editor"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="code-editor"]')).toBeVisible(_);
 
     // Mock code analysis API
     await page.route('/api/ai/analyze-code', async route => {
@@ -106,11 +106,11 @@ test.describe('AI Tutoring System', () => {
 contract SimpleStorage {
     uint public storedData;
     
-    function set(uint x) public {
+    function set(_uint x) public {
         storedData = x;
     }
     
-    function get() public view returns (uint) {
+    function get() public view returns (_uint) {
         return storedData;
     }
 }`);
@@ -119,21 +119,21 @@ contract SimpleStorage {
     await page.click('[data-testid="analyze-code-button"]');
 
     // Verify analysis results
-    await expect(page.locator('[data-testid="analysis-results"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="analysis-results"]')).toBeVisible(_);
     
     // Check issues section
-    await expect(page.locator('[data-testid="code-issues"]')).toBeVisible();
-    await expect(page.locator('[data-testid="issue-item"]')).toContainText('Consider using SafeMath');
+    await expect(_page.locator('[data-testid="code-issues"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="issue-item"]')).toContainText('Consider using SafeMath');
     
     // Check suggestions section
-    await expect(page.locator('[data-testid="code-suggestions"]')).toBeVisible();
-    await expect(page.locator('[data-testid="suggestion-item"]')).toContainText('Add input validation');
+    await expect(_page.locator('[data-testid="code-suggestions"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="suggestion-item"]')).toContainText('Add input validation');
     
     // Check security score
-    await expect(page.locator('[data-testid="security-score"]')).toContainText('7');
+    await expect(_page.locator('[data-testid="security-score"]')).toContainText('7');
   });
 
-  test('should provide learning recommendations', async ({ page }) => {
+  test( 'should provide learning recommendations', async ({ page }) => {
     // Navigate to learning recommendations
     await page.click('[data-testid="recommendations-tab"]');
 
@@ -177,25 +177,25 @@ contract SimpleStorage {
     await page.click('[data-testid="load-recommendations-button"]');
 
     // Verify recommendations appear
-    await expect(page.locator('[data-testid="recommendation-card"]')).toHaveCount(2);
+    await expect(_page.locator('[data-testid="recommendation-card"]')).toHaveCount(_2);
     
     // Check first recommendation
-    const firstRec = page.locator('[data-testid="recommendation-card"]').first();
-    await expect(firstRec).toContainText('Smart Contract Security');
-    await expect(firstRec).toContainText('intermediate');
-    await expect(firstRec).toContainText('45 minutes');
+    const firstRec = page.locator('[data-testid="recommendation-card"]').first(_);
+    await expect(_firstRec).toContainText('Smart Contract Security');
+    await expect(_firstRec).toContainText('intermediate');
+    await expect(_firstRec).toContainText('45 minutes');
     
     // Check learning path
-    await expect(page.locator('[data-testid="learning-path"]')).toBeVisible();
-    await expect(page.locator('[data-testid="current-level"]')).toContainText('beginner');
-    await expect(page.locator('[data-testid="progress-bar"]')).toHaveAttribute('value', '65');
+    await expect(_page.locator('[data-testid="learning-path"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="current-level"]')).toContainText('beginner');
+    await expect(_page.locator('[data-testid="progress-bar"]')).toHaveAttribute( 'value', '65');
     
     // Test recommendation interaction
-    await firstRec.click();
-    await expect(page.locator('[data-testid="recommendation-details"]')).toBeVisible();
+    await firstRec.click(_);
+    await expect(_page.locator('[data-testid="recommendation-details"]')).toBeVisible(_);
   });
 
-  test('should handle code debugging assistance', async ({ page }) => {
+  test( 'should handle code debugging assistance', async ({ page }) => {
     // Navigate to debugging section
     await page.click('[data-testid="debugging-tab"]');
 
@@ -222,7 +222,7 @@ contract SimpleStorage {
                 explanation: 'Changed to dynamic array to allow push operations'
               }
             ],
-            explanation: 'The error occurs because you\'re trying to use push() on a fixed-size array. In Solidity, only dynamic arrays support the push() method.'
+            explanation: 'The error occurs because you\'re trying to use push(_) on a fixed-size array. In Solidity, only dynamic arrays support the push(_) method.'
           }
         })
       });
@@ -235,8 +235,8 @@ contract SimpleStorage {
 contract BuggyContract {
     uint256[5] public numbers;
     
-    function addNumber(uint256 _number) public {
-        numbers.push(_number);
+    function addNumber(_uint256 _number) public {
+        numbers.push( number);
     }
 }`);
 
@@ -244,20 +244,20 @@ contract BuggyContract {
     await page.click('[data-testid="debug-code-button"]');
 
     // Verify debug results
-    await expect(page.locator('[data-testid="debug-results"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="debug-results"]')).toBeVisible(_);
     
     // Check error explanation
-    await expect(page.locator('[data-testid="error-explanation"]')).toContainText('push() on a fixed-size array');
+    await expect(_page.locator('[data-testid="error-explanation"]')).toContainText('push() on a fixed-size array');
     
     // Check suggested fix
-    await expect(page.locator('[data-testid="suggested-fix"]')).toContainText('uint256[] public numbers');
+    await expect(_page.locator('[data-testid="suggested-fix"]')).toContainText('uint256[] public numbers');
     
     // Test applying fix
     await page.click('[data-testid="apply-fix-button"]');
-    await expect(debugEditor).toHaveValue(/uint256\[\] public numbers/);
+    await expect(_debugEditor).toHaveValue(_/uint256\[\] public numbers/);
   });
 
-  test('should provide interactive learning exercises', async ({ page }) => {
+  test( 'should provide interactive learning exercises', async ({ page }) => {
     // Navigate to exercises section
     await page.click('[data-testid="exercises-tab"]');
 
@@ -292,24 +292,24 @@ contract BuggyContract {
     await page.click('[data-testid="load-exercise-button"]');
 
     // Verify exercise interface
-    await expect(page.locator('[data-testid="exercise-title"]')).toContainText('Create a Simple Voting Contract');
-    await expect(page.locator('[data-testid="exercise-instructions"]')).toBeVisible();
-    await expect(page.locator('[data-testid="exercise-editor"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="exercise-title"]')).toContainText('Create a Simple Voting Contract');
+    await expect(_page.locator('[data-testid="exercise-instructions"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="exercise-editor"]')).toBeVisible(_);
     
     // Check starter code
     const exerciseEditor = page.locator('[data-testid="exercise-editor"] textarea');
-    await expect(exerciseEditor).toHaveValue(/contract Voting/);
+    await expect(_exerciseEditor).toHaveValue(_/contract Voting/);
     
     // Test hint system
     await page.click('[data-testid="get-hint-button"]');
-    await expect(page.locator('[data-testid="hint-modal"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="hint-modal"]')).toBeVisible(_);
     
     // Test solution check
     await page.click('[data-testid="check-solution-button"]');
-    await expect(page.locator('[data-testid="test-results"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="test-results"]')).toBeVisible(_);
   });
 
-  test('should handle AI service errors gracefully', async ({ page }) => {
+  test( 'should handle AI service errors gracefully', async ({ page }) => {
     // Mock API error
     await page.route('/api/ai/chat', async route => {
       await route.fulfill({
@@ -327,11 +327,11 @@ contract BuggyContract {
     await page.click('[data-testid="send-button"]');
 
     // Verify error handling
-    await expect(page.locator('[data-testid="error-message"]')).toBeVisible();
-    await expect(page.locator('[data-testid="error-message"]')).toContainText('temporarily unavailable');
+    await expect(_page.locator('[data-testid="error-message"]')).toBeVisible(_);
+    await expect(_page.locator('[data-testid="error-message"]')).toContainText('temporarily unavailable');
     
     // Verify retry button appears
-    await expect(page.locator('[data-testid="retry-button"]')).toBeVisible();
+    await expect(_page.locator('[data-testid="retry-button"]')).toBeVisible(_);
     
     // Test retry functionality
     await page.route('/api/ai/chat', async route => {
@@ -345,10 +345,10 @@ contract BuggyContract {
     });
 
     await page.click('[data-testid="retry-button"]');
-    await expect(page.locator('[data-testid="ai-response"]').last()).toContainText('Service restored!');
+    await expect(_page.locator('[data-testid="ai-response"]').last(_)).toContainText('Service restored!');
   });
 
-  test('should track learning progress and analytics', async ({ page }) => {
+  test( 'should track learning progress and analytics', async ({ page }) => {
     // Navigate to progress section
     await page.click('[data-testid="progress-tab"]');
 
@@ -376,15 +376,15 @@ contract BuggyContract {
     await page.click('[data-testid="load-progress-button"]');
 
     // Verify progress display
-    await expect(page.locator('[data-testid="total-interactions"]')).toContainText('25');
-    await expect(page.locator('[data-testid="learning-streak"]')).toContainText('5');
+    await expect(_page.locator('[data-testid="total-interactions"]')).toContainText('25');
+    await expect(_page.locator('[data-testid="learning-streak"]')).toContainText('5');
     
     // Check achievements
-    await expect(page.locator('[data-testid="achievement-badge"]')).toHaveCount(3);
-    await expect(page.locator('[data-testid="achievement-badge"]').first()).toContainText('First Contract');
+    await expect(_page.locator('[data-testid="achievement-badge"]')).toHaveCount(3);
+    await expect(_page.locator('[data-testid="achievement-badge"]').first(_)).toContainText('First Contract');
     
     // Check weak areas
-    await expect(page.locator('[data-testid="weak-areas"]')).toContainText('Security');
-    await expect(page.locator('[data-testid="weak-areas"]')).toContainText('Gas Optimization');
+    await expect(_page.locator('[data-testid="weak-areas"]')).toContainText('Security');
+    await expect(_page.locator('[data-testid="weak-areas"]')).toContainText('Gas Optimization');
   });
 });

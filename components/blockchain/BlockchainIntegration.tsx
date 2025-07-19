@@ -36,19 +36,19 @@ interface BlockchainIntegrationProps {
 export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
   className = ''
 }) => {
-  const [stats, setStats] = useState<BlockchainStats | null>(null);
+  const [stats, setStats] = useState<BlockchainStats | null>(_null);
   const [contracts, setContracts] = useState<DeployedContract[]>([]);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isConnecting, setIsConnecting] = useState(_false);
+  const [isLoading, setIsLoading] = useState(_true);
   const [networkStatus, setNetworkStatus] = useState<'healthy' | 'warning' | 'error'>('healthy');
-  const [gasAlert, setGasAlert] = useState<boolean>(false);
+  const [gasAlert, setGasAlert] = useState<boolean>(_false);
 
   useEffect(() => {
-    loadBlockchainData();
+    loadBlockchainData(_);
   }, []);
 
   const loadBlockchainData = async () => {
-    setIsLoading(true);
+    setIsLoading(_true);
     try {
       // Mock data - in real app, connect to Web3 provider
       const mockStats: BlockchainStats = {
@@ -63,9 +63,9 @@ export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
       };
 
       // Check network status and gas prices
-      const gasPrice = parseInt(mockStats.gasPrice);
-      setGasAlert(gasPrice > 30);
-      setNetworkStatus(gasPrice > 50 ? 'error' : gasPrice > 30 ? 'warning' : 'healthy');
+      const gasPrice = parseInt(_mockStats.gasPrice);
+      setGasAlert(_gasPrice > 30);
+      setNetworkStatus(_gasPrice > 50 ? 'error' : gasPrice > 30 ? 'warning' : 'healthy');
 
       const mockContracts: DeployedContract[] = [
         {
@@ -100,33 +100,33 @@ export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
         }
       ];
 
-      setStats(mockStats);
-      setContracts(mockContracts);
-    } catch (error) {
+      setStats(_mockStats);
+      setContracts(_mockContracts);
+    } catch (_error) {
       console.error('Failed to load blockchain data:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
   const connectWallet = async () => {
-    setIsConnecting(true);
+    setIsConnecting(_true);
     try {
       // Mock wallet connection
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await loadBlockchainData();
-    } catch (error) {
+      await loadBlockchainData(_);
+    } catch (_error) {
       console.error('Failed to connect wallet:', error);
     } finally {
-      setIsConnecting(false);
+      setIsConnecting(_false);
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+  const copyToClipboard = (_text: string) => {
+    navigator.clipboard.writeText(_text);
   };
 
-  const getStatusColor = (status: DeployedContract['status']) => {
+  const getStatusColor = (_status: DeployedContract['status']) => {
     const colors = {
       active: 'text-blue-400 bg-blue-400/10',
       verified: 'text-green-400 bg-green-400/10',
@@ -135,14 +135,14 @@ export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
     return colors[status];
   };
 
-  const formatAddress = (address: string) => {
+  const formatAddress = (_address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
   if (isLoading) {
     return (
       <div className={`space-y-6 ${className}`}>
-        {[...Array(4)].map((_, i) => (
+        {[...Array(_4)].map( (_, i) => (
           <Card key={i} className="p-6 bg-white/10 backdrop-blur-md border border-white/20">
             <div className="animate-pulse">
               <div className="h-4 bg-white/20 rounded w-1/4 mb-4"></div>
@@ -260,10 +260,10 @@ export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
             <p className="text-gray-400 text-sm">Wallet Address</p>
             <div className="flex items-center space-x-2">
               <span className="text-white font-mono text-sm">
-                {formatAddress(stats.connectedWallet)}
+                {formatAddress(_stats.connectedWallet)}
               </span>
               <button
-                onClick={() => copyToClipboard(stats.connectedWallet!)}
+                onClick={(_) => copyToClipboard(_stats.connectedWallet!)}
                 className="p-1 hover:bg-white/10 rounded transition-colors"
               >
                 <Copy className="w-3 h-3 text-gray-400" />
@@ -299,7 +299,7 @@ export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
               <Activity className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{stats.blockNumber.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-white">{stats.blockNumber.toLocaleString(_)}</p>
               <p className="text-sm text-gray-400">Latest Block</p>
             </div>
           </div>
@@ -355,7 +355,7 @@ export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
         </div>
 
         <div className="space-y-4">
-          {contracts.map((contract, index) => (
+          {contracts.map( (contract, index) => (
             <motion.div
               key={contract.id}
               initial={{ opacity: 0, y: 20 }}
@@ -370,12 +370,12 @@ export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
                 <div>
                   <div className="flex items-center space-x-2 mb-1">
                     <h4 className="font-semibold text-white">{contract.name}</h4>
-                    <span className={`px-2 py-1 rounded text-xs ${getStatusColor(contract.status)}`}>
+                    <span className={`px-2 py-1 rounded text-xs ${getStatusColor(_contract.status)}`}>
                       {contract.status}
                     </span>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-400">
-                    <span className="font-mono">{formatAddress(contract.address)}</span>
+                    <span className="font-mono">{formatAddress(_contract.address)}</span>
                     <span>{contract.network}</span>
                     <span>{contract.interactions} interactions</span>
                   </div>
@@ -384,14 +384,14 @@ export const BlockchainIntegration: React.FC<BlockchainIntegrationProps> = ({
 
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => copyToClipboard(contract.address)}
+                  onClick={(_) => copyToClipboard(_contract.address)}
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                   title="Copy address"
                 >
                   <Copy className="w-4 h-4 text-gray-400" />
                 </button>
                 <button
-                  onClick={() => window.open(`https://sepolia.etherscan.io/address/${contract.address}`, '_blank')}
+                  onClick={(_) => window.open( `https://sepolia.etherscan.io/address/${contract.address}`, '_blank')}
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                   title="View on Etherscan"
                 >

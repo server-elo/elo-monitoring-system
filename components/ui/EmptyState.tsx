@@ -14,13 +14,13 @@ interface EmptyStateProps {
   action?: {
     label: string;
     href?: string;
-    onClick?: () => void;
+    onClick?: (_) => void;
     variant?: 'primary' | 'secondary';
   };
   secondaryAction?: {
     label: string;
     href?: string;
-    onClick?: () => void;
+    onClick?: (_) => void;
   };
   className?: string;
 }
@@ -33,7 +33,7 @@ export function EmptyState({
   secondaryAction,
   className
 }: EmptyStateProps) {
-  const renderActionButton = () => {
+  const renderActionButton = (_) => {
     if (!action) return null;
     
     const buttonClasses = cn(
@@ -43,7 +43,7 @@ export function EmptyState({
         : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl'
     );
     
-    if (action.href) {
+    if (_action.href) {
       return (
         <Link href={action.href} className={buttonClasses}>
           {action.label}
@@ -58,12 +58,12 @@ export function EmptyState({
     );
   };
   
-  const renderSecondaryButton = () => {
+  const renderSecondaryButton = (_) => {
     if (!secondaryAction) return null;
     
     const buttonClasses = "text-purple-400 hover:text-purple-300 transition-colors text-sm";
     
-    if (secondaryAction.href) {
+    if (_secondaryAction.href) {
       return (
         <Link href={secondaryAction.href} className={buttonClasses}>
           {secondaryAction.label}
@@ -79,7 +79,7 @@ export function EmptyState({
   };
 
   return (
-    <GlassContainer intensity="medium" className={cn('p-12 text-center', className)}>
+    <GlassContainer intensity="medium" className={cn( 'p-12 text-center', className)}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -98,10 +98,10 @@ export function EmptyState({
 
         {/* Actions */}
         <div className="space-y-3">
-          {renderActionButton()}
+          {renderActionButton(_)}
           {secondaryAction && (
             <div>
-              {renderSecondaryButton()}
+              {renderSecondaryButton(_)}
             </div>
           )}
         </div>
@@ -130,7 +130,7 @@ export function EmptyCoursesState() {
   );
 }
 
-export function EmptySearchState({ query }: { query?: string }) {
+export function EmptySearchState(_{ query }: { query?: string }) {
   return (
     <EmptyState
       icon={<Search className="w-8 h-8 text-purple-400" />}
@@ -146,7 +146,7 @@ export function EmptySearchState({ query }: { query?: string }) {
       }}
       secondaryAction={{
         label: "Clear Search",
-        onClick: () => window.location.href = '/search'
+        onClick: (_) => window.location.href = '/search'
       }}
     />
   );
@@ -164,7 +164,7 @@ export function EmptyLessonsState() {
       }}
       secondaryAction={{
         label: "View Course Details",
-        onClick: () => window.history.back()
+        onClick: (_) => window.history.back(_)
       }}
     />
   );
@@ -249,7 +249,7 @@ export function ErrorState({
 }: {
   title?: string;
   description?: string;
-  onRetry?: () => void;
+  onRetry?: (_) => void;
   showRetry?: boolean;
 }) {
   return (
@@ -259,7 +259,7 @@ export function ErrorState({
       description={description}
       action={showRetry ? {
         label: "Try Again",
-        onClick: onRetry || (() => window.location.reload()),
+        onClick: onRetry || (() => window.location.reload(_)),
         variant: "secondary"
       } : undefined}
       secondaryAction={{
@@ -275,7 +275,7 @@ export function OfflineState() {
   return null;
 }
 
-export function LoadingErrorState({ onRetry }: { onRetry?: () => void }) {
+export function LoadingErrorState(_{ onRetry }: { onRetry?: () => void }) {
   return (
     <EmptyState
       icon={<RefreshCw className="w-8 h-8 text-yellow-400" />}
@@ -283,11 +283,11 @@ export function LoadingErrorState({ onRetry }: { onRetry?: () => void }) {
       description="We're having trouble loading this content. This might be due to a slow connection or temporary server issue."
       action={{
         label: "Retry",
-        onClick: onRetry || (() => window.location.reload())
+        onClick: onRetry || (() => window.location.reload(_))
       }}
       secondaryAction={{
         label: "Go Back",
-        onClick: () => window.history.back()
+        onClick: (_) => window.history.back(_)
       }}
     />
   );

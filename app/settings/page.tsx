@@ -5,9 +5,9 @@ import dynamic from 'next/dynamic';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 // Dynamically import SettingsPage with SSR disabled
-const SettingsPage = dynamic(() => import('@/components/settings/SettingsPage').then(mod => ({ default: mod.SettingsPage })), {
+const SettingsPage = dynamic(() => import('@/components/settings/SettingsPage').then(_mod => ({ default: mod.SettingsPage })), {
   ssr: false,
-  loading: () => <LoadingSpinner />
+  loading: (_) => <LoadingSpinner />
 });
 
 export default function Settings() {

@@ -36,9 +36,9 @@ interface SharedFile {
 interface FileSharingProps {
   files: SharedFile[];
   currentUserId: string;
-  onFileUpload: (file: File, description?: string) => Promise<SharedFile>;
-  onFileDelete?: (fileId: string) => void;
-  onFileDownload?: (fileId: string) => void;
+  onFileUpload: ( file: File, description?: string) => Promise<SharedFile>;
+  onFileDelete?: (_fileId: string) => void;
+  onFileDownload?: (_fileId: string) => void;
   maxFileSize?: number; // in MB
   allowedTypes?: string[];
   className?: string;
@@ -77,31 +77,31 @@ export function FileSharing({
   ],
   className
 }: FileSharingProps) {
-  const [isDragging, setIsDragging] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
-  const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(_false);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({  });
+  const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({  });
+  const [showUploadDialog, setShowUploadDialog] = useState(_false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(_null);
   const [fileDescription, setFileDescription] = useState('');
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const dropZoneRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(_null);
+  const dropZoneRef = useRef<HTMLDivElement>(_null);
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+  const formatFileSize = (_bytes: number): string => {
+    if (_bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    const i = Math.floor(_Math.log(bytes) / Math.log(_k));
+    return parseFloat( (bytes / Math.pow(k, i)).toFixed(_2)) + ' ' + sizes[i];
   };
 
-  const getFileIcon = (type: string) => {
+  const getFileIcon = (_type: string) => {
     const Icon = FILE_ICONS[type] || FILE_ICONS.default;
     return Icon;
   };
 
-  const validateFile = (file: File): string | null => {
-    if (file.size > maxFileSize * 1024 * 1024) {
+  const validateFile = (_file: File): string | null => {
+    if (_file.size > maxFileSize * 1024 * 1024) {
       return `File size exceeds ${maxFileSize}MB limit`;
     }
 
@@ -112,33 +112,33 @@ export function FileSharing({
     return null;
   };
 
-  const handleFileSelect = (files: FileList | null) => {
+  const handleFileSelect = (_files: FileList | null) => {
     if (!files || files.length === 0) return;
 
     const file = files[0];
-    const error = validateFile(file);
+    const error = validateFile(_file);
 
     if (error) {
-      setUploadErrors({ [file.name]: error });
+      setUploadErrors({ [file.name]: error  });
       return;
     }
 
-    setSelectedFile(file);
-    setShowUploadDialog(true);
+    setSelectedFile(_file);
+    setShowUploadDialog(_true);
   };
 
   const handleUpload = async () => {
     if (!selectedFile) return;
 
-    const fileId = `upload_${Date.now()}_${selectedFile.name}`;
-    setUploadProgress({ [fileId]: 0 });
+    const fileId = `upload_${Date.now(_)}_${selectedFile.name}`;
+    setUploadProgress({ [fileId]: 0  });
 
     try {
       // Simulate upload progress
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           const current = prev[fileId] || 0;
-          if (current >= 90) {
+          if (_current >= 90) {
             clearInterval(progressInterval);
             return prev;
           }
@@ -146,10 +146,10 @@ export function FileSharing({
         });
       }, 200);
 
-      await onFileUpload(selectedFile, fileDescription);
+      await onFileUpload( selectedFile, fileDescription);
       
       clearInterval(progressInterval);
-      setUploadProgress({ [fileId]: 100 });
+      setUploadProgress({ [fileId]: 100  });
       
       setTimeout(() => {
         setUploadProgress(prev => {
@@ -158,11 +158,11 @@ export function FileSharing({
         });
       }, 1000);
 
-      setSelectedFile(null);
+      setSelectedFile(_null);
       setFileDescription('');
-      setShowUploadDialog(false);
-    } catch (error) {
-      setUploadErrors({ [fileId]: 'Upload failed' });
+      setShowUploadDialog(_false);
+    } catch (_error) {
+      setUploadErrors({ [fileId]: 'Upload failed'  });
       setUploadProgress(prev => {
         const { [fileId]: _, ...rest } = prev;
         return rest;
@@ -170,39 +170,39 @@ export function FileSharing({
     }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
+  const handleDragOver = (_e: React.DragEvent) => {
+    e.preventDefault(_);
+    setIsDragging(_true);
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
+  const handleDragLeave = (_e: React.DragEvent) => {
+    e.preventDefault(_);
     if (!dropZoneRef.current?.contains(e.relatedTarget as Node)) {
-      setIsDragging(false);
+      setIsDragging(_false);
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    handleFileSelect(e.dataTransfer.files);
+  const handleDrop = (_e: React.DragEvent) => {
+    e.preventDefault(_);
+    setIsDragging(_false);
+    handleFileSelect(_e.dataTransfer.files);
   };
 
-  const copyFileUrl = async (file: SharedFile) => {
+  const copyFileUrl = async (_file: SharedFile) => {
     try {
-      await navigator.clipboard.writeText(file.url);
+      await navigator.clipboard.writeText(_file.url);
       // Show success feedback
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to copy URL:', error);
     }
   };
 
   return (
-    <Card className={cn('p-4 bg-white/10 backdrop-blur-md border border-white/20', className)}>
+    <Card className={cn( 'p-4 bg-white/10 backdrop-blur-md border border-white/20', className)}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-white">Shared Files</h3>
         <Button
-          onClick={() => fileInputRef.current?.click()}
+          onClick={(_) => fileInputRef.current?.click(_)}
           variant="ghost"
           size="sm"
           className="text-blue-400 hover:text-blue-300"
@@ -216,7 +216,7 @@ export function FileSharing({
       <input
         ref={fileInputRef}
         type="file"
-        onChange={(e) => handleFileSelect(e.target.files)}
+        onChange={(_e) => handleFileSelect(_e.target.files)}
         className="hidden"
         accept={allowedTypes.join(',')}
       />
@@ -238,7 +238,7 @@ export function FileSharing({
         <p className="text-sm text-gray-400">
           Drag and drop files here, or{' '}
           <button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={(_) => fileInputRef.current?.click(_)}
             className="text-blue-400 hover:text-blue-300 underline"
           >
             browse
@@ -251,7 +251,7 @@ export function FileSharing({
 
       {/* Upload progress */}
       <AnimatePresence>
-        {Object.entries(uploadProgress).map(([fileId, progress]) => (
+        {Object.entries(_uploadProgress).map( ([fileId, progress]) => (
           <motion.div
             key={fileId}
             initial={{ opacity: 0, height: 0 }}
@@ -275,7 +275,7 @@ export function FileSharing({
 
       {/* Upload errors */}
       <AnimatePresence>
-        {Object.entries(uploadErrors).map(([fileName, error]) => (
+        {Object.entries(_uploadErrors).map( ([fileName, error]) => (
           <motion.div
             key={fileName}
             initial={{ opacity: 0, height: 0 }}
@@ -287,7 +287,7 @@ export function FileSharing({
               <AlertCircle className="w-4 h-4 text-red-400" />
               <span className="text-sm text-red-400">{error}</span>
               <Button
-                onClick={() => setUploadErrors(prev => {
+                onClick={(_) => setUploadErrors(prev => {
                   const { [fileName]: _, ...rest } = prev;
                   return rest;
                 })}
@@ -306,7 +306,7 @@ export function FileSharing({
       <div className="space-y-2">
         <AnimatePresence>
           {files.map(file => {
-            const Icon = getFileIcon(file.type);
+            const Icon = getFileIcon(_file.type);
             const isOwner = file.uploadedBy === currentUserId;
 
             return (
@@ -327,11 +327,11 @@ export function FileSharing({
                     )}
                   </div>
                   <div className="flex items-center space-x-2 text-xs text-gray-400">
-                    <span>{formatFileSize(file.size)}</span>
+                    <span>{formatFileSize(_file.size)}</span>
                     <span>•</span>
                     <span>{file.downloadCount} downloads</span>
                     <span>•</span>
-                    <span>{file.uploadedAt.toLocaleDateString()}</span>
+                    <span>{file.uploadedAt.toLocaleDateString(_)}</span>
                   </div>
                   {file.description && (
                     <p className="text-xs text-gray-400 mt-1 truncate">{file.description}</p>
@@ -340,9 +340,9 @@ export function FileSharing({
 
                 <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
-                    onClick={() => {
-                      onFileDownload?.(file.id);
-                      window.open(file.url, '_blank');
+                    onClick={(_) => {
+                      onFileDownload?.(_file.id);
+                      window.open( file.url, '_blank');
                     }}
                     variant="ghost"
                     size="sm"
@@ -353,7 +353,7 @@ export function FileSharing({
                   </Button>
                   
                   <Button
-                    onClick={() => copyFileUrl(file)}
+                    onClick={(_) => copyFileUrl(_file)}
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0"
@@ -364,7 +364,7 @@ export function FileSharing({
 
                   {file.type.startsWith('text/') && (
                     <Button
-                      onClick={() => window.open(file.url, '_blank')}
+                      onClick={(_) => window.open( file.url, '_blank')}
                       variant="ghost"
                       size="sm"
                       className="h-8 w-8 p-0"
@@ -376,7 +376,7 @@ export function FileSharing({
 
                   {isOwner && onFileDelete && (
                     <Button
-                      onClick={() => onFileDelete(file.id)}
+                      onClick={(_) => onFileDelete(_file.id)}
                       variant="ghost"
                       size="sm"
                       className="h-8 w-8 p-0 text-red-400 hover:text-red-300"
@@ -418,23 +418,23 @@ export function FileSharing({
               
               <div className="mb-4">
                 <div className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg">
-                  {React.createElement(getFileIcon(selectedFile.type), {
+                  {React.createElement(_getFileIcon(selectedFile.type), {
                     className: "w-5 h-5 text-blue-400"
                   })}
                   <div>
                     <div className="font-medium text-white">{selectedFile.name}</div>
-                    <div className="text-sm text-gray-400">{formatFileSize(selectedFile.size)}</div>
+                    <div className="text-sm text-gray-400">{formatFileSize(_selectedFile.size)}</div>
                   </div>
                 </div>
               </div>
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Description (optional)
+                  Description (_optional)
                 </label>
                 <textarea
                   value={fileDescription}
-                  onChange={(e) => setFileDescription(e.target.value)}
+                  onChange={(_e) => setFileDescription(_e.target.value)}
                   placeholder="Add a description for this file..."
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 resize-none"
                   rows={3}
@@ -443,9 +443,9 @@ export function FileSharing({
 
               <div className="flex space-x-3">
                 <Button
-                  onClick={() => {
-                    setShowUploadDialog(false);
-                    setSelectedFile(null);
+                  onClick={(_) => {
+                    setShowUploadDialog(_false);
+                    setSelectedFile(_null);
                     setFileDescription('');
                   }}
                   variant="ghost"

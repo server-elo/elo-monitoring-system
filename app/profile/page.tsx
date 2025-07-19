@@ -10,9 +10,9 @@ import { GlassCard } from '@/components/ui/Glassmorphism';
 import { SmartBreadcrumbs } from '@/components/navigation/SmartNavigation';
 
 // Dynamically import UserProfile with SSR disabled
-const UserProfile = dynamic(() => import('@/components/profile/UserProfile').then(mod => ({ default: mod.UserProfile })), {
+const UserProfile = dynamic(() => import('@/components/profile/UserProfile').then(_mod => ({ default: mod.UserProfile })), {
   ssr: false,
-  loading: () => <LoadingSpinner />
+  loading: (_) => <LoadingSpinner />
 });
 
 export default function Profile() {

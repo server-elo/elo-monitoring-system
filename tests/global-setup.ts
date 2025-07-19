@@ -6,17 +6,17 @@ import { PrismaClient } from '@prisma/client';
  * Initializes test database, creates test users, and sets up authentication
  */
 
-async function globalSetup(config: FullConfig) {
+async function globalSetup(_config: FullConfig) {
   console.log('🚀 Starting global test setup...');
 
   // Initialize test database
-  await setupTestDatabase();
+  await setupTestDatabase(_);
 
   // Create test users
-  await createTestUsers();
+  await createTestUsers(_);
 
   // Setup authentication
-  await setupAuthentication(config);
+  await setupAuthentication(_config);
 
   console.log('✅ Global test setup completed');
 }
@@ -39,7 +39,7 @@ async function setupTestDatabase() {
     // Clean existing test data
     try {
       // await prisma.$executeRaw`DELETE FROM "CollaborationSession" WHERE title LIKE '%test-%'`; // Temporarily disabled
-    } catch (error) {
+    } catch (_error) {
       console.log('CollaborationSession table not found, will be created when needed');
     }
 
@@ -48,7 +48,7 @@ async function setupTestDatabase() {
     });
 
     console.log('✅ Test database cleaned');
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Database setup failed:', error);
     throw error;
   } finally {
@@ -79,9 +79,9 @@ async function createTestUsers() {
         email: 'test@soliditylearn.com',
         name: 'Test User',
         image: 'https://avatars.githubusercontent.com/u/1?v=4',
-        emailVerified: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        emailVerified: new Date(_),
+        createdAt: new Date(_),
+        updatedAt: new Date(_),
       },
     });
 
@@ -93,9 +93,9 @@ async function createTestUsers() {
         email: 'collab@soliditylearn.com',
         name: 'Collaboration User',
         image: 'https://avatars.githubusercontent.com/u/2?v=4',
-        emailVerified: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        emailVerified: new Date(_),
+        createdAt: new Date(_),
+        updatedAt: new Date(_),
       },
     });
 
@@ -107,13 +107,13 @@ async function createTestUsers() {
         email: 'admin@soliditylearn.com',
         name: 'Admin User',
         image: 'https://avatars.githubusercontent.com/u/3?v=4',
-        emailVerified: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        emailVerified: new Date(_),
+        createdAt: new Date(_),
+        updatedAt: new Date(_),
       },
     });
 
-    // Create test collaboration session (if table exists)
+    // Create test collaboration session (_if table exists)
     try {
       // await prisma.$executeRaw`
       //   INSERT INTO "CollaborationSession" (
@@ -123,26 +123,26 @@ async function createTestUsers() {
       //     'test-session-1',
       //     'test-collaboration-session',
       //     'Test collaboration session for E2E testing',
-      //     '// Test Solidity contract\npragma solidity ^0.8.0;\n\ncontract TestContract {\n    uint256 public value;\n    \n    function setValue(uint256 _value) public {\n        value = _value;\n    }\n}',
+      //     '// Test Solidity contract\npragma solidity ^0.8.0;\n\ncontract TestContract {\n    uint256 public value;\n    \n    function setValue(_uint256 _value) public {\n        value = _value;\n    }\n}',
       //     'solidity',
       //     5,
       //     true,
-      //     NOW(),
-      //     NOW(),
+      //     NOW(_),
+      //     NOW(_),
       //     ${testUser.id}
-      //   ) ON CONFLICT (id) DO UPDATE SET
+      //   ) ON CONFLICT (_id) DO UPDATE SET
       //     title = EXCLUDED.title,
-      //     "updatedAt" = NOW()
+      //     "updatedAt" = NOW(_)
       // `; // Temporarily disabled
-    } catch (error) {
+    } catch (_error) {
       console.log('CollaborationSession table not available, skipping test session creation');
     }
 
     console.log('✅ Test users created successfully');
-    console.log(`   - Test User: ${testUser.id}`);
-    console.log(`   - Collab User: ${collabUser.id}`);
-    console.log(`   - Admin User: ${adminUser.id}`);
-  } catch (error) {
+    console.log(_`   - Test User: ${testUser.id}`);
+    console.log(_`   - Collab User: ${collabUser.id}`);
+    console.log(_`   - Admin User: ${adminUser.id}`);
+  } catch (_error) {
     console.error('❌ Test user creation failed:', error);
     throw error;
   } finally {
@@ -153,17 +153,17 @@ async function createTestUsers() {
 /**
  * Setup authentication for tests
  */
-async function setupAuthentication(config: FullConfig) {
+async function setupAuthentication(_config: FullConfig) {
   console.log('🔐 Setting up authentication...');
   
   const { baseURL } = config.projects[0].use;
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
+  const browser = await chromium.launch(_);
+  const context = await browser.newContext(_);
+  const page = await context.newPage(_);
 
   try {
     // Navigate to login page
-    await page.goto(`${baseURL}/auth/signin`);
+    await page.goto(_`${baseURL}/auth/signin`);
 
     // Mock authentication for test user
     await page.evaluate(() => {
@@ -176,11 +176,11 @@ async function setupAuthentication(config: FullConfig) {
           username: 'testuser',
           image: 'https://avatars.githubusercontent.com/u/1?v=4',
         },
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        expires: new Date(_Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       };
 
       // Set session in localStorage for client-side access
-      localStorage.setItem('test-session', JSON.stringify(mockSession));
+      localStorage.setItem( 'test-session', JSON.stringify(mockSession));
       
       // Set authentication cookies
       document.cookie = `next-auth.session-token=test-session-token; path=/; secure; samesite=lax`;
@@ -188,16 +188,16 @@ async function setupAuthentication(config: FullConfig) {
     });
 
     // Save authentication state
-    await context.storageState({ path: 'tests/auth/user.json' });
+    await context.storageState({ path: 'tests/auth/user.json'  });
 
     console.log('✅ Authentication setup completed');
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Authentication setup failed:', error);
     throw error;
   } finally {
-    await page.close();
-    await context.close();
-    await browser.close();
+    await page.close(_);
+    await context.close(_);
+    await browser.close(_);
   }
 }
 

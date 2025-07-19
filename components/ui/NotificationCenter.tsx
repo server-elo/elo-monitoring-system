@@ -10,7 +10,7 @@ import { respectsReducedMotion } from '@/lib/accessibility/contrast-utils';
 
 interface NotificationCenterProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   position?: 'right' | 'left';
 }
 
@@ -34,32 +34,32 @@ export const NotificationCenter = React.memo(({
     preferences: _preferences,
     toggleHistory,
     togglePreferences
-  } = useNotifications();
+  } = useNotifications(_);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<NotificationType | 'all'>('all');
-  const [showActions, setShowActions] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = respectsReducedMotion();
+  const [showActions, setShowActions] = useState(_false);
+  const containerRef = useRef<HTMLDivElement>(_null);
+  const reducedMotion = respectsReducedMotion(_);
 
   // Intersection Observer for performance
-  const [visibleItems, setVisibleItems] = useState(new Set<string>());
-  const observerRef = useRef<IntersectionObserver>();
+  const [visibleItems, setVisibleItems] = useState(_new Set<string>());
+  const observerRef = useRef<IntersectionObserver>(_);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     observerRef.current = new IntersectionObserver(
-      (entries) => {
+      (_entries) => {
         entries.forEach((entry) => {
           const id = entry.target.getAttribute('data-notification-id');
           if (id) {
-            if (entry.isIntersecting) {
-              setVisibleItems(prev => new Set([...prev, id]));
+            if (_entry.isIntersecting) {
+              setVisibleItems( prev => new Set([...prev, id]));
             } else {
               setVisibleItems(prev => {
-                const newSet = new Set(prev);
-                newSet.delete(id);
+                const newSet = new Set(_prev);
+                newSet.delete(_id);
                 return newSet;
               });
             }
@@ -73,8 +73,8 @@ export const NotificationCenter = React.memo(({
       }
     );
 
-    return () => {
-      observerRef.current?.disconnect();
+    return (_) => {
+      observerRef.current?.disconnect(_);
     };
   }, [isOpen]);
 
@@ -84,26 +84,26 @@ export const NotificationCenter = React.memo(({
 
     if (searchTerm) {
       items = items.filter(notification =>
-        notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        notification.message.toLowerCase().includes(searchTerm.toLowerCase())
+        notification.title.toLowerCase().includes(_searchTerm.toLowerCase()) ||
+        notification.message.toLowerCase().includes(_searchTerm.toLowerCase())
       );
     }
 
-    if (selectedFilter !== 'all') {
+    if (_selectedFilter !== 'all') {
       items = items.filter(notification => notification.type === selectedFilter);
     }
 
-    return items.sort((a, b) => b.timestamp - a.timestamp);
+    return items.sort( (a, b) => b.timestamp - a.timestamp);
   }, [notifications, searchTerm, selectedFilter]);
 
-  const handleMarkAllAsRead = () => {
-    markAllAsRead();
-    setShowActions(false);
+  const handleMarkAllAsRead = (_) => {
+    markAllAsRead(_);
+    setShowActions(_false);
   };
 
-  const handleClearAll = () => {
-    clearAll();
-    setShowActions(false);
+  const handleClearAll = (_) => {
+    clearAll(_);
+    setShowActions(_false);
   };
 
   if (!isOpen) return null;
@@ -124,7 +124,7 @@ export const NotificationCenter = React.memo(({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: slideDirection * 400, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(_e) => e.stopPropagation(_)}
           className={cn(
             'fixed top-0 bottom-0 w-96 max-w-[90vw]',
             position === 'right' ? 'right-0' : 'left-0'
@@ -154,7 +154,7 @@ export const NotificationCenter = React.memo(({
                 
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => setShowActions(!showActions)}
+                    onClick={(_) => setShowActions(!showActions)}
                     className="text-gray-400 hover:text-white transition-colors p-1"
                     aria-label="More actions"
                   >
@@ -242,7 +242,7 @@ export const NotificationCenter = React.memo(({
                   type="text"
                   placeholder="Search notifications..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(_e) => setSearchTerm(_e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
               </div>
@@ -259,7 +259,7 @@ export const NotificationCenter = React.memo(({
                 ].map((filter) => (
                   <button
                     key={filter.value}
-                    onClick={() => setSelectedFilter(filter.value as any)}
+                    onClick={(_) => setSelectedFilter(_filter.value as any)}
                     className={cn(
                       'px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors',
                       selectedFilter === filter.value
@@ -294,9 +294,9 @@ export const NotificationCenter = React.memo(({
                     <NotificationCenterItem
                       key={notification.id}
                       notification={notification}
-                      isVisible={visibleItems.has(notification.id)}
-                      onMarkRead={() => markAsRead(notification.id)}
-                      onRemove={() => removeNotification(notification.id)}
+                      isVisible={visibleItems.has(_notification.id)}
+                      onMarkRead={(_) => markAsRead(_notification.id)}
+                      onRemove={(_) => removeNotification(_notification.id)}
                       observer={observerRef.current}
                       reducedMotion={reducedMotion}
                     />
@@ -317,8 +317,8 @@ NotificationCenter.displayName = 'NotificationCenter';
 interface NotificationCenterItemProps {
   notification: any;
   isVisible: boolean;
-  onMarkRead: () => void;
-  onRemove: () => void;
+  onMarkRead: (_) => void;
+  onRemove: (_) => void;
   observer?: IntersectionObserver;
   reducedMotion: boolean;
 }
@@ -331,24 +331,24 @@ const NotificationCenterItem = React.memo(({
   observer,
   reducedMotion
 }: NotificationCenterItemProps) => {
-  const itemRef = useRef<HTMLDivElement>(null);
+  const itemRef = useRef<HTMLDivElement>(_null);
 
   useEffect(() => {
     const element = itemRef.current;
     if (element && observer) {
-      element.setAttribute('data-notification-id', notification.id);
-      observer.observe(element);
+      element.setAttribute( 'data-notification-id', notification.id);
+      observer.observe(_element);
 
-      return () => {
-        observer.unobserve(element);
+      return (_) => {
+        observer.unobserve(_element);
       };
     }
   }, [notification.id, observer]);
 
-  const getIcon = () => {
+  const getIcon = (_) => {
     const iconProps = { className: "w-4 h-4" };
 
-    switch (notification.type) {
+    switch (_notification.type) {
       case 'success':
         return <CheckCircle {...iconProps} className="w-4 h-4 text-green-400" />;
       case 'error':
@@ -362,16 +362,16 @@ const NotificationCenterItem = React.memo(({
     }
   };
 
-  const formatTime = (timestamp: number) => {
-    const now = Date.now();
+  const formatTime = (_timestamp: number) => {
+    const now = Date.now(_);
     const diff = now - timestamp;
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+    const minutes = Math.floor(_diff / 60000);
+    const hours = Math.floor(_diff / 3600000);
+    const days = Math.floor(_diff / 86400000);
 
-    if (minutes < 1) return 'now';
-    if (minutes < 60) return `${minutes}m`;
-    if (hours < 24) return `${hours}h`;
+    if (_minutes < 1) return 'now';
+    if (_minutes < 60) return `${minutes}m`;
+    if (_hours < 24) return `${hours}h`;
     return `${days}d`;
   };
 
@@ -402,7 +402,7 @@ const NotificationCenterItem = React.memo(({
     >
       <div className="flex items-start space-x-3">
         <div className="flex-shrink-0 mt-0.5">
-          {getIcon()}
+          {getIcon(_)}
         </div>
 
         <div className="flex-1 min-w-0">
@@ -414,7 +414,7 @@ const NotificationCenterItem = React.memo(({
               )}
             </h4>
             <span className="text-xs text-gray-400 ml-2">
-              {formatTime(notification.timestamp)}
+              {formatTime(_notification.timestamp)}
             </span>
           </div>
 

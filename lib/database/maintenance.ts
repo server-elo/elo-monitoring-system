@@ -88,28 +88,28 @@ export interface MemoryUsage {
 // Maintenance Scheduler
 export class MaintenanceScheduler {
   private static instance: MaintenanceScheduler;
-  private schedules: Map<string, MaintenanceSchedule> = new Map();
-  private timers: Map<string, NodeJS.Timeout> = new Map();
+  private schedules: Map<string, MaintenanceSchedule> = new Map(_);
+  private timers: Map<string, NodeJS.Timeout> = new Map(_);
   private isRunning: boolean = false;
 
-  constructor() {
-    this.initializeDefaultSchedules();
-    this.registerCleanupOperations();
+  constructor(_) {
+    this.initializeDefaultSchedules(_);
+    this.registerCleanupOperations(_);
   }
 
-  static getInstance(): MaintenanceScheduler {
+  static getInstance(_): MaintenanceScheduler {
     if (!MaintenanceScheduler.instance) {
-      MaintenanceScheduler.instance = new MaintenanceScheduler();
+      MaintenanceScheduler.instance = new MaintenanceScheduler(_);
     }
     return MaintenanceScheduler.instance;
   }
 
-  private registerCleanupOperations(): void {
-    registerOrphanedDataOperations();
-    registerDataRemovalOperations();
+  private registerCleanupOperations(_): void {
+    registerOrphanedDataOperations(_);
+    registerDataRemovalOperations(_);
   }
 
-  private initializeDefaultSchedules(): void {
+  private initializeDefaultSchedules(_): void {
     const defaultSchedules: MaintenanceSchedule[] = [
       {
         id: 'daily_cleanup',
@@ -145,7 +145,7 @@ export class MaintenanceScheduler {
         description: 'Weekly comprehensive cleanup including orphaned data and old logs',
         operations: [
           'orphaned_achievements',
-          'orphaned_progress',
+          'orphanedprogress',
           'orphaned_leaderboard',
           'orphaned_prerequisites',
           'old_logs'
@@ -204,16 +204,16 @@ export class MaintenanceScheduler {
     ];
 
     defaultSchedules.forEach(schedule => {
-      this.schedules.set(schedule.id, schedule);
+      this.schedules.set( schedule.id, schedule);
     });
 
-    logger.info('Default maintenance schedules initialized', {
+    logger.info('Default maintenance schedules initialized', { metadata: {
       scheduleCount: defaultSchedules.length
     });
-  }
+  }});
 
-  async startScheduler(): Promise<void> {
-    if (this.isRunning) {
+  async startScheduler(_): Promise<void> {
+    if (_this.isRunning) {
       logger.warn('Maintenance scheduler is already running');
       return;
     }
@@ -222,18 +222,18 @@ export class MaintenanceScheduler {
     logger.info('Starting maintenance scheduler');
 
     // Schedule all enabled maintenance tasks
-    for (const [scheduleId, schedule] of this.schedules.entries()) {
-      if (schedule.enabled) {
-        this.scheduleTask(scheduleId, schedule);
+    for ( const [scheduleId, schedule] of this.schedules.entries()) {
+      if (_schedule.enabled) {
+        this.scheduleTask( scheduleId, schedule);
       }
     }
 
-    logger.info('Maintenance scheduler started', {
-      activeSchedules: Array.from(this.schedules.values()).filter(s => s.enabled).length
+    logger.info('Maintenance scheduler started', { metadata: {
+      activeSchedules: Array.from(_this.schedules.values()).filter(s => s.enabled).length
     });
-  }
+  }});
 
-  async stopScheduler(): Promise<void> {
+  async stopScheduler(_): Promise<void> {
     if (!this.isRunning) {
       return;
     }
@@ -242,91 +242,91 @@ export class MaintenanceScheduler {
     logger.info('Stopping maintenance scheduler');
 
     // Clear all timers
-    for (const [scheduleId, timer] of this.timers.entries()) {
-      clearTimeout(timer);
-      this.timers.delete(scheduleId);
+    for ( const [scheduleId, timer] of this.timers.entries()) {
+      clearTimeout(_timer);
+      this.timers.delete(_scheduleId);
     }
 
     logger.info('Maintenance scheduler stopped');
   }
 
-  private scheduleTask(scheduleId: string, schedule: MaintenanceSchedule): void {
-    const nextRun = this.calculateNextRun(schedule.schedule);
-    const delay = nextRun.getTime() - Date.now();
+  private scheduleTask( scheduleId: string, schedule: MaintenanceSchedule): void {
+    const nextRun = this.calculateNextRun(_schedule.schedule);
+    const delay = nextRun.getTime(_) - Date.now(_);
 
-    if (delay > 0) {
-      const timer = setTimeout(async () => {
-        await this.executeScheduledMaintenance(scheduleId);
+    if (_delay > 0) {
+      const timer = setTimeout( async () => {
+        await this.executeScheduledMaintenance(_scheduleId);
         
         // Reschedule for next run
-        if (this.isRunning && schedule.enabled) {
-          this.scheduleTask(scheduleId, schedule);
+        if (_this.isRunning && schedule.enabled) {
+          this.scheduleTask( scheduleId, schedule);
         }
       }, delay);
 
-      this.timers.set(scheduleId, timer);
+      this.timers.set( scheduleId, timer);
       
       // Update next run time
       schedule.nextRun = nextRun.toISOString();
 
-      logger.info('Maintenance task scheduled', {
+      logger.info('Maintenance task scheduled', { metadata: {
         scheduleId,
         nextRun: nextRun.toISOString(),
         delayMs: delay
       });
-    }
+    }});
   }
 
-  private calculateNextRun(schedule: CronSchedule): Date {
+  private calculateNextRun(_schedule: CronSchedule): Date {
     // Simplified cron calculation - in production, use a proper cron library
-    const now = new Date();
+    const now = new Date(_);
     const nextRun = new Date(now);
 
     // Parse hour and minute
-    const hour = schedule.hour === '*' ? now.getHours() : parseInt(schedule.hour);
-    const minute = schedule.minute === '*' ? now.getMinutes() : parseInt(schedule.minute);
+    const hour = schedule.hour === '*' ? now.getHours(_) : parseInt(_schedule.hour);
+    const minute = schedule.minute === '*' ? now.getMinutes(_) : parseInt(_schedule.minute);
 
-    nextRun.setHours(hour, minute, 0, 0);
+    nextRun.setHours( hour, minute, 0, 0);
 
     // If the time has passed today, schedule for tomorrow
-    if (nextRun <= now) {
-      nextRun.setDate(nextRun.getDate() + 1);
+    if (_nextRun <= now) {
+      nextRun.setDate(_nextRun.getDate() + 1);
     }
 
     // Handle day of week
-    if (schedule.dayOfWeek !== '*') {
-      const targetDay = parseInt(schedule.dayOfWeek);
-      const currentDay = nextRun.getDay();
+    if (_schedule.dayOfWeek !== '*') {
+      const targetDay = parseInt(_schedule.dayOfWeek);
+      const currentDay = nextRun.getDay(_);
       
-      if (currentDay !== targetDay) {
-        const daysUntilTarget = (targetDay - currentDay + 7) % 7;
-        nextRun.setDate(nextRun.getDate() + daysUntilTarget);
+      if (_currentDay !== targetDay) {
+        const daysUntilTarget = (_targetDay - currentDay + 7) % 7;
+        nextRun.setDate(_nextRun.getDate() + daysUntilTarget);
       }
     }
 
     // Handle day of month
-    if (schedule.dayOfMonth !== '*') {
-      const targetDate = parseInt(schedule.dayOfMonth);
-      nextRun.setDate(targetDate);
+    if (_schedule.dayOfMonth !== '*') {
+      const targetDate = parseInt(_schedule.dayOfMonth);
+      nextRun.setDate(_targetDate);
       
       // If the date has passed this month, move to next month
-      if (nextRun <= now) {
-        nextRun.setMonth(nextRun.getMonth() + 1);
-        nextRun.setDate(targetDate);
+      if (_nextRun <= now) {
+        nextRun.setMonth(_nextRun.getMonth() + 1);
+        nextRun.setDate(_targetDate);
       }
     }
 
     return nextRun;
   }
 
-  async executeScheduledMaintenance(scheduleId: string): Promise<MaintenanceReport> {
-    const schedule = this.schedules.get(scheduleId);
+  async executeScheduledMaintenance(_scheduleId: string): Promise<MaintenanceReport> {
+    const schedule = this.schedules.get(_scheduleId);
     if (!schedule) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new Error(_`Schedule not found: ${scheduleId}`);
     }
 
-    const startTime = new Date();
-    logger.info('Starting scheduled maintenance', {
+    const startTime = new Date(_);
+    logger.info('Starting scheduled maintenance', { metadata: {
       scheduleId,
       scheduleName: schedule.name,
       operations: schedule.operations
@@ -334,7 +334,7 @@ export class MaintenanceScheduler {
 
     try {
       // Collect system metrics before maintenance
-      const beforeMetrics = await this.collectSystemMetrics();
+      const beforeMetrics = await this.collectSystemMetrics(_);
 
       // Execute cleanup operations
       const cleanupResults = await cleanupManager.executeBatch(
@@ -343,16 +343,16 @@ export class MaintenanceScheduler {
       );
 
       // Collect system metrics after maintenance
-      const afterMetrics = await this.collectSystemMetrics();
+      const afterMetrics = await this.collectSystemMetrics(_);
 
       // Update last run time
       schedule.lastRun = startTime.toISOString();
 
-      const endTime = new Date();
-      const duration = endTime.getTime() - startTime.getTime();
+      const endTime = new Date(_);
+      const duration = endTime.getTime(_) - startTime.getTime(_);
 
       const report: MaintenanceReport = {
-        id: `maintenance_${Date.now()}`,
+        id: `maintenance_${Date.now(_)}`,
         scheduleId,
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
@@ -360,13 +360,13 @@ export class MaintenanceScheduler {
         status: cleanupResults.status,
         operations: [cleanupResults],
         systemMetrics: afterMetrics,
-        recommendations: this.generateRecommendations(beforeMetrics, afterMetrics, cleanupResults)
+        recommendations: this.generateRecommendations( beforeMetrics, afterMetrics, cleanupResults)
       };
 
       // Send notifications
-      await this.sendNotifications(schedule, report);
+      await this.sendNotifications( schedule, report);
 
-      logger.info('Scheduled maintenance completed', {
+      logger.info('Scheduled maintenance completed', { metadata: {
         scheduleId,
         status: report.status,
         duration,
@@ -375,35 +375,35 @@ export class MaintenanceScheduler {
 
       return report;
 
-    } catch (error) {
-      const endTime = new Date();
-      const duration = endTime.getTime() - startTime.getTime();
+    } catch (_error) {
+      const endTime = new Date(_);
+      const duration = endTime.getTime(_) - startTime.getTime(_);
 
       const errorReport: MaintenanceReport = {
-        id: `maintenance_${Date.now()}`,
+        id: `maintenance_${Date.now(_)}`,
         scheduleId,
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
         duration,
         status: 'FAILED',
         operations: [],
-        systemMetrics: await this.collectSystemMetrics(),
+        systemMetrics: await this.collectSystemMetrics(_),
         recommendations: [`Maintenance failed: ${error instanceof Error ? error.message : 'Unknown error'}`]
       };
 
-      await this.sendNotifications(schedule, errorReport);
+      await this.sendNotifications( schedule, errorReport);
 
-      logger.error('Scheduled maintenance failed', {
+      logger.error('Scheduled maintenance failed', { metadata: {
         scheduleId,
         error: error instanceof Error ? error.message : 'Unknown error',
         duration
       });
 
       return errorReport;
-    }
+    }});
   }
 
-  private async collectSystemMetrics(): Promise<SystemMetrics> {
+  private async collectSystemMetrics(_): Promise<SystemMetrics> {
     // Mock system metrics collection
     // In production, this would query actual system and database metrics
     return {
@@ -413,14 +413,14 @@ export class MaintenanceScheduler {
           tableName: 'users',
           rowCount: 10000,
           sizeBytes: 50 * 1024 * 1024,
-          lastAnalyzed: new Date().toISOString(),
+          lastAnalyzed: new Date(_).toISOString(),
           fragmentationLevel: 5
         },
         {
           tableName: 'lessons',
           rowCount: 500,
           sizeBytes: 10 * 1024 * 1024,
-          lastAnalyzed: new Date().toISOString(),
+          lastAnalyzed: new Date(_).toISOString(),
           fragmentationLevel: 2
         }
       ],
@@ -430,7 +430,7 @@ export class MaintenanceScheduler {
           query: 'SELECT * FROM users WHERE email = ?',
           avgExecutionTime: 2.5,
           executionCount: 1000,
-          lastExecuted: new Date().toISOString()
+          lastExecuted: new Date(_).toISOString()
         }
       ],
       diskUsage: {
@@ -456,45 +456,45 @@ export class MaintenanceScheduler {
     const recommendations: string[] = [];
 
     // Disk usage recommendations
-    if (afterMetrics.diskUsage.percentage > 80) {
+    if (_afterMetrics.diskUsage.percentage > 80) {
       recommendations.push('Disk usage is high (>80%). Consider increasing cleanup frequency or archiving old data.');
     }
 
     // Database size recommendations
     const sizeDiff = beforeMetrics.databaseSize - afterMetrics.databaseSize;
-    if (sizeDiff > 0) {
-      const savedMB = Math.round(sizeDiff / (1024 * 1024));
-      recommendations.push(`Cleanup freed ${savedMB}MB of database space.`);
+    if (_sizeDiff > 0) {
+      const savedMB = Math.round(_sizeDiff / (1024 * 1024));
+      recommendations.push(_`Cleanup freed ${savedMB}MB of database space.`);
     }
 
     // Cleanup results recommendations
-    if (cleanupResults.totalErrors > 0) {
-      recommendations.push(`${cleanupResults.totalErrors} errors occurred during cleanup. Review logs for details.`);
+    if (_cleanupResults.totalErrors > 0) {
+      recommendations.push(_`${cleanupResults.totalErrors} errors occurred during cleanup. Review logs for details.`);
     }
 
-    if (cleanupResults.totalWarnings > 5) {
-      recommendations.push(`${cleanupResults.totalWarnings} warnings generated. Consider reviewing data integrity.`);
+    if (_cleanupResults.totalWarnings > 5) {
+      recommendations.push(_`${cleanupResults.totalWarnings} warnings generated. Consider reviewing data integrity.`);
     }
 
     // Performance recommendations
-    if (afterMetrics.indexEfficiency < 90) {
+    if (_afterMetrics.indexEfficiency < 90) {
       recommendations.push('Index efficiency is below 90%. Consider rebuilding indexes.');
     }
 
     return recommendations;
   }
 
-  private async sendNotifications(schedule: MaintenanceSchedule, report: MaintenanceReport): Promise<void> {
+  private async sendNotifications( schedule: MaintenanceSchedule, report: MaintenanceReport): Promise<void> {
     const shouldNotify = 
-      (report.status === 'SUCCESS' && schedule.notifications.onSuccess) ||
-      (report.status === 'FAILED' && schedule.notifications.onFailure) ||
-      (report.status === 'PARTIAL_SUCCESS' && schedule.notifications.onWarnings);
+      (_report.status === 'SUCCESS' && schedule.notifications.onSuccess) ||
+      (_report.status === 'FAILED' && schedule.notifications.onFailure) ||
+      (_report.status === 'PARTIAL_SUCCESS' && schedule.notifications.onWarnings);
 
     if (!shouldNotify) {
       return;
     }
 
-    logger.info('Sending maintenance notifications', {
+    logger.info('Sending maintenance notifications', { metadata: {
       scheduleId: schedule.id,
       status: report.status,
       recipients: schedule.notifications.recipients.length,
@@ -506,96 +506,96 @@ export class MaintenanceScheduler {
     const notification = {
       subject: `Maintenance Report: ${schedule.name}`,
       status: report.status,
-      duration: `${Math.round(report.duration / 1000)}s`,
+      duration: `${Math.round(_report.duration / 1000)}s`,
       operations: report.operations.length,
       recommendations: report.recommendations
     };
 
-    logger.info('Maintenance notification sent', notification);
-  }
+    logger.info( 'Maintenance notification sent', notification);
+  }});
 
   // Public API methods
-  async addSchedule(schedule: MaintenanceSchedule): Promise<void> {
-    this.schedules.set(schedule.id, schedule);
+  async addSchedule(_schedule: MaintenanceSchedule): Promise<void> {
+    this.schedules.set( schedule.id, schedule);
     
-    if (schedule.enabled && this.isRunning) {
-      this.scheduleTask(schedule.id, schedule);
+    if (_schedule.enabled && this.isRunning) {
+      this.scheduleTask( schedule.id, schedule);
     }
 
-    logger.info('Maintenance schedule added', {
+    logger.info('Maintenance schedule added', { metadata: {
       scheduleId: schedule.id,
       name: schedule.name
     });
-  }
+  }});
 
-  async updateSchedule(scheduleId: string, updates: Partial<MaintenanceSchedule>): Promise<void> {
-    const schedule = this.schedules.get(scheduleId);
+  async updateSchedule( scheduleId: string, updates: Partial<MaintenanceSchedule>): Promise<void> {
+    const schedule = this.schedules.get(_scheduleId);
     if (!schedule) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new Error(_`Schedule not found: ${scheduleId}`);
     }
 
     // Clear existing timer
-    const timer = this.timers.get(scheduleId);
+    const timer = this.timers.get(_scheduleId);
     if (timer) {
-      clearTimeout(timer);
-      this.timers.delete(scheduleId);
+      clearTimeout(_timer);
+      this.timers.delete(_scheduleId);
     }
 
     // Update schedule
-    Object.assign(schedule, updates);
+    Object.assign( schedule, updates);
 
     // Reschedule if enabled
-    if (schedule.enabled && this.isRunning) {
-      this.scheduleTask(scheduleId, schedule);
+    if (_schedule.enabled && this.isRunning) {
+      this.scheduleTask( scheduleId, schedule);
     }
 
-    logger.info('Maintenance schedule updated', {
+    logger.info('Maintenance schedule updated', { metadata: {
       scheduleId,
       enabled: schedule.enabled
     });
-  }
+  }});
 
-  async deleteSchedule(scheduleId: string): Promise<void> {
-    const timer = this.timers.get(scheduleId);
+  async deleteSchedule(_scheduleId: string): Promise<void> {
+    const timer = this.timers.get(_scheduleId);
     if (timer) {
-      clearTimeout(timer);
-      this.timers.delete(scheduleId);
+      clearTimeout(_timer);
+      this.timers.delete(_scheduleId);
     }
 
-    this.schedules.delete(scheduleId);
+    this.schedules.delete(_scheduleId);
 
-    logger.info('Maintenance schedule deleted', { scheduleId });
+    logger.info( 'Maintenance schedule deleted', { metadata: { scheduleId });
   }
 
-  getSchedules(): MaintenanceSchedule[] {
-    return Array.from(this.schedules.values());
+  getSchedules(_): MaintenanceSchedule[] {
+    return Array.from(_this.schedules.values());
   }
 
-  getSchedule(scheduleId: string): MaintenanceSchedule | undefined {
-    return this.schedules.get(scheduleId);
+  getSchedule(_scheduleId: string): MaintenanceSchedule | undefined {
+    return this.schedules.get(_scheduleId);
   }
 
-  async runMaintenanceNow(scheduleId: string): Promise<MaintenanceReport> {
-    return this.executeScheduledMaintenance(scheduleId);
+  async runMaintenanceNow(_scheduleId: string): Promise<MaintenanceReport> {
+    return this.executeScheduledMaintenance(_scheduleId);
   }
 
-  async getMaintenanceStatus(): Promise<{
+  async getMaintenanceStatus(_): Promise<{
     schedulerRunning: boolean;
     activeSchedules: number;
     nextRun?: string;
     lastRun?: string;
   }> {
-    const activeSchedules = Array.from(this.schedules.values()).filter(s => s.enabled);
+    const activeSchedules = Array.from(_this.schedules.values()).filter(s => s.enabled);
     const nextRuns = activeSchedules
       .map(s => s.nextRun)
       .filter(Boolean)
-      .sort();
+      .sort(_);
     
     const lastRuns = activeSchedules
       .map(s => s.lastRun)
       .filter(Boolean)
-      .sort()
-      .reverse();
+      .sort(_)
+      .reverse(_);
 
     return {
       schedulerRunning: this.isRunning,
@@ -607,14 +607,14 @@ export class MaintenanceScheduler {
 }
 
 // Export singleton instance
-export const maintenanceScheduler = MaintenanceScheduler.getInstance();
+export const maintenanceScheduler = MaintenanceScheduler.getInstance(_);
 
 // Initialize maintenance system
 export async function initializeMaintenanceSystem(): Promise<void> {
   logger.info('Initializing maintenance system');
 
   // Start the scheduler
-  await maintenanceScheduler.startScheduler();
+  await maintenanceScheduler.startScheduler(_);
 
   logger.info('Maintenance system initialized successfully');
 }
@@ -624,7 +624,7 @@ export async function shutdownMaintenanceSystem(): Promise<void> {
   logger.info('Shutting down maintenance system');
 
   // Stop the scheduler
-  await maintenanceScheduler.stopScheduler();
+  await maintenanceScheduler.stopScheduler(_);
 
   logger.info('Maintenance system shutdown complete');
 }

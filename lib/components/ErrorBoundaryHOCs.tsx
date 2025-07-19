@@ -32,7 +32,7 @@ interface ErrorBoundaryConfig {
   /** Maximum number of retries */
   maxRetries?: number;
   /** Custom error handler */
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+  onError?: ( error: Error, errorInfo: React.ErrorInfo) => void;
   /** Show error details in development */
   showErrorDetails?: boolean;
 }
@@ -44,10 +44,10 @@ export function withPageErrorBoundary<P extends object>(
   Component: ComponentType<P>,
   config: ErrorBoundaryConfig = {}
 ) {
-  const WrappedComponent = forwardRef<unknown, P>((props, ref) => {
+  const WrappedComponent = forwardRef<unknown, P>( (props, ref) => {
     // Error handling is done by the specialized error boundary
-    // const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
-      logger.error(`Page Error Boundary: ${config.name || Component.displayName || Component.name}`, {
+    // const handleError = ( error: Error, errorInfo: React.ErrorInfo) => {
+      logger.error(`Page Error Boundary: ${config.name || Component.displayName || Component.name}`, { metadata: {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
@@ -55,7 +55,7 @@ export function withPageErrorBoundary<P extends object>(
         props: process.env.NODE_ENV === 'development' ? props : undefined
       });
       
-      config.onError?.(error, errorInfo);
+      config.onError?.( error, errorInfo);
     // };
 
     return (
@@ -69,9 +69,9 @@ export function withPageErrorBoundary<P extends object>(
     );
   });
 
-  WrappedComponent.displayName = `withPageErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withPageErrorBoundary(_${Component.displayName || Component.name})`;
   return WrappedComponent;
-}
+}});
 
 /**
  * HOC that wraps a component with a feature-level error boundary
@@ -80,10 +80,10 @@ export function withFeatureErrorBoundary<P extends object>(
   Component: ComponentType<P>,
   config: ErrorBoundaryConfig = {}
 ) {
-  const WrappedComponent = forwardRef<unknown, P>((props, ref) => {
+  const WrappedComponent = forwardRef<unknown, P>( (props, ref) => {
     // Error handling is done by the specialized error boundary
-    // const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
-      logger.error(`Feature Error Boundary: ${config.name || Component.displayName || Component.name}`, {
+    // const handleError = ( error: Error, errorInfo: React.ErrorInfo) => {
+      logger.error(`Feature Error Boundary: ${config.name || Component.displayName || Component.name}`, { metadata: {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
@@ -91,7 +91,7 @@ export function withFeatureErrorBoundary<P extends object>(
         props: process.env.NODE_ENV === 'development' ? props : undefined
       });
       
-      config.onError?.(error, errorInfo);
+      config.onError?.( error, errorInfo);
     // };
 
     return (
@@ -107,9 +107,9 @@ export function withFeatureErrorBoundary<P extends object>(
     );
   });
 
-  WrappedComponent.displayName = `withFeatureErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withFeatureErrorBoundary(_${Component.displayName || Component.name})`;
   return WrappedComponent;
-}
+}});
 
 /**
  * HOC that wraps a component with a component-level error boundary
@@ -118,10 +118,10 @@ export function withComponentErrorBoundary<P extends object>(
   Component: ComponentType<P>,
   config: ErrorBoundaryConfig = {}
 ) {
-  const WrappedComponent = forwardRef<unknown, P>((props, ref) => {
+  const WrappedComponent = forwardRef<unknown, P>( (props, ref) => {
     // Error handling is done by the specialized error boundary
-    // const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
-      logger.error(`Component Error Boundary: ${config.name || Component.displayName || Component.name}`, {
+    // const handleError = ( error: Error, errorInfo: React.ErrorInfo) => {
+      logger.error(`Component Error Boundary: ${config.name || Component.displayName || Component.name}`, { metadata: {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
@@ -129,7 +129,7 @@ export function withComponentErrorBoundary<P extends object>(
         props: process.env.NODE_ENV === 'development' ? props : undefined
       });
       
-      config.onError?.(error, errorInfo);
+      config.onError?.( error, errorInfo);
     // };
 
     return (
@@ -145,9 +145,9 @@ export function withComponentErrorBoundary<P extends object>(
     );
   });
 
-  WrappedComponent.displayName = `withComponentErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withComponentErrorBoundary(_${Component.displayName || Component.name})`;
   return WrappedComponent;
-}
+}});
 
 /**
  * HOC that wraps a code editor component with specialized error boundary
@@ -156,10 +156,10 @@ export function withCodeEditorErrorBoundary<P extends object>(
   Component: ComponentType<P>,
   config: ErrorBoundaryConfig = {}
 ) {
-  const WrappedComponent = forwardRef<unknown, P>((props, ref) => {
+  const WrappedComponent = forwardRef<unknown, P>( (props, ref) => {
     // Error handling is done by the specialized error boundary
-    // const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
-      logger.error(`Code Editor Error Boundary: ${config.name || Component.displayName || Component.name}`, {
+    // const handleError = ( error: Error, errorInfo: React.ErrorInfo) => {
+      logger.error(`Code Editor Error Boundary: ${config.name || Component.displayName || Component.name}`, { metadata: {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
@@ -167,7 +167,7 @@ export function withCodeEditorErrorBoundary<P extends object>(
         props: process.env.NODE_ENV === 'development' ? props : undefined
       });
       
-      config.onError?.(error, errorInfo);
+      config.onError?.( error, errorInfo);
     // };
 
     return (
@@ -177,9 +177,9 @@ export function withCodeEditorErrorBoundary<P extends object>(
     );
   });
 
-  WrappedComponent.displayName = `withCodeEditorErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withCodeEditorErrorBoundary(_${Component.displayName || Component.name})`;
   return WrappedComponent;
-}
+}});
 
 /**
  * HOC that wraps a learning module component with specialized error boundary
@@ -188,10 +188,10 @@ export function withLearningModuleErrorBoundary<P extends object>(
   Component: ComponentType<P>,
   config: ErrorBoundaryConfig & { moduleId?: string; lessonId?: string } = {}
 ) {
-  const WrappedComponent = forwardRef<unknown, P>((props, ref) => {
+  const WrappedComponent = forwardRef<unknown, P>( (props, ref) => {
     // Error handling is done by the specialized error boundary
-    // const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
-      logger.error(`Learning Module Error Boundary: ${config.name || Component.displayName || Component.name}`, {
+    // const handleError = ( error: Error, errorInfo: React.ErrorInfo) => {
+      logger.error(`Learning Module Error Boundary: ${config.name || Component.displayName || Component.name}`, { metadata: {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
@@ -201,7 +201,7 @@ export function withLearningModuleErrorBoundary<P extends object>(
         props: process.env.NODE_ENV === 'development' ? props : undefined
       });
       
-      config.onError?.(error, errorInfo);
+      config.onError?.( error, errorInfo);
     // };
 
     return (
@@ -214,9 +214,9 @@ export function withLearningModuleErrorBoundary<P extends object>(
     );
   });
 
-  WrappedComponent.displayName = `withLearningModuleErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withLearningModuleErrorBoundary(_${Component.displayName || Component.name})`;
   return WrappedComponent;
-}
+}});
 
 /**
  * HOC that wraps an authentication component with specialized error boundary
@@ -225,10 +225,10 @@ export function withAuthErrorBoundary<P extends object>(
   Component: ComponentType<P>,
   config: ErrorBoundaryConfig = {}
 ) {
-  const WrappedComponent = forwardRef<unknown, P>((props, ref) => {
+  const WrappedComponent = forwardRef<unknown, P>( (props, ref) => {
     // Error handling is done by the specialized error boundary
-    // const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
-      logger.error(`Auth Error Boundary: ${config.name || Component.displayName || Component.name}`, {
+    // const handleError = ( error: Error, errorInfo: React.ErrorInfo) => {
+      logger.error(`Auth Error Boundary: ${config.name || Component.displayName || Component.name}`, { metadata: {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
@@ -236,7 +236,7 @@ export function withAuthErrorBoundary<P extends object>(
         props: process.env.NODE_ENV === 'development' ? props : undefined
       });
       
-      config.onError?.(error, errorInfo);
+      config.onError?.( error, errorInfo);
     // };
 
     return (
@@ -246,9 +246,9 @@ export function withAuthErrorBoundary<P extends object>(
     );
   });
 
-  WrappedComponent.displayName = `withAuthErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withAuthErrorBoundary(_${Component.displayName || Component.name})`;
   return WrappedComponent;
-}
+}});
 
 /**
  * HOC that wraps an async component with specialized error boundary
@@ -257,13 +257,13 @@ export function withAsyncErrorBoundary<P extends object>(
   Component: ComponentType<P>,
   config: ErrorBoundaryConfig & { 
     operationType?: 'api' | 'upload' | 'processing' | 'authentication';
-    onRetry?: () => Promise<void>;
+    onRetry?: (_) => Promise<void>;
   } = {}
 ) {
-  const WrappedComponent = forwardRef<unknown, P>((props, ref) => {
+  const WrappedComponent = forwardRef<unknown, P>( (props, ref) => {
     // Error handling is done by the specialized error boundary
-    // const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
-      logger.error(`Async Error Boundary: ${config.name || Component.displayName || Component.name}`, {
+    // const handleError = ( error: Error, errorInfo: React.ErrorInfo) => {
+      logger.error(`Async Error Boundary: ${config.name || Component.displayName || Component.name}`, { metadata: {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
@@ -272,7 +272,7 @@ export function withAsyncErrorBoundary<P extends object>(
         props: process.env.NODE_ENV === 'development' ? props : undefined
       });
       
-      config.onError?.(error, errorInfo);
+      config.onError?.( error, errorInfo);
     // };
 
     return (
@@ -285,9 +285,9 @@ export function withAsyncErrorBoundary<P extends object>(
     );
   });
 
-  WrappedComponent.displayName = `withAsyncErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withAsyncErrorBoundary(_${Component.displayName || Component.name})`;
   return WrappedComponent;
-}
+}});
 
 /**
  * Utility function to automatically choose the appropriate error boundary HOC
@@ -301,27 +301,27 @@ export function withSmartErrorBoundary<P extends object>(
       moduleId?: string;
       lessonId?: string;
       operationType?: 'api' | 'upload' | 'processing' | 'authentication';
-      onRetry?: () => Promise<void>;
+      onRetry?: (_) => Promise<void>;
     };
   }
 ) {
-  switch (context.type) {
+  switch (_context.type) {
     case 'page':
-      return withPageErrorBoundary(Component, context.config);
+      return withPageErrorBoundary( Component, context.config);
     case 'feature':
-      return withFeatureErrorBoundary(Component, context.config);
+      return withFeatureErrorBoundary( Component, context.config);
     case 'component':
-      return withComponentErrorBoundary(Component, context.config);
+      return withComponentErrorBoundary( Component, context.config);
     case 'code-editor':
-      return withCodeEditorErrorBoundary(Component, context.config);
+      return withCodeEditorErrorBoundary( Component, context.config);
     case 'learning-module':
-      return withLearningModuleErrorBoundary(Component, context.config);
+      return withLearningModuleErrorBoundary( Component, context.config);
     case 'auth':
-      return withAuthErrorBoundary(Component, context.config);
+      return withAuthErrorBoundary( Component, context.config);
     case 'async':
-      return withAsyncErrorBoundary(Component, context.config);
+      return withAsyncErrorBoundary( Component, context.config);
     default:
-      return withComponentErrorBoundary(Component, context.config);
+      return withComponentErrorBoundary( Component, context.config);
   }
 }
 
@@ -332,8 +332,8 @@ export function ErrorBoundaryDecorator(
   type: 'page' | 'feature' | 'component' | 'code-editor' | 'learning-module' | 'auth' | 'async',
   config?: ErrorBoundaryConfig
 ) {
-  return function <T extends ComponentType<any>>(target: T): T {
-    return withSmartErrorBoundary(target, { type, config }) as T;
+  return function <T extends ComponentType<any>>(_target: T): T {
+    return withSmartErrorBoundary( target, { type, config }) as T;
   };
 }
 

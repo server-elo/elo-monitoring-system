@@ -14,40 +14,40 @@ interface UserManagementProps {
 }
 
 interface UserTableProps {
-  users: AdminUser[];
-  selectedUsers: Set<string>;
-  onSelectUser: (userId: string) => void;
-  onSelectAll: (selected: boolean) => void;
+  users: AdminUser[]; 
+  selectedUsers: Set<string>; 
+  onSelectUser: (userId: string) => void; 
+  onSelectAll: (_selected: boolean) => void; 
   onUserAction: (userId: string, action: string) => void;
   loading?: boolean;
 }
 
 function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserAction, loading }: UserTableProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const getStatusColor = (_status: string) => {
+    switch (_status) {
       case 'active': return 'text-green-400 bg-green-500/10';
       case 'suspended': return 'text-yellow-400 bg-yellow-500/10';
       case 'banned': return 'text-red-400 bg-red-500/10';
-      default: return 'text-gray-400 bg-gray-500/10';
+      default: return 'text-gray-400 bg-gray-500/10'; 
     }
   };
 
-  const getRoleColor = (role: string) => {
-    switch (role) {
+  const getRoleColor = (_role: string) => {
+    switch (_role) {
       case 'admin': return 'text-purple-400 bg-purple-500/10';
       case 'instructor': return 'text-blue-400 bg-blue-500/10';
       case 'student': return 'text-green-400 bg-green-500/10';
-      default: return 'text-gray-400 bg-gray-500/10';
+      default: return 'text-gray-400 bg-gray-500/10'; 
     }
   };
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: 'numeric' 
+      month: 'short' 
+      day: 'numeric' 
+      hour: '2-digit' 
+      minute: '2-digit' 
     }).format(date);
   };
 
@@ -67,11 +67,11 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                 <div className="w-20 h-6 bg-gray-600 animate-pulse rounded" />
                 <div className="w-16 h-6 bg-gray-600 animate-pulse rounded" />
               </div>
-            ))}
+           ))}
           </div>
         </div>
       </Card>
-    );
+   );
   }
 
   return (
@@ -84,7 +84,7 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                 <input
                   type="checkbox"
                   checked={selectedUsers.size === users.length && users.length > 0}
-                  onChange={(e) => onSelectAll(e.target.checked)}
+                  onChange={(_e) => onSelectAll(_e.target.checked)}
                   className="rounded border-white/20 bg-white/10 text-blue-500 focus:ring-blue-500"
                 />
               </th>
@@ -109,7 +109,7 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                   <input
                     type="checkbox"
                     checked={selectedUsers.has(user.id)}
-                    onChange={() => onSelectUser(user.id)}
+                    onChange={(() => onSelectUser(user.id)}
                     className="rounded border-white/20 bg-white/10 text-blue-500 focus:ring-blue-500"
                   />
                 </td>
@@ -118,11 +118,11 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                     <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                       {user.avatar ? (
                         <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
-                      ) : (
+                     ) : (
                         <span className="text-white font-medium text-sm">
                           {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                         </span>
-                      )}
+                     )}
                     </div>
                     <div>
                       <div className="font-medium text-white">{user.name}</div>
@@ -132,24 +132,24 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                           <AlertTriangle className="w-3 h-3 text-yellow-400" />
                           <span className="text-xs text-yellow-400">Unverified</span>
                         </div>
-                      )}
+                     )}
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <span className={cn(
-                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium' 
                     getRoleColor(user.role)
-                  )}>
+                 )}>
                     {user.role === 'admin' && <Shield className="w-3 h-3 mr-1" />}
                     {user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   <span className={cn(
-                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium' 
                     getStatusColor(user.status)
-                  )}>
+                 )}>
                     {user.status === 'active' && <CheckCircle className="w-3 h-3 mr-1" />}
                     {user.status === 'suspended' && <Clock className="w-3 h-3 mr-1" />}
                     {user.status === 'banned' && <XCircle className="w-3 h-3 mr-1" />}
@@ -168,9 +168,9 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                           {user.loginCount} logins
                         </div>
                       </div>
-                    ) : (
+                   ) : (
                       <span className="text-gray-500">Never</span>
-                    )}
+                   )}
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -185,9 +185,9 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                     </div>
                     {user.averageScore > 0 && (
                       <div className="text-xs text-gray-400 mt-1">
-                        Avg: {user.averageScore}%
+                        Avg: {user.averageScore}% 
                       </div>
-                    )}
+                   )}
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -201,23 +201,23 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end space-x-2">
                     <Button
-                      onClick={() => onUserAction(user.id, 'view')}
+                      onClick={(() => onUserAction(user.id, 'view')}
                       variant="ghost"
                       size="sm"
                       className="text-gray-400 hover:text-white"
                     >
                       <Eye className="w-4 h-4" />
                     </Button>
-                    {adminAuth.hasPermission(ADMIN_PERMISSIONS.USERS_WRITE) && (
+                    {adminAuth.hasPermission(_ADMIN_PERMISSIONS.USERS_WRITE) && (
                       <Button
-                        onClick={() => onUserAction(user.id, 'edit')}
+                        onClick={(() => onUserAction(user.id, 'edit')}
                         variant="ghost"
                         size="sm"
                         className="text-gray-400 hover:text-white"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
-                    )}
+                   )}
                     <div className="relative">
                       <Button
                         variant="ghost"
@@ -230,35 +230,35 @@ function UserTable({ users, selectedUsers, onSelectUser, onSelectAll, onUserActi
                   </div>
                 </td>
               </motion.tr>
-            ))}
+           ))}
           </tbody>
         </table>
       </div>
     </Card>
-  );
+ );
 }
 
-export function UserManagement({ className }: UserManagementProps) {
+export function UserManagement(_{ className }: UserManagementProps) {
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(_new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [filters] = useState<AdminFilter[]>([]);
   const [sort] = useState<AdminSort>({ field: 'createdAt', direction: 'desc' });
   const [pagination, setPagination] = useState<AdminPagination>({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0
+    page: 1 
+    limit: 10 
+    total: 0 
+    totalPages: 0 
   });
-  const [loading, setLoading] = useState(true);
-  const [showFilters, setShowFilters] = useState(false);
+  const [loading, setLoading] = useState(_true);
+  const [showFilters, setShowFilters] = useState(_false);
 
   useEffect(() => {
     loadUsers();
   }, [searchQuery, filters, sort, pagination.page]);
 
   const loadUsers = async () => {
-    setLoading(true);
+    setLoading(_true);
     
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -266,84 +266,84 @@ export function UserManagement({ className }: UserManagementProps) {
     // Mock users data
     const mockUsers: AdminUser[] = [
       {
-        id: '1',
-        email: 'john.doe@example.com',
-        name: 'John Doe',
-        role: 'student',
-        status: 'active',
-        createdAt: new Date('2023-01-15'),
-        lastLoginAt: new Date('2024-01-10'),
-        lastActivity: new Date('2024-01-10'),
-        loginCount: 45,
-        xpTotal: 1250,
-        lessonsCompleted: 12,
-        averageScore: 87,
-        timeSpent: 2340,
-        emailVerified: true,
-        twoFactorEnabled: false
-      },
+        id: '1' 
+        email: 'john.doe@example.com' 
+        name: 'John Doe' 
+        role: 'student' 
+        status: 'active' 
+        createdAt: new Date('2023-01-15') 
+        lastLoginAt: new Date('2024-01-10') 
+        lastActivity: new Date('2024-01-10') 
+        loginCount: 45 
+        xpTotal: 1250 
+        lessonsCompleted: 12 
+        averageScore: 87 
+        timeSpent: 2340 
+        emailVerified: true 
+        twoFactorEnabled: false 
+      } 
       {
-        id: '2',
-        email: 'jane.smith@example.com',
-        name: 'Jane Smith',
-        role: 'instructor',
-        status: 'active',
-        createdAt: new Date('2023-02-20'),
-        lastLoginAt: new Date('2024-01-09'),
-        lastActivity: new Date('2024-01-09'),
-        loginCount: 123,
-        xpTotal: 3450,
-        lessonsCompleted: 28,
-        averageScore: 94,
-        timeSpent: 5670,
-        emailVerified: true,
-        twoFactorEnabled: true
-      },
+        id: '2' 
+        email: 'jane.smith@example.com' 
+        name: 'Jane Smith' 
+        role: 'instructor' 
+        status: 'active' 
+        createdAt: new Date('2023-02-20') 
+        lastLoginAt: new Date('2024-01-09') 
+        lastActivity: new Date('2024-01-09') 
+        loginCount: 123 
+        xpTotal: 3450 
+        lessonsCompleted: 28 
+        averageScore: 94 
+        timeSpent: 5670 
+        emailVerified: true 
+        twoFactorEnabled: true 
+      } 
       {
-        id: '3',
-        email: 'bob.wilson@example.com',
-        name: 'Bob Wilson',
-        role: 'student',
-        status: 'suspended',
-        createdAt: new Date('2023-03-10'),
-        lastLoginAt: new Date('2023-12-15'),
-        lastActivity: new Date('2023-12-15'),
-        loginCount: 23,
-        xpTotal: 680,
-        lessonsCompleted: 5,
-        averageScore: 72,
-        timeSpent: 890,
-        suspensionReason: 'Violation of community guidelines',
-        suspensionExpiresAt: new Date('2024-02-15'),
-        emailVerified: false,
-        twoFactorEnabled: false
+        id: '3' 
+        email: 'bob.wilson@example.com' 
+        name: 'Bob Wilson' 
+        role: 'student' 
+        status: 'suspended' 
+        createdAt: new Date('2023-03-10') 
+        lastLoginAt: new Date('2023-12-15') 
+        lastActivity: new Date('2023-12-15') 
+        loginCount: 23 
+        xpTotal: 680 
+        lessonsCompleted: 5 
+        averageScore: 72 
+        timeSpent: 890 
+        suspensionReason: 'Violation of community guidelines' 
+        suspensionExpiresAt: new Date('2024-02-15') 
+        emailVerified: false 
+        twoFactorEnabled: false 
       }
     ];
 
-    setUsers(mockUsers);
+    setUsers(_mockUsers);
     setPagination(prev => ({
-      ...prev,
-      total: mockUsers.length,
-      totalPages: Math.ceil(mockUsers.length / prev.limit)
+      ...prev 
+      total: mockUsers.length 
+      totalPages: Math.ceil(_mockUsers.length / prev.limit) 
     }));
-    setLoading(false);
+    setLoading(_false);
   };
 
   const handleSelectUser = (userId: string) => {
-    const newSelected = new Set(selectedUsers);
-    if (newSelected.has(userId)) {
+    const newSelected = new Set(_selectedUsers);
+    if (_newSelected.has(userId)) {
       newSelected.delete(userId);
     } else {
       newSelected.add(userId);
     }
-    setSelectedUsers(newSelected);
+    setSelectedUsers(_newSelected);
   };
 
-  const handleSelectAll = (selected: boolean) => {
+  const handleSelectAll = (_selected: boolean) => {
     if (selected) {
-      setSelectedUsers(new Set(users.map(user => user.id)));
+      setSelectedUsers(_new Set(users.map(user => user.id)));
     } else {
-      setSelectedUsers(new Set());
+      setSelectedUsers(_new Set());
     }
   };
 
@@ -352,13 +352,13 @@ export function UserManagement({ className }: UserManagementProps) {
     // Implement user actions
   };
 
-  const handleBulkAction = (action: string) => {
+  const handleBulkAction = (_action: string) => {
     console.log(`Bulk action ${action} on users:`, Array.from(selectedUsers));
     // Implement bulk actions
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("'space-y-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -374,12 +374,12 @@ export function UserManagement({ className }: UserManagementProps) {
             <Upload className="w-4 h-4 mr-2" />
             Import
           </Button>
-          {adminAuth.hasPermission(ADMIN_PERMISSIONS.USERS_WRITE) && (
+          {adminAuth.hasPermission(_ADMIN_PERMISSIONS.USERS_WRITE) && (
             <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
               <UserPlus className="w-4 h-4 mr-2" />
               Add User
             </Button>
-          )}
+         )}
         </div>
       </div>
 
@@ -392,12 +392,12 @@ export function UserManagement({ className }: UserManagementProps) {
               type="text"
               placeholder="Search users by name, email, or role..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(_e) => setSearchQuery(_e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"
             />
           </div>
           <Button
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={(() => setShowFilters(!showFilters)}
             variant="outline"
             className="border-white/20 text-white hover:bg-white/10"
           >
@@ -426,7 +426,7 @@ export function UserManagement({ className }: UserManagementProps) {
               </span>
               <div className="flex space-x-2">
                 <Button
-                  onClick={() => handleBulkAction('activate')}
+                  onClick={(() => handleBulkAction('activate')}
                   size="sm"
                   variant="outline"
                   className="border-green-400/30 text-green-400 hover:bg-green-500/10"
@@ -435,7 +435,7 @@ export function UserManagement({ className }: UserManagementProps) {
                   Activate
                 </Button>
                 <Button
-                  onClick={() => handleBulkAction('suspend')}
+                  onClick={(() => handleBulkAction('suspend')}
                   size="sm"
                   variant="outline"
                   className="border-yellow-400/30 text-yellow-400 hover:bg-yellow-500/10"
@@ -444,7 +444,7 @@ export function UserManagement({ className }: UserManagementProps) {
                   Suspend
                 </Button>
                 <Button
-                  onClick={() => handleBulkAction('ban')}
+                  onClick={(() => handleBulkAction('ban')}
                   size="sm"
                   variant="outline"
                   className="border-red-400/30 text-red-400 hover:bg-red-500/10"
@@ -453,7 +453,7 @@ export function UserManagement({ className }: UserManagementProps) {
                   Ban
                 </Button>
                 <Button
-                  onClick={() => handleBulkAction('delete')}
+                  onClick={(() => handleBulkAction('delete')}
                   size="sm"
                   variant="outline"
                   className="border-red-400/30 text-red-400 hover:bg-red-500/10"
@@ -464,7 +464,7 @@ export function UserManagement({ className }: UserManagementProps) {
               </div>
             </div>
           </motion.div>
-        )}
+       )}
       </Card>
 
       {/* Users Table */}
@@ -484,7 +484,7 @@ export function UserManagement({ className }: UserManagementProps) {
         </div>
         <div className="flex space-x-2">
           <Button
-            onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+            onClick={(() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
             disabled={pagination.page === 1}
             variant="outline"
             size="sm"
@@ -493,7 +493,7 @@ export function UserManagement({ className }: UserManagementProps) {
             Previous
           </Button>
           <Button
-            onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+            onClick={(() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
             disabled={pagination.page === pagination.totalPages}
             variant="outline"
             size="sm"
@@ -504,5 +504,5 @@ export function UserManagement({ className }: UserManagementProps) {
         </div>
       </div>
     </div>
-  );
+ );
 }

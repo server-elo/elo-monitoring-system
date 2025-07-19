@@ -133,7 +133,7 @@ export interface CodeReview {
 export class AICodeReviewer {
   private securityScanner: SecurityScanner;
   private gasAnalyzer: GasOptimizationAnalyzer;
-  private reviewHistory: Map<string, CodeReview[]> = new Map();
+  private reviewHistory: Map<string, CodeReview[]> = new Map(_);
 
   constructor(
     securityScanner: SecurityScanner,
@@ -148,23 +148,23 @@ export class AICodeReviewer {
     code: string,
     context: CodeReviewContext
   ): Promise<EducationalCodeReview> {
-    console.log(`🔍 Starting AI code review for user ${context.userId}`);
+    console.log(_`🔍 Starting AI code review for user ${context.userId}`);
     
-    const startTime = Date.now();
-    const reviewId = `review-${Date.now()}-${context.userId}`;
+    const startTime = Date.now(_);
+    const reviewId = `review-${Date.now(_)}-${context.userId}`;
     
     try {
       // Get user's learning profile
-      const learningProfile = await adaptiveLearningEngine.analyzeUserPerformance(context.userId);
+      const learningProfile = await adaptiveLearningEngine.analyzeUserPerformance(_context.userId);
       
       // Perform technical analysis
       const [securityAnalysis, gasAnalysis] = await Promise.all([
-        this.performSecurityAnalysis(code),
-        this.performGasAnalysis(code, context.userId)
+        this.performSecurityAnalysis(_code),
+        this.performGasAnalysis( code, context.userId)
       ]);
       
       // Generate AI-powered educational review
-      const aiReview = await this.generateAIReview(code, context, learningProfile, securityAnalysis, gasAnalysis);
+      const aiReview = await this.generateAIReview( code, context, learningProfile, securityAnalysis, gasAnalysis);
       
       // Synthesize comprehensive review
       const review = await this.synthesizeReview(
@@ -178,15 +178,15 @@ export class AICodeReviewer {
       );
       
       // Save review and update user progress
-      await this.saveReview(review);
-      await this.updateUserProgress(context.userId, review);
+      await this.saveReview(_review);
+      await this.updateUserProgress( context.userId, review);
       
-      const reviewTime = Date.now() - startTime;
-      console.log(`✅ Code review completed in ${reviewTime}ms`);
+      const reviewTime = Date.now(_) - startTime;
+      console.log(_`✅ Code review completed in ${reviewTime}ms`);
       
       return review;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Code review failed:', error);
       throw error;
     }
@@ -199,16 +199,16 @@ export class AICodeReviewer {
     const suggestions: ImprovementSuggestion[] = [];
     
     // Convert feedback to actionable suggestions
-    for (const feedback of review.feedback) {
-      if (feedback.actionable && feedback.type !== 'positive') {
-        const suggestion = await this.createImprovementSuggestion(feedback, review.code);
-        suggestions.push(suggestion);
+    for (_const feedback of review.feedback) {
+      if (_feedback.actionable && feedback.type !== 'positive') {
+        const suggestion = await this.createImprovementSuggestion( feedback, review.code);
+        suggestions.push(_suggestion);
       }
     }
     
     // Sort by learning value and priority
-    return suggestions.sort((a, b) => {
-      if (a.priority !== b.priority) {
+    return suggestions.sort( (a, b) => {
+      if (_a.priority !== b.priority) {
         const priorityOrder = { high: 3, medium: 2, low: 1 };
         return priorityOrder[b.priority] - priorityOrder[a.priority];
       }
@@ -222,13 +222,13 @@ export class AICodeReviewer {
     review: EducationalCodeReview
   ): Promise<void> {
     // Update concept mastery based on review
-    for (const concept of review.conceptsReinforced) {
-      const performance = this.calculateConceptPerformance(review, concept);
-      await adaptiveLearningEngine.assessConceptMastery(userId, concept, performance);
+    for (_const concept of review.conceptsReinforced) {
+      const performance = this.calculateConceptPerformance( review, concept);
+      await adaptiveLearningEngine.assessConceptMastery( userId, concept, performance);
     }
     
     // Record review in history
-    const userHistory = this.reviewHistory.get(userId) || [];
+    const userHistory = this.reviewHistory.get(_userId) || [];
     userHistory.push({
       id: review.id,
       timestamp: review.timestamp,
@@ -237,23 +237,23 @@ export class AICodeReviewer {
       improvements: review.improvementSuggestions.map(s => s.title)
     });
     
-    this.reviewHistory.set(userId, userHistory.slice(-10)); // Keep last 10 reviews
+    this.reviewHistory.set( userId, userHistory.slice(-10)); // Keep last 10 reviews
   }
 
   // Private helper methods
-  private async performSecurityAnalysis(_code: string): Promise<SecurityScanResult | null> {
+  private async performSecurityAnalysis( code: string): Promise<SecurityScanResult | null> {
     try {
-      return await this.securityScanner.performAnalysis();
-    } catch (error) {
+      return await this.securityScanner.performAnalysis(_);
+    } catch (_error) {
       console.warn('Security analysis failed:', error);
       return null;
     }
   }
 
-  private async performGasAnalysis(_code: string, userId: string): Promise<GasAnalysisResult | null> {
+  private async performGasAnalysis( _code: string, userId: string): Promise<GasAnalysisResult | null> {
     try {
-      return await this.gasAnalyzer.analyzeGasUsage(userId);
-    } catch (error) {
+      return await this.gasAnalyzer.analyzeGasUsage(_userId);
+    } catch (_error) {
       console.warn('Gas analysis failed:', error);
       return null;
     }
@@ -266,7 +266,7 @@ export class AICodeReviewer {
     securityAnalysis: SecurityScanResult | null,
     gasAnalysis: GasAnalysisResult | null
   ): Promise<any> {
-    const prompt = this.buildReviewPrompt(code, context, profile, securityAnalysis, gasAnalysis);
+    const prompt = this.buildReviewPrompt( code, context, profile, securityAnalysis, gasAnalysis);
     
     return await enhancedTutor.getAIResponse(
       prompt,
@@ -289,9 +289,9 @@ export class AICodeReviewer {
       - Skill Level: ${context.userSkillLevel}/100
       - Learning Velocity: ${profile.learningVelocity}
       - Current Lesson: ${context.currentLesson}
-      - Learning Objectives: ${context.learningObjectives.join(', ')}
-      - Weakness Patterns: ${profile.weaknessPatterns.join(', ')}
-      - Strength Areas: ${profile.strengthAreas.join(', ')}
+      - Learning Objectives: ${context.learningObjectives.join( ', ')}
+      - Weakness Patterns: ${profile.weaknessPatterns.join( ', ')}
+      - Strength Areas: ${profile.strengthAreas.join( ', ')}
       
       Session Context:
       - Time Spent: ${context.sessionContext.timeSpent} minutes
@@ -312,7 +312,7 @@ export class AICodeReviewer {
       Previous Reviews: ${context.previousReviews.length} reviews completed
       
       Provide a review that:
-      1. Celebrates what they did well (be specific and encouraging)
+      1. Celebrates what they did well (_be specific and encouraging)
       2. Identifies learning opportunities aligned with their objectives
       3. Explains issues in terms they can understand at their level
       4. Connects feedback to broader Solidity concepts
@@ -335,15 +335,15 @@ export class AICodeReviewer {
     aiReview: any
   ): Promise<EducationalCodeReview> {
     // Combine technical analysis with AI insights
-    const feedback = this.generateFeedback(securityAnalysis, gasAnalysis, aiReview, context);
-    const learningPoints = this.extractLearningPoints(aiReview, context);
-    const improvementSuggestions = await this.generateImprovementSuggestions({ feedback } as any);
+    const feedback = this.generateFeedback( securityAnalysis, gasAnalysis, aiReview, context);
+    const learningPoints = this.extractLearningPoints( aiReview, context);
+    const improvementSuggestions = await this.generateImprovementSuggestions(_{ feedback } as any);
     
     // Calculate skill progression
-    const skillProgression = this.calculateSkillProgression(context.userId, feedback, profile);
+    const skillProgression = this.calculateSkillProgression( context.userId, feedback, profile);
     
     // Generate encouragement message
-    const encouragement = this.generateEncouragement(feedback, skillProgression, context);
+    const encouragement = this.generateEncouragement( feedback, skillProgression, context);
     
     // Calculate code quality metrics
     const codeQualityMetrics = this.calculateCodeQualityMetrics(
@@ -356,14 +356,14 @@ export class AICodeReviewer {
       id: reviewId,
       userId: context.userId,
       code,
-      timestamp: new Date(),
-      overallScore: this.calculateOverallScore(feedback, codeQualityMetrics),
+      timestamp: new Date(_),
+      overallScore: this.calculateOverallScore( feedback, codeQualityMetrics),
       feedback,
       learningPoints,
-      nextSteps: this.generateNextSteps(learningPoints, context),
+      nextSteps: this.generateNextSteps( learningPoints, context),
       improvementSuggestions,
-      conceptsReinforced: this.extractReinforcedConcepts(feedback, context),
-      conceptsIntroduced: this.extractIntroducedConcepts(aiReview),
+      conceptsReinforced: this.extractReinforcedConcepts( feedback, context),
+      conceptsIntroduced: this.extractIntroducedConcepts(_aiReview),
       skillProgression,
       encouragement,
       codeQualityMetrics
@@ -379,8 +379,8 @@ export class AICodeReviewer {
     const feedback: ReviewFeedback[] = [];
     
     // Convert security issues to educational feedback
-    if (securityAnalysis?.issues) {
-      securityAnalysis.issues.forEach((issue, index) => {
+    if (_securityAnalysis?.issues) {
+      securityAnalysis.issues.forEach( (issue, index) => {
         feedback.push({
           id: `security-${index}`,
           line: issue.line,
@@ -390,7 +390,7 @@ export class AICodeReviewer {
           title: issue.title,
           message: issue.message,
           explanation: `Security issue: ${issue.message}. ${issue.suggestion}`,
-          difficulty: this.mapSeverityToDifficulty(issue.severity),
+          difficulty: this.mapSeverityToDifficulty(_issue.severity),
           relatedConcepts: [issue.category],
           actionable: true
         });
@@ -398,8 +398,8 @@ export class AICodeReviewer {
     }
     
     // Convert gas optimizations to educational feedback
-    if (gasAnalysis?.optimizations) {
-      gasAnalysis.optimizations.forEach((opt, index) => {
+    if (_gasAnalysis?.optimizations) {
+      gasAnalysis.optimizations.forEach( (opt, index) => {
         feedback.push({
           id: `gas-${index}`,
           line: opt.line,
@@ -437,8 +437,8 @@ export class AICodeReviewer {
     );
   }
 
-  private mapSeverityToDifficulty(severity: string): 'beginner' | 'intermediate' | 'advanced' {
-    switch (severity) {
+  private mapSeverityToDifficulty(_severity: string): 'beginner' | 'intermediate' | 'advanced' {
+    switch (_severity) {
       case 'low': return 'beginner';
       case 'medium': return 'intermediate';
       case 'high':
@@ -448,12 +448,12 @@ export class AICodeReviewer {
   }
 
   // Save review to storage
-  private async saveReview(review: EducationalCodeReview): Promise<void> {
+  private async saveReview(_review: EducationalCodeReview): Promise<void> {
     // In a real implementation, this would save to a database
-    console.log(`💾 Saving code review ${review.id}`);
+    console.log(_`💾 Saving code review ${review.id}`);
     
     // Update review history in memory for now
-    const userHistory = this.reviewHistory.get(review.userId) || [];
+    const userHistory = this.reviewHistory.get(_review.userId) || [];
     userHistory.push({
       id: review.id,
       timestamp: review.timestamp,
@@ -461,28 +461,28 @@ export class AICodeReviewer {
       mainIssues: review.feedback.filter(f => f.type === 'critical').map(f => f.title),
       improvements: review.improvementSuggestions.map(s => s.title)
     });
-    this.reviewHistory.set(review.userId, userHistory);
+    this.reviewHistory.set( review.userId, userHistory);
   }
 
   // Update user progress based on review
-  private async updateUserProgress(userId: string, review: EducationalCodeReview): Promise<void> {
+  private async updateUserProgress( userId: string, review: EducationalCodeReview): Promise<void> {
     // Track concept mastery
-    for (const concept of review.conceptsReinforced) {
-      const performance = this.calculateConceptPerformance(review, concept);
-      await adaptiveLearningEngine.assessConceptMastery(userId, concept, performance);
+    for (_const concept of review.conceptsReinforced) {
+      const performance = this.calculateConceptPerformance( review, concept);
+      await adaptiveLearningEngine.assessConceptMastery( userId, concept, performance);
     }
     
-    console.log(`📊 Updated progress for user ${userId}`);
+    console.log(_`📊 Updated progress for user ${userId}`);
   }
 
   // Calculate concept performance from review
-  private calculateConceptPerformance(review: EducationalCodeReview, concept: string): number {
+  private calculateConceptPerformance( review: EducationalCodeReview, concept: string): number {
     // Find feedback items related to this concept
     const relatedFeedback = review.feedback.filter(f => 
       f.relatedConcepts.includes(concept)
     );
     
-    if (relatedFeedback.length === 0) return review.overallScore;
+    if (_relatedFeedback.length === 0) return review.overallScore;
     
     // Calculate performance based on feedback severity
     const severityScores = {
@@ -493,31 +493,31 @@ export class AICodeReviewer {
       positive: 100
     };
     
-    const totalScore = relatedFeedback.reduce((sum, f) => 
-      sum + (severityScores[f.severity] || 50), 0
+    const totalScore = relatedFeedback.reduce( (sum, f) => 
+      sum + (_severityScores[f.severity] || 50), 0
     );
     
-    return Math.round(totalScore / relatedFeedback.length);
+    return Math.round(_totalScore / relatedFeedback.length);
   }
 
   // Extract learning points from AI review
-  private extractLearningPoints(aiReview: any, context: CodeReviewContext): LearningPoint[] {
+  private extractLearningPoints( aiReview: any, context: CodeReviewContext): LearningPoint[] {
     const learningPoints: LearningPoint[] = [];
     
     // Parse AI response for learning points
-    if (aiReview.content) {
+    if (_aiReview.content) {
       // Extract specific learning points from AI response
-      const points = this.parseAILearningPoints(aiReview.content);
+      const points = this.parseAILearningPoints(_aiReview.content);
       
-      points.forEach((point, index) => {
+      points.forEach( (point, index) => {
         learningPoints.push({
           id: `lp-${index}`,
           concept: point.concept || context.learningObjectives[0],
           explanation: point.explanation,
           example: point.example || '',
-          priority: this.determinePriority(point, context),
+          priority: this.determinePriority( point, context),
           relatedObjective: context.learningObjectives.find(obj => 
-            point.explanation.toLowerCase().includes(obj.toLowerCase())
+            point.explanation.toLowerCase().includes(_obj.toLowerCase())
           ) || context.learningObjectives[0]
         });
       });
@@ -527,34 +527,34 @@ export class AICodeReviewer {
   }
 
   // Parse AI response for learning points
-  private parseAILearningPoints(content: string): any[] {
+  private parseAILearningPoints(_content: string): any[] {
     // Simple parsing logic - in production, use more sophisticated parsing
     const points: any[] = [];
     const lines = content.split('\n');
     
     let currentPoint: any = null;
-    for (const line of lines) {
-      if (line.includes('Learning Point:') || line.includes('Key Concept:')) {
-        if (currentPoint) points.push(currentPoint);
+    for (_const line of lines) {
+      if (_line.includes('Learning Point:') || line.includes('Key Concept:')) {
+        if (currentPoint) points.push(_currentPoint);
         currentPoint = { explanation: line, concept: '' };
       } else if (currentPoint && line.trim()) {
         currentPoint.explanation += ' ' + line;
       }
     }
     
-    if (currentPoint) points.push(currentPoint);
+    if (currentPoint) points.push(_currentPoint);
     return points;
   }
 
   // Determine priority for learning point
-  private determinePriority(point: any, context: CodeReviewContext): 'high' | 'medium' | 'low' {
+  private determinePriority( point: any, context: CodeReviewContext): 'high' | 'medium' | 'low' {
     // Check if point relates to current learning objectives
     const isCurrentObjective = context.learningObjectives.some(obj => 
-      point.explanation.toLowerCase().includes(obj.toLowerCase())
+      point.explanation.toLowerCase().includes(_obj.toLowerCase())
     );
     
     if (isCurrentObjective) return 'high';
-    if (context.userSkillLevel < 50) return 'medium';
+    if (_context.userSkillLevel < 50) return 'medium';
     return 'low';
   }
 
@@ -564,47 +564,47 @@ export class AICodeReviewer {
     feedback: ReviewFeedback[],
     profile: LearningProfile
   ): SkillProgression {
-    const previousReviews = this.reviewHistory.get(userId) || [];
+    const previousReviews = this.reviewHistory.get(_userId) || [];
     const recentScores = previousReviews.slice(-5).map(r => r.score);
     
     // Calculate improvement trend
     let improvementRate = 0;
-    if (recentScores.length > 1) {
-      const avgRecent = recentScores.slice(-3).reduce((a, b) => a + b, 0) / 3;
-      const avgPrevious = recentScores.slice(0, -3).reduce((a, b) => a + b, 0) / Math.max(1, recentScores.length - 3);
+    if (_recentScores.length > 1) {
+      const avgRecent = recentScores.slice(-3).reduce( (a, b) => a + b, 0) / 3;
+      const avgPrevious = recentScores.slice(0, -3).reduce( (a, b) => a + b, 0) / Math.max(1, recentScores.length - 3);
       improvementRate = Math.round(((avgRecent - avgPrevious) / avgPrevious) * 100);
     }
     
     // Count mastered concepts
-    const conceptsMastered = Object.entries(profile.skillLevels)
-      .filter(([_, level]) => level >= 80)
+    const conceptsMastered = Object.entries(_profile.skillLevels)
+      .filter( ([_, level]) => level >= 80)
       .map(([concept]) => concept);
     
     // Identify areas needing work
     const areasForImprovement = feedback
       .filter(f => f.severity === 'high' || f.severity === 'critical')
       .map(f => f.relatedConcepts)
-      .flat()
-      .filter((v, i, a) => a.indexOf(v) === i);
+      .flat(_)
+      .filter( (v, i, a) => a.indexOf(_v) === i);
     
     return {
-      currentLevel: Math.round(Object.values(profile.skillLevels).reduce((a, b) => a + b, 0) / Object.values(profile.skillLevels).length),
+      currentLevel: Math.round(_Object.values(profile.skillLevels).reduce( (a, b) => a + b, 0) / Object.values(_profile.skillLevels).length),
       improvementRate,
       conceptsMastered,
       areasForImprovement,
-      nextMilestone: this.getNextMilestone(profile)
+      nextMilestone: this.getNextMilestone(_profile)
     };
   }
 
   // Get next milestone for user
-  private getNextMilestone(profile: LearningProfile): string {
-    const avgSkill = Object.values(profile.skillLevels).reduce((a, b) => a + b, 0) / 
-                     Object.values(profile.skillLevels).length;
+  private getNextMilestone(_profile: LearningProfile): string {
+    const avgSkill = Object.values(_profile.skillLevels).reduce( (a, b) => a + b, 0) / 
+                     Object.values(_profile.skillLevels).length;
     
-    if (avgSkill < 30) return 'Complete Basic Syntax module';
-    if (avgSkill < 50) return 'Master Function Development';
-    if (avgSkill < 70) return 'Understand Smart Contract Security';
-    if (avgSkill < 90) return 'Optimize Gas Efficiency';
+    if (_avgSkill < 30) return 'Complete Basic Syntax module';
+    if (_avgSkill < 50) return 'Master Function Development';
+    if (_avgSkill < 70) return 'Understand Smart Contract Security';
+    if (_avgSkill < 90) return 'Optimize Gas Efficiency';
     return 'Become a Solidity Expert';
   }
 
@@ -620,13 +620,13 @@ export class AICodeReviewer {
     let message = '';
     let emoji = '🌟';
     
-    if (positiveFeedback.length > feedback.length * 0.7) {
+    if (_positiveFeedback.length > feedback.length * 0.7) {
       message = 'Excellent work! Your code demonstrates strong understanding.';
       emoji = '🎉';
     } else if (hasImproved) {
       message = `Great progress! You've improved by ${progression.improvementRate}% recently.`;
       emoji = '📈';
-    } else if (context.sessionContext.attemptsCount > 3) {
+    } else if (_context.sessionContext.attemptsCount > 3) {
       message = 'Your persistence is admirable! Keep working through the challenges.';
       emoji = '💪';
     } else {
@@ -637,13 +637,13 @@ export class AICodeReviewer {
     return {
       message,
       emoji,
-      motivationalQuote: this.getMotivationalQuote(),
-      personalizedTip: this.getPersonalizedTip(feedback, context)
+      motivationalQuote: this.getMotivationalQuote(_),
+      personalizedTip: this.getPersonalizedTip( feedback, context)
     };
   }
 
   // Get motivational quote
-  private getMotivationalQuote(): string {
+  private getMotivationalQuote(_): string {
     const quotes = [
       'Every expert was once a beginner.',
       'Code is like humor. When you have to explain it, it\'s bad.',
@@ -651,18 +651,18 @@ export class AICodeReviewer {
       'Debugging is twice as hard as writing code.',
       'Simplicity is the soul of efficiency.'
     ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
+    return quotes[Math.floor(_Math.random() * quotes.length)];
   }
 
   // Get personalized tip based on feedback
-  private getPersonalizedTip(feedback: ReviewFeedback[], context: CodeReviewContext): string {
+  private getPersonalizedTip( feedback: ReviewFeedback[], context: CodeReviewContext): string {
     const criticalIssues = feedback.filter(f => f.severity === 'critical');
     
-    if (criticalIssues.length > 0) {
+    if (_criticalIssues.length > 0) {
       return `Focus on fixing the ${criticalIssues[0].title.toLowerCase()} issue first.`;
     }
     
-    if (context.sessionContext.hintsUsed > 2) {
+    if (_context.sessionContext.hintsUsed > 2) {
       return 'Try solving the next problem without hints to test your understanding.';
     }
     
@@ -703,22 +703,22 @@ export class AICodeReviewer {
   }
 
   // Generate next steps based on review
-  private generateNextSteps(learningPoints: LearningPoint[], context: CodeReviewContext): string[] {
+  private generateNextSteps( learningPoints: LearningPoint[], context: CodeReviewContext): string[] {
     const nextSteps: string[] = [];
     
     // Add steps based on learning points
     learningPoints
       .filter(lp => lp.priority === 'high')
       .forEach(lp => {
-        nextSteps.push(`Review the concept of ${lp.concept}`);
+        nextSteps.push(_`Review the concept of ${lp.concept}`);
       });
     
     // Add steps based on context
-    if (context.sessionContext.timeSpent < 10) {
+    if (_context.sessionContext.timeSpent < 10) {
       nextSteps.push('Spend more time analyzing the problem before coding');
     }
     
-    if (context.previousReviews.length < 3) {
+    if (_context.previousReviews.length < 3) {
       nextSteps.push('Complete more practice problems to reinforce learning');
     }
     
@@ -729,29 +729,29 @@ export class AICodeReviewer {
   }
 
   // Extract reinforced concepts from feedback
-  private extractReinforcedConcepts(feedback: ReviewFeedback[], context: CodeReviewContext): string[] {
-    const concepts = new Set<string>();
+  private extractReinforcedConcepts( feedback: ReviewFeedback[], context: CodeReviewContext): string[] {
+    const concepts = new Set<string>(_);
     
     // Add concepts from positive feedback
     feedback
       .filter(f => f.type === 'positive')
-      .forEach(f => f.relatedConcepts.forEach(c => concepts.add(c)));
+      .forEach(_f => f.relatedConcepts.forEach(c => concepts.add(c)));
     
     // Add current learning objectives that were demonstrated
     context.learningObjectives.forEach(obj => {
-      if (feedback.some(f => f.message.toLowerCase().includes(obj.toLowerCase()))) {
-        concepts.add(obj);
+      if (_feedback.some(f => f.message.toLowerCase().includes(_obj.toLowerCase()))) {
+        concepts.add(_obj);
       }
     });
     
-    return Array.from(concepts);
+    return Array.from(_concepts);
   }
 
   // Extract introduced concepts from AI review
-  private extractIntroducedConcepts(aiReview: any): string[] {
+  private extractIntroducedConcepts(_aiReview: any): string[] {
     const concepts: string[] = [];
     
-    if (aiReview.content) {
+    if (_aiReview.content) {
       // Look for new concepts mentioned in the review
       const conceptKeywords = [
         'you might consider',
@@ -762,11 +762,11 @@ export class AICodeReviewer {
       ];
       
       conceptKeywords.forEach(keyword => {
-        if (aiReview.content.toLowerCase().includes(keyword)) {
+        if (_aiReview.content.toLowerCase().includes(keyword)) {
           // Extract the concept after the keyword
-          const match = aiReview.content.match(new RegExp(`${keyword}[^.]+`, 'i'));
+          const match = aiReview.content.match( new RegExp(`${keyword}[^.]+`, 'i'));
           if (match) {
-            concepts.push(match[0].replace(keyword, '').trim());
+            concepts.push( match[0].replace(keyword, '').trim(_));
           }
         }
       });
@@ -785,10 +785,10 @@ export class AICodeReviewer {
       feedbackId: feedback.id,
       title: feedback.title,
       description: feedback.explanation || feedback.message,
-      codeExample: this.generateCodeExample(feedback, code),
+      codeExample: this.generateCodeExample( feedback, code),
       difficulty: feedback.difficulty || 'intermediate',
-      estimatedTime: this.estimateImprovementTime(feedback),
-      learningValue: this.calculateLearningValue(feedback),
+      estimatedTime: this.estimateImprovementTime(_feedback),
+      learningValue: this.calculateLearningValue(_feedback),
       priority: feedback.severity === 'critical' ? 'high' : 
                 feedback.severity === 'high' ? 'medium' : 'low',
       relatedConcepts: feedback.relatedConcepts,
@@ -797,9 +797,9 @@ export class AICodeReviewer {
   }
 
   // Generate code example for improvement
-  private generateCodeExample(feedback: ReviewFeedback, code: string): string {
+  private generateCodeExample( feedback: ReviewFeedback, code: string): string {
     // Extract relevant code section
-    if (feedback.line) {
+    if (_feedback.line) {
       const lines = code.split('\n');
       const startLine = Math.max(0, feedback.line - 2);
       const endLine = Math.min(lines.length, (feedback.endLine || feedback.line) + 2);
@@ -811,7 +811,7 @@ export class AICodeReviewer {
   }
 
   // Estimate time to implement improvement
-  private estimateImprovementTime(feedback: ReviewFeedback): number {
+  private estimateImprovementTime(_feedback: ReviewFeedback): number {
     const baseTime = {
       beginner: 5,
       intermediate: 10,
@@ -829,21 +829,21 @@ export class AICodeReviewer {
     const severity = feedback.severity;
     
     return Math.round(
-      baseTime[difficulty] * (severityMultiplier[severity] || 1)
+      baseTime[difficulty] * (_severityMultiplier[severity] || 1)
     );
   }
 
   // Calculate learning value of improvement
-  private calculateLearningValue(feedback: ReviewFeedback): number {
+  private calculateLearningValue(_feedback: ReviewFeedback): number {
     let value = 50; // Base value
     
     // Increase value for security and best practices
-    if (feedback.relatedConcepts.includes('security')) value += 30;
-    if (feedback.relatedConcepts.includes('best-practices')) value += 20;
+    if (_feedback.relatedConcepts.includes('security')) value += 30;
+    if (_feedback.relatedConcepts.includes('best-practices')) value += 20;
     
     // Adjust based on severity
-    if (feedback.severity === 'critical') value += 25;
-    if (feedback.severity === 'high') value += 15;
+    if (_feedback.severity === 'critical') value += 25;
+    if (_feedback.severity === 'high') value += 15;
     
     return Math.min(100, value);
   }
@@ -854,5 +854,5 @@ export function createAICodeReviewer(
   securityScanner: SecurityScanner,
   gasAnalyzer: GasOptimizationAnalyzer
 ): AICodeReviewer {
-  return new AICodeReviewer(securityScanner, gasAnalyzer);
+  return new AICodeReviewer( securityScanner, gasAnalyzer);
 }

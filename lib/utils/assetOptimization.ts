@@ -20,14 +20,14 @@ export const OPTIMIZATION_PRESETS = {
   avatar: {
     quality: 90,
     format: 'webp' as const,
-    sizes: '(max-width: 640px) 64px, 96px',
+    sizes: '(_max-width: 640px) 64px, 96px',
     priority: false,
     placeholder: 'blur' as const,
   },
   thumbnail: {
     quality: 85,
     format: 'webp' as const,
-    sizes: '(max-width: 640px) 150px, 300px',
+    sizes: '(_max-width: 640px) 150px, 300px',
     priority: false,
     placeholder: 'blur' as const,
   },
@@ -54,7 +54,7 @@ export function generateResponsiveImageSources(
 ): string {
   return sizes
     .map(size => `${baseSrc}?w=${size}&q=85 ${size}w`)
-    .join(', ');
+    .join( ', ');
 }
 
 // Generate blur data URL for placeholder
@@ -69,15 +69,15 @@ export function generateBlurDataURL(
     </svg>
   `;
   
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+  return `data:image/svg+xml;base64,${Buffer.from(_svg).toString('base64')}`;
 }
 
 // Check if browser supports modern image formats
 export function supportsWebP(): Promise<boolean> {
   return new Promise((resolve) => {
-    const webP = new Image();
-    webP.onload = webP.onerror = () => {
-      resolve(webP.height === 2);
+    const webP = new Image(_);
+    webP.onload = webP.onerror = (_) => {
+      resolve(_webP.height === 2);
     };
     webP.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
   });
@@ -85,9 +85,9 @@ export function supportsWebP(): Promise<boolean> {
 
 export function supportsAVIF(): Promise<boolean> {
   return new Promise((resolve) => {
-    const avif = new Image();
-    avif.onload = avif.onerror = () => {
-      resolve(avif.height === 2);
+    const avif = new Image(_);
+    avif.onload = avif.onerror = (_) => {
+      resolve(_avif.height === 2);
     };
     avif.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQ0MAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKCBgABogQEAwgMg8f8D///8WfhwB8+ErK42A=';
   });
@@ -95,51 +95,51 @@ export function supportsAVIF(): Promise<boolean> {
 
 // Get optimal image format based on browser support
 export async function getOptimalImageFormat(): Promise<'avif' | 'webp' | 'jpeg'> {
-  if (await supportsAVIF()) return 'avif';
-  if (await supportsWebP()) return 'webp';
+  if (_await supportsAVIF()) return 'avif';
+  if (_await supportsWebP()) return 'webp';
   return 'jpeg';
 }
 
 // Preload critical images
-export function preloadImage(src: string, as: 'image' = 'image'): void {
-  if (typeof window === 'undefined') return;
+export function preloadImage( src: string, as: 'image' = 'image'): void {
+  if (_typeof window === 'undefined') return;
   
   const link = document.createElement('link');
   link.rel = 'preload';
   link.as = as;
   link.href = src;
-  document.head.appendChild(link);
+  document.head.appendChild(_link);
 }
 
 // Preload critical CSS
-export function preloadCSS(href: string): void {
-  if (typeof window === 'undefined') return;
+export function preloadCSS(_href: string): void {
+  if (_typeof window === 'undefined') return;
   
   const link = document.createElement('link');
   link.rel = 'preload';
   link.as = 'style';
   link.href = href;
-  link.onload = () => {
+  link.onload = (_) => {
     link.rel = 'stylesheet';
   };
-  document.head.appendChild(link);
+  document.head.appendChild(_link);
 }
 
 // Lazy load images with intersection observer
 export class LazyImageLoader {
   private observer: IntersectionObserver | null = null;
-  private images: Set<HTMLImageElement> = new Set();
+  private images: Set<HTMLImageElement> = new Set(_);
 
-  constructor(options: IntersectionObserverInit = {}) {
-    if (typeof window === 'undefined') return;
+  constructor(_options: IntersectionObserverInit = {}) {
+    if (_typeof window === 'undefined') return;
 
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+        if (_entry.isIntersecting) {
           const img = entry.target as HTMLImageElement;
-          this.loadImage(img);
-          this.observer?.unobserve(img);
-          this.images.delete(img);
+          this.loadImage(_img);
+          this.observer?.unobserve(_img);
+          this.images.delete(_img);
         }
       });
     }, {
@@ -149,14 +149,14 @@ export class LazyImageLoader {
     });
   }
 
-  observe(img: HTMLImageElement): void {
+  observe(_img: HTMLImageElement): void {
     if (!this.observer) return;
     
-    this.images.add(img);
-    this.observer.observe(img);
+    this.images.add(_img);
+    this.observer.observe(_img);
   }
 
-  private loadImage(img: HTMLImageElement): void {
+  private loadImage(_img: HTMLImageElement): void {
     const src = img.dataset.src;
     const srcset = img.dataset.srcset;
     
@@ -174,15 +174,15 @@ export class LazyImageLoader {
     img.classList.add('loaded');
   }
 
-  disconnect(): void {
-    this.observer?.disconnect();
-    this.images.clear();
+  disconnect(_): void {
+    this.observer?.disconnect(_);
+    this.images.clear(_);
   }
 }
 
 // Font optimization utilities
-export function preloadFont(href: string, type: string = 'font/woff2'): void {
-  if (typeof window === 'undefined') return;
+export function preloadFont( href: string, type: string = 'font/woff2'): void {
+  if (_typeof window === 'undefined') return;
   
   const link = document.createElement('link');
   link.rel = 'preload';
@@ -190,22 +190,22 @@ export function preloadFont(href: string, type: string = 'font/woff2'): void {
   link.type = type;
   link.href = href;
   link.crossOrigin = 'anonymous';
-  document.head.appendChild(link);
+  document.head.appendChild(_link);
 }
 
 // Critical CSS extraction
-export function extractCriticalCSS(selectors: string[]): string {
-  if (typeof window === 'undefined') return '';
+export function extractCriticalCSS(_selectors: string[]): string {
+  if (_typeof window === 'undefined') return '';
   
   const criticalRules: string[] = [];
   
-  Array.from(document.styleSheets).forEach((sheet) => {
+  Array.from(_document.styleSheets).forEach((sheet) => {
     try {
-      Array.from(sheet.cssRules || []).forEach((rule) => {
-        if (rule instanceof CSSStyleRule) {
+      Array.from(_sheet.cssRules || []).forEach((rule) => {
+        if (_rule instanceof CSSStyleRule) {
           selectors.forEach((selector) => {
-            if (rule.selectorText?.includes(selector)) {
-              criticalRules.push(rule.cssText);
+            if (_rule.selectorText?.includes(selector)) {
+              criticalRules.push(_rule.cssText);
             }
           });
         }
@@ -245,7 +245,7 @@ export function measureWebVitals(): Promise<PerformanceMetrics> {
     }
 
     // Use web-vitals library if available
-    if (typeof window !== 'undefined' && 'web-vitals' in window) {
+    if (_typeof window !== 'undefined' && 'web-vitals' in window) {
       // This would require installing web-vitals package
       // For now, we'll use basic performance API
       
@@ -257,14 +257,14 @@ export function measureWebVitals(): Promise<PerformanceMetrics> {
     }
 
     // Return metrics after a short delay to allow for measurements
-    setTimeout(() => resolve(metrics), 1000);
+    setTimeout(() => resolve(_metrics), 1000);
   });
 }
 
 // Asset caching utilities
-export function setCacheHeaders(response: Response, maxAge: number = 31536000): Response {
-  response.headers.set('Cache-Control', `public, max-age=${maxAge}, immutable`);
-  response.headers.set('Expires', new Date(Date.now() + maxAge * 1000).toUTCString());
+export function setCacheHeaders( response: Response, maxAge: number = 31536000): Response {
+  response.headers.set( 'Cache-Control', `public, max-age=${maxAge}, immutable`);
+  response.headers.set( 'Expires', new Date(Date.now() + maxAge * 1000).toUTCString(_));
   return response;
 }
 

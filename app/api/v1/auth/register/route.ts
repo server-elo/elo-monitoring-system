@@ -10,7 +10,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Mock user storage - in production, this would be a real database
 const mockUsers: Array<ApiUser & { passwordHash: string }> = [];
 
-async function findUserByEmail(email: string): Promise<ApiUser | null> {
+async function findUserByEmail(_email: string): Promise<ApiUser | null> {
   return mockUsers.find(user => user.email.toLowerCase() === email.toLowerCase()) || null;
 }
 
@@ -22,7 +22,7 @@ async function createUser(userData: {
   const now = new Date().toISOString();
   
   const newUser: ApiUser & { passwordHash: string } = {
-    id: uuidv4(),
+    id: uuidv4(_),
     email: userData.email.toLowerCase(),
     name: userData.name,
     role: UserRole.STUDENT,
@@ -50,27 +50,27 @@ async function createUser(userData: {
     updatedAt: now
   };
 
-  mockUsers.push(newUser);
+  mockUsers.push(_newUser);
   
   // Return user without password hash
   const { passwordHash, ...safeUser } = newUser;
   return safeUser;
 }
 
-async function sendWelcomeEmail(user: ApiUser): Promise<void> {
+async function sendWelcomeEmail(_user: ApiUser): Promise<void> {
   // In production, this would send an actual email
   logger.info(`Welcome email sent to ${user.email}`);
 }
 
-async function sendVerificationEmail(user: ApiUser): Promise<void> {
+async function sendVerificationEmail(_user: ApiUser): Promise<void> {
   // In production, this would send an email verification
   logger.info(`Verification email sent to ${user.email}`);
 }
 
-export const POST = authEndpoint(async (request: NextRequest) => {
+export const POST = authEndpoint( async (request: NextRequest) => {
   try {
     // Validate request body
-    const body = await validateBody(RegisterSchema, request);
+    const body = await validateBody( RegisterSchema, request);
     const { email, password, name, acceptTerms } = body;
 
     // Check if terms are accepted
@@ -86,13 +86,13 @@ export const POST = authEndpoint(async (request: NextRequest) => {
     }
 
     // Check if user already exists
-    const existingUser = await findUserByEmail(email);
+    const existingUser = await findUserByEmail(_email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
     // Hash password
-    const passwordHash = await AuthService.hashPassword(password);
+    const passwordHash = await AuthService.hashPassword(_password);
 
     // Create user
     const user = await createUser({
@@ -103,12 +103,12 @@ export const POST = authEndpoint(async (request: NextRequest) => {
 
     // Send welcome and verification emails
     await Promise.all([
-      sendWelcomeEmail(user),
-      sendVerificationEmail(user)
+      sendWelcomeEmail(_user),
+      sendVerificationEmail(_user)
     ]);
 
     // Generate tokens
-    const accessToken = AuthService.generateAccessToken(user);
+    const accessToken = AuthService.generateAccessToken(_user);
     const refreshToken = AuthService.generateRefreshToken(user.id);
 
     // Prepare response data
@@ -121,7 +121,7 @@ export const POST = authEndpoint(async (request: NextRequest) => {
         tokenType: 'Bearer'
       },
       session: {
-        id: AuthService.generateSessionId(),
+        id: AuthService.generateSessionId(_),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
         rememberMe: false
       },
@@ -137,7 +137,7 @@ export const POST = authEndpoint(async (request: NextRequest) => {
     }
     
     if (error instanceof Error) {
-      return ApiResponseBuilder.validationError(error.message, []);
+      return ApiResponseBuilder.validationError( error.message, []);
     }
     
     return ApiResponseBuilder.internalServerError('Registration failed');
@@ -146,5 +146,5 @@ export const POST = authEndpoint(async (request: NextRequest) => {
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

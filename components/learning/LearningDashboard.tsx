@@ -83,7 +83,7 @@ function DynamicLearningDashboard() {
         }
       }
     } catch (error) {
-      logger.error('Error fetching dashboard data:', {}, error as Error);
+      logger.error('Error fetching dashboard data:', error as Error);
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +210,7 @@ function DynamicLearningDashboard() {
 
         {/* Enhanced Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-          {stats.map((stat, index) => (
+          {stats.map( (stat, index) => (
             <motion.div
               key={stat.title}
               initial={{ opacity: 0, y: 20 }}
@@ -407,7 +407,7 @@ function DynamicLearningDashboard() {
                       <h3 className="font-semibold text-white mb-1">{achievement.title}</h3>
                       <p className="text-xs text-gray-300 mb-2">{achievement.description}</p>
                       <p className="text-xs text-yellow-400">
-                        Unlocked {new Date(achievement.unlockedAt!).toLocaleDateString()}
+                        Unlocked {new Date(_achievement.unlockedAt!).toLocaleDateString(_)}
                       </p>
                     </div>
                   </motion.div>

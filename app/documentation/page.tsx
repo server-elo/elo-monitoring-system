@@ -107,7 +107,7 @@ export default function DocumentationPage() {
           >
             <h2 className="text-2xl font-bold text-white mb-6">Quick Links</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {quickLinks.map((link, index) => (
+              {quickLinks.map( (link, index) => (
                 <motion.a
                   key={link.name}
                   href={link.href}
@@ -139,7 +139,7 @@ export default function DocumentationPage() {
           >
             <h2 className="text-2xl font-bold text-white mb-8">Documentation Sections</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {documentationSections.map((section, index) => (
+              {documentationSections.map( (section, index) => (
                 <motion.div
                   key={section.title}
                   className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6"

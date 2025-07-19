@@ -45,7 +45,7 @@ export interface AdvancedIDEInterfaceProps {
   repositoryId: string;
   repositoryName: string;
   initialContent?: string;
-  onLayoutChange?: (layout: IDELayout) => void;
+  onLayoutChange?: (_layout: IDELayout) => void;
   className?: string;
 }
 
@@ -88,21 +88,21 @@ export function AdvancedIDEInterface({
   onLayoutChange,
   className
 }: AdvancedIDEInterfaceProps) {
-  const [layout, setLayout] = useState<IDELayout>(defaultLayout);
-  const [_isFullscreen, _setIsFullscreen] = useState(false);
-  const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [layout, setLayout] = useState<IDELayout>(_defaultLayout);
+  const [_isFullscreen, _setIsFullscreen] = useState(_false);
+  const [showCommandPalette, setShowCommandPalette] = useState(_false);
   const [commandQuery, setCommandQuery] = useState('');
-  const [editorContent, setEditorContent] = useState(initialContent);
+  const [editorContent, setEditorContent] = useState(_initialContent);
   
-  const leftSidebarRef = useRef<HTMLDivElement>(null);
-  const rightSidebarRef = useRef<HTMLDivElement>(null);
-  const bottomPanelRef = useRef<HTMLDivElement>(null);
+  const leftSidebarRef = useRef<HTMLDivElement>(_null);
+  const rightSidebarRef = useRef<HTMLDivElement>(_null);
+  const bottomPanelRef = useRef<HTMLDivElement>(_null);
 
   // Update layout and notify parent
   const updateLayout = useCallback((updates: Partial<IDELayout>) => {
     setLayout(prev => {
       const newLayout = { ...prev, ...updates };
-      onLayoutChange?.(newLayout);
+      onLayoutChange?.(_newLayout);
       return newLayout;
     });
   }, [onLayoutChange]);
@@ -158,7 +158,7 @@ export function AdvancedIDEInterface({
 
   // Change theme
   const changeTheme = useCallback((theme: IDELayout['theme']) => {
-    updateLayout({ theme });
+    updateLayout({ theme  });
   }, [updateLayout]);
 
   // Accessibility features
@@ -182,61 +182,61 @@ export function AdvancedIDEInterface({
 
   // Keyboard shortcuts
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (_e: KeyboardEvent) => {
       // Command palette
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'P') {
-        e.preventDefault();
-        setShowCommandPalette(true);
+        e.preventDefault(_);
+        setShowCommandPalette(_true);
       }
       
       // Toggle panels
       if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-        e.preventDefault();
-        toggleLeftSidebar();
+        e.preventDefault(_);
+        toggleLeftSidebar(_);
       }
       
       // Toggle terminal
       if ((e.ctrlKey || e.metaKey) && e.key === '`') {
-        e.preventDefault();
-        toggleBottomPanel();
+        e.preventDefault(_);
+        toggleBottomPanel(_);
       }
       
       // Split editor
       if ((e.ctrlKey || e.metaKey) && e.key === '\\') {
-        e.preventDefault();
-        changeSplitMode(layout.editor.splitMode === 'single' ? 'vertical' : 'single');
+        e.preventDefault(_);
+        changeSplitMode(_layout.editor.splitMode === 'single' ? 'vertical' : 'single');
       }
       
       // Accessibility shortcuts
       if ((e.ctrlKey || e.metaKey) && e.key === '=') {
-        e.preventDefault();
-        adjustFontSize(2);
+        e.preventDefault(_);
+        adjustFontSize(_2);
       }
       
       if ((e.ctrlKey || e.metaKey) && e.key === '-') {
-        e.preventDefault();
-        adjustFontSize(-2);
+        e.preventDefault(_);
+        adjustFontSize(_-2);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener( 'keydown', handleKeyDown);
+    return (_) => window.removeEventListener( 'keydown', handleKeyDown);
   }, [toggleLeftSidebar, toggleBottomPanel, changeSplitMode, layout.editor.splitMode, adjustFontSize]);
 
   // Command palette commands
   const commands = [
     { id: 'toggle-sidebar', label: 'Toggle Sidebar', action: toggleLeftSidebar },
     { id: 'toggle-terminal', label: 'Toggle Terminal', action: toggleBottomPanel },
-    { id: 'split-vertical', label: 'Split Editor Vertically', action: () => changeSplitMode('vertical') },
-    { id: 'split-horizontal', label: 'Split Editor Horizontally', action: () => changeSplitMode('horizontal') },
+    { id: 'split-vertical', label: 'Split Editor Vertically', action: (_) => changeSplitMode('vertical') },
+    { id: 'split-horizontal', label: 'Split Editor Horizontally', action: (_) => changeSplitMode('horizontal') },
     { id: 'toggle-minimap', label: 'Toggle Minimap', action: toggleMinimap },
-    { id: 'theme-dark', label: 'Dark Theme', action: () => changeTheme('dark') },
-    { id: 'theme-light', label: 'Light Theme', action: () => changeTheme('light') },
+    { id: 'theme-dark', label: 'Dark Theme', action: (_) => changeTheme('dark') },
+    { id: 'theme-light', label: 'Light Theme', action: (_) => changeTheme('light') },
     { id: 'high-contrast', label: 'Toggle High Contrast', action: toggleHighContrast },
   ];
 
   const filteredCommands = commands.filter(cmd => 
-    cmd.label.toLowerCase().includes(commandQuery.toLowerCase())
+    cmd.label.toLowerCase().includes(_commandQuery.toLowerCase())
   );
 
   return (
@@ -269,13 +269,13 @@ export function AdvancedIDEInterface({
                 'p-1 rounded hover:bg-gray-700 transition-colors',
                 layout.leftSidebar.visible ? 'text-blue-400' : 'text-gray-400'
               )}
-              title="Toggle Sidebar (Ctrl+B)"
+              title="Toggle Sidebar (_Ctrl+B)"
             >
               <Sidebar className="w-4 h-4" />
             </button>
             
             <button
-              onClick={() => changeSplitMode('vertical')}
+              onClick={(_) => changeSplitMode('vertical')}
               className={cn(
                 'p-1 rounded hover:bg-gray-700 transition-colors',
                 layout.editor.splitMode === 'vertical' ? 'text-blue-400' : 'text-gray-400'
@@ -286,7 +286,7 @@ export function AdvancedIDEInterface({
             </button>
             
             <button
-              onClick={() => changeSplitMode('horizontal')}
+              onClick={(_) => changeSplitMode('horizontal')}
               className={cn(
                 'p-1 rounded hover:bg-gray-700 transition-colors',
                 layout.editor.splitMode === 'horizontal' ? 'text-blue-400' : 'text-gray-400'
@@ -302,7 +302,7 @@ export function AdvancedIDEInterface({
                 'p-1 rounded hover:bg-gray-700 transition-colors',
                 layout.bottomPanel.visible ? 'text-blue-400' : 'text-gray-400'
               )}
-              title="Toggle Terminal (Ctrl+`)"
+              title="Toggle Terminal (_Ctrl+`)"
             >
               <Terminal className="w-4 h-4" />
             </button>
@@ -311,9 +311,9 @@ export function AdvancedIDEInterface({
 
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => setShowCommandPalette(true)}
+            onClick={(_) => setShowCommandPalette(_true)}
             className="flex items-center space-x-2 px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
-            title="Command Palette (Ctrl+Shift+P)"
+            title="Command Palette (_Ctrl+Shift+P)"
           >
             <Command className="w-3 h-3" />
             <span>Commands</span>
@@ -321,7 +321,7 @@ export function AdvancedIDEInterface({
           
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => changeTheme('dark')}
+              onClick={(_) => changeTheme('dark')}
               className={cn(
                 'p-1 rounded hover:bg-gray-700 transition-colors',
                 layout.theme === 'dark' ? 'text-blue-400' : 'text-gray-400'
@@ -332,7 +332,7 @@ export function AdvancedIDEInterface({
             </button>
             
             <button
-              onClick={() => changeTheme('light')}
+              onClick={(_) => changeTheme('light')}
               className={cn(
                 'p-1 rounded hover:bg-gray-700 transition-colors',
                 layout.theme === 'light' ? 'text-blue-400' : 'text-gray-400'
@@ -370,7 +370,7 @@ export function AdvancedIDEInterface({
             >
               <LeftSidebarContent
                 activePanel={layout.leftSidebar.activePanel}
-                onPanelChange={(panel) => updateLayout({
+                onPanelChange={(_panel) => updateLayout({
                   leftSidebar: { ...layout.leftSidebar, activePanel: panel }
                 })}
                 repositoryId={repositoryId}
@@ -455,7 +455,7 @@ export function AdvancedIDEInterface({
               >
                 <BottomPanelContent
                   activeTab={layout.bottomPanel.activeTab}
-                  onTabChange={(tab) => updateLayout({
+                  onTabChange={(_tab) => updateLayout({
                     bottomPanel: { ...layout.bottomPanel, activeTab: tab }
                   })}
                   repositoryId={repositoryId}
@@ -478,7 +478,7 @@ export function AdvancedIDEInterface({
             >
               <RightSidebarContent
                 activePanel={layout.rightSidebar.activePanel}
-                onPanelChange={(panel) => updateLayout({
+                onPanelChange={(_panel) => updateLayout({
                   rightSidebar: { ...layout.rightSidebar, activePanel: panel }
                 })}
               />
@@ -495,20 +495,20 @@ export function AdvancedIDEInterface({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center pt-20 z-50"
-            onClick={() => setShowCommandPalette(false)}
+            onClick={(_) => setShowCommandPalette(_false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-gray-800 border border-gray-600 rounded-lg w-96 max-h-96 overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(_e) => e.stopPropagation(_)}
             >
               <div className="p-4 border-b border-gray-600">
                 <input
                   type="text"
                   value={commandQuery}
-                  onChange={(e) => setCommandQuery(e.target.value)}
+                  onChange={(_e) => setCommandQuery(_e.target.value)}
                   placeholder="Type a command..."
                   className="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none"
                   autoFocus
@@ -519,9 +519,9 @@ export function AdvancedIDEInterface({
                 {filteredCommands.map((command) => (
                   <button
                     key={command.id}
-                    onClick={() => {
-                      command.action();
-                      setShowCommandPalette(false);
+                    onClick={(_) => {
+                      command.action(_);
+                      setShowCommandPalette(_false);
                       setCommandQuery('');
                     }}
                     className="w-full px-4 py-2 text-left hover:bg-gray-700 transition-colors"
@@ -546,7 +546,7 @@ function LeftSidebarContent({
   repositoryName
 }: {
   activePanel: IDELayout['leftSidebar']['activePanel'];
-  onPanelChange: (panel: IDELayout['leftSidebar']['activePanel']) => void;
+  onPanelChange: (_panel: IDELayout['leftSidebar']['activePanel']) => void;
   repositoryId: string;
   repositoryName: string;
 }) {
@@ -566,7 +566,7 @@ function LeftSidebarContent({
           return (
             <button
               key={panel.id}
-              onClick={() => onPanelChange(panel.id as any)}
+              onClick={(_) => onPanelChange(_panel.id as any)}
               className={cn(
                 'flex-1 flex items-center justify-center p-3 transition-colors',
                 activePanel === panel.id
@@ -635,7 +635,7 @@ function RightSidebarContent({
   onPanelChange
 }: {
   activePanel: IDELayout['rightSidebar']['activePanel'];
-  onPanelChange: (panel: IDELayout['rightSidebar']['activePanel']) => void;
+  onPanelChange: (_panel: IDELayout['rightSidebar']['activePanel']) => void;
 }) {
   const panels = [
     { id: 'outline', label: 'Outline', icon: Layers },
@@ -652,7 +652,7 @@ function RightSidebarContent({
           return (
             <button
               key={panel.id}
-              onClick={() => onPanelChange(panel.id as any)}
+              onClick={(_) => onPanelChange(_panel.id as any)}
               className={cn(
                 'flex-1 flex items-center justify-center p-3 transition-colors',
                 activePanel === panel.id
@@ -721,7 +721,7 @@ function BottomPanelContent({
   repositoryName: _repositoryName
 }: {
   activeTab: IDELayout['bottomPanel']['activeTab'];
-  onTabChange: (tab: IDELayout['bottomPanel']['activeTab']) => void;
+  onTabChange: (_tab: IDELayout['bottomPanel']['activeTab']) => void;
   repositoryId: string;
   repositoryName: string;
 }) {
@@ -741,7 +741,7 @@ function BottomPanelContent({
           return (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id as any)}
+              onClick={(_) => onTabChange(_tab.id as any)}
               className={cn(
                 'flex items-center space-x-2 px-4 py-2 text-sm transition-colors',
                 activeTab === tab.id
@@ -763,7 +763,7 @@ function BottomPanelContent({
             <div className="text-green-400">$ solc --version</div>
             <div className="text-gray-300">solc, the solidity compiler commandline interface</div>
             <div className="text-gray-300">Version: 0.8.19+commit.7dd6d404.Linux.g++</div>
-            <div className="text-green-400 mt-2">$ _</div>
+            <div className="text-green-400 mt-2">$ </div>
           </div>
         )}
 

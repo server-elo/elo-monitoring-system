@@ -140,38 +140,38 @@ export interface GeneratedContract {
 
 export class SmartContractTemplates {
   private _securityScanner: SecurityScanner;
-  private templates: Map<string, ContractTemplate> = new Map();
-  private userCustomizations: Map<string, TemplateCustomization[]> = new Map();
+  private templates: Map<string, ContractTemplate> = new Map(_);
+  private userCustomizations: Map<string, TemplateCustomization[]> = new Map(_);
 
-  constructor(securityScanner: SecurityScanner) {
-    this._securityScanner = securityScanner;
-    this.initializeTemplates();
+  constructor(_securityScanner: SecurityScanner) {
+    this.securityScanner = securityScanner;
+    this.initializeTemplates(_);
   }
 
   // Get personalized template recommendations
-  async getRecommendedTemplates(userId: string): Promise<ContractTemplate[]> {
-    console.log(`🎯 Getting template recommendations for user ${userId}`);
+  async getRecommendedTemplates(_userId: string): Promise<ContractTemplate[]> {
+    console.log(_`🎯 Getting template recommendations for user ${userId}`);
     
     try {
       // Get user's learning profile
-      const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
+      const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
       
       // Calculate user's overall skill level
-      const skillLevel = this.calculateOverallSkillLevel(profile);
+      const skillLevel = this.calculateOverallSkillLevel(_profile);
       
       // Get templates matching user's level and interests
-      const allTemplates = Array.from(this.templates.values());
+      const allTemplates = Array.from(_this.templates.values());
       const recommendations = allTemplates
-        .filter(template => this.isTemplateAppropriate(template, profile, skillLevel))
-        .sort((a, b) => this.calculateRelevanceScore(b, profile) - this.calculateRelevanceScore(a, profile))
+        .filter( template => this.isTemplateAppropriate(template, profile, skillLevel))
+        .sort( (a, b) => this.calculateRelevanceScore( b, profile) - this.calculateRelevanceScore( a, profile))
         .slice(0, 8);
       
-      console.log(`✅ Found ${recommendations.length} recommended templates`);
+      console.log(_`✅ Found ${recommendations.length} recommended templates`);
       return recommendations;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Template recommendation failed:', error);
-      return this.getDefaultTemplates();
+      return this.getDefaultTemplates(_);
     }
   }
 
@@ -181,28 +181,28 @@ export class SmartContractTemplates {
     userId: string,
     customization: Omit<TemplateCustomization, 'templateId' | 'userId' | 'timestamp'>
   ): Promise<GeneratedContract> {
-    console.log(`🏗️ Generating contract from template ${templateId}`);
+    console.log(_`🏗️ Generating contract from template ${templateId}`);
     
     try {
-      const template = this.templates.get(templateId);
+      const template = this.templates.get(_templateId);
       if (!template) {
-        throw new Error(`Template ${templateId} not found`);
+        throw new Error(_`Template ${templateId} not found`);
       }
       
       // Validate customization
-      this.validateCustomization(template, customization);
+      this.validateCustomization( template, customization);
       
       // Generate code from template
-      const code = this.processTemplate(template, customization);
+      const code = this.processTemplate( template, customization);
       
       // Run security and gas analysis
       const [securityAnalysis, gasAnalysis] = await Promise.all([
-        this.analyzeContractSecurity(code, userId),
-        this.analyzeContractGas(code, userId)
+        this.analyzeContractSecurity( code, userId),
+        this.analyzeContractGas( code, userId)
       ]);
       
       // Calculate quality score
-      const qualityScore = this.calculateQualityScore(securityAnalysis, gasAnalysis, template);
+      const qualityScore = this.calculateQualityScore( securityAnalysis, gasAnalysis, template);
       
       // Generate suggestions and warnings
       const { suggestions, warnings, errors } = this.generateFeedback(
@@ -213,7 +213,7 @@ export class SmartContractTemplates {
       );
       
       const generatedContract: GeneratedContract = {
-        id: `contract-${Date.now()}-${userId}`,
+        id: `contract-${Date.now(_)}-${userId}`,
         templateId,
         userId,
         code,
@@ -221,7 +221,7 @@ export class SmartContractTemplates {
           ...customization,
           templateId,
           userId,
-          timestamp: new Date()
+          timestamp: new Date(_)
         },
         securityAnalysis,
         gasAnalysis,
@@ -230,30 +230,30 @@ export class SmartContractTemplates {
         warnings,
         errors,
         deploymentReady: errors.length === 0 && qualityScore >= 70,
-        generatedAt: new Date()
+        generatedAt: new Date(_)
       };
       
       // Save customization for future reference
-      await this.saveCustomization(generatedContract.customization);
+      await this.saveCustomization(_generatedContract.customization);
       
-      console.log(`✅ Contract generated successfully (Quality: ${qualityScore})`);
+      console.log(_`✅ Contract generated successfully (Quality: ${qualityScore})`);
       return generatedContract;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Contract generation failed:', error);
       throw error;
     }
   }
 
   // Get template by ID with user-specific enhancements
-  async getTemplate(templateId: string, userId?: string): Promise<ContractTemplate | null> {
-    const template = this.templates.get(templateId);
+  async getTemplate( templateId: string, userId?: string): Promise<ContractTemplate | null> {
+    const template = this.templates.get(_templateId);
     if (!template) return null;
     
     if (userId) {
       // Enhance template with user-specific information
-      const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
-      return this.enhanceTemplateForUser(template, profile);
+      const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
+      return this.enhanceTemplateForUser( template, profile);
     }
     
     return template;
@@ -267,45 +267,45 @@ export class SmartContractTemplates {
     code: string,
     category: ContractTemplate['category']
   ): Promise<ContractTemplate> {
-    console.log(`🎨 Creating custom template: ${name}`);
+    console.log(_`🎨 Creating custom template: ${name}`);
     
     try {
       // Analyze the provided code
       const [securityAnalysis, gasAnalysis] = await Promise.all([
-        this.analyzeContractSecurity(code, userId),
-        this.analyzeContractGas(code, userId)
+        this.analyzeContractSecurity( code, userId),
+        this.analyzeContractGas( code, userId)
       ]);
       
       // Extract placeholders from code
-      const placeholders = this.extractPlaceholders(code);
+      const placeholders = this.extractPlaceholders(_code);
       
       // Generate best practices based on analysis
-      const bestPractices = this.generateBestPracticesFromAnalysis(securityAnalysis, gasAnalysis);
+      const bestPractices = this.generateBestPracticesFromAnalysis( securityAnalysis, gasAnalysis);
       
       // Determine difficulty and complexity
-      const difficulty = this.determineDifficulty(code, securityAnalysis, gasAnalysis);
-      const complexity = this.calculateComplexity(code);
+      const difficulty = this.determineDifficulty( code, securityAnalysis, gasAnalysis);
+      const complexity = this.calculateComplexity(_code);
       
       // Generate documentation
-      const documentation = await this.generateDocumentation(code, name, description);
+      const documentation = await this.generateDocumentation( code, name, description);
       
       const customTemplate: ContractTemplate = {
-        id: `custom-${Date.now()}-${userId}`,
+        id: `custom-${Date.now(_)}-${userId}`,
         name,
         description,
         category,
         difficulty,
         complexity,
-        estimatedTime: this.estimateCompletionTime(complexity, difficulty),
-        prerequisites: this.identifyPrerequisites(code),
-        learningObjectives: await this.generateLearningObjectives(code, category),
-        concepts: this.extractConcepts(code),
+        estimatedTime: this.estimateCompletionTime( complexity, difficulty),
+        prerequisites: this.identifyPrerequisites(_code),
+        learningObjectives: await this.generateLearningObjectives( code, category),
+        concepts: this.extractConcepts(_code),
         template: code,
         placeholders,
         bestPractices,
-        securityChecks: this.generateSecurityChecks(securityAnalysis),
-        gasOptimizations: this.generateGasOptimizations(gasAnalysis),
-        testCases: await this.generateTestCases(code),
+        securityChecks: this.generateSecurityChecks(_securityAnalysis),
+        gasOptimizations: this.generateGasOptimizations(_gasAnalysis),
+        testCases: await this.generateTestCases(_code),
         documentation,
         realWorldExamples: [],
         nextTemplates: [],
@@ -313,12 +313,12 @@ export class SmartContractTemplates {
       };
       
       // Save custom template
-      this.templates.set(customTemplate.id, customTemplate);
+      this.templates.set( customTemplate.id, customTemplate);
       
-      console.log(`✅ Custom template created: ${customTemplate.id}`);
+      console.log(_`✅ Custom template created: ${customTemplate.id}`);
       return customTemplate;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Custom template creation failed:', error);
       throw error;
     }
@@ -330,47 +330,47 @@ export class SmartContractTemplates {
     code: string,
     userId: string
   ): Promise<ValidationResult> {
-    const template = this.templates.get(templateId);
+    const template = this.templates.get(_templateId);
     if (!template) {
-      throw new Error(`Template ${templateId} not found`);
+      throw new Error(_`Template ${templateId} not found`);
     }
     
     const violations: ValidationViolation[] = [];
     const suggestions: string[] = [];
     
     // Check best practices
-    for (const practice of template.bestPractices) {
-      const violation = this.checkBestPractice(code, practice);
+    for (_const practice of template.bestPractices) {
+      const violation = this.checkBestPractice( code, practice);
       if (violation) {
-        violations.push(violation);
+        violations.push(_violation);
       }
     }
     
     // Check security patterns
-    for (const check of template.securityChecks) {
-      if (check.pattern.test(code)) {
+    for (_const check of template.securityChecks) {
+      if (_check.pattern.test(code)) {
         violations.push({
           type: 'security',
           severity: check.severity,
           message: check.message,
           fix: check.fix,
           autoFixable: check.autoFixable,
-          line: this.findPatternLine(code, check.pattern)
+          line: this.findPatternLine( code, check.pattern)
         });
       }
     }
     
     // Run full security analysis
-    const securityAnalysis = await this.analyzeContractSecurity(code, userId);
+    const securityAnalysis = await this.analyzeContractSecurity( code, userId);
     
     // Generate improvement suggestions
     if (securityAnalysis) {
-      suggestions.push(...this.generateImprovementSuggestions(securityAnalysis, template));
+      suggestions.push( ...this.generateImprovementSuggestions(securityAnalysis, template));
     }
     
     return {
       isValid: violations.filter(v => v.severity === 'critical' || v.severity === 'high').length === 0,
-      score: this.calculateValidationScore(violations, template),
+      score: this.calculateValidationScore( violations, template),
       violations,
       suggestions,
       template: template.name
@@ -378,17 +378,17 @@ export class SmartContractTemplates {
   }
 
   // Get template progression path
-  getTemplatePath(currentTemplateId: string): ContractTemplate[] {
-    const current = this.templates.get(currentTemplateId);
+  getTemplatePath(_currentTemplateId: string): ContractTemplate[] {
+    const current = this.templates.get(_currentTemplateId);
     if (!current) return [];
     
     const path: ContractTemplate[] = [current];
     
     // Add next templates in progression
-    for (const nextId of current.nextTemplates) {
-      const next = this.templates.get(nextId);
+    for (_const nextId of current.nextTemplates) {
+      const next = this.templates.get(_nextId);
       if (next) {
-        path.push(next);
+        path.push(_next);
       }
     }
     
@@ -396,14 +396,14 @@ export class SmartContractTemplates {
   }
 
   // Private helper methods
-  private initializeTemplates(): void {
+  private initializeTemplates(_): void {
     console.log('🔄 Initializing smart contract templates...');
     
     // Initialize with predefined templates
-    this.loadPredefinedTemplates();
+    this.loadPredefinedTemplates(_);
   }
 
-  private loadPredefinedTemplates(): void {
+  private loadPredefinedTemplates(_): void {
     // Basic ERC20 Token Template
     const erc20Template: ContractTemplate = {
       id: 'erc20-basic',
@@ -421,27 +421,27 @@ export class SmartContractTemplates {
         'Practice access control'
       ],
       concepts: ['tokens', 'standards', 'mappings', 'events'],
-      template: this.getERC20Template(),
-      placeholders: this.getERC20Placeholders(),
-      bestPractices: this.getERC20BestPractices(),
-      securityChecks: this.getERC20SecurityChecks(),
-      gasOptimizations: this.getERC20GasOptimizations(),
+      template: this.getERC20Template(_),
+      placeholders: this.getERC20Placeholders(_),
+      bestPractices: this.getERC20BestPractices(_),
+      securityChecks: this.getERC20SecurityChecks(_),
+      gasOptimizations: this.getERC20GasOptimizations(_),
       testCases: [],
-      documentation: this.getERC20Documentation(),
+      documentation: this.getERC20Documentation(_),
       realWorldExamples: ['USDC', 'DAI', 'LINK'],
       nextTemplates: ['erc20-advanced', 'erc20-mintable'],
       customizationOptions: []
     };
     
-    this.templates.set(erc20Template.id, erc20Template);
+    this.templates.set( erc20Template.id, erc20Template);
     
     // Add more templates...
-    this.addNFTTemplates();
-    this.addDeFiTemplates();
-    this.addDAOTemplates();
+    this.addNFTTemplates(_);
+    this.addDeFiTemplates(_);
+    this.addDAOTemplates(_);
   }
 
-  private getERC20Template(): string {
+  private getERC20Template(_): string {
     return `
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
@@ -455,24 +455,24 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
         string memory symbol,
         uint256 initialSupply,
         address owner
-    ) ERC20(name, symbol) Ownable(owner) {
-        _mint(owner, initialSupply * 10**decimals());
+    ) ERC20( name, symbol) Ownable(_owner) {
+        _mint( owner, initialSupply * 10**decimals());
     }
     
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
+    function mint( address to, uint256 amount) public onlyOwner {
+        _mint( to, amount);
     }
     
-    function burn(uint256 amount) public {
-        _burn(msg.sender, amount);
+    function burn(_uint256 amount) public {
+        _burn( msg.sender, amount);
     }
 }
-    `.trim();
+    `.trim(_);
   }
 
-  private calculateOverallSkillLevel(profile: LearningProfile): number {
-    const skillValues = Object.values(profile.skillLevels);
-    return skillValues.reduce((sum, level) => sum + level, 0) / skillValues.length;
+  private calculateOverallSkillLevel(_profile: LearningProfile): number {
+    const skillValues = Object.values(_profile.skillLevels);
+    return skillValues.reduce( (sum, level) => sum + level, 0) / skillValues.length;
   }
 
   private isTemplateAppropriate(
@@ -486,13 +486,13 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     );
     
     // Check difficulty appropriateness
-    const difficultyMatch = this.isDifficultyAppropriate(template.difficulty, skillLevel);
+    const difficultyMatch = this.isDifficultyAppropriate( template.difficulty, skillLevel);
     
     return hasPrerequisites && difficultyMatch;
   }
 
-  private isDifficultyAppropriate(difficulty: string, skillLevel: number): boolean {
-    switch (difficulty) {
+  private isDifficultyAppropriate( difficulty: string, skillLevel: number): boolean {
+    switch (_difficulty) {
       case 'beginner': return skillLevel <= 60;
       case 'intermediate': return skillLevel >= 40 && skillLevel <= 80;
       case 'advanced': return skillLevel >= 70;
@@ -501,18 +501,18 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
   }
 
   // Missing method implementations
-  private calculateRelevanceScore(template: ContractTemplate, profile: LearningProfile): number {
+  private calculateRelevanceScore( template: ContractTemplate, profile: LearningProfile): number {
     let score = 0;
     
     // Score based on skill level match
-    const avgSkillLevel = this.calculateOverallSkillLevel(profile);
-    if (this.isDifficultyAppropriate(template.difficulty, avgSkillLevel)) {
+    const avgSkillLevel = this.calculateOverallSkillLevel(_profile);
+    if ( this.isDifficultyAppropriate(template.difficulty, avgSkillLevel)) {
       score += 50;
     }
     
     // Score based on concept match
     template.concepts.forEach(concept => {
-      if (profile.skillLevels[concept] && profile.skillLevels[concept] > 0) {
+      if (_profile.skillLevels[concept] && profile.skillLevels[concept] > 0) {
         score += 10;
       }
     });
@@ -520,24 +520,24 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     return score;
   }
 
-  private getDefaultTemplates(): ContractTemplate[] {
-    return Array.from(this.templates.values()).slice(0, 5);
+  private getDefaultTemplates(_): ContractTemplate[] {
+    return Array.from(_this.templates.values()).slice(0, 5);
   }
 
-  private validateCustomization(template: ContractTemplate, customization: any): void {
+  private validateCustomization( template: ContractTemplate, customization: any): void {
     // Validate that required placeholders are filled
     template.placeholders.forEach(placeholder => {
-      if (placeholder.required && !customization.placeholderValues[placeholder.id]) {
-        throw new Error(`Required placeholder ${placeholder.name} is missing`);
+      if (_placeholder.required && !customization.placeholderValues[placeholder.id]) {
+        throw new Error(_`Required placeholder ${placeholder.name} is missing`);
       }
     });
   }
 
-  private processTemplate(template: ContractTemplate, customization: any): string {
+  private processTemplate( template: ContractTemplate, customization: any): string {
     let code = template.template;
     
     // Replace placeholders
-    for (const [key, value] of Object.entries(customization.placeholderValues || {})) {
+    for ( const [key, value] of Object.entries(customization.placeholderValues || {})) {
       const placeholder = `{{${key}}}`;
       code = code.replace(new RegExp(placeholder, 'g'), value as string);
     }
@@ -545,7 +545,7 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     return code;
   }
 
-  private async analyzeContractSecurity(code: string, userId: string): Promise<any> {
+  private async analyzeContractSecurity( code: string, userId: string): Promise<any> {
     // Mock implementation - would use actual security scanner
     return {
       issues: [],
@@ -554,7 +554,7 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     };
   }
 
-  private async analyzeContractGas(code: string, userId: string): Promise<any> {
+  private async analyzeContractGas( code: string, userId: string): Promise<any> {
     // Mock implementation - would use actual gas analyzer
     return {
       optimizations: [],
@@ -563,11 +563,11 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     };
   }
 
-  private calculateQualityScore(securityAnalysis: any, gasAnalysis: any, template: ContractTemplate): number {
+  private calculateQualityScore( securityAnalysis: any, gasAnalysis: any, template: ContractTemplate): number {
     return Math.round((securityAnalysis.overallScore + gasAnalysis.score) / 2);
   }
 
-  private generateFeedback(template: ContractTemplate, securityAnalysis: any, gasAnalysis: any, customization: any): {
+  private generateFeedback( template: ContractTemplate, securityAnalysis: any, gasAnalysis: any, customization: any): {
     suggestions: string[];
     warnings: string[];
     errors: string[];
@@ -577,47 +577,47 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     const errors: string[] = [];
     
     // Add template-specific feedback
-    if (securityAnalysis.issues.length > 0) {
+    if (_securityAnalysis.issues.length > 0) {
       warnings.push('Security issues detected. Review the highlighted code.');
     }
     
-    if (gasAnalysis.optimizations.length > 0) {
+    if (_gasAnalysis.optimizations.length > 0) {
       suggestions.push('Gas optimizations available. Consider implementing suggested changes.');
     }
     
     return { suggestions, warnings, errors };
   }
 
-  private async saveCustomization(customization: any): Promise<void> {
+  private async saveCustomization(_customization: any): Promise<void> {
     // Mock implementation - would save to database
   }
 
-  private enhanceTemplateForUser(template: ContractTemplate, profile: LearningProfile): ContractTemplate {
+  private enhanceTemplateForUser( template: ContractTemplate, profile: LearningProfile): ContractTemplate {
     // Add user-specific enhancements
     return {
       ...template,
       // Add personalized learning objectives based on user profile
       learningObjectives: [
         ...template.learningObjectives,
-        ...this.generatePersonalizedObjectives(template, profile)
+        ...this.generatePersonalizedObjectives( template, profile)
       ]
     };
   }
 
-  private generatePersonalizedObjectives(template: ContractTemplate, profile: LearningProfile): string[] {
+  private generatePersonalizedObjectives( template: ContractTemplate, profile: LearningProfile): string[] {
     const objectives: string[] = [];
     
     // Add objectives based on weakness patterns
     profile.weaknessPatterns.forEach(pattern => {
-      if (template.concepts.some(concept => concept.includes(pattern))) {
-        objectives.push(`Improve understanding of ${pattern}`);
+      if (_template.concepts.some(concept => concept.includes(pattern))) {
+        objectives.push(_`Improve understanding of ${pattern}`);
       }
     });
     
     return objectives;
   }
 
-  private extractPlaceholders(code: string): TemplatePlaceholder[] {
+  private extractPlaceholders(_code: string): TemplatePlaceholder[] {
     const placeholders: TemplatePlaceholder[] = [];
     const regex = /\{\{([^}]+)\}\}/g;
     let match;
@@ -638,11 +638,11 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     return placeholders;
   }
 
-  private generateBestPracticesFromAnalysis(securityAnalysis: any, gasAnalysis: any): BestPractice[] {
+  private generateBestPracticesFromAnalysis( securityAnalysis: any, gasAnalysis: any): BestPractice[] {
     const practices: BestPractice[] = [];
     
     // Generate practices based on analysis
-    if (securityAnalysis.issues.length > 0) {
+    if (_securityAnalysis.issues.length > 0) {
       practices.push({
         id: 'security-review',
         title: 'Security Review',
@@ -659,52 +659,52 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     return practices;
   }
 
-  private determineDifficulty(code: string, securityAnalysis: any, gasAnalysis: any): 'beginner' | 'intermediate' | 'advanced' {
-    const codeComplexity = this.calculateComplexity(code);
-    if (codeComplexity <= 3) return 'beginner';
-    if (codeComplexity <= 7) return 'intermediate';
+  private determineDifficulty( code: string, securityAnalysis: any, gasAnalysis: any): 'beginner' | 'intermediate' | 'advanced' {
+    const codeComplexity = this.calculateComplexity(_code);
+    if (_codeComplexity <= 3) return 'beginner';
+    if (_codeComplexity <= 7) return 'intermediate';
     return 'advanced';
   }
 
-  private calculateComplexity(code: string): number {
+  private calculateComplexity(_code: string): number {
     // Simple complexity calculation based on code features
     let complexity = 1;
     
     // Check for various complexity indicators
-    if (code.includes('modifier')) complexity++;
-    if (code.includes('mapping')) complexity++;
-    if (code.includes('struct')) complexity++;
-    if (code.includes('interface')) complexity++;
-    if (code.includes('library')) complexity++;
+    if (_code.includes('modifier')) complexity++;
+    if (_code.includes('mapping')) complexity++;
+    if (_code.includes('struct')) complexity++;
+    if (_code.includes('interface')) complexity++;
+    if (_code.includes('library')) complexity++;
     
     return complexity;
   }
 
-  private estimateCompletionTime(complexity: number, difficulty: string): number {
+  private estimateCompletionTime( complexity: number, difficulty: string): number {
     const baseTime = 30; // minutes
     const complexityMultiplier = complexity * 15;
     const difficultyMultiplier = difficulty === 'beginner' ? 1 : difficulty === 'intermediate' ? 1.5 : 2;
     
-    return Math.round(baseTime + (complexityMultiplier * difficultyMultiplier));
+    return Math.round(_baseTime + (complexityMultiplier * difficultyMultiplier));
   }
 
-  private identifyPrerequisites(code: string): string[] {
+  private identifyPrerequisites(_code: string): string[] {
     const prerequisites: string[] = [];
     
-    if (code.includes('ERC20')) prerequisites.push('erc20-standard');
-    if (code.includes('ERC721')) prerequisites.push('erc721-standard');
-    if (code.includes('modifier')) prerequisites.push('modifiers');
-    if (code.includes('mapping')) prerequisites.push('mappings');
-    if (code.includes('struct')) prerequisites.push('structs');
+    if (_code.includes('ERC20')) prerequisites.push('erc20-standard');
+    if (_code.includes('ERC721')) prerequisites.push('erc721-standard');
+    if (_code.includes('modifier')) prerequisites.push('modifiers');
+    if (_code.includes('mapping')) prerequisites.push('mappings');
+    if (_code.includes('struct')) prerequisites.push('structs');
     
     return prerequisites;
   }
 
-  private async generateLearningObjectives(code: string, category: string): Promise<string[]> {
+  private async generateLearningObjectives( code: string, category: string): Promise<string[]> {
     const objectives: string[] = [];
     
     // Generate category-specific objectives
-    switch (category) {
+    switch (_category) {
       case 'basic':
         objectives.push('Understand basic contract structure');
         objectives.push('Learn about state variables');
@@ -722,19 +722,19 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     return objectives;
   }
 
-  private extractConcepts(code: string): string[] {
+  private extractConcepts(_code: string): string[] {
     const concepts: string[] = [];
     
-    if (code.includes('mapping')) concepts.push('mappings');
-    if (code.includes('struct')) concepts.push('structs');
-    if (code.includes('modifier')) concepts.push('modifiers');
-    if (code.includes('event')) concepts.push('events');
-    if (code.includes('require')) concepts.push('error-handling');
+    if (_code.includes('mapping')) concepts.push('mappings');
+    if (_code.includes('struct')) concepts.push('structs');
+    if (_code.includes('modifier')) concepts.push('modifiers');
+    if (_code.includes('event')) concepts.push('events');
+    if (_code.includes('require')) concepts.push('error-handling');
     
     return concepts;
   }
 
-  private async generateDocumentation(code: string, name: string, description: string): Promise<TemplateDocumentation> {
+  private async generateDocumentation( code: string, name: string, description: string): Promise<TemplateDocumentation> {
     return {
       overview: `${name}: ${description}`,
       usage: 'Deploy and interact with this contract',
@@ -745,8 +745,8 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     };
   }
 
-  private generateSecurityChecks(securityAnalysis: any): SecurityCheck[] {
-    return securityAnalysis.issues.map((issue: any, index: number) => ({
+  private generateSecurityChecks(_securityAnalysis: any): SecurityCheck[] {
+    return securityAnalysis.issues.map( (issue: any, index: number) => ({
       id: `security-check-${index}`,
       name: issue.title || 'Security Check',
       description: issue.message || 'Security vulnerability detected',
@@ -759,8 +759,8 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     }));
   }
 
-  private generateGasOptimizations(gasAnalysis: any): GasOptimization[] {
-    return gasAnalysis.optimizations.map((opt: any, index: number) => ({
+  private generateGasOptimizations(_gasAnalysis: any): GasOptimization[] {
+    return gasAnalysis.optimizations.map( (opt: any, index: number) => ({
       id: `gas-opt-${index}`,
       name: opt.title || 'Gas Optimization',
       description: opt.description || 'Gas optimization opportunity',
@@ -772,7 +772,7 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     }));
   }
 
-  private async generateTestCases(code: string): Promise<TemplateTestCase[]> {
+  private async generateTestCases(_code: string): Promise<TemplateTestCase[]> {
     return [
       {
         id: 'test-deployment',
@@ -785,9 +785,9 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     ];
   }
 
-  private checkBestPractice(code: string, practice: BestPractice): ValidationViolation | null {
+  private checkBestPractice( code: string, practice: BestPractice): ValidationViolation | null {
     // Simple pattern matching for best practices
-    if (practice.category === 'security' && !code.includes('require')) {
+    if (_practice.category === 'security' && !code.includes('require')) {
       return {
         type: 'best-practice',
         severity: 'medium',
@@ -800,20 +800,20 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     return null;
   }
 
-  private findPatternLine(code: string, pattern: RegExp): number {
+  private findPatternLine( code: string, pattern: RegExp): number {
     const lines = code.split('\n');
     for (let i = 0; i < lines.length; i++) {
-      if (pattern.test(lines[i])) {
+      if (_pattern.test(lines[i])) {
         return i + 1;
       }
     }
     return 1;
   }
 
-  private generateImprovementSuggestions(securityAnalysis: any, template: ContractTemplate): string[] {
+  private generateImprovementSuggestions( securityAnalysis: any, template: ContractTemplate): string[] {
     const suggestions: string[] = [];
     
-    if (securityAnalysis.issues.length > 0) {
+    if (_securityAnalysis.issues.length > 0) {
       suggestions.push('Review security analysis results');
     }
     
@@ -823,11 +823,11 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     return suggestions;
   }
 
-  private calculateValidationScore(violations: ValidationViolation[], template: ContractTemplate): number {
+  private calculateValidationScore( violations: ValidationViolation[], template: ContractTemplate): number {
     let score = 100;
     
     violations.forEach(violation => {
-      switch (violation.severity) {
+      switch (_violation.severity) {
         case 'critical': score -= 25; break;
         case 'high': score -= 15; break;
         case 'medium': score -= 10; break;
@@ -839,7 +839,7 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
   }
 
   // Template-specific methods
-  private getERC20Placeholders(): TemplatePlaceholder[] {
+  private getERC20Placeholders(_): TemplatePlaceholder[] {
     return [
       {
         id: 'TOKEN_NAME',
@@ -854,7 +854,7 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     ];
   }
 
-  private getERC20BestPractices(): BestPractice[] {
+  private getERC20BestPractices(_): BestPractice[] {
     return [
       {
         id: 'erc20-ownership',
@@ -870,13 +870,13 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     ];
   }
 
-  private getERC20SecurityChecks(): SecurityCheck[] {
+  private getERC20SecurityChecks(_): SecurityCheck[] {
     return [
       {
         id: 'erc20-overflow',
         name: 'Integer Overflow',
         description: 'Check for integer overflow in token operations',
-        pattern: /\+\+|\-\-|\+|\-|\*|\/(?!\*)/,
+        pattern: /\+\+|\-\-|\+|\-|\*|\/(_?!\*)/,
         severity: 'high',
         message: 'Potential integer overflow',
         fix: 'Use SafeMath or Solidity ^0.8.0',
@@ -886,7 +886,7 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     ];
   }
 
-  private getERC20GasOptimizations(): GasOptimization[] {
+  private getERC20GasOptimizations(_): GasOptimization[] {
     return [
       {
         id: 'erc20-storage',
@@ -901,7 +901,7 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     ];
   }
 
-  private getERC20Documentation(): TemplateDocumentation {
+  private getERC20Documentation(_): TemplateDocumentation {
     return {
       overview: 'A basic ERC20 token implementation with standard functionality',
       usage: 'Deploy the contract and interact with standard ERC20 methods',
@@ -912,15 +912,15 @@ contract {{TOKEN_NAME}} is ERC20, Ownable {
     };
   }
 
-  private addNFTTemplates(): void {
+  private addNFTTemplates(_): void {
     // Implementation for NFT templates
   }
 
-  private addDeFiTemplates(): void {
+  private addDeFiTemplates(_): void {
     // Implementation for DeFi templates
   }
 
-  private addDAOTemplates(): void {
+  private addDAOTemplates(_): void {
     // Implementation for DAO templates
   }
 }
@@ -946,5 +946,5 @@ interface ValidationViolation {
 export function createSmartContractTemplates(
   securityScanner: SecurityScanner
 ): SmartContractTemplates {
-  return new SmartContractTemplates(securityScanner);
+  return new SmartContractTemplates(_securityScanner);
 }

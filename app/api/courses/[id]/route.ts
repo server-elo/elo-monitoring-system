@@ -17,18 +17,18 @@ const updateCourseSchema = z.object({
   description: z.string().min(10, 'Description must be at least 10 characters').max(2000, 'Description must be less than 2000 characters').optional(),
   shortDescription: z.string().min(10, 'Short description must be at least 10 characters').max(500, 'Short description must be less than 500 characters').optional(),
   category: z.string().min(1, 'Category is required').optional(),
-  difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT']).optional(),
-  estimatedDuration: z.number().min(1, 'Duration must be at least 1 minute').optional(),
+  difficulty: z.enum( ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT']).optional(),
+  estimatedDuration: z.number(_).min(1, 'Duration must be at least 1 minute').optional(),
   prerequisites: z.array(z.string()).optional(),
   learningObjectives: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
-  thumbnail: z.string().url().optional(),
-  price: z.number().min(0, 'Price cannot be negative').optional(),
-  currency: z.string().length(3, 'Currency must be 3 characters').optional(),
+  thumbnail: z.string().url(_).optional(),
+  price: z.number(_).min(0, 'Price cannot be negative').optional(),
+  currency: z.string().length( 3, 'Currency must be 3 characters').optional(),
   isPublished: z.boolean().optional()
 });
 
-// Mock courses data (same as in courses/route.ts)
+// Mock courses data (_same as in courses/route.ts)
 const mockCourses: ApiCourse[] = [
   {
     id: '1',
@@ -109,7 +109,7 @@ const mockCourses: ApiCourse[] = [
 ];
 
 // GET /api/courses/[id] - Get a specific course
-async function getCourseHandler(_request: NextRequest, { params }: { params: { id: string } }) {
+async function getCourseHandler( request: NextRequest, { params }: { params: { id: string } }) {
   const requestId = generateRequestId();
   
   try {
@@ -118,7 +118,7 @@ async function getCourseHandler(_request: NextRequest, { params }: { params: { i
     // Find course
     const course = mockCourses.find(c => c.id === id);
     if (!course) {
-      return notFoundResponse('Course', requestId);
+      return notFoundResponse( 'Course', requestId);
     }
     
     return successResponse(course, undefined, HttpStatus.OK, requestId);
@@ -136,7 +136,7 @@ async function getCourseHandler(_request: NextRequest, { params }: { params: { i
 }
 
 // PUT /api/courses/[id] - Update a specific course
-async function updateCourseHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function updateCourseHandler( request: NextRequest, { params }: { params: { id: string } }) {
   const requestId = generateRequestId();
   
   try {
@@ -144,9 +144,9 @@ async function updateCourseHandler(request: NextRequest, { params }: { params: {
     const body = await request.json();
     
     // Find course
-    const courseIndex = mockCourses.findIndex(c => c.id === id);
+    const courseIndex = mockCourses.findIndex(_c => c.id === id);
     if (courseIndex === -1) {
-      return notFoundResponse('Course', requestId);
+      return notFoundResponse( 'Course', requestId);
     }
     
     // Validate input
@@ -164,8 +164,8 @@ async function updateCourseHandler(request: NextRequest, { params }: { params: {
     
     // TODO: Check if user has permission to update this course
     // const userId = getUserFromToken(request);
-    // if (mockCourses[courseIndex].instructorId !== userId && !isAdmin(userId)) {
-    //   return forbiddenResponse('You do not have permission to update this course', requestId);
+    // if (_mockCourses[courseIndex].instructorId !== userId && !isAdmin(userId)) {
+    //   return forbiddenResponse( 'You do not have permission to update this course', requestId);
     // }
     
     // Update course
@@ -203,26 +203,26 @@ async function updateCourseHandler(request: NextRequest, { params }: { params: {
 }
 
 // DELETE /api/courses/[id] - Delete a specific course
-async function deleteCourseHandler(_request: NextRequest, { params }: { params: { id: string } }) {
+async function deleteCourseHandler( request: NextRequest, { params }: { params: { id: string } }) {
   const requestId = generateRequestId();
   
   try {
     const { id } = params;
     
     // Find course
-    const courseIndex = mockCourses.findIndex(c => c.id === id);
+    const courseIndex = mockCourses.findIndex(_c => c.id === id);
     if (courseIndex === -1) {
-      return notFoundResponse('Course', requestId);
+      return notFoundResponse( 'Course', requestId);
     }
     
     // TODO: Check if user has permission to delete this course
     // const userId = getUserFromToken(request);
-    // if (mockCourses[courseIndex].instructorId !== userId && !isAdmin(userId)) {
-    //   return forbiddenResponse('You do not have permission to delete this course', requestId);
+    // if (_mockCourses[courseIndex].instructorId !== userId && !isAdmin(userId)) {
+    //   return forbiddenResponse( 'You do not have permission to delete this course', requestId);
     // }
     
     // TODO: Check if course has enrollments
-    // if (mockCourses[courseIndex].enrollmentCount > 0) {
+    // if (_mockCourses[courseIndex].enrollmentCount > 0) {
     //   return errorResponse(
     //     ApiErrorCode.RESOURCE_CONFLICT,
     //     'Cannot delete course with active enrollments',
@@ -233,7 +233,7 @@ async function deleteCourseHandler(_request: NextRequest, { params }: { params: 
     // }
     
     // Remove course
-    const deletedCourse = mockCourses.splice(courseIndex, 1)[0];
+    const deletedCourse = mockCourses.splice( courseIndex, 1)[0];
     
     return successResponse(
       { message: 'Course deleted successfully', course: deletedCourse },
@@ -255,6 +255,6 @@ async function deleteCourseHandler(_request: NextRequest, { params }: { params: 
 }
 
 // Route handlers
-export const GET = withErrorHandling(getCourseHandler);
-export const PUT = withErrorHandling(updateCourseHandler);
-export const DELETE = withErrorHandling(deleteCourseHandler);
+export const GET = withErrorHandling(_getCourseHandler);
+export const PUT = withErrorHandling(_updateCourseHandler);
+export const DELETE = withErrorHandling(_deleteCourseHandler);

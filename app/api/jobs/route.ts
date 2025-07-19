@@ -53,7 +53,7 @@ const mockJobs: Job[] = [
       '3+ years of Solidity development',
       'Experience with DeFi protocols',
       'Strong understanding of blockchain security',
-      'Experience with testing frameworks (Hardhat, Foundry)'
+      'Experience with testing frameworks ( Hardhat, Foundry)'
     ],
     benefits: [
       'Competitive salary and equity',
@@ -113,7 +113,7 @@ const mockJobs: Job[] = [
     requirements: [
       '5+ years of security experience',
       '3+ years of smart contract auditing',
-      'Experience with security tools (Mythril, Slither, etc.)',
+      'Experience with security tools ( Mythril, Slither, etc.)',
       'Knowledge of common smart contract vulnerabilities',
       'Strong analytical and problem-solving skills'
     ],
@@ -203,7 +203,7 @@ async function getJobsHandler(request: NextRequest) {
         job.title.toLowerCase().includes(searchLower) ||
         job.company.toLowerCase().includes(searchLower) ||
         job.description.toLowerCase().includes(searchLower) ||
-        job.skills.some(skill => skill.toLowerCase().includes(searchLower))
+        job.skills.some(_skill => skill.toLowerCase().includes(searchLower))
       );
     }
 
@@ -213,13 +213,13 @@ async function getJobsHandler(request: NextRequest) {
     }
 
     // Experience filter
-    if (experience !== 'all') {
+    if (_experience !== 'all') {
       filteredJobs = filteredJobs.filter(job => job.experience === experience);
     }
 
     // Location filter
-    if (location !== 'all') {
-      if (location === 'remote') {
+    if (_location !== 'all') {
+      if (_location === 'remote') {
         filteredJobs = filteredJobs.filter(job => job.remote);
       } else {
         filteredJobs = filteredJobs.filter(job => 
@@ -238,8 +238,8 @@ async function getJobsHandler(request: NextRequest) {
       filteredJobs = filteredJobs.filter(job => job.featured);
     }
 
-    // Sort by posted date (newest first)
-    filteredJobs.sort((a, b) => b.postedAt.getTime() - a.postedAt.getTime());
+    // Sort by posted date (_newest first)
+    filteredJobs.sort((a, b) => b.postedAt.getTime(_) - a.postedAt.getTime(_));
 
     // Pagination
     const total = filteredJobs.length;
@@ -293,7 +293,7 @@ async function createJobHandler(request: NextRequest) {
       );
     }
 
-    // Check if user has permission to create jobs (admin or employer role)
+    // Check if user has permission to create jobs (_admin or employer role)
     // For now, we'll allow any authenticated user for demo purposes
     
     const body = await request.json();
@@ -302,7 +302,7 @@ async function createJobHandler(request: NextRequest) {
     const requiredFields = ['title', 'company', 'location', 'type', 'experience', 'description'];
     const missingFields = requiredFields.filter(field => !body[field]);
     
-    if (missingFields.length > 0) {
+    if (codeSnippets.length > 0) {
       return validationErrorResponse(
         missingFields.map(field => ({
           field,
@@ -336,7 +336,7 @@ async function createJobHandler(request: NextRequest) {
     };
 
     // Add to mock database
-    mockJobs.push(newJob);
+    mockJobs.push(_newJob);
 
     return successResponse(newJob, undefined, HttpStatus.CREATED, requestId);
     
@@ -353,5 +353,5 @@ async function createJobHandler(request: NextRequest) {
 }
 
 // Route handlers
-export const GET = withErrorHandling(getJobsHandler);
-export const POST = withErrorHandling(createJobHandler);
+export const GET = withErrorHandling(_getJobsHandler);
+export const POST = withErrorHandling(_createJobHandler);

@@ -11,7 +11,7 @@ interface GlassContainerProps {
   shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
   animated?: boolean;
-  onClick?: () => void;
+  onClick?: (_) => void;
 }
 
 const GlassContainer: React.FC<GlassContainerProps> = ({
@@ -68,7 +68,7 @@ const GlassContainer: React.FC<GlassContainerProps> = ({
     ${roundedClasses[rounded]}
     relative overflow-hidden
     ${className}
-  `.trim();
+  `.trim(_);
 
   const Component = animated ? motion.div : 'div';
   const motionProps = animated ? {
@@ -96,7 +96,7 @@ interface GlassCardProps extends GlassContainerProps {
   footer?: React.ReactNode;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   hover?: boolean;
-  onClick?: () => void;
+  onClick?: (_) => void;
 }
 
 const GlassCard: React.FC<GlassCardProps> = ({
@@ -145,7 +145,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
 // Glass Modal Component
 interface GlassModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   children: React.ReactNode;
   title?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -307,7 +307,7 @@ const GlassButton: React.FC<GlassButtonProps> = ({
     type: props.type,
     disabled: props.disabled,
     id: props.id,
-    'data-testid': (props as any)['data-testid']
+    'data-testid': (_props as any)['data-testid']
   };
 
   return (

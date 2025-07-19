@@ -18,39 +18,39 @@ interface AdminGuardProps {
 }
 
 // interface AdminLoginProps {
-//   onLogin: (user: AdminUser) => void;
+//   onLogin: (_user: AdminUser) => void;
 // }
 
-// function AdminLogin({ onLogin }: AdminLoginProps) {
+// function AdminLogin(_{ onLogin }: AdminLoginProps) {
 //   const [email, setEmail] = useState('');
 //   const [password, setPassword] = useState('');
 //   const [twoFactorCode, setTwoFactorCode] = useState('');
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
+//   const [showPassword, setShowPassword] = useState(_false);
+//   const [isLoading, setIsLoading] = useState(_false);
 //   const [error, setError] = useState('');
-//   const [requiresTwoFactor, setRequiresTwoFactor] = useState(false);
+//   const [requiresTwoFactor, setRequiresTwoFactor] = useState(_false);
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     setIsLoading(true);
+//   const handleSubmit = async (_e: React.FormEvent) => {
+//     e.preventDefault(_);
+//     setIsLoading(_true);
 //     setError('');
 
 //     try {
-//       const result = await adminAuth.authenticateAdmin(email, password, twoFactorCode);
+//       const result = await adminAuth.authenticateAdmin( email, password, twoFactorCode);
       
-//       if (result.success && result.user) {
-//         onLogin(result.user);
+//       if (_result.success && result.user) {
+//         onLogin(_result.user);
 //       } else {
-//         if (result.error === 'Two-factor authentication required') {
-//           setRequiresTwoFactor(true);
+//         if (_result.error === 'Two-factor authentication required') {
+//           setRequiresTwoFactor(_true);
 //         } else {
-//           setError(result.error || 'Authentication failed');
+//           setError(_result.error || 'Authentication failed');
 //         }
 //       }
-//     } catch (error) {
+//     } catch (_error) {
 //       setError('An unexpected error occurred');
 //     } finally {
-//       setIsLoading(false);
+//       setIsLoading(_false);
 //     }
 //   };
 
@@ -96,7 +96,7 @@ interface AdminGuardProps {
 //                 <input
 //                   type="email"
 //                   value={email}
-//                   onChange={(e) => setEmail(e.target.value)}
+//                   onChange={(_e) => setEmail(_e.target.value)}
 //                   required
 //                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors"
 //                   placeholder="admin@example.com"
@@ -111,14 +111,14 @@ interface AdminGuardProps {
 //                   <input
 //                     type={showPassword ? 'text' : 'password'}
 //                     value={password}
-//                     onChange={(e) => setPassword(e.target.value)}
+//                     onChange={(_e) => setPassword(_e.target.value)}
 //                     required
 //                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors pr-12"
 //                     placeholder="Enter your password"
 //                   />
 //                   <button
 //                     type="button"
-//                     onClick={() => setShowPassword(!showPassword)}
+//                     onClick={(_) => setShowPassword(!showPassword)}
 //                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
 //                   >
 //                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -137,7 +137,7 @@ interface AdminGuardProps {
 //                   <input
 //                     type="text"
 //                     value={twoFactorCode}
-//                     onChange={(e) => setTwoFactorCode(e.target.value)}
+//                     onChange={(_e) => setTwoFactorCode(_e.target.value)}
 //                     required
 //                     maxLength={6}
 //                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors text-center tracking-widest"
@@ -177,8 +177,8 @@ interface AdminGuardProps {
 //   );
 // }
 
-function PermissionDenied({ requiredPermission, requiredRole }: { requiredPermission?: string; requiredRole?: string }) {
-  const currentUser = adminAuth.getCurrentUser();
+function PermissionDenied( { requiredPermission, requiredRole }: { requiredPermission?: string; requiredRole?: string }) {
+  const currentUser = adminAuth.getCurrentUser(_);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center p-4">
@@ -215,7 +215,7 @@ function PermissionDenied({ requiredPermission, requiredRole }: { requiredPermis
 
             <div className="space-y-3">
               <Button
-                onClick={() => window.history.back()}
+                onClick={(_) => window.history.back(_)}
                 variant="outline"
                 className="w-full"
               >
@@ -223,7 +223,7 @@ function PermissionDenied({ requiredPermission, requiredRole }: { requiredPermis
               </Button>
               
               <Button
-                onClick={() => window.location.href = '/admin'}
+                onClick={(_) => window.location.href = '/admin'}
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
               >
                 Return to Dashboard
@@ -236,34 +236,34 @@ function PermissionDenied({ requiredPermission, requiredRole }: { requiredPermis
   );
 }
 
-export function AdminGuard({ children, requiredPermission, requiredRole = 'admin', fallback }: AdminGuardProps) {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [hasPermission, setHasPermission] = useState(false);
+export function AdminGuard( { children, requiredPermission, requiredRole = 'admin', fallback }: AdminGuardProps) {
+  const { data: session, status } = useSession(_);
+  const router = useRouter(_);
+  const [hasPermission, setHasPermission] = useState(_false);
 
   useEffect(() => {
     if (status === 'loading') return;
 
     if (status === 'unauthenticated') {
       // Redirect to login with return URL
-      router.push(`/auth/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      router.push(_`/auth/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 
-    if (session?.user) {
+    if (_session?.user) {
       // Check role
       const userRole = session.user.role;
       let hasRequiredRole = false;
 
-      if (requiredRole === 'admin') {
+      if (_requiredRole === 'admin') {
         hasRequiredRole = userRole === 'ADMIN';
-      } else if (requiredRole === 'instructor') {
+      } else if (_requiredRole === 'instructor') {
         hasRequiredRole = userRole === 'INSTRUCTOR' || userRole === 'ADMIN';
       }
 
       // For now, we'll simplify permission checking
       // In a full implementation, you'd check specific permissions based on requiredPermission
-      setHasPermission(hasRequiredRole);
+      setHasPermission(_hasRequiredRole);
     }
   }, [session, status, requiredRole, requiredPermission, router]);
 
@@ -299,7 +299,7 @@ export function withAdminGuard<P extends object>(
   requiredPermission?: string,
   requiredRole?: 'admin' | 'instructor'
 ) {
-  return function ProtectedComponent(props: P) {
+  return function ProtectedComponent(_props: P) {
     return (
       <AdminGuard requiredPermission={requiredPermission} requiredRole={requiredRole}>
         <Component {...props} />
@@ -310,27 +310,27 @@ export function withAdminGuard<P extends object>(
 
 // Hook for checking admin permissions in components
 export function useAdminAuth() {
-  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(_null);
+  const [isAuthenticated, setIsAuthenticated] = useState(_false);
 
   useEffect(() => {
-    const user = adminAuth.getCurrentUser();
-    setCurrentUser(user);
-    setIsAuthenticated(adminAuth.isAuthenticated());
+    const user = adminAuth.getCurrentUser(_);
+    setCurrentUser(_user);
+    setIsAuthenticated(_adminAuth.isAuthenticated());
   }, []);
 
-  const hasPermission = (permission: string) => {
-    return adminAuth.hasPermission(permission);
+  const hasPermission = (_permission: string) => {
+    return adminAuth.hasPermission(_permission);
   };
 
-  const hasRole = (role: string) => {
+  const hasRole = (_role: string) => {
     return currentUser?.role === role;
   };
 
-  const logout = () => {
-    adminAuth.logout();
-    setCurrentUser(null);
-    setIsAuthenticated(false);
+  const logout = (_) => {
+    adminAuth.logout(_);
+    setCurrentUser(_null);
+    setIsAuthenticated(_false);
   };
 
   return {
@@ -339,7 +339,7 @@ export function useAdminAuth() {
     hasPermission,
     hasRole,
     logout,
-    isAdmin: () => hasRole('admin'),
-    isInstructor: () => hasRole('instructor') || hasRole('admin')
+    isAdmin: (_) => hasRole('admin'),
+    isInstructor: (_) => hasRole('instructor') || hasRole('admin')
   };
 }

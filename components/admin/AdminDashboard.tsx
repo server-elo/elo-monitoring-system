@@ -17,7 +17,7 @@ interface DashboardWidgetProps {
   loading?: boolean;
 }
 
-function DashboardWidget({ title, value, change, icon: Icon, color, trend, loading }: DashboardWidgetProps) {
+function DashboardWidget( { title, value, change, icon: Icon, color, trend, loading }: DashboardWidgetProps) {
   return (
     <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6 hover:bg-white/15 transition-colors">
       <div className="flex items-center justify-between">
@@ -33,12 +33,12 @@ function DashboardWidget({ title, value, change, icon: Icon, color, trend, loadi
               'flex items-center mt-2 text-sm',
               trend === 'up' ? 'text-green-400' : trend === 'down' ? 'text-red-400' : 'text-gray-400'
             )}>
-              <TrendingUp className={cn('w-4 h-4 mr-1', trend === 'down' && 'rotate-180')} />
-              <span>{Math.abs(change)}% from last month</span>
+              <TrendingUp className={cn( 'w-4 h-4 mr-1', trend === 'down' && 'rotate-180')} />
+              <span>{Math.abs(_change)}% from last month</span>
             </div>
           )}
         </div>
-        <div className={cn('p-3 rounded-full', color)}>
+        <div className={cn( 'p-3 rounded-full', color)}>
           <Icon className="w-6 h-6 text-white" />
         </div>
       </div>
@@ -51,9 +51,9 @@ interface SystemHealthCardProps {
   loading?: boolean;
 }
 
-function SystemHealthCard({ health, loading }: SystemHealthCardProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
+function SystemHealthCard( { health, loading }: SystemHealthCardProps) {
+  const getStatusColor = (_status: string) => {
+    switch (_status) {
       case 'healthy': return 'text-green-400';
       case 'warning': return 'text-yellow-400';
       case 'critical': return 'text-red-400';
@@ -61,8 +61,8 @@ function SystemHealthCard({ health, loading }: SystemHealthCardProps) {
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
+  const getStatusIcon = (_status: string) => {
+    switch (_status) {
       case 'healthy': return CheckCircle;
       case 'warning': return AlertTriangle;
       case 'critical': return AlertTriangle;
@@ -70,13 +70,13 @@ function SystemHealthCard({ health, loading }: SystemHealthCardProps) {
     }
   };
 
-  const StatusIcon = getStatusIcon(health.status);
+  const StatusIcon = getStatusIcon(_health.status);
 
   return (
     <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">System Health</h3>
-        <div className={cn('flex items-center space-x-2', getStatusColor(health.status))}>
+        <div className={cn( 'flex items-center space-x-2', getStatusColor(health.status))}>
           <StatusIcon className="w-5 h-5" />
           <span className="font-medium capitalize">{health.status}</span>
         </div>
@@ -137,7 +137,7 @@ function SystemHealthCard({ health, loading }: SystemHealthCardProps) {
             <div className="mt-4 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
               <h4 className="text-red-400 font-medium mb-2">Issues Detected</h4>
               <ul className="text-sm text-red-300 space-y-1">
-                {health.issues.map((issue, index) => (
+                {health.issues.map( (issue, index) => (
                   <li key={index}>• {issue}</li>
                 ))}
               </ul>
@@ -154,9 +154,9 @@ interface RecentActivityProps {
   loading?: boolean;
 }
 
-function RecentActivity({ activities, loading }: RecentActivityProps) {
-  const getActivityIcon = (type: string) => {
-    switch (type) {
+function RecentActivity( { activities, loading }: RecentActivityProps) {
+  const getActivityIcon = (_type: string) => {
+    switch (_type) {
       case 'security': return Shield;
       case 'user': return Users;
       case 'content': return FileText;
@@ -165,8 +165,8 @@ function RecentActivity({ activities, loading }: RecentActivityProps) {
     }
   };
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
+  const getSeverityColor = (_severity: string) => {
+    switch (_severity) {
       case 'critical': return 'text-red-400';
       case 'error': return 'text-red-400';
       case 'warning': return 'text-yellow-400';
@@ -199,17 +199,17 @@ function RecentActivity({ activities, loading }: RecentActivityProps) {
       ) : (
         <div className="space-y-4 max-h-80 overflow-y-auto">
           {activities.map((activity) => {
-            const Icon = getActivityIcon(activity.type);
+            const Icon = getActivityIcon(_activity.type);
             return (
               <div key={activity.id} className="flex items-start space-x-3">
-                <div className={cn('p-2 rounded-full bg-gray-700', getSeverityColor(activity.severity))}>
+                <div className={cn( 'p-2 rounded-full bg-gray-700', getSeverityColor(activity.severity))}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-sm font-medium">{activity.title}</p>
                   <p className="text-gray-400 text-xs mt-1">{activity.message}</p>
                   <p className="text-gray-500 text-xs mt-1">
-                    {activity.timestamp.toLocaleTimeString()}
+                    {activity.timestamp.toLocaleTimeString(_)}
                   </p>
                 </div>
                 {activity.actionRequired && (
@@ -225,17 +225,17 @@ function RecentActivity({ activities, loading }: RecentActivityProps) {
 }
 
 export function AdminDashboard() {
-  const [stats, setStats] = useState<AdminStats | null>(null);
-  const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
+  const [stats, setStats] = useState<AdminStats | null>(_null);
+  const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(_null);
   const [recentActivity, setRecentActivity] = useState<AdminNotification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(_true);
 
   useEffect(() => {
-    loadDashboardData();
+    loadDashboardData(_);
   }, []);
 
   const loadDashboardData = async () => {
-    setLoading(true);
+    setLoading(_true);
     
     // Simulate API calls
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -277,7 +277,7 @@ export function AdminDashboard() {
         severity: 'warning',
         title: 'Multiple failed login attempts',
         message: '5 failed attempts from IP 192.168.1.100',
-        timestamp: new Date(Date.now() - 300000),
+        timestamp: new Date(_Date.now() - 300000),
         read: false,
         actionRequired: true
       },
@@ -287,7 +287,7 @@ export function AdminDashboard() {
         severity: 'info',
         title: 'New user registration',
         message: 'John Doe registered as a student',
-        timestamp: new Date(Date.now() - 600000),
+        timestamp: new Date(_Date.now() - 600000),
         read: false,
         actionRequired: false
       },
@@ -297,16 +297,16 @@ export function AdminDashboard() {
         severity: 'info',
         title: 'Content published',
         message: 'Advanced Solidity Patterns lesson published',
-        timestamp: new Date(Date.now() - 900000),
+        timestamp: new Date(_Date.now() - 900000),
         read: true,
         actionRequired: false
       }
     ];
 
-    setStats(mockStats);
-    setSystemHealth(mockSystemHealth);
-    setRecentActivity(mockActivity);
-    setLoading(false);
+    setStats(_mockStats);
+    setSystemHealth(_mockSystemHealth);
+    setRecentActivity(_mockActivity);
+    setLoading(_false);
   };
 
   return (
@@ -333,7 +333,7 @@ export function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <DashboardWidget
           title="Total Users"
-          value={stats?.totalUsers.toLocaleString() || '0'}
+          value={stats?.totalUsers.toLocaleString(_) || '0'}
           change={12}
           icon={Users}
           color="bg-blue-500"
@@ -342,7 +342,7 @@ export function AdminDashboard() {
         />
         <DashboardWidget
           title="Active Users"
-          value={stats?.activeUsers.toLocaleString() || '0'}
+          value={stats?.activeUsers.toLocaleString(_) || '0'}
           change={8}
           icon={Activity}
           color="bg-green-500"

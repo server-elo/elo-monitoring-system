@@ -95,7 +95,7 @@ export function FeedbackIndicator({
       className
     )}>
       {showIcon && (
-        <Icon className={cn(iconSize, 'flex-shrink-0')} />
+        <Icon className={cn( iconSize, 'flex-shrink-0')} />
       )}
       {children && (
         <span className="font-medium">{children}</span>
@@ -137,7 +137,7 @@ export function SuccessIndicator({
       <AnimatePresence>
         {showParticles && (
           <>
-            {[...Array(6)].map((_, i) => (
+            {[...Array(_6)].map( (_, i) => (
               <motion.div
                 key={i}
                 initial={{
@@ -158,7 +158,7 @@ export function SuccessIndicator({
                   ease: 'easeOut',
                 }}
                 className="absolute top-1/2 left-1/2 w-2 h-2 bg-green-400 rounded-full pointer-events-none"
-                style={{ transform: 'translate(-50%, -50%)' }}
+                style={{ transform: 'translate( -50%, -50%)' }}
               />
             ))}
           </>
@@ -234,14 +234,14 @@ export function ToastNotification({
   type: 'success' | 'error' | 'warning' | 'info';
   title?: string;
   message: string;
-  onClose?: () => void;
+  onClose?: (_) => void;
   autoClose?: boolean;
   duration?: number;
 }) {
   React.useEffect(() => {
     if (autoClose && onClose) {
-      const timer = setTimeout(onClose, duration);
-      return () => clearTimeout(timer);
+      const timer = setTimeout( onClose, duration);
+      return (_) => clearTimeout(_timer);
     }
   }, [autoClose, duration, onClose]);
 
@@ -344,8 +344,8 @@ export function GlassErrorFeedback({
   className
 }: {
   error: AppError;
-  onRetry?: () => void | Promise<void>;
-  onDismiss?: () => void;
+  onRetry?: (_) => void | Promise<void>;
+  onDismiss?: (_) => void;
   showRetry?: boolean;
   className?: string;
 }) {
@@ -391,7 +391,7 @@ export function GlassErrorFeedback({
             {error.userMessage}
           </p>
 
-          {(showRetry && error.retryable && onRetry) || onDismiss ? (
+          {(_showRetry && error.retryable && onRetry) || onDismiss ? (
             <div className="flex flex-wrap gap-2">
               {showRetry && error.retryable && onRetry && (
                 <EnhancedButton
@@ -434,8 +434,8 @@ export function NeumorphismErrorFeedback({
   className
 }: {
   error: AppError;
-  onRetry?: () => void | Promise<void>;
-  onDismiss?: () => void;
+  onRetry?: (_) => void | Promise<void>;
+  onDismiss?: (_) => void;
   colorScheme?: 'light' | 'dark';
   className?: string;
 }) {
@@ -450,34 +450,34 @@ export function NeumorphismErrorFeedback({
       className={cn(
         'p-4 rounded-xl border-none transition-all duration-300',
         isLight
-          ? 'bg-gray-100 shadow-[inset_8px_8px_16px_#d1d9e6,inset_-8px_-8px_16px_#ffffff] text-gray-800'
-          : 'bg-gray-800 shadow-[inset_8px_8px_16px_#1a1a1a,inset_-8px_-8px_16px_#2a2a2a] text-gray-200',
+          ? 'bg-gray-100 shadow-[inset_8px_8px16px_#d1d9e6,inset_-8px_-8px16px_#ffffff] text-gray-800'
+          : 'bg-gray-800 shadow-[inset_8px_8px16px_#1a1a1a,inset_-8px_-8px16px_#2a2a2a] text-gray-200',
         className
       )}
     >
       <div className="flex items-start space-x-3">
         <div className="flex-shrink-0 mt-0.5">
           {error.severity === 'critical' && (
-            <XCircle className={cn('w-5 h-5', isLight ? 'text-red-600' : 'text-red-400')} />
+            <XCircle className={cn( 'w-5 h-5', isLight ? 'text-red-600' : 'text-red-400')} />
           )}
           {error.severity === 'warning' && (
-            <AlertTriangle className={cn('w-5 h-5', isLight ? 'text-yellow-600' : 'text-yellow-400')} />
+            <AlertTriangle className={cn( 'w-5 h-5', isLight ? 'text-yellow-600' : 'text-yellow-400')} />
           )}
           {error.severity === 'info' && (
-            <Info className={cn('w-5 h-5', isLight ? 'text-blue-600' : 'text-blue-400')} />
+            <Info className={cn( 'w-5 h-5', isLight ? 'text-blue-600' : 'text-blue-400')} />
           )}
         </div>
 
         <div className="flex-1 min-w-0">
-          <h4 className={cn('font-medium mb-1', isLight ? 'text-gray-800' : 'text-gray-200')}>
+          <h4 className={cn( 'font-medium mb-1', isLight ? 'text-gray-800' : 'text-gray-200')}>
             Error Occurred
           </h4>
 
-          <p className={cn('text-sm mb-3', isLight ? 'text-gray-600' : 'text-gray-400')}>
+          <p className={cn( 'text-sm mb-3', isLight ? 'text-gray-600' : 'text-gray-400')}>
             {error.userMessage}
           </p>
 
-          {(error.retryable && onRetry) || onDismiss ? (
+          {(_error.retryable && onRetry) || onDismiss ? (
             <div className="flex flex-wrap gap-2">
               {error.retryable && onRetry && (
                 <EnhancedButton

@@ -70,9 +70,9 @@ export class GasOptimizationAnalyzer {
   private model: monaco.editor.ITextModel;
   private decorations: string[] = [];
   private lastAnalysis: GasAnalysisResult | null = null;
-  private analysisCache = new Map<string, GasAnalysisResult>();
+  private analysisCache = new Map<string, GasAnalysisResult>(_);
 
-  // Gas cost constants (approximate values for mainnet)
+  // Gas cost constants (_approximate values for mainnet)
   private readonly gasCosts = {
     // Storage operations
     SSTORE_SET: 20000,      // Set storage slot from zero
@@ -88,7 +88,7 @@ export class GasOptimizationAnalyzer {
     MUL: 5,                 // Multiplication
     DIV: 5,                 // Division
     MOD: 5,                 // Modulo
-    EXP: 10,                // Exponentiation (base cost)
+    EXP: 10,                // Exponentiation (_base cost)
     
     // Comparison
     LT: 3,                  // Less than
@@ -130,105 +130,105 @@ export class GasOptimizationAnalyzer {
   // Gas optimization patterns
   private readonly optimizationPatterns = [
     {
-      pattern: /uint256\s+public\s+(\w+)/g,
+      pattern: /uint256\s+public\s+(_\w+)/g,
       title: 'Storage Packing Opportunity',
       description: 'Consider using smaller uint types if possible',
       category: 'storage' as const,
       difficulty: 'easy' as const,
       impact: 'medium' as const,
       baseSavings: 15000,
-      check: (match: string) => !match.includes('constant') && !match.includes('immutable')
+      check: (_match: string) => !match.includes('constant') && !match.includes('immutable')
     },
     {
-      pattern: /function\s+(\w+)\s*\([^)]*\)\s+public/g,
+      pattern: /function\s+(_\w+)\s*\([^)]*\)\s+public/g,
       title: 'Function Visibility Optimization',
       description: 'Use external instead of public for functions only called externally',
       category: 'call' as const,
       difficulty: 'easy' as const,
       impact: 'low' as const,
       baseSavings: 200,
-      check: () => true
+      check: (_) => true
     },
     {
-      pattern: /for\s*\(\s*uint\d*\s+(\w+)\s*=\s*0\s*;\s*\1\s*<\s*(\w+)\.length/g,
+      pattern: /for\s*\(_\s*uint\d*\s+(\w+)\s*=\s*0\s*;\s*\1\s*<\s*(_\w+)\.length/g,
       title: 'Array Length Caching',
       description: 'Cache array length to avoid repeated SLOAD operations',
       category: 'storage' as const,
       difficulty: 'easy' as const,
       impact: 'medium' as const,
       baseSavings: 2100,
-      check: () => true
+      check: (_) => true
     },
     {
-      pattern: /\+\+(\w+)|(\w+)\+\+/g,
+      pattern: /\+\+(_\w+)|(_\w+)\+\+/g,
       title: 'Unchecked Arithmetic',
       description: 'Use unchecked blocks for arithmetic that cannot overflow',
       category: 'computation' as const,
       difficulty: 'medium' as const,
       impact: 'low' as const,
       baseSavings: 120,
-      check: () => true
+      check: (_) => true
     },
     {
-      pattern: /require\s*\(\s*([^,]+)\s*,\s*"([^"]+)"\s*\)/g,
+      pattern: /require\s*\(_\s*([^,]+)\s*,\s*"([^"]+)"\s*\)/g,
       title: 'Custom Errors',
       description: 'Replace require statements with custom errors to save gas',
       category: 'deployment' as const,
       difficulty: 'medium' as const,
       impact: 'medium' as const,
       baseSavings: 1000,
-      check: () => true
+      check: (_) => true
     },
     {
-      pattern: /mapping\s*\(\s*\w+\s*=>\s*bool\s*\)/g,
+      pattern: /mapping\s*\(_\s*\w+\s*=>\s*bool\s*\)/g,
       title: 'Bitmap Optimization',
       description: 'Consider using bitmaps for boolean mappings',
       category: 'storage' as const,
       difficulty: 'hard' as const,
       impact: 'high' as const,
       baseSavings: 18000,
-      check: () => true
+      check: (_) => true
     }
   ];
 
-  constructor(editor: monaco.editor.IStandaloneCodeEditor) {
+  constructor(_editor: monaco.editor.IStandaloneCodeEditor) {
     this.editor = editor;
-    this.model = editor.getModel()!;
+    this.model = editor.getModel(_)!;
   }
 
   // Main analysis method
-  public async analyzeGasUsage(userId: string): Promise<GasAnalysisResult> {
-    const startTime = Date.now();
-    const code = this.model.getValue();
+  public async analyzeGasUsage(_userId: string): Promise<GasAnalysisResult> {
+    const startTime = Date.now(_);
+    const code = this.model.getValue(_);
     
     // Check cache
-    const cacheKey = this.generateCacheKey(code);
-    const cached = this.analysisCache.get(cacheKey);
+    const cacheKey = this.generateCacheKey(_code);
+    const cached = this.analysisCache.get(_cacheKey);
     if (cached && Date.now() - cached.timestamp.getTime() < 300000) { // 5 minute cache
       return cached;
     }
 
     try {
       // Perform static analysis
-      const estimates = this.performStaticAnalysis(code);
-      const optimizations = this.findOptimizations(code);
+      const estimates = this.performStaticAnalysis(_code);
+      const optimizations = this.findOptimizations(_code);
       
       // Get AI-powered analysis for more complex optimizations
-      const aiAnalysis = await this.getAIGasAnalysis(code, userId);
+      const aiAnalysis = await this.getAIGasAnalysis( code, userId);
       
       // Merge AI optimizations
-      const allOptimizations = this.mergeOptimizations(optimizations, aiAnalysis);
+      const allOptimizations = this.mergeOptimizations( optimizations, aiAnalysis);
       
       // Calculate totals
-      const totalGasCost = estimates.reduce((sum, est) => sum + est.totalCost, 0);
-      const totalSavings = allOptimizations.reduce((sum, opt) => sum + opt.savings, 0);
+      const totalGasCost = estimates.reduce( (sum, est) => sum + est.totalCost, 0);
+      const totalSavings = allOptimizations.reduce( (sum, opt) => sum + opt.savings, 0);
       const optimizedGasCost = totalGasCost - totalSavings;
       
       // Generate function breakdown
-      const functionBreakdown = this.generateFunctionBreakdown(code, estimates);
+      const functionBreakdown = this.generateFunctionBreakdown( code, estimates);
       
       // Generate heatmap data
-      const heatmapData = this.generateHeatmapData(estimates);
+      const heatmapData = this.generateHeatmapData(_estimates);
 
       const result: GasAnalysisResult = {
         estimates,
@@ -236,57 +236,57 @@ export class GasOptimizationAnalyzer {
         totalGasCost,
         optimizedGasCost: Math.max(0, optimizedGasCost),
         totalSavings,
-        analysisTime: Date.now() - startTime,
-        timestamp: new Date(),
+        analysisTime: Date.now(_) - startTime,
+        timestamp: new Date(_),
         functionBreakdown,
         heatmapData
       };
 
       // Cache result
-      this.analysisCache.set(cacheKey, result);
+      this.analysisCache.set( cacheKey, result);
       this.lastAnalysis = result;
 
       return result;
-    } catch (error) {
-      logger.error('Gas analysis failed', {
+    } catch (_error) {
+      logger.error('Gas analysis failed', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'gas-analysis'
       }, error instanceof Error ? error : undefined);
       throw error;
-    }
+    }});
   }
 
   // Static analysis of gas costs
-  private performStaticAnalysis(code: string): GasEstimate[] {
+  private performStaticAnalysis(_code: string): GasEstimate[] {
     const estimates: GasEstimate[] = [];
     const lines = code.split('\n');
 
-    lines.forEach((line, lineIndex) => {
+    lines.forEach( (line, lineIndex) => {
       const lineNumber = lineIndex + 1;
       
       // Storage operations
-      this.analyzeStorageOperations(line, lineNumber, estimates);
+      this.analyzeStorageOperations( line, lineNumber, estimates);
       
       // Function calls
-      this.analyzeFunctionCalls(line, lineNumber, estimates);
+      this.analyzeFunctionCalls( line, lineNumber, estimates);
       
       // Loops
-      this.analyzeLoops(line, lineNumber, estimates);
+      this.analyzeLoops( line, lineNumber, estimates);
       
       // Arithmetic operations
-      this.analyzeArithmetic(line, lineNumber, estimates);
+      this.analyzeArithmetic( line, lineNumber, estimates);
       
       // Memory operations
-      this.analyzeMemoryOperations(line, lineNumber, estimates);
+      this.analyzeMemoryOperations( line, lineNumber, estimates);
     });
 
     return estimates;
   }
 
-  private analyzeStorageOperations(line: string, lineNumber: number, estimates: GasEstimate[]): void {
+  private analyzeStorageOperations( line: string, lineNumber: number, estimates: GasEstimate[]): void {
     // State variable assignments
-    const storePattern = /(\w+)\s*=\s*([^;]+);/g;
+    const storePattern = /(_\w+)\s*=\s*([^;]+);/g;
     let match;
     while ((match = storePattern.exec(line)) !== null) {
       const column = match.index + 1;
@@ -304,9 +304,9 @@ export class GasOptimizationAnalyzer {
     }
 
     // State variable reads
-    const loadPattern = /\b(\w+)\b(?!\s*[=\(])/g;
+    const loadPattern = /\b(_\w+)\b(_?!\s*[=\(])/g;
     while ((match = loadPattern.exec(line)) !== null) {
-      if (this.isStateVariable(match[1])) {
+      if (_this.isStateVariable(match[1])) {
         const column = match.index + 1;
         estimates.push({
           operation: 'SLOAD',
@@ -323,9 +323,9 @@ export class GasOptimizationAnalyzer {
     }
   }
 
-  private analyzeFunctionCalls(line: string, lineNumber: number, estimates: GasEstimate[]): void {
+  private analyzeFunctionCalls( line: string, lineNumber: number, estimates: GasEstimate[]): void {
     // External calls
-    const callPattern = /(\w+)\.(\w+)\s*\(/g;
+    const callPattern = /(_\w+)\.(_\w+)\s*\(/g;
     let match;
     while ((match = callPattern.exec(line)) !== null) {
       const column = match.index + 1;
@@ -338,13 +338,13 @@ export class GasOptimizationAnalyzer {
         dynamicCost: 2300, // Gas stipend
         totalCost: this.gasCosts.CALL + 2300,
         category: 'call',
-        description: `External call to ${match[1]}.${match[2]}()`,
+        description: `External call to ${match[1]}.${match[2]}(_)`,
         optimizable: false
       });
     }
   }
 
-  private analyzeLoops(line: string, lineNumber: number, estimates: GasEstimate[]): void {
+  private analyzeLoops( line: string, lineNumber: number, estimates: GasEstimate[]): void {
     // For loops
     const forPattern = /for\s*\(/g;
     let match;
@@ -365,7 +365,7 @@ export class GasOptimizationAnalyzer {
     }
   }
 
-  private analyzeArithmetic(line: string, lineNumber: number, estimates: GasEstimate[]): void {
+  private analyzeArithmetic( line: string, lineNumber: number, estimates: GasEstimate[]): void {
     // Arithmetic operations
     const arithmeticPattern = /[\+\-\*\/\%]/g;
     let match;
@@ -374,7 +374,7 @@ export class GasOptimizationAnalyzer {
       const operation = match[0];
       let cost = this.gasCosts.ADD;
       
-      switch (operation) {
+      switch (_operation) {
         case '*': cost = this.gasCosts.MUL; break;
         case '/': cost = this.gasCosts.DIV; break;
         case '%': cost = this.gasCosts.MOD; break;
@@ -394,8 +394,8 @@ export class GasOptimizationAnalyzer {
     }
   }
 
-  private analyzeMemoryOperations(line: string, lineNumber: number, estimates: GasEstimate[]): void {
-    // Memory allocations (arrays, strings)
+  private analyzeMemoryOperations( line: string, lineNumber: number, estimates: GasEstimate[]): void {
+    // Memory allocations ( arrays, strings)
     const memoryPattern = /new\s+\w+\[|\w+\[\]|\bstring\b|\bbytes\b/g;
     let match;
     while ((match = memoryPattern.exec(line)) !== null) {
@@ -416,15 +416,15 @@ export class GasOptimizationAnalyzer {
   }
 
   // Find optimization opportunities
-  private findOptimizations(code: string): GasOptimization[] {
+  private findOptimizations(_code: string): GasOptimization[] {
     const optimizations: GasOptimization[] = [];
     const lines = code.split('\n');
 
-    this.optimizationPatterns.forEach((pattern, patternIndex) => {
-      lines.forEach((line, lineIndex) => {
+    this.optimizationPatterns.forEach( (pattern, patternIndex) => {
+      lines.forEach( (line, lineIndex) => {
         let match;
         while ((match = pattern.pattern.exec(line)) !== null) {
-          if (pattern.check(match[0])) {
+          if (_pattern.check(match[0])) {
             const column = match.index + 1;
             const optimization = this.createOptimization(
               pattern,
@@ -433,7 +433,7 @@ export class GasOptimizationAnalyzer {
               column,
               patternIndex
             );
-            optimizations.push(optimization);
+            optimizations.push(_optimization);
           }
         }
       });
@@ -450,8 +450,8 @@ export class GasOptimizationAnalyzer {
     patternIndex: number
   ): GasOptimization {
     const beforeCode = match[0];
-    const afterCode = this.generateOptimizedCode(pattern, match);
-    const savings = this.calculateSavings(pattern, match);
+    const afterCode = this.generateOptimizedCode( pattern, match);
+    const savings = this.calculateSavings( pattern, match);
 
     return {
       id: `opt-${patternIndex}-${line}-${column}`,
@@ -469,38 +469,38 @@ export class GasOptimizationAnalyzer {
       impact: pattern.impact,
       beforeCode,
       afterCode,
-      explanation: this.generateExplanation(pattern, match),
+      explanation: this.generateExplanation( pattern, match),
       autoFixAvailable: pattern.difficulty === 'easy',
       category: pattern.category
     };
   }
 
   // Helper methods
-  private generateCacheKey(code: string): string {
+  private generateCacheKey(_code: string): string {
     return `gas-${code.length}-${code.slice(0, 100).replace(/\s/g, '')}`;
   }
 
-  private isStateVariable(name: string): boolean {
+  private isStateVariable(_name: string): boolean {
     // Simple heuristic - in a real implementation, this would use AST analysis
-    return /^[a-z][a-zA-Z0-9]*$/.test(name) && name !== 'msg' && name !== 'block' && name !== 'tx';
+    return /^[a-z][a-zA-Z0-9]*$/.test(_name) && name !== 'msg' && name !== 'block' && name !== 'tx';
   }
 
-  private async getAIGasAnalysis(code: string, userId: string): Promise<GasOptimization[]> {
+  private async getAIGasAnalysis( code: string, userId: string): Promise<GasOptimization[]> {
     try {
-      const analysis = await enhancedTutor.analyzeCodeSecurity(code, userId);
-      return this.convertAIGasOptimizations(analysis.gasOptimizations || []);
-    } catch (error) {
-      logger.error('AI gas analysis failed', {
+      const analysis = await enhancedTutor.analyzeCodeSecurity( code, userId);
+      return this.convertAIGasOptimizations(_analysis.gasOptimizations || []);
+    } catch (_error) {
+      logger.error('AI gas analysis failed', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'ai-gas-analysis'
       }, error instanceof Error ? error : undefined);
       return [];
-    }
+    }});
   }
 
-  private convertAIGasOptimizations(aiOptimizations: any[]): GasOptimization[] {
-    return aiOptimizations.map((opt, index) => ({
+  private convertAIGasOptimizations(_aiOptimizations: any[]): GasOptimization[] {
+    return aiOptimizations.map( (opt, index) => ({
       id: `ai-gas-${index}`,
       title: 'AI Gas Optimization',
       description: opt.description || 'AI-suggested optimization',
@@ -522,38 +522,38 @@ export class GasOptimizationAnalyzer {
     }));
   }
 
-  private mergeOptimizations(staticOptimizations: GasOptimization[], aiOptimizations: GasOptimization[]): GasOptimization[] {
+  private mergeOptimizations( staticOptimizations: GasOptimization[], aiOptimizations: GasOptimization[]): GasOptimization[] {
     // Simple merge - in production, would deduplicate and prioritize
     return [...staticOptimizations, ...aiOptimizations];
   }
 
-  private generateFunctionBreakdown(code: string, estimates: GasEstimate[]): Record<string, number> {
+  private generateFunctionBreakdown( code: string, estimates: GasEstimate[]): Record<string, number> {
     const breakdown: Record<string, number> = {};
     
     // Extract function names and associate gas costs
-    const functionPattern = /function\s+(\w+)/g;
+    const functionPattern = /function\s+(_\w+)/g;
     let match;
     while ((match = functionPattern.exec(code)) !== null) {
       const functionName = match[1];
       breakdown[functionName] = estimates
-        .filter(est => est.line >= this.getFunctionStartLine(code, functionName))
-        .reduce((sum, est) => sum + est.totalCost, 0);
+        .filter( est => est.line >= this.getFunctionStartLine(code, functionName))
+        .reduce( (sum, est) => sum + est.totalCost, 0);
     }
 
     return breakdown;
   }
 
-  private getFunctionStartLine(code: string, functionName: string): number {
+  private getFunctionStartLine( code: string, functionName: string): number {
     const lines = code.split('\n');
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].includes(`function ${functionName}`)) {
+      if (_lines[i].includes(`function ${functionName}`)) {
         return i + 1;
       }
     }
     return 1;
   }
 
-  private generateHeatmapData(estimates: GasEstimate[]): HeatmapPoint[] {
+  private generateHeatmapData(_estimates: GasEstimate[]): HeatmapPoint[] {
     const maxCost = Math.max(...estimates.map(e => e.totalCost));
     
     return estimates.map(estimate => ({
@@ -567,9 +567,9 @@ export class GasOptimizationAnalyzer {
     }));
   }
 
-  private generateOptimizedCode(pattern: any, match: RegExpExecArray): string {
+  private generateOptimizedCode( pattern: any, match: RegExpExecArray): string {
     // Generate optimized code based on pattern type
-    switch (pattern.title) {
+    switch (_pattern.title) {
       case 'Function Visibility Optimization':
         return match[0].replace('public', 'external');
       case 'Storage Packing Opportunity':
@@ -579,27 +579,27 @@ export class GasOptimizationAnalyzer {
     }
   }
 
-  private calculateSavings(pattern: any, match: RegExpExecArray): number {
+  private calculateSavings( pattern: any, match: RegExpExecArray): number {
     return pattern.baseSavings;
   }
 
-  private generateExplanation(pattern: any, match: RegExpExecArray): string {
+  private generateExplanation( pattern: any, match: RegExpExecArray): string {
     return `${pattern.description}. This optimization can save approximately ${pattern.baseSavings} gas.`;
   }
 
   // Public API
-  public getLastAnalysis(): GasAnalysisResult | null {
+  public getLastAnalysis(_): GasAnalysisResult | null {
     return this.lastAnalysis;
   }
 
-  public clearCache(): void {
-    this.analysisCache.clear();
+  public clearCache(_): void {
+    this.analysisCache.clear(_);
   }
 
   // Apply gas heatmap visualization to editor
-  public applyHeatmapVisualization(result: GasAnalysisResult): void {
+  public applyHeatmapVisualization(_result: GasAnalysisResult): void {
     // Clear existing decorations
-    this.decorations = this.editor.deltaDecorations(this.decorations, []);
+    this.decorations = this.editor.deltaDecorations( this.decorations, []);
 
     const newDecorations: monaco.editor.IModelDeltaDecoration[] = [];
 
@@ -609,16 +609,16 @@ export class GasOptimizationAnalyzer {
 
       // Color based on gas cost intensity
       let backgroundColor: string;
-      if (intensity > 0.8) {
-        backgroundColor = `rgba(255, 0, 0, ${alpha})`; // Red for high cost
-      } else if (intensity > 0.6) {
-        backgroundColor = `rgba(255, 165, 0, ${alpha})`; // Orange for medium-high cost
-      } else if (intensity > 0.4) {
-        backgroundColor = `rgba(255, 255, 0, ${alpha})`; // Yellow for medium cost
-      } else if (intensity > 0.2) {
-        backgroundColor = `rgba(173, 255, 47, ${alpha})`; // Green-yellow for low-medium cost
+      if (_intensity > 0.8) {
+        backgroundColor = `rgba( 255, 0, 0, ${alpha})`; // Red for high cost
+      } else if (_intensity > 0.6) {
+        backgroundColor = `rgba( 255, 165, 0, ${alpha})`; // Orange for medium-high cost
+      } else if (_intensity > 0.4) {
+        backgroundColor = `rgba( 255, 255, 0, ${alpha})`; // Yellow for medium cost
+      } else if (_intensity > 0.2) {
+        backgroundColor = `rgba( 173, 255, 47, ${alpha})`; // Green-yellow for low-medium cost
       } else {
-        backgroundColor = `rgba(0, 255, 0, ${alpha})`; // Green for low cost
+        backgroundColor = `rgba( 0, 255, 0, ${alpha})`; // Green for low cost
       }
 
       newDecorations.push({
@@ -642,11 +642,11 @@ export class GasOptimizationAnalyzer {
     });
 
     // Apply decorations
-    this.decorations = this.editor.deltaDecorations([], newDecorations);
+    this.decorations = this.editor.deltaDecorations( [], newDecorations);
   }
 
-  public dispose(): void {
-    this.clearCache();
-    this.editor.deltaDecorations(this.decorations, []);
+  public dispose(_): void {
+    this.clearCache(_);
+    this.editor.deltaDecorations( this.decorations, []);
   }
 }

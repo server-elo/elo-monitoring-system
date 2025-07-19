@@ -69,7 +69,7 @@ export default function MentorPage() {
                 { name: 'David Wilson', progress: 45, lastActive: '3 days ago', status: 'inactive' },
                 { name: 'Eva Brown', progress: 78, lastActive: '5 hours ago', status: 'active' },
                 { name: 'Frank Miller', progress: 33, lastActive: '1 hour ago', status: 'needs_help' },
-              ].map((mentee, index) => (
+              ].map( (mentee, index) => (
                 <div key={index} className="p-4 bg-white/5 rounded-lg border border-white/10">
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-white font-medium">{mentee.name}</h4>
@@ -78,7 +78,7 @@ export default function MentorPage() {
                       mentee.status === 'needs_help' ? 'bg-yellow-500/20 text-yellow-400' :
                       'bg-gray-500/20 text-gray-400'
                     }`}>
-                      {mentee.status.replace('_', ' ')}
+                      {mentee.status.replace('', ' ')}
                     </span>
                   </div>
                   <div className="mb-2">
@@ -108,7 +108,7 @@ export default function MentorPage() {
                   { from: 'Alice Johnson', message: 'Can you help me with smart contract deployment?', time: '10 min ago' },
                   { from: 'Bob Smith', message: 'Thanks for the explanation on gas optimization!', time: '2 hours ago' },
                   { from: 'Carol Davis', message: 'When is our next session scheduled?', time: '1 day ago' },
-                ].map((msg, index) => (
+                ].map( (msg, index) => (
                   <div key={index} className="p-3 bg-white/5 rounded-lg">
                     <div className="flex justify-between items-start mb-1">
                       <span className="text-white font-medium text-sm">{msg.from}</span>
@@ -127,7 +127,7 @@ export default function MentorPage() {
                   { student: 'Alice Johnson', topic: 'Smart Contract Security', time: 'Today 3:00 PM' },
                   { student: 'David Wilson', topic: 'Solidity Basics Review', time: 'Tomorrow 10:00 AM' },
                   { student: 'Eva Brown', topic: 'DeFi Project Discussion', time: 'Friday 2:00 PM' },
-                ].map((session, index) => (
+                ].map( (session, index) => (
                   <div key={index} className="p-3 bg-white/5 rounded-lg">
                     <div className="flex justify-between items-start mb-1">
                       <span className="text-white font-medium text-sm">{session.student}</span>

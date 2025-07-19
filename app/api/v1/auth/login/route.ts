@@ -9,7 +9,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Mock user database - in production, this would be a real database
 const mockUsers: Array<ApiUser & { passwordHash: string }> = [
   {
-    id: 'user_1',
+    id: 'user1',
     email: 'student@example.com',
     name: 'John Student',
     role: UserRole.STUDENT,
@@ -68,7 +68,7 @@ const mockUsers: Array<ApiUser & { passwordHash: string }> = [
     lastLoginAt: '2024-01-20T14:00:00Z'
   },
   {
-    id: 'user_3',
+    id: 'user3',
     email: 'admin@example.com',
     name: 'Admin User',
     role: UserRole.ADMIN,
@@ -98,11 +98,11 @@ const mockUsers: Array<ApiUser & { passwordHash: string }> = [
   }
 ];
 
-async function findUserByEmail(email: string): Promise<(ApiUser & { passwordHash: string }) | null> {
+async function findUserByEmail(_email: string): Promise<(_ApiUser & { passwordHash: string }) | null> {
   return mockUsers.find(user => user.email.toLowerCase() === email.toLowerCase()) || null;
 }
 
-async function updateLastLogin(userId: string): Promise<void> {
+async function updateLastLogin(_userId: string): Promise<void> {
   const user = mockUsers.find(u => u.id === userId);
   if (user) {
     user.lastLoginAt = new Date().toISOString();
@@ -110,14 +110,14 @@ async function updateLastLogin(userId: string): Promise<void> {
   }
 }
 
-export const POST = authEndpoint(async (request: NextRequest) => {
+export const POST = authEndpoint( async (request: NextRequest) => {
   try {
     // Validate request body
-    const body = await validateBody(LoginSchema, request);
+    const body = await validateBody( LoginSchema, request);
     const { email, password, rememberMe } = body;
 
     // Find user by email
-    const user = await findUserByEmail(email);
+    const user = await findUserByEmail(_email);
     if (!user) {
       return ApiResponseBuilder.unauthorized('Invalid email or password');
     }
@@ -128,7 +128,7 @@ export const POST = authEndpoint(async (request: NextRequest) => {
     }
 
     // Verify password
-    const isPasswordValid = await AuthService.verifyPassword(password, user.passwordHash);
+    const isPasswordValid = await AuthService.verifyPassword( password, user.passwordHash);
     if (!isPasswordValid) {
       return ApiResponseBuilder.unauthorized('Invalid email or password');
     }
@@ -140,7 +140,7 @@ export const POST = authEndpoint(async (request: NextRequest) => {
     const { passwordHash, ...safeUser } = user;
 
     // Generate tokens
-    const accessToken = AuthService.generateAccessToken(safeUser);
+    const accessToken = AuthService.generateAccessToken(_safeUser);
     const refreshToken = AuthService.generateRefreshToken(user.id);
 
     // Prepare response data
@@ -153,7 +153,7 @@ export const POST = authEndpoint(async (request: NextRequest) => {
         tokenType: 'Bearer'
       },
       session: {
-        id: AuthService.generateSessionId(),
+        id: AuthService.generateSessionId(_),
         expiresAt: new Date(Date.now() + (rememberMe ? 30 : 1) * 24 * 60 * 60 * 1000).toISOString(),
         rememberMe
       }
@@ -173,5 +173,5 @@ export const POST = authEndpoint(async (request: NextRequest) => {
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

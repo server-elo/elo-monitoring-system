@@ -7,7 +7,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -21,20 +21,20 @@ export async function GET(_request: NextRequest) {
 
     // Get user's historical activity to predict future schedule
     const userActivity = await prisma.userProgress.findMany({
-      where: {
-        userId: session.user.id,
-        status: 'COMPLETED',
-        completedAt: {
+      where: { 
+        userId: session.user.id 
+        status: 'COMPLETED' 
+        completedAt: { 
           gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
-        },
-      },
-      orderBy: {
-        completedAt: 'desc',
-      },
+        } 
+      } 
+      orderBy: { 
+        completedAt: 'desc' 
+      } 
     });
 
     // Analyze activity patterns by day of week
-    const activityByDay = new Array(7).fill(0);
+    const activityByDay = new Array(_7).fill(0);
     userActivity.forEach((activity: any) => {
       if (activity.completedAt) {
         const dayOfWeek = activity.completedAt.getDay();
@@ -63,11 +63,11 @@ export async function GET(_request: NextRequest) {
       const hasPlannedActivity = Math.random() > 0.3; // 70% chance of planned activity
 
       schedule.push({
-        date: date.toISOString().split('T')[0],
-        sessions: predictedSessions,
-        planned: hasPlannedActivity,
-        dayOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayOfWeek],
-        recommendedTopics: getRecommendedTopics(session.user.id, date),
+        date: date.toISOString().split('T')[0] 
+        sessions: predictedSessions 
+        planned: hasPlannedActivity 
+        dayOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayOfWeek] 
+        recommendedTopics: getRecommendedTopics(session.user.id, date) 
         estimatedDuration: predictedSessions * 30, // 30 minutes per session
       });
     }
@@ -79,7 +79,7 @@ export async function GET(_request: NextRequest) {
   }
 }
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -87,10 +87,10 @@ export async function POST(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action, data } = await _request.json();
+    const { action, data } = await request.json();
 
     switch (action) {
-      case 'schedule_session':
+      case 'schedulesession':
         const { date, time, topic, _duration } = data;
         
         if (!date || !time || !topic) {
@@ -98,56 +98,56 @@ export async function POST(_request: NextRequest) {
         }
 
         // TODO: Implement study session scheduling in database
-        logger.info(`User ${session.user.id} scheduled study session`, {
-          userId: session.user.id,
-          metadata: {
-            date,
-            time,
-            topic,
-            duration: _duration || 30,
-          }
+        logger.info(`User ${session.user.id} scheduled study session`, { metadata: {
+          userId: session.user.id 
+          metadata: { 
+            date 
+            time 
+            topic 
+            duration: duration || 30 
+          });
         });
 
         return NextResponse.json({ 
           success: true, 
-          message: 'Study session scheduled successfully' 
+          message: 'Study session scheduled successfully'  
         });
 
-      case 'complete_session':
+      case 'completesession':
         const { sessionId, actualDuration, notes } = data;
 
         // Track completed study sessions
         try {
           const completedSession = {
-            id: sessionId,
-            userId: session.user.id,
-            actualDuration,
-            notes,
-            completedAt: new Date().toISOString(),
-            status: 'completed'
+            id: sessionId 
+            userId: session.user.id 
+            actualDuration 
+            notes 
+            completedAt: new Date().toISOString() 
+            status: 'completed' 
           };
 
           // Store in localStorage for now (in production, this would be database)
-          logger.info(`User ${session.user.id} completed study session ${sessionId}`, { 
-            userId: session.user.id,
-            metadata: { completedSession }
+          logger.info(`User ${session.user.id} completed study session ${sessionId}`, { metadata: { 
+            userId: session.user.id 
+            metadata: { completedSession } 
           });
 
           // In a real implementation, you would save to database:
           // await db.studySession.update({
-          //   where: { id: sessionId },
+          //   where: { id: sessionId } 
           //   data: { status: 'completed', actualDuration, notes, completedAt: new Date() }
           // });
 
           return NextResponse.json({
-            success: true,
-            message: 'Study session completed successfully',
-            data: completedSession
+            success: true 
+            message: 'Study session completed successfully' 
+            data: completedSession 
           });
         } catch (error) {
           logger.error('Error completing study session', error as Error);
           return NextResponse.json({
-            error: 'Failed to complete study session'
+            error: 'Failed to complete study session' 
           }, { status: 500 });
         }
 
@@ -157,45 +157,45 @@ export async function POST(_request: NextRequest) {
         // Store user study preferences
         try {
           const userPreferences = {
-            userId: session.user.id,
-            preferredTimes: preferredTimes || [],
-            studyGoals: studyGoals || {},
-            reminderSettings: reminderSettings || {},
-            updatedAt: new Date().toISOString()
+            userId: session.user.id 
+            preferredTimes: preferredTimes || [] 
+            studyGoals: studyGoals || {} 
+            reminderSettings: reminderSettings || {} 
+            updatedAt: new Date().toISOString() 
           };
 
           // Validate preferences data
           if (preferredTimes && !Array.isArray(preferredTimes)) {
             return NextResponse.json({
-              error: 'preferredTimes must be an array'
+              error: 'preferredTimes must be an array' 
             }, { status: 400 });
           }
 
-          logger.info(`User ${session.user.id} updated study preferences`, { 
-            userId: session.user.id,
-            metadata: { userPreferences }
+          logger.info(`User ${session.user.id} updated study preferences`, { metadata: { 
+            userId: session.user.id 
+            metadata: { userPreferences } 
           });
 
           // In a real implementation, you would save to database:
           // await db.userPreferences.upsert({
-          //   where: { userId: session.user.id },
-          //   update: { preferredTimes, studyGoals, reminderSettings, updatedAt: new Date() },
+          //   where: { userId: session.user.id } 
+          //   update: { preferredTimes, studyGoals, reminderSettings, updatedAt: new Date() } 
           //   create: { userId: session.user.id, preferredTimes, studyGoals, reminderSettings }
           // });
 
           return NextResponse.json({
-            success: true,
-            message: 'Study preferences updated successfully',
-            data: userPreferences
+            success: true 
+            message: 'Study preferences updated successfully' 
+            data: userPreferences 
           });
         } catch (error) {
           logger.error('Error updating study preferences', error as Error);
           return NextResponse.json({
-            error: 'Failed to update study preferences'
+            error: 'Failed to update study preferences' 
           }, { status: 500 });
         }
 
-      default:
+      default: 
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
@@ -205,38 +205,38 @@ export async function POST(_request: NextRequest) {
 }
 
 // Helper function to get recommended topics based on user progress
-async function getRecommendedTopics(userId: string, _date: Date): Promise<string[]> {
+async function getRecommendedTopics(userId: string, date: Date): Promise<string[]> {
   try {
     // Get user's recent progress to recommend next topics
     // TODO: Use this data to provide personalized recommendations
     const _recentProgress = await prisma.userProgress.findMany({
-      where: {
-        userId,
-        status: 'COMPLETED',
-      },
-      include: {
-        lesson: {
-          include: {
-            module: true,
-          },
-        },
-      },
-      orderBy: {
-        completedAt: 'desc',
-      },
-      take: 5,
+      where: { 
+        userId 
+        status: 'COMPLETED' 
+      } 
+      include: { 
+        lesson: { 
+          include: { 
+            module: true 
+          } 
+        } 
+      } 
+      orderBy: { 
+        completedAt: 'desc' 
+      } 
+      take: 5 
     });
 
     // Use the progress data for future recommendation logic
-    logger.info(`Found ${_recentProgress.length} recent progress entries for user ${userId}`);
+    logger.info(`Found ${codeSnippets.length} recent progress entries for user ${userId}`);
 
     // Simple recommendation logic - suggest next lessons in sequence
     const topics = [
-      'Solidity Basics',
-      'Smart Contract Development',
-      'DeFi Protocols',
-      'Security Best Practices',
-      'Gas Optimization',
+      'Solidity Basics' 
+      'Smart Contract Development' 
+      'DeFi Protocols' 
+      'Security Best Practices' 
+      'Gas Optimization' 
     ];
 
     // Return 2-3 recommended topics

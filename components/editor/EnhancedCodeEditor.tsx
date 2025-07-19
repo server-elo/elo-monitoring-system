@@ -17,7 +17,7 @@ import { GasOptimizationPanel } from './GasOptimizationPanel';
 interface EnhancedCodeEditorProps {
   initialCode?: string;
   userId: string;
-  onCodeChange?: (code: string) => void;
+  onCodeChange?: (_code: string) => void;
   className?: string;
   height?: string;
   theme?: 'vs-dark' | 'vs-light';
@@ -37,10 +37,10 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
   enableGasAnalysis = true,
   enableRealtime = true
 }) => {
-  const editorRef = useRef<HTMLDivElement>(null);
-  const [editorInstance, setEditorInstance] = useState<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const editorRef = useRef<HTMLDivElement>(_null);
+  const [editorInstance, setEditorInstance] = useState<monaco.editor.IStandaloneCodeEditor | null>(_null);
   const [activePanel, setActivePanel] = useState<'security' | 'gas' | 'both'>('both');
-  const [code, setCode] = useState(initialCode);
+  const [code, setCode] = useState(_initialCode);
 
   // Security analysis hook
   const {
@@ -76,7 +76,7 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
     if (!editorRef.current) return;
 
     // Configure Solidity language support
-    monaco.languages.register({ id: 'solidity' });
+    monaco.languages.register({ id: 'solidity'  });
     monaco.languages.setMonarchTokensProvider('solidity', {
       tokenizer: {
         root: [
@@ -141,40 +141,40 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
 
     // Setup change listener
     const disposable = newEditorInstance.onDidChangeModelContent(() => {
-      const newCode = newEditorInstance.getValue();
-      setCode(newCode);
-      onCodeChange?.(newCode);
+      const newCode = newEditorInstance.getValue(_);
+      setCode(_newCode);
+      onCodeChange?.(_newCode);
     });
 
-    setEditorInstance(newEditorInstance);
+    setEditorInstance(_newEditorInstance);
 
-    return () => {
-      disposable.dispose();
-      newEditorInstance.dispose();
+    return (_) => {
+      disposable.dispose(_);
+      newEditorInstance.dispose(_);
     };
   }, [initialCode, theme, onCodeChange]);
 
   // Manual analysis triggers
-  const handleSecurityAnalysis = useCallback(async () => {
+  const handleSecurityAnalysis = useCallback( async () => {
     try {
-      await performSecurityAnalysis();
-    } catch (error) {
+      await performSecurityAnalysis(_);
+    } catch (_error) {
       console.error('Security analysis failed:', error);
     }
   }, [performSecurityAnalysis]);
 
-  const handleGasAnalysis = useCallback(async () => {
+  const handleGasAnalysis = useCallback( async () => {
     try {
-      await performGasAnalysis();
-    } catch (error) {
+      await performGasAnalysis(_);
+    } catch (_error) {
       console.error('Gas analysis failed:', error);
     }
   }, [performGasAnalysis]);
 
-  const handleRunAllAnalysis = useCallback(async () => {
+  const handleRunAllAnalysis = useCallback( async () => {
     await Promise.all([
-      handleSecurityAnalysis(),
-      handleGasAnalysis()
+      handleSecurityAnalysis(_),
+      handleGasAnalysis(_)
     ]);
   }, [handleSecurityAnalysis, handleGasAnalysis]);
 
@@ -185,7 +185,7 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
     securityScore: securityResult.overallScore
   } : null;
 
-  const gasMetrics = getGasMetrics();
+  const gasMetrics = getGasMetrics(_);
 
   return (
     <div className={`enhanced-code-editor ${className}`}>
@@ -212,7 +212,7 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
                 gasMetrics.totalCost > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
               }`}>
                 ⛽ Gas: {isGasAnalyzing ? 'Analyzing...' : 
-                  gasMetrics.totalCost > 0 ? `${Math.round(gasMetrics.totalCost / 1000)}K` : 'Ready'}
+                  gasMetrics.totalCost > 0 ? `${Math.round(_gasMetrics.totalCost / 1000)}K` : 'Ready'}
               </div>
             )}
           </div>
@@ -223,7 +223,7 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
           {/* Panel Toggle */}
           <select
             value={activePanel}
-            onChange={(e) => setActivePanel(e.target.value as any)}
+            onChange={(_e) => setActivePanel(_e.target.value as any)}
             className="px-3 py-1 border border-gray-300 rounded text-sm"
           >
             <option value="both">Both Panels</option>
@@ -267,7 +267,7 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
 
         {/* Analysis Panels */}
         <div className="w-96 border-l bg-white overflow-y-auto" style={{ height }}>
-          {(activePanel === 'both' || activePanel === 'security') && enableSecurity && (
+          {(_activePanel === 'both' || activePanel === 'security') && enableSecurity && (
             <div className="border-b">
               <div className="p-3 bg-gray-50 border-b">
                 <h4 className="font-semibold text-gray-800">🛡️ Security Analysis</h4>
@@ -284,7 +284,7 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
             </div>
           )}
 
-          {(activePanel === 'both' || activePanel === 'gas') && enableGasAnalysis && (
+          {(_activePanel === 'both' || activePanel === 'gas') && enableGasAnalysis && (
             <div>
               <div className="p-3 bg-gray-50 border-b">
                 <h4 className="font-semibold text-gray-800">⛽ Gas Optimization</h4>

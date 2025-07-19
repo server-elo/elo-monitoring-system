@@ -8,12 +8,12 @@ export const dynamic = 'force-dynamic';
 
 let io: ServerIO | null = null;
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   if (!io) {
     logger.info('Initializing Socket.io server...');
     
     // Create HTTP server for Socket.io
-    const httpServer = new NetServer();
+    const httpServer = new NetServer(_);
     
     io = new ServerIO(httpServer, {
       path: '/api/socket',
@@ -27,20 +27,20 @@ export async function GET(_request: NextRequest) {
     });
 
     // Set up Socket.io event handlers
-    io.on('connection', (socket) => {
+    io.on( 'connection', (socket) => {
       logger.info(`User connected: ${socket.id}`);
 
-      socket.on('join_room', (room: string) => {
-        socket.join(room);
-        socket.to(room).emit('user_joined', { userId: socket.id });
+      socket.on( 'join_room', (room: string) => {
+        socket.join(_room);
+        socket.to(_room).emit( 'user_joined', { userId: socket.id });
       });
 
-      socket.on('leave_room', (room: string) => {
-        socket.leave(room);
-        socket.to(room).emit('user_left', { userId: socket.id });
+      socket.on( 'leave_room', (room: string) => {
+        socket.leave(_room);
+        socket.to(_room).emit( 'user_left', { userId: socket.id });
       });
 
-      socket.on('code_change', (data: { room: string; code: string; changes: any }) => {
+      socket.on( 'code_change', (data: { room: string; code: string; changes: any }) => {
         socket.to(data.room).emit('code_updated', {
           code: data.code,
           changes: data.changes,
@@ -48,7 +48,7 @@ export async function GET(_request: NextRequest) {
         });
       });
 
-      socket.on('cursor_update', (data: { room: string; line: number; column: number }) => {
+      socket.on( 'cursor_update', (data: { room: string; line: number; column: number }) => {
         socket.to(data.room).emit('cursor_updated', {
           userId: socket.id,
           line: data.line,
@@ -56,7 +56,7 @@ export async function GET(_request: NextRequest) {
         });
       });
 
-      socket.on('chat_message', (data: { room: string; message: string; user: any }) => {
+      socket.on( 'chat_message', (data: { room: string; message: string; user: any }) => {
         io?.to(data.room).emit('message_received', {
           id: Date.now().toString(),
           content: data.message,
@@ -65,14 +65,14 @@ export async function GET(_request: NextRequest) {
         });
       });
 
-      socket.on('disconnect', () => {
+      socket.on( 'disconnect', () => {
         logger.info(`User disconnected: ${socket.id}`);
       });
     });
 
     // Start the server on a different port for Socket.io
     const port = process.env.SOCKET_PORT || 3001;
-    httpServer.listen(port, () => {
+    httpServer.listen( port, () => {
       logger.info(`Socket.io server running on port ${port}`);
     });
   }
@@ -94,17 +94,17 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'broadcast':
-        io.emit(data.event, data.payload);
+        io.emit( data.event, data.payload);
         break;
       
       case 'room_broadcast':
-        io.to(data.room).emit(data.event, data.payload);
+        io.to(data.room).emit( data.event, data.payload);
         break;
       
       case 'get_room_info':
         const room = io.sockets.adapter.rooms.get(data.room);
         return NextResponse.json({
-          participants: room ? Array.from(room) : [],
+          participants: room ? Array.from(_room) : [],
           count: room ? room.size : 0,
         });
       

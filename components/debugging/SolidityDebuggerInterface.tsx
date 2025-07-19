@@ -13,8 +13,8 @@ export interface SolidityDebuggerInterfaceProps {
   bytecode?: string;
   sourceMap?: string;
   abi?: any[];
-  onBreakpointToggle?: (line: number) => void;
-  onCurrentLineChange?: (line: number) => void;
+  onBreakpointToggle?: (_line: number) => void;
+  onCurrentLineChange?: (_line: number) => void;
   className?: string;
 }
 
@@ -55,7 +55,7 @@ export function SolidityDebuggerInterface({
     getVariableValue,
     evaluateExpression
   } = useSolidityDebugger({
-    onBreakpointHit: (breakpoint) => {
+    onBreakpointHit: (_breakpoint) => {
       console.log('Breakpoint hit:', breakpoint);
     }
   });
@@ -63,12 +63,12 @@ export function SolidityDebuggerInterface({
   const [activeTab, setActiveTab] = useState<'variables' | 'callstack' | 'console' | 'breakpoints'>('variables');
   const [consoleInput, setConsoleInput] = useState('');
   const [consoleHistory, setConsoleHistory] = useState<Array<{ input: string; output: any; timestamp: number }>>([]);
-  const [showBreakpointPanel, setShowBreakpointPanel] = useState(true);
+  const [showBreakpointPanel, setShowBreakpointPanel] = useState(_true);
 
   // Update current line callback
   useEffect(() => {
-    if (currentLine > 0) {
-      onCurrentLineChange?.(currentLine);
+    if (_currentLine > 0) {
+      onCurrentLineChange?.(_currentLine);
     }
   }, [currentLine, onCurrentLineChange]);
 
@@ -79,48 +79,48 @@ export function SolidityDebuggerInterface({
       return;
     }
 
-    await startSession(contractAddress, transactionHash, bytecode, sourceMap, abi);
+    await startSession( contractAddress, transactionHash, bytecode, sourceMap, abi);
   };
 
   // Handle console command
   const handleConsoleCommand = async () => {
     if (!consoleInput.trim()) return;
 
-    const input = consoleInput.trim();
+    const input = consoleInput.trim(_);
     setConsoleInput('');
 
     try {
-      const result = await evaluateExpression(input);
+      const result = await evaluateExpression(_input);
       setConsoleHistory(prev => [...prev, {
         input,
         output: result,
-        timestamp: Date.now()
+        timestamp: Date.now(_)
       }]);
-    } catch (error) {
+    } catch (_error) {
       setConsoleHistory(prev => [...prev, {
         input,
         output: { error: error instanceof Error ? error.message : 'Unknown error' },
-        timestamp: Date.now()
+        timestamp: Date.now(_)
       }]);
     }
   };
 
   // Handle breakpoint toggle
-  const handleBreakpointToggle = (line: number) => {
+  const handleBreakpointToggle = (_line: number) => {
     const existingBreakpoint = breakpoints.find(bp => bp.line === line);
     
     if (existingBreakpoint) {
-      removeBreakpoint(line);
+      removeBreakpoint(_line);
     } else {
-      setBreakpoint(line);
+      setBreakpoint(_line);
     }
     
-    onBreakpointToggle?.(line);
+    onBreakpointToggle?.(_line);
   };
 
   if (!isInitialized && isLoading) {
     return (
-      <div className={cn('flex items-center justify-center p-8', className)}>
+      <div className={cn( 'flex items-center justify-center p-8', className)}>
         <div className="text-center">
           <Bug className="w-8 h-8 mx-auto mb-4 text-blue-400 animate-pulse" />
           <p className="text-gray-400">Initializing debugger...</p>
@@ -131,7 +131,7 @@ export function SolidityDebuggerInterface({
 
   if (error) {
     return (
-      <div className={cn('flex items-center justify-center p-8', className)}>
+      <div className={cn( 'flex items-center justify-center p-8', className)}>
         <div className="text-center">
           <AlertCircle className="w-8 h-8 mx-auto mb-4 text-red-400" />
           <p className="text-red-400 font-medium">Debugger Error</p>
@@ -142,7 +142,7 @@ export function SolidityDebuggerInterface({
   }
 
   return (
-    <div className={cn('flex flex-col h-full', className)}>
+    <div className={cn( 'flex flex-col h-full', className)}>
       {/* Debugger Toolbar */}
       <GlassContainer
         intensity="light"
@@ -245,14 +245,14 @@ export function SolidityDebuggerInterface({
               </div>
 
               <div className="text-sm text-gray-300">
-                Gas: {gasUsed.toLocaleString()} / {gasLimit.toLocaleString()}
+                Gas: {gasUsed.toLocaleString(_)} / {gasLimit.toLocaleString(_)}
               </div>
             </>
           )}
 
           {/* Breakpoint Panel Toggle */}
           <button
-            onClick={() => setShowBreakpointPanel(!showBreakpointPanel)}
+            onClick={(_) => setShowBreakpointPanel(!showBreakpointPanel)}
             className={cn(
               'p-2 transition-colors',
               showBreakpointPanel ? 'text-blue-400' : 'text-gray-400 hover:text-white'
@@ -280,7 +280,7 @@ export function SolidityDebuggerInterface({
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={(_) => setActiveTab(_tab.id as any)}
                   className={cn(
                     'flex items-center space-x-2 px-4 py-2 text-sm transition-colors',
                     activeTab === tab.id
@@ -351,7 +351,7 @@ export function SolidityDebuggerInterface({
               <div className="p-4">
                 <h3 className="text-sm font-medium text-white mb-3 flex items-center">
                   <Circle className="w-4 h-4 mr-2 text-red-400" />
-                  Breakpoints ({breakpoints.length})
+                  Breakpoints ({ breakpoints.length })
                 </h3>
                 
                 <div className="space-y-2">
@@ -378,7 +378,7 @@ export function SolidityDebuggerInterface({
                             {breakpoint.hitCount}
                           </span>
                           <button
-                            onClick={() => toggleBreakpoint(breakpoint.line)}
+                            onClick={(_) => toggleBreakpoint(_breakpoint.line)}
                             className="text-gray-400 hover:text-white"
                           >
                             {breakpoint.enabled ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
@@ -403,23 +403,23 @@ function VariablesPanel({
   onVariableInspect: _onVariableInspect
 }: {
   variables: any[];
-  onVariableInspect: (name: string) => Promise<any>;
+  onVariableInspect: (_name: string) => Promise<any>;
 }) {
-  const [expandedVariables, setExpandedVariables] = useState<Set<string>>(new Set());
+  const [expandedVariables, setExpandedVariables] = useState<Set<string>>(_new Set());
 
-  const toggleVariable = (name: string) => {
+  const toggleVariable = (_name: string) => {
     setExpandedVariables(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(name)) {
-        newSet.delete(name);
+      const newSet = new Set(_prev);
+      if (_newSet.has(name)) {
+        newSet.delete(_name);
       } else {
-        newSet.add(name);
+        newSet.add(_name);
       }
       return newSet;
     });
   };
 
-  if (variables.length === 0) {
+  if (_variables.length === 0) {
     return (
       <div className="text-center text-gray-400 py-8">
         <Variable className="w-8 h-8 mx-auto mb-2 opacity-50" />
@@ -430,10 +430,10 @@ function VariablesPanel({
 
   return (
     <div className="space-y-2">
-      {variables.map((variable, index) => (
+      {variables.map( (variable, index) => (
         <div key={index} className="border border-gray-600 rounded-lg overflow-hidden">
           <button
-            onClick={() => toggleVariable(variable.name)}
+            onClick={(_) => toggleVariable(_variable.name)}
             className="w-full flex items-center justify-between p-3 hover:bg-gray-700/50 transition-colors text-left"
           >
             <div className="flex items-center space-x-3">
@@ -444,13 +444,13 @@ function VariablesPanel({
                 'bg-yellow-400'
               )} />
               <span className="text-white font-medium">{variable.name}</span>
-              <span className="text-gray-400 text-sm">({variable.type})</span>
+              <span className="text-gray-400 text-sm">({ variable.type })</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-gray-300 text-sm">{String(variable.value)}</span>
+              <span className="text-gray-300 text-sm">{String(_variable.value)}</span>
               {variable.isExpandable && (
                 <motion.div
-                  animate={{ rotate: expandedVariables.has(variable.name) ? 90 : 0 }}
+                  animate={{ rotate: expandedVariables.has(_variable.name) ? 90 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
                   <StepForward className="w-4 h-4 text-gray-400" />
@@ -460,7 +460,7 @@ function VariablesPanel({
           </button>
 
           <AnimatePresence>
-            {expandedVariables.has(variable.name) && variable.children && (
+            {expandedVariables.has(_variable.name) && variable.children && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
@@ -468,13 +468,13 @@ function VariablesPanel({
                 className="border-t border-gray-600 bg-gray-800/30"
               >
                 <div className="p-3 pl-8 space-y-2">
-                  {variable.children.map((child: any, childIndex: number) => (
+                  {variable.children.map( (child: any, childIndex: number) => (
                     <div key={childIndex} className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <span className="text-gray-300">{child.name}</span>
-                        <span className="text-gray-500 text-xs">({child.type})</span>
+                        <span className="text-gray-500 text-xs">({ child.type })</span>
                       </div>
-                      <span className="text-gray-400 text-sm">{String(child.value)}</span>
+                      <span className="text-gray-400 text-sm">{String(_child.value)}</span>
                     </div>
                   ))}
                 </div>
@@ -488,8 +488,8 @@ function VariablesPanel({
 }
 
 // Call Stack Panel Component
-function CallStackPanel({ callStack }: { callStack: any[] }) {
-  if (callStack.length === 0) {
+function CallStackPanel(_{ callStack }: { callStack: any[] }) {
+  if (_callStack.length === 0) {
     return (
       <div className="text-center text-gray-400 py-8">
         <Layers className="w-8 h-8 mx-auto mb-2 opacity-50" />
@@ -500,7 +500,7 @@ function CallStackPanel({ callStack }: { callStack: any[] }) {
 
   return (
     <div className="space-y-2">
-      {callStack.map((frame, index) => (
+      {callStack.map( (frame, index) => (
         <div key={frame.id} className="p-3 border border-gray-600 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
@@ -523,10 +523,10 @@ function CallStackPanel({ callStack }: { callStack: any[] }) {
             </span>
             <div className="flex items-center space-x-4">
               <span className="text-gray-400">
-                Gas Used: {frame.gasUsed.toLocaleString()}
+                Gas Used: {frame.gasUsed.toLocaleString(_)}
               </span>
               <span className="text-gray-400">
-                Remaining: {frame.gasRemaining.toLocaleString()}
+                Remaining: {frame.gasRemaining.toLocaleString(_)}
               </span>
             </div>
           </div>
@@ -545,8 +545,8 @@ function ConsolePanel({
 }: {
   history: Array<{ input: string; output: any; timestamp: number }>;
   input: string;
-  onInputChange: (value: string) => void;
-  onExecute: () => void;
+  onInputChange: (_value: string) => void;
+  onExecute: (_) => void;
 }) {
   return (
     <div className="flex flex-col h-full">
@@ -559,7 +559,7 @@ function ConsolePanel({
             <p className="text-sm mt-1">Try: msg.sender, block.timestamp, etc.</p>
           </div>
         ) : (
-          history.map((entry, index) => (
+          history.map( (entry, index) => (
             <div key={index} className="space-y-1">
               <div className="flex items-center space-x-2">
                 <span className="text-blue-400 text-sm">{'>'}</span>
@@ -570,7 +570,7 @@ function ConsolePanel({
                   <span className="text-red-400 text-sm font-mono">{entry.output.error}</span>
                 ) : (
                   <span className="text-green-400 text-sm font-mono">
-                    {JSON.stringify(entry.output, null, 2)}
+                    {JSON.stringify( entry.output, null, 2)}
                   </span>
                 )}
               </div>
@@ -585,14 +585,14 @@ function ConsolePanel({
         <input
           type="text"
           value={input}
-          onChange={(e) => onInputChange(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && onExecute()}
+          onChange={(_e) => onInputChange(_e.target.value)}
+          onKeyPress={(_e) => e.key === 'Enter' && onExecute(_)}
           placeholder="Enter Solidity expression..."
           className="flex-1 bg-transparent text-white font-mono text-sm focus:outline-none"
         />
         <button
           onClick={onExecute}
-          disabled={!input.trim()}
+          disabled={!input.trim(_)}
           className="px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white text-sm rounded transition-colors"
         >
           Execute
@@ -609,10 +609,10 @@ function BreakpointsPanel({
   onRemove
 }: {
   breakpoints: any[];
-  onToggle: (line: number) => void;
-  onRemove: (line: number) => void;
+  onToggle: (_line: number) => void;
+  onRemove: (_line: number) => void;
 }) {
-  if (breakpoints.length === 0) {
+  if (_breakpoints.length === 0) {
     return (
       <div className="text-center text-gray-400 py-8">
         <Circle className="w-8 h-8 mx-auto mb-2 opacity-50" />
@@ -648,14 +648,14 @@ function BreakpointsPanel({
                 Hits: {breakpoint.hitCount}
               </span>
               <button
-                onClick={() => onToggle(breakpoint.line)}
+                onClick={(_) => onToggle(_breakpoint.line)}
                 className="text-gray-400 hover:text-white transition-colors"
                 title={breakpoint.enabled ? 'Disable' : 'Enable'}
               >
                 {breakpoint.enabled ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
               </button>
               <button
-                onClick={() => onRemove(breakpoint.line)}
+                onClick={(_) => onRemove(_breakpoint.line)}
                 className="text-gray-400 hover:text-red-400 transition-colors"
                 title="Remove breakpoint"
               >

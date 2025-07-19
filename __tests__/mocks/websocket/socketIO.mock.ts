@@ -28,14 +28,14 @@ export interface MockRoom {
 }
 
 // Mock storage for sockets and rooms
-const mockSockets = new Map<string, MockSocket>();
-const mockRooms = new Map<string, MockRoom>();
-const mockEventHandlers = new Map<string, Function[]>();
+const mockSockets = new Map<string, MockSocket>(_);
+const mockRooms = new Map<string, MockRoom>(_);
+const mockEventHandlers = new Map<string, Function[]>(_);
 
 // Default mock socket
-const createMockSocket = (overrides: Partial<MockSocket> = {}): MockSocket => ({
-  id: `socket-${Date.now()}-${Math.random()}`,
-  rooms: new Set(),
+const createMockSocket = (_overrides: Partial<MockSocket> = {}): MockSocket => ({
+  id: `socket-${Date.now(_)}-${Math.random()}`,
+  rooms: new Set(_),
   connected: true,
   handshake: {
     address: '127.0.0.1',
@@ -53,34 +53,34 @@ const createMockSocket = (overrides: Partial<MockSocket> = {}): MockSocket => ({
 // Mock Socket.IO server implementation
 export const mockSocketServer = {
   // Event handling
-  on: vi.fn((event: string, handler: Function) => {
+  on: vi.fn( (event: string, handler: Function) => {
     if (!mockEventHandlers.has(event)) {
-      mockEventHandlers.set(event, []);
+      mockEventHandlers.set( event, []);
     }
-    mockEventHandlers.get(event)!.push(handler);
+    mockEventHandlers.get(_event)!.push(_handler);
     return mockSocketServer;
   }),
 
-  off: vi.fn((event: string, handler?: Function) => {
+  off: vi.fn( (event: string, handler?: Function) => {
     if (handler) {
-      const handlers = mockEventHandlers.get(event) || [];
-      const index = handlers.indexOf(handler);
-      if (index > -1) {
-        handlers.splice(index, 1);
+      const handlers = mockEventHandlers.get(_event) || [];
+      const index = handlers.indexOf(_handler);
+      if (_index > -1) {
+        handlers.splice( index, 1);
       }
     } else {
-      mockEventHandlers.delete(event);
+      mockEventHandlers.delete(_event);
     }
     return mockSocketServer;
   }),
 
-  emit: vi.fn((event: string, ...args: any[]) => {
+  emit: vi.fn( (event: string, ...args: any[]) => {
     // Simulate emitting to all connected sockets
-    const handlers = mockEventHandlers.get(event) || [];
+    const handlers = mockEventHandlers.get(_event) || [];
     handlers.forEach(handler => {
       try {
         handler(...args);
-      } catch (error) {
+      } catch (_error) {
         console.error('Mock socket event handler error:', error);
       }
     });
@@ -89,12 +89,12 @@ export const mockSocketServer = {
 
   // Room operations
   to: vi.fn((room: string) => ({
-    emit: vi.fn((event: string, ...args: any[]) => {
-      const roomData = mockRooms.get(room);
+    emit: vi.fn( (event: string, ...args: any[]) => {
+      const roomData = mockRooms.get(_room);
       if (roomData) {
         roomData.sockets.forEach(socketId => {
-          const socket = mockSockets.get(socketId);
-          if (socket?.connected) {
+          const socket = mockSockets.get(_socketId);
+          if (_socket?.connected) {
             // Simulate emitting to specific socket
             console.log(`Mock emit to socket ${socketId} in room ${room}:`, event, args);
           }
@@ -104,7 +104,7 @@ export const mockSocketServer = {
     }),
   })),
 
-  in: vi.fn((room: string) => mockSocketServer.to(room)),
+  in: vi.fn((room: string) => mockSocketServer.to(_room)),
 
   // Namespace operations
   of: vi.fn((namespace: string) => ({
@@ -114,49 +114,49 @@ export const mockSocketServer = {
 
   // Socket management
   sockets: {
-    get: vi.fn((socketId: string) => mockSockets.get(socketId)),
-    has: vi.fn((socketId: string) => mockSockets.has(socketId)),
-    delete: vi.fn((socketId: string) => mockSockets.delete(socketId)),
-    size: () => mockSockets.size,
-    forEach: (callback: (socket: MockSocket) => void) => {
-      mockSockets.forEach(callback);
+    get: vi.fn((socketId: string) => mockSockets.get(_socketId)),
+    has: vi.fn((socketId: string) => mockSockets.has(_socketId)),
+    delete: vi.fn((socketId: string) => mockSockets.delete(_socketId)),
+    size: (_) => mockSockets.size,
+    forEach: (_callback: (socket: MockSocket) => void) => {
+      mockSockets.forEach(_callback);
     },
   },
 
   // Server lifecycle
   listen: vi.fn((port?: number) => {
-    console.log(`Mock Socket.IO server listening on port ${port || 3001}`);
+    console.log(_`Mock Socket.IO server listening on port ${port || 3001}`);
     return mockSocketServer;
   }),
 
   close: vi.fn((callback?: Function) => {
-    mockSockets.clear();
-    mockRooms.clear();
-    mockEventHandlers.clear();
-    if (callback) callback();
+    mockSockets.clear(_);
+    mockRooms.clear(_);
+    mockEventHandlers.clear(_);
+    if (callback) callback(_);
     return mockSocketServer;
   }),
 
   // Connection handling
   handleConnection: vi.fn((socket: MockSocket) => {
-    mockSockets.set(socket.id, socket);
+    mockSockets.set( socket.id, socket);
     
     // Trigger connection event
     const connectionHandlers = mockEventHandlers.get('connection') || [];
-    connectionHandlers.forEach(handler => handler(createMockSocketClient(socket)));
+    connectionHandlers.forEach(_handler => handler(createMockSocketClient(socket)));
   }),
 
   // Utility methods
   engine: {
-    generateId: vi.fn(() => `socket-${Date.now()}-${Math.random()}`),
-    clientsCount: () => mockSockets.size,
+    generateId: vi.fn(() => `socket-${Date.now(_)}-${Math.random()}`),
+    clientsCount: (_) => mockSockets.size,
   },
 };
 
 // Mock Socket.IO client implementation
-export const createMockSocketClient = (socketData?: Partial<MockSocket>) => {
-  const socket = createMockSocket(socketData);
-  mockSockets.set(socket.id, socket);
+export const createMockSocketClient = (_socketData?: Partial<MockSocket>) => {
+  const socket = createMockSocket(_socketData);
+  mockSockets.set( socket.id, socket);
 
   return {
     id: socket.id,
@@ -167,35 +167,35 @@ export const createMockSocketClient = (socketData?: Partial<MockSocket>) => {
     handshake: socket.handshake,
 
     // Event handling
-    on: vi.fn((event: string, handler: Function) => {
+    on: vi.fn( (event: string, handler: Function) => {
       if (!mockEventHandlers.has(`${socket.id}:${event}`)) {
-        mockEventHandlers.set(`${socket.id}:${event}`, []);
+        mockEventHandlers.set( `${socket.id}:${event}`, []);
       }
-      mockEventHandlers.get(`${socket.id}:${event}`)!.push(handler);
+      mockEventHandlers.get(_`${socket.id}:${event}`)!.push(_handler);
       return socket;
     }),
 
-    off: vi.fn((event: string, handler?: Function) => {
+    off: vi.fn( (event: string, handler?: Function) => {
       const key = `${socket.id}:${event}`;
       if (handler) {
-        const handlers = mockEventHandlers.get(key) || [];
-        const index = handlers.indexOf(handler);
-        if (index > -1) {
-          handlers.splice(index, 1);
+        const handlers = mockEventHandlers.get(_key) || [];
+        const index = handlers.indexOf(_handler);
+        if (_index > -1) {
+          handlers.splice( index, 1);
         }
       } else {
-        mockEventHandlers.delete(key);
+        mockEventHandlers.delete(_key);
       }
       return socket;
     }),
 
-    emit: vi.fn((event: string, ...args: any[]) => {
+    emit: vi.fn( (event: string, ...args: any[]) => {
       // Simulate client-to-server emission
-      const serverHandlers = mockEventHandlers.get(event) || [];
+      const serverHandlers = mockEventHandlers.get(_event) || [];
       serverHandlers.forEach(handler => {
         try {
           handler(...args);
-        } catch (error) {
+        } catch (_error) {
           console.error('Mock socket client emit error:', error);
         }
       });
@@ -204,28 +204,28 @@ export const createMockSocketClient = (socketData?: Partial<MockSocket>) => {
 
     // Room operations
     join: vi.fn((room: string) => {
-      socket.rooms.add(room);
+      socket.rooms.add(_room);
       
       if (!mockRooms.has(room)) {
         mockRooms.set(room, {
           name: room,
-          sockets: new Set(),
+          sockets: new Set(_),
           metadata: {},
         });
       }
       
-      mockRooms.get(room)!.sockets.add(socket.id);
+      mockRooms.get(_room)!.sockets.add(_socket.id);
       return socket;
     }),
 
     leave: vi.fn((room: string) => {
-      socket.rooms.delete(room);
+      socket.rooms.delete(_room);
       
-      const roomData = mockRooms.get(room);
+      const roomData = mockRooms.get(_room);
       if (roomData) {
-        roomData.sockets.delete(socket.id);
-        if (roomData.sockets.size === 0) {
-          mockRooms.delete(room);
+        roomData.sockets.delete(_socket.id);
+        if (_roomData.sockets.size === 0) {
+          mockRooms.delete(_room);
         }
       }
       return socket;
@@ -233,15 +233,15 @@ export const createMockSocketClient = (socketData?: Partial<MockSocket>) => {
 
     // Broadcasting
     to: vi.fn((room: string) => ({
-      emit: vi.fn((event: string, ...args: any[]) => {
-        const roomData = mockRooms.get(room);
+      emit: vi.fn( (event: string, ...args: any[]) => {
+        const roomData = mockRooms.get(_room);
         if (roomData) {
           roomData.sockets.forEach(socketId => {
-            if (socketId !== socket.id) { // Don't emit to self
-              const targetSocket = mockSockets.get(socketId);
-              if (targetSocket?.connected) {
-                const handlers = mockEventHandlers.get(`${socketId}:${event}`) || [];
-                handlers.forEach(handler => handler(...args));
+            if (_socketId !== socket.id) { // Don't emit to self
+              const targetSocket = mockSockets.get(_socketId);
+              if (_targetSocket?.connected) {
+                const handlers = mockEventHandlers.get(_`${socketId}:${event}`) || [];
+                handlers.forEach(_handler => handler(...args));
               }
             }
           });
@@ -251,27 +251,27 @@ export const createMockSocketClient = (socketData?: Partial<MockSocket>) => {
     })),
 
     broadcast: {
-      emit: vi.fn((event: string, ...args: any[]) => {
+      emit: vi.fn( (event: string, ...args: any[]) => {
         // Emit to all other connected sockets
-        mockSockets.forEach((targetSocket, socketId) => {
-          if (socketId !== socket.id && targetSocket.connected) {
-            const handlers = mockEventHandlers.get(`${socketId}:${event}`) || [];
-            handlers.forEach(handler => handler(...args));
+        mockSockets.forEach( (targetSocket, socketId) => {
+          if (_socketId !== socket.id && targetSocket.connected) {
+            const handlers = mockEventHandlers.get(_`${socketId}:${event}`) || [];
+            handlers.forEach(_handler => handler(...args));
           }
         });
         return socket;
       }),
 
       to: vi.fn((room: string) => ({
-        emit: vi.fn((event: string, ...args: any[]) => {
-          const roomData = mockRooms.get(room);
+        emit: vi.fn( (event: string, ...args: any[]) => {
+          const roomData = mockRooms.get(_room);
           if (roomData) {
             roomData.sockets.forEach(socketId => {
-              if (socketId !== socket.id) {
-                const targetSocket = mockSockets.get(socketId);
-                if (targetSocket?.connected) {
-                  const handlers = mockEventHandlers.get(`${socketId}:${event}`) || [];
-                  handlers.forEach(handler => handler(...args));
+              if (_socketId !== socket.id) {
+                const targetSocket = mockSockets.get(_socketId);
+                if (_targetSocket?.connected) {
+                  const handlers = mockEventHandlers.get(_`${socketId}:${event}`) || [];
+                  handlers.forEach(_handler => handler(...args));
                 }
               }
             });
@@ -287,28 +287,28 @@ export const createMockSocketClient = (socketData?: Partial<MockSocket>) => {
       
       // Leave all rooms
       socket.rooms.forEach(room => {
-        const roomData = mockRooms.get(room);
+        const roomData = mockRooms.get(_room);
         if (roomData) {
-          roomData.sockets.delete(socket.id);
-          if (roomData.sockets.size === 0) {
-            mockRooms.delete(room);
+          roomData.sockets.delete(_socket.id);
+          if (_roomData.sockets.size === 0) {
+            mockRooms.delete(_room);
           }
         }
       });
       
-      socket.rooms.clear();
+      socket.rooms.clear(_);
       
       // Trigger disconnect event
-      const disconnectHandlers = mockEventHandlers.get(`${socket.id}:disconnect`) || [];
-      disconnectHandlers.forEach(handler => handler(close ? 'client disconnect' : 'server disconnect'));
+      const disconnectHandlers = mockEventHandlers.get(_`${socket.id}:disconnect`) || [];
+      disconnectHandlers.forEach(_handler => handler(close ? 'client disconnect' : 'server disconnect'));
       
       // Clean up event handlers
-      const keysToDelete = Array.from(mockEventHandlers.keys())
+      const keysToDelete = Array.from(_mockEventHandlers.keys())
         .filter(key => key.startsWith(`${socket.id}:`));
-      keysToDelete.forEach(key => mockEventHandlers.delete(key));
+      keysToDelete.forEach(_key => mockEventHandlers.delete(key));
       
       if (close) {
-        mockSockets.delete(socket.id);
+        mockSockets.delete(_socket.id);
       }
       
       return socket;
@@ -318,7 +318,7 @@ export const createMockSocketClient = (socketData?: Partial<MockSocket>) => {
     compress: vi.fn((compress: boolean) => socket),
     timeout: vi.fn((timeout: number) => socket),
     volatile: {
-      emit: vi.fn((event: string, ...args: any[]) => {
+      emit: vi.fn( (event: string, ...args: any[]) => {
         // Volatile emit - may be dropped
         return socket;
       }),
@@ -328,7 +328,7 @@ export const createMockSocketClient = (socketData?: Partial<MockSocket>) => {
 
 // Mock Socket.IO client library
 export const mockSocketIOClient = {
-  connect: vi.fn((url: string, options?: any) => {
+  connect: vi.fn( (url: string, options?: any) => {
     const socket = createMockSocketClient({
       handshake: {
         address: '127.0.0.1',
@@ -341,101 +341,101 @@ export const mockSocketIOClient = {
 
     // Simulate connection delay
     setTimeout(() => {
-      const connectHandlers = mockEventHandlers.get(`${socket.id}:connect`) || [];
-      connectHandlers.forEach(handler => handler());
+      const connectHandlers = mockEventHandlers.get(_`${socket.id}:connect`) || [];
+      connectHandlers.forEach(_handler => handler());
     }, 10);
 
     return socket;
   }),
 
-  io: vi.fn((url: string, options?: any) => mockSocketIOClient.connect(url, options)),
+  io: vi.fn( (url: string, options?: any) => mockSocketIOClient.connect( url, options)),
 };
 
 // Mock collaboration-specific events and data
 export const mockCollaborationEvents = {
   // Document editing events
-  'document:edit': vi.fn(),
-  'document:cursor': vi.fn(),
-  'document:selection': vi.fn(),
-  'document:save': vi.fn(),
+  'document:edit': vi.fn(_),
+  'document:cursor': vi.fn(_),
+  'document:selection': vi.fn(_),
+  'document:save': vi.fn(_),
   
   // User presence events
-  'user:join': vi.fn(),
-  'user:leave': vi.fn(),
-  'user:typing': vi.fn(),
-  'user:idle': vi.fn(),
+  'user:join': vi.fn(_),
+  'user:leave': vi.fn(_),
+  'user:typing': vi.fn(_),
+  'user:idle': vi.fn(_),
   
   // Session events
-  'session:create': vi.fn(),
-  'session:destroy': vi.fn(),
-  'session:update': vi.fn(),
+  'session:create': vi.fn(_),
+  'session:destroy': vi.fn(_),
+  'session:update': vi.fn(_),
   
   // Error events
-  'error:connection': vi.fn(),
-  'error:authentication': vi.fn(),
-  'error:permission': vi.fn(),
+  'error:connection': vi.fn(_),
+  'error:authentication': vi.fn(_),
+  'error:permission': vi.fn(_),
 };
 
 // Helper functions for tests
-export const simulateSocketConnection = (socketData?: Partial<MockSocket>) => {
-  const socket = createMockSocketClient(socketData);
-  mockSocketServer.handleConnection(socket);
+export const simulateSocketConnection = (_socketData?: Partial<MockSocket>) => {
+  const socket = createMockSocketClient(_socketData);
+  mockSocketServer.handleConnection(_socket);
   return socket;
 };
 
-export const simulateSocketDisconnection = (socketId: string) => {
-  const socket = mockSockets.get(socketId);
+export const simulateSocketDisconnection = (_socketId: string) => {
+  const socket = mockSockets.get(_socketId);
   if (socket) {
-    const client = createMockSocketClient(socket);
-    client.disconnect(true);
+    const client = createMockSocketClient(_socket);
+    client.disconnect(_true);
   }
 };
 
-export const simulateRoomJoin = (socketId: string, room: string) => {
-  const socket = mockSockets.get(socketId);
+export const simulateRoomJoin = ( socketId: string, room: string) => {
+  const socket = mockSockets.get(_socketId);
   if (socket) {
-    const client = createMockSocketClient(socket);
-    client.join(room);
+    const client = createMockSocketClient(_socket);
+    client.join(_room);
   }
 };
 
-export const simulateRoomLeave = (socketId: string, room: string) => {
-  const socket = mockSockets.get(socketId);
+export const simulateRoomLeave = ( socketId: string, room: string) => {
+  const socket = mockSockets.get(_socketId);
   if (socket) {
-    const client = createMockSocketClient(socket);
-    client.leave(room);
+    const client = createMockSocketClient(_socket);
+    client.leave(_room);
   }
 };
 
-export const simulateEventEmission = (event: string, ...args: any[]) => {
-  const handlers = mockEventHandlers.get(event) || [];
-  handlers.forEach(handler => handler(...args));
+export const simulateEventEmission = ( event: string, ...args: any[]) => {
+  const handlers = mockEventHandlers.get(_event) || [];
+  handlers.forEach(_handler => handler(...args));
 };
 
-export const getMockSockets = () => mockSockets;
-export const getMockRooms = () => mockRooms;
-export const getMockEventHandlers = () => mockEventHandlers;
+export const getMockSockets = (_) => mockSockets;
+export const getMockRooms = (_) => mockRooms;
+export const getMockEventHandlers = (_) => mockEventHandlers;
 
-export const clearMockSocketData = () => {
-  mockSockets.clear();
-  mockRooms.clear();
-  mockEventHandlers.clear();
+export const clearMockSocketData = (_) => {
+  mockSockets.clear(_);
+  mockRooms.clear(_);
+  mockEventHandlers.clear(_);
 };
 
-export const resetSocketMocks = () => {
-  vi.clearAllMocks();
+export const resetSocketMocks = (_) => {
+  vi.clearAllMocks(_);
   
   // Reset all mock functions
-  Object.values(mockSocketServer).forEach(fn => {
-    if (typeof fn === 'function') {
-      fn.mockClear?.();
+  Object.values(_mockSocketServer).forEach(fn => {
+    if (_typeof fn === 'function') {
+      fn.mockClear?.(_);
     }
   });
   
-  Object.values(mockSocketIOClient).forEach(fn => fn.mockClear?.());
-  Object.values(mockCollaborationEvents).forEach(fn => fn.mockClear?.());
+  Object.values(_mockSocketIOClient).forEach(_fn => fn.mockClear?.());
+  Object.values(_mockCollaborationEvents).forEach(_fn => fn.mockClear?.());
   
-  clearMockSocketData();
+  clearMockSocketData(_);
 };
 
 export default mockSocketServer;

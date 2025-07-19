@@ -23,7 +23,7 @@ import {
  * Route-based error boundary configuration
  */
 interface RouteErrorBoundaryConfig {
-  /** Route pattern to match (regex or string) */
+  /** Route pattern to match (_regex or string) */
   pattern: string | RegExp;
   /** Type of error boundary to apply */
   type: 'page' | 'feature' | 'component' | 'code-editor' | 'learning-module' | 'auth' | 'async';
@@ -40,7 +40,7 @@ interface RouteErrorBoundaryConfig {
     moduleId?: string;
     lessonId?: string;
     operationType?: 'api' | 'upload' | 'processing' | 'authentication';
-    onRetry?: () => Promise<void>;
+    onRetry?: (_) => Promise<void>;
   };
 }
 
@@ -50,7 +50,7 @@ interface RouteErrorBoundaryConfig {
 const ROUTE_CONFIGURATIONS: RouteErrorBoundaryConfig[] = [
   // Authentication routes
   {
-    pattern: /^\/auth\/(login|register|reset-password)/,
+    pattern: /^\/auth\/(_login|register|reset-password)/,
     type: 'auth',
     name: 'AuthPage',
     enableRetry: true,
@@ -165,11 +165,11 @@ const COMPONENT_TYPE_CONFIGURATIONS: Record<string, RouteErrorBoundaryConfig> = 
 export class ErrorBoundaryRegistry {
   private static instance: ErrorBoundaryRegistry;
   
-  private constructor() {}
+  private constructor(_) {}
   
-  public static getInstance(): ErrorBoundaryRegistry {
+  public static getInstance(_): ErrorBoundaryRegistry {
     if (!ErrorBoundaryRegistry.instance) {
-      ErrorBoundaryRegistry.instance = new ErrorBoundaryRegistry();
+      ErrorBoundaryRegistry.instance = new ErrorBoundaryRegistry(_);
     }
     return ErrorBoundaryRegistry.instance;
   }
@@ -182,7 +182,7 @@ export class ErrorBoundaryRegistry {
     route: string,
     customConfig?: ErrorBoundaryConfig
   ): ComponentType<P> {
-    const config = this.getRouteConfiguration(route);
+    const config = this.getRouteConfiguration(_route);
     
     if (!config) {
       // Default to page-level error boundary
@@ -194,21 +194,21 @@ export class ErrorBoundaryRegistry {
     
     const finalConfig = { ...config, ...customConfig };
     
-    switch (config.type) {
+    switch (_config.type) {
       case 'auth':
-        return withAuthErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withAuthErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'code-editor':
-        return withCodeEditorErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withCodeEditorErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'learning-module':
-        return withLearningModuleErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withLearningModuleErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'async':
-        return withAsyncErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withAsyncErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'feature':
-        return withFeatureErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withFeatureErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'component':
-        return withComponentErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withComponentErrorBoundary( Component, finalConfig) as ComponentType<P>;
       default:
-        return withPageErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withPageErrorBoundary( Component, finalConfig) as ComponentType<P>;
     }
   }
   
@@ -231,33 +231,33 @@ export class ErrorBoundaryRegistry {
     
     const finalConfig = { ...config, ...customConfig };
     
-    switch (config.type) {
+    switch (_config.type) {
       case 'auth':
-        return withAuthErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withAuthErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'code-editor':
-        return withCodeEditorErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withCodeEditorErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'learning-module':
-        return withLearningModuleErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withLearningModuleErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'async':
-        return withAsyncErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withAsyncErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'feature':
-        return withFeatureErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withFeatureErrorBoundary( Component, finalConfig) as ComponentType<P>;
       case 'component':
-        return withComponentErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withComponentErrorBoundary( Component, finalConfig) as ComponentType<P>;
       default:
-        return withComponentErrorBoundary(Component, finalConfig) as ComponentType<P>;
+        return withComponentErrorBoundary( Component, finalConfig) as ComponentType<P>;
     }
   }
   
   /**
    * Get configuration for a specific route
    */
-  private getRouteConfiguration(route: string): RouteErrorBoundaryConfig | null {
+  private getRouteConfiguration(_route: string): RouteErrorBoundaryConfig | null {
     return ROUTE_CONFIGURATIONS.find(config => {
-      if (typeof config.pattern === 'string') {
-        return route.includes(config.pattern);
+      if (_typeof config.pattern === 'string') {
+        return route.includes(_config.pattern);
       } else {
-        return config.pattern.test(route);
+        return config.pattern.test(_route);
       }
     }) || null;
   }
@@ -265,28 +265,28 @@ export class ErrorBoundaryRegistry {
   /**
    * Register a new route configuration
    */
-  public registerRoute(config: RouteErrorBoundaryConfig): void {
-    ROUTE_CONFIGURATIONS.push(config);
+  public registerRoute(_config: RouteErrorBoundaryConfig): void {
+    ROUTE_CONFIGURATIONS.push(_config);
   }
   
   /**
    * Register a new component type configuration
    */
-  public registerComponentType(type: string, config: RouteErrorBoundaryConfig): void {
+  public registerComponentType( type: string, config: RouteErrorBoundaryConfig): void {
     COMPONENT_TYPE_CONFIGURATIONS[type] = config;
   }
   
   /**
    * Get all registered route configurations
    */
-  public getRouteConfigurations(): RouteErrorBoundaryConfig[] {
+  public getRouteConfigurations(_): RouteErrorBoundaryConfig[] {
     return [...ROUTE_CONFIGURATIONS];
   }
   
   /**
    * Get all registered component type configurations
    */
-  public getComponentTypeConfigurations(): Record<string, RouteErrorBoundaryConfig> {
+  public getComponentTypeConfigurations(_): Record<string, RouteErrorBoundaryConfig> {
     return { ...COMPONENT_TYPE_CONFIGURATIONS };
   }
 }
@@ -294,37 +294,37 @@ export class ErrorBoundaryRegistry {
 /**
  * Utility functions for easy access
  */
-export const errorBoundaryRegistry = ErrorBoundaryRegistry.getInstance();
+export const errorBoundaryRegistry = ErrorBoundaryRegistry.getInstance(_);
 
 /**
  * Decorator for automatic error boundary application based on route
  */
-export function WithErrorBoundaryByRoute(route: string, config?: ErrorBoundaryConfig) {
-  return function <T extends ComponentType<any>>(target: T): T {
-    return errorBoundaryRegistry.wrapByRoute(target, route, config) as T;
+export function WithErrorBoundaryByRoute( route: string, config?: ErrorBoundaryConfig) {
+  return function <T extends ComponentType<any>>(_target: T): T {
+    return errorBoundaryRegistry.wrapByRoute( target, route, config) as T;
   };
 }
 
 /**
  * Decorator for automatic error boundary application based on component type
  */
-export function WithErrorBoundaryByType(componentType: string, config?: ErrorBoundaryConfig) {
-  return function <T extends ComponentType<any>>(target: T): T {
-    return errorBoundaryRegistry.wrapByType(target, componentType, config) as T;
+export function WithErrorBoundaryByType( componentType: string, config?: ErrorBoundaryConfig) {
+  return function <T extends ComponentType<any>>(_target: T): T {
+    return errorBoundaryRegistry.wrapByType( target, componentType, config) as T;
   };
 }
 
 /**
  * Hook to get the appropriate error boundary wrapper for current route
  */
-export function useErrorBoundaryForRoute(route: string) {
-  const registry = ErrorBoundaryRegistry.getInstance();
+export function useErrorBoundaryForRoute(_route: string) {
+  const registry = ErrorBoundaryRegistry.getInstance(_);
   
   return function wrapComponent<P extends object>(
     Component: ComponentType<P>,
     config?: ErrorBoundaryConfig
   ) {
-    return registry.wrapByRoute(Component, route, config);
+    return registry.wrapByRoute( Component, route, config);
   };
 }
 

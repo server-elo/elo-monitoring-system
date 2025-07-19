@@ -28,7 +28,7 @@ export interface LearningModule {
   content: string; // Can contain markdown-like syntax
   keywords: string[];
   geminiPromptSeed?: string;
-  videoEmbedUrl?: string; // URL for embedding a video (e.g., YouTube embed URL)
+  videoEmbedUrl?: string; // URL for embedding a video ( e.g., YouTube embed URL)
   quiz?: QuizData; // Quiz data for the module
 }
 

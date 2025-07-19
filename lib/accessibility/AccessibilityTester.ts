@@ -31,19 +31,19 @@ export class AccessibilityTester {
   private static instance: AccessibilityTester;
   private isConfigured = false;
 
-  static getInstance(): AccessibilityTester {
+  static getInstance(_): AccessibilityTester {
     if (!AccessibilityTester.instance) {
-      AccessibilityTester.instance = new AccessibilityTester();
+      AccessibilityTester.instance = new AccessibilityTester(_);
     }
     return AccessibilityTester.instance;
   }
 
-  private constructor() {
-    this.configureAxe();
+  private constructor(_) {
+    this.configureAxe(_);
   }
 
-  private configureAxe(): void {
-    if (this.isConfigured) return;
+  private configureAxe(_): void {
+    if (_this.isConfigured) return;
 
     configure({
       rules: [
@@ -97,18 +97,18 @@ export class AccessibilityTester {
         timeout
       });
 
-      return this.processResults(results, wcagLevel);
-    } catch (error) {
+      return this.processResults( results, wcagLevel);
+    } catch (_error) {
       console.error('Accessibility test failed:', error);
-      throw new Error(`Accessibility test failed: ${error}`);
+      throw new Error(_`Accessibility test failed: ${error}`);
     }
   }
 
-  async testPage(options: AccessibilityTestOptions = {}): Promise<AccessibilityTestResult> {
-    return this.testElement(document.body, options);
+  async testPage(_options: AccessibilityTestOptions = {}): Promise<AccessibilityTestResult> {
+    return this.testElement( document.body, options);
   }
 
-  private processResults(results: any, wcagLevel: 'AA' | 'AAA'): AccessibilityTestResult {
+  private processResults( results: any, wcagLevel: 'AA' | 'AAA'): AccessibilityTestResult {
     const { violations, passes, incomplete, inapplicable } = results;
 
     // Count issues by severity
@@ -118,7 +118,7 @@ export class AccessibilityTester {
     let minorIssues = 0;
 
     violations.forEach((violation: any) => {
-      switch (violation.impact) {
+      switch (_violation.impact) {
         case 'critical':
           criticalIssues += violation.nodes.length;
           break;
@@ -158,10 +158,10 @@ export class AccessibilityTester {
     };
   }
 
-  generateReport(result: AccessibilityTestResult): string {
+  generateReport(_result: AccessibilityTestResult): string {
     const { summary, score, wcagLevel } = result;
     
-    let report = `\n🔍 ACCESSIBILITY TEST REPORT (WCAG ${wcagLevel})\n`;
+    let report = `\n🔍 ACCESSIBILITY TEST REPORT (_WCAG ${wcagLevel})\n`;
     report += `${'='.repeat(50)}\n\n`;
     
     report += `📊 OVERALL SCORE: ${score}/100\n\n`;
@@ -171,18 +171,18 @@ export class AccessibilityTester {
     report += `  ❌ Failed: ${summary.violationCount} tests\n`;
     report += `  ⚠️  Incomplete: ${summary.incompleteCount} tests\n\n`;
     
-    if (summary.violationCount > 0) {
+    if (_summary.violationCount > 0) {
       report += `🚨 ISSUES BY SEVERITY:\n`;
-      if (summary.criticalIssues > 0) report += `  🔴 Critical: ${summary.criticalIssues}\n`;
-      if (summary.seriousIssues > 0) report += `  🟠 Serious: ${summary.seriousIssues}\n`;
-      if (summary.moderateIssues > 0) report += `  🟡 Moderate: ${summary.moderateIssues}\n`;
-      if (summary.minorIssues > 0) report += `  🔵 Minor: ${summary.minorIssues}\n`;
+      if (_summary.criticalIssues > 0) report += `  🔴 Critical: ${summary.criticalIssues}\n`;
+      if (_summary.seriousIssues > 0) report += `  🟠 Serious: ${summary.seriousIssues}\n`;
+      if (_summary.moderateIssues > 0) report += `  🟡 Moderate: ${summary.moderateIssues}\n`;
+      if (_summary.minorIssues > 0) report += `  🔵 Minor: ${summary.minorIssues}\n`;
       report += `\n`;
     }
     
-    if (result.violations.length > 0) {
+    if (_result.violations.length > 0) {
       report += `❌ VIOLATIONS:\n`;
-      result.violations.forEach((violation, index) => {
+      result.violations.forEach( (violation, index) => {
         report += `\n${index + 1}. ${violation.description}\n`;
         report += `   Impact: ${violation.impact}\n`;
         report += `   Help: ${violation.helpUrl}\n`;
@@ -194,7 +194,7 @@ export class AccessibilityTester {
   }
 
   // Quick accessibility checks for common issues
-  async quickCheck(element: HTMLElement): Promise<{
+  async quickCheck(_element: HTMLElement): Promise<{
     hasSkipLinks: boolean;
     hasProperHeadings: boolean;
     hasAltText: boolean;
@@ -215,17 +215,17 @@ export class AccessibilityTester {
     });
 
     return {
-      hasSkipLinks: !result.violations.some(v => v.id === 'skip-link'),
-      hasProperHeadings: !result.violations.some(v => v.id === 'heading-order'),
-      hasAltText: !result.violations.some(v => v.id === 'image-alt'),
-      hasFormLabels: !result.violations.some(v => v.id === 'label'),
-      hasKeyboardAccess: !result.violations.some(v => v.id.includes('keyboard')),
-      colorContrast: !result.violations.some(v => v.id === 'color-contrast')
+      hasSkipLinks: !result.violations.some(_v => v.id === 'skip-link'),
+      hasProperHeadings: !result.violations.some(_v => v.id === 'heading-order'),
+      hasAltText: !result.violations.some(_v => v.id === 'image-alt'),
+      hasFormLabels: !result.violations.some(_v => v.id === 'label'),
+      hasKeyboardAccess: !result.violations.some(_v => v.id.includes('keyboard')),
+      colorContrast: !result.violations.some(_v => v.id === 'color-contrast')
     };
   }
 
   // Test specific component types
-  async testButton(button: HTMLElement): Promise<AccessibilityTestResult> {
+  async testButton(_button: HTMLElement): Promise<AccessibilityTestResult> {
     return this.testElement(button, {
       tags: ['wcag2aa'],
       rules: {
@@ -236,7 +236,7 @@ export class AccessibilityTester {
     });
   }
 
-  async testForm(form: HTMLElement): Promise<AccessibilityTestResult> {
+  async testForm(_form: HTMLElement): Promise<AccessibilityTestResult> {
     return this.testElement(form, {
       tags: ['wcag2aa'],
       rules: {
@@ -248,7 +248,7 @@ export class AccessibilityTester {
     });
   }
 
-  async testNavigation(nav: HTMLElement): Promise<AccessibilityTestResult> {
+  async testNavigation(_nav: HTMLElement): Promise<AccessibilityTestResult> {
     return this.testElement(nav, {
       tags: ['wcag2aa'],
       rules: {
@@ -260,7 +260,7 @@ export class AccessibilityTester {
     });
   }
 
-  async testModal(modal: HTMLElement): Promise<AccessibilityTestResult> {
+  async testModal(_modal: HTMLElement): Promise<AccessibilityTestResult> {
     return this.testElement(modal, {
       tags: ['wcag2aa'],
       rules: {
@@ -274,21 +274,21 @@ export class AccessibilityTester {
 }
 
 // Export singleton instance
-export const accessibilityTester = AccessibilityTester.getInstance();
+export const accessibilityTester = AccessibilityTester.getInstance(_);
 
 // Utility function for quick testing in development
-export async function testAccessibility(element?: HTMLElement): Promise<void> {
-  if (process.env.NODE_ENV !== 'development') return;
+export async function testAccessibility(_element?: HTMLElement): Promise<void> {
+  if (_process.env.NODE_ENV !== 'development') return;
 
   const targetElement = element || document.body;
-  const result = await accessibilityTester.testElement(targetElement);
+  const result = await accessibilityTester.testElement(_targetElement);
   
   console.group('🔍 Accessibility Test Results');
-  console.log(accessibilityTester.generateReport(result));
+  console.log(_accessibilityTester.generateReport(result));
   
-  if (result.violations.length > 0) {
+  if (_result.violations.length > 0) {
     console.warn('Accessibility violations found:', result.violations);
   }
   
-  console.groupEnd();
+  console.groupEnd(_);
 }

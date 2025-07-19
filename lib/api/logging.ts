@@ -82,30 +82,30 @@ class ApiLogger {
   private logs: LogEntry[] = [];
   private maxLogs = 1000; // Keep last 1000 logs in memory
 
-  constructor(config: Partial<LoggerConfig> = {}) {
+  constructor(_config: Partial<LoggerConfig> = {}) {
     this.config = { ...defaultConfig, ...config };
   }
 
   /**
    * Create request context from NextRequest
    */
-  createRequestContext(request: NextRequest, requestId: string, body?: any): RequestContext {
-    const url = new URL(request.url);
-    const headers = Object.fromEntries(request.headers.entries());
-    const query = Object.fromEntries(url.searchParams.entries());
+  createRequestContext( request: NextRequest, requestId: string, body?: any): RequestContext {
+    const url = new URL(_request.url);
+    const headers = Object.fromEntries(_request.headers.entries());
+    const query = Object.fromEntries(_url.searchParams.entries());
 
     return {
       requestId,
       method: request.method,
       url: request.url,
-      ip: getClientIP(request),
+      ip: getClientIP(_request),
       userAgent: request.headers.get('user-agent') || '',
       userId: headers['x-user-id'], // Set by auth middleware
       sessionId: headers['x-session-id'], // Set by auth middleware
-      startTime: Date.now(),
-      headers: this.sanitizeHeaders(headers),
+      startTime: Date.now(_),
+      headers: this.sanitizeHeaders(_headers),
       query,
-      body: this.shouldIncludeBody(body, 'request') ? this.sanitizeBody(body) : undefined
+      body: this.shouldIncludeBody( body, 'request') ? this.sanitizeBody(_body) : undefined
     };
   }
 
@@ -121,9 +121,9 @@ class ApiLogger {
   ): ResponseContext {
     return {
       statusCode,
-      headers: this.sanitizeHeaders(headers),
-      body: this.shouldIncludeBody(body, 'response') ? this.sanitizeBody(body) : undefined,
-      responseTime: Date.now() - startTime,
+      headers: this.sanitizeHeaders(_headers),
+      body: this.shouldIncludeBody( body, 'response') ? this.sanitizeBody(_body) : undefined,
+      responseTime: Date.now(_) - startTime,
       error
     };
   }
@@ -131,26 +131,26 @@ class ApiLogger {
   /**
    * Log API request
    */
-  logRequest(requestContext: RequestContext) {
+  logRequest(_requestContext: RequestContext) {
     if (!this.shouldLog(LogLevel.INFO)) return;
 
     const logEntry: LogEntry = {
       level: LogLevel.INFO,
       message: `${requestContext.method} ${requestContext.url}`,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
       requestId: requestContext.requestId,
       context: {
         request: requestContext
       }
     };
 
-    this.writeLog(logEntry);
+    this.writeLog(_logEntry);
   }
 
   /**
    * Log API response
    */
-  logResponse(requestContext: RequestContext, responseContext: ResponseContext) {
+  logResponse( requestContext: RequestContext, responseContext: ResponseContext) {
     const level = responseContext.statusCode >= 500 ? LogLevel.ERROR :
                   responseContext.statusCode >= 400 ? LogLevel.WARN :
                   LogLevel.INFO;
@@ -159,8 +159,8 @@ class ApiLogger {
 
     const logEntry: LogEntry = {
       level,
-      message: `${requestContext.method} ${requestContext.url} - ${responseContext.statusCode} (${responseContext.responseTime}ms)`,
-      timestamp: new Date().toISOString(),
+      message: `${requestContext.method} ${requestContext.url} - ${responseContext.statusCode} (_${responseContext.responseTime}ms)`,
+      timestamp: new Date(_).toISOString(),
       requestId: requestContext.requestId,
       context: {
         request: requestContext,
@@ -168,26 +168,26 @@ class ApiLogger {
       }
     };
 
-    this.writeLog(logEntry);
+    this.writeLog(_logEntry);
 
     // Send to external monitoring if response indicates an error
-    if (responseContext.statusCode >= 400) {
-      this.sendToExternalMonitoring(logEntry);
+    if (_responseContext.statusCode >= 400) {
+      this.sendToExternalMonitoring(_logEntry);
     }
   }
 
   /**
    * Log API error
    */
-  logError(error: ApiError, requestContext: RequestContext, additionalContext?: any) {
+  logError( error: ApiError, requestContext: RequestContext, additionalContext?: any) {
     if (!this.shouldLog(LogLevel.ERROR)) return;
 
-    const errorContext = createErrorContext(error, requestContext, additionalContext);
+    const errorContext = createErrorContext( error, requestContext, additionalContext);
 
     const logEntry: LogEntry = {
       level: LogLevel.ERROR,
       message: `API Error: ${error.message}`,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
       requestId: requestContext.requestId,
       context: {
         request: requestContext,
@@ -196,27 +196,27 @@ class ApiLogger {
       }
     };
 
-    this.writeLog(logEntry);
+    this.writeLog(_logEntry);
 
     // Send to error tracking system
-    this.sendToErrorTracker(error, errorContext);
+    this.sendToErrorTracker( error, errorContext);
 
     // Send to external monitoring for critical errors
-    if (errorContext.severity === 'critical' || errorContext.severity === 'high') {
-      this.sendToExternalMonitoring(logEntry);
+    if (_errorContext.severity === 'critical' || errorContext.severity === 'high') {
+      this.sendToExternalMonitoring(_logEntry);
     }
   }
 
   /**
    * Log general message
    */
-  log(level: LogLevel, message: string, context?: any, requestId?: string) {
+  log( level: LogLevel, message: string, context?: any, requestId?: string) {
     if (!this.shouldLog(level)) return;
 
     const logEntry: LogEntry = {
       level,
       message,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
       requestId: requestId || 'system',
       context: {
         request: {} as RequestContext, // Minimal request context for system logs
@@ -224,80 +224,80 @@ class ApiLogger {
       }
     };
 
-    this.writeLog(logEntry);
+    this.writeLog(_logEntry);
   }
 
   /**
    * Get recent logs
    */
-  getRecentLogs(limit: number = 100): LogEntry[] {
-    return this.logs.slice(-limit);
+  getRecentLogs(_limit: number = 100): LogEntry[] {
+    return this.logs.slice(_-limit);
   }
 
   /**
    * Get logs by request ID
    */
-  getLogsByRequestId(requestId: string): LogEntry[] {
+  getLogsByRequestId(_requestId: string): LogEntry[] {
     return this.logs.filter(log => log.requestId === requestId);
   }
 
   /**
    * Clear logs
    */
-  clearLogs() {
+  clearLogs(_) {
     this.logs = [];
   }
 
-  private shouldLog(level: LogLevel): boolean {
+  private shouldLog(_level: LogLevel): boolean {
     const levels = [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG];
-    const configLevelIndex = levels.indexOf(this.config.level);
-    const logLevelIndex = levels.indexOf(level);
+    const configLevelIndex = levels.indexOf(_this.config.level);
+    const logLevelIndex = levels.indexOf(_level);
     return logLevelIndex <= configLevelIndex;
   }
 
-  private shouldIncludeBody(body: any, type: 'request' | 'response'): boolean {
+  private shouldIncludeBody( body: any, type: 'request' | 'response'): boolean {
     if (!body) return false;
     
     const include = type === 'request' ? this.config.includeRequestBody : this.config.includeResponseBody;
     if (!include) return false;
 
     // Check body size
-    const bodySize = JSON.stringify(body).length;
+    const bodySize = JSON.stringify(_body).length;
     return bodySize <= this.config.maxBodySize;
   }
 
-  private sanitizeHeaders(headers: Record<string, string>): Record<string, string> {
-    return sanitizeData(headers, this.config.sensitiveFields);
+  private sanitizeHeaders( headers: Record<string, string>): Record<string, string> {
+    return sanitizeData( headers, this.config.sensitiveFields);
   }
 
-  private sanitizeBody(body: any): any {
-    return sanitizeData(body, this.config.sensitiveFields);
+  private sanitizeBody(_body: any): any {
+    return sanitizeData( body, this.config.sensitiveFields);
   }
 
-  private writeLog(logEntry: LogEntry) {
+  private writeLog(_logEntry: LogEntry) {
     // Add to memory
-    this.logs.push(logEntry);
-    if (this.logs.length > this.maxLogs) {
-      this.logs = this.logs.slice(-this.maxLogs);
+    this.logs.push(_logEntry);
+    if (_this.logs.length > this.maxLogs) {
+      this.logs = this.logs.slice(_-this.maxLogs);
     }
 
     // Console logging
-    if (this.config.enableConsoleLogging) {
-      this.writeToConsole(logEntry);
+    if (_this.config.enableConsoleLogging) {
+      this.writeToConsole(_logEntry);
     }
 
-    // File logging (in production)
-    if (this.config.enableFileLogging) {
-      this.writeToFile(logEntry);
+    // File logging (_in production)
+    if (_this.config.enableFileLogging) {
+      this.writeToFile(_logEntry);
     }
   }
 
-  private writeToConsole(logEntry: LogEntry) {
+  private writeToConsole(_logEntry: LogEntry) {
     const { level, message, timestamp, requestId, context } = logEntry;
     
     const logMessage = `[${timestamp}] [${level.toUpperCase()}] [${requestId}] ${message}`;
     
-    switch (level) {
+    switch (_level) {
       case LogLevel.ERROR:
         console.error(logMessage, context);
         break;
@@ -305,21 +305,21 @@ class ApiLogger {
         console.warn(logMessage, context);
         break;
       case LogLevel.INFO:
-        console.info(logMessage, context);
+        console.info( logMessage, context);
         break;
       case LogLevel.DEBUG:
-        console.debug(logMessage, context);
+        console.debug( logMessage, context);
         break;
     }
   }
 
-  private writeToFile(_logEntry: LogEntry) {
+  private writeToFile( logEntry: LogEntry) {
     // In a real implementation, you would write to a log file
     // For now, we'll just store in memory
-    // Example: fs.appendFileSync('api.log', JSON.stringify(logEntry) + '\n');
+    // Example: fs.appendFileSync( 'api.log', JSON.stringify(logEntry) + '\n');
   }
 
-  private sendToErrorTracker(error: ApiError, errorContext: ErrorContext) {
+  private sendToErrorTracker( error: ApiError, errorContext: ErrorContext) {
     try {
       errorTracker.captureError(error, {
         component: 'api',
@@ -333,45 +333,45 @@ class ApiLogger {
           tags: errorContext.tags
         }
       });
-    } catch (trackingError) {
+    } catch (_trackingError) {
       console.error('Failed to send error to tracker:', trackingError);
     }
   }
 
-  private sendToExternalMonitoring(logEntry: LogEntry) {
+  private sendToExternalMonitoring(_logEntry: LogEntry) {
     if (!this.config.enableExternalLogging) return;
 
     try {
-      // Send to external monitoring service (e.g., DataDog, New Relic, etc.)
+      // Send to external monitoring service ( e.g., DataDog, New Relic, etc.)
       // Example implementation:
       // await fetch('https://api.monitoring-service.com/logs', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(logEntry)
+      //   body: JSON.stringify(_logEntry)
       // });
       
       console.log('Would send to external monitoring:', logEntry.message);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to send to external monitoring:', error);
     }
   }
 }
 
 // Global logger instance
-export const apiLogger = new ApiLogger();
+export const apiLogger = new ApiLogger(_);
 
 // Convenience methods
-export const logRequest = (requestContext: RequestContext) => apiLogger.logRequest(requestContext);
-export const logResponse = (requestContext: RequestContext, responseContext: ResponseContext) => 
-  apiLogger.logResponse(requestContext, responseContext);
-export const logError = (error: ApiError, requestContext: RequestContext, additionalContext?: any) => 
-  apiLogger.logError(error, requestContext, additionalContext);
-export const logInfo = (message: string, context?: any, requestId?: string) => 
-  apiLogger.log(LogLevel.INFO, message, context, requestId);
-export const logWarn = (message: string, context?: any, requestId?: string) => 
-  apiLogger.log(LogLevel.WARN, message, context, requestId);
-export const logDebug = (message: string, context?: any, requestId?: string) => 
-  apiLogger.log(LogLevel.DEBUG, message, context, requestId);
+export const logRequest = (_requestContext: RequestContext) => apiLogger.logRequest(_requestContext);
+export const logResponse = ( requestContext: RequestContext, responseContext: ResponseContext) => 
+  apiLogger.logResponse( requestContext, responseContext);
+export const logError = ( error: ApiError, requestContext: RequestContext, additionalContext?: any) => 
+  apiLogger.logError( error, requestContext, additionalContext);
+export const logInfo = ( message: string, context?: any, requestId?: string) => 
+  apiLogger.log( LogLevel.INFO, message, context, requestId);
+export const logWarn = ( message: string, context?: any, requestId?: string) => 
+  apiLogger.log( LogLevel.WARN, message, context, requestId);
+export const logDebug = ( message: string, context?: any, requestId?: string) => 
+  apiLogger.log( LogLevel.DEBUG, message, context, requestId);
 
 // Middleware for automatic request/response logging
 export function createLoggingMiddleware() {
@@ -382,53 +382,53 @@ export function createLoggingMiddleware() {
     let requestBody: any;
     try {
       // Clone request to read body without consuming it
-      const clonedRequest = request.clone();
-      requestBody = await clonedRequest.json();
+      const clonedRequest = request.clone(_);
+      requestBody = await clonedRequest.json(_);
     } catch {
       // Body is not JSON or already consumed
       requestBody = undefined;
     }
 
-    const requestContext = apiLogger.createRequestContext(request, requestId, requestBody);
+    const requestContext = apiLogger.createRequestContext( request, requestId, requestBody);
     
     // Log request
-    apiLogger.logRequest(requestContext);
+    apiLogger.logRequest(_requestContext);
 
     try {
       // Execute handler
-      const response = await handler(request);
+      const response = await handler(_request);
       
       // Extract response data
       let responseBody: any;
       try {
-        const clonedResponse = response.clone();
-        responseBody = await clonedResponse.json();
+        const clonedResponse = response.clone(_);
+        responseBody = await clonedResponse.json(_);
       } catch {
         responseBody = undefined;
       }
 
       const responseContext = apiLogger.createResponseContext(
         response.status,
-        Object.fromEntries(response.headers.entries()),
+        Object.fromEntries(_response.headers.entries()),
         responseBody,
         requestContext.startTime
       );
 
       // Log response
-      apiLogger.logResponse(requestContext, responseContext);
+      apiLogger.logResponse( requestContext, responseContext);
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       // Log error
-      if (error instanceof ApiError) {
-        apiLogger.logError(error, requestContext);
+      if (_error instanceof ApiError) {
+        apiLogger.logError( error, requestContext);
       } else {
         const apiError = new ApiError(
           'INTERNAL_SERVER_ERROR' as any,
           error instanceof Error ? error.message : 'Unknown error',
           500
         );
-        apiLogger.logError(apiError, requestContext);
+        apiLogger.logError( apiError, requestContext);
       }
       
       throw error;

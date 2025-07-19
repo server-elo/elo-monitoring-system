@@ -2,54 +2,54 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Cache Interface
 interface CacheStore {
-  get<T>(key: string): Promise<T | null>;
-  set<T>(key: string, value: T, ttl?: number): Promise<void>;
-  delete(key: string): Promise<void>;
-  clear(): Promise<void>;
-  has(key: string): Promise<boolean>;
+  get<T>(_key: string): Promise<T | null>;
+  set<T>( key: string, value: T, ttl?: number): Promise<void>;
+  delete(_key: string): Promise<void>;
+  clear(_): Promise<void>;
+  has(_key: string): Promise<boolean>;
 }
 
-// In-Memory Cache Store (for development)
+// In-Memory Cache Store (_for development)
 class MemoryCacheStore implements CacheStore {
-  private store = new Map<string, { value: any; expires: number }>();
+  private store = new Map<string, { value: any; expires: number }>(_);
 
-  async get<T>(key: string): Promise<T | null> {
-    const item = this.store.get(key);
+  async get<T>(_key: string): Promise<T | null> {
+    const item = this.store.get(_key);
     
     if (!item) {
       return null;
     }
 
-    if (item.expires < Date.now()) {
-      this.store.delete(key);
+    if (_item.expires < Date.now()) {
+      this.store.delete(_key);
       return null;
     }
 
     return item.value as T;
   }
 
-  async set<T>(key: string, value: T, ttl: number = 300): Promise<void> {
-    const expires = Date.now() + (ttl * 1000);
-    this.store.set(key, { value, expires });
+  async set<T>( key: string, value: T, ttl: number = 300): Promise<void> {
+    const expires = Date.now(_) + (_ttl * 1000);
+    this.store.set( key, { value, expires });
   }
 
-  async delete(key: string): Promise<void> {
-    this.store.delete(key);
+  async delete(_key: string): Promise<void> {
+    this.store.delete(_key);
   }
 
-  async clear(): Promise<void> {
-    this.store.clear();
+  async clear(_): Promise<void> {
+    this.store.clear(_);
   }
 
-  async has(key: string): Promise<boolean> {
-    const item = this.store.get(key);
+  async has(_key: string): Promise<boolean> {
+    const item = this.store.get(_key);
     
     if (!item) {
       return false;
     }
 
-    if (item.expires < Date.now()) {
-      this.store.delete(key);
+    if (_item.expires < Date.now()) {
+      this.store.delete(_key);
       return false;
     }
 
@@ -57,73 +57,73 @@ class MemoryCacheStore implements CacheStore {
   }
 
   // Cleanup expired entries
-  cleanup(): void {
-    const now = Date.now();
-    for (const [key, item] of this.store.entries()) {
-      if (item.expires < now) {
-        this.store.delete(key);
+  cleanup(_): void {
+    const now = Date.now(_);
+    for ( const [key, item] of this.store.entries()) {
+      if (_item.expires < now) {
+        this.store.delete(_key);
       }
     }
   }
 
   // Get cache statistics
-  getStats(): { size: number; keys: string[] } {
-    this.cleanup();
+  getStats(_): { size: number; keys: string[] } {
+    this.cleanup(_);
     return {
       size: this.store.size,
-      keys: Array.from(this.store.keys())
+      keys: Array.from(_this.store.keys())
     };
   }
 }
 
-// Redis Cache Store (for production)
+// Redis Cache Store (_for production)
 class RedisCacheStore implements CacheStore {
   private redis: any; // Redis client
 
-  constructor(redisClient: any) {
+  constructor(_redisClient: any) {
     this.redis = redisClient;
   }
 
-  async get<T>(key: string): Promise<T | null> {
+  async get<T>(_key: string): Promise<T | null> {
     try {
-      const value = await this.redis.get(key);
-      return value ? JSON.parse(value) : null;
-    } catch (error) {
+      const value = await this.redis.get(_key);
+      return value ? JSON.parse(_value) : null;
+    } catch (_error) {
       console.error('Redis get error:', error);
       return null;
     }
   }
 
-  async set<T>(key: string, value: T, ttl: number = 300): Promise<void> {
+  async set<T>( key: string, value: T, ttl: number = 300): Promise<void> {
     try {
-      const serialized = JSON.stringify(value);
-      await this.redis.setex(key, ttl, serialized);
-    } catch (error) {
+      const serialized = JSON.stringify(_value);
+      await this.redis.setex( key, ttl, serialized);
+    } catch (_error) {
       console.error('Redis set error:', error);
     }
   }
 
-  async delete(key: string): Promise<void> {
+  async delete(_key: string): Promise<void> {
     try {
-      await this.redis.del(key);
-    } catch (error) {
+      await this.redis.del(_key);
+    } catch (_error) {
       console.error('Redis delete error:', error);
     }
   }
 
-  async clear(): Promise<void> {
+  async clear(_): Promise<void> {
     try {
-      await this.redis.flushdb();
-    } catch (error) {
+      await this.redis.flushdb(_);
+    } catch (_error) {
       console.error('Redis clear error:', error);
     }
   }
 
-  async has(key: string): Promise<boolean> {
+  async has(_key: string): Promise<boolean> {
     try {
-      const exists = await this.redis.exists(key);
+      const exists = await this.redis.exists(_key);
       return exists === 1;
-    } catch (error) {
+    } catch (_error) {
       console.error('Redis exists error:', error);
       return false;
     }
@@ -137,75 +137,75 @@ export class CacheManager {
   private defaultTTL: number = 300; // 5 minutes
   private enabled: boolean = true;
 
-  constructor(store?: CacheStore) {
-    this.store = store || new MemoryCacheStore();
+  constructor(_store?: CacheStore) {
+    this.store = store || new MemoryCacheStore(_);
     this.enabled = process.env.CACHE_ENABLED !== 'false';
   }
 
-  static getInstance(): CacheManager {
+  static getInstance(_): CacheManager {
     if (!CacheManager.instance) {
-      CacheManager.instance = new CacheManager();
+      CacheManager.instance = new CacheManager(_);
     }
     return CacheManager.instance;
   }
 
-  async get<T>(key: string): Promise<T | null> {
+  async get<T>(_key: string): Promise<T | null> {
     if (!this.enabled) {
       return null;
     }
 
     try {
-      return await this.store.get<T>(key);
-    } catch (error) {
+      return await this.store.get<T>(_key);
+    } catch (_error) {
       console.error('Cache get error:', error);
       return null;
     }
   }
 
-  async set<T>(key: string, value: T, ttl?: number): Promise<void> {
+  async set<T>( key: string, value: T, ttl?: number): Promise<void> {
     if (!this.enabled) {
       return;
     }
 
     try {
-      await this.store.set(key, value, ttl || this.defaultTTL);
-    } catch (error) {
+      await this.store.set( key, value, ttl || this.defaultTTL);
+    } catch (_error) {
       console.error('Cache set error:', error);
     }
   }
 
-  async delete(key: string): Promise<void> {
+  async delete(_key: string): Promise<void> {
     if (!this.enabled) {
       return;
     }
 
     try {
-      await this.store.delete(key);
-    } catch (error) {
+      await this.store.delete(_key);
+    } catch (_error) {
       console.error('Cache delete error:', error);
     }
   }
 
-  async clear(): Promise<void> {
+  async clear(_): Promise<void> {
     if (!this.enabled) {
       return;
     }
 
     try {
-      await this.store.clear();
-    } catch (error) {
+      await this.store.clear(_);
+    } catch (_error) {
       console.error('Cache clear error:', error);
     }
   }
 
-  async has(key: string): Promise<boolean> {
+  async has(_key: string): Promise<boolean> {
     if (!this.enabled) {
       return false;
     }
 
     try {
-      return await this.store.has(key);
-    } catch (error) {
+      return await this.store.has(_key);
+    } catch (_error) {
       console.error('Cache has error:', error);
       return false;
     }
@@ -214,46 +214,46 @@ export class CacheManager {
   // Cache with function execution
   async getOrSet<T>(
     key: string,
-    fn: () => Promise<T>,
+    fn: (_) => Promise<T>,
     ttl?: number
   ): Promise<T> {
-    const cached = await this.get<T>(key);
+    const cached = await this.get<T>(_key);
     
-    if (cached !== null) {
+    if (_cached !== null) {
       return cached;
     }
 
-    const value = await fn();
-    await this.set(key, value, ttl);
+    const value = await fn(_);
+    await this.set( key, value, ttl);
     return value;
   }
 
   // Generate cache key
-  generateKey(prefix: string, ...parts: (string | number)[]): string {
+  generateKey( prefix: string, ...parts: (string | number)[]): string {
     return `${prefix}:${parts.join(':')}`;
   }
 
   // Cache invalidation patterns
-  async invalidatePattern(pattern: string): Promise<void> {
+  async invalidatePattern(_pattern: string): Promise<void> {
     // This would be implemented differently for Redis vs Memory
-    if (this.store instanceof MemoryCacheStore) {
-      const stats = this.store.getStats();
+    if (_this.store instanceof MemoryCacheStore) {
+      const stats = this.store.getStats(_);
       const keysToDelete = stats.keys.filter(key => 
-        key.includes(pattern) || key.match(new RegExp(pattern))
+        key.includes(pattern) || key.match(_new RegExp(pattern))
       );
       
-      for (const key of keysToDelete) {
-        await this.delete(key);
+      for (_const key of keysToDelete) {
+        await this.delete(_key);
       }
     }
   }
 
   // Enable/disable caching
-  setEnabled(enabled: boolean): void {
+  setEnabled(_enabled: boolean): void {
     this.enabled = enabled;
   }
 
-  isEnabled(): boolean {
+  isEnabled(_): boolean {
     return this.enabled;
   }
 }
@@ -261,26 +261,26 @@ export class CacheManager {
 // Cache Middleware
 export function cacheMiddleware(
   ttl: number = 300,
-  keyGenerator?: (request: NextRequest) => string
+  keyGenerator?: (_request: NextRequest) => string
 ) {
   return async (
     request: NextRequest,
-    handler: (request: NextRequest) => Promise<NextResponse>
+    handler: (_request: NextRequest) => Promise<NextResponse>
   ): Promise<NextResponse> => {
     // Only cache GET requests
-    if (request.method !== 'GET') {
-      return handler(request);
+    if (_request.method !== 'GET') {
+      return handler(_request);
     }
 
-    const cache = CacheManager.getInstance();
+    const cache = CacheManager.getInstance(_);
     const cacheKey = keyGenerator 
-      ? keyGenerator(request)
+      ? keyGenerator(_request)
       : `api:${request.url}`;
 
     // Try to get from cache
-    const cached = await cache.get<any>(cacheKey);
+    const cached = await cache.get<any>(_cacheKey);
     if (cached) {
-      const response = new NextResponse(JSON.stringify(cached), {
+      const response = new NextResponse(_JSON.stringify(cached), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
@@ -292,16 +292,16 @@ export function cacheMiddleware(
     }
 
     // Execute handler
-    const response = await handler(request);
+    const response = await handler(_request);
 
     // Cache successful responses
-    if (response.status === 200) {
+    if (_response.status === 200) {
       try {
-        const responseData = await response.json();
-        await cache.set(cacheKey, responseData, ttl);
+        const responseData = await response.json(_);
+        await cache.set( cacheKey, responseData, ttl);
         
         // Create new response with cache headers
-        const cachedResponse = new NextResponse(JSON.stringify(responseData), {
+        const cachedResponse = new NextResponse(_JSON.stringify(responseData), {
           status: 200,
           headers: {
             'Content-Type': 'application/json',
@@ -311,7 +311,7 @@ export function cacheMiddleware(
         });
         
         return cachedResponse;
-      } catch (error) {
+      } catch (_error) {
         console.error('Cache middleware error:', error);
         return response;
       }
@@ -324,27 +324,27 @@ export function cacheMiddleware(
 // Cache decorators for common patterns
 export const CachePatterns = {
   // User data cache
-  user: (userId: string) => `user:${userId}`,
+  user: (_userId: string) => `user:${userId}`,
   
   // Lesson data cache
-  lesson: (lessonId: string) => `lesson:${lessonId}`,
-  lessons: (filters: string) => `lessons:${filters}`,
+  lesson: (_lessonId: string) => `lesson:${lessonId}`,
+  lessons: (_filters: string) => `lessons:${filters}`,
   
   // Course data cache
-  course: (courseId: string) => `course:${courseId}`,
-  courses: (filters: string) => `courses:${filters}`,
+  course: (_courseId: string) => `course:${courseId}`,
+  courses: (_filters: string) => `courses:${filters}`,
   
   // Progress data cache
-  progress: (userId: string, lessonId: string) => `progress:${userId}:${lessonId}`,
-  userProgress: (userId: string) => `user_progress:${userId}`,
+  progress: ( userId: string, lessonId: string) => `progress:${userId}:${lessonId}`,
+  userProgress: (_userId: string) => `userprogress:${userId}`,
   
   // Community data cache
-  leaderboard: (category: string, filters: string) => `leaderboard:${category}:${filters}`,
-  stats: (filters: string) => `stats:${filters}`,
+  leaderboard: ( category: string, filters: string) => `leaderboard:${category}:${filters}`,
+  stats: (_filters: string) => `stats:${filters}`,
   
   // Achievement data cache
-  achievements: () => 'achievements:all',
-  userAchievements: (userId: string) => `achievements:user:${userId}`
+  achievements: (_) => 'achievements:all',
+  userAchievements: (_userId: string) => `achievements:user:${userId}`
 };
 
 // Cache TTL constants
@@ -357,25 +357,25 @@ export const CacheTTL = {
 };
 
 // Singleton instance
-export const cache = CacheManager.getInstance();
+export const cache = CacheManager.getInstance(_);
 
 // Helper functions
 export async function withCache<T>(
   key: string,
-  fn: () => Promise<T>,
+  fn: (_) => Promise<T>,
   ttl: number = CacheTTL.MEDIUM
 ): Promise<T> {
-  return cache.getOrSet(key, fn, ttl);
+  return cache.getOrSet( key, fn, ttl);
 }
 
-export function invalidateUserCache(userId: string): Promise<void> {
-  return cache.invalidatePattern(`user:${userId}`);
+export function invalidateUserCache(_userId: string): Promise<void> {
+  return cache.invalidatePattern(_`user:${userId}`);
 }
 
-export function invalidateLessonCache(lessonId: string): Promise<void> {
-  return cache.invalidatePattern(`lesson:${lessonId}`);
+export function invalidateLessonCache(_lessonId: string): Promise<void> {
+  return cache.invalidatePattern(_`lesson:${lessonId}`);
 }
 
-export function invalidateCourseCache(courseId: string): Promise<void> {
-  return cache.invalidatePattern(`course:${courseId}`);
+export function invalidateCourseCache(_courseId: string): Promise<void> {
+  return cache.invalidatePattern(_`course:${courseId}`);
 }

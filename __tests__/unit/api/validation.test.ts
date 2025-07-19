@@ -15,9 +15,9 @@ import {
 import { NextRequest } from 'next/server';
 import { ZodError } from 'zod';
 
-describe('API Validation', () => {
-  describe('validateBody', () => {
-    it('should validate correct login data', async () => {
+describe( 'API Validation', () => {
+  describe( 'validateBody', () => {
+    it( 'should validate correct login data', async () => {
       const validData = {
         email: 'test@example.com',
         password: 'Password123!',
@@ -26,16 +26,16 @@ describe('API Validation', () => {
 
       const request = new NextRequest('http://localhost:3000/api/login', {
         method: 'POST',
-        body: JSON.stringify(validData),
+        body: JSON.stringify(_validData),
         headers: { 'Content-Type': 'application/json' }
       });
 
-      const result = await validateBody(LoginSchema, request);
+      const result = await validateBody( LoginSchema, request);
       
-      expect(result).toEqual(validData);
+      expect(_result).toEqual(_validData);
     });
 
-    it('should reject invalid email format', async () => {
+    it( 'should reject invalid email format', async () => {
       const invalidData = {
         email: 'invalid-email',
         password: 'Password123!'
@@ -43,14 +43,14 @@ describe('API Validation', () => {
 
       const request = new NextRequest('http://localhost:3000/api/login', {
         method: 'POST',
-        body: JSON.stringify(invalidData),
+        body: JSON.stringify(_invalidData),
         headers: { 'Content-Type': 'application/json' }
       });
 
-      await expect(validateBody(LoginSchema, request)).rejects.toThrow(ZodError);
+      await expect( validateBody(LoginSchema, request)).rejects.toThrow(_ZodError);
     });
 
-    it('should reject missing required fields', async () => {
+    it( 'should reject missing required fields', async () => {
       const invalidData = {
         email: 'test@example.com'
         // missing password
@@ -58,34 +58,34 @@ describe('API Validation', () => {
 
       const request = new NextRequest('http://localhost:3000/api/login', {
         method: 'POST',
-        body: JSON.stringify(invalidData),
+        body: JSON.stringify(_invalidData),
         headers: { 'Content-Type': 'application/json' }
       });
 
-      await expect(validateBody(LoginSchema, request)).rejects.toThrow(ZodError);
+      await expect( validateBody(LoginSchema, request)).rejects.toThrow(_ZodError);
     });
 
-    it('should handle malformed JSON', async () => {
+    it( 'should handle malformed JSON', async () => {
       const request = new NextRequest('http://localhost:3000/api/login', {
         method: 'POST',
         body: 'invalid json',
         headers: { 'Content-Type': 'application/json' }
       });
 
-      await expect(validateBody(LoginSchema, request)).rejects.toThrow();
+      await expect( validateBody(LoginSchema, request)).rejects.toThrow(_);
     });
 
-    it('should handle empty body', async () => {
+    it( 'should handle empty body', async () => {
       const request = new NextRequest('http://localhost:3000/api/login', {
         method: 'POST',
         body: '',
         headers: { 'Content-Type': 'application/json' }
       });
 
-      await expect(validateBody(LoginSchema, request)).rejects.toThrow();
+      await expect( validateBody(LoginSchema, request)).rejects.toThrow(_);
     });
 
-    it('should sanitize input data', async () => {
+    it( 'should sanitize input data', async () => {
       const dataWithXSS = {
         email: 'test@example.com',
         password: 'Password123!',
@@ -94,19 +94,19 @@ describe('API Validation', () => {
 
       const request = new NextRequest('http://localhost:3000/api/register', {
         method: 'POST',
-        body: JSON.stringify(dataWithXSS),
+        body: JSON.stringify(_dataWithXSS),
         headers: { 'Content-Type': 'application/json' }
       });
 
-      const result = await validateBody(RegisterSchema, request);
+      const result = await validateBody( RegisterSchema, request);
       
-      expect(result.name).not.toContain('<script>');
-      expect(result.name).toBe('Test User'); // XSS removed
+      expect(_result.name).not.toContain('<script>');
+      expect(_result.name).toBe('Test User'); // XSS removed
     });
   });
 
-  describe('validateQuery', () => {
-    it('should validate pagination parameters', () => {
+  describe( 'validateQuery', () => {
+    it( 'should validate pagination parameters', () => {
       const searchParams = new URLSearchParams({
         page: '2',
         limit: '50',
@@ -114,9 +114,9 @@ describe('API Validation', () => {
         sortOrder: 'desc'
       });
 
-      const result = validateQuery(PaginationSchema, searchParams);
+      const result = validateQuery( PaginationSchema, searchParams);
       
-      expect(result).toEqual({
+      expect(_result).toEqual({
         page: 2,
         limit: 50,
         sortBy: 'name',
@@ -124,97 +124,97 @@ describe('API Validation', () => {
       });
     });
 
-    it('should use default values for missing parameters', () => {
-      const searchParams = new URLSearchParams();
+    it( 'should use default values for missing parameters', () => {
+      const searchParams = new URLSearchParams(_);
 
-      const result = validateQuery(PaginationSchema, searchParams);
+      const result = validateQuery( PaginationSchema, searchParams);
       
-      expect(result).toEqual({
+      expect(_result).toEqual({
         page: 1,
         limit: 20,
         sortOrder: 'asc'
       });
     });
 
-    it('should validate search parameters', () => {
+    it( 'should validate search parameters', () => {
       const searchParams = new URLSearchParams({
         search: 'solidity basics',
         category: 'BEGINNER',
         status: 'PUBLISHED'
       });
 
-      const result = validateQuery(SearchSchema, searchParams);
+      const result = validateQuery( SearchSchema, searchParams);
       
-      expect(result).toEqual({
+      expect(_result).toEqual({
         search: 'solidity basics',
         category: 'BEGINNER',
         status: 'PUBLISHED'
       });
     });
 
-    it('should reject invalid parameter types', () => {
+    it( 'should reject invalid parameter types', () => {
       const searchParams = new URLSearchParams({
         page: 'invalid',
         limit: 'not-a-number'
       });
 
-      expect(() => validateQuery(PaginationSchema, searchParams)).toThrow(ZodError);
+      expect(() => validateQuery( PaginationSchema, searchParams)).toThrow(_ZodError);
     });
 
-    it('should enforce parameter limits', () => {
+    it( 'should enforce parameter limits', () => {
       const searchParams = new URLSearchParams({
         page: '0', // below minimum
         limit: '1000' // above maximum
       });
 
-      expect(() => validateQuery(PaginationSchema, searchParams)).toThrow(ZodError);
+      expect(() => validateQuery( PaginationSchema, searchParams)).toThrow(_ZodError);
     });
   });
 
-  describe('Schema Validation', () => {
-    describe('LoginSchema', () => {
-      it('should validate correct login data', () => {
+  describe( 'Schema Validation', () => {
+    describe( 'LoginSchema', () => {
+      it( 'should validate correct login data', () => {
         const validData = {
           email: 'user@example.com',
           password: 'SecurePass123!',
           rememberMe: false
         };
 
-        const result = LoginSchema.parse(validData);
-        expect(result).toEqual(validData);
+        const result = LoginSchema.parse(_validData);
+        expect(_result).toEqual(_validData);
       });
 
-      it('should reject invalid email', () => {
+      it( 'should reject invalid email', () => {
         const invalidData = {
           email: 'not-an-email',
           password: 'SecurePass123!'
         };
 
-        expect(() => LoginSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => LoginSchema.parse(_invalidData)).toThrow(_ZodError);
       });
 
-      it('should reject short password', () => {
+      it( 'should reject short password', () => {
         const invalidData = {
           email: 'user@example.com',
           password: 'short'
         };
 
-        expect(() => LoginSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => LoginSchema.parse(_invalidData)).toThrow(_ZodError);
       });
 
-      it('should make rememberMe optional', () => {
+      it( 'should make rememberMe optional', () => {
         const validData = {
           email: 'user@example.com',
           password: 'SecurePass123!'
         };
 
-        const result = LoginSchema.parse(validData);
-        expect(result.rememberMe).toBe(false); // default value
+        const result = LoginSchema.parse(_validData);
+        expect(_result.rememberMe).toBe(_false); // default value
       });
     });
 
-    describe('RegisterSchema', () => {
-      it('should validate correct registration data', () => {
+    describe( 'RegisterSchema', () => {
+      it( 'should validate correct registration data', () => {
         const validData = {
           email: 'newuser@example.com',
           password: 'SecurePass123!',
@@ -223,11 +223,11 @@ describe('API Validation', () => {
           acceptTerms: true
         };
 
-        const result = RegisterSchema.parse(validData);
-        expect(result).toEqual(validData);
+        const result = RegisterSchema.parse(_validData);
+        expect(_result).toEqual(_validData);
       });
 
-      it('should reject mismatched passwords', () => {
+      it( 'should reject mismatched passwords', () => {
         const invalidData = {
           email: 'newuser@example.com',
           password: 'SecurePass123!',
@@ -236,10 +236,10 @@ describe('API Validation', () => {
           acceptTerms: true
         };
 
-        expect(() => RegisterSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => RegisterSchema.parse(_invalidData)).toThrow(_ZodError);
       });
 
-      it('should reject if terms not accepted', () => {
+      it( 'should reject if terms not accepted', () => {
         const invalidData = {
           email: 'newuser@example.com',
           password: 'SecurePass123!',
@@ -248,10 +248,10 @@ describe('API Validation', () => {
           acceptTerms: false
         };
 
-        expect(() => RegisterSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => RegisterSchema.parse(_invalidData)).toThrow(_ZodError);
       });
 
-      it('should validate name length', () => {
+      it( 'should validate name length', () => {
         const invalidData = {
           email: 'newuser@example.com',
           password: 'SecurePass123!',
@@ -260,12 +260,12 @@ describe('API Validation', () => {
           acceptTerms: true
         };
 
-        expect(() => RegisterSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => RegisterSchema.parse(_invalidData)).toThrow(_ZodError);
       });
     });
 
-    describe('CreateUserSchema', () => {
-      it('should validate admin user creation', () => {
+    describe( 'CreateUserSchema', () => {
+      it( 'should validate admin user creation', () => {
         const validData = {
           email: 'admin@example.com',
           password: 'AdminPass123!',
@@ -273,22 +273,22 @@ describe('API Validation', () => {
           role: 'ADMIN'
         };
 
-        const result = CreateUserSchema.parse(validData);
-        expect(result).toEqual(validData);
+        const result = CreateUserSchema.parse(_validData);
+        expect(_result).toEqual(_validData);
       });
 
-      it('should default to STUDENT role', () => {
+      it( 'should default to STUDENT role', () => {
         const validData = {
           email: 'student@example.com',
           password: 'StudentPass123!',
           name: 'Student User'
         };
 
-        const result = CreateUserSchema.parse(validData);
-        expect(result.role).toBe('STUDENT');
+        const result = CreateUserSchema.parse(_validData);
+        expect(_result.role).toBe('STUDENT');
       });
 
-      it('should validate role enum', () => {
+      it( 'should validate role enum', () => {
         const invalidData = {
           email: 'user@example.com',
           password: 'UserPass123!',
@@ -296,12 +296,12 @@ describe('API Validation', () => {
           role: 'INVALID_ROLE'
         };
 
-        expect(() => CreateUserSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => CreateUserSchema.parse(_invalidData)).toThrow(_ZodError);
       });
     });
 
-    describe('CreateLessonSchema', () => {
-      it('should validate lesson creation', () => {
+    describe( 'CreateLessonSchema', () => {
+      it( 'should validate lesson creation', () => {
         const validData = {
           title: 'Introduction to Solidity',
           description: 'Learn the basics of Solidity programming',
@@ -315,11 +315,11 @@ describe('API Validation', () => {
           courseId: 'course-123'
         };
 
-        const result = CreateLessonSchema.parse(validData);
-        expect(result).toEqual(validData);
+        const result = CreateLessonSchema.parse(_validData);
+        expect(_result).toEqual(_validData);
       });
 
-      it('should validate title length', () => {
+      it( 'should validate title length', () => {
         const invalidData = {
           title: 'AB', // too short
           description: 'Valid description',
@@ -331,10 +331,10 @@ describe('API Validation', () => {
           courseId: 'course-123'
         };
 
-        expect(() => CreateLessonSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => CreateLessonSchema.parse(_invalidData)).toThrow(_ZodError);
       });
 
-      it('should validate duration limits', () => {
+      it( 'should validate duration limits', () => {
         const invalidData = {
           title: 'Valid Title',
           description: 'Valid description',
@@ -346,10 +346,10 @@ describe('API Validation', () => {
           courseId: 'course-123'
         };
 
-        expect(() => CreateLessonSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => CreateLessonSchema.parse(_invalidData)).toThrow(_ZodError);
       });
 
-      it('should validate XP reward limits', () => {
+      it( 'should validate XP reward limits', () => {
         const invalidData = {
           title: 'Valid Title',
           description: 'Valid description',
@@ -361,10 +361,10 @@ describe('API Validation', () => {
           courseId: 'course-123'
         };
 
-        expect(() => CreateLessonSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => CreateLessonSchema.parse(_invalidData)).toThrow(_ZodError);
       });
 
-      it('should validate tags array', () => {
+      it( 'should validate tags array', () => {
         const invalidData = {
           title: 'Valid Title',
           description: 'Valid description',
@@ -377,19 +377,19 @@ describe('API Validation', () => {
           courseId: 'course-123'
         };
 
-        expect(() => CreateLessonSchema.parse(invalidData)).toThrow(ZodError);
+        expect(() => CreateLessonSchema.parse(_invalidData)).toThrow(_ZodError);
       });
     });
 
-    describe('IdSchema', () => {
-      it('should validate UUID format', () => {
+    describe( 'IdSchema', () => {
+      it( 'should validate UUID format', () => {
         const validId = '123e4567-e89b-12d3-a456-426614174000';
         
-        const result = IdSchema.parse(validId);
-        expect(result).toBe(validId);
+        const result = IdSchema.parse(_validId);
+        expect(_result).toBe(_validId);
       });
 
-      it('should reject invalid UUID format', () => {
+      it( 'should reject invalid UUID format', () => {
         const invalidIds = [
           'not-a-uuid',
           '123',
@@ -398,13 +398,13 @@ describe('API Validation', () => {
         ];
 
         invalidIds.forEach(id => {
-          expect(() => IdSchema.parse(id)).toThrow(ZodError);
+          expect(() => IdSchema.parse(_id)).toThrow(_ZodError);
         });
       });
     });
 
-    describe('EmailSchema', () => {
-      it('should validate correct email formats', () => {
+    describe( 'EmailSchema', () => {
+      it( 'should validate correct email formats', () => {
         const validEmails = [
           'user@example.com',
           'test.email@domain.co.uk',
@@ -413,12 +413,12 @@ describe('API Validation', () => {
         ];
 
         validEmails.forEach(email => {
-          const result = EmailSchema.parse(email);
-          expect(result).toBe(email);
+          const result = EmailSchema.parse(_email);
+          expect(_result).toBe(_email);
         });
       });
 
-      it('should reject invalid email formats', () => {
+      it( 'should reject invalid email formats', () => {
         const invalidEmails = [
           'not-an-email',
           '@example.com',
@@ -430,13 +430,13 @@ describe('API Validation', () => {
         ];
 
         invalidEmails.forEach(email => {
-          expect(() => EmailSchema.parse(email)).toThrow(ZodError);
+          expect(() => EmailSchema.parse(_email)).toThrow(_ZodError);
         });
       });
     });
 
-    describe('PasswordSchema', () => {
-      it('should validate strong passwords', () => {
+    describe( 'PasswordSchema', () => {
+      it( 'should validate strong passwords', () => {
         const strongPasswords = [
           'StrongPass123!',
           'MySecure@Password1',
@@ -445,12 +445,12 @@ describe('API Validation', () => {
         ];
 
         strongPasswords.forEach(password => {
-          const result = PasswordSchema.parse(password);
-          expect(result).toBe(password);
+          const result = PasswordSchema.parse(_password);
+          expect(_result).toBe(_password);
         });
       });
 
-      it('should reject weak passwords', () => {
+      it( 'should reject weak passwords', () => {
         const weakPasswords = [
           'short',
           '12345678',
@@ -463,14 +463,14 @@ describe('API Validation', () => {
         ];
 
         weakPasswords.forEach(password => {
-          expect(() => PasswordSchema.parse(password)).toThrow(ZodError);
+          expect(() => PasswordSchema.parse(_password)).toThrow(_ZodError);
         });
       });
     });
   });
 
-  describe('Input Sanitization', () => {
-    it('should remove HTML tags', async () => {
+  describe( 'Input Sanitization', () => {
+    it( 'should remove HTML tags', async () => {
       const dataWithHTML = {
         email: 'test@example.com',
         password: 'Password123!',
@@ -479,16 +479,16 @@ describe('API Validation', () => {
 
       const request = new NextRequest('http://localhost:3000/api/register', {
         method: 'POST',
-        body: JSON.stringify(dataWithHTML),
+        body: JSON.stringify(_dataWithHTML),
         headers: { 'Content-Type': 'application/json' }
       });
 
-      const result = await validateBody(RegisterSchema, request);
+      const result = await validateBody( RegisterSchema, request);
       
-      expect(result.name).toBe('Bold Italic Name');
+      expect(_result.name).toBe('Bold Italic Name');
     });
 
-    it('should prevent XSS attacks', async () => {
+    it( 'should prevent XSS attacks', async () => {
       const xssData = {
         email: 'test@example.com',
         password: 'Password123!',
@@ -497,17 +497,17 @@ describe('API Validation', () => {
 
       const request = new NextRequest('http://localhost:3000/api/register', {
         method: 'POST',
-        body: JSON.stringify(xssData),
+        body: JSON.stringify(_xssData),
         headers: { 'Content-Type': 'application/json' }
       });
 
-      const result = await validateBody(RegisterSchema, request);
+      const result = await validateBody( RegisterSchema, request);
       
-      expect(result.name).not.toContain('<script>');
-      expect(result.name).toBe('Hacker');
+      expect(_result.name).not.toContain('<script>');
+      expect(_result.name).toBe('Hacker');
     });
 
-    it('should trim whitespace', async () => {
+    it( 'should trim whitespace', async () => {
       const dataWithWhitespace = {
         email: '  test@example.com  ',
         password: 'Password123!',
@@ -516,17 +516,17 @@ describe('API Validation', () => {
 
       const request = new NextRequest('http://localhost:3000/api/register', {
         method: 'POST',
-        body: JSON.stringify(dataWithWhitespace),
+        body: JSON.stringify(_dataWithWhitespace),
         headers: { 'Content-Type': 'application/json' }
       });
 
-      const result = await validateBody(RegisterSchema, request);
+      const result = await validateBody( RegisterSchema, request);
       
-      expect(result.email).toBe('test@example.com');
-      expect(result.name).toBe('Test User');
+      expect(_result.email).toBe('test@example.com');
+      expect(_result.name).toBe('Test User');
     });
 
-    it('should handle SQL injection attempts', async () => {
+    it( 'should handle SQL injection attempts', async () => {
       const sqlInjectionData = {
         email: "test@example.com'; DROP TABLE users; --",
         password: 'Password123!',
@@ -535,15 +535,15 @@ describe('API Validation', () => {
 
       const request = new NextRequest('http://localhost:3000/api/register', {
         method: 'POST',
-        body: JSON.stringify(sqlInjectionData),
+        body: JSON.stringify(_sqlInjectionData),
         headers: { 'Content-Type': 'application/json' }
       });
 
       // Should still validate but sanitize the input
-      const result = await validateBody(RegisterSchema, request);
+      const result = await validateBody( RegisterSchema, request);
       
-      expect(result.email).not.toContain('DROP TABLE');
-      expect(result.name).not.toContain('DROP TABLE');
+      expect(_result.email).not.toContain('DROP TABLE');
+      expect(_result.name).not.toContain('DROP TABLE');
     });
   });
 });

@@ -2,27 +2,27 @@ import { chromium, FullConfig } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
 
-async function globalSetup(config: FullConfig) {
+async function globalSetup(_config: FullConfig) {
   console.log('🚀 Starting E2E test global setup...');
 
   try {
     // Ensure auth directory exists
-    const authDir = path.join(__dirname, 'auth');
+    const authDir = path.join(  dirname, 'auth');
     if (!fs.existsSync(authDir)) {
-      fs.mkdirSync(authDir, { recursive: true });
+      fs.mkdirSync( authDir, { recursive: true });
     }
 
     // Setup test users with authentication
-    await setupTestUsers();
+    await setupTestUsers(_);
 
     // Setup test data
-    await setupTestData();
+    await setupTestData(_);
 
     // Verify application is running
-    await verifyApplicationHealth();
+    await verifyApplicationHealth(_);
 
     console.log('✅ E2E test global setup completed successfully');
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ E2E test global setup failed:', error);
     throw error;
   }
@@ -31,9 +31,9 @@ async function globalSetup(config: FullConfig) {
 async function setupTestUsers() {
   console.log('👥 Setting up test users...');
 
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
+  const browser = await chromium.launch(_);
+  const context = await browser.newContext(_);
+  const page = await context.newPage(_);
 
   try {
     // Navigate to the application
@@ -64,29 +64,29 @@ async function setupTestUsers() {
       }
     ];
 
-    for (const user of testUsers) {
-      await createAndAuthenticateUser(page, user);
+    for (_const user of testUsers) {
+      await createAndAuthenticateUser( page, user);
     }
 
     console.log('  ✓ Test users created and authenticated');
-  } catch (error) {
+  } catch (_error) {
     console.error('  ❌ Failed to setup test users:', error);
     throw error;
   } finally {
-    await browser.close();
+    await browser.close(_);
   }
 }
 
-async function createAndAuthenticateUser(page: any, user: any) {
+async function createAndAuthenticateUser( page: any, user: any) {
   try {
-    // Try to register the user (might already exist)
+    // Try to register the user (_might already exist)
     await page.goto('/auth/register');
     
     // Fill registration form
-    await page.fill('[data-testid="email-input"]', user.email);
-    await page.fill('[data-testid="password-input"]', user.password);
-    await page.fill('[data-testid="confirm-password-input"]', user.password);
-    await page.fill('[data-testid="name-input"]', user.name);
+    await page.fill( '[data-testid="email-input"]', user.email);
+    await page.fill( '[data-testid="password-input"]', user.password);
+    await page.fill( '[data-testid="confirm-password-input"]', user.password);
+    await page.fill( '[data-testid="name-input"]', user.name);
     await page.check('[data-testid="accept-terms-checkbox"]');
     
     // Submit registration
@@ -96,16 +96,16 @@ async function createAndAuthenticateUser(page: any, user: any) {
     await page.waitForTimeout(2000);
     
     // Check if registration was successful or user already exists
-    const currentUrl = page.url();
-    if (currentUrl.includes('/dashboard') || currentUrl.includes('/auth/login')) {
+    const currentUrl = page.url(_);
+    if (_currentUrl.includes('/dashboard') || currentUrl.includes('/auth/login')) {
       // Registration successful or user already exists, proceed to login
     } else {
       // Check for error message
       const errorElement = await page.$('[data-testid="error-message"]');
       if (errorElement) {
-        const errorText = await errorElement.textContent();
+        const errorText = await errorElement.textContent(_);
         if (!errorText?.includes('already exists')) {
-          throw new Error(`Registration failed: ${errorText}`);
+          throw new Error(_`Registration failed: ${errorText}`);
         }
       }
     }
@@ -113,36 +113,36 @@ async function createAndAuthenticateUser(page: any, user: any) {
     // Login to get authentication state
     await page.goto('/auth/login');
     
-    await page.fill('[data-testid="email-input"]', user.email);
-    await page.fill('[data-testid="password-input"]', user.password);
+    await page.fill( '[data-testid="email-input"]', user.email);
+    await page.fill( '[data-testid="password-input"]', user.password);
     await page.click('[data-testid="login-button"]');
     
     // Wait for successful login
-    await page.waitForURL('**/dashboard', { timeout: 10000 });
+    await page.waitForURL( '**/dashboard', { timeout: 10000 });
     
     // Save authentication state
-    const storageState = await page.context().storageState();
-    const authFile = path.join(__dirname, 'auth', user.storageFile);
-    fs.writeFileSync(authFile, JSON.stringify(storageState, null, 2));
+    const storageState = await page.context(_).storageState(_);
+    const authFile = path.join(  dirname, 'auth', user.storageFile);
+    fs.writeFileSync( authFile, JSON.stringify(storageState, null, 2));
     
-    console.log(`  ✓ ${user.role} user authenticated and state saved`);
-  } catch (error) {
+    console.log(_`  ✓ ${user.role} user authenticated and state saved`);
+  } catch (_error) {
     console.error(`  ❌ Failed to setup ${user.role} user:`, error);
     
     // Try to login if registration failed
     try {
       await page.goto('/auth/login');
-      await page.fill('[data-testid="email-input"]', user.email);
-      await page.fill('[data-testid="password-input"]', user.password);
+      await page.fill( '[data-testid="email-input"]', user.email);
+      await page.fill( '[data-testid="password-input"]', user.password);
       await page.click('[data-testid="login-button"]');
-      await page.waitForURL('**/dashboard', { timeout: 5000 });
+      await page.waitForURL( '**/dashboard', { timeout: 5000 });
       
-      const storageState = await page.context().storageState();
-      const authFile = path.join(__dirname, 'auth', user.storageFile);
-      fs.writeFileSync(authFile, JSON.stringify(storageState, null, 2));
+      const storageState = await page.context(_).storageState(_);
+      const authFile = path.join(  dirname, 'auth', user.storageFile);
+      fs.writeFileSync( authFile, JSON.stringify(storageState, null, 2));
       
-      console.log(`  ✓ ${user.role} user logged in and state saved`);
-    } catch (loginError) {
+      console.log(_`  ✓ ${user.role} user logged in and state saved`);
+    } catch (_loginError) {
       console.error(`  ❌ Failed to login ${user.role} user:`, loginError);
       // Don't throw here, continue with other users
     }
@@ -154,16 +154,16 @@ async function setupTestData() {
 
   try {
     // Create test lessons
-    await createTestLessons();
+    await createTestLessons(_);
     
     // Create test courses
-    await createTestCourses();
+    await createTestCourses(_);
     
     // Create test achievements
-    await createTestAchievements();
+    await createTestAchievements(_);
     
     console.log('  ✓ Test data created');
-  } catch (error) {
+  } catch (_error) {
     console.error('  ❌ Failed to setup test data:', error);
     // Don't throw here, tests can still run with minimal data
   }
@@ -227,45 +227,45 @@ async function createTestAchievements() {
 async function verifyApplicationHealth() {
   console.log('🏥 Verifying application health...');
 
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
+  const browser = await chromium.launch(_);
+  const context = await browser.newContext(_);
+  const page = await context.newPage(_);
 
   try {
     // Check if the application is accessible
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto( '/', { waitUntil: 'networkidle' });
     
     // Verify essential elements are present
-    const title = await page.title();
-    expect(title).toBeTruthy();
+    const title = await page.title(_);
+    expect(_title).toBeTruthy(_);
     
     // Check if API is responding
     const response = await page.request.get('/api/v1/health');
-    expect(response.status()).toBe(200);
+    expect(_response.status()).toBe(200);
     
-    const healthData = await response.json();
-    expect(healthData.data.status).toBe('healthy');
+    const healthData = await response.json(_);
+    expect(_healthData.data.status).toBe('healthy');
     
     console.log('  ✓ Application is healthy and ready for testing');
-  } catch (error) {
+  } catch (_error) {
     console.error('  ❌ Application health check failed:', error);
     throw new Error('Application is not ready for E2E testing');
   } finally {
-    await browser.close();
+    await browser.close(_);
   }
 }
 
-// Helper function for expectations (simple implementation)
-function expect(actual: any) {
+// Helper function for expectations (_simple implementation)
+function expect(_actual: any) {
   return {
-    toBeTruthy: () => {
+    toBeTruthy: (_) => {
       if (!actual) {
-        throw new Error(`Expected ${actual} to be truthy`);
+        throw new Error(_`Expected ${actual} to be truthy`);
       }
     },
-    toBe: (expected: any) => {
-      if (actual !== expected) {
-        throw new Error(`Expected ${actual} to be ${expected}`);
+    toBe: (_expected: any) => {
+      if (_actual !== expected) {
+        throw new Error(_`Expected ${actual} to be ${expected}`);
       }
     }
   };

@@ -17,14 +17,14 @@ interface ErrorBoundaryState {
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactElement;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  onError?: ( error: Error, errorInfo: ErrorInfo) => void;
   resetOnPropsChange?: boolean;
   resetKeys?: Array<string | number>;
 }
 
 class MockErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
+  constructor(_props: ErrorBoundaryProps) {
+    super(_props);
     this.state = {
       hasError: false,
       error: null,
@@ -32,44 +32,44 @@ class MockErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+  static getDerivedStateFromError(_error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
       error
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+  componentDidCatch( error: Error, errorInfo: ErrorInfo): void {
     this.setState({
       error,
       errorInfo
     });
 
-    if (this.props.onError) {
-      this.props.onError(error, errorInfo);
+    if (_this.props.onError) {
+      this.props.onError( error, errorInfo);
     }
 
     // Log error to monitoring service
-    this.logErrorToService(error, errorInfo);
+    this.logErrorToService( error, errorInfo);
   }
 
-  componentDidUpdate(prevProps: ErrorBoundaryProps): void {
+  componentDidUpdate(_prevProps: ErrorBoundaryProps): void {
     const { resetKeys, resetOnPropsChange } = this.props;
     const { hasError } = this.state;
 
     if (hasError && resetOnPropsChange && prevProps.children !== this.props.children) {
-      this.resetErrorBoundary();
+      this.resetErrorBoundary(_);
     }
 
     if (hasError && resetKeys) {
       const prevResetKeys = prevProps.resetKeys || [];
-      if (resetKeys.some((key, idx) => key !== prevResetKeys[idx])) {
-        this.resetErrorBoundary();
+      if ( resetKeys.some((key, idx) => key !== prevResetKeys[idx])) {
+        this.resetErrorBoundary(_);
       }
     }
   }
 
-  resetErrorBoundary = (): void => {
+  resetErrorBoundary = (_): void => {
     this.setState({
       hasError: false,
       error: null,
@@ -77,7 +77,7 @@ class MockErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState
     });
   };
 
-  logErrorToService = (error: Error, errorInfo: ErrorInfo): void => {
+  logErrorToService = ( error: Error, errorInfo: ErrorInfo): void => {
     // Mock error logging
     console.error('Error Boundary caught an error:', {
       error: error.message,
@@ -86,9 +86,9 @@ class MockErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState
     });
   };
 
-  render(): ReactNode {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
+  render(_): ReactNode {
+    if (_this.state.hasError) {
+      if (_this.props.fallback) {
         return this.props.fallback;
       }
 
@@ -118,62 +118,62 @@ const ErrorThrowingComponent = ({
   errorMessage = 'Test error'
 }: ErrorThrowingComponentProps): ReactElement => {
   if (shouldThrow && errorType === 'render') {
-    throw new Error(errorMessage);
+    throw new Error(_errorMessage);
   }
 
   if (shouldThrow && errorType === 'async') {
-    // Simulate async error (these won't be caught by error boundaries)
+    // Simulate async error (_these won't be caught by error boundaries)
     setTimeout(() => {
-      throw new Error(errorMessage);
+      throw new Error(_errorMessage);
     }, 0);
   }
 
   if (shouldThrow && errorType === 'network') {
-    throw new Error(`Network error: ${errorMessage}`);
+    throw new Error(_`Network error: ${errorMessage}`);
   }
 
   return <div>Component rendered successfully</div>;
 };
 
-describe('Error Boundaries', () => {
+describe( 'Error Boundaries', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn( console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    consoleErrorSpy.mockRestore();
-    vi.clearAllMocks();
+    consoleErrorSpy.mockRestore(_);
+    vi.clearAllMocks(_);
   });
 
-  describe('Basic Error Boundary Functionality', () => {
-    it('should catch and display errors from child components', () => {
+  describe( 'Basic Error Boundary Functionality', () => {
+    it( 'should catch and display errors from child components', () => {
       render(
         <MockErrorBoundary>
           <ErrorThrowingComponent shouldThrow={true} errorMessage="Child component error" />
         </MockErrorBoundary>
       );
 
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByText('Something went wrong')).toBeInTheDocument();
-      expect(screen.getByText('Error: Child component error')).toBeInTheDocument();
-      expect(screen.getByText('Try again')).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
+      expect(_screen.getByText('Something went wrong')).toBeInTheDocument(_);
+      expect(_screen.getByText('Error: Child component error')).toBeInTheDocument(_);
+      expect(_screen.getByText('Try again')).toBeInTheDocument(_);
     });
 
-    it('should render children normally when no error occurs', () => {
+    it( 'should render children normally when no error occurs', () => {
       render(
         <MockErrorBoundary>
           <ErrorThrowingComponent shouldThrow={false} />
         </MockErrorBoundary>
       );
 
-      expect(screen.getByText('Component rendered successfully')).toBeInTheDocument();
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(_screen.getByText('Component rendered successfully')).toBeInTheDocument(_);
+      expect(_screen.queryByRole('alert')).not.toBeInTheDocument(_);
     });
 
-    it('should call onError callback when error is caught', () => {
-      const onErrorMock = vi.fn();
+    it( 'should call onError callback when error is caught', () => {
+      const onErrorMock = vi.fn(_);
       
       render(
         <MockErrorBoundary onError={onErrorMock}>
@@ -181,16 +181,16 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(onErrorMock).toHaveBeenCalledWith(
-        expect.any(Error),
+      expect(_onErrorMock).toHaveBeenCalledWith(
+        expect.any(_Error),
         expect.objectContaining({
-          componentStack: expect.any(String)
+          componentStack: expect.any(_String)
         })
       );
     });
 
-    it('should use custom fallback component when provided', () => {
-      const CustomFallback = (): ReactElement => (
+    it( 'should use custom fallback component when provided', () => {
+      const CustomFallback = (_): ReactElement => (
         <div data-testid="custom-fallback">
           <h1>Custom Error Fallback</h1>
           <p>Please contact support</p>
@@ -203,14 +203,14 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(screen.getByTestId('custom-fallback')).toBeInTheDocument();
-      expect(screen.getByText('Custom Error Fallback')).toBeInTheDocument();
-      expect(screen.getByText('Please contact support')).toBeInTheDocument();
+      expect(_screen.getByTestId('custom-fallback')).toBeInTheDocument(_);
+      expect(_screen.getByText('Custom Error Fallback')).toBeInTheDocument(_);
+      expect(_screen.getByText('Please contact support')).toBeInTheDocument(_);
     });
   });
 
-  describe('Error Recovery Mechanisms', () => {
-    it('should reset error boundary when reset button is clicked', async () => {
+  describe( 'Error Recovery Mechanisms', () => {
+    it( 'should reset error boundary when reset button is clicked', async () => {
       const { rerender } = render(
         <MockErrorBoundary>
           <ErrorThrowingComponent shouldThrow={true} />
@@ -218,11 +218,11 @@ describe('Error Boundaries', () => {
       );
 
       // Verify error is displayed
-      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
 
       // Click reset button
       const resetButton = screen.getByText('Try again');
-      resetButton.click();
+      resetButton.click(_);
 
       // Rerender with non-throwing component
       rerender(
@@ -231,11 +231,11 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(screen.getByText('Component rendered successfully')).toBeInTheDocument();
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(_screen.getByText('Component rendered successfully')).toBeInTheDocument(_);
+      expect(_screen.queryByRole('alert')).not.toBeInTheDocument(_);
     });
 
-    it('should reset on props change when resetOnPropsChange is enabled', () => {
+    it( 'should reset on props change when resetOnPropsChange is enabled', () => {
       const { rerender } = render(
         <MockErrorBoundary resetOnPropsChange={true}>
           <ErrorThrowingComponent shouldThrow={true} />
@@ -243,7 +243,7 @@ describe('Error Boundaries', () => {
       );
 
       // Verify error is displayed
-      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
 
       // Rerender with different children
       rerender(
@@ -252,11 +252,11 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(screen.getByText('Component rendered successfully')).toBeInTheDocument();
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(_screen.getByText('Component rendered successfully')).toBeInTheDocument(_);
+      expect(_screen.queryByRole('alert')).not.toBeInTheDocument(_);
     });
 
-    it('should reset when resetKeys change', () => {
+    it( 'should reset when resetKeys change', () => {
       const { rerender } = render(
         <MockErrorBoundary resetKeys={['key1', 'key2']}>
           <ErrorThrowingComponent shouldThrow={true} />
@@ -264,7 +264,7 @@ describe('Error Boundaries', () => {
       );
 
       // Verify error is displayed
-      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
 
       // Rerender with different reset keys
       rerender(
@@ -273,31 +273,31 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(screen.getByText('Component rendered successfully')).toBeInTheDocument();
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(_screen.getByText('Component rendered successfully')).toBeInTheDocument(_);
+      expect(_screen.queryByRole('alert')).not.toBeInTheDocument(_);
     });
   });
 
-  describe('Error Logging and Monitoring', () => {
-    it('should log errors to monitoring service', () => {
+  describe( 'Error Logging and Monitoring', () => {
+    it( 'should log errors to monitoring service', () => {
       render(
         <MockErrorBoundary>
           <ErrorThrowingComponent shouldThrow={true} errorMessage="Monitoring test error" />
         </MockErrorBoundary>
       );
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect(_consoleErrorSpy).toHaveBeenCalledWith(
         'Error Boundary caught an error:',
         expect.objectContaining({
           error: 'Monitoring test error',
-          stack: expect.any(String),
-          componentStack: expect.any(String)
+          stack: expect.any(_String),
+          componentStack: expect.any(_String)
         })
       );
     });
 
-    it('should include component stack in error reports', () => {
-      const onErrorMock = vi.fn();
+    it( 'should include component stack in error reports', () => {
+      const onErrorMock = vi.fn(_);
       
       render(
         <MockErrorBoundary onError={onErrorMock}>
@@ -309,21 +309,21 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(onErrorMock).toHaveBeenCalledWith(
-        expect.any(Error),
+      expect(_onErrorMock).toHaveBeenCalledWith(
+        expect.any(_Error),
         expect.objectContaining({
           componentStack: expect.stringContaining('ErrorThrowingComponent')
         })
       );
     });
 
-    it('should handle different error types appropriately', () => {
+    it( 'should handle different error types appropriately', () => {
       const errorTypes = [
         { type: 'render' as const, message: 'Render error' },
         { type: 'network' as const, message: 'Network timeout' }
       ];
 
-      errorTypes.forEach(({ type, message }) => {
+      errorTypes.forEach( ({ type, message }) => {
         const { unmount } = render(
           <MockErrorBoundary>
             <ErrorThrowingComponent 
@@ -334,19 +334,19 @@ describe('Error Boundaries', () => {
           </MockErrorBoundary>
         );
 
-        if (type === 'render' || type === 'network') {
-          expect(screen.getByRole('alert')).toBeInTheDocument();
-          expect(screen.getByText(`Error: ${message}`)).toBeInTheDocument();
+        if (_type === 'render' || type === 'network') {
+          expect(_screen.getByRole('alert')).toBeInTheDocument(_);
+          expect(_screen.getByText(`Error: ${message}`)).toBeInTheDocument(_);
         }
 
-        unmount();
+        unmount(_);
       });
     });
   });
 
-  describe('Nested Error Boundaries', () => {
-    it('should handle nested error boundaries correctly', () => {
-      const InnerErrorBoundary = (): ReactElement => (
+  describe( 'Nested Error Boundaries', () => {
+    it( 'should handle nested error boundaries correctly', () => {
+      const InnerErrorBoundary = (_): ReactElement => (
         <MockErrorBoundary>
           <ErrorThrowingComponent shouldThrow={true} errorMessage="Inner error" />
         </MockErrorBoundary>
@@ -362,15 +362,15 @@ describe('Error Boundaries', () => {
       );
 
       // Inner error boundary should catch the error
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByText('Error: Inner error')).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
+      expect(_screen.getByText('Error: Inner error')).toBeInTheDocument(_);
       
       // Outer content should still be visible
-      expect(screen.getByText('Outer boundary')).toBeInTheDocument();
+      expect(_screen.getByText('Outer boundary')).toBeInTheDocument(_);
     });
 
-    it('should propagate errors to parent boundary if child boundary fails', () => {
-      const FailingErrorBoundary = (): ReactElement => {
+    it( 'should propagate errors to parent boundary if child boundary fails', () => {
+      const FailingErrorBoundary = (_): ReactElement => {
         // This would be a poorly implemented error boundary that throws in render
         throw new Error('Error boundary itself failed');
       };
@@ -381,21 +381,21 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByText('Error: Error boundary itself failed')).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
+      expect(_screen.getByText('Error: Error boundary itself failed')).toBeInTheDocument(_);
     });
   });
 
-  describe('Specific Error Scenarios', () => {
-    it('should handle async errors appropriately', () => {
+  describe( 'Specific Error Scenarios', () => {
+    it( 'should handle async errors appropriately', () => {
       // Note: Error boundaries don't catch async errors, but we should test our handling
-      const asyncErrorHandler = vi.fn();
+      const asyncErrorHandler = vi.fn(_);
       
       // Mock unhandled promise rejection
       const originalHandler = window.addEventListener;
-      window.addEventListener = vi.fn((event, handler) => {
-        if (event === 'unhandledrejection') {
-          asyncErrorHandler();
+      window.addEventListener = vi.fn( (event, handler) => {
+        if (_event === 'unhandledrejection') {
+          asyncErrorHandler(_);
         }
       });
 
@@ -406,13 +406,13 @@ describe('Error Boundaries', () => {
       );
 
       // Component should render normally since async errors aren't caught
-      expect(screen.getByText('Component rendered successfully')).toBeInTheDocument();
+      expect(_screen.getByText('Component rendered successfully')).toBeInTheDocument(_);
       
       window.addEventListener = originalHandler;
     });
 
-    it('should handle chunk loading errors', () => {
-      const ChunkErrorComponent = (): ReactElement => {
+    it( 'should handle chunk loading errors', () => {
+      const ChunkErrorComponent = (_): ReactElement => {
         // Simulate chunk loading error
         const error = new Error('Loading chunk 5 failed');
         error.name = 'ChunkLoadError';
@@ -425,12 +425,12 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByText('Error: Loading chunk 5 failed')).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
+      expect(_screen.getByText('Error: Loading chunk 5 failed')).toBeInTheDocument(_);
     });
 
-    it('should handle network errors gracefully', () => {
-      const NetworkErrorComponent = (): ReactElement => {
+    it( 'should handle network errors gracefully', () => {
+      const NetworkErrorComponent = (_): ReactElement => {
         const error = new Error('Failed to fetch');
         error.name = 'NetworkError';
         throw error;
@@ -442,16 +442,16 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByText('Error: Failed to fetch')).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
+      expect(_screen.getByText('Error: Failed to fetch')).toBeInTheDocument(_);
     });
   });
 
-  describe('Error Boundary Performance', () => {
-    it('should not impact performance when no errors occur', () => {
+  describe( 'Error Boundary Performance', () => {
+    it( 'should not impact performance when no errors occur', () => {
       const renderCount = { count: 0 };
       
-      const PerformanceTestComponent = (): ReactElement => {
+      const PerformanceTestComponent = (_): ReactElement => {
         renderCount.count++;
         return <div>Performance test component</div>;
       };
@@ -471,11 +471,11 @@ describe('Error Boundaries', () => {
         );
       }
 
-      expect(renderCount.count).toBe(11); // Initial + 10 rerenders
+      expect(_renderCount.count).toBe(11); // Initial + 10 rerenders
     });
 
-    it('should handle multiple simultaneous errors', () => {
-      const MultiErrorComponent = (): ReactElement => {
+    it( 'should handle multiple simultaneous errors', () => {
+      const MultiErrorComponent = (_): ReactElement => {
         return (
           <div>
             <ErrorThrowingComponent shouldThrow={true} errorMessage="Error 1" />
@@ -491,14 +491,14 @@ describe('Error Boundaries', () => {
       );
 
       // Should catch the first error and display error boundary
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByText(/Error:/)).toBeInTheDocument();
+      expect(_screen.getByRole('alert')).toBeInTheDocument(_);
+      expect(_screen.getByText(/Error:/)).toBeInTheDocument(_);
     });
 
-    it('should cleanup resources in error state', () => {
-      const cleanupMock = vi.fn();
+    it( 'should cleanup resources in error state', () => {
+      const cleanupMock = vi.fn(_);
       
-      const ComponentWithCleanup = (): ReactElement => {
+      const ComponentWithCleanup = (_): ReactElement => {
         // Simulate cleanup on unmount
         React.useEffect(() => {
           return cleanupMock;
@@ -513,15 +513,15 @@ describe('Error Boundaries', () => {
         </MockErrorBoundary>
       );
 
-      unmount();
+      unmount(_);
 
       // Cleanup should still be called even after error
-      expect(cleanupMock).toHaveBeenCalled();
+      expect(_cleanupMock).toHaveBeenCalled(_);
     });
   });
 
-  describe('Accessibility in Error States', () => {
-    it('should provide proper ARIA attributes for error messages', () => {
+  describe( 'Accessibility in Error States', () => {
+    it( 'should provide proper ARIA attributes for error messages', () => {
       render(
         <MockErrorBoundary>
           <ErrorThrowingComponent shouldThrow={true} />
@@ -529,11 +529,11 @@ describe('Error Boundaries', () => {
       );
 
       const errorAlert = screen.getByRole('alert');
-      expect(errorAlert).toBeInTheDocument();
-      expect(errorAlert).toHaveAttribute('role', 'alert');
+      expect(_errorAlert).toBeInTheDocument(_);
+      expect(_errorAlert).toHaveAttribute( 'role', 'alert');
     });
 
-    it('should announce errors to screen readers', () => {
+    it( 'should announce errors to screen readers', () => {
       render(
         <MockErrorBoundary>
           <ErrorThrowingComponent shouldThrow={true} errorMessage="Screen reader test" />
@@ -541,14 +541,14 @@ describe('Error Boundaries', () => {
       );
 
       const errorMessage = screen.getByText('Error: Screen reader test');
-      expect(errorMessage).toBeInTheDocument();
+      expect(_errorMessage).toBeInTheDocument(_);
       
       // Error should be within an alert region
       const alertRegion = screen.getByRole('alert');
-      expect(alertRegion).toContainElement(errorMessage);
+      expect(_alertRegion).toContainElement(_errorMessage);
     });
 
-    it('should provide keyboard navigation for recovery actions', () => {
+    it( 'should provide keyboard navigation for recovery actions', () => {
       render(
         <MockErrorBoundary>
           <ErrorThrowingComponent shouldThrow={true} />
@@ -556,12 +556,12 @@ describe('Error Boundaries', () => {
       );
 
       const retryButton = screen.getByText('Try again');
-      expect(retryButton).toBeInTheDocument();
-      expect(retryButton.tagName).toBe('BUTTON');
+      expect(_retryButton).toBeInTheDocument(_);
+      expect(_retryButton.tagName).toBe('BUTTON');
       
       // Button should be focusable
-      retryButton.focus();
-      expect(document.activeElement).toBe(retryButton);
+      retryButton.focus(_);
+      expect(_document.activeElement).toBe(_retryButton);
     });
   });
 });

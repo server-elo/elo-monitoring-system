@@ -28,14 +28,14 @@ interface AIResponse {
 }
 
 export class MultiLLMManager {
-  private services: Map<string, LLMService> = new Map();
+  private services: Map<string, LLMService> = new Map(_);
   private defaultTimeout = 30000; // 30 seconds
 
-  constructor() {
-    this.initializeServices();
+  constructor(_) {
+    this.initializeServices(_);
   }
 
-  private initializeServices() {
+  private initializeServices(_) {
     // CodeLlama 34B - Best for Solidity code tasks
     this.services.set('codellama', {
       name: 'CodeLlama 34B',
@@ -68,14 +68,14 @@ export class MultiLLMManager {
   }
 
   // Health check all services
-  async checkAllServices(): Promise<void> {
-    const healthChecks = Array.from(this.services.entries()).map(async ([key, service]) => {
+  async checkAllServices(_): Promise<void> {
+    const healthChecks = Array.from(_this.services.entries()).map( async ([key, service]) => {
       try {
-        const startTime = Date.now();
-        const response = await axios.get(`${service.url.replace('/v1', '')}/health`, {
+        const startTime = Date.now(_);
+        const response = await axios.get( `${service.url.replace('/v1', '')}/health`, {
           timeout: 5000
         });
-        const responseTime = Date.now() - startTime;
+        const responseTime = Date.now(_) - startTime;
         
         this.services.set(key, {
           ...service,
@@ -83,38 +83,38 @@ export class MultiLLMManager {
           responseTime
         });
         
-        logger.info('LLM service health check', {
+        logger.info('LLM service health check', { metadata: {
           serviceName: service.name,
           responseTime,
           status: 'healthy'
         });
-      } catch (error) {
+      } catch (_error) {
         this.services.set(key, {
           ...service,
           isHealthy: false,
           responseTime: -1
         });
-        logger.warn('LLM service health check failed', {
+        logger.warn('LLM service health check failed', { metadata: {
           serviceName: service.name,
           status: 'unhealthy'
         });
-      }
+      }});
     });
 
-    await Promise.all(healthChecks);
+    await Promise.all(_healthChecks);
   }
 
   // Smart routing based on request type
-  private selectBestService(request: AIRequest): string {
-    const availableServices = Array.from(this.services.entries())
-      .filter(([_, service]) => service.isHealthy);
+  private selectBestService(_request: AIRequest): string {
+    const availableServices = Array.from(_this.services.entries())
+      .filter( ([_, service]) => service.isHealthy);
 
-    if (availableServices.length === 0) {
+    if (_availableServices.length === 0) {
       throw new Error('No LLM services available');
     }
 
     // Route based on request type
-    switch (request.type) {
+    switch (_request.type) {
       case 'code':
       case 'analysis':
         // Prefer CodeLlama for code tasks
@@ -137,7 +137,7 @@ export class MultiLLMManager {
     }
 
     // Fallback to fastest available service
-    const fastestService = availableServices.reduce((fastest, current) => 
+    const fastestService = availableServices.reduce( (fastest, current) => 
       current[1].responseTime < fastest[1].responseTime ? current : fastest
     );
 
@@ -145,8 +145,8 @@ export class MultiLLMManager {
   }
 
   // Auto-detect request type based on content
-  private detectRequestType(prompt: string, context?: string): AIRequest['type'] {
-    const text = (prompt + ' ' + (context || '')).toLowerCase();
+  private detectRequestType( prompt: string, context?: string): AIRequest['type'] {
+    const text = (_prompt + ' ' + (context || '')).toLowerCase();
     
     // Code-related keywords
     const codeKeywords = [
@@ -161,11 +161,11 @@ export class MultiLLMManager {
       'what is', 'define', 'explain briefly', 'short answer', 'quick question'
     ];
 
-    if (codeKeywords.some(keyword => text.includes(keyword))) {
+    if (_codeKeywords.some(keyword => text.includes(keyword))) {
       return 'code';
     }
     
-    if (quickKeywords.some(keyword => text.includes(keyword)) || prompt.length < 50) {
+    if (_quickKeywords.some(keyword => text.includes(keyword)) || prompt.length < 50) {
       return 'quick';
     }
     
@@ -173,41 +173,41 @@ export class MultiLLMManager {
   }
 
   // Main method to get AI response
-  async getResponse(request: AIRequest): Promise<AIResponse> {
+  async getResponse(_request: AIRequest): Promise<AIResponse> {
     // Auto-detect type if not specified
     if (!request.type) {
-      request.type = this.detectRequestType(request.prompt, request.context);
+      request.type = this.detectRequestType( request.prompt, request.context);
     }
 
     // Check service health first
-    await this.checkAllServices();
+    await this.checkAllServices(_);
 
     // Select best service
-    const serviceKey = this.selectBestService(request);
-    const service = this.services.get(serviceKey)!;
+    const serviceKey = this.selectBestService(_request);
+    const service = this.services.get(_serviceKey)!;
 
-    logger.info('LLM request routing', {
+    logger.info('LLM request routing', { metadata: {
       requestType: request.type,
       serviceName: service.name,
       operation: 'route-request'
     });
 
     try {
-      const startTime = Date.now();
+      const startTime = Date.now(_);
       
       const response = await axios.post(`${service.url}/chat/completions`, {
         model: service.model,
         messages: [
           {
             role: 'system',
-            content: this.getSystemPrompt(service.specialization, request.type)
+            content: this.getSystemPrompt( service.specialization, request.type)
           },
           {
             role: 'user',
             content: request.context ? 
               `Context: ${request.context}\n\nQuestion: ${request.prompt}` : 
               request.prompt
-          }
+          }});
         ],
         max_tokens: request.maxTokens || 2048,
         temperature: request.temperature || 0.1,
@@ -220,7 +220,7 @@ export class MultiLLMManager {
         }
       });
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now(_) - startTime;
       
       return {
         response: response.data.choices[0].message.content,
@@ -230,33 +230,33 @@ export class MultiLLMManager {
         service: service.name
       };
 
-    } catch (error) {
-      logger.error('LLM service request failed', {
+    } catch (_error) {
+      logger.error('LLM service request failed', { metadata: {
         serviceName: service.name,
         error: error.message,
         operation: 'llm-request'
       }, error);
       
       // Try fallback to another service
-      return this.tryFallback(request, serviceKey);
-    }
+      return this.tryFallback( request, serviceKey);
+    }});
   }
 
   // Fallback to another service if primary fails
-  private async tryFallback(request: AIRequest, failedServiceKey: string): Promise<AIResponse> {
-    const availableServices = Array.from(this.services.entries())
-      .filter(([key, service]) => key !== failedServiceKey && service.isHealthy);
+  private async tryFallback( request: AIRequest, failedServiceKey: string): Promise<AIResponse> {
+    const availableServices = Array.from(_this.services.entries())
+      .filter( ([key, service]) => key !== failedServiceKey && service.isHealthy);
 
-    if (availableServices.length === 0) {
+    if (_availableServices.length === 0) {
       throw new Error('All LLM services failed');
     }
 
     // Try the fastest available service
-    const fallbackService = availableServices.reduce((fastest, current) => 
+    const fallbackService = availableServices.reduce( (fastest, current) => 
       current[1].responseTime < fastest[1].responseTime ? current : fastest
     );
 
-    logger.info('LLM service fallback', {
+    logger.info('LLM service fallback', { metadata: {
       fallbackService: fallbackService[1].name,
       operation: 'fallback-request'
     });
@@ -264,21 +264,21 @@ export class MultiLLMManager {
     const service = fallbackService[1];
     
     try {
-      const startTime = Date.now();
+      const startTime = Date.now(_);
       
       const response = await axios.post(`${service.url}/chat/completions`, {
         model: service.model,
         messages: [
           {
             role: 'system',
-            content: this.getSystemPrompt(service.specialization, request.type)
+            content: this.getSystemPrompt( service.specialization, request.type)
           },
           {
             role: 'user',
             content: request.context ? 
               `Context: ${request.context}\n\nQuestion: ${request.prompt}` : 
               request.prompt
-          }
+          }});
         ],
         max_tokens: request.maxTokens || 2048,
         temperature: request.temperature || 0.1,
@@ -291,32 +291,32 @@ export class MultiLLMManager {
         }
       });
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now(_) - startTime;
       
       return {
         response: response.data.choices[0].message.content,
         model: service.model,
         responseTime,
         tokensUsed: response.data.usage?.total_tokens,
-        service: `${service.name} (fallback)`
+        service: `${service.name} (_fallback)`
       };
 
-    } catch (error) {
-      throw new Error(`All LLM services failed. Last error: ${error.message}`);
+    } catch (_error) {
+      throw new Error(_`All LLM services failed. Last error: ${error.message}`);
     }
   }
 
   // Get optimized system prompts for different services and request types
-  private getSystemPrompt(specialization: string, _requestType?: string): string {
+  private getSystemPrompt( specialization: string, _requestType?: string): string {
     const basePrompt = "You are an expert Solidity developer and blockchain educator.";
     
-    switch (specialization) {
+    switch (_specialization) {
       case 'code':
         return `${basePrompt} You specialize in writing, analyzing, and debugging Solidity smart contracts. Focus on:
 - Writing secure, gas-optimized code
 - Identifying vulnerabilities and best practices
 - Providing detailed code explanations
-- Following latest Solidity standards (^0.8.20)
+- Following latest Solidity standards (_^0.8.20)
 - Using OpenZeppelin patterns where appropriate`;
 
       case 'chat':
@@ -341,8 +341,8 @@ export class MultiLLMManager {
   }
 
   // Get service status
-  getServiceStatus(): Array<{name: string, healthy: boolean, responseTime: number}> {
-    return Array.from(this.services.values()).map(service => ({
+  getServiceStatus(_): Array<{name: string, healthy: boolean, responseTime: number}> {
+    return Array.from(_this.services.values()).map(service => ({
       name: service.name,
       healthy: service.isHealthy,
       responseTime: service.responseTime
@@ -350,7 +350,7 @@ export class MultiLLMManager {
   }
 
   // Specialized methods for common use cases
-  async analyzeCode(code: string): Promise<AIResponse> {
+  async analyzeCode(_code: string): Promise<AIResponse> {
     return this.getResponse({
       prompt: `Analyze this Solidity code for security issues, gas optimizations, and best practices:\n\n\`\`\`solidity\n${code}\n\`\`\``,
       type: 'code',
@@ -358,7 +358,7 @@ export class MultiLLMManager {
     });
   }
 
-  async generateSmartContract(description: string, requirements: string[]): Promise<AIResponse> {
+  async generateSmartContract( description: string, requirements: string[]): Promise<AIResponse> {
     const prompt = `Generate a complete Solidity smart contract based on this description:
 
 Description: ${description}
@@ -375,7 +375,7 @@ Provide production-ready code with proper documentation, security considerations
     });
   }
 
-  async explainConcept(concept: string, level: 'beginner' | 'intermediate' | 'advanced' = 'beginner'): Promise<AIResponse> {
+  async explainConcept( concept: string, level: 'beginner' | 'intermediate' | 'advanced' = 'beginner'): Promise<AIResponse> {
     return this.getResponse({
       prompt: `Explain "${concept}" for a ${level} level student. Include examples and practical applications.`,
       type: 'explanation',
@@ -383,7 +383,7 @@ Provide production-ready code with proper documentation, security considerations
     });
   }
 
-  async quickAnswer(question: string): Promise<AIResponse> {
+  async quickAnswer(_question: string): Promise<AIResponse> {
     return this.getResponse({
       prompt: question,
       type: 'quick',
@@ -393,4 +393,4 @@ Provide production-ready code with proper documentation, security considerations
 }
 
 // Export singleton instance
-export const multiLLM = new MultiLLMManager();
+export const multiLLM = new MultiLLMManager(_);

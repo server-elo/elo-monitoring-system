@@ -30,8 +30,8 @@ The GlassCard component implements the glassmorphism design pattern with customi
 It provides a modern, depth-aware interface element perfect for overlays, modals, and content containers.
 
 ### Key Features
-- **Customizable Blur**: Control backdrop blur intensity (sm, md, lg, xl)
-- **Opacity Control**: Adjust background opacity (low, medium, high)
+- **Customizable Blur**: Control backdrop blur intensity ( sm, md, lg, xl)
+- **Opacity Control**: Adjust background opacity ( low, medium, high)
 - **Hover Effects**: Optional hover state animations
 - **Glow Effects**: Color-coded glow effects for emphasis
 - **Accessibility**: WCAG 2.1 AA compliant with proper contrast ratios

@@ -108,29 +108,29 @@ export interface SkillDevelopmentPlan {
 }
 
 export class JobMatchingEngine {
-  private jobListings: Map<string, JobListing> = new Map();
-  private userMatches: Map<string, JobMatch[]> = new Map();
+  private jobListings: Map<string, JobListing> = new Map(_);
+  private userMatches: Map<string, JobMatch[]> = new Map(_);
 
-  constructor() {
-    this.initializeJobListings();
+  constructor(_) {
+    this.initializeJobListings(_);
   }
 
-  async findMatches(userId: string, preferences?: JobPreferences): Promise<JobMatch[]> {
-    console.log(`🎯 Finding job matches for user ${userId}`);
+  async findMatches( userId: string, preferences?: JobPreferences): Promise<JobMatch[]> {
+    console.log(_`🎯 Finding job matches for user ${userId}`);
     
     try {
       // Get user's comprehensive profile
-      const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
-      const portfolio = await this.getUserPortfolio(userId);
-      const skillAssessment = await this.getSkillAssessment(userId);
+      const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
+      const portfolio = await this.getUserPortfolio(_userId);
+      const skillAssessment = await this.getSkillAssessment(_userId);
       
       // Get relevant job listings
-      const relevantJobs = this.filterJobsByPreferences(preferences);
+      const relevantJobs = this.filterJobsByPreferences(_preferences);
       
       // Calculate matches for each job
       const matches: JobMatch[] = [];
       
-      for (const job of relevantJobs) {
+      for (_const job of relevantJobs) {
         const match = await this.calculateJobMatch(
           userId,
           job,
@@ -139,40 +139,40 @@ export class JobMatchingEngine {
           skillAssessment
         );
         
-        if (match.matchScore >= 30) { // Minimum threshold
-          matches.push(match);
+        if (_match.matchScore >= 30) { // Minimum threshold
+          matches.push(_match);
         }
       }
       
       // Sort by match score and relevance
-      const sortedMatches = matches.sort((a, b) => b.matchScore - a.matchScore);
+      const sortedMatches = matches.sort( (a, b) => b.matchScore - a.matchScore);
       
       // Cache results
-      this.userMatches.set(userId, sortedMatches);
+      this.userMatches.set( userId, sortedMatches);
       
-      console.log(`✅ Found ${sortedMatches.length} job matches`);
+      console.log(_`✅ Found ${sortedMatches.length} job matches`);
       return sortedMatches.slice(0, 20); // Top 20 matches
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Job matching failed:', error);
       throw error;
     }
   }
 
-  async generateCareerRecommendations(userId: string): Promise<CareerRecommendation[]> {
-    const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
-    const matches = await this.findMatches(userId);
+  async generateCareerRecommendations(_userId: string): Promise<CareerRecommendation[]> {
+    const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
+    const matches = await this.findMatches(_userId);
     
     const recommendations: CareerRecommendation[] = [];
     
     // Analyze career progression opportunities
-    const currentLevel = this.assessCurrentLevel(profile);
-    const growthAreas = this.identifyGrowthAreas(matches);
+    const currentLevel = this.assessCurrentLevel(_profile);
+    const growthAreas = this.identifyGrowthAreas(_matches);
     
     // Generate specific recommendations
-    for (const area of growthAreas) {
-      const recommendation = await this.generateAreaRecommendation(userId, area, currentLevel);
-      recommendations.push(recommendation);
+    for (_const area of growthAreas) {
+      const recommendation = await this.generateAreaRecommendation( userId, area, currentLevel);
+      recommendations.push(_recommendation);
     }
     
     return recommendations;
@@ -184,9 +184,9 @@ export class JobMatchingEngine {
     outcome: 'applied' | 'interview' | 'offer' | 'hired' | 'rejected'
   ): Promise<void> {
     // Track application outcomes to improve matching algorithm
-    const match = await this.getJobMatch(userId, jobId);
+    const match = await this.getJobMatch( userId, jobId);
     if (match) {
-      await this.updateMatchingAlgorithm(match, outcome);
+      await this.updateMatchingAlgorithm( match, outcome);
     }
   }
 
@@ -198,18 +198,18 @@ export class JobMatchingEngine {
     skillAssessment: any
   ): Promise<JobMatch> {
     // Calculate skill alignment
-    const skillAlignment = this.calculateSkillAlignment(job.skillsRequired, skillAssessment);
+    const skillAlignment = this.calculateSkillAlignment( job.skillsRequired, skillAssessment);
     
     // Identify skill gaps
-    const skillGaps = this.identifySkillGaps(job.skillsRequired, skillAssessment);
+    const skillGaps = this.identifySkillGaps( job.skillsRequired, skillAssessment);
     
     // Calculate various match components
-    const skillScore = this.calculateSkillScore(skillAlignment);
-    const experienceScore = this.calculateExperienceScore(job, portfolio);
-    const projectScore = this.calculateProjectScore(job, portfolio);
-    const cultureScore = this.calculateCultureScore(job, profile);
+    const skillScore = this.calculateSkillScore(_skillAlignment);
+    const experienceScore = this.calculateExperienceScore( job, portfolio);
+    const projectScore = this.calculateProjectScore( job, portfolio);
+    const cultureScore = this.calculateCultureScore( job, profile);
     
-    // Overall match score (weighted average)
+    // Overall match score (_weighted average)
     const matchScore = Math.round(
       skillScore * 0.4 +
       experienceScore * 0.25 +
@@ -218,22 +218,22 @@ export class JobMatchingEngine {
     );
     
     // Generate improvement plan
-    const improvementPlan = await this.generateImprovementPlan(skillGaps, job);
+    const improvementPlan = await this.generateImprovementPlan( skillGaps, job);
     
     return {
       jobId: job.id,
       userId,
       matchScore,
       skillAlignment,
-      strengthsMatch: this.identifyStrengths(skillAlignment),
+      strengthsMatch: this.identifyStrengths(_skillAlignment),
       skillGaps,
-      recommendations: await this.generateRecommendations(userId, job, skillGaps),
-      applicationReadiness: this.calculateApplicationReadiness(skillGaps, portfolio),
-      estimatedInterviewSuccess: this.estimateInterviewSuccess(skillAlignment, portfolio),
-      careerGrowthPotential: this.calculateGrowthPotential(job, profile),
-      salaryFit: this.assessSalaryFit(job.salaryRange, profile),
+      recommendations: await this.generateRecommendations( userId, job, skillGaps),
+      applicationReadiness: this.calculateApplicationReadiness( skillGaps, portfolio),
+      estimatedInterviewSuccess: this.estimateInterviewSuccess( skillAlignment, portfolio),
+      careerGrowthPotential: this.calculateGrowthPotential( job, profile),
+      salaryFit: this.assessSalaryFit( job.salaryRange, profile),
       cultureFit: cultureScore,
-      matchReasons: this.generateMatchReasons(skillAlignment, job),
+      matchReasons: this.generateMatchReasons( skillAlignment, job),
       improvementPlan
     };
   }
@@ -252,7 +252,7 @@ export class JobMatchingEngine {
         current: currentLevel,
         gap,
         importance: req.weight,
-        evidence: this.getSkillEvidence(req.skill, current)
+        evidence: this.getSkillEvidence( req.skill, current)
       };
     });
   }
@@ -272,10 +272,10 @@ export class JobMatchingEngine {
           currentLevel,
           requiredLevel: req.level,
           gap,
-          priority: this.calculateGapPriority(gap, req.weight),
-          timeToClose: this.estimateTimeToClose(gap),
-          learningResources: this.getLearningResources(req.skill),
-          projects: this.getRelevantProjects(req.skill)
+          priority: this.calculateGapPriority( gap, req.weight),
+          timeToClose: this.estimateTimeToClose(_gap),
+          learningResources: this.getLearningResources(_req.skill),
+          projects: this.getRelevantProjects(_req.skill)
         };
       });
   }
@@ -285,12 +285,12 @@ export class JobMatchingEngine {
     job: JobListing
   ): Promise<ImprovementPlan> {
     const criticalGaps = skillGaps.filter(gap => gap.priority === 'critical' || gap.priority === 'high');
-    const totalTime = criticalGaps.reduce((sum, gap) => sum + gap.timeToClose, 0);
+    const totalTime = criticalGaps.reduce( (sum, gap) => sum + gap.timeToClose, 0);
     
     return {
       timeframe: Math.max(4, totalTime), // Minimum 4 weeks
       focusAreas: criticalGaps.map(gap => gap.skill),
-      recommendedProjects: this.getProjectsForSkills(criticalGaps.map(g => g.skill)),
+      recommendedProjects: this.getProjectsForSkills(_criticalGaps.map(g => g.skill)),
       skillDevelopment: criticalGaps.map(gap => ({
         skill: gap.skill,
         currentLevel: gap.currentLevel,
@@ -298,14 +298,14 @@ export class JobMatchingEngine {
         estimatedTime: gap.timeToClose,
         learningPath: gap.learningResources,
         practiceProjects: gap.projects,
-        milestones: this.generateMilestones(gap)
+        milestones: this.generateMilestones(_gap)
       })),
-      certifications: this.getRelevantCertifications(job.category),
-      networking: this.getNetworkingOpportunities(job.company)
+      certifications: this.getRelevantCertifications(_job.category),
+      networking: this.getNetworkingOpportunities(_job.company)
     };
   }
 
-  private initializeJobListings(): void {
+  private initializeJobListings(_): void {
     // Sample job listings for demonstration
     const sampleJobs: JobListing[] = [
       {
@@ -328,7 +328,7 @@ export class JobMatchingEngine {
         remote: true,
         type: 'full-time',
         category: 'defi',
-        postedDate: new Date(),
+        postedDate: new Date(_),
         benefits: ['Health insurance', 'Token allocation', 'Remote work'],
         companyInfo: {
           name: 'DeFi Protocol Inc',
@@ -342,24 +342,24 @@ export class JobMatchingEngine {
       }
     ];
 
-    sampleJobs.forEach(job => this.jobListings.set(job.id, job));
+    sampleJobs.forEach( job => this.jobListings.set(job.id, job));
   }
 
-  private calculateGapPriority(gap: number, weight: number): 'low' | 'medium' | 'high' | 'critical' {
+  private calculateGapPriority( gap: number, weight: number): 'low' | 'medium' | 'high' | 'critical' {
     const score = gap * weight / 100;
-    if (score > 60) return 'critical';
-    if (score > 40) return 'high';
-    if (score > 20) return 'medium';
+    if (_score > 60) return 'critical';
+    if (_score > 40) return 'high';
+    if (_score > 20) return 'medium';
     return 'low';
   }
 
-  private estimateTimeToClose(gap: number): number {
+  private estimateTimeToClose(_gap: number): number {
     // Estimate weeks needed to close skill gap
-    return Math.ceil(gap / 10) * 2; // 2 weeks per 10 skill points
+    return Math.ceil(_gap / 10) * 2; // 2 weeks per 10 skill points
   }
 
   // Get user portfolio
-  private async getUserPortfolio(userId: string): Promise<any> {
+  private async getUserPortfolio(_userId: string): Promise<any> {
     // In production, fetch from database
     return {
       projects: [],
@@ -370,38 +370,38 @@ export class JobMatchingEngine {
   }
 
   // Get skill assessment
-  private async getSkillAssessment(userId: string): Promise<any> {
-    const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
+  private async getSkillAssessment(_userId: string): Promise<any> {
+    const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
     return {
       solidityLevel: profile.skillLevels.solidity || 0,
       web3Level: profile.skillLevels.web3 || 0,
       securityLevel: profile.skillLevels.security || 0,
       gasOptimizationLevel: profile.skillLevels.gasOptimization || 0,
-      overallScore: Object.values(profile.skillLevels).reduce((a, b) => a + b, 0) / Object.keys(profile.skillLevels).length
+      overallScore: Object.values(_profile.skillLevels).reduce( (a, b) => a + b, 0) / Object.keys(_profile.skillLevels).length
     };
   }
 
   // Filter jobs by preferences
-  private filterJobsByPreferences(preferences: JobPreferences): BlockchainJob[] {
-    let jobs = Array.from(this.jobListings.values());
+  private filterJobsByPreferences(_preferences: JobPreferences): BlockchainJob[] {
+    let jobs = Array.from(_this.jobListings.values());
     
-    if (preferences.location) {
+    if (_preferences.location) {
       jobs = jobs.filter(job => job.location === preferences.location || job.remote);
     }
     
-    if (preferences.remote !== undefined) {
+    if (_preferences.remote !== undefined) {
       jobs = jobs.filter(job => job.remote === preferences.remote);
     }
     
-    if (preferences.minSalary) {
+    if (_preferences.minSalary) {
       jobs = jobs.filter(job => job.salaryMax >= preferences.minSalary!);
     }
     
-    if (preferences.companySize) {
+    if (_preferences.companySize) {
       jobs = jobs.filter(job => job.companySize === preferences.companySize);
     }
     
-    if (preferences.industries?.length) {
+    if (_preferences.industries?.length) {
       jobs = jobs.filter(job => preferences.industries!.includes(job.industry));
     }
     
@@ -409,40 +409,40 @@ export class JobMatchingEngine {
   }
 
   // Calculate skill score
-  private calculateSkillScore(requiredSkills: string[], userSkills: Record<string, number>): number {
-    if (requiredSkills.length === 0) return 100;
+  private calculateSkillScore( requiredSkills: string[], userSkills: Record<string, number>): number {
+    if (_requiredSkills.length === 0) return 100;
     
     const scores = requiredSkills.map(skill => {
       const userLevel = userSkills[skill.toLowerCase()] || 0;
       return Math.min(100, userLevel);
     });
     
-    return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    return Math.round( scores.reduce((a, b) => a + b, 0) / scores.length);
   }
 
   // Calculate experience score
-  private calculateExperienceScore(requiredYears: number, userProfile: any): number {
+  private calculateExperienceScore( requiredYears: number, userProfile: any): number {
     // Simulate user experience calculation
     const userYears = userProfile.experienceYears || 0;
     
-    if (userYears >= requiredYears) return 100;
-    if (userYears >= requiredYears * 0.8) return 80;
-    if (userYears >= requiredYears * 0.6) return 60;
-    if (userYears >= requiredYears * 0.4) return 40;
+    if (_userYears >= requiredYears) return 100;
+    if (_userYears >= requiredYears * 0.8) return 80;
+    if (_userYears >= requiredYears * 0.6) return 60;
+    if (_userYears >= requiredYears * 0.4) return 40;
     return 20;
   }
 
   // Calculate project score
-  private calculateProjectScore(job: BlockchainJob, portfolio: any): number {
+  private calculateProjectScore( job: BlockchainJob, portfolio: any): number {
     const relevantProjects = portfolio.projects?.filter((p: any) => 
-      job.requiredSkills.some(skill => p.technologies?.includes(skill))
+      job.requiredSkills.some(_skill => p.technologies?.includes(skill))
     ) || [];
     
     return Math.min(100, relevantProjects.length * 20);
   }
 
   // Calculate culture score
-  private calculateCultureScore(companyValues: string[], userProfile: any): number {
+  private calculateCultureScore( companyValues: string[], userProfile: any): number {
     // Simple culture fit calculation
     const userValues = userProfile.values || [];
     const matches = companyValues.filter(value => userValues.includes(value));
@@ -451,41 +451,41 @@ export class JobMatchingEngine {
   }
 
   // Assess salary fit
-  private assessSalaryFit(job: BlockchainJob, preferences: JobPreferences): SalaryFit {
-    const midpoint = (job.salaryMin + job.salaryMax) / 2;
+  private assessSalaryFit( job: BlockchainJob, preferences: JobPreferences): SalaryFit {
+    const midpoint = (_job.salaryMin + job.salaryMax) / 2;
     const userExpectation = preferences.minSalary || midpoint;
     
     let fit: 'below' | 'within' | 'above' = 'within';
-    if (userExpectation > job.salaryMax) fit = 'below';
-    else if (userExpectation < job.salaryMin) fit = 'above';
+    if (_userExpectation > job.salaryMax) fit = 'below';
+    else if (_userExpectation < job.salaryMin) fit = 'above';
     
     return {
       fit,
-      salaryRange: `$${job.salaryMin.toLocaleString()} - $${job.salaryMax.toLocaleString()}`,
+      salaryRange: `$${job.salaryMin.toLocaleString(_)} - $${job.salaryMax.toLocaleString(_)}`,
       percentMatch: Math.min(100, Math.max(0, 100 - Math.abs(midpoint - userExpectation) / midpoint * 100))
     };
   }
 
   // Calculate growth potential
-  private calculateGrowthPotential(job: BlockchainJob, userProfile: any): number {
+  private calculateGrowthPotential( job: BlockchainJob, userProfile: any): number {
     let score = 50; // Base score
     
     // Higher potential for roles slightly above current level
-    if (job.seniorityLevel === 'mid' && userProfile.level === 'junior') score += 30;
-    if (job.seniorityLevel === 'senior' && userProfile.level === 'mid') score += 30;
+    if (_job.seniorityLevel === 'mid' && userProfile.level === 'junior') score += 30;
+    if (_job.seniorityLevel === 'senior' && userProfile.level === 'mid') score += 30;
     
     // Consider company size and industry
-    if (job.companySize === 'startup') score += 20;
+    if (_job.companySize === 'startup') score += 20;
     
     return Math.min(100, score);
   }
 
   // Calculate application readiness
-  private calculateApplicationReadiness(match: JobMatch, portfolio: any): ApplicationReadiness {
+  private calculateApplicationReadiness( match: JobMatch, portfolio: any): ApplicationReadiness {
     const isReady = match.matchScore >= 60 && portfolio.projects?.length > 0;
     const missingRequirements: string[] = [];
     
-    if (match.matchScore < 60) {
+    if (_match.matchScore < 60) {
       missingRequirements.push('Improve skill match');
     }
     if (!portfolio.projects?.length) {
@@ -501,16 +501,16 @@ export class JobMatchingEngine {
   }
 
   // Generate match reasons
-  private generateMatchReasons(job: BlockchainJob, scores: any): string[] {
+  private generateMatchReasons( job: BlockchainJob, scores: any): string[] {
     const reasons: string[] = [];
     
-    if (scores.skillScore >= 80) {
+    if (_scores.skillScore >= 80) {
       reasons.push('Strong skill alignment with job requirements');
     }
-    if (scores.projectScore >= 60) {
+    if (_scores.projectScore >= 60) {
       reasons.push('Relevant project experience');
     }
-    if (scores.cultureScore >= 70) {
+    if (_scores.cultureScore >= 70) {
       reasons.push('Good culture fit with company values');
     }
     
@@ -518,25 +518,25 @@ export class JobMatchingEngine {
   }
 
   // Identify strengths
-  private identifyStrengths(scores: any): string[] {
+  private identifyStrengths(_scores: any): string[] {
     const strengths: string[] = [];
     
-    if (scores.skillScore >= 80) strengths.push('Technical skills');
-    if (scores.experienceScore >= 80) strengths.push('Industry experience');
-    if (scores.projectScore >= 80) strengths.push('Project portfolio');
-    if (scores.cultureScore >= 80) strengths.push('Culture alignment');
+    if (_scores.skillScore >= 80) strengths.push('Technical skills');
+    if (_scores.experienceScore >= 80) strengths.push('Industry experience');
+    if (_scores.projectScore >= 80) strengths.push('Project portfolio');
+    if (_scores.cultureScore >= 80) strengths.push('Culture alignment');
     
     return strengths;
   }
 
   // Identify growth areas
-  private identifyGrowthAreas(job: BlockchainJob, userSkills: Record<string, number>): string[] {
+  private identifyGrowthAreas( job: BlockchainJob, userSkills: Record<string, number>): string[] {
     const areas: string[] = [];
     
     job.requiredSkills.forEach(skill => {
       const userLevel = userSkills[skill.toLowerCase()] || 0;
-      if (userLevel < 60) {
-        areas.push(skill);
+      if (_userLevel < 60) {
+        areas.push(_skill);
       }
     });
     
@@ -544,7 +544,7 @@ export class JobMatchingEngine {
   }
 
   // Get skill evidence
-  private getSkillEvidence(skill: string, portfolio: any): any[] {
+  private getSkillEvidence( skill: string, portfolio: any): any[] {
     const evidence = [];
     
     // Find projects using this skill
@@ -562,7 +562,7 @@ export class JobMatchingEngine {
   }
 
   // Get relevant projects
-  private getRelevantProjects(requiredSkills: string[], portfolio: any): any[] {
+  private getRelevantProjects( requiredSkills: string[], portfolio: any): any[] {
     return portfolio.projects?.filter((project: any) => 
       requiredSkills.some(skill => 
         project.technologies?.includes(skill)
@@ -571,7 +571,7 @@ export class JobMatchingEngine {
   }
 
   // Get relevant certifications
-  private getRelevantCertifications(job: BlockchainJob): any[] {
+  private getRelevantCertifications(_job: BlockchainJob): any[] {
     // Map job requirements to relevant certifications
     const certMap: Record<string, string[]> = {
       'solidity': ['Certified Solidity Developer', 'ConsenSys Academy'],
@@ -587,7 +587,7 @@ export class JobMatchingEngine {
       }
     });
     
-    return [...new Set(certs)].map(cert => ({
+    return [...new Set(_certs)].map(cert => ({
       name: cert,
       relevance: 'high',
       provider: 'Various'
@@ -595,7 +595,7 @@ export class JobMatchingEngine {
   }
 
   // Get projects for skills
-  private getProjectsForSkills(skills: string[]): any[] {
+  private getProjectsForSkills(_skills: string[]): any[] {
     const projectIdeas = {
       'solidity': ['Build a DeFi protocol', 'Create an NFT marketplace'],
       'security': ['Audit a smart contract', 'Build a security scanner'],
@@ -619,7 +619,7 @@ export class JobMatchingEngine {
   }
 
   // Get learning resources
-  private getLearningResources(skills: string[]): any[] {
+  private getLearningResources(_skills: string[]): any[] {
     const resources: any[] = [];
     
     skills.forEach(skill => {
@@ -636,7 +636,7 @@ export class JobMatchingEngine {
   }
 
   // Get networking opportunities
-  private getNetworkingOpportunities(industry: string): any[] {
+  private getNetworkingOpportunities(_industry: string): any[] {
     return [
       {
         type: 'conference',
@@ -657,10 +657,10 @@ export class JobMatchingEngine {
   }
 
   // Generate milestones
-  private generateMilestones(currentLevel: string, targetLevel: string): any[] {
+  private generateMilestones( currentLevel: string, targetLevel: string): any[] {
     const milestones = [];
     
-    if (currentLevel === 'junior' && targetLevel === 'mid') {
+    if (_currentLevel === 'junior' && targetLevel === 'mid') {
       milestones.push(
         { week: 2, goal: 'Complete advanced Solidity course' },
         { week: 4, goal: 'Build first DeFi project' },
@@ -673,51 +673,51 @@ export class JobMatchingEngine {
   }
 
   // Assess current level
-  private assessCurrentLevel(profile: any): string {
-    const avgSkill = Object.values(profile.skillLevels).reduce((a: number, b: number) => a + b, 0) / 
-                     Object.keys(profile.skillLevels).length;
+  private assessCurrentLevel(_profile: any): string {
+    const avgSkill = Object.values(_profile.skillLevels).reduce( (a: number, b: number) => a + b, 0) / 
+                     Object.keys(_profile.skillLevels).length;
     
-    if (avgSkill < 30) return 'junior';
-    if (avgSkill < 70) return 'mid';
+    if (_avgSkill < 30) return 'junior';
+    if (_avgSkill < 70) return 'mid';
     return 'senior';
   }
 
   // Estimate interview success
-  private estimateInterviewSuccess(match: JobMatch, preparation: any): number {
+  private estimateInterviewSuccess( match: JobMatch, preparation: any): number {
     let successRate = match.matchScore;
     
     // Adjust based on preparation
-    if (preparation.mockInterviews > 3) successRate += 10;
-    if (preparation.companyResearch) successRate += 5;
-    if (preparation.technicalPractice) successRate += 10;
+    if (_preparation.mockInterviews > 3) successRate += 10;
+    if (_preparation.companyResearch) successRate += 5;
+    if (_preparation.technicalPractice) successRate += 10;
     
     return Math.min(100, successRate);
   }
 
   // Update matching algorithm
-  private async updateMatchingAlgorithm(userId: string, feedback: any): Promise<void> {
+  private async updateMatchingAlgorithm( userId: string, feedback: any): Promise<void> {
     // Store feedback for algorithm improvement
-    const userFeedback = this.userFeedback.get(userId) || [];
+    const userFeedback = this.userFeedback.get(_userId) || [];
     userFeedback.push({
-      timestamp: new Date(),
+      timestamp: new Date(_),
       feedback,
       outcome: feedback.hired ? 'success' : 'continue'
     });
     
-    this.userFeedback.set(userId, userFeedback);
-    console.log(`📊 Updated matching algorithm with user feedback`);
+    this.userFeedback.set( userId, userFeedback);
+    console.log(_`📊 Updated matching algorithm with user feedback`);
   }
 
   // Get job match by ID
-  private async getJobMatch(userId: string, jobId: string): Promise<JobMatch | null> {
-    const job = this.jobListings.get(jobId);
+  private async getJobMatch( userId: string, jobId: string): Promise<JobMatch | null> {
+    const job = this.jobListings.get(_jobId);
     if (!job) return null;
     
-    const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
-    const portfolio = await this.getUserPortfolio(userId);
-    const skillAssessment = await this.getSkillAssessment(userId);
+    const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
+    const portfolio = await this.getUserPortfolio(_userId);
+    const skillAssessment = await this.getSkillAssessment(_userId);
     
-    return this.calculateJobMatch(userId, job, profile, portfolio, skillAssessment);
+    return this.calculateJobMatch( userId, job, profile, portfolio, skillAssessment);
   }
 }
 
@@ -754,4 +754,4 @@ interface ApplicationReadiness {
   estimatedPrepTime: number;
 }
 
-export const jobMatchingEngine = new JobMatchingEngine();
+export const jobMatchingEngine = new JobMatchingEngine(_);

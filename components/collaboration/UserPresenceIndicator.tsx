@@ -33,8 +33,8 @@ interface UserActivity {
   typingLocation?: 'chat' | 'code';
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
+const getStatusColor = (_status: string) => {
+  switch (_status) {
     case 'online': return 'bg-green-400';
     case 'away': return 'bg-yellow-400';
     case 'offline': return 'bg-gray-400';
@@ -42,8 +42,8 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getActivityIcon = (activity?: string) => {
-  switch (activity) {
+const getActivityIcon = (_activity?: string) => {
+  switch (_activity) {
     case 'coding': return <Code className="w-3 h-3" />;
     case 'chatting': return <MessageCircle className="w-3 h-3" />;
     case 'viewing': return <Eye className="w-3 h-3" />;
@@ -51,16 +51,16 @@ const getActivityIcon = (activity?: string) => {
   }
 };
 
-const formatLastSeen = (lastSeen: Date) => {
+const formatLastSeen = (_lastSeen: Date) => {
   const now = new Date();
-  const diff = now.getTime() - lastSeen.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const diff = now.getTime() - lastSeen.getTime(_);
+  const minutes = Math.floor(_diff / 60000);
+  const hours = Math.floor(_minutes / 60);
+  const days = Math.floor(_hours / 24);
 
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
+  if (_minutes < 1) return 'Just now';
+  if (_minutes < 60) return `${minutes}m ago`;
+  if (_hours < 24) return `${hours}h ago`;
   return `${days}d ago`;
 };
 
@@ -69,17 +69,17 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
   compact = false,
   className = ''
 }) => {
-  const { user } = useAuth();
+  const { user } = useAuth(_);
   const { 
     isConnected, 
     presence, 
     participants, 
     typingUsers,
     updateUserStatus 
-  } = useSocket();
+  } = useSocket(_);
 
   const [userActivities, setUserActivities] = useState<UserActivity[]>([]);
-  const [showAllUsers, setShowAllUsers] = useState(false);
+  const [showAllUsers, setShowAllUsers] = useState(_false);
 
   // Transform presence data into user activities
   useEffect(() => {
@@ -89,12 +89,12 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
       
       // Determine current activity
       let currentActivity: UserActivity['currentActivity'] = 'idle';
-      if (typingUser?.isTyping) {
+      if (_typingUser?.isTyping) {
         currentActivity = typingUser.typingLocation === 'code' ? 'coding' : 'chatting';
-      } else if (userPresence?.cursor) {
+      } else if (_userPresence?.cursor) {
         currentActivity = 'coding';
       } else if (userPresence?.lastSeen && 
-                 new Date().getTime() - userPresence.lastSeen.getTime() < 30000) {
+                 new Date().getTime(_) - userPresence.lastSeen.getTime(_) < 30000) {
         currentActivity = 'viewing';
       }
 
@@ -110,29 +110,29 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
       };
     });
 
-    setUserActivities(activities);
+    setUserActivities(_activities);
   }, [participants, presence, typingUsers]);
 
   // Auto-update user status based on activity
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
+    const handleVisibilityChange = (_) => {
+      if (_document.hidden) {
         updateUserStatus('away');
       } else {
         updateUserStatus('online');
       }
     };
 
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = (_) => {
       updateUserStatus('offline');
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener( 'visibilitychange', handleVisibilityChange);
+    window.addEventListener( 'beforeunload', handleBeforeUnload);
 
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+    return (_) => {
+      document.removeEventListener( 'visibilitychange', handleVisibilityChange);
+      window.removeEventListener( 'beforeunload', handleBeforeUnload);
     };
   }, [updateUserStatus]);
 
@@ -162,7 +162,7 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
               <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-semibold border-2 border-slate-800">
                 {activity.userName.charAt(0)}
               </div>
-              <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-slate-800 ${getStatusColor(activity.status)}`} />
+              <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-slate-800 ${getStatusColor(_activity.status)}`} />
               {activity.isTyping && (
                 <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
@@ -186,7 +186,7 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
           <div className="flex items-center space-x-2">
             <Users className="w-5 h-5 text-blue-400" />
             <h3 className="text-lg font-semibold text-white">
-              Active Users ({onlineUsers.length})
+              Active Users ({ onlineUsers.length })
             </h3>
             <div className={`flex items-center space-x-1 ${!isConnected ? 'opacity-50' : ''}`}>
               {isConnected ? (
@@ -201,7 +201,7 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => setShowAllUsers(!showAllUsers)}
+              onClick={(_) => setShowAllUsers(!showAllUsers)}
               className="text-xs"
             >
               {showAllUsers ? 'Show Less' : `+${userActivities.length - 6} more`}
@@ -232,7 +232,7 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
                         {activity.userName.charAt(0)}
                       </div>
                     )}
-                    <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-700 ${getStatusColor(activity.status)}`} />
+                    <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-700 ${getStatusColor(_activity.status)}`} />
                   </div>
                   
                   <div>
@@ -240,7 +240,7 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
                       <span className="text-white font-medium">
                         {activity.userName}
                         {activity.userId === user?.id && (
-                          <span className="text-xs text-gray-400 ml-1">(You)</span>
+                          <span className="text-xs text-gray-400 ml-1">(_You)</span>
                         )}
                       </span>
                       {activity.isTyping && (
@@ -258,7 +258,7 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
                     
                     {showDetails && (
                       <div className="flex items-center space-x-2 text-xs text-gray-400">
-                        {getActivityIcon(activity.currentActivity)}
+                        {getActivityIcon(_activity.currentActivity)}
                         <span>
                           {activity.isTyping 
                             ? `Typing in ${activity.typingLocation}...`
@@ -267,7 +267,7 @@ export const UserPresenceIndicator: React.FC<UserPresenceIndicatorProps> = ({
                         </span>
                         <span>•</span>
                         <Clock className="w-3 h-3" />
-                        <span>{formatLastSeen(activity.lastSeen)}</span>
+                        <span>{formatLastSeen(_activity.lastSeen)}</span>
                       </div>
                     )}
                   </div>

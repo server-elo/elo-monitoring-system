@@ -58,42 +58,42 @@ class StructuredLogger {
   /**
    * Check if log level should be output
    */
-  private shouldLog(level: LogLevel): boolean {
+  private shouldLog(_level: LogLevel): boolean {
     const levels = [LogLevel.DEBUG, LogLevel.INFO, LogLevel.WARN, LogLevel.ERROR, LogLevel.FATAL];
-    const currentIndex = levels.indexOf(this.logLevel);
-    const messageIndex = levels.indexOf(level);
+    const currentIndex = levels.indexOf(_this.logLevel);
+    const messageIndex = levels.indexOf(_level);
     return messageIndex >= currentIndex;
   }
 
   /**
    * Format and output log entry
    */
-  private log(entry: LogEntry): void {
+  private log(_entry: LogEntry): void {
     if (!this.shouldLog(entry.level)) return;
 
     // Output as JSON for structured logging
-    const output = JSON.stringify(entry);
+    const output = JSON.stringify(_entry);
     
     // Use appropriate console method based on level
-    switch (entry.level) {
+    switch (_entry.level) {
       case LogLevel.ERROR:
       case LogLevel.FATAL:
-        console.error(output);
+        console.error(_output);
         break;
       case LogLevel.WARN:
-        console.warn(output);
+        console.warn(_output);
         break;
       default:
-        console.log(output);
+        console.log(_output);
     }
   }
 
   /**
    * Create base log entry
    */
-  private createLogEntry(level: LogLevel, message: string, context?: LogContext): LogEntry {
+  private createLogEntry( level: LogLevel, message: string, context?: LogContext): LogEntry {
     return {
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(_).toISOString(),
       level,
       message,
       hostname: this.hostname,
@@ -106,68 +106,68 @@ class StructuredLogger {
   /**
    * Log debug message
    */
-  debug(message: string, context?: LogContext): void {
-    this.log(this.createLogEntry(LogLevel.DEBUG, message, context));
+  debug( message: string, context?: LogContext): void {
+    this.log( this.createLogEntry(LogLevel.DEBUG, message, context));
   }
 
   /**
    * Log info message
    */
-  info(message: string, context?: LogContext): void {
-    this.log(this.createLogEntry(LogLevel.INFO, message, context));
+  info( message: string, context?: LogContext): void {
+    this.log( this.createLogEntry(LogLevel.INFO, message, context));
   }
 
   /**
    * Log warning message
    */
-  warn(message: string, context?: LogContext): void {
-    this.log(this.createLogEntry(LogLevel.WARN, message, context));
+  warn( message: string, context?: LogContext): void {
+    this.log( this.createLogEntry(LogLevel.WARN, message, context));
   }
 
   /**
    * Log error message
    */
-  error(message: string, error?: Error, context?: LogContext): void {
-    const entry = this.createLogEntry(LogLevel.ERROR, message, context);
+  error( message: string, error?: Error, context?: LogContext): void {
+    const entry = this.createLogEntry( LogLevel.ERROR, message, context);
     
     if (error) {
       entry.error = {
         message: error.message,
         stack: error.stack,
-        code: (error as any).code,
+        code: (_error as any).code,
       };
     }
     
-    this.log(entry);
+    this.log(_entry);
   }
 
   /**
    * Log fatal error message
    */
-  fatal(message: string, error?: Error, context?: LogContext): void {
-    const entry = this.createLogEntry(LogLevel.FATAL, message, context);
+  fatal( message: string, error?: Error, context?: LogContext): void {
+    const entry = this.createLogEntry( LogLevel.FATAL, message, context);
     
     if (error) {
       entry.error = {
         message: error.message,
         stack: error.stack,
-        code: (error as any).code,
+        code: (_error as any).code,
       };
     }
     
-    this.log(entry);
+    this.log(_entry);
   }
 
   /**
    * Create child logger with additional context
    */
-  child(context: LogContext): StructuredLogger {
-    const childLogger = new StructuredLogger();
-    const originalLog = childLogger.log.bind(childLogger);
+  child(_context: LogContext): StructuredLogger {
+    const childLogger = new StructuredLogger(_);
+    const originalLog = childLogger.log.bind(_childLogger);
     
-    childLogger.log = (entry: LogEntry) => {
+    childLogger.log = (_entry: LogEntry) => {
       entry.context = { ...context, ...entry.context };
-      originalLog(entry);
+      originalLog(_entry);
     };
     
     return childLogger;
@@ -181,8 +181,8 @@ export const logger = new StructuredLogger();
 export { StructuredLogger };
 
 // Example usage:
-// logger.info('Server started', { port: 3000, version: '1.0.0' });
-// logger.error('Database connection failed', error, { retries: 3 });
+// logger.info( 'Server started', { metadata: { port: 3000, version: '1.0.0' });
+// logger.error( 'Database connection failed', error, { retries: 3 });
 // 
-// const requestLogger = logger.child({ requestId: '123-456' });
-// requestLogger.info('Processing request', { method: 'GET', path: '/api/users' });
+// const requestLogger = logger.child({ requestId: '123-456'  });
+// requestLogger.info( 'Processing request', { method: 'GET', path: '/api/users' });

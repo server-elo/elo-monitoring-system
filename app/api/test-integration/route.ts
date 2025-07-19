@@ -46,13 +46,13 @@ const PAGES_TO_TEST: PageTest[] = [
   }
 ];
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   // const { searchParams } = new URL(request.url);
   // const testType = searchParams.get('type') || 'basic'; // Available for future use
 
   try {
     const results = await Promise.all(
-      PAGES_TO_TEST.map(async (page) => {
+      PAGES_TOTEST.map( async (page) => {
         try {
           // Test if the page route exists by checking the file system
           const pageExists = await checkPageExists(page.path);
@@ -89,7 +89,7 @@ export async function GET(_request: NextRequest) {
       message: 'Page integration test completed',
       summary,
       results,
-      recommendations: generateRecommendations(results),
+      recommendations: generateRecommendations(_results),
       timestamp: new Date().toISOString()
     });
 
@@ -177,17 +177,17 @@ async function testComponentIntegration(pages: PageTest[]): Promise<any[]> {
   }));
 }
 
-function generateRecommendations(results: any[]): string[] {
+function generateRecommendations(_results: any[]): string[] {
   const recommendations: string[] = [];
   
   const missingPages = results.filter(r => r.status === 'missing');
-  if (missingPages.length > 0) {
-    recommendations.push(`Create missing pages: ${missingPages.map(p => p.path).join(', ')}`);
+  if (codeSnippets.length > 0) {
+    recommendations.push(_`Create missing pages: ${missingPages.map(p => p.path).join( ', ')}`);
   }
 
   const errorPages = results.filter(r => r.status === 'error');
-  if (errorPages.length > 0) {
-    recommendations.push(`Fix errors in pages: ${errorPages.map(p => p.path).join(', ')}`);
+  if (codeSnippets.length > 0) {
+    recommendations.push(_`Fix errors in pages: ${errorPages.map(p => p.path).join( ', ')}`);
   }
 
   if (results.every(r => r.status === 'exists')) {

@@ -21,7 +21,6 @@ import { databaseMonitor } from '@/lib/monitoring/database-monitoring';
 import { uptimeMonitor } from '@/lib/monitoring/uptime-monitoring';
 import { bundleAnalyzer } from '@/lib/monitoring/bundle-analysis';
 import { ga4 } from '@/lib/monitoring/google-analytics';
-;
 import { logger } from '@/lib/monitoring/simple-logger';
 import { cn } from '@/lib/utils';
 
@@ -43,31 +42,31 @@ type DashboardTab =
  * Alert severity levels
  */
 interface AlertSummary {
-  critical: number;
-  high: number;
-  medium: number;
-  low: number;
-  total: number;
+  critical: number; 
+  high: number; 
+  medium: number; 
+  low: number; 
+  total: number; 
 }
 
 /**
  * System health status
  */
 interface SystemHealth {
-  overall: 'healthy' | 'warning' | 'critical';
-  services: {
-    database: 'up' | 'down' | 'degraded';
-    redis: 'up' | 'down' | 'degraded';
-    api: 'up' | 'down' | 'degraded';
-    auth: 'up' | 'down' | 'degraded';
+  overall: 'healthy' | 'warning' | 'critical'; 
+  services: { 
+    database: 'up' | 'down' | 'degraded'; 
+    redis: 'up' | 'down' | 'degraded'; 
+    api: 'up' | 'down' | 'degraded'; 
+    auth: 'up' | 'down' | 'degraded'; 
   };
-  performance: {
-    responseTime: number;
-    errorRate: number;
-    throughput: number;
+  performance: { 
+    responseTime: number; 
+    errorRate: number; 
+    throughput: number; 
   };
-  uptime: number;
-  lastUpdate: Date;
+  uptime: number; 
+  lastUpdate: Date; 
 }
 
 /**
@@ -75,11 +74,11 @@ interface SystemHealth {
  */
 export function ComprehensiveMonitoringDashboard() {
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
-  const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
-  const [alertSummary, setAlertSummary] = useState<AlertSummary | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(_null);
+  const [alertSummary, setAlertSummary] = useState<AlertSummary | null>(_null);
+  const [isLoading, setIsLoading] = useState(_true);
   const [refreshInterval] = useState(30000); // 30 seconds
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [autoRefresh, setAutoRefresh] = useState(_true);
   const [_searchFilter] = useState('');
   const [_selectedTimeRange] = useState('1h');
 
@@ -91,7 +90,7 @@ export function ComprehensiveMonitoringDashboard() {
     
     if (autoRefresh) {
       const interval = setInterval(refreshDashboard, refreshInterval);
-      return () => clearInterval(interval);
+      return (() => clearInterval(_interval);
     }
   }, [autoRefresh, refreshInterval]);
 
@@ -100,19 +99,19 @@ export function ComprehensiveMonitoringDashboard() {
    */
   const initializeDashboard = async () => {
     try {
-      setIsLoading(true);
+      setIsLoading(_true);
       
       await Promise.all([
-        loadSystemHealth(),
-        loadAlertSummary(),
+        loadSystemHealth() 
+        loadAlertSummary() 
         loadMonitoringData()
       ]);
       
       logger.info('Comprehensive monitoring dashboard initialized');
     } catch (error) {
-      logger.error('Failed to initialize monitoring dashboard', error as Error);
+      logger.error("'Failed to initialize monitoring dashboard', error as Error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
@@ -142,28 +141,28 @@ export function ComprehensiveMonitoringDashboard() {
       }
 
       const health: SystemHealth = {
-        overall: overallHealth,
-        services: {
-          database: dbMetrics.health.status === 'healthy' ? 'up' : 
-                   dbMetrics.health.status === 'degraded' ? 'degraded' : 'down',
-          redis: redisMetrics.connection.status === 'connected' ? 'up' : 
-                redisMetrics.connection.status === 'disconnected' ? 'down' : 'degraded',
-          api: uptimeStatus.upServices > 0 ? 'up' : 'down',
-          auth: 'up' // Would be determined by specific auth service checks
-        },
-        performance: {
-          responseTime: dbMetrics.queryPerformance.averageExecutionTime,
-          errorRate: dbMetrics.queryPerformance.failedQueries / 
-                    Math.max(dbMetrics.queryPerformance.totalQueries, 1),
-          throughput: dbMetrics.queryPerformance.totalQueries
-        },
-        uptime: uptimeStatus.averageUptime,
-        lastUpdate: new Date()
+        overall: overallHealth 
+        services: { 
+          database: dbMetrics.health.status === 'healthy' ? 'up' :  
+                   dbMetrics.health.status === 'degraded' ? 'degraded' : 'down' 
+          redis: redisMetrics.connection.status === 'connected' ? 'up' :  
+                redisMetrics.connection.status === 'disconnected' ? 'down' : 'degraded' 
+          api: uptimeStatus.upServices > 0 ? 'up' : 'down' 
+          auth: 'up' // Would be determined by specific auth service checks 
+        } 
+        performance: { 
+          responseTime: dbMetrics.queryPerformance.averageExecutionTime 
+          errorRate: dbMetrics.queryPerformance.failedQueries /  
+                    Math.max(dbMetrics.queryPerformance.totalQueries, 1) 
+          throughput: dbMetrics.queryPerformance.totalQueries 
+        } 
+        uptime: uptimeStatus.averageUptime 
+        lastUpdate: new Date() 
       };
 
-      setSystemHealth(health);
+      setSystemHealth(_health);
     } catch (error) {
-      logger.error('Failed to load system health', error as Error);
+      logger.error("'Failed to load system health', error as Error);
     }
   };
 
@@ -175,18 +174,18 @@ export function ComprehensiveMonitoringDashboard() {
       // Get alerts from various sources
       const uptimeIncidents = uptimeMonitor.getIncidents(undefined, 'open');
       
-      // Mock alert summary (would aggregate from all monitoring sources)
+      // Mock alert summary (_would aggregate from all monitoring sources)
       const summary: AlertSummary = {
-        critical: uptimeIncidents.filter(i => i.severity === 'critical').length,
-        high: uptimeIncidents.filter(i => i.severity === 'high').length,
-        medium: uptimeIncidents.filter(i => i.severity === 'medium').length,
-        low: uptimeIncidents.filter(i => i.severity === 'low').length,
-        total: uptimeIncidents.length
+        critical: uptimeIncidents.filter(i => i.severity === 'critical').length 
+        high: uptimeIncidents.filter(i => i.severity === 'high').length 
+        medium: uptimeIncidents.filter(i => i.severity === 'medium').length 
+        low: uptimeIncidents.filter(i => i.severity === 'low').length 
+        total: uptimeIncidents.length 
       };
 
-      setAlertSummary(summary);
+      setAlertSummary(_summary);
     } catch (error) {
-      logger.error('Failed to load alert summary', error as Error);
+      logger.error("'Failed to load alert summary', error as Error);
     }
   };
 
@@ -202,7 +201,7 @@ export function ComprehensiveMonitoringDashboard() {
         // Bundle analysis data would be loaded from latest build
       ]);
     } catch (error) {
-      logger.error('Failed to load monitoring data', error as Error);
+      logger.error("'Failed to load monitoring data', error as Error);
     }
   };
 
@@ -211,7 +210,7 @@ export function ComprehensiveMonitoringDashboard() {
    */
   const refreshDashboard = async () => {
     await Promise.all([
-      loadSystemHealth(),
+      loadSystemHealth() 
       loadAlertSummary()
     ]);
   };
@@ -219,52 +218,52 @@ export function ComprehensiveMonitoringDashboard() {
   /**
    * Export monitoring data
    */
-  const exportMonitoringData = () => {
+  const exportMonitoringData = (() => {
     const data = {
-      timestamp: new Date().toISOString(),
-      systemHealth,
-      alertSummary,
-      database: databaseMonitor.exportMonitoringData(),
-      uptime: uptimeMonitor.exportData(),
-      bundles: bundleAnalyzer.exportData(),
-      analytics: ga4.exportData()
+      timestamp: new Date().toISOString() ,
+      systemHealth 
+      alertSummary 
+      database: databaseMonitor.exportMonitoringData() 
+      uptime: uptimeMonitor.exportData() 
+      bundles: bundleAnalyzer.exportData() 
+      analytics: ga4.exportData() 
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `monitoring-export-${Date.now()}.json`;
     a.click();
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(_url);
   };
 
   /**
    * Dashboard tabs configuration
    */
   const tabs: Array<{ id: DashboardTab; label: string; icon: any; count?: number }> = [
-    { id: 'overview', label: 'Overview', icon: Monitor },
-    { id: 'performance', label: 'Performance', icon: Zap },
-    { id: 'database', label: 'Database', icon: Database },
-    { id: 'uptime', label: 'Uptime', icon: Activity },
-    { id: 'bundles', label: 'Bundles', icon: Package },
-    { id: 'errors', label: 'Errors', icon: AlertTriangle },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'alerts', label: 'Alerts', icon: Shield, count: alertSummary?.total },
+    { id: 'overview', label: 'Overview', icon: Monitor } 
+    { id: 'performance', label: 'Performance', icon: Zap } 
+    { id: 'database', label: 'Database', icon: Database } 
+    { id: 'uptime', label: 'Uptime', icon: Activity } 
+    { id: 'bundles', label: 'Bundles', icon: Package } 
+    { id: 'errors', label: 'Errors', icon: AlertTriangle } 
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 } 
+    { id: 'alerts', label: 'Alerts', icon: Shield, count: alertSummary?.total } 
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
 
   /**
    * System status indicator
    */
-  const StatusIndicator = ({ status }: { status: 'up' | 'down' | 'degraded' }) => (
+  const StatusIndicator = (_{ status }: { status: 'up' | 'down' | 'degraded' }) => (
     <div className={cn(
-      "w-3 h-3 rounded-full",
-      status === 'up' && "bg-green-500",
-      status === 'degraded' && "bg-yellow-500",
+      "w-3 h-3 rounded-full" 
+      status === 'up' && "bg-green-500" 
+      status === 'degraded' && "bg-yellow-500" 
       status === 'down' && "bg-red-500"
-    )} />
-  );
+   )} />
+ );
 
   /**
    * Health metric card
@@ -274,43 +273,43 @@ export function ComprehensiveMonitoringDashboard() {
     value, 
     unit, 
     status, 
-    icon: Icon,
+    icon: Icon 
     trend 
   }: {
-    title: string;
-    value: number;
-    unit: string;
-    status: 'good' | 'warning' | 'critical';
-    icon: any;
+    title: string; 
+    value: number; 
+    unit: string; 
+    status: 'good' | 'warning' | 'critical'; 
+    icon: any; 
     trend?: 'up' | 'down';
   }) => (
     <Card className="p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-2">
           <Icon className={cn(
-            "w-5 h-5",
-            status === 'good' && "text-green-500",
-            status === 'warning' && "text-yellow-500",
+            "w-5 h-5" 
+            status === 'good' && "text-green-500" 
+            status === 'warning' && "text-yellow-500" 
             status === 'critical' && "text-red-500"
-          )} />
+         )} />
           <span className="text-sm font-medium text-gray-600">{title}</span>
         </div>
         {trend && (
           <div className="flex items-center">
             {trend === 'up' ? (
               <TrendingUp className="w-4 h-4 text-green-500" />
-            ) : (
+           ) : (
               <TrendingDown className="w-4 h-4 text-red-500" />
-            )}
+           )}
           </div>
-        )}
+       )}
       </div>
       <div className="flex items-baseline space-x-1">
         <span className="text-2xl font-bold">{value.toFixed(1)}</span>
         <span className="text-sm text-gray-500">{unit}</span>
       </div>
     </Card>
-  );
+ );
 
   if (isLoading) {
     return (
@@ -318,7 +317,7 @@ export function ComprehensiveMonitoringDashboard() {
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
         <span className="ml-2 text-gray-600">Loading monitoring dashboard...</span>
       </div>
-    );
+   );
   }
 
   return (
@@ -340,11 +339,11 @@ export function ComprehensiveMonitoringDashboard() {
               {/* System health indicator */}
               <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700">
                 <div className={cn(
-                  "w-3 h-3 rounded-full",
-                  systemHealth?.overall === 'healthy' && "bg-green-500",
-                  systemHealth?.overall === 'warning' && "bg-yellow-500",
+                  "w-3 h-3 rounded-full" 
+                  systemHealth?.overall === 'healthy' && "bg-green-500" 
+                  systemHealth?.overall === 'warning' && "bg-yellow-500" 
                   systemHealth?.overall === 'critical' && "bg-red-500"
-                )} />
+               )} />
                 <span className="text-sm font-medium">
                   {systemHealth?.overall === 'healthy' && 'All Systems Operational'}
                   {systemHealth?.overall === 'warning' && 'Some Issues Detected'}
@@ -356,11 +355,11 @@ export function ComprehensiveMonitoringDashboard() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setAutoRefresh(!autoRefresh)}
+                onClick={(() => setAutoRefresh(!autoRefresh)}
                 className={cn(
-                  "flex items-center space-x-2",
+                  "flex items-center space-x-2" 
                   autoRefresh && "bg-green-500/20 border-green-500"
-                )}
+               )}
               >
                 <Activity className="w-4 h-4" />
                 <span>{autoRefresh ? 'Live' : 'Paused'}</span>
@@ -387,13 +386,13 @@ export function ComprehensiveMonitoringDashboard() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={(() => setActiveTab(_tab.id)}
                 className={cn(
-                  "flex items-center space-x-2 px-3 py-2 border-b-2 text-sm font-medium transition-colors",
+                  "flex items-center space-x-2 px-3 py-2 border-b-2 text-sm font-medium transition-colors" 
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                )}
+               )}
               >
                 <tab.icon className="w-4 h-4" />
                 <span>{tab.label}</span>
@@ -401,9 +400,9 @@ export function ComprehensiveMonitoringDashboard() {
                   <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
                     {tab.count}
                   </span>
-                )}
+               )}
               </button>
-            ))}
+           ))}
           </nav>
         </div>
       </div>
@@ -450,31 +449,31 @@ export function ComprehensiveMonitoringDashboard() {
                     trend="up"
                   />
                 </>
-              )}
+             )}
             </div>
 
             {/* Services status */}
             <Card className="p-6">
               <h2 className="text-lg font-semibold mb-4">Service Status</h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {systemHealth && Object.entries(systemHealth.services).map(([service, status]) => (
+                {systemHealth && Object.entries(_systemHealth.services).map(([service, status]) => (
                   <div key={service} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <StatusIndicator status={status} />
                       <span className="font-medium capitalize">{service}</span>
                     </div>
                     <span className={cn(
-                      "text-sm",
-                      status === 'up' && "text-green-600",
-                      status === 'degraded' && "text-yellow-600",
+                      "text-sm" 
+                      status === 'up' && "text-green-600" 
+                      status === 'degraded' && "text-yellow-600" 
                       status === 'down' && "text-red-600"
-                    )}>
+                   )}>
                       {status === 'up' && 'Operational'}
                       {status === 'degraded' && 'Degraded'}
                       {status === 'down' && 'Down'}
                     </span>
                   </div>
-                ))}
+               ))}
               </div>
             </Card>
 
@@ -486,7 +485,7 @@ export function ComprehensiveMonitoringDashboard() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setActiveTab('alerts')}
+                    onClick={(() => setActiveTab('alerts')}
                   >
                     View All
                     <ExternalLink className="w-4 h-4 ml-2" />
@@ -511,29 +510,29 @@ export function ComprehensiveMonitoringDashboard() {
                   </div>
                 </div>
               </Card>
-            )}
+           )}
           </div>
-        )}
+       )}
 
         {/* Performance Tab */}
         {activeTab === 'performance' && (
           <MonitoringDashboard />
-        )}
+       )}
 
         {/* Other tabs would render their respective components */}
         {activeTab === 'database' && (
           <div className="text-center text-gray-500 py-8">
             Database monitoring component would be rendered here
           </div>
-        )}
+       )}
 
         {/* Placeholder for other tabs */}
         {!['overview', 'performance', 'database'].includes(activeTab) && (
           <div className="text-center text-gray-500 py-8">
             {tabs.find(t => t.id === activeTab)?.label} monitoring component would be rendered here
           </div>
-        )}
+       )}
       </div>
     </div>
-  );
+ );
 }

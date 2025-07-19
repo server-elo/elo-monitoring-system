@@ -78,7 +78,7 @@ interface ApiEndpointDoc {
 export class ApiDocumentationGenerator {
   private spec: OpenAPISpec;
 
-  constructor() {
+  constructor(_) {
     this.spec = {
       openapi: '3.0.3',
       info: {
@@ -279,10 +279,10 @@ export class ApiDocumentationGenerator {
       ]
     };
 
-    this.generateCommonSchemas();
+    this.generateCommonSchemas(_);
   }
 
-  private generateCommonSchemas(): void {
+  private generateCommonSchemas(_): void {
     // Common response schemas
     this.spec.components.schemas.SuccessResponse = {
       type: 'object',
@@ -366,46 +366,46 @@ export class ApiDocumentationGenerator {
     };
 
     // Generate schemas from Zod schemas
-    this.generateSchemasFromZod();
+    this.generateSchemasFromZod(_);
   }
 
-  private generateSchemasFromZod(): void {
+  private generateSchemasFromZod(_): void {
     // Convert Zod schemas to OpenAPI schemas
-    Object.entries(SchemaRegistry).forEach(([name, schema]) => {
+    Object.entries(_SchemaRegistry).forEach( ([name, schema]) => {
       try {
-        this.spec.components.schemas[this.capitalize(name)] = this.zodToOpenApi(schema);
-      } catch (error) {
+        this.spec.components.schemas[this.capitalize(_name)] = this.zodToOpenApi(_schema);
+      } catch (_error) {
         console.warn(`Failed to convert schema ${name}:`, error);
       }
     });
   }
 
-  private zodToOpenApi(schema: z.ZodSchema<any>): any {
+  private zodToOpenApi(_schema: z.ZodSchema<any>): any {
     // Basic Zod to OpenAPI conversion
     // In a real implementation, you'd use a library like zod-to-openapi
-    if (schema instanceof z.ZodString) {
+    if (_schema instanceof z.ZodString) {
       return { type: 'string' };
     }
-    if (schema instanceof z.ZodNumber) {
+    if (_schema instanceof z.ZodNumber) {
       return { type: 'number' };
     }
-    if (schema instanceof z.ZodBoolean) {
+    if (_schema instanceof z.ZodBoolean) {
       return { type: 'boolean' };
     }
-    if (schema instanceof z.ZodArray) {
+    if (_schema instanceof z.ZodArray) {
       return {
         type: 'array',
-        items: this.zodToOpenApi(schema.element)
+        items: this.zodToOpenApi(_schema.element)
       };
     }
-    if (schema instanceof z.ZodObject) {
+    if (_schema instanceof z.ZodObject) {
       const properties: Record<string, any> = {};
       const required: string[] = [];
       
-      Object.entries(schema.shape).forEach(([key, value]) => {
-        properties[key] = this.zodToOpenApi(value as z.ZodSchema<any>);
-        if (!(value as any).isOptional()) {
-          required.push(key);
+      Object.entries(_schema.shape).forEach( ([key, value]) => {
+        properties[key] = this.zodToOpenApi(_value as z.ZodSchema<any>);
+        if (!(value as any).isOptional(_)) {
+          required.push(_key);
         }
       });
       
@@ -419,7 +419,7 @@ export class ApiDocumentationGenerator {
     return { type: 'object' };
   }
 
-  addEndpoint(endpoint: ApiEndpointDoc): void {
+  addEndpoint(_endpoint: ApiEndpointDoc): void {
     if (!this.spec.paths[endpoint.path]) {
       this.spec.paths[endpoint.path] = {};
     }
@@ -436,20 +436,20 @@ export class ApiDocumentationGenerator {
     };
   }
 
-  generateSpec(): OpenAPISpec {
+  generateSpec(_): OpenAPISpec {
     // Add all documented endpoints
-    this.addAuthenticationEndpoints();
-    this.addUserEndpoints();
-    this.addCourseEndpoints();
-    this.addSettingsEndpoints();
-    this.addSearchEndpoints();
-    this.addErrorEndpoints();
-    this.addMetricsEndpoints();
+    this.addAuthenticationEndpoints(_);
+    this.addUserEndpoints(_);
+    this.addCourseEndpoints(_);
+    this.addSettingsEndpoints(_);
+    this.addSearchEndpoints(_);
+    this.addErrorEndpoints(_);
+    this.addMetricsEndpoints(_);
     
     return this.spec;
   }
 
-  private addAuthenticationEndpoints(): void {
+  private addAuthenticationEndpoints(_): void {
     this.addEndpoint({
       path: '/auth/login',
       method: 'POST',
@@ -593,48 +593,48 @@ export class ApiDocumentationGenerator {
     });
   }
 
-  private addUserEndpoints(): void {
+  private addUserEndpoints(_): void {
     // Add user-related endpoints
   }
 
-  private addCourseEndpoints(): void {
+  private addCourseEndpoints(_): void {
     // Add course-related endpoints
   }
 
-  private addSettingsEndpoints(): void {
+  private addSettingsEndpoints(_): void {
     // Add settings-related endpoints
   }
 
-  private addSearchEndpoints(): void {
+  private addSearchEndpoints(_): void {
     // Add search-related endpoints
   }
 
-  private addErrorEndpoints(): void {
+  private addErrorEndpoints(_): void {
     // Add error reporting endpoints
   }
 
-  private addMetricsEndpoints(): void {
+  private addMetricsEndpoints(_): void {
     // Add metrics endpoints
   }
 
-  private capitalize(str: string): string {
+  private capitalize(_str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  exportToJson(): string {
-    return JSON.stringify(this.generateSpec(), null, 2);
+  exportToJson(_): string {
+    return JSON.stringify(_this.generateSpec(), null, 2);
   }
 
-  exportToYaml(): string {
+  exportToYaml(_): string {
     // In a real implementation, you'd use a YAML library
-    return JSON.stringify(this.generateSpec(), null, 2);
+    return JSON.stringify(_this.generateSpec(), null, 2);
   }
 }
 
 // Create and export the documentation generator
-export const apiDocumentation = new ApiDocumentationGenerator();
+export const apiDocumentation = new ApiDocumentationGenerator(_);
 
 // Generate the complete OpenAPI specification
 export function generateApiDocumentation(): OpenAPISpec {
-  return apiDocumentation.generateSpec();
+  return apiDocumentation.generateSpec(_);
 }

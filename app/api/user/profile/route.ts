@@ -7,7 +7,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -47,13 +47,13 @@ export async function GET(_request: NextRequest) {
     let currentLevel = 1;
     let skillLevel = 'BEGINNER';
     
-    if (totalXP >= 10000) {
-      currentLevel = Math.floor(totalXP / 2000) + 1;
+    if (_totalXP >= 10000) {
+      currentLevel = Math.floor(_totalXP / 2000) + 1;
       skillLevel = 'EXPERT';
-    } else if (totalXP >= 5000) {
+    } else if (_totalXP >= 5000) {
       currentLevel = Math.floor((totalXP - 5000) / 1000) + 6;
       skillLevel = 'ADVANCED';
-    } else if (totalXP >= 1000) {
+    } else if (_totalXP >= 1000) {
       currentLevel = Math.floor((totalXP - 1000) / 800) + 2;
       skillLevel = 'INTERMEDIATE';
     }
@@ -93,7 +93,7 @@ export async function GET(_request: NextRequest) {
       },
     };
 
-    return NextResponse.json(profileData);
+    return NextResponse.json(_profileData);
   } catch (error) {
     logger.error('Error fetching user profile', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
 
         // Check for level up
         const newLevel = Math.floor(updatedProfile.totalXP / 1000) + 1;
-        if (newLevel > updatedProfile.currentLevel) {
+        if (_newLevel > updatedProfile.currentLevel) {
           await prisma.userProfile.update({
             where: { userId: session.user.id },
             data: { currentLevel: newLevel },
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
 
         if (profile) {
           const lastActiveDate = new Date(profile.lastActiveDate);
-          const daysDiff = Math.floor((today.getTime() - lastActiveDate.getTime()) / (1000 * 60 * 60 * 24));
+          const daysDiff = Math.floor((today.getTime() - lastActiveDate.getTime(_)) / (1000 * 60 * 60 * 24));
           
           let newStreak = profile.streak;
           if (daysDiff === 1) {

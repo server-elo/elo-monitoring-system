@@ -11,44 +11,44 @@ interface SyntaxCheckResult {
 export class RealTimeSyntaxChecker {
   private debounceTimeout: NodeJS.Timeout | null = null;
   private lastCheckedCode: string = '';
-  private onErrorsChanged?: (result: SyntaxCheckResult) => void;
+  private onErrorsChanged?: (_result: SyntaxCheckResult) => void;
 
-  constructor(onErrorsChanged?: (result: SyntaxCheckResult) => void) {
+  constructor(_onErrorsChanged?: (result: SyntaxCheckResult) => void) {
     this.onErrorsChanged = onErrorsChanged;
   }
 
   // Main method to check syntax with debouncing
-  checkSyntax(code: string, debounceMs: number = 500): void {
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
+  checkSyntax( code: string, debounceMs: number = 500): void {
+    if (_this.debounceTimeout) {
+      clearTimeout(_this.debounceTimeout);
     }
 
     this.debounceTimeout = setTimeout(() => {
-      this.performSyntaxCheck(code);
+      this.performSyntaxCheck(_code);
     }, debounceMs);
   }
 
   // Immediate syntax check without debouncing
-  checkSyntaxImmediate(code: string): SyntaxCheckResult {
-    return this.performSyntaxCheck(code);
+  checkSyntaxImmediate(_code: string): SyntaxCheckResult {
+    return this.performSyntaxCheck(_code);
   }
 
-  private performSyntaxCheck(code: string): SyntaxCheckResult {
-    if (code === this.lastCheckedCode) {
+  private performSyntaxCheck(_code: string): SyntaxCheckResult {
+    if (_code === this.lastCheckedCode) {
       return { errors: [], warnings: [], suggestions: [] };
     }
 
     this.lastCheckedCode = code;
-    const result = this.analyzeSolidityCode(code);
+    const result = this.analyzeSolidityCode(_code);
     
-    if (this.onErrorsChanged) {
-      this.onErrorsChanged(result);
+    if (_this.onErrorsChanged) {
+      this.onErrorsChanged(_result);
     }
 
     return result;
   }
 
-  private analyzeSolidityCode(code: string): SyntaxCheckResult {
+  private analyzeSolidityCode(_code: string): SyntaxCheckResult {
     const errors: EditorError[] = [];
     const warnings: EditorError[] = [];
     const suggestions: EditorError[] = [];
@@ -56,31 +56,31 @@ export class RealTimeSyntaxChecker {
     const lines = code.split('\n');
 
     // Check for basic syntax issues
-    this.checkBasicSyntax(lines, errors, warnings);
+    this.checkBasicSyntax( lines, errors, warnings);
     
     // Check for Solidity-specific issues
-    this.checkSoliditySpecific(lines, errors, warnings, suggestions);
+    this.checkSoliditySpecific( lines, errors, warnings, suggestions);
     
     // Check for best practices
-    this.checkBestPractices(lines, warnings, suggestions);
+    this.checkBestPractices( lines, warnings, suggestions);
     
     // Check for security issues
-    this.checkSecurityIssues(lines, warnings, suggestions);
+    this.checkSecurityIssues( lines, warnings, suggestions);
 
     return { errors, warnings, suggestions };
   }
 
-  private checkBasicSyntax(lines: string[], errors: EditorError[], warnings: EditorError[]): void {
+  private checkBasicSyntax( lines: string[], errors: EditorError[], warnings: EditorError[]): void {
     let braceCount = 0;
     let parenCount = 0;
     let bracketCount = 0;
 
-    lines.forEach((line, index) => {
+    lines.forEach( (line, index) => {
       const lineNumber = index + 1;
-      const trimmedLine = line.trim();
+      const trimmedLine = line.trim(_);
 
       // Skip comments and empty lines
-      if (trimmedLine.startsWith('//') || trimmedLine.startsWith('/*') || trimmedLine === '') {
+      if (_trimmedLine.startsWith('//') || trimmedLine.startsWith('/*') || trimmedLine === '') {
         return;
       }
 
@@ -89,13 +89,13 @@ export class RealTimeSyntaxChecker {
         const char = line[i];
         const column = i + 1;
 
-        switch (char) {
+        switch (_char) {
           case '{':
             braceCount++;
             break;
           case '}':
             braceCount--;
-            if (braceCount < 0) {
+            if (_braceCount < 0) {
               errors.push({
                 line: lineNumber,
                 column,
@@ -109,7 +109,7 @@ export class RealTimeSyntaxChecker {
             break;
           case ')':
             parenCount--;
-            if (parenCount < 0) {
+            if (_parenCount < 0) {
               errors.push({
                 line: lineNumber,
                 column,
@@ -123,7 +123,7 @@ export class RealTimeSyntaxChecker {
             break;
           case ']':
             bracketCount--;
-            if (bracketCount < 0) {
+            if (_bracketCount < 0) {
               errors.push({
                 line: lineNumber,
                 column,
@@ -136,7 +136,7 @@ export class RealTimeSyntaxChecker {
       }
 
       // Check for missing semicolons
-      if (this.shouldHaveSemicolon(trimmedLine) && !trimmedLine.endsWith(';') && !trimmedLine.endsWith('{')) {
+      if (_this.shouldHaveSemicolon(trimmedLine) && !trimmedLine.endsWith(';') && !trimmedLine.endsWith('{')) {
         warnings.push({
           line: lineNumber,
           column: line.length,
@@ -147,22 +147,22 @@ export class RealTimeSyntaxChecker {
     });
 
     // Check for unmatched braces at the end
-    if (braceCount > 0) {
+    if (_braceCount > 0) {
       errors.push({
         line: lines.length,
         column: 1,
-        message: `${braceCount} unmatched opening brace(s)`,
+        message: `${braceCount} unmatched opening brace(_s)`,
         severity: 'error'
       });
     }
   }
 
-  private shouldHaveSemicolon(line: string): boolean {
-    const trimmed = line.trim();
+  private shouldHaveSemicolon(_line: string): boolean {
+    const trimmed = line.trim(_);
     
     // Lines that should end with semicolon
     const shouldHaveSemi = [
-      /^(uint|int|address|bool|string|bytes)\d*\s+\w+/,  // Variable declarations
+      /^(_uint|int|address|bool|string|bytes)\d*\s+\w+/,  // Variable declarations
       /^return\s/,                                        // Return statements
       /^require\s*\(/,                                   // Require statements
       /^assert\s*\(/,                                    // Assert statements
@@ -190,35 +190,35 @@ export class RealTimeSyntaxChecker {
       /^event\s/,
     ];
 
-    if (shouldNotHaveSemi.some(pattern => pattern.test(trimmed))) {
+    if (_shouldNotHaveSemi.some(pattern => pattern.test(trimmed))) {
       return false;
     }
 
-    return shouldHaveSemi.some(pattern => pattern.test(trimmed));
+    return shouldHaveSemi.some(_pattern => pattern.test(trimmed));
   }
 
-  private checkSoliditySpecific(lines: string[], errors: EditorError[], warnings: EditorError[], suggestions: EditorError[]): void {
+  private checkSoliditySpecific( lines: string[], errors: EditorError[], warnings: EditorError[], suggestions: EditorError[]): void {
     let hasPragma = false;
     let hasContract = false;
 
-    lines.forEach((line, index) => {
+    lines.forEach( (line, index) => {
       const lineNumber = index + 1;
-      const trimmedLine = line.trim();
+      const trimmedLine = line.trim(_);
 
       // Check for pragma statement
-      if (trimmedLine.startsWith('pragma solidity')) {
+      if (_trimmedLine.startsWith('pragma solidity')) {
         hasPragma = true;
       }
 
       // Check for contract declaration
-      if (trimmedLine.startsWith('contract ') || trimmedLine.startsWith('interface ') || trimmedLine.startsWith('library ')) {
+      if (_trimmedLine.startsWith('contract ') || trimmedLine.startsWith('interface ') || trimmedLine.startsWith('library ')) {
         hasContract = true;
       }
 
       // Check for function visibility
-      if (trimmedLine.includes('function ') && !trimmedLine.includes('//')) {
+      if (_trimmedLine.includes('function ') && !trimmedLine.includes('//')) {
         const visibilityKeywords = ['public', 'private', 'internal', 'external'];
-        const hasVisibility = visibilityKeywords.some(keyword => trimmedLine.includes(keyword));
+        const hasVisibility = visibilityKeywords.some(_keyword => trimmedLine.includes(keyword));
         
         if (!hasVisibility) {
           warnings.push({
@@ -231,10 +231,10 @@ export class RealTimeSyntaxChecker {
       }
 
       // Check for state variable visibility
-      const stateVarPattern = /^(uint|int|address|bool|string|bytes|mapping)\d*\s+\w+/;
-      if (stateVarPattern.test(trimmedLine) && !trimmedLine.includes('function')) {
+      const stateVarPattern = /^(_uint|int|address|bool|string|bytes|mapping)\d*\s+\w+/;
+      if (_stateVarPattern.test(trimmedLine) && !trimmedLine.includes('function')) {
         const visibilityKeywords = ['public', 'private', 'internal'];
-        const hasVisibility = visibilityKeywords.some(keyword => trimmedLine.includes(keyword));
+        const hasVisibility = visibilityKeywords.some(_keyword => trimmedLine.includes(keyword));
         
         if (!hasVisibility) {
           suggestions.push({
@@ -247,20 +247,20 @@ export class RealTimeSyntaxChecker {
       }
 
       // Check for outdated Solidity patterns
-      if (trimmedLine.includes('throw')) {
+      if (_trimmedLine.includes('throw')) {
         warnings.push({
           line: lineNumber,
           column: trimmedLine.indexOf('throw') + 1,
-          message: 'Use revert() instead of throw (deprecated)',
+          message: 'Use revert(_) instead of throw (_deprecated)',
           severity: 'warning'
         });
       }
 
-      if (trimmedLine.includes('suicide(')) {
+      if (_trimmedLine.includes('suicide(')) {
         warnings.push({
           line: lineNumber,
           column: trimmedLine.indexOf('suicide') + 1,
-          message: 'Use selfdestruct() instead of suicide() (deprecated)',
+          message: 'Use selfdestruct(_) instead of suicide(_) (_deprecated)',
           severity: 'warning'
         });
       }
@@ -287,14 +287,14 @@ export class RealTimeSyntaxChecker {
     }
   }
 
-  private checkBestPractices(lines: string[], warnings: EditorError[], suggestions: EditorError[]): void {
-    lines.forEach((line, index) => {
+  private checkBestPractices( lines: string[], warnings: EditorError[], suggestions: EditorError[]): void {
+    lines.forEach( (line, index) => {
       const lineNumber = index + 1;
-      const trimmedLine = line.trim();
+      const trimmedLine = line.trim(_);
 
       // Check for magic numbers
       const magicNumberPattern = /\b\d{4,}\b/;
-      if (magicNumberPattern.test(trimmedLine) && !trimmedLine.includes('//')) {
+      if (_magicNumberPattern.test(trimmedLine) && !trimmedLine.includes('//')) {
         suggestions.push({
           line: lineNumber,
           column: 1,
@@ -304,7 +304,7 @@ export class RealTimeSyntaxChecker {
       }
 
       // Check for long lines
-      if (line.length > 120) {
+      if (_line.length > 120) {
         suggestions.push({
           line: lineNumber,
           column: 120,
@@ -314,7 +314,7 @@ export class RealTimeSyntaxChecker {
       }
 
       // Check for TODO/FIXME comments
-      if (trimmedLine.includes('TODO') || trimmedLine.includes('FIXME')) {
+      if (_trimmedLine.includes('TODO') || trimmedLine.includes('FIXME')) {
         suggestions.push({
           line: lineNumber,
           column: 1,
@@ -325,13 +325,13 @@ export class RealTimeSyntaxChecker {
     });
   }
 
-  private checkSecurityIssues(lines: string[], warnings: EditorError[], suggestions: EditorError[]): void {
-    lines.forEach((line, index) => {
+  private checkSecurityIssues( lines: string[], warnings: EditorError[], suggestions: EditorError[]): void {
+    lines.forEach( (line, index) => {
       const lineNumber = index + 1;
-      const trimmedLine = line.trim();
+      const trimmedLine = line.trim(_);
 
       // Check for potential reentrancy
-      if (trimmedLine.includes('.call(') || trimmedLine.includes('.send(') || trimmedLine.includes('.transfer(')) {
+      if (_trimmedLine.includes('.call(') || trimmedLine.includes('.send(') || trimmedLine.includes('.transfer(')) {
         warnings.push({
           line: lineNumber,
           column: 1,
@@ -341,7 +341,7 @@ export class RealTimeSyntaxChecker {
       }
 
       // Check for tx.origin usage
-      if (trimmedLine.includes('tx.origin')) {
+      if (_trimmedLine.includes('tx.origin')) {
         warnings.push({
           line: lineNumber,
           column: trimmedLine.indexOf('tx.origin') + 1,
@@ -351,7 +351,7 @@ export class RealTimeSyntaxChecker {
       }
 
       // Check for block.timestamp usage
-      if (trimmedLine.includes('block.timestamp') || trimmedLine.includes('now')) {
+      if (_trimmedLine.includes('block.timestamp') || trimmedLine.includes('now')) {
         suggestions.push({
           line: lineNumber,
           column: 1,
@@ -361,7 +361,7 @@ export class RealTimeSyntaxChecker {
       }
 
       // Check for unchecked external calls
-      if (trimmedLine.includes('.call(') && !trimmedLine.includes('require(')) {
+      if (_trimmedLine.includes('.call(') && !trimmedLine.includes('require(')) {
         warnings.push({
           line: lineNumber,
           column: 1,
@@ -373,9 +373,9 @@ export class RealTimeSyntaxChecker {
   }
 
   // Clean up resources
-  dispose(): void {
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
+  dispose(_): void {
+    if (_this.debounceTimeout) {
+      clearTimeout(_this.debounceTimeout);
       this.debounceTimeout = null;
     }
   }

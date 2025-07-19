@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/config';
 import { logger } from '@/lib/monitoring/simple-logger';
 
-export async function POST(_request: NextRequest) {
+export async function POST( request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -19,7 +19,7 @@ export async function POST(_request: NextRequest) {
       bytecode, 
       abi, 
       constructorArgs: _constructorArgs
-    } = await _request.json();
+    } = await request.json();
 
     if (!contractName || !address || !chainId || !transactionHash) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -36,7 +36,7 @@ export async function POST(_request: NextRequest) {
       userId: session.user.id,
       createdAt: new Date(),
       // Don't store bytecode and abi for free tier to save space
-      hasArtifacts: !!(bytecode && abi),
+      hasArtifacts: !!(_bytecode && abi),
     };
 
     return NextResponse.json({ 
@@ -57,7 +57,7 @@ export async function POST(_request: NextRequest) {
   }
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     

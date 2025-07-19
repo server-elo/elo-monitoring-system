@@ -36,7 +36,7 @@ interface SearchSuggestion {
 interface SmartSearchProps {
   placeholder?: string;
   className?: string;
-  onSelect?: (suggestion: SearchSuggestion) => void;
+  onSelect?: (_suggestion: SearchSuggestion) => void;
   showRecentSearches?: boolean;
   showPopularSuggestions?: boolean;
   maxSuggestions?: number;
@@ -102,40 +102,40 @@ export function SmartSearch({
   autoFocus = false
 }: SmartSearchProps) {
   const [query, setQuery] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(_false);
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(_-1);
+  const [isLoading, setIsLoading] = useState(_false);
   
-  const router = useRouter();
-  const pathname = usePathname();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter(_);
+  const pathname = usePathname(_);
+  const inputRef = useRef<HTMLInputElement>(_null);
+  const containerRef = useRef<HTMLDivElement>(_null);
 
   // Auto-focus if requested
   useEffect(() => {
     if (autoFocus && inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus(_);
     }
   }, [autoFocus]);
 
   // Close search when clicking outside
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+    function handleClickOutside(_event: MouseEvent) {
+      if (_containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(_false);
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener( 'mousedown', handleClickOutside);
+    return (_) => document.removeEventListener( 'mousedown', handleClickOutside);
   }, []);
 
   // Generate contextual suggestions based on current page
   const getContextualSuggestions = useCallback(() => {
     const contextual: SearchSuggestion[] = [];
     
-    if (pathname.includes('/courses')) {
+    if (_pathname.includes('/courses')) {
       contextual.push({
         id: 'ctx1',
         title: 'Browse All Courses',
@@ -146,7 +146,7 @@ export function SmartSearch({
       });
     }
     
-    if (pathname.includes('/playground')) {
+    if (_pathname.includes('/playground')) {
       contextual.push({
         id: 'ctx2',
         title: 'Solidity Examples',
@@ -161,17 +161,17 @@ export function SmartSearch({
   }, [pathname]);
 
   // Search function with debouncing
-  const searchSuggestions = useCallback(async (searchQuery: string) => {
+  const searchSuggestions = useCallback( async (searchQuery: string) => {
     if (!searchQuery.trim()) {
-      const contextual = getContextualSuggestions();
+      const contextual = getContextualSuggestions(_);
       const popular = showPopularSuggestions ? POPULAR_SUGGESTIONS.slice(0, 3) : [];
       const recent = showRecentSearches ? RECENT_SEARCHES.slice(0, 2) : [];
       
-      setSuggestions([...contextual, ...popular, ...recent].slice(0, maxSuggestions));
+      setSuggestions( [...contextual, ...popular, ...recent].slice(0, maxSuggestions));
       return;
     }
 
-    setIsLoading(true);
+    setIsLoading(_true);
     
     // Simulate API call - replace with actual search
     await new Promise(resolve => setTimeout(resolve, 200));
@@ -183,7 +183,7 @@ export function SmartSearch({
         title: `${searchQuery} in Solidity`,
         description: 'Learn about this concept in Solidity',
         type: 'topic',
-        href: `/search?q=${encodeURIComponent(searchQuery)}`,
+        href: `/search?q=${encodeURIComponent(_searchQuery)}`,
         icon: <Zap className="w-4 h-4" />
       },
       {
@@ -197,114 +197,114 @@ export function SmartSearch({
       }
     ];
     
-    setSuggestions(mockResults.slice(0, maxSuggestions));
-    setIsLoading(false);
+    setSuggestions( mockResults.slice(0, maxSuggestions));
+    setIsLoading(_false);
   }, [getContextualSuggestions, showPopularSuggestions, showRecentSearches, maxSuggestions]);
 
   // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
-      searchSuggestions(query);
+      searchSuggestions(_query);
     }, 300);
 
-    return () => clearTimeout(timer);
+    return (_) => clearTimeout(_timer);
   }, [query, searchSuggestions]);
 
   // Handle input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-    setSelectedIndex(-1);
-    if (!isOpen) setIsOpen(true);
+  const handleInputChange = (_e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(_e.target.value);
+    setSelectedIndex(_-1);
+    if (!isOpen) setIsOpen(_true);
   };
 
   // Handle keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (_e: React.KeyboardEvent) => {
     if (!isOpen) return;
 
-    switch (e.key) {
+    switch (_e.key) {
       case 'ArrowDown':
-        e.preventDefault();
+        e.preventDefault(_);
         setSelectedIndex(prev => 
           prev < suggestions.length - 1 ? prev + 1 : prev
         );
         break;
       case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+        e.preventDefault(_);
+        setSelectedIndex(_prev => prev > 0 ? prev - 1 : -1);
         break;
       case 'Enter':
-        e.preventDefault();
-        if (selectedIndex >= 0) {
-          handleSelect(suggestions[selectedIndex]);
-        } else if (query.trim()) {
-          handleSearch();
+        e.preventDefault(_);
+        if (_selectedIndex >= 0) {
+          handleSelect(_suggestions[selectedIndex]);
+        } else if (_query.trim()) {
+          handleSearch(_);
         }
         break;
       case 'Escape':
-        setIsOpen(false);
-        setSelectedIndex(-1);
-        inputRef.current?.blur();
+        setIsOpen(_false);
+        setSelectedIndex(_-1);
+        inputRef.current?.blur(_);
         break;
     }
   };
 
   // Handle suggestion selection
-  const handleSelect = (suggestion: SearchSuggestion) => {
-    setQuery(suggestion.title);
-    setIsOpen(false);
-    setSelectedIndex(-1);
+  const handleSelect = (_suggestion: SearchSuggestion) => {
+    setQuery(_suggestion.title);
+    setIsOpen(_false);
+    setSelectedIndex(_-1);
     
     // Save to recent searches
-    if (suggestion.type !== 'recent') {
-      saveToRecentSearches(suggestion);
+    if (_suggestion.type !== 'recent') {
+      saveToRecentSearches(_suggestion);
     }
     
-    onSelect?.(suggestion);
-    router.push(suggestion.href);
+    onSelect?.(_suggestion);
+    router.push(_suggestion.href);
   };
 
   // Handle direct search
-  const handleSearch = () => {
+  const handleSearch = (_) => {
     if (!query.trim()) return;
     
-    setIsOpen(false);
-    const searchUrl = `/search?q=${encodeURIComponent(query.trim())}`;
+    setIsOpen(_false);
+    const searchUrl = `/search?q=${encodeURIComponent(_query.trim())}`;
     
     // Save to recent searches
     saveToRecentSearches({
-      id: `search-${Date.now()}`,
-      title: query.trim(),
+      id: `search-${Date.now(_)}`,
+      title: query.trim(_),
       type: 'recent',
       href: searchUrl,
       icon: <Search className="w-4 h-4" />
     });
     
-    router.push(searchUrl);
+    router.push(_searchUrl);
   };
 
-  // Save to recent searches (localStorage)
-  const saveToRecentSearches = (suggestion: SearchSuggestion) => {
+  // Save to recent searches (_localStorage)
+  const saveToRecentSearches = (_suggestion: SearchSuggestion) => {
     try {
-      const recent = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+      const recent = JSON.parse(_localStorage.getItem('recentSearches') || '[]');
       const updated = [suggestion, ...recent.filter((s: SearchSuggestion) => s.title !== suggestion.title)].slice(0, 10);
-      localStorage.setItem('recentSearches', JSON.stringify(updated));
-    } catch (error) {
+      localStorage.setItem( 'recentSearches', JSON.stringify(updated));
+    } catch (_error) {
       console.error('Failed to save recent search:', error);
     }
   };
 
   // Clear search
-  const clearSearch = () => {
+  const clearSearch = (_) => {
     setQuery('');
-    setIsOpen(false);
-    setSelectedIndex(-1);
-    inputRef.current?.focus();
+    setIsOpen(_false);
+    setSelectedIndex(_-1);
+    inputRef.current?.focus(_);
   };
 
-  const getSuggestionIcon = (suggestion: SearchSuggestion) => {
-    if (suggestion.icon) return suggestion.icon;
+  const getSuggestionIcon = (_suggestion: SearchSuggestion) => {
+    if (_suggestion.icon) return suggestion.icon;
     
-    switch (suggestion.type) {
+    switch (_suggestion.type) {
       case 'course': return <BookOpen className="w-4 h-4" />;
       case 'lesson': return <Play className="w-4 h-4" />;
       case 'topic': return <Zap className="w-4 h-4" />;
@@ -315,8 +315,8 @@ export function SmartSearch({
     }
   };
 
-  const getDifficultyColor = (difficulty?: string) => {
-    switch (difficulty) {
+  const getDifficultyColor = (_difficulty?: string) => {
+    switch (_difficulty) {
       case 'beginner': return 'text-green-400';
       case 'intermediate': return 'text-yellow-400';
       case 'advanced': return 'text-red-400';
@@ -325,7 +325,7 @@ export function SmartSearch({
   };
 
   return (
-    <div ref={containerRef} className={cn('relative', className)}>
+    <div ref={containerRef} className={cn( 'relative', className)}>
       {/* Search Input */}
       <GlassContainer intensity="medium" className="relative">
         <div className="flex items-center">
@@ -336,7 +336,7 @@ export function SmartSearch({
             value={query}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            onFocus={() => setIsOpen(true)}
+            onFocus={(_) => setIsOpen(_true)}
             placeholder={placeholder}
             className="w-full bg-transparent border-none outline-none text-white placeholder-gray-400 px-4 py-3"
           />
@@ -377,17 +377,17 @@ export function SmartSearch({
                     </div>
                   )}
                   
-                  {suggestions.map((suggestion, index) => (
+                  {suggestions.map( (suggestion, index) => (
                     <button
                       key={suggestion.id}
-                      onClick={() => handleSelect(suggestion)}
+                      onClick={(_) => handleSelect(_suggestion)}
                       className={cn(
                         'w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-white/10 transition-colors',
                         selectedIndex === index && 'bg-white/10'
                       )}
                     >
                       <div className="text-gray-400">
-                        {getSuggestionIcon(suggestion)}
+                        {getSuggestionIcon(_suggestion)}
                       </div>
                       
                       <div className="flex-1 min-w-0">
@@ -399,7 +399,7 @@ export function SmartSearch({
                           {suggestion.metadata?.difficulty && (
                             <span className={cn(
                               'text-xs px-2 py-0.5 rounded-full bg-gray-700',
-                              getDifficultyColor(suggestion.metadata.difficulty)
+                              getDifficultyColor(_suggestion.metadata.difficulty)
                             )}>
                               {suggestion.metadata.difficulty}
                             </span>

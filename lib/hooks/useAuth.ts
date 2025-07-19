@@ -35,23 +35,23 @@ export interface AuthState {
 }
 
 export interface AuthActions {
-  login: (provider?: string, credentials?: { email: string; password: string }) => Promise<boolean>;
-  logout: () => Promise<void>;
-  register: (data: { name: string; email: string; password: string }) => Promise<boolean>;
-  forgotPassword: (email: string) => Promise<boolean>;
-  resetPassword: (token: string, password: string) => Promise<boolean>;
-  clearError: () => void;
-  refreshSession: () => Promise<boolean>;
-  checkPermission: (permission: string) => boolean;
-  updateProfile: (data: Partial<AuthUser>) => Promise<boolean>;
+  login: ( provider?: string, credentials?: { email: string; password: string }) => Promise<boolean>;
+  logout: (_) => Promise<void>;
+  register: (_data: { name: string; email: string; password: string }) => Promise<boolean>;
+  forgotPassword: (_email: string) => Promise<boolean>;
+  resetPassword: ( token: string, password: string) => Promise<boolean>;
+  clearError: (_) => void;
+  refreshSession: (_) => Promise<boolean>;
+  checkPermission: (_permission: string) => boolean;
+  updateProfile: (_data: Partial<AuthUser>) => Promise<boolean>;
 }
 
 export function useAuth(): AuthState & AuthActions {
-  const { data: session, status, update } = useSession();
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [sessionManager] = useState(() => SessionManager.getInstance());
+  const { data: session, status, update } = useSession(_);
+  const router = useRouter(_);
+  const [error, setError] = useState<string | null>(_null);
+  const [isLoading, setIsLoading] = useState(_false);
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
 
   // Derived state
   const user: AuthUser | null = session?.user ? {
@@ -59,7 +59,7 @@ export function useAuth(): AuthState & AuthActions {
     name: session.user.name || '',
     email: session.user.email || '',
     image: session.user.image || undefined,
-    role: (session.user as any).role || 'STUDENT',
+    role: (_session.user as any).role || 'STUDENT',
   } : null;
 
   const isAuthenticated = !!session && !!user;
@@ -73,14 +73,14 @@ export function useAuth(): AuthState & AuthActions {
         email: user.email,
         name: user.name,
         role: user.role,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-        lastActivity: new Date(),
-        createdAt: new Date(),
+        expiresAt: new Date(_Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+        lastActivity: new Date(_),
+        createdAt: new Date(_),
         deviceId: '',
         sessionId: ''
       });
     } else {
-      sessionManager.clearSession();
+      sessionManager.clearSession(_);
     }
   }, [session, user, sessionManager]);
 
@@ -89,13 +89,13 @@ export function useAuth(): AuthState & AuthActions {
     provider: string = 'credentials',
     credentials?: { email: string; password: string }
   ): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(_true);
+    setError(_null);
 
     try {
       let result;
 
-      if (provider === 'credentials' && credentials) {
+      if (_provider === 'credentials' && credentials) {
         result = await signIn('credentials', {
           email: credentials.email,
           password: credentials.password,
@@ -108,7 +108,7 @@ export function useAuth(): AuthState & AuthActions {
         });
       }
 
-      if (result?.error) {
+      if (_result?.error) {
         setError(result.error === 'CredentialsSignin' 
           ? 'Invalid email or password' 
           : 'Authentication failed'
@@ -116,25 +116,25 @@ export function useAuth(): AuthState & AuthActions {
         return false;
       }
 
-      if (result?.ok) {
+      if (_result?.ok) {
         // Refresh the session to get updated user data
-        await update();
+        await update(_);
         return true;
       }
 
       return false;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+    } catch (_err) {
+      setError(_err instanceof Error ? err.message : 'Login failed');
       return false;
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, [update]);
 
   // Logout function
-  const logout = useCallback(async (): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
+  const logout = useCallback( async (): Promise<void> => {
+    setIsLoading(_true);
+    setError(_null);
 
     try {
       await signOut({ 
@@ -142,10 +142,10 @@ export function useAuth(): AuthState & AuthActions {
         callbackUrl: '/' 
       });
       router.push('/');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Logout failed');
+    } catch (_err) {
+      setError(_err instanceof Error ? err.message : 'Logout failed');
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, [router]);
 
@@ -155,8 +155,8 @@ export function useAuth(): AuthState & AuthActions {
     email: string;
     password: string;
   }): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(_true);
+    setError(_null);
 
     try {
       const response = await fetch('/api/auth/register', {
@@ -164,13 +164,13 @@ export function useAuth(): AuthState & AuthActions {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(_data),
       });
 
-      const result = await response.json();
+      const result = await response.json(_);
 
       if (!response.ok) {
-        setError(result.error || 'Registration failed');
+        setError(_result.error || 'Registration failed');
         return false;
       }
 
@@ -181,33 +181,33 @@ export function useAuth(): AuthState & AuthActions {
       });
 
       return loginSuccess;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
+    } catch (_err) {
+      setError(_err instanceof Error ? err.message : 'Registration failed');
       return false;
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, [login]);
 
   // Clear error function
   const clearError = useCallback(() => {
-    setError(null);
+    setError(_null);
   }, []);
 
   // Enhanced refresh session function
-  const refreshSession = useCallback(async (): Promise<boolean> => {
+  const refreshSession = useCallback( async (): Promise<boolean> => {
     try {
       // Try SessionManager refresh first
-      const sessionRefreshed = await sessionManager.refreshSession();
+      const sessionRefreshed = await sessionManager.refreshSession(_);
       if (sessionRefreshed) {
-        await update();
+        await update(_);
         return true;
       }
 
       // Fallback to NextAuth update
-      await update();
+      await update(_);
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Session refresh failed:', error);
       return false;
     }
@@ -215,57 +215,57 @@ export function useAuth(): AuthState & AuthActions {
 
   // Get session status
   const getSessionStatus = useCallback((): SessionStatus => {
-    return sessionManager.getSessionStatus();
+    return sessionManager.getSessionStatus(_);
   }, [sessionManager]);
 
   // Add session status listener
   const addSessionStatusListener = useCallback((listener: (status: SessionStatus) => void) => {
-    return sessionManager.addStatusListener(listener);
+    return sessionManager.addStatusListener(_listener);
   }, [sessionManager]);
 
   // Add session event listener
   const addSessionEventListener = useCallback((listener: (event: any) => void) => {
-    return sessionManager.addEventListener(listener);
+    return sessionManager.addEventListener(_listener);
   }, [sessionManager]);
 
   // Forgot password function
-  const forgotPassword = useCallback(async (email: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+  const forgotPassword = useCallback( async (email: string): Promise<boolean> => {
+    setIsLoading(_true);
+    setError(_null);
 
     try {
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email  }),
       });
 
-      const result = await response.json();
+      const result = await response.json(_);
 
       if (!response.ok) {
-        if (response.status === 404) {
+        if (_response.status === 404) {
           setError('No account found with this email address');
-        } else if (response.status === 429) {
+        } else if (_response.status === 429) {
           setError('Too many requests. Please wait before trying again');
         } else {
-          setError(result.error || 'Failed to send reset email');
+          setError(_result.error || 'Failed to send reset email');
         }
         return false;
       }
 
       return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send reset email');
+    } catch (_err) {
+      setError(_err instanceof Error ? err.message : 'Failed to send reset email');
       return false;
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, []);
 
   // Reset password function
-  const resetPassword = useCallback(async (token: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+  const resetPassword = useCallback( async (token: string, password: string): Promise<boolean> => {
+    setIsLoading(_true);
+    setError(_null);
 
     try {
       const response = await fetch('/api/auth/reset-password', {
@@ -274,23 +274,23 @@ export function useAuth(): AuthState & AuthActions {
         body: JSON.stringify({ token, password }),
       });
 
-      const result = await response.json();
+      const result = await response.json(_);
 
       if (!response.ok) {
-        if (response.status === 400) {
+        if (_response.status === 400) {
           setError('Invalid or expired reset token');
         } else {
-          setError(result.error || 'Failed to reset password');
+          setError(_result.error || 'Failed to reset password');
         }
         return false;
       }
 
       return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to reset password');
+    } catch (_err) {
+      setError(_err instanceof Error ? err.message : 'Failed to reset password');
       return false;
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, []);
 
@@ -339,32 +339,32 @@ export function useAuth(): AuthState & AuthActions {
   }, [user]);
 
   // Update profile function
-  const updateProfile = useCallback(async (data: Partial<AuthUser>): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+  const updateProfile = useCallback( async (data: Partial<AuthUser>): Promise<boolean> => {
+    setIsLoading(_true);
+    setError(_null);
 
     try {
       const response = await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(_data),
       });
 
-      const result = await response.json();
+      const result = await response.json(_);
 
       if (!response.ok) {
-        setError(result.error || 'Failed to update profile');
+        setError(_result.error || 'Failed to update profile');
         return false;
       }
 
       // Refresh session to get updated user data
-      await update();
+      await update(_);
       return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
+    } catch (_err) {
+      setError(_err instanceof Error ? err.message : 'Failed to update profile');
       return false;
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   }, [update]);
 
@@ -393,7 +393,7 @@ export function useAuth(): AuthState & AuthActions {
 
 // Permission checking hook
 export function usePermissions() {
-  const { user } = useAuth();
+  const { user } = useAuth(_);
 
   const hasPermission = useCallback((permission: string): boolean => {
     if (!user) return false;
@@ -441,8 +441,8 @@ export function usePermissions() {
   const hasRole = useCallback((role: string | string[]): boolean => {
     if (!user) return false;
     
-    if (Array.isArray(role)) {
-      return role.includes(user.role);
+    if (_Array.isArray(role)) {
+      return role.includes(_user.role);
     }
     
     return user.role === role;
@@ -473,7 +473,7 @@ export function usePermissions() {
 
 // Authentication status hook
 export function useAuthStatus() {
-  const { status } = useSession();
+  const { status } = useSession(_);
   
   return {
     isLoading: status === 'loading',

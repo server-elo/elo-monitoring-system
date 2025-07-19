@@ -8,19 +8,19 @@ import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 
 interface AnalyticsMetric {
-  label: string;
-  value: string | number;
-  change: number;
-  trend: 'up' | 'down' | 'neutral';
-  icon: React.ComponentType<any>;
-  color: string;
+  label: string; 
+  value: string | number; 
+  change: number; 
+  trend: 'up' | 'down' | 'neutral'; 
+  icon: React.ComponentType<any>; 
+  color: string; 
 }
 
 interface ChartData {
-  labels: string[];
-  datasets: {
-    label: string;
-    data: number[];
+  labels: string[]; 
+  datasets: { 
+    label: string; 
+    data: number[]; 
     borderColor?: string;
     backgroundColor?: string;
     fill?: boolean;
@@ -31,7 +31,7 @@ interface UserAnalyticsProps {
   className?: string;
 }
 
-function MetricCard({ metric }: { metric: AnalyticsMetric }) {
+function MetricCard(_{ metric }: { metric: AnalyticsMetric }) {
   const Icon = metric.icon;
   
   return (
@@ -41,26 +41,26 @@ function MetricCard({ metric }: { metric: AnalyticsMetric }) {
           <p className="text-gray-400 text-sm font-medium">{metric.label}</p>
           <p className="text-2xl font-bold text-white mt-1">{metric.value}</p>
           <div className={cn(
-            'flex items-center mt-2 text-sm',
+            'flex items-center mt-2 text-sm' 
             metric.trend === 'up' ? 'text-green-400' : 
             metric.trend === 'down' ? 'text-red-400' : 'text-gray-400'
-          )}>
+         )}>
             {metric.trend === 'up' ? (
               <TrendingUp className="w-4 h-4 mr-1" />
-            ) : metric.trend === 'down' ? (
+           ) : metric.trend === 'down' ? (
               <TrendingDown className="w-4 h-4 mr-1" />
-            ) : (
+           ) : (
               <Activity className="w-4 h-4 mr-1" />
-            )}
-            <span>{Math.abs(metric.change)}% from last month</span>
+           )}
+            <span>{Math.abs(_metric.change)}% from last month</span>
           </div>
         </div>
-        <div className={cn('p-3 rounded-full', metric.color)}>
+        <div className={cn("'p-3 rounded-full', metric.color)}>
           <Icon className="w-6 h-6 text-white" />
         </div>
       </div>
     </Card>
-  );
+ );
 }
 
 function SimpleChart({ title, data, type: _type = 'line' }: { title: string; data: ChartData; type?: 'line' | 'bar' | 'pie' }) {
@@ -86,7 +86,7 @@ function SimpleChart({ title, data, type: _type = 'line' }: { title: string; dat
         {data.labels.map((label, index) => {
           const value = data.datasets[0]?.data[index] || 0;
           const maxValue = Math.max(...(data.datasets[0]?.data || [0]));
-          const height = (value / maxValue) * 100;
+          const height = (_value / maxValue) * 100;
           
           return (
             <div key={label} className="flex-1 flex flex-col items-center">
@@ -97,18 +97,18 @@ function SimpleChart({ title, data, type: _type = 'line' }: { title: string; dat
               />
               <span className="text-xs text-gray-400 mt-2 text-center">{label}</span>
             </div>
-          );
+         );
         })}
       </div>
     </Card>
-  );
+ );
 }
 
 function UserSegmentChart() {
   const segments = [
-    { label: 'Active Students', value: 68, color: 'bg-green-500' },
-    { label: 'Inactive Students', value: 22, color: 'bg-yellow-500' },
-    { label: 'Instructors', value: 8, color: 'bg-blue-500' },
+    { label: 'Active Students', value: 68, color: 'bg-green-500' } 
+    { label: 'Inactive Students', value: 22, color: 'bg-yellow-500' } 
+    { label: 'Instructors', value: 8, color: 'bg-blue-500' } 
     { label: 'Admins', value: 2, color: 'bg-purple-500' }
   ];
 
@@ -120,31 +120,31 @@ function UserSegmentChart() {
         {segments.map((segment) => (
           <div key={segment.label} className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className={cn('w-3 h-3 rounded-full', segment.color)} />
+              <div className={cn("'w-3 h-3 rounded-full', segment.color)} />
               <span className="text-gray-300">{segment.label}</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
                 <div 
-                  className={cn('h-full transition-all duration-500', segment.color)}
+                  className={cn("'h-full transition-all duration-500', segment.color)}
                   style={{ width: `${segment.value}%` }}
                 />
               </div>
               <span className="text-white font-medium w-8 text-right">{segment.value}%</span>
             </div>
           </div>
-        ))}
+       ))}
       </div>
     </Card>
-  );
+ );
 }
 
 function TopPerformers() {
   const performers = [
-    { name: 'Alice Johnson', xp: 4250, lessons: 32, score: 96 },
-    { name: 'Bob Smith', xp: 3890, lessons: 28, score: 94 },
-    { name: 'Carol Davis', xp: 3650, lessons: 26, score: 92 },
-    { name: 'David Wilson', xp: 3420, lessons: 24, score: 91 },
+    { name: 'Alice Johnson', xp: 4250, lessons: 32, score: 96 } 
+    { name: 'Bob Smith', xp: 3890, lessons: 28, score: 94 } 
+    { name: 'Carol Davis', xp: 3650, lessons: 26, score: 92 } 
+    { name: 'David Wilson', xp: 3420, lessons: 24, score: 91 } 
     { name: 'Eva Brown', xp: 3180, lessons: 22, score: 89 }
   ];
 
@@ -174,82 +174,82 @@ function TopPerformers() {
               <div className="text-sm text-green-400">{performer.score}% avg</div>
             </div>
           </div>
-        ))}
+       ))}
       </div>
     </Card>
-  );
+ );
 }
 
-export function UserAnalytics({ className }: UserAnalyticsProps) {
+export function UserAnalytics(_{ className }: UserAnalyticsProps) {
   const [timeRange, setTimeRange] = useState('30d');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(_false);
 
   const metrics: AnalyticsMetric[] = [
     {
-      label: 'Total Users',
-      value: '1,247',
-      change: 12.5,
-      trend: 'up',
-      icon: Users,
-      color: 'bg-blue-500'
-    },
+      label: 'Total Users' 
+      value: '1,247' 
+      change: 12.5 
+      trend: 'up' 
+      icon: Users 
+      color: 'bg-blue-500' 
+    } 
     {
-      label: 'Active Users',
-      value: '892',
-      change: 8.3,
-      trend: 'up',
-      icon: Activity,
-      color: 'bg-green-500'
-    },
+      label: 'Active Users' 
+      value: '892' 
+      change: 8.3 
+      trend: 'up' 
+      icon: Activity 
+      color: 'bg-green-500' 
+    } 
     {
-      label: 'Avg. Session Time',
-      value: '24m',
-      change: -2.1,
-      trend: 'down',
-      icon: Clock,
-      color: 'bg-orange-500'
-    },
+      label: 'Avg. Session Time' 
+      value: '24m' 
+      change: -2.1 
+      trend: 'down' 
+      icon: Clock 
+      color: 'bg-orange-500' 
+    } 
     {
-      label: 'Completion Rate',
-      value: '78.5%',
-      change: 5.7,
-      trend: 'up',
-      icon: Target,
-      color: 'bg-purple-500'
+      label: 'Completion Rate' 
+      value: '78.5%' 
+      change: 5.7 
+      trend: 'up' 
+      icon: Target 
+      color: 'bg-purple-500' 
     }
   ];
 
   const userGrowthData: ChartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [{
-      label: 'New Users',
-      data: [45, 67, 89, 123, 156, 189],
-      borderColor: '#3B82F6',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
-      fill: true
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] 
+    datasets: [{ 
+      label: 'New Users' 
+      data: [45, 67, 89, 123, 156, 189] 
+      borderColor: '#3B82F6' 
+      backgroundColor: 'rgba(9, 130, 246, 0.1)' 
+      fill: true 
     }]
   };
 
   const engagementData: ChartData = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-    datasets: [{
-      label: 'Engagement Score',
-      data: [72, 78, 85, 82],
-      borderColor: '#10B981',
-      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-      fill: true
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'] 
+    datasets: [{ 
+      label: 'Engagement Score' 
+      data: [72, 78, 85, 82] 
+      borderColor: '#10B981' 
+      backgroundColor: 'rgba(6, 185, 129, 0.1)' 
+      fill: true 
     }]
   };
 
   const handleRefresh = async () => {
-    setLoading(true);
+    setLoading(_true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    setLoading(false);
+    setLoading(_false);
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("'space-y-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -259,7 +259,7 @@ export function UserAnalytics({ className }: UserAnalyticsProps) {
         <div className="flex space-x-3">
           <select
             value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value)}
+            onChange={(_e) => setTimeRange(_e.target.value)}
             className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400"
           >
             <option value="7d">Last 7 days</option>
@@ -273,7 +273,7 @@ export function UserAnalytics({ className }: UserAnalyticsProps) {
             variant="outline"
             className="border-white/20 text-white hover:bg-white/10"
           >
-            <RefreshCw className={cn('w-4 h-4 mr-2', loading && 'animate-spin')} />
+            <RefreshCw className={cn("'w-4 h-4 mr-2', loading && 'animate-spin')} />
             Refresh
           </Button>
           <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
@@ -294,7 +294,7 @@ export function UserAnalytics({ className }: UserAnalyticsProps) {
           >
             <MetricCard metric={metric} />
           </motion.div>
-        ))}
+       ))}
       </div>
 
       {/* Charts Grid */}
@@ -328,5 +328,5 @@ export function UserAnalytics({ className }: UserAnalyticsProps) {
         </div>
       </Card>
     </div>
-  );
+ );
 }

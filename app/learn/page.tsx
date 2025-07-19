@@ -5,9 +5,9 @@ import dynamic from 'next/dynamic';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 // Dynamically import LearningDashboard with SSR disabled to prevent build errors
-const LearningDashboard = dynamic(() => import('@/components/learning/LearningDashboard').then(mod => ({ default: mod.LearningDashboard })), {
+const LearningDashboard = dynamic(() => import('@/components/learning/LearningDashboard').then(_mod => ({ default: mod.LearningDashboard })), {
   ssr: false,
-  loading: () => <LoadingSpinner />
+  loading: (_) => <LoadingSpinner />
 });
 
 export default function LearnPage() {

@@ -52,11 +52,11 @@ export function LoadingSpinner({
   const sizeClass = sizeClasses[size];
   const colorClass = colorClasses[color];
 
-  const renderSpinner = () => {
-    switch (variant) {
+  const renderSpinner = (_) => {
+    switch (_variant) {
       case 'dots':
         return (
-          <div className={cn('flex space-x-1', className)}>
+          <div className={cn( 'flex space-x-1', className)}>
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
@@ -84,7 +84,7 @@ export function LoadingSpinner({
       case 'pulse':
         return (
           <motion.div
-            className={cn('rounded-full bg-current', sizeClass, colorClass, className)}
+            className={cn( 'rounded-full bg-current', sizeClass, colorClass, className)}
             animate={{
               scale: [1, 1.2, 1],
               opacity: [0.5, 1, 0.5]
@@ -99,7 +99,7 @@ export function LoadingSpinner({
 
       case 'bounce':
         return (
-          <div className={cn('flex space-x-1', className)}>
+          <div className={cn( 'flex space-x-1', className)}>
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
@@ -153,7 +153,7 @@ export function LoadingSpinner({
               repeat: Infinity,
               ease: 'linear'
             }}
-            className={cn(sizeClass, colorClass, className)}
+            className={cn( sizeClass, colorClass, className)}
           >
             <RotateCw className="w-full h-full" />
           </motion.div>
@@ -168,7 +168,7 @@ export function LoadingSpinner({
               repeat: Infinity,
               ease: 'linear'
             }}
-            className={cn(sizeClass, colorClass, className)}
+            className={cn( sizeClass, colorClass, className)}
           >
             <Loader2 className="w-full h-full" />
           </motion.div>
@@ -176,14 +176,14 @@ export function LoadingSpinner({
     }
   };
 
-  const spinner = renderSpinner();
+  const spinner = renderSpinner(_);
 
   if (!text) {
     return spinner;
   }
 
   const textElement = (
-    <span className={cn('text-sm font-medium', colorClass)}>
+    <span className={cn( 'text-sm font-medium', colorClass)}>
       {text}
     </span>
   );
@@ -201,13 +201,13 @@ export function LoadingSpinner({
     <div className={containerClass}>
       {textPosition === 'top' && textElement}
       {spinner}
-      {(textPosition === 'bottom' || textPosition === 'right' || textPosition === 'left') && textElement}
+      {(_textPosition === 'bottom' || textPosition === 'right' || textPosition === 'left') && textElement}
     </div>
   );
 }
 
 // Preset loading components for common use cases
-export function ButtonLoadingSpinner({ className, ...props }: Omit<LoadingSpinnerProps, 'size' | 'variant'>) {
+export function ButtonLoadingSpinner( { className, ...props }: Omit<LoadingSpinnerProps, 'size' | 'variant'>) {
   return (
     <LoadingSpinner
       {...props}
@@ -218,7 +218,7 @@ export function ButtonLoadingSpinner({ className, ...props }: Omit<LoadingSpinne
   );
 }
 
-export function PageLoadingSpinner({ className, ...props }: Omit<LoadingSpinnerProps, 'size' | 'variant'>) {
+export function PageLoadingSpinner( { className, ...props }: Omit<LoadingSpinnerProps, 'size' | 'variant'>) {
   return (
     <LoadingSpinner
       {...props}

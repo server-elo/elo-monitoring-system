@@ -20,7 +20,7 @@ interface TestProvidersProps {
   children: ReactNode;
 }
 
-export const TestProviders = ({ children }: TestProvidersProps) => {
+export const TestProviders = (_{ children }: TestProvidersProps) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -33,7 +33,7 @@ export const TestProviders = ({ children }: TestProvidersProps) => {
     },
   });
 
-  return React.createElement(QueryClientProvider, { client: queryClient }, children);
+  return React.createElement( QueryClientProvider, { client: queryClient }, children);
 };
 
 // Custom render function with providers
@@ -48,20 +48,20 @@ export const renderWithProviders = (
 };
 
 // Time utilities
-export const waitFor = (ms: number = 0): Promise<void> => 
+export const waitFor = (_ms: number = 0): Promise<void> => 
   new Promise(resolve => setTimeout(resolve, ms));
 
-export const waitForNextTick = (): Promise<void> => 
-  new Promise(resolve => process.nextTick(resolve));
+export const waitForNextTick = (_): Promise<void> => 
+  new Promise(_resolve => process.nextTick(resolve));
 
-export const waitForMacroTask = (): Promise<void> => 
+export const waitForMacroTask = (_): Promise<void> => 
   new Promise(resolve => setTimeout(resolve, 0));
 
 // DOM utilities
-export const createMockElement = (tagName: string = 'div', attributes: Record<string, string> = {}) => {
-  const element = document.createElement(tagName);
-  Object.entries(attributes).forEach(([key, value]) => {
-    element.setAttribute(key, value);
+export const createMockElement = ( tagName: string = 'div', attributes: Record<string, string> = {}) => {
+  const element = document.createElement(_tagName);
+  Object.entries(_attributes).forEach( ([key, value]) => {
+    element.setAttribute( key, value);
   });
   return element;
 };
@@ -71,7 +71,7 @@ export const createMockFile = (
   content: string = 'pragma solidity ^0.8.0;\n\ncontract Test {}',
   type: string = 'text/plain'
 ) => {
-  return new File([content], name, { type });
+  return new File( [content], name, { type });
 };
 
 // Mock fetch utilities
@@ -84,25 +84,25 @@ export const createMockResponse = <T>(
     ok: status >= 200 && status < 300,
     status,
     statusText: status === 200 ? 'OK' : 'Error',
-    headers: new Headers(headers),
-    json: vi.fn().mockResolvedValue(data),
-    text: vi.fn().mockResolvedValue(JSON.stringify(data)),
-    blob: vi.fn().mockResolvedValue(new Blob([JSON.stringify(data)])),
-    arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(0)),
-    clone: vi.fn(),
+    headers: new Headers(_headers),
+    json: vi.fn(_).mockResolvedValue(_data),
+    text: vi.fn(_).mockResolvedValue(_JSON.stringify(data)),
+    blob: vi.fn(_).mockResolvedValue(_new Blob([JSON.stringify(data)])),
+    arrayBuffer: vi.fn(_).mockResolvedValue(_new ArrayBuffer(0)),
+    clone: vi.fn(_),
   } as unknown as Response;
 
   return response;
 };
 
-export const mockFetch = (responses: Response[] | Response) => {
-  const responseArray = Array.isArray(responses) ? responses : [responses];
+export const mockFetch = (_responses: Response[] | Response) => {
+  const responseArray = Array.isArray(_responses) ? responses : [responses];
   let callCount = 0;
 
-  global.fetch = vi.fn().mockImplementation(() => {
+  global.fetch = vi.fn(_).mockImplementation(() => {
     const response = responseArray[callCount] || responseArray[responseArray.length - 1];
     callCount++;
-    return Promise.resolve(response);
+    return Promise.resolve(_response);
   });
 
   return global.fetch;
@@ -110,20 +110,20 @@ export const mockFetch = (responses: Response[] | Response) => {
 
 // Error testing utilities
 export const expectToThrow = async (
-  fn: () => Promise<any> | any,
+  fn: (_) => Promise<any> | any,
   expectedError?: string | RegExp | Error
 ) => {
   try {
-    await fn();
-    throw new Error('Expected function to throw, but it did not');
-  } catch (error) {
+    await fn(_);
+    throw new Error( 'Expected function to throw, but it did not');
+  } catch (_error) {
     if (expectedError) {
-      if (typeof expectedError === 'string') {
-        expect((error as Error).message).toContain(expectedError);
-      } else if (expectedError instanceof RegExp) {
-        expect((error as Error).message).toMatch(expectedError);
-      } else if (expectedError instanceof Error) {
-        expect(error).toEqual(expectedError);
+      if (_typeof expectedError === 'string') {
+        expect((error as Error).message).toContain(_expectedError);
+      } else if (_expectedError instanceof RegExp) {
+        expect((error as Error).message).toMatch(_expectedError);
+      } else if (_expectedError instanceof Error) {
+        expect(_error).toEqual(_expectedError);
       }
     }
     return error;
@@ -136,15 +136,15 @@ export const expectToReject = async (
 ) => {
   try {
     await promise;
-    throw new Error('Expected promise to reject, but it resolved');
-  } catch (error) {
+    throw new Error( 'Expected promise to reject, but it resolved');
+  } catch (_error) {
     if (expectedError) {
-      if (typeof expectedError === 'string') {
-        expect((error as Error).message).toContain(expectedError);
-      } else if (expectedError instanceof RegExp) {
-        expect((error as Error).message).toMatch(expectedError);
-      } else if (expectedError instanceof Error) {
-        expect(error).toEqual(expectedError);
+      if (_typeof expectedError === 'string') {
+        expect((error as Error).message).toContain(_expectedError);
+      } else if (_expectedError instanceof RegExp) {
+        expect((error as Error).message).toMatch(_expectedError);
+      } else if (_expectedError instanceof Error) {
+        expect(_error).toEqual(_expectedError);
       }
     }
     return error;
@@ -156,8 +156,8 @@ export const createMockImplementation = <T extends (...args: any[]) => any>(
   defaultReturn: ReturnType<T>,
   implementations: Record<string, ReturnType<T>> = {}
 ) => {
-  return vi.fn().mockImplementation((...args: Parameters<T>) => {
-    const key = JSON.stringify(args);
+  return vi.fn(_).mockImplementation((...args: Parameters<T>) => {
+    const key = JSON.stringify(_args);
     return implementations[key] || defaultReturn;
   });
 };
@@ -167,72 +167,72 @@ export const createAsyncMockImplementation = <T extends (...args: any[]) => Prom
   implementations: Record<string, Awaited<ReturnType<T>>> = {},
   delay: number = 0
 ) => {
-  return vi.fn().mockImplementation(async (...args: Parameters<T>) => {
-    if (delay > 0) {
-      await waitFor(delay);
+  return vi.fn(_).mockImplementation( async (...args: Parameters<T>) => {
+    if (_delay > 0) {
+      await waitFor(_delay);
     }
-    const key = JSON.stringify(args);
+    const key = JSON.stringify(_args);
     return implementations[key] || defaultReturn;
   });
 };
 
 // Test data state management
 class TestDataStore {
-  private data = new Map<string, any>();
+  private data = new Map<string, any>(_);
 
-  set<T>(key: string, value: T): void {
-    this.data.set(key, value);
+  set<T>( key: string, value: T): void {
+    this.data.set( key, value);
   }
 
-  get<T>(key: string): T | undefined {
-    return this.data.get(key);
+  get<T>(_key: string): T | undefined {
+    return this.data.get(_key);
   }
 
-  has(key: string): boolean {
-    return this.data.has(key);
+  has(_key: string): boolean {
+    return this.data.has(_key);
   }
 
-  delete(key: string): boolean {
-    return this.data.delete(key);
+  delete(_key: string): boolean {
+    return this.data.delete(_key);
   }
 
-  clear(): void {
-    this.data.clear();
+  clear(_): void {
+    this.data.clear(_);
   }
 
-  keys(): string[] {
-    return Array.from(this.data.keys());
+  keys(_): string[] {
+    return Array.from(_this.data.keys());
   }
 
-  values<T>(): T[] {
-    return Array.from(this.data.values());
+  values<T>(_): T[] {
+    return Array.from(_this.data.values());
   }
 
-  entries<T>(): [string, T][] {
-    return Array.from(this.data.entries());
+  entries<T>(_): [string, T][] {
+    return Array.from(_this.data.entries());
   }
 }
 
-export const testDataStore = new TestDataStore();
+export const testDataStore = new TestDataStore(_);
 
 // Console utilities for testing
-export const suppressConsole = () => {
+export const suppressConsole = (_) => {
   const originalConsole = { ...console };
   
   beforeAll(() => {
-    console.log = vi.fn();
-    console.warn = vi.fn();
-    console.error = vi.fn();
-    console.info = vi.fn();
-    console.debug = vi.fn();
+    console.log = vi.fn(_);
+    console.warn = vi.fn(_);
+    console.error = vi.fn(_);
+    console.info = vi.fn(_);
+    console.debug = vi.fn(_);
   });
 
   afterAll(() => {
-    Object.assign(console, originalConsole);
+    Object.assign( console, originalConsole);
   });
 };
 
-export const captureConsole = () => {
+export const captureConsole = (_) => {
   const logs: string[] = [];
   const warnings: string[] = [];
   const errors: string[] = [];
@@ -240,24 +240,24 @@ export const captureConsole = () => {
   const originalConsole = { ...console };
 
   beforeAll(() => {
-    console.log = vi.fn((...args) => logs.push(args.join(' ')));
-    console.warn = vi.fn((...args) => warnings.push(args.join(' ')));
-    console.error = vi.fn((...args) => errors.push(args.join(' ')));
+    console.log = vi.fn((...args) => logs.push(_args.join(' ')));
+    console.warn = vi.fn((...args) => warnings.push(_args.join(' ')));
+    console.error = vi.fn((...args) => errors.push(_args.join(' ')));
   });
 
   afterAll(() => {
-    Object.assign(console, originalConsole);
+    Object.assign( console, originalConsole);
   });
 
   return { logs, warnings, errors };
 };
 
 // Environment utilities
-export const withEnvironment = (env: Record<string, string>) => {
+export const withEnvironment = ( env: Record<string, string>) => {
   const originalEnv = { ...process.env };
 
   beforeAll(() => {
-    Object.assign(process.env, env);
+    Object.assign( process.env, env);
   });
 
   afterAll(() => {
@@ -265,11 +265,11 @@ export const withEnvironment = (env: Record<string, string>) => {
   });
 };
 
-export const mockEnvironment = (env: Record<string, string>) => {
+export const mockEnvironment = ( env: Record<string, string>) => {
   const originalEnv = { ...process.env };
-  Object.assign(process.env, env);
+  Object.assign( process.env, env);
   
-  return () => {
+  return (_) => {
     process.env = originalEnv;
   };
 };
@@ -281,13 +281,13 @@ export const mockDate = (date: Date | string | number) => {
 
   beforeAll(() => {
     global.Date = class extends Date {
-      constructor() {
-        super();
+      constructor(_) {
+        super(_);
         return mockDateValue;
       }
       
-      static now() {
-        return mockDateValue.getTime();
+      static now(_) {
+        return mockDateValue.getTime(_);
       }
     } as any;
   });
@@ -301,60 +301,60 @@ export const mockDate = (date: Date | string | number) => {
 
 export const freezeTime = (date: Date | string | number = new Date()) => {
   const frozenDate = new Date(date);
-  vi.useFakeTimers();
-  vi.setSystemTime(frozenDate);
+  vi.useFakeTimers(_);
+  vi.setSystemTime(_frozenDate);
   
   return {
-    unfreeze: () => {
-      vi.useRealTimers();
+    unfreeze: (_) => {
+      vi.useRealTimers(_);
     },
-    advance: (ms: number) => {
-      vi.advanceTimersByTime(ms);
+    advance: (_ms: number) => {
+      vi.advanceTimersByTime(_ms);
     },
-    set: (newDate: Date | string | number) => {
+    set: (_newDate: Date | string | number) => {
       vi.setSystemTime(new Date(newDate));
     },
   };
 };
 
 // Random data utilities with consistent seeding
-export const seedRandom = (seed: string = 'test-seed') => {
-  faker.seed(seed.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0));
+export const seedRandom = (_seed: string = 'test-seed') => {
+  faker.seed(_seed.split('').reduce( (acc, char) => acc + char.charCodeAt(0), 0));
 };
 
-export const resetRandom = () => {
-  faker.seed();
+export const resetRandom = (_) => {
+  faker.seed(_);
 };
 
 // Test isolation utilities
-export const isolateTest = () => {
+export const isolateTest = (_) => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    testDataStore.clear();
-    seedRandom();
+    vi.clearAllMocks(_);
+    testDataStore.clear(_);
+    seedRandom(_);
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.restoreAllMocks(_);
   });
 };
 
 // Retry utilities for flaky tests
 export const retryTest = async (
-  testFn: () => Promise<void> | void,
+  testFn: (_) => Promise<void> | void,
   maxRetries: number = 3,
   delay: number = 100
 ) => {
   let lastError: Error | undefined;
 
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+  for (_let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      await testFn();
+      await testFn(_);
       return; // Success
-    } catch (error) {
+    } catch (_error) {
       lastError = error as Error;
-      if (attempt < maxRetries) {
-        await waitFor(delay);
+      if (_attempt < maxRetries) {
+        await waitFor(_delay);
       }
     }
   }
@@ -363,27 +363,27 @@ export const retryTest = async (
 };
 
 // Memory leak detection utilities
-export const detectMemoryLeaks = () => {
+export const detectMemoryLeaks = (_) => {
   let initialMemory: NodeJS.MemoryUsage;
 
   beforeAll(() => {
-    if (global.gc) {
-      global.gc();
+    if (_global.gc) {
+      global.gc(_);
     }
     initialMemory = process.memoryUsage();
   });
 
   afterAll(() => {
-    if (global.gc) {
-      global.gc();
+    if (_global.gc) {
+      global.gc(_);
     }
     const finalMemory = process.memoryUsage();
     const heapGrowth = finalMemory.heapUsed - initialMemory.heapUsed;
     
     // Allow some growth but flag significant increases
     const maxAllowedGrowth = 50 * 1024 * 1024; // 50MB
-    if (heapGrowth > maxAllowedGrowth) {
-      console.warn(`Potential memory leak detected: Heap grew by ${Math.round(heapGrowth / 1024 / 1024)}MB`);
+    if (_heapGrowth > maxAllowedGrowth) {
+      console.warn(_`Potential memory leak detected: Heap grew by ${Math.round(heapGrowth / 1024 / 1024)}MB`);
     }
   });
 };

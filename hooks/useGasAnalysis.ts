@@ -27,12 +27,12 @@ interface UseGasAnalysisReturn {
   isAnalyzing: boolean;
   lastError: Error | null;
   analyzer: GasOptimizationAnalyzer | null;
-  performAnalysis: () => Promise<void>;
-  clearResults: () => void;
-  toggleHeatmap: (enabled: boolean) => void;
-  applyOptimization: (optimization: GasOptimization) => Promise<boolean>;
-  jumpToOptimization: (optimization: GasOptimization) => void;
-  getGasMetrics: () => GasMetrics;
+  performAnalysis: (_) => Promise<void>;
+  clearResults: (_) => void;
+  toggleHeatmap: (_enabled: boolean) => void;
+  applyOptimization: (_optimization: GasOptimization) => Promise<boolean>;
+  jumpToOptimization: (_optimization: GasOptimization) => void;
+  getGasMetrics: (_) => GasMetrics;
 }
 
 interface GasMetrics {
@@ -52,15 +52,15 @@ export function useGasAnalysis(
   userId: string,
   options: UseGasAnalysisOptions = {}
 ): UseGasAnalysisReturn {
-  const [analysisResult, setAnalysisResult] = useState<GasAnalysisResult | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [lastError, setLastError] = useState<Error | null>(null);
-  const [analyzer, setAnalyzer] = useState<GasOptimizationAnalyzer | null>(null);
-  const [heatmapEnabled, setHeatmapEnabled] = useState(options.enableHeatmap ?? false);
+  const [analysisResult, setAnalysisResult] = useState<GasAnalysisResult | null>(_null);
+  const [isAnalyzing, setIsAnalyzing] = useState(_false);
+  const [lastError, setLastError] = useState<Error | null>(_null);
+  const [analyzer, setAnalyzer] = useState<GasOptimizationAnalyzer | null>(_null);
+  const [heatmapEnabled, setHeatmapEnabled] = useState(_options.enableHeatmap ?? false);
   
-  const analyzerRef = useRef<GasOptimizationAnalyzer | null>(null);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const optionsRef = useRef(options);
+  const analyzerRef = useRef<GasOptimizationAnalyzer | null>(_null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(_null);
+  const optionsRef = useRef(_options);
 
   // Update options ref when options change
   useEffect(() => {
@@ -74,49 +74,49 @@ export function useGasAnalysis(
     }
 
     try {
-      const newAnalyzer = new GasOptimizationAnalyzer(editorInstance);
-      setAnalyzer(newAnalyzer);
+      const newAnalyzer = new GasOptimizationAnalyzer(_editorInstance);
+      setAnalyzer(_newAnalyzer);
       analyzerRef.current = newAnalyzer;
 
       // Setup auto-analysis if enabled
-      if (options.autoAnalyze) {
-        const model = editorInstance.getModel();
+      if (_options.autoAnalyze) {
+        const model = editorInstance.getModel(_);
         if (model) {
           const disposable = model.onDidChangeContent(() => {
-            scheduleAnalysis();
+            scheduleAnalysis(_);
           });
 
-          return () => {
-            disposable.dispose();
-            newAnalyzer.dispose();
+          return (_) => {
+            disposable.dispose(_);
+            newAnalyzer.dispose(_);
             analyzerRef.current = null;
           };
         }
       }
 
-      return () => {
-        newAnalyzer.dispose();
+      return (_) => {
+        newAnalyzer.dispose(_);
         analyzerRef.current = null;
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to initialize gas analyzer:', error);
-      setLastError(error instanceof Error ? error : new Error('Analyzer initialization failed'));
+      setLastError(_error instanceof Error ? error : new Error('Analyzer initialization failed'));
     }
   }, [editorInstance, options.autoAnalyze]);
 
   // Schedule analysis with debouncing
   const scheduleAnalysis = useCallback(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
+    if (_debounceTimerRef.current) {
+      clearTimeout(_debounceTimerRef.current);
     }
 
     debounceTimerRef.current = setTimeout(() => {
-      performAnalysis().catch(console.error);
+      performAnalysis(_).catch(_console.error);
     }, options.debounceMs ?? 3000); // 3 second debounce for gas analysis
   }, [options.debounceMs]);
 
   // Perform gas analysis
-  const performAnalysis = useCallback(async () => {
+  const performAnalysis = useCallback( async () => {
     if (!analyzerRef.current || !userId) {
       throw new Error('Analyzer not initialized or user ID missing');
     }
@@ -126,53 +126,53 @@ export function useGasAnalysis(
     }
 
     try {
-      setIsAnalyzing(true);
-      setLastError(null);
+      setIsAnalyzing(_true);
+      setLastError(_null);
 
-      const result = await analyzerRef.current.analyzeGasUsage(userId);
-      setAnalysisResult(result);
+      const result = await analyzerRef.current.analyzeGasUsage(_userId);
+      setAnalysisResult(_result);
 
       // Apply heatmap if enabled
       if (heatmapEnabled) {
-        analyzerRef.current.applyHeatmapVisualization(result);
+        analyzerRef.current.applyHeatmapVisualization(_result);
       }
 
-      console.log(`✅ Gas analysis completed: ${result.optimizations.length} optimizations found`);
-    } catch (error) {
+      console.log(_`✅ Gas analysis completed: ${result.optimizations.length} optimizations found`);
+    } catch (_error) {
       const errorObj = error instanceof Error ? error : new Error('Gas analysis failed');
-      setLastError(errorObj);
+      setLastError(_errorObj);
       console.error('Gas analysis failed:', errorObj);
       throw errorObj;
     } finally {
-      setIsAnalyzing(false);
+      setIsAnalyzing(_false);
     }
   }, [userId, isAnalyzing, heatmapEnabled]);
 
   // Clear analysis results
   const clearResults = useCallback(() => {
-    setAnalysisResult(null);
-    setLastError(null);
-    setIsAnalyzing(false);
+    setAnalysisResult(_null);
+    setLastError(_null);
+    setIsAnalyzing(_false);
     
-    if (analyzerRef.current) {
-      analyzerRef.current.clearCache();
+    if (_analyzerRef.current) {
+      analyzerRef.current.clearCache(_);
     }
   }, []);
 
   // Toggle heatmap visualization
   const toggleHeatmap = useCallback((enabled: boolean) => {
-    setHeatmapEnabled(enabled);
+    setHeatmapEnabled(_enabled);
     
-    if (analyzerRef.current && analysisResult) {
+    if (_analyzerRef.current && analysisResult) {
       if (enabled) {
-        analyzerRef.current.applyHeatmapVisualization(analysisResult);
+        analyzerRef.current.applyHeatmapVisualization(_analysisResult);
       } else {
         // Clear heatmap decorations
-        analyzerRef.current.dispose();
+        analyzerRef.current.dispose(_);
         // Reinitialize without heatmap
         if (editorInstance) {
-          const newAnalyzer = new GasOptimizationAnalyzer(editorInstance);
-          setAnalyzer(newAnalyzer);
+          const newAnalyzer = new GasOptimizationAnalyzer(_editorInstance);
+          setAnalyzer(_newAnalyzer);
           analyzerRef.current = newAnalyzer;
         }
       }
@@ -180,13 +180,13 @@ export function useGasAnalysis(
   }, [analysisResult, editor]);
 
   // Apply a gas optimization
-  const applyOptimization = useCallback(async (optimization: GasOptimization): Promise<boolean> => {
+  const applyOptimization = useCallback( async (optimization: GasOptimization): Promise<boolean> => {
     if (!editor || !optimization.autoFixAvailable) {
       return false;
     }
 
     try {
-      const model = editorInstance.getModel();
+      const model = editorInstance.getModel(_);
       if (!model) return false;
 
       // Apply the optimization
@@ -205,11 +205,11 @@ export function useGasAnalysis(
 
       // Trigger re-analysis after a short delay
       setTimeout(() => {
-        performAnalysis().catch(console.error);
+        performAnalysis(_).catch(_console.error);
       }, 1000);
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to apply optimization:', error);
       return false;
     }
@@ -226,9 +226,9 @@ export function useGasAnalysis(
       optimization.endColumn
     );
 
-    editorInstance.setSelection(range);
-    editorInstance.revealRangeInCenter(range);
-    editorInstance.focus();
+    editorInstance.setSelection(_range);
+    editorInstance.revealRangeInCenter(_range);
+    editorInstance.focus(_);
   }, [editor]);
 
   // Calculate gas metrics
@@ -250,7 +250,7 @@ export function useGasAnalysis(
     const optimizations = analysisResult.optimizations;
     const totalCost = analysisResult.totalGasCost;
     const potentialSavings = analysisResult.totalSavings;
-    const savingsPercentage = totalCost > 0 ? (potentialSavings / totalCost) * 100 : 0;
+    const savingsPercentage = totalCost > 0 ? (_potentialSavings / totalCost) * 100 : 0;
 
     const easyOptimizations = optimizations.filter(opt => opt.difficulty === 'easy').length;
     const mediumOptimizations = optimizations.filter(opt => opt.difficulty === 'medium').length;
@@ -276,9 +276,9 @@ export function useGasAnalysis(
 
   // Cleanup on unmount
   useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
+    return (_) => {
+      if (_debounceTimerRef.current) {
+        clearTimeout(_debounceTimerRef.current);
       }
     };
   }, []);
@@ -298,7 +298,7 @@ export function useGasAnalysis(
 }
 
 // Custom hook for gas optimization recommendations
-export function useGasOptimizationRecommendations(analysisResult: GasAnalysisResult | null) {
+export function useGasOptimizationRecommendations(_analysisResult: GasAnalysisResult | null) {
   const recommendations = [];
 
   if (!analysisResult) {
@@ -312,29 +312,29 @@ export function useGasOptimizationRecommendations(analysisResult: GasAnalysisRes
   };
 
   // High gas cost warning
-  if (metrics.totalCost > 1000000) {
+  if (_metrics.totalCost > 1000000) {
     recommendations.push({
       type: 'warning',
       title: 'High Gas Cost Detected',
-      message: `Total gas cost of ${(metrics.totalCost / 1000000).toFixed(1)}M is very high. Consider major optimizations.`,
+      message: `Total gas cost of ${(_metrics.totalCost / 1000000).toFixed(1)}M is very high. Consider major optimizations.`,
       priority: 'high'
     });
   }
 
   // Easy wins available
   const easyOptimizations = metrics.optimizations.filter(opt => opt.difficulty === 'easy');
-  if (easyOptimizations.length > 0) {
+  if (_easyOptimizations.length > 0) {
     recommendations.push({
       type: 'success',
       title: 'Easy Optimizations Available',
-      message: `${easyOptimizations.length} easy optimization${easyOptimizations.length !== 1 ? 's' : ''} can save ${easyOptimizations.reduce((sum, opt) => sum + opt.savings, 0)} gas.`,
+      message: `${easyOptimizations.length} easy optimization${easyOptimizations.length !== 1 ? 's' : ''} can save ${easyOptimizations.reduce( (sum, opt) => sum + opt.savings, 0)} gas.`,
       priority: 'medium'
     });
   }
 
   // High impact optimizations
   const highImpactOptimizations = metrics.optimizations.filter(opt => opt.impact === 'high');
-  if (highImpactOptimizations.length > 0) {
+  if (_highImpactOptimizations.length > 0) {
     recommendations.push({
       type: 'info',
       title: 'High Impact Optimizations',
@@ -345,7 +345,7 @@ export function useGasOptimizationRecommendations(analysisResult: GasAnalysisRes
 
   // Storage optimization focus
   const storageOptimizations = metrics.optimizations.filter(opt => opt.category === 'storage');
-  if (storageOptimizations.length > 2) {
+  if (_storageOptimizations.length > 2) {
     recommendations.push({
       type: 'info',
       title: 'Storage Optimization Focus',
@@ -355,7 +355,7 @@ export function useGasOptimizationRecommendations(analysisResult: GasAnalysisRes
   }
 
   // Good optimization coverage
-  if (metrics.savings > 0 && (metrics.savings / metrics.totalCost) > 0.2) {
+  if (_metrics.savings > 0 && (metrics.savings / metrics.totalCost) > 0.2) {
     recommendations.push({
       type: 'success',
       title: 'Good Optimization Potential',
@@ -364,7 +364,7 @@ export function useGasOptimizationRecommendations(analysisResult: GasAnalysisRes
     });
   }
 
-  return recommendations.sort((a, b) => {
+  return recommendations.sort( (a, b) => {
     const priorityOrder = { high: 3, medium: 2, low: 1 };
     return priorityOrder[b.priority] - priorityOrder[a.priority];
   });

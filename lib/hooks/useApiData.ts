@@ -95,28 +95,28 @@ interface CommunityStats {
 }
 
 // Custom hook for user progress data
-export const useUserProgress = () => {
-  const [progress, setProgress] = useState<UserProgress | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
+export const useUserProgress = (_) => {
+  const [progress, setProgress] = useState<UserProgress | null>(_null);
+  const [loading, setLoading] = useState(_true);
+  const [error, setError] = useState<string | null>(_null);
+  const { isAuthenticated } = useAuth(_);
+  const { toast } = useToast(_);
 
-  const fetchProgress = useCallback(async () => {
+  const fetchProgress = useCallback( async () => {
     if (!isAuthenticated) {
-      setLoading(false);
+      setLoading(_false);
       return;
     }
 
     try {
-      setLoading(true);
+      setLoading(_true);
       const response = await fetch('/api/user/progress');
       
       if (!response.ok) {
         throw new Error('Failed to fetch user progress');
       }
 
-      const data = await response.json();
+      const data = await response.json(_);
       
       // Transform API response to UserProgress interface
       const transformedProgress: UserProgress = {
@@ -132,51 +132,51 @@ export const useUserProgress = () => {
         badges: data.achievements?.map((a: any) => a.achievement.title) || []
       };
 
-      setProgress(transformedProgress);
-      setError(null);
-    } catch (err) {
+      setProgress(_transformedProgress);
+      setError(_null);
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
+      setError(_errorMessage);
       toast({
         title: 'Error loading progress',
         description: errorMessage,
         variant: 'destructive'
       });
     } finally {
-      setLoading(false);
+      setLoading(_false);
     }
   }, [isAuthenticated, toast]);
 
   useEffect(() => {
-    fetchProgress();
+    fetchProgress(_);
   }, [fetchProgress]);
 
   return { progress, loading, error, refetch: fetchProgress };
 };
 
 // Custom hook for achievements data
-export const useAchievements = () => {
+export const useAchievements = (_) => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
+  const [loading, setLoading] = useState(_true);
+  const [error, setError] = useState<string | null>(_null);
+  const { isAuthenticated } = useAuth(_);
+  const { toast } = useToast(_);
 
-  const fetchAchievements = useCallback(async () => {
+  const fetchAchievements = useCallback( async () => {
     if (!isAuthenticated) {
-      setLoading(false);
+      setLoading(_false);
       return;
     }
 
     try {
-      setLoading(true);
+      setLoading(_true);
       const response = await fetch('/api/achievements');
       
       if (!response.ok) {
         throw new Error('Failed to fetch achievements');
       }
 
-      const data = await response.json();
+      const data = await response.json(_);
       
       // Transform API response to Achievement interface
       const transformedAchievements: Achievement[] = data.achievements.map((a: any) => ({
@@ -186,26 +186,26 @@ export const useAchievements = () => {
         category: a.category.toLowerCase(),
         xpReward: a.xpReward,
         unlocked: a.isUnlocked,
-        unlockedAt: a.unlockedAt ? new Date(a.unlockedAt) : undefined,
+        unlockedAt: a.unlockedAt ? new Date(_a.unlockedAt) : undefined,
         rarity: a.rarity?.toLowerCase() || 'common'
       }));
 
-      setAchievements(transformedAchievements);
-      setError(null);
-    } catch (err) {
+      setAchievements(_transformedAchievements);
+      setError(_null);
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
+      setError(_errorMessage);
       toast({
         title: 'Error loading achievements',
         description: errorMessage,
         variant: 'destructive'
       });
     } finally {
-      setLoading(false);
+      setLoading(_false);
     }
   }, [isAuthenticated, toast]);
 
-  const claimAchievement = useCallback(async (achievementId: string) => {
+  const claimAchievement = useCallback( async (achievementId: string) => {
     try {
       const response = await fetch('/api/achievements', {
         method: 'POST',
@@ -217,12 +217,12 @@ export const useAchievements = () => {
         throw new Error('Failed to claim achievement');
       }
 
-      const data = await response.json();
+      const data = await response.json(_);
       
       // Update local state
       setAchievements(prev => prev.map(a => 
         a.id === achievementId 
-          ? { ...a, unlocked: true, unlockedAt: new Date() }
+          ? { ...a, unlocked: true, unlockedAt: new Date(_) }
           : a
       ));
 
@@ -232,7 +232,7 @@ export const useAchievements = () => {
       });
 
       return data;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       toast({
         title: 'Error claiming achievement',
@@ -244,116 +244,116 @@ export const useAchievements = () => {
   }, [toast]);
 
   useEffect(() => {
-    fetchAchievements();
+    fetchAchievements(_);
   }, [fetchAchievements]);
 
   return { achievements, loading, error, refetch: fetchAchievements, claimAchievement };
 };
 
 // Custom hook for learning paths data
-export const useLearningPaths = () => {
+export const useLearningPaths = (_) => {
   const [learningPaths, setLearningPaths] = useState<LearningPath[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
+  const [loading, setLoading] = useState(_true);
+  const [error, setError] = useState<string | null>(_null);
+  const { isAuthenticated } = useAuth(_);
 
   // Log authentication status for debugging
   useEffect(() => {
     console.log('Learning progress fetch - authenticated:', isAuthenticated);
   }, [isAuthenticated]);
-  const { toast } = useToast();
+  const { toast } = useToast(_);
 
-  const fetchLearningPaths = useCallback(async () => {
+  const fetchLearningPaths = useCallback( async () => {
     try {
-      setLoading(true);
+      setLoading(_true);
       const response = await fetch('/api/learning-paths');
       
       if (!response.ok) {
         throw new Error('Failed to fetch learning paths');
       }
 
-      const data = await response.json();
-      setLearningPaths(data.learningPaths || []);
-      setError(null);
-    } catch (err) {
+      const data = await response.json(_);
+      setLearningPaths(_data.learningPaths || []);
+      setError(_null);
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
+      setError(_errorMessage);
       toast({
         title: 'Error loading learning paths',
         description: errorMessage,
         variant: 'destructive'
       });
     } finally {
-      setLoading(false);
+      setLoading(_false);
     }
   }, [toast]);
 
   useEffect(() => {
-    fetchLearningPaths();
+    fetchLearningPaths(_);
   }, [fetchLearningPaths]);
 
   return { learningPaths, loading, error, refetch: fetchLearningPaths };
 };
 
 // Custom hook for projects data
-export const useProjects = () => {
+export const useProjects = (_) => {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
+  const [loading, setLoading] = useState(_true);
+  const [error, setError] = useState<string | null>(_null);
+  const { isAuthenticated } = useAuth(_);
+  const { toast } = useToast(_);
 
   // Log authentication status for projects fetch
   useEffect(() => {
     console.log('Projects fetch - authenticated:', isAuthenticated);
   }, [isAuthenticated]);
 
-  const fetchProjects = useCallback(async () => {
+  const fetchProjects = useCallback( async () => {
     try {
-      setLoading(true);
+      setLoading(_true);
       const response = await fetch('/api/projects');
       
       if (!response.ok) {
         throw new Error('Failed to fetch projects');
       }
 
-      const data = await response.json();
-      setProjects(data.projects || []);
-      setError(null);
-    } catch (err) {
+      const data = await response.json(_);
+      setProjects(_data.projects || []);
+      setError(_null);
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
+      setError(_errorMessage);
       toast({
         title: 'Error loading projects',
         description: errorMessage,
         variant: 'destructive'
       });
     } finally {
-      setLoading(false);
+      setLoading(_false);
     }
   }, [toast]);
 
   useEffect(() => {
-    fetchProjects();
+    fetchProjects(_);
   }, [fetchProjects]);
 
   return { projects, loading, error, refetch: fetchProjects };
 };
 
 // Custom hook for community stats
-export const useCommunityStats = () => {
+export const useCommunityStats = (_) => {
   const [stats, setStats] = useState<CommunityStats>({
     onlineUsers: 0,
     studyGroups: 0,
     mentorsAvailable: 0,
     activeCollaborations: 0
   });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
+  const [loading, setLoading] = useState(_true);
+  const [error, setError] = useState<string | null>(_null);
+  const { toast } = useToast(_);
 
   // Enhanced error handling with toast notifications
-  const showErrorToast = useCallback((error: any, operation: string) => {
+  const showErrorToast = useCallback( (error: any, operation: string) => {
     const errorMessage = error?.message || `Failed to ${operation}`;
     toast({
       title: "Operation Failed",
@@ -365,39 +365,39 @@ export const useCommunityStats = () => {
     console.error(`API Error in ${operation}:`, error);
   }, [toast]);
 
-  const fetchStats = useCallback(async () => {
+  const fetchStats = useCallback( async () => {
     try {
-      setLoading(true);
+      setLoading(_true);
       const response = await fetch('/api/community/stats');
       
       if (!response.ok) {
         throw new Error('Failed to fetch community stats');
       }
 
-      const data = await response.json();
-      setStats(data.stats);
-      setError(null);
-    } catch (err) {
+      const data = await response.json(_);
+      setStats(_data.stats);
+      setError(_null);
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
+      setError(_errorMessage);
       // Enhanced error handling with optional toast for debugging
       console.log('Community stats fetch error:', errorMessage);
 
       // Use toast for debugging when needed
-      if (process.env.NODE_ENV === 'development') {
-        showErrorToast(err, 'fetch community stats');
+      if (_process.env.NODE_ENV === 'development') {
+        showErrorToast( err, 'fetch community stats');
       }
     } finally {
-      setLoading(false);
+      setLoading(_false);
     }
   }, []);
 
   useEffect(() => {
-    fetchStats();
+    fetchStats(_);
     
     // Refresh stats every 30 seconds
-    const interval = setInterval(fetchStats, 30000);
-    return () => clearInterval(interval);
+    const interval = setInterval( fetchStats, 30000);
+    return (_) => clearInterval(_interval);
   }, [fetchStats]);
 
   return { stats, loading, error, refetch: fetchStats };

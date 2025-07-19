@@ -61,7 +61,7 @@ const mockCertificates: Certificate[] = [
     metadata: {
       courseId: 'course_solidity_fundamentals',
       completionTime: 40,
-      instructorId: 'instructor_1'
+      instructorId: 'instructor1'
     }
   },
   {
@@ -102,7 +102,7 @@ const mockCertificates: Certificate[] = [
   }
 ];
 
-async function getCertificateHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function getCertificateHandler( request: NextRequest, { params }: { params: { id: string } }) {
   const requestId = generateRequestId();
   
   try {
@@ -122,10 +122,10 @@ async function getCertificateHandler(request: NextRequest, { params }: { params:
     const certificate = mockCertificates.find(cert => cert.id === id);
     
     if (!certificate) {
-      return notFoundResponse('Certificate', requestId);
+      return notFoundResponse( 'Certificate', requestId);
     }
 
-    // Check if this is a public certificate request (no auth required for public URLs)
+    // Check if this is a public certificate request (_no auth required for public URLs)
     const url = new URL(request.url);
     const isPublicRequest = url.searchParams.get('public') === 'true';
     
@@ -158,7 +158,7 @@ async function getCertificateHandler(request: NextRequest, { params }: { params:
     } else {
       // For public requests, only return verified certificates
       if (!certificate.verified) {
-        return notFoundResponse('Certificate', requestId);
+        return notFoundResponse( 'Certificate', requestId);
       }
       
       // For public access, remove sensitive information
@@ -208,7 +208,7 @@ async function getCertificateHandler(request: NextRequest, { params }: { params:
   }
 }
 
-async function updateCertificateHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function updateCertificateHandler( request: NextRequest, { params }: { params: { id: string } }) {
   const requestId = generateRequestId();
   
   try {
@@ -237,10 +237,10 @@ async function updateCertificateHandler(request: NextRequest, { params }: { para
     }
 
     // Find certificate
-    const certificateIndex = mockCertificates.findIndex(cert => cert.id === id);
+    const certificateIndex = mockCertificates.findIndex(_cert => cert.id === id);
     
     if (certificateIndex === -1) {
-      return notFoundResponse('Certificate', requestId);
+      return notFoundResponse( 'Certificate', requestId);
     }
 
     const certificate = mockCertificates[certificateIndex];
@@ -290,7 +290,7 @@ async function updateCertificateHandler(request: NextRequest, { params }: { para
   }
 }
 
-async function deleteCertificateHandler(_request: NextRequest, { params }: { params: { id: string } }) {
+async function deleteCertificateHandler( request: NextRequest, { params }: { params: { id: string } }) {
   const requestId = generateRequestId();
   
   try {
@@ -319,15 +319,15 @@ async function deleteCertificateHandler(_request: NextRequest, { params }: { par
     }
 
     // Find certificate
-    const certificateIndex = mockCertificates.findIndex(cert => cert.id === id);
+    const certificateIndex = mockCertificates.findIndex(_cert => cert.id === id);
     
     if (certificateIndex === -1) {
-      return notFoundResponse('Certificate', requestId);
+      return notFoundResponse( 'Certificate', requestId);
     }
 
     const certificate = mockCertificates[certificateIndex];
 
-    // Check if user can delete this certificate (usually restricted)
+    // Check if user can delete this certificate (_usually restricted)
     if (certificate.userId !== session.user.id) {
       return errorResponse(
         ApiErrorCode.FORBIDDEN,
@@ -360,6 +360,6 @@ async function deleteCertificateHandler(_request: NextRequest, { params }: { par
 }
 
 // Route handlers
-export const GET = withErrorHandling(getCertificateHandler);
-export const PUT = withErrorHandling(updateCertificateHandler);
-export const DELETE = withErrorHandling(deleteCertificateHandler);
+export const GET = withErrorHandling(_getCertificateHandler);
+export const PUT = withErrorHandling(_updateCertificateHandler);
+export const DELETE = withErrorHandling(_deleteCertificateHandler);

@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils';
 
 export interface PrivacySectionProps {
   privacy: PrivacySettings;
-  onUpdate: (data: Partial<PrivacySettings>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
-  onRequestDataExport: () => Promise<{ success: boolean; downloadUrl?: string }>;
-  onRequestAccountDeletion: () => Promise<{ success: boolean }>;
+  onUpdate: (_data: Partial<PrivacySettings>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
+  onRequestDataExport: (_) => Promise<{ success: boolean; downloadUrl?: string }>;
+  onRequestAccountDeletion: (_) => Promise<{ success: boolean }>;
   validationErrors?: SettingsValidationError[];
   className?: string;
 }
@@ -25,42 +25,42 @@ export function PrivacySection({
   className
 }: PrivacySectionProps) {
   const [activeTab, setActiveTab] = useState<'profile' | 'data' | 'sharing'>('profile');
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(_false);
+  const [isExporting, setIsExporting] = useState(_false);
+  const [isDeleting, setIsDeleting] = useState(_false);
 
   // Handle privacy updates
-  const handlePrivacyUpdate = useCallback(async (field: keyof PrivacySettings, value: any) => {
-    await onUpdate({ [field]: value });
+  const handlePrivacyUpdate = useCallback( async (field: keyof PrivacySettings, value: any) => {
+    await onUpdate({ [field]: value  });
   }, [onUpdate]);
 
   // Handle data export
-  const handleDataExport = useCallback(async () => {
-    setIsExporting(true);
+  const handleDataExport = useCallback( async () => {
+    setIsExporting(_true);
     try {
-      const result = await onRequestDataExport();
-      if (result.success && result.downloadUrl) {
+      const result = await onRequestDataExport(_);
+      if (_result.success && result.downloadUrl) {
         // Trigger download
         const link = document.createElement('a');
         link.href = result.downloadUrl;
         link.download = 'my-data-export.zip';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        document.body.appendChild(_link);
+        link.click(_);
+        document.body.removeChild(_link);
       }
     } finally {
-      setIsExporting(false);
+      setIsExporting(_false);
     }
   }, [onRequestDataExport]);
 
   // Handle account deletion
-  const handleAccountDeletion = useCallback(async () => {
-    setIsDeleting(true);
+  const handleAccountDeletion = useCallback( async () => {
+    setIsDeleting(_true);
     try {
-      await onRequestAccountDeletion();
-      setShowDeleteConfirmation(false);
+      await onRequestAccountDeletion(_);
+      setShowDeleteConfirmation(_false);
     } finally {
-      setIsDeleting(false);
+      setIsDeleting(_false);
     }
   }, [onRequestAccountDeletion]);
 
@@ -75,7 +75,7 @@ export function PrivacySection({
       intensity="medium"
       tint="neutral"
       border
-      className={cn('p-6', className)}
+      className={cn( 'p-6', className)}
     >
       <div className="flex items-center space-x-3 mb-6">
         <Database className="w-6 h-6 text-blue-400" />
@@ -93,7 +93,7 @@ export function PrivacySection({
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(_) => setActiveTab(_tab.id as any)}
               className={cn(
                 'flex items-center space-x-2 px-4 py-2 text-sm transition-colors',
                 activeTab === tab.id
@@ -152,7 +152,7 @@ export function PrivacySection({
                     return (
                       <button
                         key={option.value}
-                        onClick={() => handlePrivacyUpdate('profileVisibility', option.value)}
+                        onClick={(_) => handlePrivacyUpdate( 'profileVisibility', option.value)}
                         className={cn(
                           'p-3 rounded-lg border text-left transition-colors',
                           privacy.profileVisibility === option.value
@@ -182,7 +182,7 @@ export function PrivacySection({
                 </div>
                 
                 <button
-                  onClick={() => handlePrivacyUpdate('showProgress', !privacy.showProgress)}
+                  onClick={(_) => handlePrivacyUpdate( 'showProgress', !privacy.showProgress)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     privacy.showProgress ? 'bg-blue-600' : 'bg-gray-600'
@@ -208,7 +208,7 @@ export function PrivacySection({
                 </div>
                 
                 <button
-                  onClick={() => handlePrivacyUpdate('showAchievements', !privacy.showAchievements)}
+                  onClick={(_) => handlePrivacyUpdate( 'showAchievements', !privacy.showAchievements)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     privacy.showAchievements ? 'bg-blue-600' : 'bg-gray-600'
@@ -234,7 +234,7 @@ export function PrivacySection({
                 </div>
                 
                 <button
-                  onClick={() => handlePrivacyUpdate('allowCollaboration', !privacy.allowCollaboration)}
+                  onClick={(_) => handlePrivacyUpdate( 'allowCollaboration', !privacy.allowCollaboration)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     privacy.allowCollaboration ? 'bg-blue-600' : 'bg-gray-600'
@@ -260,7 +260,7 @@ export function PrivacySection({
                 </div>
                 
                 <button
-                  onClick={() => handlePrivacyUpdate('showOnlineStatus', !privacy.showOnlineStatus)}
+                  onClick={(_) => handlePrivacyUpdate( 'showOnlineStatus', !privacy.showOnlineStatus)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     privacy.showOnlineStatus ? 'bg-blue-600' : 'bg-gray-600'
@@ -337,7 +337,7 @@ export function PrivacySection({
                   ].map((option) => (
                     <button
                       key={option.value}
-                      onClick={() => handlePrivacyUpdate('dataRetentionDays', option.value)}
+                      onClick={(_) => handlePrivacyUpdate( 'dataRetentionDays', option.value)}
                       className={cn(
                         'p-3 rounded-lg border text-center transition-colors',
                         privacy.dataRetentionDays === option.value
@@ -362,7 +362,7 @@ export function PrivacySection({
                     </p>
                     
                     <button
-                      onClick={() => setShowDeleteConfirmation(true)}
+                      onClick={(_) => setShowDeleteConfirmation(_true)}
                       className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -400,7 +400,7 @@ export function PrivacySection({
                 </div>
                 
                 <button
-                  onClick={() => handlePrivacyUpdate('allowAnalytics', !privacy.allowAnalytics)}
+                  onClick={(_) => handlePrivacyUpdate( 'allowAnalytics', !privacy.allowAnalytics)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     privacy.allowAnalytics ? 'bg-purple-600' : 'bg-gray-600'
@@ -426,7 +426,7 @@ export function PrivacySection({
                 </div>
                 
                 <button
-                  onClick={() => handlePrivacyUpdate('allowPersonalization', !privacy.allowPersonalization)}
+                  onClick={(_) => handlePrivacyUpdate( 'allowPersonalization', !privacy.allowPersonalization)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     privacy.allowPersonalization ? 'bg-purple-600' : 'bg-gray-600'
@@ -452,7 +452,7 @@ export function PrivacySection({
                 </div>
                 
                 <button
-                  onClick={() => handlePrivacyUpdate('allowMarketing', !privacy.allowMarketing)}
+                  onClick={(_) => handlePrivacyUpdate( 'allowMarketing', !privacy.allowMarketing)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     privacy.allowMarketing ? 'bg-purple-600' : 'bg-gray-600'
@@ -478,7 +478,7 @@ export function PrivacySection({
                 </div>
                 
                 <button
-                  onClick={() => handlePrivacyUpdate('allowThirdParty', !privacy.allowThirdParty)}
+                  onClick={(_) => handlePrivacyUpdate( 'allowThirdParty', !privacy.allowThirdParty)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     privacy.allowThirdParty ? 'bg-purple-600' : 'bg-gray-600'
@@ -505,14 +505,14 @@ export function PrivacySection({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setShowDeleteConfirmation(false)}
+            onClick={(_) => setShowDeleteConfirmation(_false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-gray-800 p-6 rounded-lg border border-gray-600 w-96 max-w-[90vw]"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(_e) => e.stopPropagation(_)}
             >
               <div className="flex items-start space-x-3 mb-4">
                 <AlertTriangle className="w-6 h-6 text-red-400 mt-0.5" />
@@ -532,7 +532,7 @@ export function PrivacySection({
               
               <div className="flex justify-end space-x-3">
                 <button
-                  onClick={() => setShowDeleteConfirmation(false)}
+                  onClick={(_) => setShowDeleteConfirmation(_false)}
                   className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                 >
                   Cancel

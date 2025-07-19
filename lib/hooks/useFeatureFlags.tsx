@@ -11,13 +11,13 @@ import {
 } from '@/lib/features/feature-flags';
 
 interface UseFeatureFlagsReturn {
-  isEnabled: (featureKey: string) => boolean;
-  getFeature: (featureKey: string) => FeatureFlag | null;
-  getAccessReason: (featureKey: string) => ReturnType<typeof getFeatureAccessReason>;
-  getAllFeatures: () => Record<string, boolean>;
+  isEnabled: (_featureKey: string) => boolean;
+  getFeature: (_featureKey: string) => FeatureFlag | null;
+  getAccessReason: (_featureKey: string) => ReturnType<typeof getFeatureAccessReason>;
+  getAllFeatures: (_) => Record<string, boolean>;
   userRole: UserRole | undefined;
   userId: string | undefined;
-  refreshFeatures: () => void;
+  refreshFeatures: (_) => void;
 }
 
 interface UseFeatureFlagsOptions {
@@ -27,7 +27,7 @@ interface UseFeatureFlagsOptions {
   refreshInterval?: number; // in milliseconds
 }
 
-export function useFeatureFlags(options: UseFeatureFlagsOptions = {}): UseFeatureFlagsReturn {
+export function useFeatureFlags(_options: UseFeatureFlagsOptions = {}): UseFeatureFlagsReturn {
   const {
     userRole: initialUserRole,
     userId: initialUserId,
@@ -35,9 +35,9 @@ export function useFeatureFlags(options: UseFeatureFlagsOptions = {}): UseFeatur
     refreshInterval = 300000 // 5 minutes
   } = options;
 
-  const [userRole, setUserRole] = useState<UserRole | undefined>(initialUserRole);
-  const [userId, setUserId] = useState<string | undefined>(initialUserId);
-  const [features, setFeatures] = useState<Record<string, boolean>>({});
+  const [userRole, setUserRole] = useState<UserRole | undefined>(_initialUserRole);
+  const [userId, setUserId] = useState<string | undefined>(_initialUserId);
+  const [features, setFeatures] = useState<Record<string, boolean>>({  });
 
   // Load user info from session/auth context if not provided
   useEffect(() => {
@@ -48,47 +48,47 @@ export function useFeatureFlags(options: UseFeatureFlagsOptions = {}): UseFeatur
       const storedUserId = localStorage.getItem('userId');
       
       if (storedRole && !initialUserRole) {
-        setUserRole(storedRole);
+        setUserRole(_storedRole);
       }
       
       if (storedUserId && !initialUserId) {
-        setUserId(storedUserId);
+        setUserId(_storedUserId);
       }
     }
   }, [initialUserRole, initialUserId]);
 
   // Refresh features when user info changes
   const refreshFeatures = useCallback(() => {
-    const allFeatures = getUserFeatures(userRole, userId);
-    setFeatures(allFeatures);
+    const allFeatures = getUserFeatures( userRole, userId);
+    setFeatures(_allFeatures);
   }, [userRole, userId]);
 
   // Initial load and refresh when dependencies change
   useEffect(() => {
-    refreshFeatures();
+    refreshFeatures(_);
   }, [refreshFeatures]);
 
   // Auto-refresh features if enabled
   useEffect(() => {
     if (!autoRefresh) return;
 
-    const interval = setInterval(refreshFeatures, refreshInterval);
-    return () => clearInterval(interval);
+    const interval = setInterval( refreshFeatures, refreshInterval);
+    return (_) => clearInterval(_interval);
   }, [autoRefresh, refreshInterval, refreshFeatures]);
 
   // Check if a specific feature is enabled
   const isEnabled = useCallback((featureKey: string): boolean => {
-    return isFeatureEnabled(featureKey, userRole, userId);
+    return isFeatureEnabled( featureKey, userRole, userId);
   }, [userRole, userId]);
 
   // Get feature information
   const getFeature = useCallback((featureKey: string): FeatureFlag | null => {
-    return getFeatureInfo(featureKey);
+    return getFeatureInfo(_featureKey);
   }, []);
 
   // Get access reason for a feature
   const getAccessReason = useCallback((featureKey: string) => {
-    return getFeatureAccessReason(featureKey, userRole, userId);
+    return getFeatureAccessReason( featureKey, userRole, userId);
   }, [userRole, userId]);
 
   // Get all features
@@ -108,12 +108,12 @@ export function useFeatureFlags(options: UseFeatureFlagsOptions = {}): UseFeatur
 }
 
 // Hook for a specific feature
-export function useFeature(featureKey: string, options: UseFeatureFlagsOptions = {}) {
-  const { isEnabled, getFeature, getAccessReason } = useFeatureFlags(options);
+export function useFeature( featureKey: string, options: UseFeatureFlagsOptions = {}) {
+  const { isEnabled, getFeature, getAccessReason } = useFeatureFlags(_options);
   
-  const enabled = isEnabled(featureKey);
-  const feature = getFeature(featureKey);
-  const accessReason = getAccessReason(featureKey);
+  const enabled = isEnabled(_featureKey);
+  const feature = getFeature(_featureKey);
+  const accessReason = getAccessReason(_featureKey);
 
   return {
     enabled,
@@ -124,14 +124,14 @@ export function useFeature(featureKey: string, options: UseFeatureFlagsOptions =
 }
 
 // Hook for multiple features
-export function useFeatures(featureKeys: string[], options: UseFeatureFlagsOptions = {}) {
-  const { isEnabled, getFeature, getAccessReason } = useFeatureFlags(options);
+export function useFeatures( featureKeys: string[], options: UseFeatureFlagsOptions = {}) {
+  const { isEnabled, getFeature, getAccessReason } = useFeatureFlags(_options);
   
-  const features = featureKeys.reduce((acc, key) => {
+  const features = featureKeys.reduce( (acc, key) => {
     acc[key] = {
-      enabled: isEnabled(key),
-      feature: getFeature(key),
-      accessReason: getAccessReason(key)
+      enabled: isEnabled(_key),
+      feature: getFeature(_key),
+      accessReason: getAccessReason(_key)
     };
     return acc;
   }, {} as Record<string, {
@@ -144,11 +144,11 @@ export function useFeatures(featureKeys: string[], options: UseFeatureFlagsOptio
 }
 
 // Hook for beta features specifically
-export function useBetaFeatures(options: UseFeatureFlagsOptions = {}) {
-  const { getAllFeatures, getFeature } = useFeatureFlags(options);
+export function useBetaFeatures(_options: UseFeatureFlagsOptions = {}) {
+  const { getAllFeatures, getFeature } = useFeatureFlags(_options);
   
-  const allFeatures = getAllFeatures();
-  const betaFeatures = Object.keys(allFeatures)
+  const allFeatures = getAllFeatures(_);
+  const betaFeatures = Object.keys(_allFeatures)
     .map(key => getFeature(key))
     .filter((feature): feature is FeatureFlag => 
       feature !== null && feature.state === 'beta'
@@ -159,14 +159,14 @@ export function useBetaFeatures(options: UseFeatureFlagsOptions = {}) {
 }
 
 // Hook for coming soon features
-export function useComingSoonFeatures(options: UseFeatureFlagsOptions = {}) {
-  const { getFeature } = useFeatureFlags(options);
+export function useComingSoonFeatures(_options: UseFeatureFlagsOptions = {}) {
+  const { getFeature } = useFeatureFlags(_options);
   
   // Get all feature keys from the feature flags
   // Note: Using dynamic import would be better, but for now using a static approach
   const FEATURE_FLAGS = {} as Record<string, any>;
   
-  const comingSoonFeatures = Object.keys(FEATURE_FLAGS)
+  const comingSoonFeatures = Object.keys(_FEATURE_FLAGS)
     .map(key => getFeature(key))
     .filter((feature): feature is FeatureFlag => 
       feature !== null && feature.state === 'coming_soon'
@@ -176,14 +176,14 @@ export function useComingSoonFeatures(options: UseFeatureFlagsOptions = {}) {
 }
 
 // Hook for development features
-export function useDevelopmentFeatures(options: UseFeatureFlagsOptions = {}) {
-  const { getFeature } = useFeatureFlags(options);
+export function useDevelopmentFeatures(_options: UseFeatureFlagsOptions = {}) {
+  const { getFeature } = useFeatureFlags(_options);
   
   // Get all feature keys from the feature flags
   // Note: Using dynamic import would be better, but for now using a static approach
   const FEATURE_FLAGS = {} as Record<string, any>;
   
-  const developmentFeatures = Object.keys(FEATURE_FLAGS)
+  const developmentFeatures = Object.keys(_FEATURE_FLAGS)
     .map(key => getFeature(key))
     .filter((feature): feature is FeatureFlag => 
       feature !== null && feature.state === 'development'
@@ -192,7 +192,7 @@ export function useDevelopmentFeatures(options: UseFeatureFlagsOptions = {}) {
   return developmentFeatures;
 }
 
-// Context provider for feature flags (optional)
+// Context provider for feature flags (_optional)
 import React, { createContext, useContext } from 'react';
 
 interface FeatureFlagsContextType extends UseFeatureFlagsReturn {
@@ -200,7 +200,7 @@ interface FeatureFlagsContextType extends UseFeatureFlagsReturn {
   contextVersion?: string;
 }
 
-const FeatureFlagsContext = createContext<FeatureFlagsContextType | undefined>(undefined);
+const FeatureFlagsContext = createContext<FeatureFlagsContextType | undefined>(_undefined);
 
 export function FeatureFlagsProvider({ 
   children, 
@@ -211,7 +211,7 @@ export function FeatureFlagsProvider({
   userRole?: UserRole;
   userId?: string;
 }) {
-  const featureFlags = useFeatureFlags({ userRole, userId, autoRefresh: true });
+  const featureFlags = useFeatureFlags( { userRole, userId, autoRefresh: true });
 
   return (
     <FeatureFlagsContext.Provider value={featureFlags}>
@@ -221,16 +221,16 @@ export function FeatureFlagsProvider({
 }
 
 export function useFeatureFlagsContext(): FeatureFlagsContextType {
-  const context = useContext(FeatureFlagsContext);
-  if (context === undefined) {
+  const context = useContext(_FeatureFlagsContext);
+  if (_context === undefined) {
     throw new Error('useFeatureFlagsContext must be used within a FeatureFlagsProvider');
   }
   return context;
 }
 
 // Utility hook for feature-gated components
-export function useFeatureGate(featureKey: string, options: UseFeatureFlagsOptions = {}) {
-  const { enabled, accessReason } = useFeature(featureKey, options);
+export function useFeatureGate( featureKey: string, options: UseFeatureFlagsOptions = {}) {
+  const { enabled, accessReason } = useFeature( featureKey, options);
   
   return {
     canAccess: enabled,

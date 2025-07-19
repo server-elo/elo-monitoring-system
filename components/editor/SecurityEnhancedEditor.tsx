@@ -19,8 +19,8 @@ interface SecurityEnhancedEditorProps {
   language?: string;
   theme?: 'vs-dark' | 'vs-light';
   height?: string;
-  onChange?: (code: string) => void;
-  onSecurityScan?: (result: SecurityScanResult) => void;
+  onChange?: (_code: string) => void;
+  onSecurityScan?: (_result: SecurityScanResult) => void;
   className?: string;
   readOnly?: boolean;
   showSecurityPanel?: boolean;
@@ -46,14 +46,14 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
   readOnly = false,
   showSecurityPanel = true
 }) => {
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth(_);
+  const { toast } = useToast(_);
   
-  const editorRef = useRef<HTMLDivElement>(null);
-  const editorInstanceRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const securityScannerRef = useRef<SecurityScanner | null>(null);
+  const editorRef = useRef<HTMLDivElement>(_null);
+  const editorInstanceRef = useRef<editor.IStandaloneCodeEditor | null>(_null);
+  const securityScannerRef = useRef<SecurityScanner | null>(_null);
   
-  const [isEditorReady, setIsEditorReady] = useState(false);
+  const [isEditorReady, setIsEditorReady] = useState(_false);
   const [securityStats, setSecurityStats] = useState<SecurityStats>({
     totalIssues: 0,
     criticalIssues: 0,
@@ -63,8 +63,8 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
     lastScanTime: null
   });
   const [currentIssues, setCurrentIssues] = useState<SecurityIssue[]>([]);
-  const [isScanning, setIsScanning] = useState(false);
-  const [selectedIssue, setSelectedIssue] = useState<SecurityIssue | null>(null);
+  const [isScanning, setIsScanning] = useState(_false);
+  const [selectedIssue, setSelectedIssue] = useState<SecurityIssue | null>(_null);
   const [llmStatus, setLlmStatus] = useState<'connected' | 'disconnected' | 'checking'>('checking');
   const [scanSource, setScanSource] = useState<'local-llm' | 'fallback' | 'pattern-only'>('pattern-only');
   const [responseTime, setResponseTime] = useState<number>(0);
@@ -101,32 +101,32 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
     editorInstanceRef.current = editor;
 
     // Initialize security scanner
-    const scanner = createSecurityScanner(editor, user.id);
+    const scanner = createSecurityScanner( editor, user.id);
     securityScannerRef.current = scanner;
 
     // Listen for content changes
     editor.onDidChangeModelContent(() => {
-      const code = editor.getValue();
-      onChange?.(code);
-      setIsScanning(true);
+      const code = editor.getValue(_);
+      onChange?.(_code);
+      setIsScanning(_true);
     });
 
     // Listen for security scan results
-    const handleScanComplete = (event: CustomEvent<SecurityScanResult>) => {
+    const handleScanComplete = (_event: CustomEvent<SecurityScanResult>) => {
       const result = event.detail;
-      updateSecurityStats(result);
-      setCurrentIssues(result.issues);
-      setIsScanning(false);
-      onSecurityScan?.(result);
+      updateSecurityStats(_result);
+      setCurrentIssues(_result.issues);
+      setIsScanning(_false);
+      onSecurityScan?.(_result);
     };
 
-    document.addEventListener('securityScanComplete', handleScanComplete as EventListener);
-    setIsEditorReady(true);
+    document.addEventListener( 'securityScanComplete', handleScanComplete as EventListener);
+    setIsEditorReady(_true);
 
-    return () => {
-      document.removeEventListener('securityScanComplete', handleScanComplete as EventListener);
-      scanner.dispose();
-      editor.dispose();
+    return (_) => {
+      document.removeEventListener( 'securityScanComplete', handleScanComplete as EventListener);
+      scanner.dispose(_);
+      editor.dispose(_);
     };
   }, [user]);
 
@@ -139,26 +139,26 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
           signal: AbortSignal.timeout(2000)
         });
 
-        if (response.ok) {
+        if (_response.ok) {
           setLlmStatus('connected');
           setScanSource('local-llm');
         } else {
           setLlmStatus('disconnected');
           setScanSource('fallback');
         }
-      } catch (error) {
+      } catch (_error) {
         setLlmStatus('disconnected');
         setScanSource('pattern-only');
       }
     };
 
     // Initial check
-    checkLLMStatus();
+    checkLLMStatus(_);
 
     // Check every 30 seconds
-    const interval = setInterval(checkLLMStatus, 30000);
+    const interval = setInterval( checkLLMStatus, 30000);
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, []);
 
   const updateSecurityStats = useCallback((result: SecurityScanResult) => {
@@ -171,17 +171,17 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
       lastScanTime: new Date()
     };
 
-    setSecurityStats(stats);
+    setSecurityStats(_stats);
 
     // Update response time and scan source from the first AI issue
     const aiIssue = result.issues.find(issue => issue.source);
     if (aiIssue) {
-      setResponseTime(aiIssue.analysisTime || 0);
-      setScanSource(aiIssue.source as 'local-llm' | 'fallback' | 'pattern-only');
+      setResponseTime(_aiIssue.analysisTime || 0);
+      setScanSource(_aiIssue.source as 'local-llm' | 'fallback' | 'pattern-only');
     }
 
     // Show toast for critical issues
-    if (stats.criticalIssues > 0) {
+    if (_stats.criticalIssues > 0) {
       toast({
         title: '🚨 Critical Security Issues Found',
         description: `Found ${stats.criticalIssues} critical security issues that need immediate attention.`,
@@ -200,7 +200,7 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
     });
     
     // Focus editor
-    editorInstanceRef.current.focus();
+    editorInstanceRef.current.focus(_);
     
     // Select the problematic code
     editorInstanceRef.current.setSelection({
@@ -210,49 +210,49 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
       endColumn: issue.endColumn
     });
 
-    setSelectedIssue(issue);
+    setSelectedIssue(_issue);
   }, []);
 
-  const handleManualScan = useCallback(async () => {
+  const handleManualScan = useCallback( async () => {
     if (!securityScannerRef.current) return;
     
-    setIsScanning(true);
+    setIsScanning(_true);
     try {
-      const result = await securityScannerRef.current.scanNow();
-      updateSecurityStats(result);
-      setCurrentIssues(result.issues);
+      const result = await securityScannerRef.current.scanNow(_);
+      updateSecurityStats(_result);
+      setCurrentIssues(_result.issues);
       
       toast({
         title: '🔍 Security Scan Complete',
         description: `Found ${result.issues.length} issues. Security score: ${result.overallScore}/100`,
         variant: result.overallScore > 80 ? 'default' : 'destructive'
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Scan Failed',
         description: 'Failed to perform security scan. Please try again.',
         variant: 'destructive'
       });
     } finally {
-      setIsScanning(false);
+      setIsScanning(_false);
     }
   }, [toast, updateSecurityStats]);
 
   // Score visualization helpers - replaced by inline logic
-  // const _getScoreColor = (score: number): string => {
-  //   if (score >= 90) return 'text-green-500';
-  //   if (score >= 70) return 'text-yellow-500';
+  // const _getScoreColor = (_score: number): string => {
+  //   if (_score >= 90) return 'text-green-500';
+  //   if (_score >= 70) return 'text-yellow-500';
   //   return 'text-red-500';
   // };
 
-  // const _getScoreIcon = (score: number) => {
-  //   if (score >= 90) return <CheckCircle className="w-5 h-5 text-green-500" />;
-  //   if (score >= 70) return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+  // const _getScoreIcon = (_score: number) => {
+  //   if (_score >= 90) return <CheckCircle className="w-5 h-5 text-green-500" />;
+  //   if (_score >= 70) return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
   //   return <XCircle className="w-5 h-5 text-red-500" />;
   // };
 
-  const getSeverityIcon = (severity: SecurityIssue['severity']) => {
-    switch (severity) {
+  const getSeverityIcon = (_severity: SecurityIssue['severity']) => {
+    switch (_severity) {
       case 'critical':
       case 'high':
         return <XCircle className="w-4 h-4 text-red-500" />;
@@ -263,8 +263,8 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
     }
   };
 
-  const getSeverityBadgeVariant = (severity: SecurityIssue['severity']) => {
-    switch (severity) {
+  const getSeverityBadgeVariant = (_severity: SecurityIssue['severity']) => {
+    switch (_severity) {
       case 'critical':
       case 'high':
         return 'destructive';
@@ -328,7 +328,7 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">Security Score</span>
                 <span className="text-sm text-gray-500">
-                  {securityStats.lastScanTime?.toLocaleTimeString() || 'Not scanned'}
+                  {securityStats.lastScanTime?.toLocaleTimeString(_) || 'Not scanned'}
                 </span>
               </div>
               <Progress 
@@ -375,7 +375,7 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
               {/* Issues List */}
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 <AnimatePresence>
-                  {currentIssues.map((issue, index) => (
+                  {currentIssues.map( (issue, index) => (
                     <motion.div
                       key={issue.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -387,13 +387,13 @@ export const SecurityEnhancedEditor: React.FC<SecurityEnhancedEditorProps> = ({
                         className={`p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
                           selectedIssue?.id === issue.id ? 'ring-2 ring-blue-500' : ''
                         }`}
-                        onClick={() => handleIssueClick(issue)}
+                        onClick={(_) => handleIssueClick(_issue)}
                       >
                         <div className="flex items-start gap-2">
-                          {getSeverityIcon(issue.severity)}
+                          {getSeverityIcon(_issue.severity)}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <Badge variant={getSeverityBadgeVariant(issue.severity)} className="text-xs">
+                              <Badge variant={getSeverityBadgeVariant(_issue.severity)} className="text-xs">
                                 {issue.severity.toUpperCase()}
                               </Badge>
                               <span className="text-xs text-gray-500">Line {issue.line}</span>

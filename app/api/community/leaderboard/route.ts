@@ -5,7 +5,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Mock data for demonstration - in production, this would come from your database
 const mockUsers: LeaderboardUser[] = [
   {
-    id: 'user_1',
+    id: 'user1',
     name: 'Alice Johnson',
     email: 'alice@example.com',
     avatar: '/avatars/alice.jpg',
@@ -20,7 +20,7 @@ const mockUsers: LeaderboardUser[] = [
     longestStreak: 25,
     badges: [
       {
-        id: 'badge_1',
+        id: 'badge1',
         name: 'Solidity Master',
         description: 'Completed advanced Solidity course',
         icon: '🏆',
@@ -31,7 +31,7 @@ const mockUsers: LeaderboardUser[] = [
     ],
     recentAchievements: [
       {
-        id: 'achievement_1',
+        id: 'achievement1',
         title: 'Smart Contract Expert',
         description: 'Deployed 10 smart contracts',
         icon: '📜',
@@ -74,7 +74,7 @@ const mockUsers: LeaderboardUser[] = [
     timeSpent: 1980
   },
   {
-    id: 'user_3',
+    id: 'user3',
     name: 'Carol Davis',
     email: 'carol@example.com',
     xpTotal: 13560,
@@ -125,7 +125,7 @@ for (let i = 4; i <= 100; i++) {
   });
 }
 
-function applyFilters(users: LeaderboardUser[], filters: LeaderboardFilters): LeaderboardUser[] {
+function applyFilters( users: LeaderboardUser[], filters: LeaderboardFilters): LeaderboardUser[] {
   let filtered = [...users];
 
   // Apply search filter
@@ -159,7 +159,7 @@ function applyFilters(users: LeaderboardUser[], filters: LeaderboardFilters): Le
   return filtered;
 }
 
-function sortUsers(users: LeaderboardUser[], category: string, _timeframe: string): LeaderboardUser[] {
+function sortUsers( users: LeaderboardUser[], category: string, timeframe: string): LeaderboardUser[] {
   const sorted = [...users];
 
   switch (category) {
@@ -196,13 +196,13 @@ export async function POST(request: NextRequest) {
     const { category, filters, page = 1, limit = 50 } = body;
 
     // Apply filters
-    let filteredUsers = applyFilters(mockUsers, filters);
+    let filteredUsers = applyFilters( mockUsers, filters);
 
     // Sort users based on category
-    filteredUsers = sortUsers(filteredUsers, category, filters.timeframe);
+    filteredUsers = sortUsers( filteredUsers, category, filters.timeframe);
 
     // Paginate results
-    const startIndex = (page - 1) * limit;
+    const startIndex = (_page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
 
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
       users: paginatedUsers,
       total: filteredUsers.length,
       page,
-      totalPages: Math.ceil(filteredUsers.length / limit),
+      totalPages: Math.ceil(codeSnippets.length / limit),
       hasNextPage: endIndex < filteredUsers.length,
       hasPreviousPage: page > 1,
       lastUpdated: new Date(),

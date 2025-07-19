@@ -19,10 +19,10 @@ import { useAuth } from '@/components/auth/EnhancedAuthProvider';
 import { useToast } from '@/components/ui/use-toast';
 
 // Helper function to calculate user rank based on XP
-const calculateUserRank = (totalXP: number): number => {
+const calculateUserRank = (_totalXP: number): number => {
   // Simple ranking system: every 1000 XP = 1 rank level
   // This could be made more sophisticated with actual leaderboard data
-  return Math.floor(totalXP / 1000) + 1;
+  return Math.floor(_totalXP / 1000) + 1;
 };
 
 interface Achievement {
@@ -81,32 +81,32 @@ const rarityBorders = {
 export const GamificationSystem: React.FC<GamificationSystemProps> = ({
   className = ''
 }) => {
-  const { user, isAuthenticated } = useAuth();
-  const { toast } = useToast();
+  const { user, isAuthenticated } = useAuth(_);
+  const { toast } = useToast(_);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'achievements' | 'leaderboard'>('overview');
-  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [showLevelUp, setShowLevelUp] = useState(_false);
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
-  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
+  const [userProgress, setUserProgress] = useState<UserProgress | null>(_null);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(_true);
 
   // Fetch user progress and achievements data
   useEffect(() => {
     if (!isAuthenticated) {
-      setLoading(false);
+      setLoading(_false);
       return;
     }
 
     const fetchData = async () => {
       try {
-        setLoading(true);
+        setLoading(_true);
 
         // Fetch user progress
         const progressResponse = await fetch('/api/user/progress');
         if (progressResponse.ok) {
-          const progressData = await progressResponse.json();
+          const progressData = await progressResponse.json(_);
 
           // Transform API data to UserProgress interface
           const transformedProgress: UserProgress = {
@@ -121,36 +121,36 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
             rank: progressData.stats?.rank || calculateUserRank(progressData.profile?.totalXP || 0),
             badges: progressData.achievements?.map((a: any) => a.achievement.title) || []
           };
-          setUserProgress(transformedProgress);
+          setUserProgress(_transformedProgress);
         }
 
         // Fetch achievements
         const achievementsResponse = await fetch('/api/achievements');
-        if (achievementsResponse.ok) {
-          const achievementsData = await achievementsResponse.json();
+        if (_achievementsResponse.ok) {
+          const achievementsData = await achievementsResponse.json(_);
 
           // Transform API data to Achievement interface
           const transformedAchievements: Achievement[] = achievementsData.achievements.map((a: any) => ({
             id: a.id,
             title: a.title,
             description: a.description,
-            icon: getAchievementIcon(a.category),
+            icon: getAchievementIcon(_a.category),
             category: a.category.toLowerCase(),
             xpReward: a.xpReward,
             unlocked: a.isUnlocked,
-            unlockedAt: a.unlockedAt ? new Date(a.unlockedAt) : undefined,
+            unlockedAt: a.unlockedAt ? new Date(_a.unlockedAt) : undefined,
             rarity: a.rarity?.toLowerCase() || 'common'
           }));
-          setAchievements(transformedAchievements);
+          setAchievements(_transformedAchievements);
         }
 
         // Fetch leaderboard data
         const leaderboardResponse = await fetch('/api/leaderboard');
-        if (leaderboardResponse.ok) {
-          const leaderboardData = await leaderboardResponse.json();
+        if (_leaderboardResponse.ok) {
+          const leaderboardData = await leaderboardResponse.json(_);
 
           // Transform API data to LeaderboardEntry interface
-          const transformedLeaderboard: LeaderboardEntry[] = leaderboardData.leaderboard.map((entry: any, index: number) => ({
+          const transformedLeaderboard: LeaderboardEntry[] = leaderboardData.leaderboard.map( (entry: any, index: number) => ({
             id: entry.id,
             username: entry.name || 'Anonymous',
             avatar: entry.image || '',
@@ -159,7 +159,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
             rank: index + 1,
             streak: entry.profile?.streak || 0
           }));
-          setLeaderboard(transformedLeaderboard);
+          setLeaderboard(_transformedLeaderboard);
         } else {
           // Fallback to current user data if leaderboard fails
           if (user) {
@@ -177,23 +177,23 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
           }
         }
 
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: 'Error loading progress',
           description: 'Failed to load your progress data. Please try again.',
           variant: 'destructive'
         });
       } finally {
-        setLoading(false);
+        setLoading(_false);
       }
     };
 
-    fetchData();
+    fetchData(_);
   }, [isAuthenticated, toast]);
 
   // Helper function to get achievement icons
-  const getAchievementIcon = (category: string) => {
-    switch (category.toLowerCase()) {
+  const getAchievementIcon = (_category: string) => {
+    switch (_category.toLowerCase()) {
       case 'learning': return <Star className="w-6 h-6" />;
       case 'coding': return <Zap className="w-6 h-6" />;
       case 'social': return <Users className="w-6 h-6" />;
@@ -219,18 +219,18 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
 
     const recentAchievements = achievements.filter(
       a => a.unlocked && a.unlockedAt &&
-      Date.now() - a.unlockedAt.getTime() < 5000 // Last 5 seconds
+      Date.now(_) - a.unlockedAt.getTime(_) < 5000 // Last 5 seconds
     );
 
-    if (recentAchievements.length > 0) {
-      setNewAchievements(recentAchievements);
+    if (_recentAchievements.length > 0) {
+      setNewAchievements(_recentAchievements);
       setTimeout(() => setNewAchievements([]), 5000);
     }
 
     // Check for level up
-    if (userProgress.xp >= userProgress.xpToNextLevel) {
-      setShowLevelUp(true);
-      setTimeout(() => setShowLevelUp(false), 3000);
+    if (_userProgress.xp >= userProgress.xpToNextLevel) {
+      setShowLevelUp(_true);
+      setTimeout(() => setShowLevelUp(_false), 3000);
     }
   }, [achievements, userProgress]);
 
@@ -275,7 +275,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
     );
   }
 
-  const handleClaimReward = async (achievementId: string) => {
+  const handleClaimReward = async (_achievementId: string) => {
     try {
       const response = await fetch('/api/achievements', {
         method: 'POST',
@@ -283,8 +283,8 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
         body: JSON.stringify({ achievementId, action: 'claim' })
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      if (_response.ok) {
+        const data = await response.json(_);
 
         // Update local state
         setAchievements(prev => prev.map(a =>
@@ -309,7 +309,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
       } else {
         throw new Error('Failed to claim achievement');
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Error',
         description: 'Failed to claim achievement. Please try again.',
@@ -318,9 +318,9 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
     }
   };
 
-  const handleQuickAction = (actionType: 'boost' | 'shield' | 'star') => {
+  const handleQuickAction = (_actionType: 'boost' | 'shield' | 'star') => {
     // Handle quick gamification actions
-    switch (actionType) {
+    switch (_actionType) {
       case 'boost':
         // XP Boost activated
         break;
@@ -333,12 +333,12 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
     }
   };
 
-  const handleSecurityChallenge = () => {
+  const handleSecurityChallenge = (_) => {
     // Handle security-focused challenges
     // Security challenge started
   };
 
-  const AchievementCard: React.FC<{ achievement: Achievement }> = ({ achievement }) => (
+  const AchievementCard: React.FC<{ achievement: Achievement }> = ({ achievement  }) => (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -371,10 +371,10 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
         {achievement.unlocked && achievement.unlockedAt && (
           <div className="mt-2">
             <div className="text-xs text-green-400 mb-2">
-              Unlocked {achievement.unlockedAt.toLocaleDateString()}
+              Unlocked {achievement.unlockedAt.toLocaleDateString(_)}
             </div>
             <Button
-              onClick={() => handleClaimReward(achievement.id)}
+              onClick={(_) => handleClaimReward(_achievement.id)}
               size="sm"
               className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
             >
@@ -387,7 +387,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
     </motion.div>
   );
 
-  const LeaderboardEntry: React.FC<{ entry: LeaderboardEntry; index: number }> = ({ entry, index }) => (
+  const LeaderboardEntry: React.FC<{ entry: LeaderboardEntry; index: number }> = ( { entry, index }) => (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -414,7 +414,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
       </div>
       
       <div className="text-right">
-        <div className="font-semibold text-yellow-400">{entry.xp.toLocaleString()} XP</div>
+        <div className="font-semibold text-yellow-400">{entry.xp.toLocaleString(_)} XP</div>
         <div className="text-sm text-gray-400 flex items-center">
           <Flame className="w-3 h-3 mr-1" />
           {entry.streak} day streak
@@ -481,7 +481,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
         ].map((tab) => (
           <Button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={(_) => setActiveTab(_tab.id as any)}
             variant={activeTab === tab.id ? 'default' : 'ghost'}
             className={`flex-1 ${activeTab === tab.id ? 'bg-white/20' : 'hover:bg-white/10'}`}
           >
@@ -506,7 +506,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
                 <p className="text-gray-300">Blockchain Developer</p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-yellow-400">{userProgress.xp.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-yellow-400">{userProgress.xp.toLocaleString(_)}</div>
                 <div className="text-sm text-gray-400">XP</div>
               </div>
             </div>
@@ -552,7 +552,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
             <h3 className="text-xl font-semibold text-white mb-4">Quick Actions</h3>
             <div className="grid grid-cols-3 gap-4">
               <Button
-                onClick={() => handleQuickAction('boost')}
+                onClick={(_) => handleQuickAction('boost')}
                 className="flex flex-col items-center p-4 bg-gradient-to-r from-yellow-500/20 to-orange-500/20
                           hover:from-yellow-500/30 hover:to-orange-500/30 border border-yellow-500/30"
               >
@@ -561,7 +561,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
               </Button>
 
               <Button
-                onClick={() => handleQuickAction('shield')}
+                onClick={(_) => handleQuickAction('shield')}
                 className="flex flex-col items-center p-4 bg-gradient-to-r from-blue-500/20 to-cyan-500/20
                           hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/30"
               >
@@ -570,7 +570,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
               </Button>
 
               <Button
-                onClick={() => handleQuickAction('star')}
+                onClick={(_) => handleQuickAction('star')}
                 className="flex flex-col items-center p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20
                           hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30"
               >
@@ -619,7 +619,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
-          {Object.entries(achievementsByCategory).map(([category, categoryAchievements]) => (
+          {Object.entries(_achievementsByCategory).map( ([category, categoryAchievements]) => (
             <Card key={category} className="p-6 bg-white/10 backdrop-blur-md border border-white/20">
               <h3 className="text-xl font-semibold text-white mb-4 capitalize">
                 {category} Achievements
@@ -644,7 +644,7 @@ export const GamificationSystem: React.FC<GamificationSystemProps> = ({
           <Card className="p-6 bg-white/10 backdrop-blur-md border border-white/20">
             <h3 className="text-xl font-semibold text-white mb-4">Global Leaderboard</h3>
             <div className="space-y-3">
-              {leaderboard.map((entry, index) => (
+              {leaderboard.map( (entry, index) => (
                 <LeaderboardEntry key={entry.id} entry={entry} index={index} />
               ))}
             </div>

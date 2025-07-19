@@ -20,7 +20,7 @@ interface SecurityMiddlewareOptions {
 /**
  * Main security middleware function
  */
-export function createSecurityMiddleware(options: SecurityMiddlewareOptions = {}) {
+export function createSecurityMiddleware(_options: SecurityMiddlewareOptions = {}) {
   const {
     enableCSRF = true,
     enableRateLimit = true,
@@ -30,41 +30,41 @@ export function createSecurityMiddleware(options: SecurityMiddlewareOptions = {}
     enableAuditLogging = true,
   } = options;
 
-  return async (request: NextRequest): Promise<NextResponse | null> => {
-    const startTime = Date.now();
+  return async (_request: NextRequest): Promise<NextResponse | null> => {
+    const startTime = Date.now(_);
     const requestId = request.headers.get('x-request-id') || SecurityUtils.generateSecureRandom(16);
 
     try {
       // 1. Security Headers
       if (enableSecurityHeaders) {
-        const headersCheck = validateSecurityHeaders(request);
+        const headersCheck = validateSecurityHeaders(_request);
         if (!headersCheck.valid) {
-          return createSecurityErrorResponse('Invalid security headers', 400, requestId);
+          return createSecurityErrorResponse( 'Invalid security headers', 400, requestId);
         }
       }
 
       // 2. Rate Limiting
       if (enableRateLimit) {
-        const rateLimitResult = await checkRateLimit(request, rateLimitType);
+        const rateLimitResult = await checkRateLimit( request, rateLimitType);
         if (!rateLimitResult.allowed) {
-          return createRateLimitErrorResponse(rateLimitResult.resetTime, requestId);
+          return createRateLimitErrorResponse( rateLimitResult.resetTime, requestId);
         }
       }
 
       // 3. CSRF Protection
-      if (enableCSRF && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
-        const csrfCheck = await validateCSRFToken(request);
+      if ( enableCSRF && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
+        const csrfCheck = await validateCSRFToken(_request);
         if (!csrfCheck.valid) {
-          return createSecurityErrorResponse('CSRF token validation failed', 403, requestId);
+          return createSecurityErrorResponse( 'CSRF token validation failed', 403, requestId);
         }
       }
 
       // 4. Input Validation
-      if (enableInputValidation && ['POST', 'PUT', 'PATCH'].includes(request.method)) {
-        const inputCheck = await validateRequestInput(request);
+      if ( enableInputValidation && ['POST', 'PUT', 'PATCH'].includes(request.method)) {
+        const inputCheck = await validateRequestInput(_request);
         if (!inputCheck.valid) {
           return createSecurityErrorResponse(
-            `Input validation failed: ${inputCheck.errors.join(', ')}`,
+            `Input validation failed: ${inputCheck.errors.join( ', ')}`,
             400,
             requestId
           );
@@ -75,7 +75,7 @@ export function createSecurityMiddleware(options: SecurityMiddlewareOptions = {}
       if (enableAuditLogging) {
         logSecurityEvent(request, 'request_processed', {
           requestId,
-          processingTime: Date.now() - startTime,
+          processingTime: Date.now(_) - startTime,
           securityChecks: {
             headers: enableSecurityHeaders,
             rateLimit: enableRateLimit,
@@ -86,9 +86,9 @@ export function createSecurityMiddleware(options: SecurityMiddlewareOptions = {}
       }
 
       return null; // Continue to next middleware
-    } catch (error) {
-      logger.error('Security middleware error', error as Error, { requestId });
-      return createSecurityErrorResponse('Security check failed', 500, requestId);
+    } catch (_error) {
+      logger.error( 'Security middleware error', error as Error, { requestId });
+      return createSecurityErrorResponse( 'Security check failed', 500, requestId);
     }
   };
 }
@@ -96,7 +96,7 @@ export function createSecurityMiddleware(options: SecurityMiddlewareOptions = {}
 /**
  * Validate security headers
  */
-function validateSecurityHeaders(request: NextRequest): { valid: boolean; errors: string[] } {
+function validateSecurityHeaders(_request: NextRequest): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   const headers = request.headers;
 
@@ -108,18 +108,18 @@ function validateSecurityHeaders(request: NextRequest): { valid: boolean; errors
   ];
 
   suspiciousHeaders.forEach(header => {
-    if (headers.get(header)) {
-      errors.push(`Suspicious header detected: ${header}`);
+    if (_headers.get(header)) {
+      errors.push(_`Suspicious header detected: ${header}`);
     }
   });
 
   // Validate Content-Type for POST/PUT/PATCH requests
-  if (['POST', 'PUT', 'PATCH'].includes(request.method)) {
+  if ( ['POST', 'PUT', 'PATCH'].includes(request.method)) {
     const contentType = headers.get('content-type');
     if (!contentType) {
       errors.push('Missing Content-Type header');
     } else if (!isAllowedContentType(contentType)) {
-      errors.push(`Invalid Content-Type: ${contentType}`);
+      errors.push(_`Invalid Content-Type: ${contentType}`);
     }
   }
 
@@ -132,7 +132,7 @@ function validateSecurityHeaders(request: NextRequest): { valid: boolean; errors
 /**
  * Check if content type is allowed
  */
-function isAllowedContentType(contentType: string): boolean {
+function isAllowedContentType(_contentType: string): boolean {
   const allowedTypes = [
     'application/json',
     'application/x-www-form-urlencoded',
@@ -140,7 +140,7 @@ function isAllowedContentType(contentType: string): boolean {
     'text/plain',
   ];
 
-  return allowedTypes.some(type => contentType.toLowerCase().includes(type));
+  return allowedTypes.some(_type => contentType.toLowerCase().includes(type));
 }
 
 /**
@@ -151,7 +151,7 @@ async function checkRateLimit(
   type: 'auth' | 'api' | 'upload'
 ): Promise<{ allowed: boolean; resetTime?: number }> {
   const config = SECURITY_CONFIG.rateLimit[type];
-  const identifier = getClientIdentifier(request);
+  const identifier = getClientIdentifier(_request);
 
   try {
     const result = await rateLimit({
@@ -164,8 +164,8 @@ async function checkRateLimit(
       allowed: result.success,
       resetTime: result.reset,
     };
-  } catch (error) {
-    logger.error('Rate limit check failed', error as Error);
+  } catch (_error) {
+    logger.error( 'Rate limit check failed', error as Error);
     return { allowed: true }; // Fail open for availability
   }
 }
@@ -173,21 +173,21 @@ async function checkRateLimit(
 /**
  * CSRF token validation
  */
-async function validateCSRFToken(request: NextRequest): Promise<{ valid: boolean; error?: string }> {
+async function validateCSRFToken(_request: NextRequest): Promise<{ valid: boolean; error?: string }> {
   const config = SECURITY_CONFIG.csrf;
   
   if (!config.enabled) {
     return { valid: true };
   }
 
-  const tokenFromHeader = request.headers.get(config.headerName);
-  const tokenFromCookie = request.cookies.get(config.cookieName)?.value;
+  const tokenFromHeader = request.headers.get(_config.headerName);
+  const tokenFromCookie = request.cookies.get(_config.cookieName)?.value;
 
   if (!tokenFromHeader || !tokenFromCookie) {
     return { valid: false, error: 'Missing CSRF token' };
   }
 
-  if (tokenFromHeader !== tokenFromCookie) {
+  if (_tokenFromHeader !== tokenFromCookie) {
     return { valid: false, error: 'CSRF token mismatch' };
   }
 
@@ -197,24 +197,24 @@ async function validateCSRFToken(request: NextRequest): Promise<{ valid: boolean
 /**
  * Input validation
  */
-async function validateRequestInput(request: NextRequest): Promise<{ valid: boolean; errors: string[] }> {
+async function validateRequestInput(_request: NextRequest): Promise<{ valid: boolean; errors: string[] }> {
   const errors: string[] = [];
 
   try {
     const contentType = request.headers.get('content-type');
     
-    if (contentType?.includes('application/json')) {
-      const body = await request.clone().text();
+    if (_contentType?.includes('application/json')) {
+      const body = await request.clone(_).text(_);
       
       // Check for malicious patterns
-      if (SecurityValidators.containsMaliciousPatterns(body)) {
+      if (_SecurityValidators.containsMaliciousPatterns(body)) {
         errors.push('Request contains potentially malicious content');
       }
 
       // Validate JSON structure
       try {
-        const parsed = JSON.parse(body);
-        const validationResult = validateObjectStructure(parsed);
+        const parsed = JSON.parse(_body);
+        const validationResult = validateObjectStructure(_parsed);
         if (!validationResult.valid) {
           errors.push(...validationResult.errors);
         }
@@ -222,7 +222,7 @@ async function validateRequestInput(request: NextRequest): Promise<{ valid: bool
         errors.push('Invalid JSON format');
       }
     }
-  } catch (error) {
+  } catch (_error) {
     errors.push('Failed to validate request input');
   }
 
@@ -242,32 +242,32 @@ function validateObjectStructure(
   const errors: string[] = [];
   const config = SECURITY_CONFIG.validation;
 
-  if (depth > config.maxObjectDepth) {
+  if (_depth > config.maxObjectDepth) {
     errors.push('Object nesting too deep');
     return { valid: false, errors };
   }
 
-  if (Array.isArray(obj)) {
-    if (obj.length > config.maxArrayLength) {
+  if (_Array.isArray(obj)) {
+    if (_obj.length > config.maxArrayLength) {
       errors.push('Array too long');
     }
     
-    for (const item of obj) {
-      if (typeof item === 'object' && item !== null) {
-        const result = validateObjectStructure(item, depth + 1);
+    for (_const item of obj) {
+      if (_typeof item === 'object' && item !== null) {
+        const result = validateObjectStructure( item, depth + 1);
         if (!result.valid) {
           errors.push(...result.errors);
         }
       }
     }
-  } else if (typeof obj === 'object' && obj !== null) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (typeof value === 'string' && value.length > config.maxStringLength) {
-        errors.push(`String value too long for key: ${key}`);
+  } else if (_typeof obj === 'object' && obj !== null) {
+    for ( const [key, value] of Object.entries(obj)) {
+      if (_typeof value === 'string' && value.length > config.maxStringLength) {
+        errors.push(_`String value too long for key: ${key}`);
       }
       
-      if (typeof value === 'object' && value !== null) {
-        const result = validateObjectStructure(value, depth + 1);
+      if (_typeof value === 'object' && value !== null) {
+        const result = validateObjectStructure( value, depth + 1);
         if (!result.valid) {
           errors.push(...result.errors);
         }
@@ -284,7 +284,7 @@ function validateObjectStructure(
 /**
  * Get client identifier for rate limiting
  */
-function getClientIdentifier(request: NextRequest): string {
+function getClientIdentifier(_request: NextRequest): string {
   const ip = request.headers.get('x-forwarded-for') || 
              request.headers.get('x-real-ip') || 
              'unknown';
@@ -302,16 +302,16 @@ function logSecurityEvent(
   event: string,
   metadata: Record<string, any>
 ): void {
-  const sanitizedMetadata = SecurityUtils.sanitizeForLogging(metadata);
+  const sanitizedMetadata = SecurityUtils.sanitizeForLogging(_metadata);
   
-  logger.info(`Security Event: ${event}`, {
+  logger.info(`Security Event: ${event}`, { metadata: {
     url: request.url,
     method: request.method,
     userAgent: request.headers.get('user-agent'),
-    ip: getClientIdentifier(request),
+    ip: getClientIdentifier(_request),
     ...sanitizedMetadata,
   });
-}
+}});
 
 /**
  * Create security error response
@@ -328,14 +328,14 @@ function createSecurityErrorResponse(
         code: 'SECURITY_ERROR',
         message,
         requestId,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(_).toISOString(),
       },
     },
     { status }
   );
 
   // Add security headers
-  addSecurityHeaders(response);
+  addSecurityHeaders(_response);
   
   return response;
 }
@@ -343,7 +343,7 @@ function createSecurityErrorResponse(
 /**
  * Create rate limit error response
  */
-function createRateLimitErrorResponse(resetTime: number | undefined, requestId: string): NextResponse {
+function createRateLimitErrorResponse( resetTime: number | undefined, requestId: string): NextResponse {
   const response = NextResponse.json(
     {
       success: false,
@@ -352,17 +352,17 @@ function createRateLimitErrorResponse(resetTime: number | undefined, requestId: 
         message: 'Too many requests',
         requestId,
         resetTime,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(_).toISOString(),
       },
     },
     { status: 429 }
   );
 
   if (resetTime) {
-    response.headers.set('Retry-After', Math.ceil((resetTime - Date.now()) / 1000).toString());
+    response.headers.set( 'Retry-After', Math.ceil((resetTime - Date.now()) / 1000).toString());
   }
 
-  addSecurityHeaders(response);
+  addSecurityHeaders(_response);
   
   return response;
 }
@@ -370,11 +370,11 @@ function createRateLimitErrorResponse(resetTime: number | undefined, requestId: 
 /**
  * Add security headers to response
  */
-function addSecurityHeaders(response: NextResponse): void {
+function addSecurityHeaders(_response: NextResponse): void {
   const config = SECURITY_CONFIG.headers;
 
   // HSTS
-  if (SECURITY_CONFIG.session.secure) {
+  if (_SECURITY_CONFIG.session.secure) {
     response.headers.set(
       'Strict-Transport-Security',
       `max-age=${config.hsts.maxAge}; includeSubDomains; preload`
@@ -382,19 +382,19 @@ function addSecurityHeaders(response: NextResponse): void {
   }
 
   // Other security headers
-  response.headers.set('X-Frame-Options', config.xFrameOptions);
-  response.headers.set('X-Content-Type-Options', config.xContentTypeOptions);
-  response.headers.set('X-XSS-Protection', config.xXssProtection);
-  response.headers.set('Referrer-Policy', config.referrerPolicy);
+  response.headers.set( 'X-Frame-Options', config.xFrameOptions);
+  response.headers.set( 'X-Content-Type-Options', config.xContentTypeOptions);
+  response.headers.set( 'X-XSS-Protection', config.xXssProtection);
+  response.headers.set( 'Referrer-Policy', config.referrerPolicy);
 
   // CSP
-  response.headers.set('Content-Security-Policy', SecurityUtils.createCSPHeader());
+  response.headers.set( 'Content-Security-Policy', SecurityUtils.createCSPHeader());
 
   // Permissions Policy
-  const permissionsPolicy = Object.entries(config.permissionsPolicy)
-    .map(([directive, allowlist]) => `${directive}=(${allowlist.join(' ')})`)
-    .join(', ');
-  response.headers.set('Permissions-Policy', permissionsPolicy);
+  const permissionsPolicy = Object.entries(_config.permissionsPolicy)
+    .map( ([directive, allowlist]) => `${directive}=(_${allowlist.join(' ')})`)
+    .join( ', ');
+  response.headers.set( 'Permissions-Policy', permissionsPolicy);
 }
 
 // Export specific middleware configurations

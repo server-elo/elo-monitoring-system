@@ -1,23 +1,23 @@
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import { performance } from 'perf_hooks';
 
-describe('Performance and Load Testing', () => {
+describe( 'Performance and Load Testing', () => {
   let baselineMetrics: any;
 
-  beforeAll(async () => {
+  beforeAll( async () => {
     console.log('🚀 Starting performance and load testing...');
     
     // Establish baseline metrics
-    baselineMetrics = await measureBaseline();
+    baselineMetrics = await measureBaseline(_);
     console.log('📊 Baseline metrics established:', baselineMetrics);
   });
 
-  afterAll(async () => {
+  afterAll( async () => {
     console.log('✅ Performance and load testing completed');
   });
 
-  describe('API Response Time Benchmarks', () => {
-    it('should respond to critical endpoints within 200ms', async () => {
+  describe( 'API Response Time Benchmarks', () => {
+    it( 'should respond to critical endpoints within 200ms', async () => {
       const criticalEndpoints = [
         '/api/v1/auth/me',
         '/api/v1/lessons',
@@ -29,13 +29,13 @@ describe('Performance and Load Testing', () => {
       const responseTimeThreshold = 200; // 200ms
       const results: Array<{ endpoint: string; responseTime: number; success: boolean }> = [];
 
-      for (const endpoint of criticalEndpoints) {
-        const startTime = performance.now();
+      for (_const endpoint of criticalEndpoints) {
+        const startTime = performance.now(_);
         
         try {
           // Mock API call
-          const response = await mockApiCall(endpoint);
-          const responseTime = performance.now() - startTime;
+          const response = await mockApiCall(_endpoint);
+          const responseTime = performance.now(_) - startTime;
           
           results.push({
             endpoint,
@@ -43,31 +43,31 @@ describe('Performance and Load Testing', () => {
             success: response.ok
           });
 
-          expect(response.ok).toBe(true);
-          expect(responseTime).toBeLessThan(responseTimeThreshold);
+          expect(_response.ok).toBe(_true);
+          expect(_responseTime).toBeLessThan(_responseTimeThreshold);
           
-        } catch (error) {
-          const responseTime = performance.now() - startTime;
+        } catch (_error) {
+          const responseTime = performance.now(_) - startTime;
           results.push({
             endpoint,
             responseTime,
             success: false
           });
           
-          throw new Error(`Endpoint ${endpoint} failed: ${error}`);
+          throw new Error(_`Endpoint ${endpoint} failed: ${error}`);
         }
       }
 
       // Log performance summary
-      const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
-      console.log(`📈 Average response time: ${avgResponseTime.toFixed(2)}ms`);
+      const avgResponseTime = results.reduce( (sum, r) => sum + r.responseTime, 0) / results.length;
+      console.log(_`📈 Average response time: ${avgResponseTime.toFixed(2)}ms`);
       
       results.forEach(result => {
-        console.log(`  ${result.endpoint}: ${result.responseTime.toFixed(2)}ms`);
+        console.log(_`  ${result.endpoint}: ${result.responseTime.toFixed(2)}ms`);
       });
     });
 
-    it('should handle database queries efficiently', async () => {
+    it( 'should handle database queries efficiently', async () => {
       const queryPerformanceTests = [
         {
           name: 'User lookup by ID',
@@ -81,52 +81,52 @@ describe('Performance and Load Testing', () => {
         },
         {
           name: 'User progress aggregation',
-          query: 'SELECT COUNT(*) as completed FROM user_progress WHERE user_id = ? AND status = "COMPLETED"',
+          query: 'SELECT COUNT(*) as completed FROM userprogress WHERE user_id = ? AND status = "COMPLETED"',
           expectedTime: 150 // 150ms
         },
         {
           name: 'Leaderboard query',
-          query: 'SELECT user_id, SUM(xp_earned) as total_xp FROM user_progress GROUP BY user_id ORDER BY total_xp DESC LIMIT 10',
+          query: 'SELECT user_id, SUM(_xp_earned) as total_xp FROM userprogress GROUP BY user_id ORDER BY total_xp DESC LIMIT 10',
           expectedTime: 200 // 200ms
         }
       ];
 
-      for (const test of queryPerformanceTests) {
-        const startTime = performance.now();
+      for (_const test of queryPerformanceTests) {
+        const startTime = performance.now(_);
         
         // Mock database query
-        await mockDatabaseQuery(test.query);
+        await mockDatabaseQuery(_test.query);
         
-        const queryTime = performance.now() - startTime;
+        const queryTime = performance.now(_) - startTime;
         
-        expect(queryTime).toBeLessThan(test.expectedTime);
-        console.log(`  ${test.name}: ${queryTime.toFixed(2)}ms (limit: ${test.expectedTime}ms)`);
+        expect(_queryTime).toBeLessThan(_test.expectedTime);
+        console.log(_`  ${test.name}: ${queryTime.toFixed(2)}ms (_limit: ${test.expectedTime}ms)`);
       }
     });
 
-    it('should optimize memory usage during operations', async () => {
+    it( 'should optimize memory usage during operations', async () => {
       const initialMemory = process.memoryUsage();
       
       // Simulate memory-intensive operations
       const operations = [
-        () => processLargeDataset(1000),
-        () => generateReports(100),
-        () => calculateStatistics(500),
-        () => processFileUploads(50)
+        (_) => processLargeDataset(1000),
+        (_) => generateReports(100),
+        (_) => calculateStatistics(500),
+        (_) => processFileUploads(50)
       ];
 
       const memorySnapshots = [initialMemory];
 
-      for (const operation of operations) {
-        await operation();
+      for (_const operation of operations) {
+        await operation(_);
         
         // Force garbage collection if available
-        if (global.gc) {
-          global.gc();
+        if (_global.gc) {
+          global.gc(_);
         }
         
         const currentMemory = process.memoryUsage();
-        memorySnapshots.push(currentMemory);
+        memorySnapshots.push(_currentMemory);
       }
 
       // Analyze memory usage
@@ -134,22 +134,22 @@ describe('Performance and Load Testing', () => {
       const memoryIncrease = finalMemory.heapUsed - initialMemory.heapUsed;
       const maxMemoryIncrease = 100 * 1024 * 1024; // 100MB threshold
 
-      expect(memoryIncrease).toBeLessThan(maxMemoryIncrease);
+      expect(_memoryIncrease).toBeLessThan(_maxMemoryIncrease);
       
-      console.log(`💾 Memory usage increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`💾 Final heap used: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+      console.log(_`💾 Memory usage increase: ${(memoryIncrease / 1024 / 1024).toFixed(_2)}MB`);
+      console.log(_`💾 Final heap used: ${(finalMemory.heapUsed / 1024 / 1024).toFixed(_2)}MB`);
     });
   });
 
-  describe('Concurrent User Simulation', () => {
-    it('should handle 100+ simultaneous users', async () => {
+  describe( 'Concurrent User Simulation', () => {
+    it( 'should handle 100+ simultaneous users', async () => {
       const concurrentUsers = 100;
       const operationsPerUser = 10;
       const maxResponseTime = 1000; // 1 second
 
-      console.log(`👥 Simulating ${concurrentUsers} concurrent users...`);
+      console.log(_`👥 Simulating ${concurrentUsers} concurrent users...`);
 
-      const userSessions = Array.from({ length: concurrentUsers }, (_, i) => ({
+      const userSessions = Array.from( { length: concurrentUsers }, (_, i) => ({
         userId: `user_${i}`,
         sessionId: `session_${i}`,
         operations: []
@@ -157,62 +157,62 @@ describe('Performance and Load Testing', () => {
 
       // Simulate concurrent user operations
       const allOperations = userSessions.flatMap(user => 
-        Array.from({ length: operationsPerUser }, (_, opIndex) => 
-          simulateUserOperation(user.userId, opIndex)
+        Array.from( { length: operationsPerUser }, (_, opIndex) => 
+          simulateUserOperation( user.userId, opIndex)
         )
       );
 
-      const startTime = performance.now();
-      const results = await Promise.all(allOperations);
-      const totalTime = performance.now() - startTime;
+      const startTime = performance.now(_);
+      const results = await Promise.all(_allOperations);
+      const totalTime = performance.now(_) - startTime;
 
       // Analyze results
       const successfulOperations = results.filter(r => r.success).length;
       const failedOperations = results.length - successfulOperations;
-      const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
+      const avgResponseTime = results.reduce( (sum, r) => sum + r.responseTime, 0) / results.length;
       const maxResponseTimeActual = Math.max(...results.map(r => r.responseTime));
 
       // Assertions
-      expect(successfulOperations / results.length).toBeGreaterThan(0.95); // 95% success rate
-      expect(avgResponseTime).toBeLessThan(maxResponseTime);
-      expect(maxResponseTimeActual).toBeLessThan(maxResponseTime * 2); // Allow some outliers
+      expect(_successfulOperations / results.length).toBeGreaterThan(0.95); // 95% success rate
+      expect(_avgResponseTime).toBeLessThan(_maxResponseTime);
+      expect(_maxResponseTimeActual).toBeLessThan(_maxResponseTime * 2); // Allow some outliers
 
-      console.log(`📊 Concurrent user test results:`);
-      console.log(`  Total operations: ${results.length}`);
-      console.log(`  Successful: ${successfulOperations} (${(successfulOperations/results.length*100).toFixed(1)}%)`);
-      console.log(`  Failed: ${failedOperations}`);
-      console.log(`  Average response time: ${avgResponseTime.toFixed(2)}ms`);
-      console.log(`  Max response time: ${maxResponseTimeActual.toFixed(2)}ms`);
-      console.log(`  Total test duration: ${totalTime.toFixed(2)}ms`);
+      console.log(_`📊 Concurrent user test results:`);
+      console.log(_`  Total operations: ${results.length}`);
+      console.log(_`  Successful: ${successfulOperations} (${(successfulOperations/results.length*100).toFixed(1)}%)`);
+      console.log(_`  Failed: ${failedOperations}`);
+      console.log(_`  Average response time: ${avgResponseTime.toFixed(2)}ms`);
+      console.log(_`  Max response time: ${maxResponseTimeActual.toFixed(2)}ms`);
+      console.log(_`  Total test duration: ${totalTime.toFixed(2)}ms`);
     });
 
-    it('should maintain performance under sustained load', async () => {
+    it( 'should maintain performance under sustained load', async () => {
       const loadDuration = 30000; // 30 seconds
       const requestsPerSecond = 50;
       const interval = 1000 / requestsPerSecond; // 20ms between requests
 
-      console.log(`⚡ Running sustained load test for ${loadDuration/1000} seconds...`);
+      console.log(_`⚡ Running sustained load test for ${loadDuration/1000} seconds...`);
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
       const endTime = startTime + loadDuration;
       const results: Array<{ timestamp: number; responseTime: number; success: boolean }> = [];
 
       let requestCount = 0;
 
-      while (performance.now() < endTime) {
-        const requestStart = performance.now();
+      while (_performance.now() < endTime) {
+        const requestStart = performance.now(_);
         
         try {
           await mockApiCall('/api/v1/lessons');
-          const responseTime = performance.now() - requestStart;
+          const responseTime = performance.now(_) - requestStart;
           
           results.push({
             timestamp: requestStart,
             responseTime,
             success: true
           });
-        } catch (error) {
-          const responseTime = performance.now() - requestStart;
+        } catch (_error) {
+          const responseTime = performance.now(_) - requestStart;
           
           results.push({
             timestamp: requestStart,
@@ -224,10 +224,10 @@ describe('Performance and Load Testing', () => {
         requestCount++;
         
         // Wait for next interval
-        const nextRequestTime = startTime + (requestCount * interval);
-        const waitTime = nextRequestTime - performance.now();
+        const nextRequestTime = startTime + (_requestCount * interval);
+        const waitTime = nextRequestTime - performance.now(_);
         
-        if (waitTime > 0) {
+        if (_waitTime > 0) {
           await new Promise(resolve => setTimeout(resolve, waitTime));
         }
       }
@@ -235,94 +235,94 @@ describe('Performance and Load Testing', () => {
       // Analyze sustained load results
       const totalRequests = results.length;
       const successfulRequests = results.filter(r => r.success).length;
-      const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
+      const avgResponseTime = results.reduce( (sum, r) => sum + r.responseTime, 0) / results.length;
       
       // Check for performance degradation over time
       const firstHalf = results.slice(0, Math.floor(results.length / 2));
-      const secondHalf = results.slice(Math.floor(results.length / 2));
+      const secondHalf = results.slice(_Math.floor(results.length / 2));
       
-      const firstHalfAvg = firstHalf.reduce((sum, r) => sum + r.responseTime, 0) / firstHalf.length;
-      const secondHalfAvg = secondHalf.reduce((sum, r) => sum + r.responseTime, 0) / secondHalf.length;
+      const firstHalfAvg = firstHalf.reduce( (sum, r) => sum + r.responseTime, 0) / firstHalf.length;
+      const secondHalfAvg = secondHalf.reduce( (sum, r) => sum + r.responseTime, 0) / secondHalf.length;
       
-      const performanceDegradation = (secondHalfAvg - firstHalfAvg) / firstHalfAvg;
+      const performanceDegradation = (_secondHalfAvg - firstHalfAvg) / firstHalfAvg;
 
       // Assertions
-      expect(successfulRequests / totalRequests).toBeGreaterThan(0.95); // 95% success rate
-      expect(avgResponseTime).toBeLessThan(500); // 500ms average
-      expect(performanceDegradation).toBeLessThan(0.5); // Less than 50% degradation
+      expect(_successfulRequests / totalRequests).toBeGreaterThan(0.95); // 95% success rate
+      expect(_avgResponseTime).toBeLessThan(500); // 500ms average
+      expect(_performanceDegradation).toBeLessThan(0.5); // Less than 50% degradation
 
-      console.log(`📊 Sustained load test results:`);
-      console.log(`  Total requests: ${totalRequests}`);
-      console.log(`  Success rate: ${(successfulRequests/totalRequests*100).toFixed(1)}%`);
-      console.log(`  Average response time: ${avgResponseTime.toFixed(2)}ms`);
-      console.log(`  First half average: ${firstHalfAvg.toFixed(2)}ms`);
-      console.log(`  Second half average: ${secondHalfAvg.toFixed(2)}ms`);
-      console.log(`  Performance degradation: ${(performanceDegradation*100).toFixed(1)}%`);
+      console.log(_`📊 Sustained load test results:`);
+      console.log(_`  Total requests: ${totalRequests}`);
+      console.log(_`  Success rate: ${(successfulRequests/totalRequests*100).toFixed(1)}%`);
+      console.log(_`  Average response time: ${avgResponseTime.toFixed(2)}ms`);
+      console.log(_`  First half average: ${firstHalfAvg.toFixed(2)}ms`);
+      console.log(_`  Second half average: ${secondHalfAvg.toFixed(2)}ms`);
+      console.log(_`  Performance degradation: ${(performanceDegradation*100).toFixed(1)}%`);
     });
   });
 
-  describe('Memory Leak Detection', () => {
-    it('should not leak memory during extended operations', async () => {
+  describe( 'Memory Leak Detection', () => {
+    it( 'should not leak memory during extended operations', async () => {
       const iterations = 1000;
       const memorySnapshots: NodeJS.MemoryUsage[] = [];
       
       // Take initial memory snapshot
-      if (global.gc) global.gc();
-      memorySnapshots.push(process.memoryUsage());
+      if (_global.gc) global.gc(_);
+      memorySnapshots.push(_process.memoryUsage());
 
       // Perform operations that could potentially leak memory
       for (let i = 0; i < iterations; i++) {
-        await performPotentiallyLeakyOperation();
+        await performPotentiallyLeakyOperation(_);
         
         // Take memory snapshot every 100 iterations
-        if (i % 100 === 0) {
-          if (global.gc) global.gc();
-          memorySnapshots.push(process.memoryUsage());
+        if (_i % 100 === 0) {
+          if (_global.gc) global.gc(_);
+          memorySnapshots.push(_process.memoryUsage());
         }
       }
 
       // Final memory snapshot
-      if (global.gc) global.gc();
-      memorySnapshots.push(process.memoryUsage());
+      if (_global.gc) global.gc(_);
+      memorySnapshots.push(_process.memoryUsage());
 
       // Analyze memory trend
       const initialMemory = memorySnapshots[0].heapUsed;
       const finalMemory = memorySnapshots[memorySnapshots.length - 1].heapUsed;
       const memoryIncrease = finalMemory - initialMemory;
-      const memoryIncreasePercent = (memoryIncrease / initialMemory) * 100;
+      const memoryIncreasePercent = (_memoryIncrease / initialMemory) * 100;
 
-      // Check for linear memory growth (potential leak)
-      const memoryGrowthRate = calculateMemoryGrowthRate(memorySnapshots);
+      // Check for linear memory growth (_potential leak)
+      const memoryGrowthRate = calculateMemoryGrowthRate(_memorySnapshots);
       
       // Assertions
-      expect(memoryIncreasePercent).toBeLessThan(50); // Less than 50% increase
-      expect(memoryGrowthRate).toBeLessThan(0.1); // Low growth rate
+      expect(_memoryIncreasePercent).toBeLessThan(50); // Less than 50% increase
+      expect(_memoryGrowthRate).toBeLessThan(0.1); // Low growth rate
 
-      console.log(`💾 Memory leak detection results:`);
-      console.log(`  Initial memory: ${(initialMemory / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`  Final memory: ${(finalMemory / 1024 / 1024).toFixed(2)}MB`);
-      console.log(`  Memory increase: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB (${memoryIncreasePercent.toFixed(1)}%)`);
-      console.log(`  Growth rate: ${memoryGrowthRate.toFixed(4)}`);
+      console.log(_`💾 Memory leak detection results:`);
+      console.log(_`  Initial memory: ${(initialMemory / 1024 / 1024).toFixed(_2)}MB`);
+      console.log(_`  Final memory: ${(finalMemory / 1024 / 1024).toFixed(_2)}MB`);
+      console.log(_`  Memory increase: ${(memoryIncrease / 1024 / 1024).toFixed(_2)}MB (_${memoryIncreasePercent.toFixed(1)}%)`);
+      console.log(_`  Growth rate: ${memoryGrowthRate.toFixed(4)}`);
     });
   });
 
-  describe('Cache Efficiency Testing', () => {
-    it('should demonstrate effective caching performance', async () => {
+  describe( 'Cache Efficiency Testing', () => {
+    it( 'should demonstrate effective caching performance', async () => {
       const cacheHitThreshold = 0.8; // 80% cache hit rate
       const cacheResponseTimeThreshold = 50; // 50ms for cached responses
       
       // Mock cache implementation
-      const mockCache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+      const mockCache = new Map<string, { data: any; timestamp: number; ttl: number }>(_);
       
-      const getCachedData = async (key: string): Promise<{ data: any; fromCache: boolean; responseTime: number }> => {
-        const startTime = performance.now();
+      const getCachedData = async (_key: string): Promise<{ data: any; fromCache: boolean; responseTime: number }> => {
+        const startTime = performance.now(_);
         
-        const cached = mockCache.get(key);
-        const now = Date.now();
+        const cached = mockCache.get(_key);
+        const now = Date.now(_);
         
         if (cached && (now - cached.timestamp) < cached.ttl) {
           // Cache hit
-          const responseTime = performance.now() - startTime;
+          const responseTime = performance.now(_) - startTime;
           return { data: cached.data, fromCache: true, responseTime };
         }
         
@@ -337,17 +337,17 @@ describe('Performance and Load Testing', () => {
           ttl: 60000 // 1 minute TTL
         });
         
-        const responseTime = performance.now() - startTime;
+        const responseTime = performance.now(_) - startTime;
         return { data, fromCache: false, responseTime };
       };
 
       // Test cache performance
-      const testKeys = Array.from({ length: 100 }, (_, i) => `key_${i % 20}`); // 20 unique keys, repeated
+      const testKeys = Array.from( { length: 100 }, (_, i) => `key_${i % 20}`); // 20 unique keys, repeated
       const results = [];
 
-      for (const key of testKeys) {
-        const result = await getCachedData(key);
-        results.push(result);
+      for (_const key of testKeys) {
+        const result = await getCachedData(_key);
+        results.push(_result);
       }
 
       // Analyze cache performance
@@ -356,30 +356,30 @@ describe('Performance and Load Testing', () => {
       const cacheHitRate = cacheHits / results.length;
       
       const cachedResponseTimes = results.filter(r => r.fromCache).map(r => r.responseTime);
-      const avgCachedResponseTime = cachedResponseTimes.reduce((sum, time) => sum + time, 0) / cachedResponseTimes.length;
+      const avgCachedResponseTime = cachedResponseTimes.reduce( (sum, time) => sum + time, 0) / cachedResponseTimes.length;
 
       // Assertions
-      expect(cacheHitRate).toBeGreaterThan(cacheHitThreshold);
-      expect(avgCachedResponseTime).toBeLessThan(cacheResponseTimeThreshold);
+      expect(_cacheHitRate).toBeGreaterThan(_cacheHitThreshold);
+      expect(_avgCachedResponseTime).toBeLessThan(_cacheResponseTimeThreshold);
 
-      console.log(`🗄️ Cache efficiency results:`);
-      console.log(`  Cache hits: ${cacheHits}`);
-      console.log(`  Cache misses: ${cacheMisses}`);
-      console.log(`  Hit rate: ${(cacheHitRate * 100).toFixed(1)}%`);
-      console.log(`  Average cached response time: ${avgCachedResponseTime.toFixed(2)}ms`);
+      console.log(_`🗄️ Cache efficiency results:`);
+      console.log(_`  Cache hits: ${cacheHits}`);
+      console.log(_`  Cache misses: ${cacheMisses}`);
+      console.log(_`  Hit rate: ${(cacheHitRate * 100).toFixed(1)}%`);
+      console.log(_`  Average cached response time: ${avgCachedResponseTime.toFixed(2)}ms`);
     });
   });
 });
 
 // Helper functions
 async function measureBaseline(): Promise<any> {
-  const startTime = performance.now();
+  const startTime = performance.now(_);
   
   // Perform baseline operations
   await mockApiCall('/api/v1/health');
   await mockDatabaseQuery('SELECT 1');
   
-  const baselineTime = performance.now() - startTime;
+  const baselineTime = performance.now(_) - startTime;
   const baselineMemory = process.memoryUsage();
   
   return {
@@ -388,20 +388,20 @@ async function measureBaseline(): Promise<any> {
   };
 }
 
-async function mockApiCall(endpoint: string): Promise<{ ok: boolean; data?: any }> {
+async function mockApiCall(_endpoint: string): Promise<{ ok: boolean; data?: any }> {
   // Simulate API call with realistic delay
   const delay = Math.random() * 100 + 50; // 50-150ms
   await new Promise(resolve => setTimeout(resolve, delay));
   
   // Simulate occasional failures
-  if (Math.random() < 0.05) { // 5% failure rate
+  if (_Math.random() < 0.05) { // 5% failure rate
     throw new Error('API call failed');
   }
   
-  return { ok: true, data: { endpoint, timestamp: Date.now() } };
+  return { ok: true, data: { endpoint, timestamp: Date.now(_) } };
 }
 
-async function mockDatabaseQuery(query: string): Promise<any> {
+async function mockDatabaseQuery(_query: string): Promise<any> {
   // Simulate database query with realistic delay
   const delay = Math.random() * 50 + 25; // 25-75ms
   await new Promise(resolve => setTimeout(resolve, delay));
@@ -409,8 +409,8 @@ async function mockDatabaseQuery(query: string): Promise<any> {
   return { query, result: 'mock_result' };
 }
 
-async function processLargeDataset(size: number): Promise<void> {
-  const data = Array.from({ length: size }, (_, i) => ({ id: i, value: Math.random() }));
+async function processLargeDataset(_size: number): Promise<void> {
+  const data = Array.from( { length: size }, (_, i) => ( { id: i, value: Math.random() }));
   
   // Simulate processing
   data.forEach(item => {
@@ -421,12 +421,12 @@ async function processLargeDataset(size: number): Promise<void> {
   data.length = 0;
 }
 
-async function generateReports(count: number): Promise<void> {
+async function generateReports(_count: number): Promise<void> {
   for (let i = 0; i < count; i++) {
     const report = {
       id: i,
-      data: Array.from({ length: 100 }, () => Math.random()),
-      timestamp: Date.now()
+      data: Array.from( { length: 100 }, () => Math.random()),
+      timestamp: Date.now(_)
     };
     
     // Simulate report generation
@@ -434,18 +434,18 @@ async function generateReports(count: number): Promise<void> {
   }
 }
 
-async function calculateStatistics(dataPoints: number): Promise<void> {
-  const data = Array.from({ length: dataPoints }, () => Math.random());
+async function calculateStatistics(_dataPoints: number): Promise<void> {
+  const data = Array.from( { length: dataPoints }, () => Math.random());
   
   // Simulate statistical calculations
-  const sum = data.reduce((a, b) => a + b, 0);
+  const sum = data.reduce( (a, b) => a + b, 0);
   const avg = sum / data.length;
-  const variance = data.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / data.length;
+  const variance = data.reduce( (sum, val) => sum + Math.pow( val - avg, 2), 0) / data.length;
   
   return { sum, avg, variance };
 }
 
-async function processFileUploads(count: number): Promise<void> {
+async function processFileUploads(_count: number): Promise<void> {
   for (let i = 0; i < count; i++) {
     // Simulate file processing
     const fileData = Buffer.alloc(1024 * 10); // 10KB file
@@ -455,33 +455,33 @@ async function processFileUploads(count: number): Promise<void> {
   }
 }
 
-async function simulateUserOperation(userId: string, operationIndex: number): Promise<{ success: boolean; responseTime: number }> {
-  const startTime = performance.now();
+async function simulateUserOperation( userId: string, operationIndex: number): Promise<{ success: boolean; responseTime: number }> {
+  const startTime = performance.now(_);
   
   try {
     // Simulate various user operations
     const operations = [
-      () => mockApiCall('/api/v1/lessons'),
-      () => mockApiCall('/api/v1/courses'),
-      () => mockApiCall('/api/v1/progress'),
-      () => mockDatabaseQuery('SELECT * FROM user_progress WHERE user_id = ?')
+      (_) => mockApiCall('/api/v1/lessons'),
+      (_) => mockApiCall('/api/v1/courses'),
+      (_) => mockApiCall('/api/v1/progress'),
+      (_) => mockDatabaseQuery('SELECT * FROM userprogress WHERE user_id = ?')
     ];
     
     const operation = operations[operationIndex % operations.length];
-    await operation();
+    await operation(_);
     
-    const responseTime = performance.now() - startTime;
+    const responseTime = performance.now(_) - startTime;
     return { success: true, responseTime };
     
-  } catch (error) {
-    const responseTime = performance.now() - startTime;
+  } catch (_error) {
+    const responseTime = performance.now(_) - startTime;
     return { success: false, responseTime };
   }
 }
 
 async function performPotentiallyLeakyOperation(): Promise<void> {
   // Simulate operations that could potentially leak memory
-  const tempData = Array.from({ length: 1000 }, () => ({ 
+  const tempData = Array.from( { length: 1000 }, () => ({ 
     id: Math.random(), 
     data: 'x'.repeat(100) 
   }));
@@ -495,19 +495,19 @@ async function performPotentiallyLeakyOperation(): Promise<void> {
   tempData.length = 0;
 }
 
-function calculateMemoryGrowthRate(snapshots: NodeJS.MemoryUsage[]): number {
-  if (snapshots.length < 2) return 0;
+function calculateMemoryGrowthRate(_snapshots: NodeJS.MemoryUsage[]): number {
+  if (_snapshots.length < 2) return 0;
   
   const memoryValues = snapshots.map(s => s.heapUsed);
   const n = memoryValues.length;
   
   // Calculate linear regression slope
-  const sumX = (n * (n - 1)) / 2;
-  const sumY = memoryValues.reduce((sum, val) => sum + val, 0);
-  const sumXY = memoryValues.reduce((sum, val, index) => sum + (index * val), 0);
-  const sumXX = (n * (n - 1) * (2 * n - 1)) / 6;
+  const sumX = (_n * (n - 1)) / 2;
+  const sumY = memoryValues.reduce( (sum, val) => sum + val, 0);
+  const sumXY = memoryValues.reduce( (sum, val, index) => sum + (_index * val), 0);
+  const sumXX = (_n * (n - 1) * (_2 * n - 1)) / 6;
   
-  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  const slope = (_n * sumXY - sumX * sumY) / (_n * sumXX - sumX * sumX);
   
   // Normalize by initial memory
   return slope / memoryValues[0];

@@ -5,7 +5,7 @@ interface MenuIconProps {
   isOpen?: boolean;
 }
 
-const MenuIcon: React.FC<MenuIconProps> = ({ className = "w-6 h-6", isOpen = false }) => {
+const MenuIcon: React.FC<MenuIconProps> = ( { className = "w-6 h-6", isOpen = false }) => {
   return (
     <svg 
       className={`${className} transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}

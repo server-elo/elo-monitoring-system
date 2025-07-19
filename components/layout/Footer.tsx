@@ -68,7 +68,7 @@ export function Footer() {
               
               {/* Social Links */}
               <div className="flex space-x-4">
-                {socialLinks.map((social, index) => (
+                {socialLinks.map( (social, index) => (
                   <motion.a
                     key={social.label}
                     href={social.href}
@@ -90,7 +90,7 @@ export function Footer() {
           </div>
 
           {/* Footer Links */}
-          {footerLinks.map((section, sectionIndex) => (
+          {footerLinks.map( (section, sectionIndex) => (
             <div key={section.title}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -100,12 +100,12 @@ export function Footer() {
               >
                 <h4 className="text-white font-semibold mb-4">{section.title}</h4>
                 <ul className="space-y-3">
-                  {section.links.map((link, linkIndex) => (
+                  {section.links.map( (link, linkIndex) => (
                     <motion.li
                       key={link.name}
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: (sectionIndex * 0.1) + (linkIndex * 0.05) }}
+                      transition={{ duration: 0.6, delay: (_sectionIndex * 0.1) + (_linkIndex * 0.05) }}
                       viewport={{ once: true }}
                     >
                       <a

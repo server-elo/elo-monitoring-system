@@ -79,21 +79,21 @@ export function EnhancedButton({
   ...props
 }: EnhancedButtonProps) {
   // Async button state management
-  const asyncButton = useAsyncButton(asyncOptions);
+  const asyncButton = useAsyncButton(_asyncOptions);
 
   // Local state for visual feedback
-  const [isPressed, setIsPressed] = useState(false);
-  const [_showSuccessAnimation, _setShowSuccessAnimation] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [isPressed, setIsPressed] = useState(_false);
+  const [_showSuccessAnimation, _setShowSuccessAnimation] = useState(_false);
+  const buttonRef = useRef<HTMLButtonElement>(_null);
 
-  // Determine current state (prioritize async state over props)
+  // Determine current state (_prioritize async state over props)
   const currentLoading = asyncButton.state.isLoading || loading;
   const currentSuccess = asyncButton.state.isSuccess || success;
   const currentError = asyncButton.state.isError || error;
   const currentDisabled = asyncButton.state.isDisabled || disabled || currentLoading;
 
   // Get current text based on state
-  const getCurrentText = () => {
+  const getCurrentText = (_) => {
     if (currentLoading) return loadingText;
     if (currentSuccess && showFeedback) return successText;
     if (currentError && showFeedback) return errorText || asyncButton.state.error || 'Error';
@@ -101,14 +101,14 @@ export function EnhancedButton({
   };
 
   // Get current icon based on state
-  const getCurrentIcon = () => {
+  const getCurrentIcon = (_) => {
     if (currentLoading) return <Loader2 className="w-4 h-4 animate-spin" />;
     if (currentSuccess && showFeedback) return <Check className="w-4 h-4" />;
     if (currentError && showFeedback) return <AlertCircle className="w-4 h-4" />;
     return null;
   };
 
-  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async (_e: React.MouseEvent<HTMLButtonElement>) => {
     if (currentDisabled) return;
 
     // Haptic feedback for mobile devices
@@ -118,70 +118,70 @@ export function EnhancedButton({
 
     // Sound effect
     if (soundEffect) {
-      playClickSound();
+      playClickSound(_);
     }
 
     // Visual feedback
     if (rippleEffect) {
-      setIsPressed(true);
-      setTimeout(() => setIsPressed(false), 150);
+      setIsPressed(_true);
+      setTimeout(() => setIsPressed(_false), 150);
     }
 
     // Handle async action
     if (asyncAction) {
-      await asyncButton.execute(asyncAction);
+      await asyncButton.execute(_asyncAction);
     }
 
     // Handle regular onClick
     if (onClick) {
-      await onClick(e);
+      await onClick(_e);
     }
   };
 
   // Keyboard event handling
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClick(e as any);
+  const handleKeyDown = (_e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (_e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(_);
+      handleClick(_e as any);
     }
-    if (props.onKeyDown) {
-      props.onKeyDown(e);
+    if (_props.onKeyDown) {
+      props.onKeyDown(_e);
     }
   };
 
   // Cleanup async button on unmount
   useEffect(() => {
-    return () => {
-      asyncButton.cleanup();
+    return (_) => {
+      asyncButton.cleanup(_);
     };
   }, [asyncButton]);
 
-  const playClickSound = () => {
+  const playClickSound = (_) => {
     // Create a subtle click sound using Web Audio API
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+      const audioContext = new (_window.AudioContext || (window as any).webkitAudioContext)(_);
+      const oscillator = audioContext.createOscillator(_);
+      const gainNode = audioContext.createGain(_);
 
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      oscillator.connect(_gainNode);
+      gainNode.connect(_audioContext.destination);
 
-      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime( 800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime( 400, audioContext.currentTime + 0.1);
 
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      gainNode.gain.setValueAtTime( 0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime( 0.01, audioContext.currentTime + 0.1);
 
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.1);
-    } catch (error) {
+      oscillator.start(_audioContext.currentTime);
+      oscillator.stop(_audioContext.currentTime + 0.1);
+    } catch (_error) {
       // Fallback: silent operation if Web Audio API is not available
     }
   };
 
-  const getButtonContent = () => {
-    const icon = getCurrentIcon();
-    const text = getCurrentText();
+  const getButtonContent = (_) => {
+    const icon = getCurrentIcon(_);
+    const text = getCurrentText(_);
 
     return (
       <motion.div
@@ -235,7 +235,7 @@ export function EnhancedButton({
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           disabled={currentDisabled}
-          aria-label={ariaLabel || (typeof children === 'string' ? children : undefined)}
+          aria-label={ariaLabel || (_typeof children === 'string' ? children : undefined)}
           aria-describedby={description ? `${props.id}-desc` : undefined}
           className={cn(
             'relative overflow-hidden transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2',
@@ -270,7 +270,7 @@ export function EnhancedButton({
 
           {/* Button content */}
           <span className="relative z-10">
-            {getButtonContent()}
+            {getButtonContent(_)}
           </span>
 
           {/* Glow effect */}
@@ -337,7 +337,7 @@ export function EnhancedButton({
       <AnimatePresence>
         {success && showSuccessAnimation && (
           <>
-            {[...Array(6)].map((_, i) => (
+            {[...Array(_6)].map( (_, i) => (
               <motion.div
                 key={i}
                 initial={{
@@ -358,7 +358,7 @@ export function EnhancedButton({
                   ease: 'easeOut',
                 }}
                 className="absolute top-1/2 left-1/2 w-2 h-2 bg-green-400 rounded-full pointer-events-none"
-                style={{ transform: 'translate(-50%, -50%)' }}
+                style={{ transform: 'translate( -50%, -50%)' }}
               />
             ))}
           </>
@@ -380,7 +380,7 @@ export function EnhancedButton({
 }
 
 // Preset button variants for common use cases
-export function PrimaryButton(props: EnhancedButtonProps) {
+export function PrimaryButton(_props: EnhancedButtonProps) {
   return (
     <EnhancedButton
       {...props}
@@ -397,7 +397,7 @@ export function PrimaryButton(props: EnhancedButtonProps) {
   );
 }
 
-export function SecondaryButton(props: EnhancedButtonProps) {
+export function SecondaryButton(_props: EnhancedButtonProps) {
   return (
     <EnhancedButton
       {...props}
@@ -413,7 +413,7 @@ export function SecondaryButton(props: EnhancedButtonProps) {
   );
 }
 
-export function SuccessButton(props: EnhancedButtonProps) {
+export function SuccessButton(_props: EnhancedButtonProps) {
   return (
     <EnhancedButton
       {...props}
@@ -427,7 +427,7 @@ export function SuccessButton(props: EnhancedButtonProps) {
   );
 }
 
-export function DangerButton(props: EnhancedButtonProps) {
+export function DangerButton(_props: EnhancedButtonProps) {
   return (
     <EnhancedButton
       {...props}
@@ -440,7 +440,7 @@ export function DangerButton(props: EnhancedButtonProps) {
   );
 }
 
-export function FloatingActionButton(props: EnhancedButtonProps) {
+export function FloatingActionButton(_props: EnhancedButtonProps) {
   return (
     <EnhancedButton
       {...props}
@@ -460,7 +460,7 @@ export function FloatingActionButton(props: EnhancedButtonProps) {
 
 // Specialized async button components
 export function AsyncSubmitButton(props: Omit<EnhancedButtonProps, 'asyncAction' | 'children'> & {
-  onSubmit: () => Promise<void>;
+  onSubmit: (_) => Promise<void>;
   submitText?: string;
 }) {
   const { onSubmit, submitText = 'Submit', ...buttonProps } = props;
@@ -485,7 +485,7 @@ export function AsyncSubmitButton(props: Omit<EnhancedButtonProps, 'asyncAction'
 }
 
 export function AsyncSaveButton(props: Omit<EnhancedButtonProps, 'asyncAction' | 'children'> & {
-  onSave: () => Promise<void>;
+  onSave: (_) => Promise<void>;
 }) {
   const { onSave, ...buttonProps } = props;
 
@@ -516,7 +516,7 @@ export function AsyncSaveButton(props: Omit<EnhancedButtonProps, 'asyncAction' |
 }
 
 export function AsyncDeleteButton(props: Omit<EnhancedButtonProps, 'asyncAction' | 'children'> & {
-  onDelete: () => Promise<void>;
+  onDelete: (_) => Promise<void>;
   confirmText?: string;
 }) {
   const { onDelete, confirmText = 'Delete', ...buttonProps } = props;

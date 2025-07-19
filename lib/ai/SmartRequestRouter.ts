@@ -38,15 +38,15 @@ export interface RoutingStrategy {
 
 export class SmartRequestRouter {
   private healthMonitor: HealthMonitor;
-  private llmServices = new Map<string, LocalLLMService>();
-  private routingStrategies = new Map<string, RoutingStrategy>();
+  private llmServices = new Map<string, LocalLLMService>(_);
+  private routingStrategies = new Map<string, RoutingStrategy>(_);
   private requestHistory: Array<{
     request: RoutingRequest;
     response: RoutingResponse;
     timestamp: Date;
   }> = [];
 
-  constructor() {
+  constructor(_) {
     // Default service configurations
     const defaultConfigs: ServiceConfig[] = [
       {
@@ -90,14 +90,14 @@ export class SmartRequestRouter {
       }
     ];
 
-    this.healthMonitor = new HealthMonitor(defaultConfigs);
-    this.initializeServices(defaultConfigs);
-    this.setupRoutingStrategies();
+    this.healthMonitor = new HealthMonitor(_defaultConfigs);
+    this.initializeServices(_defaultConfigs);
+    this.setupRoutingStrategies(_);
   }
 
-  private initializeServices(configs: ServiceConfig[]): void {
-    for (const config of configs) {
-      if (config.name !== 'Gemini-Pro') {
+  private initializeServices(_configs: ServiceConfig[]): void {
+    for (_const config of configs) {
+      if (_config.name !== 'Gemini-Pro') {
         // Initialize local LLM services
         const service = new LocalLLMService({
           baseURL: config.url,
@@ -106,21 +106,21 @@ export class SmartRequestRouter {
           maxTokens: 4096,
           temperature: 0.1
         });
-        this.llmServices.set(config.name, service);
+        this.llmServices.set( config.name, service);
       }
     }
   }
 
-  private setupRoutingStrategies(): void {
+  private setupRoutingStrategies(_): void {
     // Performance-based routing
     this.routingStrategies.set('performance', {
       name: 'performance',
-      selectService: (request, healthyServices) => {
+      selectService: ( request, healthyServices) => {
         return healthyServices
           .filter(s => s.specialty === request.type || s.specialty === 'general')
-          .sort((a, b) => {
+          .sort( (a, b) => {
             // Sort by uptime first, then response time
-            if (a.uptime !== b.uptime) return b.uptime - a.uptime;
+            if (_a.uptime !== b.uptime) return b.uptime - a.uptime;
             return a.averageResponseTime - b.averageResponseTime;
           })[0] || null;
       }
@@ -129,7 +129,7 @@ export class SmartRequestRouter {
     // Specialty-based routing
     this.routingStrategies.set('specialty', {
       name: 'specialty',
-      selectService: (request, healthyServices) => {
+      selectService: ( request, healthyServices) => {
         // First try to find exact specialty match
         const specialtyMatch = healthyServices.find(s => s.specialty === request.type);
         if (specialtyMatch) return specialtyMatch;
@@ -142,12 +142,12 @@ export class SmartRequestRouter {
     // Load-balanced routing
     this.routingStrategies.set('load-balanced', {
       name: 'load-balanced',
-      selectService: (request, healthyServices) => {
+      selectService: ( request, healthyServices) => {
         const suitableServices = healthyServices.filter(s => 
           s.specialty === request.type || s.specialty === 'general'
         );
 
-        if (suitableServices.length === 0) return null;
+        if (_suitableServices.length === 0) return null;
 
         // Simple round-robin based on request count
         const requestCount = this.requestHistory.length;
@@ -165,38 +165,38 @@ export class SmartRequestRouter {
     const maxRetries = request.retryAttempts || 2;
     let lastError: Error | null = null;
 
-    while (retryCount <= maxRetries) {
+    while (_retryCount <= maxRetries) {
       try {
-        const healthyServices = this.healthMonitor.getHealthyServices();
+        const healthyServices = this.healthMonitor.getHealthyServices(_);
         
-        if (healthyServices.length === 0) {
+        if (_healthyServices.length === 0) {
           throw new Error('No healthy services available');
         }
 
-        const routingStrategy = this.routingStrategies.get(strategy);
+        const routingStrategy = this.routingStrategies.get(_strategy);
         if (!routingStrategy) {
-          throw new Error(`Unknown routing strategy: ${strategy}`);
+          throw new Error(_`Unknown routing strategy: ${strategy}`);
         }
 
-        const selectedService = routingStrategy.selectService(request, healthyServices);
+        const selectedService = routingStrategy.selectService( request, healthyServices);
         if (!selectedService) {
           throw new Error('No suitable service found for request');
         }
 
-        console.log(`🎯 Routing ${request.type} request to ${selectedService.name}`);
+        console.log(_`🎯 Routing ${request.type} request to ${selectedService.name}`);
 
-        const response = await this.executeRequest(request, selectedService);
+        const response = await this.executeRequest( request, selectedService);
         
         // Record successful request
         this.recordRequest(request, response);
         
         return response;
 
-      } catch (error) {
+      } catch (_error) {
         lastError = error instanceof Error ? error : new Error('Unknown error');
         retryCount++;
         
-        if (retryCount <= maxRetries) {
+        if (_retryCount <= maxRetries) {
           console.warn(`🔄 Request failed, retrying (${retryCount}/${maxRetries}):`, lastError.message);
           await this.delay(1000 * retryCount); // Exponential backoff
         }
@@ -206,11 +206,11 @@ export class SmartRequestRouter {
     // All retries failed, try Gemini as final fallback
     console.log('🆘 All services failed, using Gemini fallback');
     try {
-      const fallbackResponse = await this.executeGeminiFallback(request);
+      const fallbackResponse = await this.executeGeminiFallback(_request);
       this.recordRequest(request, fallbackResponse);
       return fallbackResponse;
-    } catch (geminiError) {
-      throw new Error(`All services failed. Last error: ${lastError?.message}, Gemini error: ${geminiError}`);
+    } catch (_geminiError) {
+      throw new Error( `All services failed. Last error: ${lastError?.message}, Gemini error: ${geminiError}`);
     }
   }
 
@@ -218,19 +218,19 @@ export class SmartRequestRouter {
     request: RoutingRequest,
     service: ServiceHealth
   ): Promise<RoutingResponse> {
-    const startTime = Date.now();
+    const startTime = Date.now(_);
 
     if (service.name === 'Gemini-Pro') {
-      return this.executeGeminiFallback(request);
+      return this.executeGeminiFallback(_request);
     }
 
-    const llmService = this.llmServices.get(service.name);
+    const llmService = this.llmServices.get(_service.name);
     if (!llmService) {
-      throw new Error(`LLM service ${service.name} not initialized`);
+      throw new Error(_`LLM service ${service.name} not initialized`);
     }
 
-    const content = await llmService.generateResponse(request.prompt);
-    const responseTime = Date.now() - startTime;
+    const content = await llmService.generateResponse(_request.prompt);
+    const responseTime = Date.now(_) - startTime;
 
     return {
       content,
@@ -243,11 +243,11 @@ export class SmartRequestRouter {
     };
   }
 
-  private async executeGeminiFallback(request: RoutingRequest): Promise<RoutingResponse> {
-    const startTime = Date.now();
+  private async executeGeminiFallback(_request: RoutingRequest): Promise<RoutingResponse> {
+    const startTime = Date.now(_);
     
-    const content = await sendMessageToGeminiChat(request.prompt);
-    const responseTime = Date.now() - startTime;
+    const content = await sendMessageToGeminiChat(_request.prompt);
+    const responseTime = Date.now(_) - startTime;
 
     return {
       content,
@@ -264,32 +264,32 @@ export class SmartRequestRouter {
     this.requestHistory.push({
       request,
       response,
-      timestamp: new Date()
+      timestamp: new Date(_)
     });
 
     // Limit history size
-    if (this.requestHistory.length > 1000) {
-      this.requestHistory.splice(0, this.requestHistory.length - 1000);
+    if (_this.requestHistory.length > 1000) {
+      this.requestHistory.splice( 0, this.requestHistory.length - 1000);
     }
   }
 
-  private delay(ms: number): Promise<void> {
+  private delay(_ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  public getHealthMonitor(): HealthMonitor {
+  public getHealthMonitor(_): HealthMonitor {
     return this.healthMonitor;
   }
 
-  public getServiceHealth(): ServiceHealth[] {
-    return this.healthMonitor.getAllServicesHealth();
+  public getServiceHealth(_): ServiceHealth[] {
+    return this.healthMonitor.getAllServicesHealth(_);
   }
 
-  public async checkServiceHealth(serviceName?: string): Promise<void> {
-    await this.healthMonitor.forceHealthCheck(serviceName);
+  public async checkServiceHealth(_serviceName?: string): Promise<void> {
+    await this.healthMonitor.forceHealthCheck(_serviceName);
   }
 
-  public getRequestHistory(): Array<{
+  public getRequestHistory(_): Array<{
     request: RoutingRequest;
     response: RoutingResponse;
     timestamp: Date;
@@ -297,7 +297,7 @@ export class SmartRequestRouter {
     return [...this.requestHistory];
   }
 
-  public getPerformanceMetrics(): {
+  public getPerformanceMetrics(_): {
     totalRequests: number;
     averageResponseTime: number;
     successRate: number;
@@ -305,7 +305,7 @@ export class SmartRequestRouter {
     fallbackRate: number;
   } {
     const total = this.requestHistory.length;
-    if (total === 0) {
+    if (_total === 0) {
       return {
         totalRequests: 0,
         averageResponseTime: 0,
@@ -315,12 +315,12 @@ export class SmartRequestRouter {
       };
     }
 
-    const totalResponseTime = this.requestHistory.reduce((sum, r) => sum + r.response.responseTime, 0);
+    const totalResponseTime = this.requestHistory.reduce( (sum, r) => sum + r.response.responseTime, 0);
     const fallbackCount = this.requestHistory.filter(r => r.response.fallbackUsed).length;
     
     const serviceUsage: Record<string, number> = {};
     this.requestHistory.forEach(r => {
-      serviceUsage[r.response.serviceName] = (serviceUsage[r.response.serviceName] || 0) + 1;
+      serviceUsage[r.response.serviceName] = (_serviceUsage[r.response.serviceName] || 0) + 1;
     });
 
     return {
@@ -328,14 +328,14 @@ export class SmartRequestRouter {
       averageResponseTime: totalResponseTime / total,
       successRate: 100, // All recorded requests were successful
       serviceUsage,
-      fallbackRate: (fallbackCount / total) * 100
+      fallbackRate: (_fallbackCount / total) * 100
     };
   }
 
-  public addService(config: ServiceConfig): void {
-    this.healthMonitor.addService(config);
+  public addService(_config: ServiceConfig): void {
+    this.healthMonitor.addService(_config);
     
-    if (config.name !== 'Gemini-Pro') {
+    if (_config.name !== 'Gemini-Pro') {
       const service = new LocalLLMService({
         baseURL: config.url,
         apiKey: process.env.LOCAL_LLM_API_KEY || 'lm-studio',
@@ -343,18 +343,18 @@ export class SmartRequestRouter {
         maxTokens: 4096,
         temperature: 0.1
       });
-      this.llmServices.set(config.name, service);
+      this.llmServices.set( config.name, service);
     }
   }
 
-  public removeService(serviceName: string): boolean {
-    this.llmServices.delete(serviceName);
-    return this.healthMonitor.removeService(serviceName);
+  public removeService(_serviceName: string): boolean {
+    this.llmServices.delete(_serviceName);
+    return this.healthMonitor.removeService(_serviceName);
   }
 
-  public destroy(): void {
-    this.healthMonitor.destroy();
-    this.llmServices.clear();
+  public destroy(_): void {
+    this.healthMonitor.destroy(_);
+    this.llmServices.clear(_);
     this.requestHistory = [];
   }
 }

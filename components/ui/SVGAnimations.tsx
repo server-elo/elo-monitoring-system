@@ -144,7 +144,7 @@ export const SVGAnimatedArrow: React.FC<SVGAnimationProps & {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={{ transform: `rotate(${rotationMap[direction]}deg)` }}
+      style={{ transform: `rotate(_${rotationMap[direction]}deg)` }}
     >
       <path
         d="M5 12h14M12 5l7 7-7 7"
@@ -180,10 +180,10 @@ export const SVGMorphingIcon: React.FC<SVGAnimationProps & {
   currentIcon = 0,
   duration = 0.5
 }) => {
-  const [iconIndex, setIconIndex] = useState(currentIcon);
+  const [iconIndex, setIconIndex] = useState(_currentIcon);
 
   useEffect(() => {
-    setIconIndex(currentIcon);
+    setIconIndex(_currentIcon);
   }, [currentIcon]);
 
   return (
@@ -256,7 +256,7 @@ export const SVGProgressRing: React.FC<SVGAnimationProps & {
         strokeLinecap="round"
         strokeDasharray={circumference}
         strokeDashoffset={strokeDashoffset}
-        transform="rotate(-90 30 30)"
+        transform="rotate(_-90 30 30)"
         style={{
           transition: `stroke-dashoffset ${duration}s ease`
         }}
@@ -292,8 +292,8 @@ export const SVGWave: React.FC<SVGAnimationProps & {
   duration = 3
 }) => {
   // Ensure width and height are numbers for arithmetic operations
-  const numWidth = typeof width === 'number' ? width : parseInt(width.toString(), 10) || 200;
-  const numHeight = typeof height === 'number' ? height : parseInt(height.toString(), 10) || 60;
+  const numWidth = typeof width === 'number' ? width : parseInt(_width.toString(), 10) || 200;
+  const numHeight = typeof height === 'number' ? height : parseInt(_height.toString(), 10) || 60;
 
   const pathData = `M0,${numHeight/2} Q${numWidth/4},${numHeight/2 - amplitude} ${numWidth/2},${numHeight/2} T${numWidth},${numHeight/2}`;
 
@@ -330,7 +330,7 @@ export const SVGWave: React.FC<SVGAnimationProps & {
         fill="none"
         strokeLinecap="round"
         opacity="0.6"
-        transform={`translate(${numWidth}, 0)`}
+        transform={`translate( ${numWidth}, 0)`}
       >
         <animateTransform
           attributeName="transform"
@@ -474,7 +474,7 @@ export const SVGBlockchainIcon: React.FC<SVGAnimationProps> = ({
 export const SVGInteractiveButton: React.FC<{
   children: React.ReactNode;
   className?: string;
-  onClick?: () => void;
+  onClick?: (_) => void;
   variant?: 'primary' | 'secondary';
 }> = ({
   children,
@@ -482,8 +482,8 @@ export const SVGInteractiveButton: React.FC<{
   onClick,
   variant = 'primary'
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
+  const [isHovered, setIsHovered] = useState(_false);
+  const [isPressed, setIsPressed] = useState(_false);
 
   const variantColors = {
     primary: '#3b82f6',
@@ -494,10 +494,10 @@ export const SVGInteractiveButton: React.FC<{
     <button
       className={`relative inline-flex items-center justify-center px-6 py-3 ${className}`}
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onMouseDown={() => setIsPressed(true)}
-      onMouseUp={() => setIsPressed(false)}
+      onMouseEnter={(_) => setIsHovered(_true)}
+      onMouseLeave={(_) => setIsHovered(_false)}
+      onMouseDown={(_) => setIsPressed(_true)}
+      onMouseUp={(_) => setIsPressed(_false)}
     >
       <svg
         className="absolute inset-0 w-full h-full"

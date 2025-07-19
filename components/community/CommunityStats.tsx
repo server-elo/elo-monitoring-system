@@ -29,7 +29,7 @@ interface StatCardProps {
   loading?: boolean;
 }
 
-function StatCard({ title, value, change, icon: Icon, color, loading }: StatCardProps) {
+function StatCard( { title, value, change, icon: Icon, color, loading }: StatCardProps) {
   return (
     <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6">
       <div className="flex items-center justify-between">
@@ -39,24 +39,24 @@ function StatCard({ title, value, change, icon: Icon, color, loading }: StatCard
             <div className="w-20 h-8 bg-gray-600 animate-pulse rounded mt-2" />
           ) : (
             <p className="text-2xl font-bold text-white mt-1">
-              {typeof value === 'number' ? StatsUtils.formatNumber(value) : value}
+              {typeof value === 'number' ? StatsUtils.formatNumber(_value) : value}
             </p>
           )}
           {change !== undefined && !loading && (
-            <div className={cn('flex items-center space-x-1 mt-1', StatsUtils.getGrowthColor(change))}>
+            <div className={cn( 'flex items-center space-x-1 mt-1', StatsUtils.getGrowthColor(change))}>
               {change >= 0 ? (
                 <TrendingUp className="w-3 h-3" />
               ) : (
                 <TrendingDown className="w-3 h-3" />
               )}
               <span className="text-xs font-medium">
-                {StatsUtils.formatGrowthRate(change)}
+                {StatsUtils.formatGrowthRate(_change)}
               </span>
             </div>
           )}
         </div>
-        <div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', `bg-${color}-500/20`)}>
-          <Icon className={cn('w-6 h-6', `text-${color}-400`)} />
+        <div className={cn( 'w-12 h-12 rounded-lg flex items-center justify-center', `bg-${color}-500/20`)}>
+          <Icon className={cn( 'w-6 h-6', `text-${color}-400`)} />
         </div>
       </div>
     </Card>
@@ -65,17 +65,17 @@ function StatCard({ title, value, change, icon: Icon, color, loading }: StatCard
 
 interface StatsFiltersProps {
   filters: StatsFilters;
-  onFiltersChange: (filters: StatsFilters) => void;
+  onFiltersChange: (_filters: StatsFilters) => void;
   isLoading: boolean;
 }
 
-function StatsFilters({ filters, onFiltersChange, isLoading }: StatsFiltersProps) {
-  const [showAdvanced, setShowAdvanced] = useState(false);
+function StatsFilters( { filters, onFiltersChange, isLoading }: StatsFiltersProps) {
+  const [showAdvanced, setShowAdvanced] = useState(_false);
 
-  const handleDateRangeChange = (field: 'startDate' | 'endDate', value: string) => {
+  const handleDateRangeChange = ( field: 'startDate' | 'endDate', value: string) => {
     onFiltersChange({
       ...filters,
-      [field]: value ? new Date(value) : undefined
+      [field]: value ? new Date(_value) : undefined
     });
   };
 
@@ -89,7 +89,7 @@ function StatsFilters({ filters, onFiltersChange, isLoading }: StatsFiltersProps
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">Filters</h3>
         <Button
-          onClick={() => setShowAdvanced(!showAdvanced)}
+          onClick={(_) => setShowAdvanced(!showAdvanced)}
           variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-white"
@@ -105,8 +105,8 @@ function StatsFilters({ filters, onFiltersChange, isLoading }: StatsFiltersProps
           <label className="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
           <input
             type="date"
-            value={formatDateForInput(filters.startDate)}
-            onChange={(e) => handleDateRangeChange('startDate', e.target.value)}
+            value={formatDateForInput(_filters.startDate)}
+            onChange={(_e) => handleDateRangeChange( 'startDate', e.target.value)}
             disabled={isLoading}
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400 disabled:opacity-50"
           />
@@ -115,8 +115,8 @@ function StatsFilters({ filters, onFiltersChange, isLoading }: StatsFiltersProps
           <label className="block text-sm font-medium text-gray-300 mb-2">End Date</label>
           <input
             type="date"
-            value={formatDateForInput(filters.endDate)}
-            onChange={(e) => handleDateRangeChange('endDate', e.target.value)}
+            value={formatDateForInput(_filters.endDate)}
+            onChange={(_e) => handleDateRangeChange( 'endDate', e.target.value)}
             disabled={isLoading}
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400 disabled:opacity-50"
           />
@@ -138,7 +138,7 @@ function StatsFilters({ filters, onFiltersChange, isLoading }: StatsFiltersProps
                 <label className="block text-sm font-medium text-gray-300 mb-2">User Role</label>
                 <select
                   value={filters.userDemographics?.role || ''}
-                  onChange={(e) => onFiltersChange({
+                  onChange={(_e) => onFiltersChange({
                     ...filters,
                     userDemographics: {
                       ...filters.userDemographics,
@@ -160,7 +160,7 @@ function StatsFilters({ filters, onFiltersChange, isLoading }: StatsFiltersProps
                 <label className="block text-sm font-medium text-gray-300 mb-2">Region</label>
                 <select
                   value={filters.userDemographics?.region || ''}
-                  onChange={(e) => onFiltersChange({
+                  onChange={(_e) => onFiltersChange({
                     ...filters,
                     userDemographics: {
                       ...filters.userDemographics,
@@ -183,7 +183,7 @@ function StatsFilters({ filters, onFiltersChange, isLoading }: StatsFiltersProps
                 <label className="block text-sm font-medium text-gray-300 mb-2">Difficulty</label>
                 <select
                   value={filters.difficultyLevels?.[0] || ''}
-                  onChange={(e) => onFiltersChange({
+                  onChange={(_e) => onFiltersChange({
                     ...filters,
                     difficultyLevels: e.target.value ? [e.target.value as any] : undefined
                   })}
@@ -209,7 +209,7 @@ interface TrendingTopicsProps {
   loading: boolean;
 }
 
-function TrendingTopics({ topics, loading }: TrendingTopicsProps) {
+function TrendingTopics( { topics, loading }: TrendingTopicsProps) {
   return (
     <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6">
       <h3 className="text-lg font-semibold text-white mb-4">Trending Topics</h3>
@@ -228,7 +228,7 @@ function TrendingTopics({ topics, loading }: TrendingTopicsProps) {
         </div>
       ) : topics.length > 0 ? (
         <div className="space-y-3">
-          {topics.map((topic, index) => (
+          {topics.map( (topic, index) => (
             <motion.div
               key={topic.id}
               initial={{ opacity: 0, x: -20 }}
@@ -238,7 +238,7 @@ function TrendingTopics({ topics, loading }: TrendingTopicsProps) {
             >
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-sm">{StatsUtils.getTrendIcon(topic.trend)}</span>
+                  <span className="text-sm">{StatsUtils.getTrendIcon(_topic.trend)}</span>
                 </div>
                 <div>
                   <h4 className="font-medium text-white">{topic.title}</h4>
@@ -247,8 +247,8 @@ function TrendingTopics({ topics, loading }: TrendingTopicsProps) {
               </div>
               <div className="text-right">
                 <div className="text-sm font-medium text-white">{topic.mentions}</div>
-                <div className={cn('text-xs', StatsUtils.getGrowthColor(topic.trendPercentage))}>
-                  {StatsUtils.formatGrowthRate(topic.trendPercentage)}
+                <div className={cn( 'text-xs', StatsUtils.getGrowthColor(topic.trendPercentage))}>
+                  {StatsUtils.formatGrowthRate(_topic.trendPercentage)}
                 </div>
               </div>
             </motion.div>
@@ -269,7 +269,7 @@ interface CommunityMilestonesProps {
   loading: boolean;
 }
 
-function CommunityMilestones({ milestones, loading }: CommunityMilestonesProps) {
+function CommunityMilestones( { milestones, loading }: CommunityMilestonesProps) {
   return (
     <Card className="bg-white/10 backdrop-blur-md border-white/20 p-6">
       <h3 className="text-lg font-semibold text-white mb-4">Recent Milestones</h3>
@@ -288,7 +288,7 @@ function CommunityMilestones({ milestones, loading }: CommunityMilestonesProps) 
         </div>
       ) : milestones.length > 0 ? (
         <div className="space-y-4">
-          {milestones.map((milestone, index) => (
+          {milestones.map( (milestone, index) => (
             <motion.div
               key={milestone.id}
               initial={{ opacity: 0, y: 20 }}
@@ -304,10 +304,10 @@ function CommunityMilestones({ milestones, loading }: CommunityMilestonesProps) 
                 <p className="text-sm text-gray-400">{milestone.description}</p>
                 <div className="flex items-center space-x-2 mt-1">
                   <span className="text-xs text-gray-500">
-                    {milestone.achievedAt.toLocaleDateString()}
+                    {milestone.achievedAt.toLocaleDateString(_)}
                   </span>
                   <span className="text-xs text-blue-400 font-medium">
-                    {StatsUtils.formatNumber(milestone.value)}
+                    {StatsUtils.formatNumber(_milestone.value)}
                   </span>
                 </div>
               </div>
@@ -324,11 +324,11 @@ function CommunityMilestones({ milestones, loading }: CommunityMilestonesProps) 
   );
 }
 
-export function CommunityStats({ className }: CommunityStatsProps) {
-  const [stats, setStats] = useState<CommunityStats | null>(null);
+export function CommunityStats(_{ className }: CommunityStatsProps) {
+  const [stats, setStats] = useState<CommunityStats | null>(_null);
   const [trendingTopics, setTrendingTopics] = useState<TrendingTopic[]>([]);
   const [milestones, setMilestones] = useState<CommunityMilestone[]>([]);
-  const [filters, setFilters] = useState<StatsFilters>(communityStatsManager.getDefaultFilters());
+  const [filters, setFilters] = useState<StatsFilters>(_communityStatsManager.getDefaultFilters());
   const [loading, setLoading] = useState<LoadingState>({
     leaderboards: false,
     statistics: true,
@@ -338,41 +338,41 @@ export function CommunityStats({ className }: CommunityStatsProps) {
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   useEffect(() => {
-    loadAllData();
-    setupRealTimeUpdates();
+    loadAllData(_);
+    setupRealTimeUpdates(_);
   }, []);
 
   useEffect(() => {
-    loadStats();
+    loadStats(_);
   }, [filters]);
 
   const loadAllData = async () => {
     await Promise.all([
-      loadStats(),
-      loadTrendingTopics(),
-      loadMilestones()
+      loadStats(_),
+      loadTrendingTopics(_),
+      loadMilestones(_)
     ]);
   };
 
   const loadStats = async () => {
-    setLoading(prev => ({ ...prev, statistics: true }));
+    setLoading( prev => ({ ...prev, statistics: true }));
     
     try {
-      const statsData = await communityStatsManager.getCommunityStats(filters);
-      setStats(statsData);
-      setLastUpdated(statsData.lastUpdated);
-    } catch (error) {
+      const statsData = await communityStatsManager.getCommunityStats(_filters);
+      setStats(_statsData);
+      setLastUpdated(_statsData.lastUpdated);
+    } catch (_error) {
       console.error('Failed to load community stats:', error);
     } finally {
-      setLoading(prev => ({ ...prev, statistics: false }));
+      setLoading( prev => ({ ...prev, statistics: false }));
     }
   };
 
   const loadTrendingTopics = async () => {
     try {
       const topics = await communityStatsManager.getTrendingTopics(10);
-      setTrendingTopics(topics);
-    } catch (error) {
+      setTrendingTopics(_topics);
+    } catch (_error) {
       console.error('Failed to load trending topics:', error);
     }
   };
@@ -380,15 +380,15 @@ export function CommunityStats({ className }: CommunityStatsProps) {
   const loadMilestones = async () => {
     try {
       const milestonesData = await communityStatsManager.getCommunityMilestones(5);
-      setMilestones(milestonesData);
-    } catch (error) {
+      setMilestones(_milestonesData);
+    } catch (_error) {
       console.error('Failed to load milestones:', error);
     }
   };
 
-  const setupRealTimeUpdates = () => {
+  const setupRealTimeUpdates = (_) => {
     const unsubscribe = communityStatsManager.subscribe((updatedStats) => {
-      setStats(updatedStats);
+      setStats(_updatedStats);
       setLastUpdated(new Date());
     });
 
@@ -396,54 +396,54 @@ export function CommunityStats({ className }: CommunityStatsProps) {
   };
 
   const handleRefresh = async () => {
-    setLoading(prev => ({ ...prev, refresh: true }));
+    setLoading( prev => ({ ...prev, refresh: true }));
     
     try {
-      await loadAllData();
-    } catch (error) {
+      await loadAllData(_);
+    } catch (_error) {
       console.error('Failed to refresh data:', error);
     } finally {
-      setLoading(prev => ({ ...prev, refresh: false }));
+      setLoading( prev => ({ ...prev, refresh: false }));
     }
   };
 
-  const handleExport = async (format: 'csv' | 'json') => {
-    setLoading(prev => ({ ...prev, export: true }));
+  const handleExport = async (_format: 'csv' | 'json') => {
+    setLoading( prev => ({ ...prev, export: true }));
     
     try {
       const exportOptions: ExportOptions = {
         format,
         dateRange: {
-          start: filters.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          start: filters.startDate || new Date(_Date.now() - 30 * 24 * 60 * 60 * 1000),
           end: filters.endDate || new Date()
         },
         includeFields: ['users', 'lessons', 'engagement', 'milestones'],
         filters
       };
 
-      const data = await communityStatsManager.exportStats(exportOptions);
+      const data = await communityStatsManager.exportStats(_exportOptions);
       
       // Download the file
       const blob = new Blob([data], { 
         type: format === 'csv' ? 'text/csv' : 'application/json' 
       });
-      const url = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(_blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = StatsUtils.generateExportFilename(format, exportOptions.dateRange);
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch (error) {
+      a.download = StatsUtils.generateExportFilename( format, exportOptions.dateRange);
+      document.body.appendChild(_a);
+      a.click(_);
+      document.body.removeChild(_a);
+      URL.revokeObjectURL(_url);
+    } catch (_error) {
       console.error('Failed to export stats:', error);
     } finally {
-      setLoading(prev => ({ ...prev, export: false }));
+      setLoading( prev => ({ ...prev, export: false }));
     }
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn( 'space-y-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -454,10 +454,10 @@ export function CommunityStats({ className }: CommunityStatsProps) {
         </div>
         <div className="flex items-center space-x-3">
           <div className="text-sm text-gray-400">
-            Last updated: {lastUpdated.toLocaleTimeString()}
+            Last updated: {lastUpdated.toLocaleTimeString(_)}
           </div>
           <Button
-            onClick={() => handleExport('csv')}
+            onClick={(_) => handleExport('csv')}
             disabled={loading.export}
             variant="outline"
             className="border-white/20 text-white hover:bg-white/10"
@@ -466,7 +466,7 @@ export function CommunityStats({ className }: CommunityStatsProps) {
             Export CSV
           </Button>
           <Button
-            onClick={() => handleExport('json')}
+            onClick={(_) => handleExport('json')}
             disabled={loading.export}
             variant="outline"
             className="border-white/20 text-white hover:bg-white/10"
@@ -480,7 +480,7 @@ export function CommunityStats({ className }: CommunityStatsProps) {
             variant="outline"
             className="border-white/20 text-white hover:bg-white/10"
           >
-            <RefreshCw className={cn('w-4 h-4 mr-2', loading.refresh && 'animate-spin')} />
+            <RefreshCw className={cn( 'w-4 h-4 mr-2', loading.refresh && 'animate-spin')} />
             Refresh
           </Button>
         </div>
@@ -520,7 +520,7 @@ export function CommunityStats({ className }: CommunityStatsProps) {
         />
         <StatCard
           title="Avg. Session Time"
-          value={stats ? StatsUtils.formatDuration(stats.engagementMetrics.averageSessionTime) : '0m'}
+          value={stats ? StatsUtils.formatDuration(_stats.engagementMetrics.averageSessionTime) : '0m'}
           change={stats?.platformGrowth.engagementGrowthRate}
           icon={Clock}
           color="orange"
@@ -546,7 +546,7 @@ export function CommunityStats({ className }: CommunityStatsProps) {
         />
         <StatCard
           title="Completion Rate"
-          value={stats ? StatsUtils.formatPercentage(stats.lessonsCompleted.total, stats.totalUsers * 10) : '0%'}
+          value={stats ? StatsUtils.formatPercentage( stats.lessonsCompleted.total, stats.totalUsers * 10) : '0%'}
           icon={Award}
           color="yellow"
           loading={loading.statistics}

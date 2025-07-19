@@ -68,8 +68,8 @@ interface LearningPath {
 interface StructuredCurriculumProps {
   learningPaths: LearningPath[];
   currentPath?: string;
-  onSelectPath?: (pathId: string) => void;
-  onStartLesson?: (lessonId: string) => void;
+  onSelectPath?: (_pathId: string) => void;
+  onStartLesson?: (_lessonId: string) => void;
   className?: string;
 }
 
@@ -93,11 +93,11 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
   onStartLesson,
   className = ''
 }) => {
-  const [selectedPath, setSelectedPath] = useState<string>(currentPath || learningPaths[0]?.id);
-  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
+  const [selectedPath, setSelectedPath] = useState<string>(_currentPath || learningPaths[0]?.id);
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(_new Set());
   const [activeTab, setActiveTab] = useState<'overview' | 'curriculum' | 'progress' | 'community' | 'rewards'>('overview');
-  const [userProgress, setUserProgress] = useState<{[key: string]: number}>({});
-  const [earnedRewards, setEarnedRewards] = useState<{[key: string]: number}>({});
+  const [userProgress, setUserProgress] = useState<{[key: string]: number}>({  });
+  const [earnedRewards, setEarnedRewards] = useState<{[key: string]: number}>({  });
   const [securityBadges, setSecurityBadges] = useState<string[]>([]);
   const [communityStats, setCommunityStats] = useState<{studyGroups: number, discussions: number, mentors: number}>({
     studyGroups: 0,
@@ -122,61 +122,61 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
       });
 
       setUserProgress(progressData);
-      setEarnedRewards(rewardsData);
+      setEarnedRewards(_rewardsData);
 
       // Check for security badges
       const badges: string[] = [];
       currentLearningPath.modules.forEach(module => {
-        if (module.category === 'security' && module.completed) {
-          badges.push(`security-${module.id}`);
+        if (_module.category === 'security' && module.completed) {
+          badges.push(_`security-${module.id}`);
         }
       });
-      setSecurityBadges(badges);
+      setSecurityBadges(_badges);
 
       // Load community stats
       setCommunityStats({
-        studyGroups: Math.floor(Math.random() * 50) + 10,
-        discussions: Math.floor(Math.random() * 200) + 50,
-        mentors: Math.floor(Math.random() * 20) + 5
+        studyGroups: Math.floor(_Math.random() * 50) + 10,
+        discussions: Math.floor(_Math.random() * 200) + 50,
+        mentors: Math.floor(_Math.random() * 20) + 5
       });
     }
   }, [currentLearningPath, selectedPath]);
 
-  const toggleModule = (moduleId: string) => {
-    const newExpanded = new Set(expandedModules);
-    if (newExpanded.has(moduleId)) {
-      newExpanded.delete(moduleId);
+  const toggleModule = (_moduleId: string) => {
+    const newExpanded = new Set(_expandedModules);
+    if (_newExpanded.has(moduleId)) {
+      newExpanded.delete(_moduleId);
     } else {
-      newExpanded.add(moduleId);
+      newExpanded.add(_moduleId);
     }
-    setExpandedModules(newExpanded);
+    setExpandedModules(_newExpanded);
   };
 
-  const handleSelectPath = (pathId: string) => {
-    setSelectedPath(pathId);
-    onSelectPath?.(pathId);
+  const handleSelectPath = (_pathId: string) => {
+    setSelectedPath(_pathId);
+    onSelectPath?.(_pathId);
   };
 
-  const handleQuickAction = (moduleId: string, action: 'bookmark' | 'share' | 'notes') => {
+  const handleQuickAction = ( moduleId: string, action: 'bookmark' | 'share' | 'notes') => {
     // Track module-specific actions using moduleId
-    logger.info(`Quick action performed`, { moduleId, action });
+    logger.info( `Quick action performed`, { metadata: { moduleId, action });
     // In a real app, this would save to user preferences/analytics
   };
 
-  const earnSecurityBadge = (moduleId: string) => {
+  const earnSecurityBadge = (_moduleId: string) => {
     if (!securityBadges.includes(`security-${moduleId}`)) {
-      setSecurityBadges(prev => [...prev, `security-${moduleId}`]);
+      setSecurityBadges( prev => [...prev, `security-${moduleId}`]);
     }
   };
 
-  const addRewardCoins = (moduleId: string, amount: number) => {
+  const addRewardCoins = ( moduleId: string, amount: number) => {
     setEarnedRewards(prev => ({
       ...prev,
-      [moduleId]: (prev[moduleId] || 0) + amount
+      [moduleId]: (_prev[moduleId] || 0) + amount
     }));
   };
 
-  const LessonCard: React.FC<{ lesson: Lesson; moduleId: string }> = ({ lesson, moduleId }) => (
+  const LessonCard: React.FC<{ lesson: Lesson; moduleId: string }> = ( { lesson, moduleId }) => (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -224,7 +224,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
             </div>
             <div className="flex items-center space-x-1">
               <Coins className="w-3 h-3 text-yellow-400" />
-              <span>+{Math.floor(lesson.xpReward / 2)} coins</span>
+              <span>+{Math.floor(_lesson.xpReward / 2)} coins</span>
             </div>
           </div>
 
@@ -233,9 +233,9 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
             <Button
               size="sm"
               variant="outline"
-              onClick={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                handleQuickAction(moduleId, 'bookmark');
+              onClick={(_e: React.MouseEvent) => {
+                e.stopPropagation(_);
+                handleQuickAction( moduleId, 'bookmark');
               }}
               className="text-xs px-2 py-1 h-6"
             >
@@ -246,9 +246,9 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  earnSecurityBadge(moduleId);
+                onClick={(_e: React.MouseEvent) => {
+                  e.stopPropagation(_);
+                  earnSecurityBadge(_moduleId);
                 }}
                 className="text-xs px-2 py-1 h-6 border-green-500/50 text-green-400"
               >
@@ -261,10 +261,10 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
 
         <div className="flex flex-col space-y-2">
           <Button
-            onClick={() => {
-              onStartLesson?.(lesson.id);
-              if (lesson.completed) {
-                addRewardCoins(moduleId, 5); // Bonus for reviewing
+            onClick={(_) => {
+              onStartLesson?.(_lesson.id);
+              if (_lesson.completed) {
+                addRewardCoins( moduleId, 5); // Bonus for reviewing
               }
             }}
             disabled={lesson.locked}
@@ -285,15 +285,15 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
     </motion.div>
   );
 
-  const ModuleCard: React.FC<{ module: Module }> = ({ module }) => {
-    const isExpanded = expandedModules.has(module.id);
+  const ModuleCard: React.FC<{ module: Module }> = ({ module  }) => {
+    const isExpanded = expandedModules.has(_module.id);
     const completedLessons = module.lessons.filter(l => l.completed).length;
     
     return (
       <Card className="overflow-hidden bg-white/10 backdrop-blur-md border border-white/20">
         <div 
           className="p-6 cursor-pointer hover:bg-white/5 transition-colors"
-          onClick={() => toggleModule(module.id)}
+          onClick={(_) => toggleModule(_module.id)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -337,7 +337,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
             <div className="flex items-center space-x-4">
               <div className="text-right">
                 <div className="text-sm font-medium text-white">
-                  {Math.round(module.progress)}% Complete
+                  {Math.round(_module.progress)}% Complete
                 </div>
                 <Progress value={module.progress} className="w-24 h-2 mt-1" />
               </div>
@@ -413,7 +413,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
                   ? 'bg-blue-500/20 border-blue-500/50' 
                   : 'bg-white/10 border-white/20 hover:bg-white/20'
               }`}
-              onClick={() => handleSelectPath(path.id)}
+              onClick={(_) => handleSelectPath(_path.id)}
             >
               <h3 className="text-lg font-semibold text-white mb-2">{path.title}</h3>
               <p className="text-sm text-gray-300 mb-4">{path.description}</p>
@@ -425,7 +425,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <span>Students:</span>
-                  <span>{path.studentsEnrolled.toLocaleString()}</span>
+                  <span>{path.studentsEnrolled.toLocaleString(_)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Rating:</span>
@@ -438,7 +438,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
               
               <Progress value={path.completionRate} className="mt-4" />
               <div className="text-xs text-gray-400 mt-1">
-                {Math.round(path.completionRate)}% Complete
+                {Math.round(_path.completionRate)}% Complete
               </div>
             </Card>
           ))}
@@ -456,7 +456,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
         ].map((tab) => (
           <Button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={(_) => setActiveTab(_tab.id as any)}
             variant={activeTab === tab.id ? 'default' : 'ghost'}
             className={`flex-1 ${activeTab === tab.id ? 'bg-white/20' : 'hover:bg-white/10'}`}
           >
@@ -492,7 +492,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-400">
-                    {currentLearningPath.modules.reduce((acc, m) => acc + m.lessons.length, 0)}
+                    {currentLearningPath.modules.reduce( (acc, m) => acc + m.lessons.length, 0)}
                   </div>
                   <div className="text-sm text-gray-400">Lessons</div>
                 </div>
@@ -504,7 +504,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-purple-400">
-                    {Math.round(currentLearningPath.completionRate)}%
+                    {Math.round(_currentLearningPath.completionRate)}%
                   </div>
                   <div className="text-sm text-gray-400">Complete</div>
                 </div>
@@ -546,19 +546,19 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="p-4 bg-blue-500/20 rounded-lg border border-blue-500/50">
                   <div className="text-2xl font-bold text-blue-400">
-                    {Object.values(userProgress).filter(p => p > 0).length}
+                    {Object.values(_userProgress).filter(p => p > 0).length}
                   </div>
                   <div className="text-sm text-blue-300">Modules Started</div>
                 </div>
                 <div className="p-4 bg-green-500/20 rounded-lg border border-green-500/50">
                   <div className="text-2xl font-bold text-green-400">
-                    {Object.values(userProgress).filter(p => p >= 100).length}
+                    {Object.values(_userProgress).filter(p => p >= 100).length}
                   </div>
                   <div className="text-sm text-green-300">Modules Completed</div>
                 </div>
                 <div className="p-4 bg-purple-500/20 rounded-lg border border-purple-500/50">
                   <div className="text-2xl font-bold text-purple-400">
-                    {Math.round(Object.values(userProgress).reduce((acc, p) => acc + p, 0) / Object.keys(userProgress).length) || 0}%
+                    {Math.round(_Object.values(userProgress).reduce( (acc, p) => acc + p, 0) / Object.keys(_userProgress).length) || 0}%
                   </div>
                   <div className="text-sm text-purple-300">Average Progress</div>
                 </div>
@@ -579,7 +579,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
                     <div className="flex items-center space-x-3">
                       <Progress value={userProgress[module.id] || module.progress} className="w-24" />
                       <span className="text-sm text-gray-400 w-12">
-                        {Math.round(userProgress[module.id] || module.progress)}%
+                        {Math.round(_userProgress[module.id] || module.progress)}%
                       </span>
                       {/* Progress indicator using userProgress */}
                       <div className="flex items-center space-x-1">
@@ -655,7 +655,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
 
                 <div className="space-y-3">
                   {securityBadges.length > 0 ? (
-                    securityBadges.map((badge, index) => (
+                    securityBadges.map( (badge, index) => (
                       <div key={badge} className="flex items-center space-x-3 p-3 bg-green-500/20 border border-green-500/50 rounded-lg">
                         <Shield className="w-4 h-4 text-green-400" />
                         <div>
@@ -691,7 +691,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
                 </h3>
 
                 <div className="space-y-4">
-                  {Object.entries(earnedRewards).map(([moduleId, coins]) => {
+                  {Object.entries(_earnedRewards).map( ([moduleId, coins]) => {
                     const moduleData = currentLearningPath.modules.find(m => m.id === moduleId);
                     return coins > 0 ? (
                       <div key={moduleId} className="flex items-center justify-between p-3 bg-yellow-500/20 border border-yellow-500/50 rounded-lg">
@@ -707,7 +707,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
                     ) : null;
                   })}
 
-                  {Object.values(earnedRewards).every(coins => coins === 0) && (
+                  {Object.values(_earnedRewards).every(_coins => coins === 0) && (
                     <div className="text-center py-8 text-gray-400">
                       <Coins className="w-12 h-12 mx-auto mb-3 opacity-50" />
                       <p>Complete lessons to earn coins</p>
@@ -723,7 +723,7 @@ export const StructuredCurriculum: React.FC<StructuredCurriculumProps> = ({
                     </div>
                     <div className="flex items-center space-x-1 text-2xl font-bold text-yellow-400">
                       <Coins className="w-6 h-6" />
-                      <span>{Object.values(earnedRewards).reduce((sum, coins) => sum + coins, 0)}</span>
+                      <span>{Object.values(_earnedRewards).reduce( (sum, coins) => sum + coins, 0)}</span>
                     </div>
                   </div>
                 </div>

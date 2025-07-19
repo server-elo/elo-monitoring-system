@@ -19,7 +19,7 @@ interface QuickStatsProps {
   loading: boolean;
 }
 
-function QuickStats({ loading }: QuickStatsProps) {
+function QuickStats(_{ loading }: QuickStatsProps) {
   const [stats, setStats] = useState({
     activeUsers: 0,
     onlineNow: 0,
@@ -31,20 +31,20 @@ function QuickStats({ loading }: QuickStatsProps) {
     // Simulate real-time stats updates
     const interval = setInterval(() => {
       setStats(() => ({
-        activeUsers: 1247 + Math.floor(Math.random() * 20) - 10,
-        onlineNow: 89 + Math.floor(Math.random() * 10) - 5,
-        lessonsToday: 156 + Math.floor(Math.random() * 5) - 2,
-        xpEarned: 12450 + Math.floor(Math.random() * 100) - 50
+        activeUsers: 1247 + Math.floor(_Math.random() * 20) - 10,
+        onlineNow: 89 + Math.floor(_Math.random() * 10) - 5,
+        lessonsToday: 156 + Math.floor(_Math.random() * 5) - 2,
+        xpEarned: 12450 + Math.floor(_Math.random() * 100) - 50
       }));
     }, 5000); // Update every 5 seconds
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, []);
 
   const quickStats = [
     {
       label: 'Active Users',
-      value: stats.activeUsers.toLocaleString(),
+      value: stats.activeUsers.toLocaleString(_),
       icon: Users,
       color: 'blue',
       change: '+2.3%'
@@ -65,7 +65,7 @@ function QuickStats({ loading }: QuickStatsProps) {
     },
     {
       label: 'XP Earned',
-      value: stats.xpEarned.toLocaleString(),
+      value: stats.xpEarned.toLocaleString(_),
       icon: Star,
       color: 'yellow',
       change: '+12.4%'
@@ -74,7 +74,7 @@ function QuickStats({ loading }: QuickStatsProps) {
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {quickStats.map((stat, index) => (
+      {quickStats.map( (stat, index) => (
         <motion.div
           key={stat.label}
           initial={{ opacity: 0, y: 20 }}
@@ -92,8 +92,8 @@ function QuickStats({ loading }: QuickStatsProps) {
                 )}
                 <p className="text-green-400 text-xs mt-1">{stat.change}</p>
               </div>
-              <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', `bg-${stat.color}-500/20`)}>
-                <stat.icon className={cn('w-4 h-4', `text-${stat.color}-400`)} />
+              <div className={cn( 'w-8 h-8 rounded-lg flex items-center justify-center', `bg-${stat.color}-500/20`)}>
+                <stat.icon className={cn( 'w-4 h-4', `text-${stat.color}-400`)} />
               </div>
             </div>
           </Card>
@@ -109,7 +109,7 @@ interface ConnectionStatusProps {
   latency: number;
 }
 
-function ConnectionStatus({ isConnected, connectionType, latency }: ConnectionStatusProps) {
+function ConnectionStatus( { isConnected, connectionType, latency }: ConnectionStatusProps) {
   return (
     <div className="flex items-center space-x-2 text-sm">
       <div className={cn(
@@ -118,14 +118,14 @@ function ConnectionStatus({ isConnected, connectionType, latency }: ConnectionSt
       )} />
       <span className="text-gray-400">
         {isConnected ? 'Connected' : 'Disconnected'} via {connectionType}
-        {isConnected && latency > 0 && ` (${latency}ms)`}
+        {isConnected && latency > 0 && ` (_${latency}ms)`}
       </span>
     </div>
   );
 }
 
-export function CommunityHub({ className }: CommunityHubProps) {
-  const { user } = useAuth();
+export function CommunityHub(_{ className }: CommunityHubProps) {
+  const { user } = useAuth(_);
   const [activeTab, setActiveTab] = useState<'overview' | 'leaderboards' | 'statistics'>('overview');
   const [connectionStatus, setConnectionStatus] = useState({
     isConnected: false,
@@ -136,29 +136,29 @@ export function CommunityHub({ className }: CommunityHubProps) {
 
   useEffect(() => {
     // Monitor real-time connection status
-    const updateConnectionStatus = () => {
+    const updateConnectionStatus = (_) => {
       setConnectionStatus({
-        isConnected: realTimeManager.isConnected(),
-        connectionType: realTimeManager.getConnectionType(),
-        latency: realTimeManager.getLatency()
+        isConnected: realTimeManager.isConnected(_),
+        connectionType: realTimeManager.getConnectionType(_),
+        latency: realTimeManager.getLatency(_)
       });
     };
 
     // Initial status
-    updateConnectionStatus();
+    updateConnectionStatus(_);
 
     // Update every 5 seconds
-    const interval = setInterval(updateConnectionStatus, 5000);
+    const interval = setInterval( updateConnectionStatus, 5000);
 
     // Subscribe to connection changes
-    const unsubscribe = realTimeManager.subscribe('connection', () => {
-      updateConnectionStatus();
+    const unsubscribe = realTimeManager.subscribe( 'connection', () => {
+      updateConnectionStatus(_);
       setLastUpdate(new Date());
     });
 
-    return () => {
-      clearInterval(interval);
-      unsubscribe();
+    return (_) => {
+      clearInterval(_interval);
+      unsubscribe(_);
     };
   }, []);
 
@@ -184,7 +184,7 @@ export function CommunityHub({ className }: CommunityHubProps) {
   ];
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn( 'space-y-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -196,7 +196,7 @@ export function CommunityHub({ className }: CommunityHubProps) {
         <div className="flex items-center space-x-4">
           <ConnectionStatus {...connectionStatus} />
           <div className="text-sm text-gray-400">
-            Updated: {lastUpdate.toLocaleTimeString()}
+            Updated: {lastUpdate.toLocaleTimeString(_)}
           </div>
         </div>
       </div>
@@ -211,7 +211,7 @@ export function CommunityHub({ className }: CommunityHubProps) {
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(_) => setActiveTab(_tab.id as any)}
               className={cn(
                 'flex items-center space-x-2 px-4 py-3 rounded-md text-sm font-medium transition-colors flex-1',
                 activeTab === tab.id
@@ -267,7 +267,7 @@ export function CommunityHub({ className }: CommunityHubProps) {
                     { name: 'Alice Johnson', xp: 2340, rank: 1 },
                     { name: 'Bob Smith', xp: 1980, rank: 2 },
                     { name: 'Carol Davis', xp: 1750, rank: 3 }
-                  ].map((performer, index) => (
+                  ].map( (performer, index) => (
                     <div key={performer.name} className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className={cn(
@@ -285,7 +285,7 @@ export function CommunityHub({ className }: CommunityHubProps) {
                   ))}
                 </div>
                 <Button
-                  onClick={() => setActiveTab('leaderboards')}
+                  onClick={(_) => setActiveTab('leaderboards')}
                   variant="outline"
                   className="w-full mt-4 border-white/20 text-white hover:bg-white/10"
                 >
@@ -317,7 +317,7 @@ export function CommunityHub({ className }: CommunityHubProps) {
                   ))}
                 </div>
                 <Button
-                  onClick={() => setActiveTab('statistics')}
+                  onClick={(_) => setActiveTab('statistics')}
                   variant="outline"
                   className="w-full mt-4 border-white/20 text-white hover:bg-white/10"
                 >
@@ -339,7 +339,7 @@ export function CommunityHub({ className }: CommunityHubProps) {
                   { action: 'started course', user: 'Carol Davis', target: 'Advanced Solidity', time: '8 min ago', icon: '🚀' },
                   { action: 'joined study group', user: 'David Wilson', target: 'DeFi Developers', time: '12 min ago', icon: '👥' },
                   { action: 'deployed contract', user: 'Eva Brown', target: 'Token Contract', time: '15 min ago', icon: '📜' }
-                ].map((activity, index) => (
+                ].map( (activity, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: -20 }}

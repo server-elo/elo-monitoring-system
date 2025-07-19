@@ -40,14 +40,14 @@ export function NavigationFlowOptimizer({
   className?: string;
   showOnlyRelevant?: boolean;
 }) {
-  const { user } = useAuth();
-  const { settings } = useSettings();
-  const router = useRouter();
-  const pathname = usePathname();
+  const { user } = useAuth(_);
+  const { settings } = useSettings(_);
+  const router = useRouter(_);
+  const pathname = usePathname(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   const [flows, setFlows] = useState<NavigationFlow[]>([]);
-  const [currentFlow, setCurrentFlow] = useState<NavigationFlow | null>(null);
+  const [currentFlow, setCurrentFlow] = useState<NavigationFlow | null>(_null);
   const [deadEnds, setDeadEnds] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<Array<{
     type: 'shortcut' | 'alternative' | 'next-step';
@@ -58,10 +58,10 @@ export function NavigationFlowOptimizer({
   }>>([]);
 
   useEffect(() => {
-    initializeFlows();
-    analyzeCurrentPath();
-    detectDeadEnds();
-    generateSuggestions();
+    initializeFlows(_);
+    analyzeCurrentPath(_);
+    detectDeadEnds(_);
+    generateSuggestions(_);
   }, [pathname, user]);
 
   const initializeFlows = useCallback(() => {
@@ -80,7 +80,7 @@ export function NavigationFlowOptimizer({
             description: 'Set up your learning profile',
             href: '/profile/setup',
             icon: Users,
-            isCompleted: !!(user?.profile?.displayName && user?.profile?.bio),
+            isCompleted: !!(_user?.profile?.displayName && user?.profile?.bio),
             isBlocked: false,
             estimatedTime: 5
           },
@@ -91,7 +91,7 @@ export function NavigationFlowOptimizer({
             href: '/learn/solidity-basics',
             icon: BookOpen,
             isCompleted: false,
-            isBlocked: !(user?.profile?.displayName && user?.profile?.bio),
+            isBlocked: !(_user?.profile?.displayName && user?.profile?.bio),
             requirements: ['Complete Profile'],
             estimatedTime: 30
           },
@@ -187,16 +187,16 @@ export function NavigationFlowOptimizer({
       ? allFlows.filter(flow => !flow.userRole || flow.userRole === user?.role)
       : allFlows;
 
-    setFlows(relevantFlows);
+    setFlows(_relevantFlows);
   }, [user, showOnlyRelevant]);
 
   const analyzeCurrentPath = useCallback(() => {
     // Find which flow the current path belongs to
     const currentFlowMatch = flows.find(flow =>
-      flow.steps.some(step => step.href === pathname)
+      flow.steps.some(_step => step.href === pathname)
     );
     
-    setCurrentFlow(currentFlowMatch || null);
+    setCurrentFlow(_currentFlowMatch || null);
     
     // Track navigation analytics
     errorTracker.addBreadcrumb(
@@ -220,14 +220,14 @@ export function NavigationFlowOptimizer({
       pathname.includes(path) || pathname.endsWith('/complete')
     );
     
-    setDeadEnds(currentDeadEnds);
+    setDeadEnds(_currentDeadEnds);
   }, [pathname]);
 
   const generateSuggestions = useCallback(() => {
     const newSuggestions = [];
     
     // Shortcut suggestions based on current path
-    if (pathname.includes('/learn')) {
+    if (_pathname.includes('/learn')) {
       newSuggestions.push({
         type: 'shortcut' as const,
         title: 'Quick Practice',
@@ -237,7 +237,7 @@ export function NavigationFlowOptimizer({
       });
     }
     
-    if (pathname.includes('/code')) {
+    if (_pathname.includes('/code')) {
       newSuggestions.push({
         type: 'alternative' as const,
         title: 'Get Help',
@@ -249,7 +249,7 @@ export function NavigationFlowOptimizer({
     
     // Next step suggestions based on current flow
     if (currentFlow) {
-      const currentStepIndex = currentFlow.steps.findIndex(step => step.href === pathname);
+      const currentStepIndex = currentFlow.steps.findIndex(_step => step.href === pathname);
       const nextStep = currentFlow.steps[currentStepIndex + 1];
       
       if (nextStep && !nextStep.isBlocked) {
@@ -264,7 +264,7 @@ export function NavigationFlowOptimizer({
     }
     
     // General helpful suggestions
-    if (newSuggestions.length === 0) {
+    if (_newSuggestions.length === 0) {
       newSuggestions.push({
         type: 'alternative' as const,
         title: 'Explore Achievements',
@@ -274,11 +274,11 @@ export function NavigationFlowOptimizer({
       });
     }
     
-    setSuggestions(newSuggestions);
+    setSuggestions(_newSuggestions);
   }, [pathname, currentFlow]);
 
-  const handleFlowStepClick = (step: NavigationStep) => {
-    if (step.isBlocked) {
+  const handleFlowStepClick = (_step: NavigationStep) => {
+    if (_step.isBlocked) {
       // Show requirements modal or toast
       return;
     }
@@ -290,10 +290,10 @@ export function NavigationFlowOptimizer({
       { stepId: step.id, href: step.href }
     );
     
-    router.push(step.href);
+    router.push(_step.href);
   };
 
-  const handleSuggestionClick = (suggestion: typeof suggestions[0]) => {
+  const handleSuggestionClick = (_suggestion: typeof suggestions[0]) => {
     errorTracker.addBreadcrumb(
       `Navigation suggestion clicked: ${suggestion.title}`,
       'navigation',
@@ -301,11 +301,11 @@ export function NavigationFlowOptimizer({
       { type: suggestion.type, href: suggestion.href }
     );
     
-    router.push(suggestion.href);
+    router.push(_suggestion.href);
   };
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn( "space-y-6", className)}>
       {/* Current Flow Progress */}
       {currentFlow && (
         <GlassContainer intensity="medium" className="p-6">
@@ -323,10 +323,10 @@ export function NavigationFlowOptimizer({
           </div>
           
           <div className="space-y-3">
-            {currentFlow.steps.map((step, _index) => (
+            {currentFlow.steps.map( (step, _index) => (
               <motion.button
                 key={step.id}
-                onClick={() => handleFlowStepClick(step)}
+                onClick={(_) => handleFlowStepClick(_step)}
                 disabled={step.isBlocked}
                 className={cn(
                   "w-full flex items-center justify-between p-3 rounded-lg transition-colors text-left",
@@ -355,7 +355,7 @@ export function NavigationFlowOptimizer({
                     <div className="text-gray-400 text-xs">{step.description}</div>
                     {step.requirements && step.isBlocked && (
                       <div className="text-yellow-400 text-xs mt-1">
-                        Requires: {step.requirements.join(', ')}
+                        Requires: {step.requirements.join( ', ')}
                       </div>
                     )}
                   </div>
@@ -382,10 +382,10 @@ export function NavigationFlowOptimizer({
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {suggestions.map((suggestion, index) => (
+            {suggestions.map( (suggestion, index) => (
               <motion.button
                 key={index}
-                onClick={() => handleSuggestionClick(suggestion)}
+                onClick={(_) => handleSuggestionClick(_suggestion)}
                 className="flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-left"
                 whileHover={shouldAnimate ? { scale: 1.02 } : {}}
                 whileTap={shouldAnimate ? { scale: 0.98 } : {}}
@@ -425,21 +425,21 @@ export function NavigationFlowOptimizer({
           
           <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => router.push('/dashboard')}
+              onClick={(_) => router.push('/dashboard')}
               className="flex items-center space-x-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
             >
               <Home className="w-4 h-4" />
               <span>Go to Dashboard</span>
             </button>
             <button
-              onClick={() => router.back()}
+              onClick={(_) => router.back(_)}
               className="flex items-center space-x-2 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm"
             >
               <ArrowRight className="w-4 h-4 rotate-180" />
               <span>Go Back</span>
             </button>
             <button
-              onClick={() => router.push('/search')}
+              onClick={(_) => router.push('/search')}
               className="flex items-center space-x-2 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm"
             >
               <Search className="w-4 h-4" />

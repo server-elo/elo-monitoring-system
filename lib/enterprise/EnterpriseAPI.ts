@@ -145,11 +145,11 @@ export interface GrowthMetrics {
 }
 
 export class EnterpriseAPI {
-  private clients: Map<string, EnterpriseClient> = new Map();
-  private rateLimitTracker: Map<string, RateLimitState> = new Map();
+  private clients: Map<string, EnterpriseClient> = new Map(_);
+  private rateLimitTracker: Map<string, RateLimitState> = new Map(_);
 
-  constructor() {
-    this.initializeClients();
+  constructor(_) {
+    this.initializeClients(_);
   }
 
   // Talent Discovery API
@@ -158,33 +158,33 @@ export class EnterpriseAPI {
     criteria: TalentSearchCriteria,
     pagination: PaginationOptions
   ): Promise<TalentSearchResult> {
-    console.log(`🔍 Enterprise talent search for client ${clientId}`);
+    console.log(_`🔍 Enterprise talent search for client ${clientId}`);
     
-    this.validateClientPermissions(clientId, 'users', 'read');
-    await this.checkRateLimit(clientId);
+    this.validateClientPermissions( clientId, 'users', 'read');
+    await this.checkRateLimit(_clientId);
     
     try {
       // Search and filter talent based on criteria
-      const talents = await this.findMatchingTalent(criteria);
+      const talents = await this.findMatchingTalent(_criteria);
       
       // Apply client-specific filters and permissions
-      const filteredTalents = this.applyClientFilters(clientId, talents);
+      const filteredTalents = this.applyClientFilters( clientId, talents);
       
       // Paginate results
-      const paginatedResults = this.paginateResults(filteredTalents, pagination);
+      const paginatedResults = this.paginateResults( filteredTalents, pagination);
       
       // Track API usage
-      await this.trackAPIUsage(clientId, 'talent-search', criteria);
+      await this.trackAPIUsage( clientId, 'talent-search', criteria);
       
       return {
         talents: paginatedResults.items,
         totalCount: filteredTalents.length,
         pagination: paginatedResults.pagination,
-        searchId: `search-${Date.now()}`,
-        timestamp: new Date()
+        searchId: `search-${Date.now(_)}`,
+        timestamp: new Date(_)
       };
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Talent search failed:', error);
       throw error;
     }
@@ -196,29 +196,29 @@ export class EnterpriseAPI {
     userId: string,
     skills: string[]
   ): Promise<SkillVerificationResult> {
-    console.log(`✅ Verifying skills for user ${userId}`);
+    console.log(_`✅ Verifying skills for user ${userId}`);
     
-    this.validateClientPermissions(clientId, 'skills', 'read');
-    await this.checkRateLimit(clientId);
+    this.validateClientPermissions( clientId, 'skills', 'read');
+    await this.checkRateLimit(_clientId);
     
     try {
-      const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
+      const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
       const verifications: SkillVerification[] = [];
       
-      for (const skill of skills) {
-        const verification = await this.verifyIndividualSkill(userId, skill, profile);
-        verifications.push(verification);
+      for (_const skill of skills) {
+        const verification = await this.verifyIndividualSkill( userId, skill, profile);
+        verifications.push(_verification);
       }
       
       return {
         userId,
         verifications,
-        overallConfidence: this.calculateOverallConfidence(verifications),
-        verificationDate: new Date(),
-        validUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 days
+        overallConfidence: this.calculateOverallConfidence(_verifications),
+        verificationDate: new Date(_),
+        validUntil: new Date(_Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 days
       };
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Skill verification failed:', error);
       throw error;
     }
@@ -230,8 +230,8 @@ export class EnterpriseAPI {
     certificationId: string,
     tokenId?: string
   ): Promise<CertificationVerificationResult> {
-    this.validateClientPermissions(clientId, 'certifications', 'read');
-    await this.checkRateLimit(clientId);
+    this.validateClientPermissions( clientId, 'certifications', 'read');
+    await this.checkRateLimit(_clientId);
     
     try {
       let verified = false;
@@ -239,13 +239,13 @@ export class EnterpriseAPI {
       
       if (tokenId) {
         // Verify blockchain certificate
-        verified = await blockchainCertification.verifyCertificate(tokenId);
+        verified = await blockchainCertification.verifyCertificate(_tokenId);
         if (verified) {
-          details = await this.getCertificationDetails(tokenId);
+          details = await this.getCertificationDetails(_tokenId);
         }
       } else {
         // Verify traditional certificate
-        details = await this.getTraditionalCertificationDetails(certificationId);
+        details = await this.getTraditionalCertificationDetails(_certificationId);
         verified = details !== null;
       }
       
@@ -254,11 +254,11 @@ export class EnterpriseAPI {
         tokenId,
         verified,
         details,
-        verificationDate: new Date(),
+        verificationDate: new Date(_),
         verificationMethod: tokenId ? 'blockchain' : 'traditional'
       };
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Certification verification failed:', error);
       throw error;
     }
@@ -270,10 +270,10 @@ export class EnterpriseAPI {
     userIds: string[],
     analysisType: 'skills' | 'fit' | 'potential' | 'growth'
   ): Promise<BulkAnalysisResult> {
-    this.validateClientPermissions(clientId, 'analytics', 'read');
-    await this.checkRateLimit(clientId, userIds.length);
+    this.validateClientPermissions( clientId, 'analytics', 'read');
+    await this.checkRateLimit( clientId, userIds.length);
     
-    console.log(`📊 Bulk analysis for ${userIds.length} users`);
+    console.log(_`📊 Bulk analysis for ${userIds.length} users`);
     
     try {
       const results: TalentAnalysisResult[] = [];
@@ -283,7 +283,7 @@ export class EnterpriseAPI {
       for (let i = 0; i < userIds.length; i += batchSize) {
         const batch = userIds.slice(i, i + batchSize);
         const batchResults = await Promise.all(
-          batch.map(userId => this.analyzeTalent(userId, analysisType))
+          batch.map( userId => this.analyzeTalent(userId, analysisType))
         );
         results.push(...batchResults);
       }
@@ -291,12 +291,12 @@ export class EnterpriseAPI {
       return {
         analysisType,
         results,
-        summary: this.generateBulkAnalysisSummary(results),
-        processedAt: new Date(),
+        summary: this.generateBulkAnalysisSummary(_results),
+        processedAt: new Date(_),
         totalProcessed: results.length
       };
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Bulk analysis failed:', error);
       throw error;
     }
@@ -308,28 +308,28 @@ export class EnterpriseAPI {
     jobDescription: JobDescription,
     maxCandidates: number = 50
   ): Promise<JobMatchResult> {
-    this.validateClientPermissions(clientId, 'jobs', 'read');
-    await this.checkRateLimit(clientId);
+    this.validateClientPermissions( clientId, 'jobs', 'read');
+    await this.checkRateLimit(_clientId);
     
     try {
       // Parse job requirements
-      const requirements = await this.parseJobRequirements(jobDescription);
+      const requirements = await this.parseJobRequirements(_jobDescription);
       
       // Find matching candidates
-      const matches = await this.findJobMatches(requirements, maxCandidates);
+      const matches = await this.findJobMatches( requirements, maxCandidates);
       
       // Rank and score matches
-      const rankedMatches = this.rankJobMatches(matches, requirements);
+      const rankedMatches = this.rankJobMatches( matches, requirements);
       
       return {
         jobId: jobDescription.id,
         matches: rankedMatches,
         totalCandidates: matches.length,
         searchCriteria: requirements,
-        generatedAt: new Date()
+        generatedAt: new Date(_)
       };
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Job matching failed:', error);
       throw error;
     }
@@ -341,18 +341,18 @@ export class EnterpriseAPI {
     reportType: 'skills-gap' | 'market-trends' | 'hiring-forecast' | 'custom',
     parameters: ReportParameters
   ): Promise<TalentReport> {
-    this.validateClientPermissions(clientId, 'analytics', 'read');
-    await this.checkRateLimit(clientId);
+    this.validateClientPermissions( clientId, 'analytics', 'read');
+    await this.checkRateLimit(_clientId);
     
     try {
-      const report = await this.generateReport(reportType, parameters);
+      const report = await this.generateReport( reportType, parameters);
       
       // Apply client-specific customizations
-      const customizedReport = this.applyReportCustomizations(clientId, report);
+      const customizedReport = this.applyReportCustomizations( clientId, report);
       
       return customizedReport;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Report generation failed:', error);
       throw error;
     }
@@ -364,18 +364,18 @@ export class EnterpriseAPI {
     events: string[],
     webhookUrl: string
   ): Promise<WebhookRegistration> {
-    const client = this.clients.get(clientId);
+    const client = this.clients.get(_clientId);
     if (!client) throw new Error('Client not found');
     
     client.webhookUrl = webhookUrl;
     
     return {
-      webhookId: `webhook-${Date.now()}`,
+      webhookId: `webhook-${Date.now(_)}`,
       clientId,
       events,
       url: webhookUrl,
       status: 'active',
-      createdAt: new Date()
+      createdAt: new Date(_)
     };
   }
 
@@ -385,30 +385,30 @@ export class EnterpriseAPI {
     resource: string,
     action: string
   ): void {
-    const client = this.clients.get(clientId);
+    const client = this.clients.get(_clientId);
     if (!client) {
       throw new Error('Invalid client ID');
     }
     
     const permission = client.permissions.find(p => p.resource === resource);
     if (!permission || !permission.actions.includes(action as any)) {
-      throw new Error(`Insufficient permissions for ${action} on ${resource}`);
+      throw new Error(_`Insufficient permissions for ${action} on ${resource}`);
     }
   }
 
-  private async checkRateLimit(clientId: string, requestWeight: number = 1): Promise<void> {
-    const client = this.clients.get(clientId);
+  private async checkRateLimit( clientId: string, requestWeight: number = 1): Promise<void> {
+    const client = this.clients.get(_clientId);
     if (!client) throw new Error('Client not found');
     
-    const state = this.rateLimitTracker.get(clientId) || {
+    const state = this.rateLimitTracker.get(_clientId) || {
       requestsThisMinute: 0,
       requestsThisHour: 0,
       requestsThisDay: 0,
-      lastReset: new Date()
+      lastReset: new Date(_)
     };
     
     // Check rate limits
-    if (state.requestsThisMinute + requestWeight > client.rateLimit.requestsPerMinute) {
+    if (_state.requestsThisMinute + requestWeight > client.rateLimit.requestsPerMinute) {
       throw new Error('Rate limit exceeded: requests per minute');
     }
     
@@ -417,16 +417,16 @@ export class EnterpriseAPI {
     state.requestsThisHour += requestWeight;
     state.requestsThisDay += requestWeight;
     
-    this.rateLimitTracker.set(clientId, state);
+    this.rateLimitTracker.set( clientId, state);
   }
 
-  private initializeClients(): void {
+  private initializeClients(_): void {
     // Sample enterprise client
     const sampleClient: EnterpriseClient = {
       id: 'enterprise-1',
       name: 'TechCorp HR Platform',
       type: 'hr-platform',
-      apiKey: 'ent_1234567890abcdef',
+      apiKey: 'ent1234567890abcdef',
       permissions: [
         {
           resource: 'users',
@@ -466,26 +466,26 @@ export class EnterpriseAPI {
           lms: ['cornerstone', 'degreed']
         }
       },
-      createdAt: new Date(),
-      lastActive: new Date()
+      createdAt: new Date(_),
+      lastActive: new Date(_)
     };
 
-    this.clients.set(sampleClient.id, sampleClient);
+    this.clients.set( sampleClient.id, sampleClient);
   }
 
   // Missing method implementations
-  private async findMatchingTalent(criteria: TalentSearchCriteria): Promise<TalentProfile[]> {
+  private async findMatchingTalent(_criteria: TalentSearchCriteria): Promise<TalentProfile[]> {
     // Mock implementation - would search database
     return [];
   }
 
-  private applyClientFilters(clientId: string, talents: TalentProfile[]): TalentProfile[] {
+  private applyClientFilters( clientId: string, talents: TalentProfile[]): TalentProfile[] {
     // Mock implementation - would apply client-specific filters
     return talents;
   }
 
-  private paginateResults(talents: TalentProfile[], pagination: PaginationOptions): { items: TalentProfile[]; pagination: PaginationInfo } {
-    const start = (pagination.page - 1) * pagination.limit;
+  private paginateResults( talents: TalentProfile[], pagination: PaginationOptions): { items: TalentProfile[]; pagination: PaginationInfo } {
+    const start = (_pagination.page - 1) * pagination.limit;
     const end = start + pagination.limit;
     const items = talents.slice(start, end);
     
@@ -493,43 +493,43 @@ export class EnterpriseAPI {
       items,
       pagination: {
         currentPage: pagination.page,
-        totalPages: Math.ceil(talents.length / pagination.limit),
+        totalPages: Math.ceil(_talents.length / pagination.limit),
         hasNext: end < talents.length,
         hasPrevious: pagination.page > 1
       }
     };
   }
 
-  private async trackAPIUsage(clientId: string, operation: string, criteria: any): Promise<void> {
+  private async trackAPIUsage( clientId: string, operation: string, criteria: any): Promise<void> {
     // Mock implementation - would track API usage
   }
 
-  private async verifyIndividualSkill(userId: string, skill: string, profile: any): Promise<SkillVerification> {
+  private async verifyIndividualSkill( userId: string, skill: string, profile: any): Promise<SkillVerification> {
     return {
       skill,
       verified: true,
       confidence: 0.85,
       evidence: ['project-analysis', 'code-review'],
-      lastVerified: new Date()
+      lastVerified: new Date(_)
     };
   }
 
-  private calculateOverallConfidence(verifications: SkillVerification[]): number {
-    if (verifications.length === 0) return 0;
-    return verifications.reduce((sum, v) => sum + v.confidence, 0) / verifications.length;
+  private calculateOverallConfidence(_verifications: SkillVerification[]): number {
+    if (_verifications.length === 0) return 0;
+    return verifications.reduce( (sum, v) => sum + v.confidence, 0) / verifications.length;
   }
 
-  private async getCertificationDetails(tokenId: string): Promise<any> {
+  private async getCertificationDetails(_tokenId: string): Promise<any> {
     // Mock implementation - would get certification details
     return {};
   }
 
-  private async getTraditionalCertificationDetails(certificationId: string): Promise<any> {
+  private async getTraditionalCertificationDetails(_certificationId: string): Promise<any> {
     // Mock implementation - would get traditional certification details
     return {};
   }
 
-  private async analyzeTalent(userId: string, analysisType: string): Promise<TalentAnalysisResult> {
+  private async analyzeTalent( userId: string, analysisType: string): Promise<TalentAnalysisResult> {
     return {
       userId,
       analysisType,
@@ -539,16 +539,16 @@ export class EnterpriseAPI {
     };
   }
 
-  private generateBulkAnalysisSummary(results: TalentAnalysisResult[]): BulkAnalysisSummary {
+  private generateBulkAnalysisSummary(_results: TalentAnalysisResult[]): BulkAnalysisSummary {
     return {
       totalAnalyzed: results.length,
-      averageScore: results.reduce((sum, r) => sum + r.score, 0) / results.length,
+      averageScore: results.reduce( (sum, r) => sum + r.score, 0) / results.length,
       topPerformers: results.filter(r => r.score > 90).length,
       needsImprovement: results.filter(r => r.score < 70).length
     };
   }
 
-  private async parseJobRequirements(jobDescription: JobDescription): Promise<JobRequirements> {
+  private async parseJobRequirements(_jobDescription: JobDescription): Promise<JobRequirements> {
     return {
       requiredSkills: [],
       preferredSkills: [],
@@ -558,27 +558,27 @@ export class EnterpriseAPI {
     };
   }
 
-  private async findJobMatches(requirements: JobRequirements, maxCandidates: number): Promise<JobCandidate[]> {
+  private async findJobMatches( requirements: JobRequirements, maxCandidates: number): Promise<JobCandidate[]> {
     // Mock implementation - would find matching candidates
     return [];
   }
 
-  private rankJobMatches(matches: JobCandidate[], requirements: JobRequirements): JobCandidate[] {
+  private rankJobMatches( matches: JobCandidate[], requirements: JobRequirements): JobCandidate[] {
     // Mock implementation - would rank matches
     return matches;
   }
 
-  private async generateReport(reportType: string, parameters: ReportParameters): Promise<TalentReport> {
+  private async generateReport( reportType: string, parameters: ReportParameters): Promise<TalentReport> {
     return {
-      id: `report-${Date.now()}`,
+      id: `report-${Date.now(_)}`,
       type: reportType,
       data: {},
-      generatedAt: new Date(),
+      generatedAt: new Date(_),
       parameters
     };
   }
 
-  private applyReportCustomizations(clientId: string, report: TalentReport): TalentReport {
+  private applyReportCustomizations( clientId: string, report: TalentReport): TalentReport {
     // Mock implementation - would apply customizations
     return report;
   }
@@ -769,4 +769,4 @@ interface VerificationStatus {
   skills: boolean;
 }
 
-export const enterpriseAPI = new EnterpriseAPI();
+export const enterpriseAPI = new EnterpriseAPI(_);

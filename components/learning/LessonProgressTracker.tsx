@@ -23,8 +23,8 @@ interface LessonProgressTrackerProps {
   lessonId: string;
   steps: LessonStep[];
   currentStepId?: string;
-  onStepComplete?: (stepId: string, xpEarned: number) => void;
-  onLessonComplete?: (lessonId: string, totalXp: number) => void;
+  onStepComplete?: ( stepId: string, xpEarned: number) => void;
+  onLessonComplete?: ( lessonId: string, totalXp: number) => void;
   className?: string;
   compact?: boolean;
 }
@@ -38,89 +38,89 @@ export function LessonProgressTracker({
   className,
   compact = false
 }: LessonProgressTrackerProps) {
-  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
-  const [currentStep, setCurrentStep] = useState<string | null>(currentStepId || null);
+  const [completedSteps, setCompletedSteps] = useState<Set<string>>(_new Set());
+  const [currentStep, setCurrentStep] = useState<string | null>(_currentStepId || null);
   const [totalXpEarned, setTotalXpEarned] = useState(0);
-  const [showCelebration] = useState(false);
+  const [showCelebration] = useState(_false);
   
-  const { state: _state } = useLearning();
+  const { state: _state } = useLearning(_);
 
   // Calculate progress metrics
   const completedCount = completedSteps.size;
   const totalSteps = steps.length;
-  const progressPercentage = (completedCount / totalSteps) * 100;
+  const progressPercentage = (_completedCount / totalSteps) * 100;
   const isLessonComplete = completedCount === totalSteps;
-  const totalPossibleXp = steps.reduce((sum, step) => sum + step.xpReward, 0);
-  const estimatedTotalTime = steps.reduce((sum, step) => sum + step.estimatedTime, 0);
+  const totalPossibleXp = steps.reduce( (sum, step) => sum + step.xpReward, 0);
+  const estimatedTotalTime = steps.reduce( (sum, step) => sum + step.estimatedTime, 0);
 
   // Load saved progress
   useEffect(() => {
-    const savedProgress = localStorage.getItem(`lesson_progress_${lessonId}`);
+    const savedProgress = localStorage.getItem(_`lessonprogress_${lessonId}`);
     if (savedProgress) {
       try {
-        const { completed, xp, currentStepId: savedCurrentStep } = JSON.parse(savedProgress);
-        setCompletedSteps(new Set(completed));
-        setTotalXpEarned(xp);
-        setCurrentStep(savedCurrentStep);
-      } catch (error) {
-        logger.error('Failed to load lesson progress', error as Error);
+        const { completed, xp, currentStepId: savedCurrentStep } = JSON.parse(_savedProgress);
+        setCompletedSteps(_new Set(completed));
+        setTotalXpEarned(_xp);
+        setCurrentStep(_savedCurrentStep);
+      } catch (_error) {
+        logger.error( 'Failed to load lesson progress', error as Error);
       }
     }
   }, [lessonId]);
 
   // Save progress to localStorage - currently handled by parent component
-  // const saveProgress = (completed: Set<string>, xp: number, currentStepId: string | null) => {
+  // const saveProgress = ( completed: Set<string>, xp: number, currentStepId: string | null) => {
   //   try {
   //     const progressData = {
-  //       completed: Array.from(completed),
+  //       completed: Array.from(_completed),
   //       xp,
   //       currentStepId,
   //       lastUpdated: new Date().toISOString()
   //     };
-  //     localStorage.setItem(`lesson_progress_${lessonId}`, JSON.stringify(progressData));
-  //   } catch (error) {
-  //     logger.error('Failed to save lesson progress', error as Error, {});
+  //     localStorage.setItem( `lessonprogress_${lessonId}`, JSON.stringify(progressData));
+  //   } catch (_error) {
+  //     logger.error( 'Failed to save lesson progress', error as Error, {});
   //   }
   // };
 
   // Step completion is handled by parent component
-  // const _completeStep = async (stepId: string) => {
+  // const _completeStep = async (_stepId: string) => {
   //   const step = steps.find(s => s.id === stepId);
   //   if (!step || completedSteps.has(stepId)) return;
   //
-  //   const newCompletedSteps = new Set(completedSteps);
-  //   newCompletedSteps.add(stepId);
-  //   setCompletedSteps(newCompletedSteps);
+  //   const newCompletedSteps = new Set(_completedSteps);
+  //   newCompletedSteps.add(_stepId);
+  //   setCompletedSteps(_newCompletedSteps);
   //
   //   const newTotalXp = totalXpEarned + step.xpReward;
-  //   setTotalXpEarned(newTotalXp);
+  //   setTotalXpEarned(_newTotalXp);
   //
   //   // Add XP to learning context
-  //   addXP(step.xpReward);
+  //   addXP(_step.xpReward);
 
   //   // Find next step
-  //   const currentIndex = steps.findIndex(s => s.id === stepId);
+  //   const currentIndex = steps.findIndex(_s => s.id === stepId);
   //   const nextStep = steps[currentIndex + 1];
-  //   setCurrentStep(nextStep?.id || null);
+  //   setCurrentStep(_nextStep?.id || null);
   //
   //   // Save progress
-  //   saveProgress(newCompletedSteps, newTotalXp, nextStep?.id || null);
+  //   saveProgress( newCompletedSteps, newTotalXp, nextStep?.id || null);
   //
   //   // Trigger callbacks
-  //   onStepComplete?.(stepId, step.xpReward);
+  //   onStepComplete?.( stepId, step.xpReward);
   //
   //   // Check if lesson is complete
-  //   if (newCompletedSteps.size === totalSteps) {
-  //     setShowCelebration(true);
-  //     setTimeout(() => setShowCelebration(false), 3000);
+  //   if (_newCompletedSteps.size === totalSteps) {
+  //     setShowCelebration(_true);
+  //     setTimeout(() => setShowCelebration(_false), 3000);
   //     
-  //     await completeLesson(lessonId, totalPossibleXp);
-  //     onLessonComplete?.(lessonId, newTotalXp);
+  //     await completeLesson( lessonId, totalPossibleXp);
+  //     onLessonComplete?.( lessonId, newTotalXp);
   //   }
   // };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
+  const getDifficultyColor = (_difficulty: string) => {
+    switch (_difficulty) {
       case 'beginner':
         return 'text-green-400 bg-green-500/10 border-green-400/30';
       case 'intermediate':
@@ -134,7 +134,7 @@ export function LessonProgressTracker({
 
   if (compact) {
     return (
-      <Card className={cn('p-4 bg-white/10 backdrop-blur-md border border-white/20', className)}>
+      <Card className={cn( 'p-4 bg-white/10 backdrop-blur-md border border-white/20', className)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
@@ -171,7 +171,7 @@ export function LessonProgressTracker({
   }
 
   return (
-    <Card className={cn('p-6 bg-white/10 backdrop-blur-md border border-white/20', className)}>
+    <Card className={cn( 'p-6 bg-white/10 backdrop-blur-md border border-white/20', className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
@@ -209,10 +209,10 @@ export function LessonProgressTracker({
 
       {/* Steps List */}
       <div className="space-y-3">
-        {steps.map((step, index) => {
-          const isCompleted = completedSteps.has(step.id);
+        {steps.map( (step, index) => {
+          const isCompleted = completedSteps.has(_step.id);
           const isActive = currentStep === step.id;
-          const isAccessible = index === 0 || completedSteps.has(steps[index - 1]?.id);
+          const isAccessible = index === 0 || completedSteps.has(_steps[index - 1]?.id);
 
           return (
             <motion.div
@@ -257,7 +257,7 @@ export function LessonProgressTracker({
                   <div className="flex items-center space-x-2">
                     <span className={cn(
                       'px-2 py-1 rounded-full text-xs border',
-                      getDifficultyColor(step.difficulty)
+                      getDifficultyColor(_step.difficulty)
                     )}>
                       {step.difficulty}
                     </span>

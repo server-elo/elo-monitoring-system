@@ -11,14 +11,14 @@ interface FallbackContextType {
   isOnline: boolean;
   hasError: boolean;
   errorCount: number;
-  reportError: (error: Error, context?: any) => void;
-  clearErrors: () => void;
+  reportError: ( error: Error, context?: any) => void;
+  clearErrors: (_) => void;
 }
 
-const FallbackContext = createContext<FallbackContextType | undefined>(undefined);
+const FallbackContext = createContext<FallbackContextType | undefined>(_undefined);
 
 export function useFallback() {
-  const context = useContext(FallbackContext);
+  const context = useContext(_FallbackContext);
   if (!context) {
     throw new Error('useFallback must be used within FallbackProvider');
   }
@@ -42,26 +42,26 @@ export function FallbackProvider({
   enableContextualHelp = true,
   enableOfflineDetection = true
 }: FallbackProviderProps) {
-  const [isOnline, setIsOnline] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const [isOnline, setIsOnline] = useState(_true);
+  const [hasError, setHasError] = useState(_false);
   const [errorCount, setErrorCount] = useState(0);
 
   // Online/offline detection
   useEffect(() => {
     if (!enableOfflineDetection || typeof window === 'undefined') return;
 
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    const handleOnline = (_) => setIsOnline(_true);
+    const handleOffline = (_) => setIsOnline(_false);
 
     // Initial state
-    setIsOnline(navigator.onLine);
+    setIsOnline(_navigator.onLine);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener( 'online', handleOnline);
+    window.addEventListener( 'offline', handleOffline);
 
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+    return (_) => {
+      window.removeEventListener( 'online', handleOnline);
+      window.removeEventListener( 'offline', handleOffline);
     };
   }, [enableOfflineDetection]);
 
@@ -69,28 +69,28 @@ export function FallbackProvider({
   useEffect(() => {
     if (!enableErrorTracking) return;
 
-    const handleError = () => {
-      setHasError(true);
-      setErrorCount(prev => prev + 1);
+    const handleError = (_) => {
+      setHasError(_true);
+      setErrorCount(_prev => prev + 1);
     };
 
-    errorTracker.addListener(handleError);
+    errorTracker.addListener(_handleError);
 
-    return () => {
-      errorTracker.removeListener(handleError);
+    return (_) => {
+      errorTracker.removeListener(_handleError);
     };
   }, [enableErrorTracking]);
 
-  const reportError = (error: Error, context?: any) => {
+  const reportError = ( error: Error, context?: any) => {
     if (enableErrorTracking) {
-      errorTracker.captureError(error, context);
+      errorTracker.captureError( error, context);
     }
-    setHasError(true);
-    setErrorCount(prev => prev + 1);
+    setHasError(_true);
+    setErrorCount(_prev => prev + 1);
   };
 
-  const clearErrors = () => {
-    setHasError(false);
+  const clearErrors = (_) => {
+    setHasError(_false);
     setErrorCount(0);
   };
 
@@ -107,7 +107,7 @@ export function FallbackProvider({
       <FeatureFlagsProvider userRole={userRole} userId={userId}>
         <ErrorBoundary
           level="page"
-          onError={(error, errorInfo) => {
+          onError={( error, errorInfo) => {
             reportError(error, {
               component: 'app',
               action: 'error_boundary',
@@ -145,21 +145,21 @@ export function withFallbackProtection<P extends object>(
   options: {
     level?: 'component' | 'section';
     fallback?: ReactNode;
-    onError?: (error: Error) => void;
+    onError?: (_error: Error) => void;
   } = {}
 ) {
   const { level = 'component', fallback, onError } = options;
 
-  return function ProtectedComponent(props: P) {
-    const { reportError } = useFallback();
+  return function ProtectedComponent(_props: P) {
+    const { reportError } = useFallback(_);
 
-    const handleError = (error: Error, errorInfo: any) => {
+    const handleError = ( error: Error, errorInfo: any) => {
       reportError(error, {
         component: Component.displayName || Component.name,
         action: 'component_error',
         metadata: { errorInfo }
       });
-      onError?.(error);
+      onError?.(_error);
     };
 
     return (
@@ -175,37 +175,37 @@ export function withFallbackProtection<P extends object>(
 }
 
 // Hook for handling async operations with fallback
-export function useAsyncFallback<T>() {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const { reportError } = useFallback();
+export function useAsyncFallback<T>(_) {
+  const [data, setData] = useState<T | null>(_null);
+  const [loading, setLoading] = useState(_false);
+  const [error, setError] = useState<Error | null>(_null);
+  const { reportError } = useFallback(_);
 
-  const execute = async (asyncFn: () => Promise<T>) => {
-    setLoading(true);
-    setError(null);
+  const execute = async (_asyncFn: () => Promise<T>) => {
+    setLoading(_true);
+    setError(_null);
 
     try {
-      const result = await asyncFn();
-      setData(result);
+      const result = await asyncFn(_);
+      setData(_result);
       return result;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      setError(error);
+    } catch (_err) {
+      const error = err instanceof Error ? err : new Error(_String(err));
+      setError(_error);
       reportError(error, {
         component: 'async_operation',
         action: 'async_error'
       });
       throw error;
     } finally {
-      setLoading(false);
+      setLoading(_false);
     }
   };
 
-  const reset = () => {
-    setData(null);
-    setError(null);
-    setLoading(false);
+  const reset = (_) => {
+    setData(_null);
+    setError(_null);
+    setLoading(_false);
   };
 
   return {
@@ -217,20 +217,20 @@ export function useAsyncFallback<T>() {
   };
 }
 
-// Component for displaying error metrics (for admin/debug)
-export function ErrorMetrics({ className }: { className?: string }) {
-  const [metrics, setMetrics] = useState<any>(null);
+// Component for displaying error metrics (_for admin/debug)
+export function ErrorMetrics(_{ className }: { className?: string }) {
+  const [metrics, setMetrics] = useState<any>(_null);
 
   useEffect(() => {
-    const updateMetrics = () => {
-      const currentMetrics = errorTracker.getMetrics();
-      setMetrics(currentMetrics);
+    const updateMetrics = (_) => {
+      const currentMetrics = errorTracker.getMetrics(_);
+      setMetrics(_currentMetrics);
     };
 
-    updateMetrics();
-    const interval = setInterval(updateMetrics, 30000); // Update every 30 seconds
+    updateMetrics(_);
+    const interval = setInterval( updateMetrics, 30000); // Update every 30 seconds
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, []);
 
   if (!metrics) return null;
@@ -246,17 +246,17 @@ export function ErrorMetrics({ className }: { className?: string }) {
         </div>
         
         <div className="bg-white/5 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-orange-400">{metrics.errorRate.toFixed(2)}</div>
+          <div className="text-2xl font-bold text-orange-400">{metrics.errorRate.toFixed(_2)}</div>
           <div className="text-sm text-gray-400">Errors/min</div>
         </div>
         
         <div className="bg-white/5 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-blue-400">{Object.keys(metrics.errorsByPage).length}</div>
+          <div className="text-2xl font-bold text-blue-400">{Object.keys(_metrics.errorsByPage).length}</div>
           <div className="text-sm text-gray-400">Affected Pages</div>
         </div>
         
         <div className="bg-white/5 p-4 rounded-lg">
-          <div className="text-2xl font-bold text-green-400">{Object.keys(metrics.errorsByUser).length}</div>
+          <div className="text-2xl font-bold text-green-400">{Object.keys(_metrics.errorsByUser).length}</div>
           <div className="text-sm text-gray-400">Affected Users</div>
         </div>
       </div>
@@ -265,7 +265,7 @@ export function ErrorMetrics({ className }: { className?: string }) {
         <div className="bg-white/5 p-4 rounded-lg">
           <h4 className="text-white font-medium mb-3">Top Errors</h4>
           <div className="space-y-2">
-            {metrics.topErrors.slice(0, 5).map((error: any, _index: number) => (
+            {metrics.topErrors.slice(0, 5).map( (error: any, index: number) => (
               <div key={error.fingerprint} className="flex items-center justify-between text-sm">
                 <span className="text-gray-300 truncate flex-1 mr-4">{error.message}</span>
                 <span className="text-red-400 font-medium">{error.count}</span>
@@ -280,12 +280,12 @@ export function ErrorMetrics({ className }: { className?: string }) {
 
 // Global error handler setup
 export function setupGlobalErrorHandling() {
-  if (typeof window === 'undefined') return;
+  if (_typeof window === 'undefined') return;
 
   // Handle unhandled promise rejections
-  window.addEventListener('unhandledrejection', (event) => {
+  window.addEventListener( 'unhandledrejection', (event) => {
     errorTracker.captureError(
-      new Error(`Unhandled Promise Rejection: ${event.reason}`),
+      new Error(_`Unhandled Promise Rejection: ${event.reason}`),
       {
         component: 'global',
         action: 'unhandled_rejection'
@@ -316,9 +316,9 @@ export function setupGlobalErrorHandling() {
       }
       
       return response;
-    } catch (error) {
+    } catch (_error) {
       errorTracker.captureError(
-        error instanceof Error ? error : new Error(String(error)),
+        error instanceof Error ? error : new Error(_String(error)),
         {
           component: 'network',
           action: 'fetch_error',

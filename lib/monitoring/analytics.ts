@@ -57,39 +57,39 @@ class AnalyticsManager {
   private learningEvents: LearningAnalytics[] = [];
   private collaborationEvents: CollaborationAnalytics[] = [];
   private performanceMetrics: PerformanceMetrics[] = [];
-  private userSessions: Map<string, UserEngagement> = new Map();
+  private userSessions: Map<string, UserEngagement> = new Map(_);
   private initialized = false;
 
   /**
    * Check if analytics is initialized
    */
-  public isInitialized(): boolean {
+  public isInitialized(_): boolean {
     return this.initialized;
   }
 
-  constructor() {
-    this.initializeAnalytics();
-    this.setupPerformanceObserver();
-    this.setupPeriodicFlush();
+  constructor(_) {
+    this.initializeAnalytics(_);
+    this.setupPerformanceObserver(_);
+    this.setupPeriodicFlush(_);
   }
 
   /**
    * Initialize analytics services
    */
-  private initializeAnalytics(): void {
+  private initializeAnalytics(_): void {
     // Initialize Google Analytics
-    if (monitoringConfig.analytics.ga && typeof window !== 'undefined') {
-      this.initializeGA();
+    if (_monitoringConfig.analytics.ga && typeof window !== 'undefined') {
+      this.initializeGA(_);
     }
 
     // Initialize PostHog
-    if (monitoringConfig.analytics.posthog.key && typeof window !== 'undefined') {
-      this.initializePostHog();
+    if (_monitoringConfig.analytics.posthog.key && typeof window !== 'undefined') {
+      this.initializePostHog(_);
     }
 
     // Initialize Mixpanel
-    if (monitoringConfig.analytics.mixpanel && typeof window !== 'undefined') {
-      this.initializeMixpanel();
+    if (_monitoringConfig.analytics.mixpanel && typeof window !== 'undefined') {
+      this.initializeMixpanel(_);
     }
 
     this.initialized = true;
@@ -99,29 +99,29 @@ class AnalyticsManager {
   /**
    * Initialize Google Analytics
    */
-  private initializeGA(): void {
+  private initializeGA(_): void {
     try {
       // Load gtag script
       const script = document.createElement('script');
       script.async = true;
       script.src = `https://www.googletagmanager.com/gtag/js?id=${monitoringConfig.analytics.ga}`;
-      document.head.appendChild(script);
+      document.head.appendChild(_script);
 
       // Initialize gtag
-      (window as any).dataLayer = (window as any).dataLayer || [];
+      (_window as any).dataLayer = (_window as any).dataLayer || [];
       function gtag(...args: any[]) {
-        (window as any).dataLayer.push(args);
+        (_window as any).dataLayer.push(_args);
       }
-      (window as any).gtag = gtag;
+      (_window as any).gtag = gtag;
 
-      gtag('js', new Date());
+      gtag( 'js', new Date());
       gtag('config', monitoringConfig.analytics.ga, {
         page_title: document.title,
         page_location: window.location.href,
       });
 
       console.log('✅ Google Analytics initialized');
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Failed to initialize Google Analytics:', error);
     }
   }
@@ -129,12 +129,12 @@ class AnalyticsManager {
   /**
    * Initialize PostHog
    */
-  private initializePostHog(): void {
+  private initializePostHog(_): void {
     try {
       // This would typically use the PostHog SDK
       // For now, we'll simulate the initialization
       console.log('✅ PostHog initialized');
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Failed to initialize PostHog:', error);
     }
   }
@@ -142,12 +142,12 @@ class AnalyticsManager {
   /**
    * Initialize Mixpanel
    */
-  private initializeMixpanel(): void {
+  private initializeMixpanel(_): void {
     try {
       // This would typically use the Mixpanel SDK
       // For now, we'll simulate the initialization
       console.log('✅ Mixpanel initialized');
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Failed to initialize Mixpanel:', error);
     }
   }
@@ -155,37 +155,37 @@ class AnalyticsManager {
   /**
    * Setup performance observer
    */
-  private setupPerformanceObserver(): void {
-    if (typeof window === 'undefined' || !('PerformanceObserver' in window)) {
+  private setupPerformanceObserver(_): void {
+    if (_typeof window === 'undefined' || !('PerformanceObserver' in window)) {
       return;
     }
 
     // Observe Core Web Vitals
     const observer = new PerformanceObserver((list) => {
-      list.getEntries().forEach((entry) => {
-        if (entry.entryType === 'navigation') {
+      list.getEntries(_).forEach((entry) => {
+        if (_entry.entryType === 'navigation') {
           this.trackPerformance('page_load', entry.duration, {
             url: window.location.href,
-            loadEventEnd: (entry as PerformanceNavigationTiming).loadEventEnd,
-            domContentLoaded: (entry as PerformanceNavigationTiming).domContentLoadedEventEnd,
+            loadEventEnd: (_entry as PerformanceNavigationTiming).loadEventEnd,
+            domContentLoaded: (_entry as PerformanceNavigationTiming).domContentLoadedEventEnd,
           });
         }
       });
     });
 
-    observer.observe({ entryTypes: ['navigation', 'measure'] });
+    observer.observe( { entryTypes: ['navigation', 'measure'] });
 
-    // Track Web Vitals using web-vitals library (if available)
-    this.trackWebVitals();
+    // Track Web Vitals using web-vitals library (_if available)
+    this.trackWebVitals(_);
   }
 
   /**
    * Track Web Vitals
    */
-  private trackWebVitals(): void {
+  private trackWebVitals(_): void {
     // This would typically use the web-vitals library
     // For now, we'll simulate tracking
-    if (typeof window !== 'undefined') {
+    if (_typeof window !== 'undefined') {
       // Simulate CLS, FID, LCP, FCP, TTFB tracking
       setTimeout(() => {
         this.trackEvent('web_vital', {
@@ -200,16 +200,16 @@ class AnalyticsManager {
   /**
    * Setup periodic flush of analytics data
    */
-  private setupPeriodicFlush(): void {
+  private setupPeriodicFlush(_): void {
     // Flush events every 30 seconds
     setInterval(() => {
-      this.flushEvents();
+      this.flushEvents(_);
     }, 30 * 1000);
 
     // Flush on page unload
-    if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => {
-        this.flushEvents();
+    if (_typeof window !== 'undefined') {
+      window.addEventListener( 'beforeunload', () => {
+        this.flushEvents(_);
       });
     }
   }
@@ -217,41 +217,41 @@ class AnalyticsManager {
   /**
    * Track generic event
    */
-  trackEvent(name: string, properties: Record<string, any> = {}, userId?: string): void {
+  trackEvent( name: string, properties: Record<string, any> = {}, userId?: string): void {
     const event: AnalyticsEvent = {
       name,
       properties: {
         ...properties,
-        timestamp: Date.now(),
+        timestamp: Date.now(_),
         url: typeof window !== 'undefined' ? window.location.href : undefined,
         userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
       },
       userId,
-      sessionId: this.getSessionId(),
-      timestamp: Date.now(),
+      sessionId: this.getSessionId(_),
+      timestamp: Date.now(_),
     };
 
-    this.events.push(event);
+    this.events.push(_event);
 
     // Send to external services
-    this.sendToGA(name, properties);
-    this.sendToPostHog(name, properties, userId);
-    this.sendToMixpanel(name, properties, userId);
+    this.sendToGA( name, properties);
+    this.sendToPostHog( name, properties, userId);
+    this.sendToMixpanel( name, properties, userId);
 
     // Log for debugging
-    logger.info(`Analytics event: ${name}`, {
+    logger.info(`Analytics event: ${name}`, { metadata: {
       userId,
       metadata: properties,
     });
-  }
+  }});
 
   /**
    * Track learning analytics
    */
-  trackLearning(analytics: LearningAnalytics): void {
+  trackLearning(_analytics: LearningAnalytics): void {
     this.learningEvents.push({
       ...analytics,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
     } as any);
 
     // Track as generic event
@@ -278,10 +278,10 @@ class AnalyticsManager {
   /**
    * Track collaboration analytics
    */
-  trackCollaboration(analytics: CollaborationAnalytics): void {
+  trackCollaboration(_analytics: CollaborationAnalytics): void {
     this.collaborationEvents.push({
       ...analytics,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
     } as any);
 
     this.trackEvent('collaboration_activity', {
@@ -317,11 +317,11 @@ class AnalyticsManager {
       success,
       metadata: {
         ...metadata,
-        timestamp: Date.now(),
+        timestamp: Date.now(_),
       },
     };
 
-    this.performanceMetrics.push(performanceMetric);
+    this.performanceMetrics.push(_performanceMetric);
 
     this.trackEvent('performance_metric', {
       metric,
@@ -341,8 +341,8 @@ class AnalyticsManager {
   /**
    * Track user engagement
    */
-  trackUserEngagement(userId: string, action: string, feature?: string): void {
-    let engagement = this.userSessions.get(userId);
+  trackUserEngagement( userId: string, action: string, feature?: string): void {
+    let engagement = this.userSessions.get(_userId);
     
     if (!engagement) {
       engagement = {
@@ -351,22 +351,22 @@ class AnalyticsManager {
         pageViews: 0,
         interactions: 0,
         features: [],
-        timestamp: Date.now(),
+        timestamp: Date.now(_),
       };
-      this.userSessions.set(userId, engagement);
+      this.userSessions.set( userId, engagement);
     }
 
     engagement.interactions++;
     
-    if (action === 'page_view') {
+    if (_action === 'page_view') {
       engagement.pageViews++;
     }
 
     if (feature && !engagement.features.includes(feature)) {
-      engagement.features.push(feature);
+      engagement.features.push(_feature);
     }
 
-    engagement.sessionDuration = Date.now() - engagement.timestamp;
+    engagement.sessionDuration = Date.now(_) - engagement.timestamp;
 
     this.trackEvent('user_engagement', {
       action,
@@ -381,7 +381,7 @@ class AnalyticsManager {
   /**
    * Track page view
    */
-  trackPageView(path: string, title?: string, userId?: string): void {
+  trackPageView( path: string, title?: string, userId?: string): void {
     this.trackEvent('page_view', {
       path,
       title: title || document.title,
@@ -389,14 +389,14 @@ class AnalyticsManager {
     }, userId);
 
     if (userId) {
-      this.trackUserEngagement(userId, 'page_view');
+      this.trackUserEngagement( userId, 'page_view');
     }
   }
 
   /**
    * Track user action
    */
-  trackUserAction(action: string, target: string, userId?: string, metadata?: Record<string, any>): void {
+  trackUserAction( action: string, target: string, userId?: string, metadata?: Record<string, any>): void {
     this.trackEvent('user_action', {
       action,
       target,
@@ -404,23 +404,23 @@ class AnalyticsManager {
     }, userId);
 
     if (userId) {
-      this.trackUserEngagement(userId, action, target);
+      this.trackUserEngagement( userId, action, target);
     }
   }
 
   /**
    * Send event to Google Analytics
    */
-  private sendToGA(name: string, properties: Record<string, any>): void {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', name, properties);
+  private sendToGA( name: string, properties: Record<string, any>): void {
+    if (_typeof window !== 'undefined' && (window as any).gtag) {
+      (_window as any).gtag( 'event', name, properties);
     }
   }
 
   /**
    * Send event to PostHog
    */
-  private sendToPostHog(name: string, properties: Record<string, any>, userId?: string): void {
+  private sendToPostHog( name: string, properties: Record<string, any>, userId?: string): void {
     // This would use the PostHog SDK
     console.log('PostHog event:', { name, properties, userId });
   }
@@ -428,7 +428,7 @@ class AnalyticsManager {
   /**
    * Send event to Mixpanel
    */
-  private sendToMixpanel(name: string, properties: Record<string, any>, userId?: string): void {
+  private sendToMixpanel( name: string, properties: Record<string, any>, userId?: string): void {
     // This would use the Mixpanel SDK
     console.log('Mixpanel event:', { name, properties, userId });
   }
@@ -436,13 +436,13 @@ class AnalyticsManager {
   /**
    * Get or create session ID
    */
-  private getSessionId(): string {
-    if (typeof window === 'undefined') return 'server-session';
+  private getSessionId(_): string {
+    if (_typeof window === 'undefined') return 'server-session';
     
     let sessionId = sessionStorage.getItem('analytics_session_id');
     if (!sessionId) {
       sessionId = crypto.randomUUID();
-      sessionStorage.setItem('analytics_session_id', sessionId);
+      sessionStorage.setItem( 'analytics_session_id', sessionId);
     }
     return sessionId;
   }
@@ -450,39 +450,39 @@ class AnalyticsManager {
   /**
    * Flush events to external services
    */
-  private flushEvents(): void {
-    if (this.events.length === 0) return;
+  private flushEvents(_): void {
+    if (_this.events.length === 0) return;
 
     const events = [...this.events];
     this.events = [];
 
     // Send batch to analytics services
-    this.sendBatchToServices(events);
+    this.sendBatchToServices(_events);
 
-    logger.info('Analytics events flushed', {
+    logger.info('Analytics events flushed', { metadata: {
       count: events.length,
       metadata: {
-        eventTypes: [...new Set(events.map(e => e.name))],
-        flushTimestamp: Date.now(),
+        eventTypes: [...new Set(_events.map(e => e.name))],
+        flushTimestamp: Date.now(_),
         batchSize: events.length
       },
     });
-  }
+  }});
 
   /**
    * Send batch of events to analytics services
    */
-  private sendBatchToServices(events: AnalyticsEvent[]): void {
+  private sendBatchToServices(_events: AnalyticsEvent[]): void {
     // This would send batched events to analytics services
     if (isProduction) {
-      console.log(`Sending ${events.length} analytics events to services`);
+      console.log(_`Sending ${events.length} analytics events to services`);
     }
   }
 
   /**
    * Get analytics statistics
    */
-  getStats(): {
+  getStats(_): {
     pendingEvents: number;
     learningEvents: number;
     collaborationEvents: number;
@@ -501,23 +501,23 @@ class AnalyticsManager {
   /**
    * Generate analytics report
    */
-  generateReport(): {
+  generateReport(_): {
     summary: Record<string, number>;
     topEvents: Array<{ name: string; count: number }>;
     performance: Record<string, { avg: number; count: number }>;
     engagement: Record<string, any>;
   } {
-    const eventCounts = this.events.reduce((acc, event) => {
-      acc[event.name] = (acc[event.name] || 0) + 1;
+    const eventCounts = this.events.reduce( (acc, event) => {
+      acc[event.name] = (_acc[event.name] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    const topEvents = Object.entries(eventCounts)
-      .sort(([, a], [, b]) => b - a)
+    const topEvents = Object.entries(_eventCounts)
+      .sort( ([, a], [, b]) => b - a)
       .slice(0, 10)
-      .map(([name, count]) => ({ name, count }));
+      .map( ([name, count]) => ( { name, count }));
 
-    const performanceByMetric = this.performanceMetrics.reduce((acc, metric) => {
+    const performanceByMetric = this.performanceMetrics.reduce( (acc, metric) => {
       if (!acc[metric.metric]) {
         acc[metric.metric] = { total: 0, count: 0 };
       }
@@ -526,7 +526,7 @@ class AnalyticsManager {
       return acc;
     }, {} as Record<string, { total: number; count: number }>);
 
-    const performance = Object.entries(performanceByMetric).reduce((acc, [metric, data]) => {
+    const performance = Object.entries(_performanceByMetric).reduce( (acc, [metric, data]) => {
       acc[metric] = {
         avg: data.total / data.count,
         count: data.count,
@@ -536,10 +536,10 @@ class AnalyticsManager {
 
     const engagement = {
       totalSessions: this.userSessions.size,
-      avgSessionDuration: Array.from(this.userSessions.values())
-        .reduce((sum: number, session) => sum + session.sessionDuration, 0) / this.userSessions.size,
-      totalInteractions: Array.from(this.userSessions.values())
-        .reduce((sum: number, session) => sum + session.interactions, 0),
+      avgSessionDuration: Array.from(_this.userSessions.values())
+        .reduce( (sum: number, session) => sum + session.sessionDuration, 0) / this.userSessions.size,
+      totalInteractions: Array.from(_this.userSessions.values())
+        .reduce( (sum: number, session) => sum + session.interactions, 0),
     };
 
     return {
@@ -557,19 +557,19 @@ class AnalyticsManager {
 }
 
 // Create singleton instance
-export const analytics = new AnalyticsManager();
+export const analytics = new AnalyticsManager(_);
 
 /**
  * React hook for analytics tracking
  */
 export function useAnalytics() {
   return {
-    trackEvent: analytics.trackEvent.bind(analytics),
-    trackPageView: analytics.trackPageView.bind(analytics),
-    trackUserAction: analytics.trackUserAction.bind(analytics),
-    trackLearning: analytics.trackLearning.bind(analytics),
-    trackCollaboration: analytics.trackCollaboration.bind(analytics),
-    trackPerformance: analytics.trackPerformance.bind(analytics),
+    trackEvent: analytics.trackEvent.bind(_analytics),
+    trackPageView: analytics.trackPageView.bind(_analytics),
+    trackUserAction: analytics.trackUserAction.bind(_analytics),
+    trackLearning: analytics.trackLearning.bind(_analytics),
+    trackCollaboration: analytics.trackCollaboration.bind(_analytics),
+    trackPerformance: analytics.trackPerformance.bind(_analytics),
   };
 }
 

@@ -34,7 +34,7 @@ const isDevelopmentMode = process.env.NODE_ENV === 'development' && !process.env
 
 interface AuthModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   defaultMode?: 'login' | 'register';
 }
 
@@ -43,21 +43,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   defaultMode = 'login'
 }) => {
-  const [mode, setMode] = useState<'login' | 'register'>(defaultMode);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [currentError, setCurrentError] = useState<AuthError | null>(null);
+  const [mode, setMode] = useState<'login' | 'register'>(_defaultMode);
+  const [showPassword, setShowPassword] = useState(_false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(_false);
+  const [isLoading, setIsLoading] = useState(_false);
+  const [error, setError] = useState<string | null>(_null);
+  const [success, setSuccess] = useState<string | null>(_null);
+  const [currentError, setCurrentError] = useState<AuthError | null>(_null);
 
   // Enhanced error handling
-  const { showAuthError } = useError();
-  const { handleFieldError, handleSubmissionError } = useFormErrorHandler();
+  const { showAuthError } = useError(_);
+  const { handleFieldError, handleSubmissionError } = useFormErrorHandler(_);
 
   // Login form
   const loginForm = useForm<LoginData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(_loginSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -66,7 +66,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   // Registration form
   const registerForm = useForm<RegistrationData>({
-    resolver: zodResolver(registrationSchema),
+    resolver: zodResolver(_registrationSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -78,59 +78,59 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const currentForm = mode === 'login' ? loginForm : registerForm;
 
   // Enhanced form submission with comprehensive error handling
-  const handleSubmit = async (data: LoginData | RegistrationData) => {
-    setIsLoading(true);
-    setError(null);
-    setSuccess(null);
-    setCurrentError(null);
+  const handleSubmit = async (_data: LoginData | RegistrationData) => {
+    setIsLoading(_true);
+    setError(_null);
+    setSuccess(_null);
+    setCurrentError(_null);
 
     try {
-      if (mode === 'register') {
+      if (_mode === 'register') {
         // Register new user
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
+          body: JSON.stringify(_data),
         });
 
-        const result = await response.json();
+        const result = await response.json(_);
 
         if (!response.ok) {
           // Handle specific registration errors
-          if (response.status === 409) {
+          if (_response.status === 409) {
             const authError = ErrorFactory.createAuthError({
               message: 'User already exists',
               authType: 'register',
               userMessage: 'An account with this email already exists. Would you like to sign in instead?'
             });
-            setCurrentError(authError);
-            showAuthError('register', authError.userMessage);
+            setCurrentError(_authError);
+            showAuthError( 'register', authError.userMessage);
             return;
           }
 
-          if (response.status === 400 && result.details) {
+          if (_response.status === 400 && result.details) {
             // Handle validation errors
             result.details.forEach((detail: any) => {
-              handleFieldError(detail.path[0], detail.message);
+              handleFieldError( detail.path[0], detail.message);
             });
             return;
           }
 
-          throw new Error(result.error || 'Registration failed');
+          throw new Error(_result.error || 'Registration failed');
         }
 
         setSuccess('Account created successfully! You can now sign in.');
         setMode('login');
-        registerForm.reset();
+        registerForm.reset(_);
       } else {
         // Sign in existing user
         const result = await signIn('credentials', {
-          email: (data as LoginData).email,
-          password: (data as LoginData).password,
+          email: (_data as LoginData).email,
+          password: (_data as LoginData).password,
           redirect: false,
         });
 
-        if (result?.error) {
+        if (_result?.error) {
           // Handle specific login errors
           const authError = ErrorFactory.createAuthError({
             message: 'Authentication failed',
@@ -139,33 +139,33 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               ? 'Invalid email or password. Please check your credentials and try again.'
               : 'Login failed. Please try again or contact support if the problem persists.'
           });
-          setCurrentError(authError);
-          showAuthError('login', authError.userMessage);
+          setCurrentError(_authError);
+          showAuthError( 'login', authError.userMessage);
           return;
         }
 
-        if (result?.ok) {
+        if (_result?.ok) {
           setSuccess('Signed in successfully!');
           setTimeout(() => {
-            onClose();
-            window.location.reload(); // Refresh to update auth state
+            onClose(_);
+            window.location.reload(_); // Refresh to update auth state
           }, 1000);
         }
       }
-    } catch (err) {
+    } catch (_err) {
       const error = err instanceof Error ? err : new Error('An unexpected error occurred');
-      handleSubmissionError(error, data);
-      setError(error.message);
+      handleSubmissionError( error, data);
+      setError(_error.message);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
   // Enhanced OAuth sign in with error handling
-  const handleOAuthSignIn = async (provider: string) => {
-    setIsLoading(true);
-    setError(null);
-    setCurrentError(null);
+  const handleOAuthSignIn = async (_provider: string) => {
+    setIsLoading(_true);
+    setError(_null);
+    setCurrentError(_null);
 
     try {
       const result = await signIn(provider, {
@@ -173,39 +173,39 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         redirect: false
       });
 
-      if (result?.error) {
+      if (_result?.error) {
         const authError = ErrorFactory.createAuthError({
           message: `${provider} OAuth failed`,
           authType: 'login',
           userMessage: `Failed to sign in with ${provider}. Please try again or use a different method.`
         });
-        setCurrentError(authError);
-        showAuthError('login', authError.userMessage);
-      } else if (result?.ok) {
-        setSuccess(`Successfully signed in with ${provider}!`);
+        setCurrentError(_authError);
+        showAuthError( 'login', authError.userMessage);
+      } else if (_result?.ok) {
+        setSuccess(_`Successfully signed in with ${provider}!`);
         setTimeout(() => {
-          onClose();
-          window.location.reload();
+          onClose(_);
+          window.location.reload(_);
         }, 1000);
       }
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(`${provider} OAuth sign in failed`);
+    } catch (_err) {
+      const error = err instanceof Error ? err : new Error(_`${provider} OAuth sign in failed`);
       const authError = ErrorFactory.createAuthError({
         message: error.message,
         authType: 'login',
         userMessage: `Unable to connect to ${provider}. Please check your internet connection and try again.`
       });
-      setCurrentError(authError);
-      showAuthError('login', authError.userMessage);
-      setError(authError.userMessage);
+      setCurrentError(_authError);
+      showAuthError( 'login', authError.userMessage);
+      setError(_authError.userMessage);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
   // Password strength indicator for registration
   const passwordValue = registerForm.watch('password');
-  const passwordStrength = passwordValue ? PasswordUtils.checkPasswordStrength(passwordValue) : null;
+  const passwordStrength = passwordValue ? PasswordUtils.checkPasswordStrength(_passwordValue) : null;
 
   if (!isOpen) return null;
 
@@ -224,7 +224,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(_e) => e.stopPropagation(_)}
           className="w-full max-w-md"
         >
           <GlassCard className="p-6 relative">
@@ -263,13 +263,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="mb-4">
                 <ErrorMessage
                   error={currentError}
-                  onDismiss={() => {
-                    setCurrentError(null);
-                    setError(null);
+                  onDismiss={(_) => {
+                    setCurrentError(_null);
+                    setError(_null);
                   }}
-                  onRetry={() => {
-                    setCurrentError(null);
-                    setError(null);
+                  onRetry={(_) => {
+                    setCurrentError(_null);
+                    setError(_null);
                     // Retry logic handled by AsyncSubmitButton
                   }}
                   compact
@@ -303,7 +303,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {/* OAuth Buttons */}
             <div className="space-y-3 mb-6">
               <button
-                onClick={() => handleOAuthSignIn('github')}
+                onClick={(_) => handleOAuthSignIn('github')}
                 disabled={isLoading}
                 className="w-full flex items-center justify-center space-x-2 p-3 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg transition-colors disabled:opacity-50"
               >
@@ -312,7 +312,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
               
               <button
-                onClick={() => handleOAuthSignIn('google')}
+                onClick={(_) => handleOAuthSignIn('google')}
                 disabled={isLoading}
                 className="w-full flex items-center justify-center space-x-2 p-3 bg-white hover:bg-gray-100 text-gray-900 border border-gray-300 rounded-lg transition-colors disabled:opacity-50"
               >
@@ -332,7 +332,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
 
             {/* Form */}
-            <form onSubmit={currentForm.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={currentForm.handleSubmit(_handleSubmit)} className="space-y-4">
               {mode === 'register' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -372,7 +372,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
                   <input
-                    {...(mode === 'login' ? loginForm.register('email') : registerForm.register('email'))}
+                    {...(_mode === 'login' ? loginForm.register('email') : registerForm.register('email'))}
                     type="email"
                     id={`${mode}-email`}
                     autoComplete="email"
@@ -403,14 +403,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
-                    {...(mode === 'login' ? loginForm.register('password') : registerForm.register('password'))}
+                    {...(_mode === 'login' ? loginForm.register('password') : registerForm.register('password'))}
                     type={showPassword ? 'text' : 'password'}
                     className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter your password"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={(_) => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -442,7 +442,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                               passwordStrength.score <= 2 ? 'bg-red-500' :
                               passwordStrength.score <= 4 ? 'bg-yellow-500' : 'bg-green-500'
                             }`}
-                            style={{ width: `${(passwordStrength.score / 6) * 100}%` }}
+                            style={{ width: `${(_passwordStrength.score / 6) * 100}%` }}
                           />
                         </div>
                         <span className={`text-xs ${
@@ -455,7 +455,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       </div>
                       {passwordStrength.feedback.length > 0 && (
                         <ul className="text-xs text-gray-400 space-y-1">
-                          {passwordStrength.feedback.map((feedback, index) => (
+                          {passwordStrength.feedback.map( (feedback, index) => (
                             <li key={index}>• {feedback}</li>
                           ))}
                         </ul>
@@ -478,7 +478,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={(_) => setShowConfirmPassword(!showConfirmPassword)}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                       >
                         {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -502,8 +502,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {/* Submit Button */}
               <AsyncSubmitButton
                 onSubmit={async () => {
-                  const data = currentForm.getValues();
-                  await handleSubmit(data);
+                  const data = currentForm.getValues(_);
+                  await handleSubmit(_data);
                 }}
                 submitText={mode === 'login' ? 'Sign In' : 'Create Account'}
                 className="w-full"
@@ -513,16 +513,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   debounceMs: 500,
                   successDuration: 2000,
                   errorDuration: 4000,
-                  onSuccess: () => {
-                    if (mode === 'login') {
+                  onSuccess: (_) => {
+                    if (_mode === 'login') {
                       setTimeout(() => {
-                        onClose();
-                        window.location.reload();
+                        onClose(_);
+                        window.location.reload(_);
                       }, 1000);
                     }
                   },
-                  onError: (error: Error) => {
-                    setError(error.message);
+                  onError: (_error: Error) => {
+                    setError(_error.message);
                   }
                 }}
               />
@@ -534,11 +534,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}
                 {' '}
                 <button
-                  onClick={() => {
-                    setMode(mode === 'login' ? 'register' : 'login');
-                    setError(null);
-                    setSuccess(null);
-                    currentForm.reset();
+                  onClick={(_) => {
+                    setMode(_mode === 'login' ? 'register' : 'login');
+                    setError(_null);
+                    setSuccess(_null);
+                    currentForm.reset(_);
                   }}
                   className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 >
@@ -550,7 +550,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {/* MetaMask Option */}
             <div className="mt-4">
               <button
-                onClick={() => handleOAuthSignIn('metamask')}
+                onClick={(_) => handleOAuthSignIn('metamask')}
                 disabled={isLoading}
                 className="w-full flex items-center justify-center space-x-2 p-3 bg-orange-600 hover:bg-orange-700 border border-orange-500 rounded-lg transition-colors disabled:opacity-50"
               >

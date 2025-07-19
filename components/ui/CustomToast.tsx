@@ -5,12 +5,12 @@ import { CheckCircle, XCircle, AlertTriangle, X } from 'lucide-react';
 interface CustomToastProps {
   message: string;
   type: 'success' | 'error' | 'warning';
-  onClose: () => void;
+  onClose: (_) => void;
 }
 
-const CustomToast: React.FC<CustomToastProps> = ({ message, type, onClose }) => {
-  const getIcon = () => {
-    switch (type) {
+const CustomToast: React.FC<CustomToastProps> = ( { message, type, onClose }) => {
+  const getIcon = (_) => {
+    switch (_type) {
       case 'success':
         return <CheckCircle className="w-5 h-5 text-green-400" />;
       case 'error':
@@ -22,8 +22,8 @@ const CustomToast: React.FC<CustomToastProps> = ({ message, type, onClose }) => 
     }
   };
 
-  const getBackgroundColor = () => {
-    switch (type) {
+  const getBackgroundColor = (_) => {
+    switch (_type) {
       case 'success':
         return 'bg-green-500/20 border-green-500/30';
       case 'error':
@@ -41,9 +41,9 @@ const CustomToast: React.FC<CustomToastProps> = ({ message, type, onClose }) => 
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -50, scale: 0.9 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className={`fixed top-4 right-4 z-50 flex items-center gap-3 p-4 rounded-lg border backdrop-blur-md ${getBackgroundColor()}`}
+      className={`fixed top-4 right-4 z-50 flex items-center gap-3 p-4 rounded-lg border backdrop-blur-md ${getBackgroundColor(_)}`}
     >
-      {getIcon()}
+      {getIcon(_)}
       <span className="text-white text-sm font-medium">{message}</span>
       <button
         onClick={onClose}

@@ -25,15 +25,15 @@ export function FeaturesSection() {
 
   // Track component performance on mount
   useEffect(() => {
-    const startTime = performance.now();
+    const startTime = performance.now(_);
     const timer = setTimeout(() => {
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       setPerformanceMetrics(prev => ({
         ...prev,
-        loadTime: Math.round(endTime - startTime)
+        loadTime: Math.round(_endTime - startTime)
       }));
     }, 100);
-    return () => clearTimeout(timer);
+    return (_) => clearTimeout(_timer);
   }, []);
 
   const features = [
@@ -167,7 +167,7 @@ export function FeaturesSection() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {features.map((feature, index) => (
+          {features.map( (feature, index) => (
             <motion.div
               key={feature.title}
               variants={{
@@ -217,11 +217,11 @@ export function FeaturesSection() {
 
                 {/* Progress indicator based on index position */}
                 <div className="mt-4 flex items-center space-x-1">
-                  {Array.from({ length: 5 }, (_, i) => (
+                  {Array.from( { length: 5 }, (_, i) => (
                     <div
                       key={i}
                       className={`w-2 h-1 rounded-full transition-all duration-300 ${
-                        i <= (index % 5) ? 'bg-blue-400' : 'bg-gray-600'
+                        i <= (_index % 5) ? 'bg-blue-400' : 'bg-gray-600'
                       }`}
                     />
                   ))}

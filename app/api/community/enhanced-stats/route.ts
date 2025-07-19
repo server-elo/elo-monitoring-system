@@ -3,12 +3,12 @@ import { CommunityStats, StatsFilters } from '@/lib/community/types';
 import { logger } from '@/lib/monitoring/simple-logger';
 
 // Mock data generation for demonstration
-function generateMockStats(_filters?: StatsFilters): CommunityStats {
+function generateMockStats( filters?: StatsFilters): CommunityStats {
   const now = new Date();
   const baseUsers = 1247;
-  const baseActiveToday = Math.floor(baseUsers * 0.15); // 15% daily active
-  const baseActiveWeek = Math.floor(baseUsers * 0.45); // 45% weekly active
-  const baseActiveMonth = Math.floor(baseUsers * 0.75); // 75% monthly active
+  const baseActiveToday = Math.floor(_baseUsers * 0.15); // 15% daily active
+  const baseActiveWeek = Math.floor(_baseUsers * 0.45); // 45% weekly active
+  const baseActiveMonth = Math.floor(_baseUsers * 0.75); // 75% monthly active
 
   return {
     totalUsers: baseUsers,
@@ -38,7 +38,7 @@ function generateMockStats(_filters?: StatsFilters): CommunityStats {
     },
     trendingTopics: [
       {
-        id: 'topic_1',
+        id: 'topic1',
         title: 'Smart Contract Security',
         category: 'Security',
         mentions: 234,
@@ -56,7 +56,7 @@ function generateMockStats(_filters?: StatsFilters): CommunityStats {
         trendPercentage: 8.3
       },
       {
-        id: 'topic_3',
+        id: 'topic3',
         title: 'Gas Optimization',
         category: 'Optimization',
         mentions: 156,
@@ -74,7 +74,7 @@ function generateMockStats(_filters?: StatsFilters): CommunityStats {
         trendPercentage: -5.2
       },
       {
-        id: 'topic_5',
+        id: 'topic5',
         title: 'Layer 2 Solutions',
         category: 'Scaling',
         mentions: 98,
@@ -85,7 +85,7 @@ function generateMockStats(_filters?: StatsFilters): CommunityStats {
     ],
     communityMilestones: [
       {
-        id: 'milestone_1',
+        id: 'milestone1',
         title: '1000+ Active Users',
         description: 'Community reached 1000 active users this month',
         icon: '👥',
@@ -103,7 +103,7 @@ function generateMockStats(_filters?: StatsFilters): CommunityStats {
         type: 'lessons'
       },
       {
-        id: 'milestone_3',
+        id: 'milestone3',
         title: '500K Total XP',
         description: 'Community earned 500,000 total XP points',
         icon: '⭐',
@@ -114,7 +114,7 @@ function generateMockStats(_filters?: StatsFilters): CommunityStats {
     ],
     recentAchievements: [
       {
-        id: 'achievement_1',
+        id: 'achievement1',
         title: 'Smart Contract Expert',
         description: 'Deployed first smart contract',
         icon: '📜',
@@ -132,7 +132,7 @@ function generateMockStats(_filters?: StatsFilters): CommunityStats {
         category: 'streak'
       },
       {
-        id: 'achievement_3',
+        id: 'achievement3',
         title: 'Community Helper',
         description: 'Helped 10 other students',
         icon: '🤝',
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     // Return default stats without filters
-    const stats = generateMockStats();
+    const stats = generateMockStats(_);
     return NextResponse.json(stats);
   } catch (error) {
     logger.error('Error fetching community stats', error as Error);

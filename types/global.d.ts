@@ -1,50 +1,50 @@
 // Global type declarations
 
-// Global Monaco namespaces (for files that reference them without imports)
+// Global Monaco namespaces (_for files that reference them without imports)
 declare namespace editor {
   export interface IStandaloneCodeEditor {
-    getValue(): string;
-    setValue(value: string): void;
-    getModel(): ITextModel | null;
-    setModel(model: ITextModel | null): void;
-    focus(): void;
-    dispose(): void;
-    onDidChangeModelContent(listener: (e: any) => void): any;
-    onDidChangeCursorPosition(listener: (e: any) => void): any;
-    getAction(id: string): any;
-    trigger(source: string, handlerId: string, payload?: any): void;
-    addCommand(keybinding: number, handler: () => void, context?: string): string | null;
-    createContextKey(key: string, defaultValue: boolean): any;
-    getSelection(): Selection | null;
-    setSelection(selection: any): void;
-    getPosition(): any;
-    setPosition(position: any): void;
-    revealLine(lineNumber: number): void;
-    deltaDecorations(oldDecorations: string[], newDecorations: any[]): string[];
-    layout(dimension?: { width: number; height: number }): void;
-    updateOptions(options: any): void;
+    getValue(_): string;
+    setValue(_value: string): void;
+    getModel(_): ITextModel | null;
+    setModel(_model: ITextModel | null): void;
+    focus(_): void;
+    dispose(_): void;
+    onDidChangeModelContent(_listener: (e: any) => void): any;
+    onDidChangeCursorPosition(_listener: (e: any) => void): any;
+    getAction(_id: string): any;
+    trigger( source: string, handlerId: string, payload?: any): void;
+    addCommand( keybinding: number, handler: () => void, context?: string): string | null;
+    createContextKey( key: string, defaultValue: boolean): any;
+    getSelection(_): Selection | null;
+    setSelection(_selection: any): void;
+    getPosition(_): any;
+    setPosition(_position: any): void;
+    revealLine(_lineNumber: number): void;
+    deltaDecorations( oldDecorations: string[], newDecorations: any[]): string[];
+    layout(_dimension?: { width: number; height: number }): void;
+    updateOptions(_options: any): void;
   }
   
   export interface ITextModel {
-    getValue(): string;
-    setValue(value: string): void;
-    getLineCount(): number;
-    getLineContent(lineNumber: number): string;
-    dispose(): void;
-    onDidChangeContent(listener: (e: any) => void): any;
-    pushEditOperations(beforeCursorState: any, editOperations: any[], cursorStateComputer?: any): any;
-    applyEdits(operations: any[]): any;
-    getVersionId(): number;
-    getAlternativeVersionId(): number;
-    getLinesContent(): string[];
-    getLineMaxColumn(lineNumber: number): number;
-    getLineFirstNonWhitespaceColumn(lineNumber: number): number;
-    getLineLastNonWhitespaceColumn(lineNumber: number): number;
-    validatePosition(position: any): any;
-    validateRange(range: any): any;
-    getValueInRange(range: any, eol?: any): string;
-    getWordAtPosition(position: any): any;
-    getWordUntilPosition(position: any): any;
+    getValue(_): string;
+    setValue(_value: string): void;
+    getLineCount(_): number;
+    getLineContent(_lineNumber: number): string;
+    dispose(_): void;
+    onDidChangeContent(_listener: (e: any) => void): any;
+    pushEditOperations( beforeCursorState: any, editOperations: any[], cursorStateComputer?: any): any;
+    applyEdits(_operations: any[]): any;
+    getVersionId(_): number;
+    getAlternativeVersionId(_): number;
+    getLinesContent(_): string[];
+    getLineMaxColumn(_lineNumber: number): number;
+    getLineFirstNonWhitespaceColumn(_lineNumber: number): number;
+    getLineLastNonWhitespaceColumn(_lineNumber: number): number;
+    validatePosition(_position: any): any;
+    validateRange(_range: any): any;
+    getValueInRange( range: any, eol?: any): string;
+    getWordAtPosition(_position: any): any;
+    getWordUntilPosition(_position: any): any;
   }
 
   export interface IEditorOptions {
@@ -84,37 +84,37 @@ declare namespace editor {
     Error: number;
   };
 
-  export function create(domElement: HTMLElement, options?: IEditorOptions): IStandaloneCodeEditor;
-  export function createModel(value: string, language?: string, uri?: any): ITextModel;
-  export function setModelMarkers(model: ITextModel, owner: string, markers: IMarkerData[]): void;
+  export function create( domElement: HTMLElement, options?: IEditorOptions): IStandaloneCodeEditor;
+  export function createModel( value: string, language?: string, uri?: any): ITextModel;
+  export function setModelMarkers( model: ITextModel, owner: string, markers: IMarkerData[]): void;
 }
 
 declare namespace monaco {
   export const editor: typeof editor;
   export const languages: {
-    register(language: { id: string; extensions?: string[]; aliases?: string[] }): void;
-    setMonarchTokensProvider(languageId: string, languageDef: any): void;
-    setLanguageConfiguration(languageId: string, configuration: any): void;
-    registerCompletionItemProvider(languageId: string, provider: any): any;
-    registerHoverProvider(languageId: string, provider: any): any;
-    registerSignatureHelpProvider(languageId: string, provider: any): any;
+    register(_language: { id: string; extensions?: string[]; aliases?: string[] }): void;
+    setMonarchTokensProvider( languageId: string, languageDef: any): void;
+    setLanguageConfiguration( languageId: string, configuration: any): void;
+    registerCompletionItemProvider( languageId: string, provider: any): any;
+    registerHoverProvider( languageId: string, provider: any): any;
+    registerSignatureHelpProvider( languageId: string, provider: any): any;
   };
   export class Range {
-    constructor(startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number);
+    constructor( startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number);
   }
   export class Selection {
-    constructor(startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number);
+    constructor( startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number);
   }
   export class Position {
-    constructor(lineNumber: number, column: number);
+    constructor( lineNumber: number, column: number);
   }
 }
 
 interface Window {
   ethereum?: {
-    request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
-    on: (event: string, handler: (...args: unknown[]) => void) => void;
-    removeListener: (event: string, handler: (...args: unknown[]) => void) => void;
+    request: (_args: { method: string; params?: unknown[] }) => Promise<unknown>;
+    on: ( event: string, handler: (...args: unknown[]) => void) => void;
+    removeListener: ( event: string, handler: (...args: unknown[]) => void) => void;
     isMetaMask?: boolean;
     chainId?: string;
     selectedAddress?: string;
@@ -126,16 +126,16 @@ interface Window {
    * Sentry error monitoring service
    */
   Sentry?: {
-    captureException: (error: Error) => void;
-    withScope: (callback: (scope: SentryScope) => void) => void;
-    addBreadcrumb: (breadcrumb: SentryBreadcrumb) => void;
-    setUser: (user: SentryUser) => void;
-    setTag: (key: string, value: string) => void;
-    setContext: (key: string, context: Record<string, unknown>) => void;
+    captureException: (_error: Error) => void;
+    withScope: (_callback: (scope: SentryScope) => void) => void;
+    addBreadcrumb: (_breadcrumb: SentryBreadcrumb) => void;
+    setUser: (_user: SentryUser) => void;
+    setTag: ( key: string, value: string) => void;
+    setContext: ( key: string, context: Record<string, unknown>) => void;
   };
 
   /**
-   * Google Analytics 4 (gtag)
+   * Google Analytics 4 (_gtag)
    */
   gtag?: (
     command: 'config' | 'event' | 'set',
@@ -147,50 +147,50 @@ interface Window {
    * LogRocket session recording
    */
   LogRocket?: {
-    identify: (uid: string, traits?: Record<string, unknown>) => void;
-    track: (event: string, properties?: Record<string, unknown>) => void;
-    captureException: (error: Error) => void;
+    identify: ( uid: string, traits?: Record<string, unknown>) => void;
+    track: ( event: string, properties?: Record<string, unknown>) => void;
+    captureException: (_error: Error) => void;
   };
 
   /**
    * PostHog analytics
    */
   posthog?: {
-    capture: (event: string, properties?: Record<string, unknown>) => void;
-    identify: (uid: string, properties?: Record<string, unknown>) => void;
-    reset: () => void;
+    capture: ( event: string, properties?: Record<string, unknown>) => void;
+    identify: ( uid: string, properties?: Record<string, unknown>) => void;
+    reset: (_) => void;
   };
 
   /**
    * Mixpanel analytics
    */
   mixpanel?: {
-    track: (event: string, properties?: Record<string, unknown>) => void;
-    identify: (uid: string) => void;
+    track: ( event: string, properties?: Record<string, unknown>) => void;
+    identify: (_uid: string) => void;
     people: {
-      set: (properties: Record<string, unknown>) => void;
+      set: ( properties: Record<string, unknown>) => void;
     };
   };
 
   /**
    * Hotjar heatmaps and session recordings
    */
-  hj?: (command: string, ...args: unknown[]) => void;
+  hj?: ( command: string, ...args: unknown[]) => void;
 
   /**
    * Intercom customer messaging
    */
-  Intercom?: (command: string, data?: Record<string, unknown>) => void;
+  Intercom?: ( command: string, data?: Record<string, unknown>) => void;
 }
 
 /**
  * Sentry scope interface
  */
 interface SentryScope {
-  setTag: (key: string, value: string | number) => void;
-  setContext: (key: string, context: Record<string, unknown>) => void;
-  setUser: (user: SentryUser) => void;
-  setLevel: (level: 'fatal' | 'error' | 'warning' | 'info' | 'debug') => void;
+  setTag: ( key: string, value: string | number) => void;
+  setContext: ( key: string, context: Record<string, unknown>) => void;
+  setUser: (_user: SentryUser) => void;
+  setLevel: (_level: 'fatal' | 'error' | 'warning' | 'info' | 'debug') => void;
 }
 
 /**
@@ -218,8 +218,8 @@ interface SentryUser {
 // Google Generative AI types
 declare module '@google/genai' {
   export class GoogleGenerativeAI {
-    constructor(apiKey: string);
-    getGenerativeModel(config: { model: string }): any;
+    constructor(_apiKey: string);
+    getGenerativeModel(_config: { model: string }): any;
   }
 }
 
@@ -302,8 +302,8 @@ declare module 'react-error-boundary' {
     children: React.ReactNode;
     fallback?: React.ComponentType<any>;
     FallbackComponent?: React.ComponentType<any>;
-    onError?: (error: Error, errorInfo: any) => void;
-    onReset?: () => void;
+    onError?: ( error: Error, errorInfo: any) => void;
+    onReset?: (_) => void;
     resetKeys?: Array<unknown>;
     resetOnPropsChange?: boolean;
     isolate?: boolean;
@@ -314,7 +314,7 @@ declare module 'react-error-boundary' {
     Component: React.ComponentType<P>,
     errorBoundaryProps: ErrorBoundaryProps
   ): React.ComponentType<P>;
-  export function useErrorHandler(): (error: Error) => void;
+  export function useErrorHandler(): (_error: Error) => void;
 }
 
 declare module '@storybook/react' {
@@ -327,9 +327,9 @@ declare module '@storybook/react' {
   export interface StoryObj<T = {}> {
     args?: Partial<T>;
     parameters?: Record<string, unknown>;
-    render?: (args: T) => React.ReactNode;
+    render?: (_args: T) => React.ReactNode;
   }
-  export type StoryFn<T = {}> = (args: T) => React.ReactNode;
+  export type StoryFn<T = {}> = (_args: T) => React.ReactNode;
 }
 
 declare module '@storybook/test' {
@@ -353,48 +353,48 @@ declare module 'monaco-editor' {
 
   export namespace editor {
     export interface IStandaloneCodeEditor {
-      getValue(): string;
-      setValue(value: string): void;
-      getModel(): ITextModel | null;
-      setModel(model: ITextModel | null): void;
-      focus(): void;
-      dispose(): void;
-      onDidChangeModelContent(listener: (e: any) => void): any;
-      onDidChangeCursorPosition(listener: (e: any) => void): any;
-      getAction(id: string): any;
-      trigger(source: string, handlerId: string, payload?: any): void;
-      addCommand(keybinding: number, handler: () => void, context?: string): string | null;
-      createContextKey(key: string, defaultValue: boolean): any;
-      getSelection(): Selection | null;
-      setSelection(selection: any): void;
-      getPosition(): any;
-      setPosition(position: any): void;
-      revealLine(lineNumber: number): void;
-      deltaDecorations(oldDecorations: string[], newDecorations: any[]): string[];
-      layout(dimension?: { width: number; height: number }): void;
-      updateOptions(options: any): void;
+      getValue(_): string;
+      setValue(_value: string): void;
+      getModel(_): ITextModel | null;
+      setModel(_model: ITextModel | null): void;
+      focus(_): void;
+      dispose(_): void;
+      onDidChangeModelContent(_listener: (e: any) => void): any;
+      onDidChangeCursorPosition(_listener: (e: any) => void): any;
+      getAction(_id: string): any;
+      trigger( source: string, handlerId: string, payload?: any): void;
+      addCommand( keybinding: number, handler: () => void, context?: string): string | null;
+      createContextKey( key: string, defaultValue: boolean): any;
+      getSelection(_): Selection | null;
+      setSelection(_selection: any): void;
+      getPosition(_): any;
+      setPosition(_position: any): void;
+      revealLine(_lineNumber: number): void;
+      deltaDecorations( oldDecorations: string[], newDecorations: any[]): string[];
+      layout(_dimension?: { width: number; height: number }): void;
+      updateOptions(_options: any): void;
     }
     
     export interface ITextModel {
-      getValue(): string;
-      setValue(value: string): void;
-      getLineCount(): number;
-      getLineContent(lineNumber: number): string;
-      dispose(): void;
-      onDidChangeContent(listener: (e: any) => void): any;
-      pushEditOperations(beforeCursorState: any, editOperations: any[], cursorStateComputer?: any): any;
-      applyEdits(operations: any[]): any;
-      getVersionId(): number;
-      getAlternativeVersionId(): number;
-      getLinesContent(): string[];
-      getLineMaxColumn(lineNumber: number): number;
-      getLineFirstNonWhitespaceColumn(lineNumber: number): number;
-      getLineLastNonWhitespaceColumn(lineNumber: number): number;
-      validatePosition(position: any): any;
-      validateRange(range: any): any;
-      getValueInRange(range: any, eol?: any): string;
-      getWordAtPosition(position: any): any;
-      getWordUntilPosition(position: any): any;
+      getValue(_): string;
+      setValue(_value: string): void;
+      getLineCount(_): number;
+      getLineContent(_lineNumber: number): string;
+      dispose(_): void;
+      onDidChangeContent(_listener: (e: any) => void): any;
+      pushEditOperations( beforeCursorState: any, editOperations: any[], cursorStateComputer?: any): any;
+      applyEdits(_operations: any[]): any;
+      getVersionId(_): number;
+      getAlternativeVersionId(_): number;
+      getLinesContent(_): string[];
+      getLineMaxColumn(_lineNumber: number): number;
+      getLineFirstNonWhitespaceColumn(_lineNumber: number): number;
+      getLineLastNonWhitespaceColumn(_lineNumber: number): number;
+      validatePosition(_position: any): any;
+      validateRange(_range: any): any;
+      getValueInRange( range: any, eol?: any): string;
+      getWordAtPosition(_position: any): any;
+      getWordUntilPosition(_position: any): any;
     }
 
     export interface IEditorOptions {
@@ -434,31 +434,31 @@ declare module 'monaco-editor' {
       Error: number;
     };
 
-    export function create(domElement: HTMLElement, options?: IEditorOptions): IStandaloneCodeEditor;
-    export function createModel(value: string, language?: string, uri?: any): ITextModel;
-    export function setModelMarkers(model: ITextModel, owner: string, markers: IMarkerData[]): void;
+    export function create( domElement: HTMLElement, options?: IEditorOptions): IStandaloneCodeEditor;
+    export function createModel( value: string, language?: string, uri?: any): ITextModel;
+    export function setModelMarkers( model: ITextModel, owner: string, markers: IMarkerData[]): void;
   }
 
   export namespace languages {
-    export function register(language: { id: string; extensions?: string[]; aliases?: string[] }): void;
-    export function setMonarchTokensProvider(languageId: string, languageDef: any): void;
-    export function setLanguageConfiguration(languageId: string, configuration: any): void;
-    export function registerCompletionItemProvider(languageId: string, provider: any): any;
-    export function registerHoverProvider(languageId: string, provider: any): any;
-    export function registerSignatureHelpProvider(languageId: string, provider: any): any;
+    export function register(_language: { id: string; extensions?: string[]; aliases?: string[] }): void;
+    export function setMonarchTokensProvider( languageId: string, languageDef: any): void;
+    export function setLanguageConfiguration( languageId: string, configuration: any): void;
+    export function registerCompletionItemProvider( languageId: string, provider: any): any;
+    export function registerHoverProvider( languageId: string, provider: any): any;
+    export function registerSignatureHelpProvider( languageId: string, provider: any): any;
   }
 
   export namespace monaco {
     export const editor: typeof editor;
     export const languages: typeof languages;
     export class Range {
-      constructor(startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number);
+      constructor( startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number);
     }
     export class Selection {
-      constructor(startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number);
+      constructor( startLineNumber: number, startColumn: number, endLineNumber: number, endColumn: number);
     }
     export class Position {
-      constructor(lineNumber: number, column: number);
+      constructor( lineNumber: number, column: number);
     }
   }
 
@@ -485,7 +485,7 @@ interface UATSession {
   createdAt: Date;
   startTime?: Date;
   endTime?: Date;
-  status: 'active' | 'completed' | 'failed' | 'in_progress';
+  status: 'active' | 'completed' | 'failed' | 'inprogress';
   testCases: any[];
   testerInfo?: {
     id: string;
@@ -508,7 +508,7 @@ interface UATSession {
   recordings?: string[];
 }
 
-// Check component type (likely from lucide-react)
+// Check component type (_likely from lucide-react)
 declare const Check: React.ComponentType<any>;
 
 // Animation function

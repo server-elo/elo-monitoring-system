@@ -111,11 +111,11 @@ export interface CompetitionEvent {
 
 export class GasOptimizationChallenges {
   private gasAnalyzer: GasOptimizationAnalyzer;
-  private challengeTemplates: Map<string, GasChallenge> = new Map();
+  private challengeTemplates: Map<string, GasChallenge> = new Map(_);
 
-  constructor(gasAnalyzer: GasOptimizationAnalyzer) {
+  constructor(_gasAnalyzer: GasOptimizationAnalyzer) {
     this.gasAnalyzer = gasAnalyzer;
-    this.initializeChallengeTemplates();
+    this.initializeChallengeTemplates(_);
   }
 
   // Generate personalized challenge based on user's learning profile
@@ -124,16 +124,16 @@ export class GasOptimizationChallenges {
     targetDifficulty: 'beginner' | 'intermediate' | 'advanced',
     focusArea?: string
   ): Promise<GasChallenge> {
-    console.log(`🎯 Generating personalized gas challenge for user ${userId}`);
+    console.log(_`🎯 Generating personalized gas challenge for user ${userId}`);
     
     // Get user's learning profile
-    const profile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
+    const profile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
     
     // Determine focus area based on weaknesses
-    const category = focusArea || this.selectOptimalCategory(profile.weaknessPatterns);
+    const category = focusArea || this.selectOptimalCategory(_profile.weaknessPatterns);
     
     // Generate AI-powered challenge
-    const prompt = this.buildChallengePrompt(targetDifficulty, category, profile);
+    const prompt = this.buildChallengePrompt( targetDifficulty, category, profile);
     const aiResponse = await enhancedTutor.getAIResponse(
       prompt,
       { userId },
@@ -147,7 +147,7 @@ export class GasOptimizationChallenges {
       userId
     );
     
-    console.log(`✅ Generated challenge: ${challenge.title}`);
+    console.log(_`✅ Generated challenge: ${challenge.title}`);
     return challenge;
   }
 
@@ -159,16 +159,16 @@ export class GasOptimizationChallenges {
     timeSpent: number,
     hintsUsed: number
   ): Promise<ChallengeResult> {
-    console.log(`🔍 Evaluating challenge submission for ${challenge.id}`);
+    console.log(_`🔍 Evaluating challenge submission for ${challenge.id}`);
     
-    const startTime = Date.now();
+    const startTime = Date.now(_);
     
     try {
       // Analyze gas usage of submitted code
-      const gasAnalysis = await this.analyzeSubmittedCode(submittedCode, userId);
+      const gasAnalysis = await this.analyzeSubmittedCode( submittedCode, userId);
       
       // Run test cases
-      const testResults = await this.runTestCases(submittedCode, challenge.testCases);
+      const testResults = await this.runTestCases( submittedCode, challenge.testCases);
       
       // Calculate gas reduction
       const gasReduction = this.calculateGasReduction(
@@ -195,7 +195,7 @@ export class GasOptimizationChallenges {
       );
       
       // Check for achievements
-      const achievements = this.checkAchievements(challenge, gasReduction, score, timeSpent);
+      const achievements = this.checkAchievements( challenge, gasReduction, score, timeSpent);
       
       // Generate next recommendations
       const nextRecommendations = await this.generateNextRecommendations(
@@ -222,13 +222,13 @@ export class GasOptimizationChallenges {
       };
       
       // Save result and update user progress
-      await this.saveChallengeResult(result);
-      await this.updateUserProgress(userId, result);
+      await this.saveChallengeResult(_result);
+      await this.updateUserProgress( userId, result);
       
-      console.log(`✅ Challenge evaluation completed: ${result.passed ? 'PASSED' : 'FAILED'}`);
+      console.log(_`✅ Challenge evaluation completed: ${result.passed ? 'PASSED' : 'FAILED'}`);
       return result;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Challenge evaluation failed:', error);
       throw error;
     }
@@ -242,42 +242,42 @@ export class GasOptimizationChallenges {
     duration: number // hours
   ): Promise<CompetitionEvent> {
     const competition: CompetitionEvent = {
-      id: `comp-${Date.now()}`,
+      id: `comp-${Date.now(_)}`,
       name,
       description,
-      startTime: new Date(),
-      endTime: new Date(Date.now() + duration * 60 * 60 * 1000),
+      startTime: new Date(_),
+      endTime: new Date(_Date.now() + duration * 60 * 60 * 1000),
       challenges: challengeIds,
-      prizes: this.generateCompetitionPrizes(),
+      prizes: this.generateCompetitionPrizes(_),
       participants: 0,
       status: 'active'
     };
     
-    await this.saveCompetition(competition);
+    await this.saveCompetition(_competition);
     return competition;
   }
 
   // Get challenge leaderboard
-  async getChallengeLeaderboard(challengeId: string, userId?: string): Promise<ChallengeLeaderboard> {
-    const results = await this.getChallengeResults(challengeId);
+  async getChallengeLeaderboard( challengeId: string, userId?: string): Promise<ChallengeLeaderboard> {
+    const results = await this.getChallengeResults(_challengeId);
     
-    // Sort by score (descending) then by gas used (ascending)
-    const sortedResults = results.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
+    // Sort by score (_descending) then by gas used (_ascending)
+    const sortedResults = results.sort( (a, b) => {
+      if (_b.score !== a.score) return b.score - a.score;
       return a.gasUsed - b.gasUsed;
     });
     
-    const entries: LeaderboardEntry[] = sortedResults.map((result, index) => ({
+    const entries: LeaderboardEntry[] = sortedResults.map( (result, index) => ({
       userId: result.userId,
       username: `User${result.userId.slice(-4)}`, // Anonymized for demo
       gasUsed: result.gasUsed,
       score: result.score,
       timeSpent: result.timeSpent,
-      submissionTime: new Date(), // Would come from database
+      submissionTime: new Date(_), // Would come from database
       rank: index + 1
     }));
     
-    const userRank = userId ? entries.findIndex(e => e.userId === userId) + 1 : undefined;
+    const userRank = userId ? entries.findIndex(_e => e.userId === userId) + 1 : undefined;
     
     return {
       challengeId,
@@ -294,7 +294,7 @@ export class GasOptimizationChallenges {
     gasPrice: number = 20 // gwei
   ): CostComparison {
     const gasSaved = baselineGas - optimizedGas;
-    const percentageSaved = (gasSaved / baselineGas) * 100;
+    const percentageSaved = (_gasSaved / baselineGas) * 100;
     const costSavedWei = gasSaved * gasPrice * 1e9; // Convert gwei to wei
     const costSavedEth = costSavedWei / 1e18;
     
@@ -306,12 +306,12 @@ export class GasOptimizationChallenges {
       costSavedWei,
       costSavedEth,
       gasPrice,
-      visualization: this.createGasVisualization(baselineGas, optimizedGas)
+      visualization: this.createGasVisualization( baselineGas, optimizedGas)
     };
   }
 
   // Private helper methods
-  private selectOptimalCategory(weaknessPatterns: string[]): string {
+  private selectOptimalCategory(_weaknessPatterns: string[]): string {
     const categoryMapping = {
       'storage': ['sstore', 'sload', 'storage-packing'],
       'computation': ['arithmetic', 'loops', 'unchecked'],
@@ -324,12 +324,12 @@ export class GasOptimizationChallenges {
     let maxMatches = 0;
     let selectedCategory = 'storage';
     
-    for (const [category, patterns] of Object.entries(categoryMapping)) {
+    for ( const [category, patterns] of Object.entries(categoryMapping)) {
       const matches = patterns.filter(p => 
-        weaknessPatterns.some(w => w.includes(p))
+        weaknessPatterns.some(_w => w.includes(p))
       ).length;
       
-      if (matches > maxMatches) {
+      if (_matches > maxMatches) {
         maxMatches = matches;
         selectedCategory = category;
       }
@@ -348,13 +348,13 @@ export class GasOptimizationChallenges {
       
       Difficulty: ${difficulty}
       Category: ${category}
-      User's weakness patterns: ${profile.weaknessPatterns.join(', ')}
+      User's weakness patterns: ${profile.weaknessPatterns.join( ', ')}
       User's learning velocity: ${profile.learningVelocity}
       
       Create a challenge that includes:
       1. Inefficient Solidity code (50-150 lines)
-      2. Clear optimization target (specific gas reduction percentage)
-      3. Real-world context (DeFi, NFT, DAO, etc.)
+      2. Clear optimization target (_specific gas reduction percentage)
+      3. Real-world context ( DeFi, NFT, DAO, etc.)
       4. Test cases to validate functionality
       5. Progressive hints (5 levels)
       6. Learning objectives
@@ -375,7 +375,7 @@ export class GasOptimizationChallenges {
     // Parse AI response and create structured challenge
     // This would include proper JSON parsing and validation
     
-    const challengeId = `challenge-${Date.now()}-${userId}`;
+    const challengeId = `challenge-${Date.now(_)}-${userId}`;
     
     // For demo purposes, return a structured challenge
     return {
@@ -386,24 +386,24 @@ export class GasOptimizationChallenges {
       category: category as any,
       targetGasReduction: difficulty === 'beginner' ? 20 : difficulty === 'intermediate' ? 35 : 50,
       maxGasLimit: 1000000,
-      baselineCode: this.getBaselineCode(category, difficulty),
-      baselineGasCost: this.estimateBaselineGas(category, difficulty),
-      testCases: this.generateTestCases(category),
-      hints: this.generateProgressiveHints(category, difficulty),
+      baselineCode: this.getBaselineCode( category, difficulty),
+      baselineGasCost: this.estimateBaselineGas( category, difficulty),
+      testCases: this.generateTestCases(_category),
+      hints: this.generateProgressiveHints( category, difficulty),
       timeLimit: difficulty === 'beginner' ? 30 : difficulty === 'intermediate' ? 45 : 60,
-      rewards: this.generateChallengeRewards(difficulty),
-      prerequisites: this.getPrerequisites(category, difficulty),
-      learningObjectives: this.getLearningObjectives(category),
-      realWorldContext: this.getRealWorldContext(category)
+      rewards: this.generateChallengeRewards(_difficulty),
+      prerequisites: this.getPrerequisites( category, difficulty),
+      learningObjectives: this.getLearningObjectives(_category),
+      realWorldContext: this.getRealWorldContext(_category)
     };
   }
 
-  private async analyzeSubmittedCode(_code: string, userId: string): Promise<GasAnalysisResult> {
+  private async analyzeSubmittedCode( _code: string, userId: string): Promise<GasAnalysisResult> {
     // Use our existing gas analyzer
-    return await this.gasAnalyzer.analyzeGasUsage(userId);
+    return await this.gasAnalyzer.analyzeGasUsage(_userId);
   }
 
-  private calculateGasReduction(baseline: number, optimized: number): number {
+  private calculateGasReduction( baseline: number, optimized: number): number {
     return ((baseline - optimized) / baseline) * 100;
   }
 
@@ -421,7 +421,7 @@ export class GasOptimizationChallenges {
     score += gasScore * 0.5;
     
     // Test passing score (30% weight)
-    const testScore = (testResults.passed / testResults.total) * 100;
+    const testScore = (_testResults.passed / testResults.total) * 100;
     score += testScore * 0.3;
     
     // Time bonus (10% weight)
@@ -432,15 +432,15 @@ export class GasOptimizationChallenges {
     const hintPenalty = Math.max(0, 100 - (hintsUsed * 10));
     score += hintPenalty * 0.1;
     
-    return Math.round(Math.max(0, Math.min(100, score)));
+    return Math.round( Math.max(0, Math.min(100, score)));
   }
 
-  private initializeChallengeTemplates(): void {
+  private initializeChallengeTemplates(_): void {
     // Initialize predefined challenge templates
     console.log('🔄 Initializing gas optimization challenge templates...');
   }
 
-  private getBaselineCode(category: string, difficulty: string): string {
+  private getBaselineCode( category: string, difficulty: string): string {
     // Return category-specific baseline code
     const templates = {
       storage: `
@@ -449,7 +449,7 @@ export class GasOptimizationChallenges {
             uint256 public value2;
             uint256 public value3;
             
-            function updateValues(uint256 _v1, uint256 _v2, uint256 _v3) external {
+            function updateValues( uint256 _v1, uint256 _v2, uint256 _v3) external {
                 value1 = _v1;
                 value2 = _v2;
                 value3 = _v3;
@@ -458,9 +458,9 @@ export class GasOptimizationChallenges {
       `,
       computation: `
         contract ComputationExample {
-            function inefficientLoop(uint256[] memory data) external pure returns (uint256) {
+            function inefficientLoop(_uint256[] memory data) external pure returns (_uint256) {
                 uint256 sum = 0;
-                for (uint256 i = 0; i < data.length; i++) {
+                for (_uint256 i = 0; i < data.length; i++) {
                     sum = sum + data[i] * 2;
                 }
                 return sum;
@@ -472,7 +472,7 @@ export class GasOptimizationChallenges {
     return templates[category] || templates.storage;
   }
 
-  private estimateBaselineGas(category: string, difficulty: string): number {
+  private estimateBaselineGas( category: string, difficulty: string): number {
     const estimates = {
       storage: { beginner: 100000, intermediate: 200000, advanced: 500000 },
       computation: { beginner: 50000, intermediate: 150000, advanced: 300000 }
@@ -482,15 +482,15 @@ export class GasOptimizationChallenges {
   }
 
   // Run test cases for submitted code
-  private async runTestCases(code: string, testCases: any[]): Promise<any[]> {
+  private async runTestCases( code: string, testCases: any[]): Promise<any[]> {
     const results = [];
     
-    for (const testCase of testCases) {
+    for (_const testCase of testCases) {
       // Simulate test execution
       results.push({
         testId: testCase.id,
         passed: Math.random() > 0.2, // 80% pass rate for simulation
-        gasUsed: Math.floor(Math.random() * 50000) + 20000,
+        gasUsed: Math.floor(_Math.random() * 50000) + 20000,
         executionTime: Math.random() * 100
       });
     }
@@ -512,11 +512,11 @@ export class GasOptimizationChallenges {
     let feedback = `## Challenge: ${challenge.title}\n\n`;
     feedback += `### Test Results: ${passedTests}/${totalTests} passed\n\n`;
     feedback += `### Gas Performance:\n`;
-    feedback += `- Original gas cost: ${challenge.baselineGasCost.toLocaleString()}\n`;
-    feedback += `- Your gas cost: ${gasAnalysis.totalGasCost.toLocaleString()}\n`;
+    feedback += `- Original gas cost: ${challenge.baselineGasCost.toLocaleString(_)}\n`;
+    feedback += `- Your gas cost: ${gasAnalysis.totalGasCost.toLocaleString(_)}\n`;
     feedback += `- Gas saved: ${gasReduction.toFixed(1)}%\n\n`;
     
-    if (gasReduction > 0) {
+    if (_gasReduction > 0) {
       feedback += `Great job! You've successfully optimized the gas usage.\n`;
     } else {
       feedback += `Your solution uses more gas than the baseline. Review the optimization techniques.\n`;
@@ -534,16 +534,16 @@ export class GasOptimizationChallenges {
   ): string[] {
     const achievements: string[] = [];
     
-    if (gasReduction >= 50) {
+    if (_gasReduction >= 50) {
       achievements.push('gas-master');
     }
-    if (gasReduction >= 30) {
+    if (_gasReduction >= 30) {
       achievements.push('gas-optimizer');
     }
-    if (score >= 90) {
+    if (_score >= 90) {
       achievements.push('perfect-score');
     }
-    if (timeSpent < 300) { // Less than 5 minutes
+    if (_timeSpent < 300) { // Less than 5 minutes
       achievements.push('speed-demon');
     }
     
@@ -558,14 +558,14 @@ export class GasOptimizationChallenges {
   ): Promise<string[]> {
     const recommendations: string[] = [];
     
-    if (gasAnalysis.totalGasCost > challenge.baselineGasCost) {
+    if (_gasAnalysis.totalGasCost > challenge.baselineGasCost) {
       recommendations.push('Review storage optimization techniques');
       recommendations.push('Consider using packed structs');
     }
     
-    if (challenge.difficulty === 'beginner') {
+    if (_challenge.difficulty === 'beginner') {
       recommendations.push('Try intermediate gas optimization challenges');
-    } else if (challenge.difficulty === 'intermediate') {
+    } else if (_challenge.difficulty === 'intermediate') {
       recommendations.push('Challenge yourself with advanced optimizations');
     }
     
@@ -575,16 +575,16 @@ export class GasOptimizationChallenges {
   }
 
   // Save challenge result
-  private async saveChallengeResult(result: ChallengeResult): Promise<void> {
-    const userResults = this.userChallengeResults.get(result.userId) || [];
-    userResults.push(result);
-    this.userChallengeResults.set(result.userId, userResults);
+  private async saveChallengeResult(_result: ChallengeResult): Promise<void> {
+    const userResults = this.userChallengeResults.get(_result.userId) || [];
+    userResults.push(_result);
+    this.userChallengeResults.set( result.userId, userResults);
     
-    console.log(`💾 Saved challenge result for user ${result.userId}`);
+    console.log(_`💾 Saved challenge result for user ${result.userId}`);
   }
 
   // Update user progress
-  private async updateUserProgress(userId: string, result: ChallengeResult): Promise<void> {
+  private async updateUserProgress( userId: string, result: ChallengeResult): Promise<void> {
     // Update user's gas optimization skills
     await adaptiveLearningEngine.assessConceptMastery(
       userId,
@@ -592,7 +592,7 @@ export class GasOptimizationChallenges {
       result.score
     );
     
-    console.log(`📊 Updated progress for user ${userId}`);
+    console.log(_`📊 Updated progress for user ${userId}`);
   }
 
   // Generate progressive hints
@@ -613,7 +613,7 @@ export class GasOptimizationChallenges {
   }
 
   // Generate test cases for challenge
-  private async generateTestCases(challenge: GasChallenge): Promise<any[]> {
+  private async generateTestCases(_challenge: GasChallenge): Promise<any[]> {
     const testCases = [];
     
     // Basic functionality test
@@ -644,12 +644,12 @@ export class GasOptimizationChallenges {
   }
 
   // Get challenge results for user
-  private async getChallengeResults(userId: string): Promise<ChallengeResult[]> {
-    return this.userChallengeResults.get(userId) || [];
+  private async getChallengeResults(_userId: string): Promise<ChallengeResult[]> {
+    return this.userChallengeResults.get(_userId) || [];
   }
 
   // Get learning objectives for challenge
-  private getLearningObjectives(challenge: GasChallenge): string[] {
+  private getLearningObjectives(_challenge: GasChallenge): string[] {
     const objectiveMap = {
       'storage-optimization': [
         'Understand storage vs memory costs',
@@ -672,10 +672,10 @@ export class GasOptimizationChallenges {
   }
 
   // Get prerequisites for challenge
-  private getPrerequisites(challenge: GasChallenge): string[] {
-    if (challenge.difficulty === 'beginner') {
+  private getPrerequisites(_challenge: GasChallenge): string[] {
+    if (_challenge.difficulty === 'beginner') {
       return ['Basic Solidity syntax', 'Understanding of gas costs'];
-    } else if (challenge.difficulty === 'intermediate') {
+    } else if (_challenge.difficulty === 'intermediate') {
       return ['Storage layouts', 'Function modifiers', 'Data location'];
     } else {
       return ['Assembly basics', 'EVM internals', 'Advanced patterns'];
@@ -683,7 +683,7 @@ export class GasOptimizationChallenges {
   }
 
   // Get real world context
-  private getRealWorldContext(challenge: GasChallenge): string {
+  private getRealWorldContext(_challenge: GasChallenge): string {
     return `In production smart contracts, gas optimization is crucial for:
     - Reducing transaction costs for users
     - Making DApps more accessible
@@ -692,17 +692,17 @@ export class GasOptimizationChallenges {
   }
 
   // Create gas visualization
-  private createGasVisualization(comparison: CostComparison): string {
+  private createGasVisualization(_comparison: CostComparison): string {
     const maxBarLength = 50;
-    const baselineBar = '█'.repeat(maxBarLength);
+    const baselineBar = '█'.repeat(_maxBarLength);
     const optimizedBarLength = Math.round((comparison.optimizedGas / comparison.baselineGas) * maxBarLength);
-    const optimizedBar = '█'.repeat(Math.max(1, optimizedBarLength));
+    const optimizedBar = '█'.repeat( Math.max(1, optimizedBarLength));
     
     return `
-Baseline:   ${baselineBar} ${comparison.baselineGas.toLocaleString()} gas
-Optimized:  ${optimizedBar} ${comparison.optimizedGas.toLocaleString()} gas
-Saved:      ${comparison.percentageSaved.toFixed(1)}% (${comparison.gasSaved.toLocaleString()} gas)
-    `.trim();
+Baseline:   ${baselineBar} ${comparison.baselineGas.toLocaleString(_)} gas
+Optimized:  ${optimizedBar} ${comparison.optimizedGas.toLocaleString(_)} gas
+Saved:      ${comparison.percentageSaved.toFixed(1)}% (_${comparison.gasSaved.toLocaleString()} gas)
+    `.trim(_);
   }
 
   // Generate challenge rewards
@@ -711,13 +711,13 @@ Saved:      ${comparison.percentageSaved.toFixed(1)}% (${comparison.gasSaved.toL
     performance: ChallengeResult
   ): Promise<any> {
     const rewards = {
-      experiencePoints: Math.round(performance.score * 10),
+      experiencePoints: Math.round(_performance.score * 10),
       badges: performance.achievements,
       unlocks: []
     };
     
-    if (performance.score >= 80) {
-      rewards.unlocks.push(`${challenge.difficulty}-gas-master`);
+    if (_performance.score >= 80) {
+      rewards.unlocks.push(_`${challenge.difficulty}-gas-master`);
     }
     
     return rewards;
@@ -732,7 +732,7 @@ Saved:      ${comparison.percentageSaved.toFixed(1)}% (${comparison.gasSaved.toL
     
     // Top 3 get special prizes
     const topThree = leaderboard.slice(0, 3);
-    topThree.forEach((entry, index) => {
+    topThree.forEach( (entry, index) => {
       prizes.push({
         userId: entry.userId,
         rank: index + 1,
@@ -758,5 +758,5 @@ interface CostComparison {
 
 // Export singleton instance
 export const gasOptimizationChallenges = new GasOptimizationChallenges(
-  new GasOptimizationAnalyzer({} as any) // Would be properly injected
+  new GasOptimizationAnalyzer(_{} as any) // Would be properly injected
 );

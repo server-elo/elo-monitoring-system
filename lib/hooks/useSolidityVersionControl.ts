@@ -27,15 +27,15 @@ export interface UseVCSOptions {
   repositoryId: string;
   repositoryName: string;
   autoInitialize?: boolean;
-  onCommitCreated?: (commit: Commit) => void;
-  onBranchCreated?: (branch: Branch) => void;
-  onMergeRequestCreated?: (mergeRequest: MergeRequest) => void;
+  onCommitCreated?: (_commit: Commit) => void;
+  onBranchCreated?: (_branch: Branch) => void;
+  onMergeRequestCreated?: (_mergeRequest: MergeRequest) => void;
 }
 
 /**
  * Hook for managing version control operations
  */
-export function useSolidityVersionControl(options: UseVCSOptions) {
+export function useSolidityVersionControl(_options: UseVCSOptions) {
   const { 
     repositoryId, 
     repositoryName, 
@@ -45,9 +45,9 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
     onMergeRequestCreated
   } = options;
 
-  const { data: session } = useSession();
-  const vcsRef = useRef<SolidityVersionControl | null>(null);
-  const { showSuccess, showError, showInfo, showWarning: _showWarning } = useNotifications();
+  const { data: session } = useSession(_);
+  const vcsRef = useRef<SolidityVersionControl | null>(_null);
+  const { showSuccess, showError, showInfo, showWarning: _showWarning } = useNotifications(_);
 
   const [state, setState] = useState<VCSState>({
     isInitialized: false,
@@ -66,70 +66,70 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
     if (!autoInitialize) return;
 
     const initializeVCS = async () => {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
+      setState( prev => ({ ...prev, isLoading: true, error: null }));
 
       try {
-        const vcs = new SolidityVersionControl(repositoryId, repositoryName);
+        const vcs = new SolidityVersionControl( repositoryId, repositoryName);
 
         // Set up event listeners
-        vcs.on('repository-initialized', ({ commitId }) => {
+        vcs.on( 'repository-initialized', ({ commitId }) => {
           setState(prev => ({ 
             ...prev, 
             isInitialized: true, 
             isLoading: false 
           }));
-          showSuccess('Repository Initialized', `Initial commit: ${commitId.substring(0, 8)}`);
+          showSuccess( 'Repository Initialized', `Initial commit: ${commitId.substring(0, 8)}`);
         });
 
-        vcs.on('commit-created', ({ commit }) => {
+        vcs.on( 'commit-created', ({ commit }) => {
           setState(prev => ({
             ...prev,
             commits: [commit, ...prev.commits.slice(0, 49)], // Keep last 50 commits
             stagedFiles: []
           }));
-          showSuccess('Commit Created', `${commit.message} (${commit.id.substring(0, 8)})`);
-          onCommitCreated?.(commit);
+          showSuccess( 'Commit Created', `${commit.message} (${commit.id.substring(0, 8)})`);
+          onCommitCreated?.(_commit);
         });
 
-        vcs.on('branch-created', ({ branch }) => {
+        vcs.on( 'branch-created', ({ branch }) => {
           setState(prev => ({
             ...prev,
             branches: [...prev.branches, branch]
           }));
-          showInfo('Branch Created', `Created branch: ${branch.name}`);
-          onBranchCreated?.(branch);
+          showInfo( 'Branch Created', `Created branch: ${branch.name}`);
+          onBranchCreated?.(_branch);
         });
 
-        vcs.on('branch-switched', ({ branchName, commitId: _commitId }) => {
+        vcs.on( 'branch-switched', ({ branchName, commitId: _commitId }) => {
           setState(prev => ({
             ...prev,
             currentBranch: branchName
           }));
-          showInfo('Branch Switched', `Switched to: ${branchName}`);
+          showInfo( 'Branch Switched', `Switched to: ${branchName}`);
         });
 
-        vcs.on('branches-merged', ({ sourceBranch, targetBranch, mergeCommitId: _mergeCommitId }) => {
-          showSuccess('Branches Merged', `Merged ${sourceBranch} into ${targetBranch}`);
-          refreshState();
+        vcs.on( 'branches-merged', ({ sourceBranch, targetBranch, mergeCommitId: _mergeCommitId }) => {
+          showSuccess( 'Branches Merged', `Merged ${sourceBranch} into ${targetBranch}`);
+          refreshState(_);
         });
 
-        vcs.on('merge-request-created', ({ mergeRequest }) => {
+        vcs.on( 'merge-request-created', ({ mergeRequest }) => {
           setState(prev => ({
             ...prev,
             mergeRequests: [...prev.mergeRequests, mergeRequest]
           }));
-          showInfo('Merge Request Created', mergeRequest.title);
-          onMergeRequestCreated?.(mergeRequest);
+          showInfo( 'Merge Request Created', mergeRequest.title);
+          onMergeRequestCreated?.(_mergeRequest);
         });
 
-        vcs.on('files-staged', ({ paths }) => {
+        vcs.on( 'files-staged', ({ paths }) => {
           setState(prev => ({
             ...prev,
-            stagedFiles: [...new Set([...prev.stagedFiles, ...paths])]
+            stagedFiles: [...new Set( [...prev.stagedFiles, ...paths])]
           }));
         });
 
-        vcs.on('files-unstaged', ({ paths }) => {
+        vcs.on( 'files-unstaged', ({ paths }) => {
           setState(prev => ({
             ...prev,
             stagedFiles: prev.stagedFiles.filter(file => !paths.includes(file))
@@ -144,24 +144,24 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
         });
 
         // Load initial state
-        refreshState();
+        refreshState(_);
 
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to initialize VCS';
         setState(prev => ({ 
           ...prev, 
           error: errorMessage, 
           isLoading: false 
         }));
-        showError('VCS Initialization Failed', errorMessage);
+        showError( 'VCS Initialization Failed', errorMessage);
       }
     };
 
-    initializeVCS();
+    initializeVCS(_);
 
-    return () => {
-      if (vcsRef.current) {
-        vcsRef.current.removeAllListeners();
+    return (_) => {
+      if (_vcsRef.current) {
+        vcsRef.current.removeAllListeners(_);
       }
     };
   }, [repositoryId, repositoryName, autoInitialize, showSuccess, showError, showInfo]);
@@ -171,7 +171,7 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
     if (!vcsRef.current) return;
 
     const vcs = vcsRef.current;
-    const commits = vcs.getCommitHistory();
+    const commits = vcs.getCommitHistory(_);
     const branches = vcs.branches;
     const mergeRequests = vcs.mergeRequests;
 
@@ -187,15 +187,15 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
   // Stage files
   const stageFiles = useCallback((paths: string[] | string) => {
     if (!vcsRef.current) {
-      showError('VCS Not Ready', 'Version control system is not initialized');
+      showError( 'VCS Not Ready', 'Version control system is not initialized');
       return;
     }
 
     try {
-      vcsRef.current.add(paths);
-    } catch (error) {
+      vcsRef.current.add(_paths);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to stage files';
-      showError('Stage Failed', errorMessage);
+      showError( 'Stage Failed', errorMessage);
     }
   }, [showError]);
 
@@ -204,17 +204,17 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
     if (!vcsRef.current) return;
 
     try {
-      vcsRef.current.unstage(paths);
-    } catch (error) {
+      vcsRef.current.unstage(_paths);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to unstage files';
-      showError('Unstage Failed', errorMessage);
+      showError( 'Unstage Failed', errorMessage);
     }
   }, [showError]);
 
   // Create commit
-  const createCommit = useCallback(async (message: string): Promise<string | null> => {
+  const createCommit = useCallback( async (message: string): Promise<string | null> => {
     if (!vcsRef.current || !session?.user) {
-      showError('Cannot Commit', 'VCS not ready or user not authenticated');
+      showError( 'Cannot Commit', 'VCS not ready or user not authenticated');
       return null;
     }
 
@@ -226,40 +226,40 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
       });
 
       return commitId;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create commit';
-      showError('Commit Failed', errorMessage);
+      showError( 'Commit Failed', errorMessage);
       return null;
     }
   }, [session?.user, showError]);
 
   // Create branch
-  const createBranch = useCallback((name: string, fromCommit?: string) => {
+  const createBranch = useCallback( (name: string, fromCommit?: string) => {
     if (!vcsRef.current) {
-      showError('VCS Not Ready', 'Version control system is not initialized');
+      showError( 'VCS Not Ready', 'Version control system is not initialized');
       return;
     }
 
     try {
-      vcsRef.current.createBranch(name, fromCommit);
-    } catch (error) {
+      vcsRef.current.createBranch( name, fromCommit);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create branch';
-      showError('Branch Creation Failed', errorMessage);
+      showError( 'Branch Creation Failed', errorMessage);
     }
   }, [showError]);
 
   // Switch branch
-  const switchBranch = useCallback(async (branchName: string) => {
+  const switchBranch = useCallback( async (branchName: string) => {
     if (!vcsRef.current) {
-      showError('VCS Not Ready', 'Version control system is not initialized');
+      showError( 'VCS Not Ready', 'Version control system is not initialized');
       return;
     }
 
     try {
-      await vcsRef.current.checkout(branchName);
-    } catch (error) {
+      await vcsRef.current.checkout(_branchName);
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to switch branch';
-      showError('Branch Switch Failed', errorMessage);
+      showError( 'Branch Switch Failed', errorMessage);
     }
   }, [showError]);
 
@@ -270,16 +270,16 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
     message?: string
   ): Promise<string | null> => {
     if (!vcsRef.current) {
-      showError('VCS Not Ready', 'Version control system is not initialized');
+      showError( 'VCS Not Ready', 'Version control system is not initialized');
       return null;
     }
 
     try {
-      const mergeCommitId = await vcsRef.current.merge(sourceBranch, targetBranch, message);
+      const mergeCommitId = await vcsRef.current.merge( sourceBranch, targetBranch, message);
       return mergeCommitId;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to merge branches';
-      showError('Merge Failed', errorMessage);
+      showError( 'Merge Failed', errorMessage);
       return null;
     }
   }, [showError]);
@@ -292,7 +292,7 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
     targetBranch: string
   ): string | null => {
     if (!vcsRef.current || !session?.user) {
-      showError('Cannot Create MR', 'VCS not ready or user not authenticated');
+      showError( 'Cannot Create MR', 'VCS not ready or user not authenticated');
       return null;
     }
 
@@ -310,9 +310,9 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
       );
 
       return mrId;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create merge request';
-      showError('Merge Request Failed', errorMessage);
+      showError( 'Merge Request Failed', errorMessage);
       return null;
     }
   }, [session?.user, showError]);
@@ -326,20 +326,20 @@ export function useSolidityVersionControl(options: UseVCSOptions) {
     if (!vcsRef.current) return [];
 
     try {
-      return vcsRef.current.getDiff(fromCommit, toCommit, filePath);
-    } catch (error) {
+      return vcsRef.current.getDiff( fromCommit, toCommit, filePath);
+    } catch (_error) {
       console.error('Failed to get diff:', error);
       return [];
     }
   }, []);
 
   // Get commit history for branch
-  const getBranchHistory = useCallback((branchName?: string, limit = 50): Commit[] => {
+  const getBranchHistory = useCallback( (branchName?: string, limit = 50): Commit[] => {
     if (!vcsRef.current) return [];
 
     try {
-      return vcsRef.current.getCommitHistory(branchName, limit);
-    } catch (error) {
+      return vcsRef.current.getCommitHistory( branchName, limit);
+    } catch (_error) {
       console.error('Failed to get branch history:', error);
       return [];
     }

@@ -11,63 +11,63 @@ import { prisma } from '@/lib/prisma';
 // Using extended Prisma client from wrapper
 
 interface UATDashboardData {
-  metrics: {
-    totalTesters: number;
-    activeSessions: number;
-    completedTasks: number;
-    averageCompletionRate: number;
-    averageSatisfactionScore: number;
-    criticalIssues: number;
-    averageTaskTime: number;
-    errorRate: number;
+  metrics: { 
+    totalTesters: number; 
+    activeSessions: number; 
+    completedTasks: number; 
+    averageCompletionRate: number; 
+    averageSatisfactionScore: number; 
+    criticalIssues: number; 
+    averageTaskTime: number; 
+    errorRate: number; 
   };
-  analytics: {
-    taskPerformance: Array<{
-      taskId: string;
-      taskTitle: string;
-      completionRate: number;
-      averageTime: number;
-      satisfactionScore: number;
-      errorCount: number;
-      status: 'excellent' | 'good' | 'needs_improvement' | 'critical';
+  analytics: { 
+    taskPerformance: Array<{ 
+      taskId: string; 
+      taskTitle: string; 
+      completionRate: number; 
+      averageTime: number; 
+      satisfactionScore: number; 
+      errorCount: number; 
+      status: 'excellent' | 'good' | 'needs_improvement' | 'critical'; 
     }>;
-    testerFeedback: Array<{
-      id: string;
-      testerId: string;
-      taskId: string;
-      rating: number;
-      comment: string;
-      category: string;
-      timestamp: Date;
-      priority: 'low' | 'medium' | 'high' | 'critical';
+    testerFeedback: Array<{ 
+      id: string; 
+      testerId: string; 
+      taskId: string; 
+      rating: number; 
+      comment: string; 
+      category: string; 
+      timestamp: Date; 
+      priority: 'low' | 'medium' | 'high' | 'critical'; 
     }>;
-    performanceTrends: Array<{
-      date: string;
-      completionRate: number;
-      satisfactionScore: number;
-      errorRate: number;
+    performanceTrends: Array<{ 
+      date: string; 
+      completionRate: number; 
+      satisfactionScore: number; 
+      errorRate: number; 
     }>;
   };
-  sessions: Array<{
-    id: string;
-    testerId: string;
-    testerInfo: {
-      name: string;
-      email: string;
-      experience: string;
-      background: string;
-      device: string;
-      browser: string;
+  sessions: Array<{ 
+    id: string; 
+    testerId: string; 
+    testerInfo: { 
+      name: string; 
+      email: string; 
+      experience: string; 
+      background: string; 
+      device: string; 
+      browser: string; 
     };
-    assignedTasks: string[];
-    startTime: Date;
+    assignedTasks: string[]; 
+    startTime: Date; 
     endTime?: Date;
-    status: string;
-    metrics: {
-      tasksCompleted: number;
-      totalTime: number;
-      errorsEncountered: number;
-      helpRequests: number;
+    status: string; 
+    metrics: { 
+      tasksCompleted: number; 
+      totalTime: number; 
+      errorsEncountered: number; 
+      helpRequests: number; 
     };
   }>;
 }
@@ -101,55 +101,55 @@ export async function GET(request: NextRequest) {
 
     // Fetch UAT sessions
     const sessions = await prisma.uATSession.findMany({
-      where: {
-        startTime: {
-          gte: startDate,
-        },
+      where: { 
+        startTime: { 
+          gte: startDate 
+        } 
         ...(category !== 'all' && {
-          assignedTasks: {
-            contains: category,
-          },
-        }),
-      },
-      include: {
-        tester: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        feedback: true,
-        taskResults: true,
-      },
-      orderBy: {
-        startTime: 'desc',
-      },
+          assignedTasks: { 
+            contains: category 
+          } 
+        }) 
+      } 
+      include: { 
+        tester: { 
+          select: { 
+            id: true 
+            name: true 
+            email: true 
+          } 
+        } 
+        feedback: true 
+        taskResults: true 
+      } 
+      orderBy: { 
+        startTime: 'desc' 
+      } 
     });
 
     // Fetch feedback data
     const feedback = await prisma.feedback.findMany({
-      where: {
-        timestamp: {
-          gte: startDate,
-        },
+      where: { 
+        timestamp: { 
+          gte: startDate 
+        } 
         ...(category !== 'all' && {
-          category: category,
-        }),
-        uatSessionId: {
-          not: null,
-        },
-      },
-      include: {
-        uatSession: {
-          include: {
-            tester: true,
-          },
-        },
-      },
-      orderBy: {
-        timestamp: 'desc',
-      },
+          category: category 
+        }) 
+        uatSessionId: { 
+          not: null 
+        } 
+      } 
+      include: { 
+        uatSession: { 
+          include: { 
+            tester: true 
+          } 
+        } 
+      } 
+      orderBy: { 
+        timestamp: 'desc' 
+      } 
     });
 
     // Calculate metrics
@@ -160,69 +160,69 @@ export async function GET(request: NextRequest) {
     
     // Format sessions data
     const formattedSessions = sessions.map(session => ({
-      id: session.id,
-      testerId: session.testerId,
-      testerInfo: {
-        name: ((session as any).tester?.name || 'Anonymous') as string,
-        email: ((session as any).tester?.email || '') as string,
-        experience: session.testerExperience || 'unknown',
-        background: session.testerBackground || '',
-        device: session.deviceInfo || 'unknown',
-        browser: session.browserInfo || 'unknown',
-      },
-      assignedTasks: Array.isArray(session.assignedTasks) ? session.assignedTasks as string[] : JSON.parse(session.assignedTasks || '[]') as string[],
-      startTime: session.startTime || new Date(),
-      endTime: session.endTime || undefined,
-      status: session.status || 'unknown',
-      metrics: {
-        tasksCompleted: ((session as any).taskResults?.length || 0),
-        totalTime: session.endTime 
+      id: session.id 
+      testerId: session.testerId 
+      testerInfo: { 
+        name: ((session as any).tester?.name || 'Anonymous') as string 
+        email: ((session as any).tester?.email || '') as string 
+        experience: session.testerExperience || 'unknown' 
+        background: session.testerBackground || '' 
+        device: session.deviceInfo || 'unknown' 
+        browser: session.browserInfo || 'unknown' 
+      } 
+      assignedTasks: Array.isArray(session.assignedTasks) ? session.assignedTasks as string[] : JSON.parse(session.assignedTasks || '[]') as string[] 
+      startTime: session.startTime || new Date() 
+      endTime: session.endTime || undefined 
+      status: session.status || 'unknown' 
+      metrics: { 
+        tasksCompleted: ((session as any).taskResults?.length || 0) 
+        totalTime: session.endTime  
           ? Math.floor((session.endTime.getTime() - session.startTime.getTime()) / 1000 / 60)
-          : Math.floor((Date.now() - session.startTime.getTime()) / 1000 / 60),
-        errorsEncountered: session.errorsEncountered || 0,
-        helpRequests: session.helpRequests || 0,
-      },
+          : Math.floor((Date.now() - session.startTime.getTime()) / 1000 / 60) 
+        errorsEncountered: session.errorsEncountered || 0 
+        helpRequests: session.helpRequests || 0 
+      } 
     }));
 
     const dashboardData: UATDashboardData = {
-      metrics,
-      analytics: analyticsData,
-      sessions: formattedSessions,
+      metrics 
+      analytics: analyticsData 
+      sessions: formattedSessions 
     };
 
     // Log analytics
     analytics.trackEvent('uat_dashboard_viewed', {
-      timeRange,
-      category,
-      totalSessions: sessions.length,
-      totalFeedback: feedback.length,
+      timeRange 
+      category 
+      totalSessions: sessions.length 
+      totalFeedback: feedback.length 
     });
 
     const responseTime = Date.now() - startTime;
-    logger.info('UAT dashboard data retrieved', {
-      metadata: {
-        timeRange,
-        category,
-        sessionsCount: sessions.length,
-        feedbackCount: feedback.length,
-        responseTime,
-      },
+    logger.info('UAT dashboard data retrieved', { metadata: {
+      metadata: { 
+        timeRange 
+        category 
+        sessionsCount: sessions.length 
+        feedbackCount: feedback.length 
+        responseTime 
+      } 
     });
 
-    return NextResponse.json(dashboardData);
+    return NextResponse.json(_dashboardData);
   } catch (error) {
     const responseTime = Date.now() - startTime;
     logger.error('Failed to retrieve UAT dashboard data', error as Error, {
-      metadata: {
-        responseTime,
-      },
+      metadata: { 
+        responseTime 
+      } 
     });
 
     return NextResponse.json(
-      { error: 'Failed to retrieve dashboard data' },
+      { error: 'Failed to retrieve dashboard data' } 
       { status: 500 }
-    );
-  }
+   );
+  });
 }
 
 /**
@@ -230,17 +230,17 @@ export async function GET(request: NextRequest) {
  */
 function calculateMetrics(sessions: any[], feedback: any[]) {
   const totalTesters = new Set(sessions.map(s => s.testerId)).size;
-  const activeSessions = sessions.filter(s => s.status === 'in_progress').length;
+  const activeSessions = sessions.filter(s => s.status === 'inprogress').length;
   
   // Calculate completion rates
   const completedTasks = sessions.reduce((sum, session) => 
     sum + (session.taskResults?.length || 0), 0
-  );
+ );
   const totalAssignedTasks = sessions.reduce((sum, session) => 
     sum + session.assignedTasks.length, 0
-  );
+ );
   const averageCompletionRate = totalAssignedTasks > 0 
-    ? (completedTasks / totalAssignedTasks) * 100 
+    ? (_completedTasks / totalAssignedTasks) * 100 
     : 0;
 
   // Calculate satisfaction score
@@ -267,20 +267,20 @@ function calculateMetrics(sessions: any[], feedback: any[]) {
   // Calculate error rate
   const totalErrors = sessions.reduce((sum: number, session) =>
     sum + (session.errorsEncountered || 0), 0
-  );
+ );
   const errorRate = totalAssignedTasks > 0
-    ? (totalErrors / totalAssignedTasks) * 100
+    ? (_totalErrors / totalAssignedTasks) * 100
     : 0;
 
   return {
-    totalTesters,
-    activeSessions,
-    completedTasks,
-    averageCompletionRate: Math.round(averageCompletionRate * 10) / 10,
-    averageSatisfactionScore: Math.round(averageSatisfactionScore * 10) / 10,
-    criticalIssues,
-    averageTaskTime,
-    errorRate: Math.round(errorRate * 10) / 10,
+    totalTesters 
+    activeSessions 
+    completedTasks 
+    averageCompletionRate: Math.round(_averageCompletionRate * 10) / 10 
+    averageSatisfactionScore: Math.round(_averageSatisfactionScore * 10) / 10 
+    criticalIssues 
+    averageTaskTime 
+    errorRate: Math.round(errorRate * 10) / 10 
   };
 }
 
@@ -293,23 +293,23 @@ function generateAnalytics(sessions: any[], feedback: any[]) {
   
   // Format feedback
   const testerFeedback = feedback.map(f => ({
-    id: f.id,
-    testerId: f.uatSession?.testerId || 'unknown',
+    id: f.id 
+    testerId: f.uatSession?.testerId || 'unknown' 
     taskId: f.category, // Use category as task identifier for now
-    rating: f.rating,
-    comment: f.description,
-    category: f.category,
-    timestamp: f.timestamp,
-    priority: f.priority,
+    rating: f.rating 
+    comment: f.description 
+    category: f.category 
+    timestamp: f.timestamp 
+    priority: f.priority 
   }));
 
-  // Performance trends (simplified - would use time series data in production)
+  // Performance trends (_simplified - would use time series data in production)
   const performanceTrends = generatePerformanceTrends(sessions, feedback);
 
   return {
-    taskPerformance,
-    testerFeedback,
-    performanceTrends,
+    taskPerformance 
+    testerFeedback 
+    performanceTrends 
   };
 }
 
@@ -321,35 +321,35 @@ function generateTaskPerformance(sessions: any[], feedback: any[]) {
 
   // Initialize task stats
   const allTasks = [
-    { id: 'onboarding-new-user', title: 'New User Onboarding and First Lesson' },
-    { id: 'collaboration-session', title: 'Collaborative Coding Session' },
-    { id: 'ai-tutoring-interaction', title: 'AI Tutoring and Code Debugging' },
-    { id: 'complete-learning-path', title: 'Complete Learning Path' },
-    { id: 'social-features-usage', title: 'Social Features and Community' },
+    { id: 'onboarding-new-user', title: 'New User Onboarding and First Lesson' } 
+    { id: 'collaboration-session', title: 'Collaborative Coding Session' } 
+    { id: 'ai-tutoring-interaction', title: 'AI Tutoring and Code Debugging' } 
+    { id: 'complete-learning-path', title: 'Complete Learning Path' } 
+    { id: 'social-features-usage', title: 'Social Features and Community' } 
   ];
 
   allTasks.forEach(task => {
     taskStats.set(task.id, {
-      taskId: task.id,
-      taskTitle: task.title,
-      attempts: 0,
-      completions: 0,
-      totalTime: 0,
-      ratings: [],
-      errors: 0,
+      taskId: task.id 
+      taskTitle: task.title 
+      attempts: 0 
+      completions: 0 
+      totalTime: 0 
+      ratings: [] 
+      errors: 0 
     });
   });
 
   // Aggregate data from sessions
   sessions.forEach(session => {
     session.assignedTasks.forEach((taskId: string) => {
-      const stats = taskStats.get(taskId);
+      const stats = taskStats.get(_taskId);
       if (stats) {
         stats.attempts++;
         
         // Check if task was completed
         const taskResult = session.taskResults?.find((r: any) => r.taskId === taskId);
-        if (taskResult?.completed) {
+        if (_taskResult?.completed) {
           stats.completions++;
           stats.totalTime += taskResult.timeSpent || 0;
         }
@@ -383,24 +383,24 @@ function generateTaskPerformance(sessions: any[], feedback: any[]) {
 
     // Determine status based on performance
     let status: 'excellent' | 'good' | 'needs_improvement' | 'critical';
-    if (completionRate >= 90 && satisfactionScore >= 4.5) {
+    if (_completionRate >= 90 && satisfactionScore >= 4.5) {
       status = 'excellent';
-    } else if (completionRate >= 75 && satisfactionScore >= 4.0) {
+    } else if (_completionRate >= 75 && satisfactionScore >= 4.0) {
       status = 'good';
-    } else if (completionRate >= 60 && satisfactionScore >= 3.0) {
+    } else if (_completionRate >= 60 && satisfactionScore >= 3.0) {
       status = 'needs_improvement';
     } else {
       status = 'critical';
     }
 
     return {
-      taskId: stats.taskId,
-      taskTitle: stats.taskTitle,
-      completionRate: Math.round(completionRate * 10) / 10,
-      averageTime,
-      satisfactionScore: Math.round(satisfactionScore * 10) / 10,
-      errorCount: stats.errors,
-      status,
+      taskId: stats.taskId 
+      taskTitle: stats.taskTitle 
+      completionRate: Math.round(_completionRate * 10) / 10 
+      averageTime 
+      satisfactionScore: Math.round(_satisfactionScore * 10) / 10 
+      errorCount: stats.errors 
+      status 
     };
   });
 }
@@ -424,20 +424,20 @@ function generatePerformanceTrends(sessions: any[], feedback: any[]) {
     
     const daySessions = sessions.filter(s => 
       s.startTime >= dayStart && s.startTime <= dayEnd
-    );
+   );
     
     const dayFeedback = feedback.filter(f => 
       f.timestamp >= dayStart && f.timestamp <= dayEnd
-    );
+   );
     
     // Calculate metrics for this day
     const completedTasks = daySessions.reduce((sum: number, session) =>
       sum + (session.taskResults?.length || 0), 0
-    );
+   );
     const totalTasks = daySessions.reduce((sum: number, session) =>
       sum + session.assignedTasks.length, 0
-    );
-    const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+   );
+    const completionRate = totalTasks > 0 ? (_completedTasks / totalTasks) * 100 : 0;
     
     const ratings = dayFeedback.map(f => f.rating).filter(r => r > 0);
     const satisfactionScore = ratings.length > 0
@@ -446,14 +446,14 @@ function generatePerformanceTrends(sessions: any[], feedback: any[]) {
     
     const errors = daySessions.reduce((sum: number, session) =>
       sum + (session.errorsEncountered || 0), 0
-    );
+   );
     const errorRate = totalTasks > 0 ? (errors / totalTasks) * 100 : 0;
     
     trends.push({
-      date: date.toISOString().split('T')[0],
-      completionRate: Math.round(completionRate * 10) / 10,
-      satisfactionScore: Math.round(satisfactionScore * 10) / 10,
-      errorRate: Math.round(errorRate * 10) / 10,
+      date: date.toISOString().split('T')[0] 
+      completionRate: Math.round(_completionRate * 10) / 10 
+      satisfactionScore: Math.round(_satisfactionScore * 10) / 10 
+      errorRate: Math.round(errorRate * 10) / 10 
     });
   }
   
@@ -466,11 +466,11 @@ function generatePerformanceTrends(sessions: any[], feedback: any[]) {
  */
 // async function getTaskIdsByCategory(category: string): Promise<string[]> {
 //   const tasksByCategory = {
-//     onboarding: ['onboarding-new-user'],
-//     collaboration: ['collaboration-session'],
-//     'ai-tutoring': ['ai-tutoring-interaction'],
-//     'learning-path': ['complete-learning-path'],
-//     social: ['social-features-usage'],
+//     onboarding: ['onboarding-new-user'] 
+//     collaboration: ['collaboration-session'] 
+//     'ai-tutoring': ['ai-tutoring-interaction'] 
+//     'learning-path': ['complete-learning-path'] 
+//     social: ['social-features-usage'] 
 //   };
 //   
 //   return tasksByCategory[category as keyof typeof tasksByCategory] || [];

@@ -2,36 +2,36 @@ import { useState, useEffect, useCallback } from 'react';
 
 const PROGRESS_STORAGE_KEY = 'completedModules';
 
-export const useProgress = () => {
+export const useProgress = (_) => {
   const [completedModules, setCompletedModules] = useState<string[]>([]);
 
   useEffect(() => {
     try {
-      const storedProgress = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      const storedProgress = localStorage.getItem(_PROGRESS_STORAGE_KEY);
       if (storedProgress) {
-        setCompletedModules(JSON.parse(storedProgress));
+        setCompletedModules(_JSON.parse(storedProgress));
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Failed to load progress from localStorage:", error);
       setCompletedModules([]);
     }
   }, []);
 
-  const updateLocalStorage = (updatedProgress: string[]) => {
+  const updateLocalStorage = (_updatedProgress: string[]) => {
     try {
-      localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(updatedProgress));
-    } catch (error) {
+      localStorage.setItem( PROGRESS_STORAGE_KEY, JSON.stringify(updatedProgress));
+    } catch (_error) {
       console.error("Failed to save progress to localStorage:", error);
     }
   };
 
   const addCompletedModule = useCallback((moduleId: string) => {
     setCompletedModules(prev => {
-      if (prev.includes(moduleId)) {
+      if (_prev.includes(moduleId)) {
         return prev;
       }
       const newProgress = [...prev, moduleId];
-      updateLocalStorage(newProgress);
+      updateLocalStorage(_newProgress);
       return newProgress;
     });
   }, []);

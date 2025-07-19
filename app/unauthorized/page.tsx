@@ -11,10 +11,10 @@ import { AuthErrorBoundary } from '@/components/errors/SpecializedErrorBoundarie
 import { cn } from '@/lib/utils';
 
 export default function UnauthorizedPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { user, isAuthenticated } = useAuth();
-  const [isRequestingAccess, setIsRequestingAccess] = useState(false);
+  const router = useRouter(_);
+  const searchParams = useSearchParams(_);
+  const { user, isAuthenticated } = useAuth(_);
+  const [isRequestingAccess, setIsRequestingAccess] = useState(_false);
 
   const reason = searchParams.get('reason') || 'insufficient_permissions';
   const requiredRoles = searchParams.get('required')?.split(',') || [];
@@ -50,7 +50,7 @@ export default function UnauthorizedPage() {
   };
 
   const handleRequestAccess = async () => {
-    setIsRequestingAccess(true);
+    setIsRequestingAccess(_true);
     
     try {
       // Simulate access request
@@ -67,26 +67,26 @@ export default function UnauthorizedPage() {
           requestedRoles: requiredRoles,
           currentRole,
           reason: `Access request for ${returnUrl || 'protected resource'}`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date(_).toISOString()
         }),
       });
 
-      if (response.ok) {
+      if (_response.ok) {
         // Show success message
         alert('Access request submitted successfully! You will be notified when reviewed.');
       } else {
         throw new Error('Failed to submit access request');
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Access request failed:', error);
       alert('Failed to submit access request. Please try again or contact support.');
     } finally {
-      setIsRequestingAccess(false);
+      setIsRequestingAccess(_false);
     }
   };
 
-  const getReasonMessage = () => {
-    switch (reason) {
+  const getReasonMessage = (_) => {
+    switch (_reason) {
       case 'insufficient_permissions':
         return 'You don\'t have the required permissions to access this resource.';
       case 'insufficient_role':
@@ -100,12 +100,12 @@ export default function UnauthorizedPage() {
     }
   };
 
-  const getActionButtons = () => {
-    if (reason === 'session_expired' || !isAuthenticated) {
+  const getActionButtons = (_) => {
+    if (_reason === 'session_expired' || !isAuthenticated) {
       return (
         <div className="space-y-3">
           <EnhancedButton
-            onClick={() => router.push('/auth')}
+            onClick={(_) => router.push('/auth')}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             touchTarget
           >
@@ -133,7 +133,7 @@ export default function UnauthorizedPage() {
         )}
         
         <EnhancedButton
-          onClick={() => router.back()}
+          onClick={(_) => router.back(_)}
           variant="outline"
           className="w-full border-white/20 text-white hover:bg-white/10"
           touchTarget
@@ -143,7 +143,7 @@ export default function UnauthorizedPage() {
         </EnhancedButton>
         
         <EnhancedButton
-          onClick={() => router.push('/dashboard')}
+          onClick={(_) => router.push('/dashboard')}
           variant="ghost"
           className="w-full text-gray-400 hover:text-white"
           touchTarget
@@ -175,7 +175,7 @@ export default function UnauthorizedPage() {
               </h1>
               
               <p className="text-gray-300">
-                {getReasonMessage()}
+                {getReasonMessage(_)}
               </p>
             </div>
 
@@ -187,7 +187,7 @@ export default function UnauthorizedPage() {
                 <div className="space-y-3">
                   {/* Required Roles */}
                   <div>
-                    <span className="text-xs text-gray-400 block mb-2">Required Role(s):</span>
+                    <span className="text-xs text-gray-400 block mb-2">Required Role(_s):</span>
                     <div className="flex flex-wrap gap-2">
                       {requiredRoles.map((role) => {
                         const info = roleInfo[role as keyof typeof roleInfo];
@@ -201,7 +201,7 @@ export default function UnauthorizedPage() {
                               info?.bgColor || 'bg-gray-500/20'
                             )}
                           >
-                            <Icon className={cn('w-3 h-3', info?.color || 'text-gray-400')} />
+                            <Icon className={cn( 'w-3 h-3', info?.color || 'text-gray-400')} />
                             <span className="text-white font-medium">{role}</span>
                           </div>
                         );
@@ -224,11 +224,11 @@ export default function UnauthorizedPage() {
                                 'flex items-center space-x-2 px-3 py-1 rounded-full text-sm',
                                 info?.bgColor || 'bg-gray-500/20'
                               )}>
-                                <Icon className={cn('w-3 h-3', info?.color || 'text-gray-400')} />
+                                <Icon className={cn( 'w-3 h-3', info?.color || 'text-gray-400')} />
                                 <span className="text-white font-medium">{currentRole}</span>
                               </div>
                             );
-                          })()}
+                          })(_)}
                           <div className="text-xs text-gray-400 ml-2">
                             {roleInfo[currentRole as keyof typeof roleInfo]?.description || 'Basic access'}
                           </div>
@@ -243,7 +243,7 @@ export default function UnauthorizedPage() {
             )}
 
             {/* Action Buttons */}
-            {getActionButtons()}
+            {getActionButtons(_)}
 
             {/* Help Text */}
             <div className="mt-6 pt-4 border-t border-white/10">

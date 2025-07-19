@@ -60,27 +60,27 @@ interface UseWebSocketReturn {
   
   // Chat functionality
   messages: ChatMessage[];
-  sendMessage: (content: string, type?: 'TEXT' | 'CODE') => void;
+  sendMessage: ( content: string, type?: 'TEXT' | 'CODE') => void;
   
   // Collaboration
   sessions: CollaborationSession[];
   currentSession: CollaborationSession | null;
-  joinSession: (sessionId: string) => void;
-  leaveSession: () => void;
-  createSession: (title: string, type: string, language?: string) => void;
+  joinSession: (_sessionId: string) => void;
+  leaveSession: (_) => void;
+  createSession: ( title: string, type: string, language?: string) => void;
   
   // Code collaboration
-  updateCode: (code: string) => void;
-  updateCursor: (line: number, column: number) => void;
+  updateCode: (_code: string) => void;
+  updateCursor: ( line: number, column: number) => void;
   
   // User presence
   onlineUsers: UserPresence[];
-  setTyping: (isTyping: boolean, location?: 'chat' | 'code') => void;
+  setTyping: ( isTyping: boolean, location?: 'chat' | 'code') => void;
   
   // Connection management
-  connect: () => void;
-  disconnect: () => void;
-  reconnect: () => void;
+  connect: (_) => void;
+  disconnect: (_) => void;
+  reconnect: (_) => void;
 }
 
 class SimpleWebSocket {
@@ -90,238 +90,238 @@ class SimpleWebSocket {
   private maxReconnectAttempts = 5;
   private reconnectDelay = 1000;
   private heartbeatInterval: NodeJS.Timeout | null = null;
-  private messageHandlers: Map<string, (payload: any) => void> = new Map();
+  private messageHandlers: Map<string, (_payload: any) => void> = new Map(_);
   private isReconnecting = false;
 
-  constructor(url: string) {
+  constructor(_url: string) {
     this.url = url;
   }
 
-  connect(): Promise<void> {
+  connect(_): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         // Clean up existing connection
-        if (this.ws) {
-          this.ws.close();
+        if (_this.ws) {
+          this.ws.close(_);
         }
 
-        this.ws = new WebSocket(this.url);
+        this.ws = new WebSocket(_this.url);
 
-        this.ws.onopen = () => {
+        this.ws.onopen = (_) => {
           logger.info('WebSocket connected');
           this.reconnectAttempts = 0;
           this.isReconnecting = false;
-          this.startHeartbeat();
-          resolve();
+          this.startHeartbeat(_);
+          resolve(_);
         };
 
-        this.ws.onmessage = (event) => {
+        this.ws.onmessage = (_event) => {
           try {
-            const message: WebSocketMessage = JSON.parse(event.data);
-            this.handleMessage(message);
-          } catch (error) {
-            logger.error('Failed to parse WebSocket message', error as Error);
+            const message: WebSocketMessage = JSON.parse(_event.data);
+            this.handleMessage(_message);
+          } catch (_error) {
+            logger.error( 'Failed to parse WebSocket message', error as Error);
           }
         };
 
-        this.ws.onclose = (event) => {
-          logger.info('WebSocket disconnected', { code: event.code, reason: event.reason });
-          this.stopHeartbeat();
+        this.ws.onclose = (_event) => {
+          logger.info( 'WebSocket disconnected', { metadata: { code: event.code, reason: event.reason });
+          this.stopHeartbeat(_);
           
           if (!this.isReconnecting && this.reconnectAttempts < this.maxReconnectAttempts) {
-            this.scheduleReconnect();
+            this.scheduleReconnect(_);
           }
         };
 
-        this.ws.onerror = (error) => {
-          logger.error('WebSocket error', error as Error);
-          reject(error);
+        this.ws.onerror = (_error) => {
+          logger.error( 'WebSocket error', error as Error);
+          reject(_error);
         };
 
         // Connection timeout
         setTimeout(() => {
-          if (this.ws?.readyState !== WebSocket.OPEN) {
-            reject(new Error('WebSocket connection timeout'));
+          if (_this.ws?.readyState !== WebSocket.OPEN) {
+            reject(_new Error('WebSocket connection timeout'));
           }
         }, 5000);
 
-      } catch (error) {
-        reject(error);
+      } catch (_error) {
+        reject(_error);
       }
     });
   }
 
-  disconnect(): void {
+  disconnect(_): void {
     this.isReconnecting = false;
-    this.stopHeartbeat();
-    if (this.ws) {
-      this.ws.close();
+    this.stopHeartbeat(_);
+    if (_this.ws) {
+      this.ws.close(_);
       this.ws = null;
     }
   }
 
-  send(type: string, payload: any): void {
-    if (this.ws?.readyState === WebSocket.OPEN) {
+  send( type: string, payload: any): void {
+    if (_this.ws?.readyState === WebSocket.OPEN) {
       const message: WebSocketMessage = {
         type,
         payload,
-        timestamp: Date.now(),
+        timestamp: Date.now(_),
       };
-      this.ws.send(JSON.stringify(message));
+      this.ws.send(_JSON.stringify(message));
     } else {
       logger.warn('WebSocket not connected, message not sent', { type, payload });
     }
   }
 
-  on(type: string, handler: (payload: any) => void): void {
-    this.messageHandlers.set(type, handler);
+  on( type: string, handler: (payload: any) => void): void {
+    this.messageHandlers.set( type, handler);
   }
 
-  off(type: string): void {
-    this.messageHandlers.delete(type);
+  off(_type: string): void {
+    this.messageHandlers.delete(_type);
   }
 
-  private handleMessage(message: WebSocketMessage): void {
-    const handler = this.messageHandlers.get(message.type);
+  private handleMessage(_message: WebSocketMessage): void {
+    const handler = this.messageHandlers.get(_message.type);
     if (handler) {
-      handler(message.payload);
+      handler(_message.payload);
     }
   }
 
-  private startHeartbeat(): void {
+  private startHeartbeat(_): void {
     this.heartbeatInterval = setInterval(() => {
-      this.send('ping', {});
+      this.send( 'ping', {});
     }, 30000); // 30 seconds
   }
 
-  private stopHeartbeat(): void {
-    if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval);
+  private stopHeartbeat(_): void {
+    if (_this.heartbeatInterval) {
+      clearInterval(_this.heartbeatInterval);
       this.heartbeatInterval = null;
     }
   }
 
-  private scheduleReconnect(): void {
-    if (this.isReconnecting) return;
+  private scheduleReconnect(_): void {
+    if (_this.isReconnecting) return;
     
     this.isReconnecting = true;
     this.reconnectAttempts++;
     
-    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+    const delay = this.reconnectDelay * Math.pow( 2, this.reconnectAttempts - 1);
     
     logger.info(`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
     
     setTimeout(() => {
-      this.connect().catch((error) => {
-        logger.error('Reconnection failed', error);
-        if (this.reconnectAttempts < this.maxReconnectAttempts) {
-          this.scheduleReconnect();
+      this.connect(_).catch((error) => {
+        logger.error( 'Reconnection failed', error);
+        if (_this.reconnectAttempts < this.maxReconnectAttempts) {
+          this.scheduleReconnect(_);
         }
       });
     }, delay);
   }
 
-  get isConnected(): boolean {
+  get isConnected(_): boolean {
     return this.ws?.readyState === WebSocket.OPEN;
   }
 }
 
-export function useWebSocket(sessionId?: string): UseWebSocketReturn {
-  const { data: session } = useSession();
-  const wsRef = useRef<SimpleWebSocket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function useWebSocket(_sessionId?: string): UseWebSocketReturn {
+  const { data: session } = useSession(_);
+  const wsRef = useRef<SimpleWebSocket | null>(_null);
+  const [isConnected, setIsConnected] = useState(_false);
+  const [isConnecting, setIsConnecting] = useState(_false);
+  const [error, setError] = useState<string | null>(_null);
   
   // State
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sessions, setSessions] = useState<CollaborationSession[]>([]);
-  const [currentSession, setCurrentSession] = useState<CollaborationSession | null>(null);
+  const [currentSession, setCurrentSession] = useState<CollaborationSession | null>(_null);
   const [onlineUsers, setOnlineUsers] = useState<UserPresence[]>([]);
 
   // Initialize WebSocket connection
-  const connect = useCallback(async () => {
+  const connect = useCallback( async () => {
     if (!session?.user || wsRef.current?.isConnected) return;
 
     try {
-      setIsConnecting(true);
-      setError(null);
+      setIsConnecting(_true);
+      setError(_null);
 
       // Create WebSocket URL
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/api/ws`;
       
-      wsRef.current = new SimpleWebSocket(wsUrl);
+      wsRef.current = new SimpleWebSocket(_wsUrl);
 
       // Set up message handlers
-      wsRef.current.on('message', (payload: ChatMessage) => {
-        setMessages(prev => [...prev, payload]);
+      wsRef.current.on( 'message', (payload: ChatMessage) => {
+        setMessages( prev => [...prev, payload]);
       });
 
-      wsRef.current.on('userJoined', (payload: UserPresence) => {
+      wsRef.current.on( 'userJoined', (payload: UserPresence) => {
         setOnlineUsers(prev => {
           const filtered = prev.filter(u => u.userId !== payload.userId);
           return [...filtered, payload];
         });
       });
 
-      wsRef.current.on('userLeft', (payload: { userId: string }) => {
-        setOnlineUsers(prev => prev.filter(u => u.userId !== payload.userId));
+      wsRef.current.on( 'userLeft', (payload: { userId: string }) => {
+        setOnlineUsers(_prev => prev.filter(u => u.userId !== payload.userId));
       });
 
-      wsRef.current.on('codeUpdate', (payload: { code: string; sessionId: string }) => {
-        if (payload.sessionId === sessionId) {
-          setCurrentSession(prev => prev ? { ...prev, code: payload.code } : null);
+      wsRef.current.on( 'codeUpdate', (payload: { code: string; sessionId: string }) => {
+        if (_payload.sessionId === sessionId) {
+          setCurrentSession( prev => prev ? { ...prev, code: payload.code } : null);
         }
       });
 
-      wsRef.current.on('sessionUpdate', (payload: CollaborationSession) => {
+      wsRef.current.on( 'sessionUpdate', (payload: CollaborationSession) => {
         setSessions(prev => {
           const filtered = prev.filter(s => s.id !== payload.id);
           return [...filtered, payload];
         });
       });
 
-      await wsRef.current.connect();
-      setIsConnected(true);
+      await wsRef.current.connect(_);
+      setIsConnected(_true);
 
       // Join session if provided
       if (sessionId) {
-        wsRef.current.send('joinSession', { sessionId, user: session.user });
+        wsRef.current.send( 'joinSession', { sessionId, user: session.user });
       }
 
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Connection failed';
-      setError(errorMessage);
-      logger.error('WebSocket connection failed', err as Error);
+      setError(_errorMessage);
+      logger.error( 'WebSocket connection failed', err as Error);
     } finally {
-      setIsConnecting(false);
+      setIsConnecting(_false);
     }
   }, [session, sessionId]);
 
   // Disconnect
   const disconnect = useCallback(() => {
-    if (wsRef.current) {
-      wsRef.current.disconnect();
+    if (_wsRef.current) {
+      wsRef.current.disconnect(_);
       wsRef.current = null;
     }
-    setIsConnected(false);
-    setIsConnecting(false);
+    setIsConnected(_false);
+    setIsConnecting(_false);
   }, []);
 
   // Auto-connect when session is available
   useEffect(() => {
-    if (session?.user && !wsRef.current?.isConnected) {
-      connect();
+    if (_session?.user && !wsRef.current?.isConnected) {
+      connect(_);
     }
 
-    return () => {
-      disconnect();
+    return (_) => {
+      disconnect(_);
     };
   }, [session, connect, disconnect]);
 
   // Message functions
-  const sendMessage = useCallback((content: string, type: 'TEXT' | 'CODE' = 'TEXT') => {
+  const sendMessage = useCallback( (content: string, type: 'TEXT' | 'CODE' = 'TEXT') => {
     if (!wsRef.current?.isConnected || !session?.user) return;
 
     const message: Omit<ChatMessage, 'id' | 'timestamp'> = {
@@ -330,45 +330,45 @@ export function useWebSocket(sessionId?: string): UseWebSocketReturn {
       type,
     };
 
-    wsRef.current.send('sendMessage', { ...message, sessionId });
+    wsRef.current.send( 'sendMessage', { ...message, sessionId });
   }, [session, sessionId]);
 
   // Session functions
   const joinSession = useCallback((sessionId: string) => {
     if (!wsRef.current?.isConnected || !session?.user) return;
-    wsRef.current.send('joinSession', { sessionId, user: session.user });
+    wsRef.current.send( 'joinSession', { sessionId, user: session.user });
   }, [session]);
 
   const leaveSession = useCallback(() => {
     if (!wsRef.current?.isConnected || !sessionId) return;
-    wsRef.current.send('leaveSession', { sessionId });
-    setCurrentSession(null);
+    wsRef.current.send( 'leaveSession', { sessionId });
+    setCurrentSession(_null);
   }, [sessionId]);
 
-  const createSession = useCallback((title: string, type: string, language = 'solidity') => {
+  const createSession = useCallback( (title: string, type: string, language = 'solidity') => {
     if (!wsRef.current?.isConnected || !session?.user) return;
-    wsRef.current.send('createSession', { title, type, language, user: session.user });
+    wsRef.current.send( 'createSession', { title, type, language, user: session.user });
   }, [session]);
 
   // Code collaboration functions
   const updateCode = useCallback((code: string) => {
     if (!wsRef.current?.isConnected || !sessionId) return;
-    wsRef.current.send('updateCode', { code, sessionId });
+    wsRef.current.send( 'updateCode', { code, sessionId });
   }, [sessionId]);
 
-  const updateCursor = useCallback((line: number, column: number) => {
+  const updateCursor = useCallback( (line: number, column: number) => {
     if (!wsRef.current?.isConnected || !sessionId) return;
-    wsRef.current.send('updateCursor', { line, column, sessionId });
+    wsRef.current.send( 'updateCursor', { line, column, sessionId });
   }, [sessionId]);
 
-  const setTyping = useCallback((isTyping: boolean, location: 'chat' | 'code' = 'chat') => {
+  const setTyping = useCallback( (isTyping: boolean, location: 'chat' | 'code' = 'chat') => {
     if (!wsRef.current?.isConnected || !sessionId) return;
-    wsRef.current.send('setTyping', { isTyping, location, sessionId });
+    wsRef.current.send( 'setTyping', { isTyping, location, sessionId });
   }, [sessionId]);
 
   const reconnect = useCallback(() => {
-    disconnect();
-    setTimeout(connect, 1000);
+    disconnect(_);
+    setTimeout( connect, 1000);
   }, [disconnect, connect]);
 
   return {

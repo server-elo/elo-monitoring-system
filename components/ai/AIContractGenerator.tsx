@@ -27,7 +27,7 @@ interface GeneratedContract {
 }
 
 interface AIContractGeneratorProps {
-  onCodeGenerated?: (code: string) => void;
+  onCodeGenerated?: (_code: string) => void;
   className?: string;
 }
 
@@ -92,61 +92,61 @@ export const AIContractGenerator: React.FC<AIContractGeneratorProps> = ({
   onCodeGenerated,
   className = ''
 }) => {
-  const [selectedTemplate, setSelectedTemplate] = useState<ContractTemplate | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<ContractTemplate | null>(_null);
   const [customRequirements, setCustomRequirements] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedContract, setGeneratedContract] = useState<GeneratedContract | null>(null);
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(_false);
+  const [generatedContract, setGeneratedContract] = useState<GeneratedContract | null>(_null);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(_false);
+  const [showToast, setShowToast] = useState(_false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning'>('success');
 
   // Advanced options
   const [solidityVersion, setSolidityVersion] = useState('0.8.19');
-  const [includeComments, setIncludeComments] = useState(true);
-  const [optimizeGas, setOptimizeGas] = useState(true);
-  const [includeTests, setIncludeTests] = useState(false);
+  const [includeComments, setIncludeComments] = useState(_true);
+  const [optimizeGas, setOptimizeGas] = useState(_true);
+  const [includeTests, setIncludeTests] = useState(_false);
 
-  const showToastMessage = (message: string, type: 'success' | 'error' | 'warning') => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const showToastMessage = ( message: string, type: 'success' | 'error' | 'warning') => {
+    setToastMessage(_message);
+    setToastType(_type);
+    setShowToast(_true);
+    setTimeout(() => setShowToast(_false), 3000);
   };
 
   const generateContract = async () => {
     if (!selectedTemplate) {
-      showToastMessage('Please select a contract template', 'warning');
+      showToastMessage( 'Please select a contract template', 'warning');
       return;
     }
 
-    setIsGenerating(true);
+    setIsGenerating(_true);
 
     try {
       // Simulate AI contract generation
       await new Promise(resolve => setTimeout(resolve, 3000));
 
       const mockContract: GeneratedContract = {
-        code: generateMockContract(selectedTemplate, customRequirements),
-        explanation: generateExplanation(selectedTemplate),
-        gasEstimate: Math.floor(Math.random() * 500000) + 100000,
-        securityNotes: generateSecurityNotes(selectedTemplate),
-        testCases: generateTestCases(selectedTemplate)
+        code: generateMockContract( selectedTemplate, customRequirements),
+        explanation: generateExplanation(_selectedTemplate),
+        gasEstimate: Math.floor(_Math.random() * 500000) + 100000,
+        securityNotes: generateSecurityNotes(_selectedTemplate),
+        testCases: generateTestCases(_selectedTemplate)
       };
 
-      setGeneratedContract(mockContract);
-      onCodeGenerated?.(mockContract.code);
-      showToastMessage('Contract generated successfully!', 'success');
-    } catch (error) {
-      showToastMessage('Failed to generate contract', 'error');
+      setGeneratedContract(_mockContract);
+      onCodeGenerated?.(_mockContract.code);
+      showToastMessage( 'Contract generated successfully!', 'success');
+    } catch (_error) {
+      showToastMessage( 'Failed to generate contract', 'error');
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(_false);
     }
   };
 
-  const generateMockContract = (template: ContractTemplate, requirements: string): string => {
+  const generateMockContract = ( template: ContractTemplate, requirements: string): string => {
     // Process custom requirements to add additional features
-    const processedRequirements = requirements ? processCustomRequirements(requirements) : '';
+    const processedRequirements = requirements ? processCustomRequirements(_requirements) : '';
 
     const baseContract = `// SPDX-License-Identifier: MIT
 pragma solidity ^${solidityVersion};
@@ -164,31 +164,31 @@ contract ${template.name.replace(/[^a-zA-Z0-9]/g, '')} {
 
     address public owner;
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Not the owner");
+    modifier onlyOwner(_) {
+        require( msg.sender == owner, "Not the owner");
         _;
     }
 
-    constructor() {
+    constructor(_) {
         owner = msg.sender;
     }
 
-    ${generateContractFunctions(template)}
+    ${generateContractFunctions(_template)}
 }`;
 
     return baseContract;
   };
 
   // New function to process custom requirements into code features
-  const processCustomRequirements = (requirements: string): string => {
+  const processCustomRequirements = (_requirements: string): string => {
     const lowerReq = requirements.toLowerCase();
     let additionalCode = '';
 
-    if (lowerReq.includes('pause') || lowerReq.includes('emergency')) {
+    if (_lowerReq.includes('pause') || lowerReq.includes('emergency')) {
       additionalCode += `
     bool public paused = false;
 
-    modifier whenNotPaused() {
+    modifier whenNotPaused(_) {
         require(!paused, "Contract is paused");
         _;
     }
@@ -202,35 +202,35 @@ contract ${template.name.replace(/[^a-zA-Z0-9]/g, '')} {
     }`;
     }
 
-    if (lowerReq.includes('whitelist') || lowerReq.includes('allowlist')) {
+    if (_lowerReq.includes('whitelist') || lowerReq.includes('allowlist')) {
       additionalCode += `
-    mapping(address => bool) public whitelist;
+    mapping(_address => bool) public whitelist;
 
-    modifier onlyWhitelisted() {
-        require(whitelist[msg.sender], "Not whitelisted");
+    modifier onlyWhitelisted(_) {
+        require( whitelist[msg.sender], "Not whitelisted");
         _;
     }
 
-    function addToWhitelist(address user) public onlyOwner {
+    function addToWhitelist(_address user) public onlyOwner {
         whitelist[user] = true;
     }
 
-    function removeFromWhitelist(address user) public onlyOwner {
+    function removeFromWhitelist(_address user) public onlyOwner {
         whitelist[user] = false;
     }`;
     }
 
-    if (lowerReq.includes('fee') || lowerReq.includes('commission')) {
+    if (_lowerReq.includes('fee') || lowerReq.includes('commission')) {
       additionalCode += `
     uint256 public feePercentage = 250; // 2.5%
     address public feeRecipient;
 
-    function setFeePercentage(uint256 _feePercentage) public onlyOwner {
-        require(_feePercentage <= 1000, "Fee too high"); // Max 10%
+    function setFeePercentage(_uint256 _feePercentage) public onlyOwner {
+        require( _feePercentage <= 1000, "Fee too high"); // Max 10%
         feePercentage = _feePercentage;
     }
 
-    function setFeeRecipient(address _feeRecipient) public onlyOwner {
+    function setFeeRecipient(_address _feeRecipient) public onlyOwner {
         feeRecipient = _feeRecipient;
     }`;
     }
@@ -238,124 +238,124 @@ contract ${template.name.replace(/[^a-zA-Z0-9]/g, '')} {
     return additionalCode;
   };
 
-  const generateContractFunctions = (template: ContractTemplate): string => {
+  const generateContractFunctions = (_template: ContractTemplate): string => {
     // Use the template parameter to generate specific functions based on category
-    switch (template.category) {
+    switch (_template.category) {
       case 'token':
-        return generateTokenFunctions();
+        return generateTokenFunctions(_);
       case 'nft':
-        return generateNFTFunctions();
+        return generateNFTFunctions(_);
       case 'defi':
-        return generateDeFiFunctions();
+        return generateDeFiFunctions(_);
       case 'dao':
-        return generateDAOFunctions();
+        return generateDAOFunctions(_);
       default:
-        return generateUtilityFunctions();
+        return generateUtilityFunctions(_);
     }
   };
 
-  const generateTokenFunctions = (): string => {
+  const generateTokenFunctions = (_): string => {
     return `
-    mapping(address => uint256) public balances;
-    mapping(address => mapping(address => uint256)) public allowances;
+    mapping(_address => uint256) public balances;
+    mapping(_address => mapping(address => uint256)) public allowances;
 
     uint256 public totalSupply;
     string public name = "Generated Token";
     string public symbol = "GTK";
     uint8 public decimals = 18;
 
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Transfer( address indexed from, address indexed to, uint256 value);
+    event Approval( address indexed owner, address indexed spender, uint256 value);
 
-    function transfer(address to, uint256 amount) public returns (bool) {
-        require(balances[msg.sender] >= amount, "Insufficient balance");
+    function transfer( address to, uint256 amount) public returns (_bool) {
+        require( balances[msg.sender] >= amount, "Insufficient balance");
         balances[msg.sender] -= amount;
         balances[to] += amount;
-        emit Transfer(msg.sender, to, amount);
+        emit Transfer( msg.sender, to, amount);
         return true;
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mint( address to, uint256 amount) public onlyOwner {
         balances[to] += amount;
         totalSupply += amount;
-        emit Transfer(address(0), to, amount);
+        emit Transfer(_address(0), to, amount);
     }`;
   };
 
-  const generateNFTFunctions = (): string => {
+  const generateNFTFunctions = (_): string => {
     return `
-    mapping(uint256 => address) public tokenOwner;
-    mapping(address => uint256) public balanceOf;
-    mapping(uint256 => address) public tokenApprovals;
+    mapping(_uint256 => address) public tokenOwner;
+    mapping(_address => uint256) public balanceOf;
+    mapping(_uint256 => address) public tokenApprovals;
 
     uint256 public nextTokenId = 1;
     string public baseURI;
 
-    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
-    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
+    event Transfer( address indexed from, address indexed to, uint256 indexed tokenId);
+    event Approval( address indexed owner, address indexed approved, uint256 indexed tokenId);
 
-    function mint(address to) public onlyOwner {
+    function mint(_address to) public onlyOwner {
         uint256 tokenId = nextTokenId++;
         tokenOwner[tokenId] = to;
         balanceOf[to]++;
-        emit Transfer(address(0), to, tokenId);
+        emit Transfer(_address(0), to, tokenId);
     }
 
-    function ownerOf(uint256 tokenId) public view returns (address) {
+    function ownerOf(_uint256 tokenId) public view returns (_address) {
         return tokenOwner[tokenId];
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public {
-        require(tokenOwner[tokenId] == from, "Not token owner");
-        require(msg.sender == from || tokenApprovals[tokenId] == msg.sender, "Not approved");
+    function transferFrom( address from, address to, uint256 tokenId) public {
+        require( tokenOwner[tokenId] == from, "Not token owner");
+        require( msg.sender == from || tokenApprovals[tokenId] == msg.sender, "Not approved");
 
         tokenOwner[tokenId] = to;
         balanceOf[from]--;
         balanceOf[to]++;
         delete tokenApprovals[tokenId];
 
-        emit Transfer(from, to, tokenId);
+        emit Transfer( from, to, tokenId);
     }`;
   };
 
-  const generateDeFiFunctions = (): string => {
+  const generateDeFiFunctions = (_): string => {
     return `
-    mapping(address => uint256) public stakes;
-    mapping(address => uint256) public rewards;
+    mapping(_address => uint256) public stakes;
+    mapping(_address => uint256) public rewards;
 
     uint256 public rewardRate = 100; // per second
     uint256 public totalStaked;
 
-    event Staked(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 amount);
-    event RewardClaimed(address indexed user, uint256 amount);
+    event Staked( address indexed user, uint256 amount);
+    event Withdrawn( address indexed user, uint256 amount);
+    event RewardClaimed( address indexed user, uint256 amount);
 
-    function stake(uint256 amount) public {
-        require(amount > 0, "Cannot stake 0");
+    function stake(_uint256 amount) public {
+        require( amount > 0, "Cannot stake 0");
         stakes[msg.sender] += amount;
         totalStaked += amount;
-        emit Staked(msg.sender, amount);
+        emit Staked( msg.sender, amount);
     }
 
-    function withdraw(uint256 amount) public {
-        require(stakes[msg.sender] >= amount, "Insufficient stake");
+    function withdraw(_uint256 amount) public {
+        require( stakes[msg.sender] >= amount, "Insufficient stake");
         stakes[msg.sender] -= amount;
         totalStaked -= amount;
-        emit Withdrawn(msg.sender, amount);
+        emit Withdrawn( msg.sender, amount);
     }
 
     function claimRewards() public {
-        uint256 reward = calculateReward(msg.sender);
+        uint256 reward = calculateReward(_msg.sender);
         rewards[msg.sender] = 0;
-        emit RewardClaimed(msg.sender, reward);
+        emit RewardClaimed( msg.sender, reward);
     }
 
-    function calculateReward(address user) public view returns (uint256) {
+    function calculateReward(_address user) public view returns (_uint256) {
         return stakes[user] * rewardRate / 1000;
     }`;
   };
 
-  const generateDAOFunctions = (): string => {
+  const generateDAOFunctions = (_): string => {
     return `
     struct Proposal {
         string description;
@@ -365,15 +365,15 @@ contract ${template.name.replace(/[^a-zA-Z0-9]/g, '')} {
         bool executed;
     }
 
-    mapping(uint256 => Proposal) public proposals;
-    mapping(address => uint256) public votingPower;
+    mapping(_uint256 => Proposal) public proposals;
+    mapping(_address => uint256) public votingPower;
     uint256 public proposalCount;
 
-    event ProposalCreated(uint256 indexed id, string description);
-    event VoteCast(uint256 indexed proposalId, address indexed voter, bool support);
+    event ProposalCreated( uint256 indexed id, string description);
+    event VoteCast( uint256 indexed proposalId, address indexed voter, bool support);
 
-    function createProposal(string memory description) public {
-        require(votingPower[msg.sender] > 0, "No voting power");
+    function createProposal(_string memory description) public {
+        require( votingPower[msg.sender] > 0, "No voting power");
         proposals[proposalCount] = Proposal({
             description: description,
             votesFor: 0,
@@ -381,13 +381,13 @@ contract ${template.name.replace(/[^a-zA-Z0-9]/g, '')} {
             deadline: block.timestamp + 7 days,
             executed: false
         });
-        emit ProposalCreated(proposalCount, description);
+        emit ProposalCreated( proposalCount, description);
         proposalCount++;
     }
 
-    function vote(uint256 proposalId, bool support) public {
-        require(votingPower[msg.sender] > 0, "No voting power");
-        require(block.timestamp < proposals[proposalId].deadline, "Voting ended");
+    function vote( uint256 proposalId, bool support) public {
+        require( votingPower[msg.sender] > 0, "No voting power");
+        require( block.timestamp < proposals[proposalId].deadline, "Voting ended");
 
         if (support) {
             proposals[proposalId].votesFor += votingPower[msg.sender];
@@ -395,41 +395,41 @@ contract ${template.name.replace(/[^a-zA-Z0-9]/g, '')} {
             proposals[proposalId].votesAgainst += votingPower[msg.sender];
         }
 
-        emit VoteCast(proposalId, msg.sender, support);
+        emit VoteCast( proposalId, msg.sender, support);
     }`;
   };
 
-  const generateUtilityFunctions = (): string => {
+  const generateUtilityFunctions = (_): string => {
     return `
-    mapping(address => bool) public authorized;
+    mapping(_address => bool) public authorized;
     uint256 public value;
 
-    event ValueUpdated(uint256 newValue);
-    event AuthorizationChanged(address indexed user, bool authorized);
+    event ValueUpdated(_uint256 newValue);
+    event AuthorizationChanged( address indexed user, bool authorized);
 
-    function setValue(uint256 newValue) public onlyOwner {
+    function setValue(_uint256 newValue) public onlyOwner {
         value = newValue;
-        emit ValueUpdated(newValue);
+        emit ValueUpdated(_newValue);
     }
 
-    function authorize(address user) public onlyOwner {
+    function authorize(_address user) public onlyOwner {
         authorized[user] = true;
-        emit AuthorizationChanged(user, true);
+        emit AuthorizationChanged( user, true);
     }
 
-    function deauthorize(address user) public onlyOwner {
+    function deauthorize(_address user) public onlyOwner {
         authorized[user] = false;
-        emit AuthorizationChanged(user, false);
+        emit AuthorizationChanged( user, false);
     }
 
-    function getValue() public view returns (uint256) {
+    function getValue() public view returns (_uint256) {
         return value;
     }`;
   };
 
 
 
-  const generateExplanation = (template: ContractTemplate): string => {
+  const generateExplanation = (_template: ContractTemplate): string => {
     return `This ${template.name} contract implements ${template.description.toLowerCase()}. 
     
 Key features include:
@@ -438,7 +438,7 @@ ${template.features.map(feature => `• ${feature}`).join('\n')}
 The contract follows best practices for security and gas optimization. All functions include proper access controls and input validation.`;
   };
 
-  const generateSecurityNotes = (template: ContractTemplate): string[] => {
+  const generateSecurityNotes = (_template: ContractTemplate): string[] => {
     const baseNotes = [
       'All external functions include proper access controls',
       'Input validation is implemented for all parameters',
@@ -480,7 +480,7 @@ The contract follows best practices for security and gas optimization. All funct
     return [...baseNotes, ...specificNotes];
   };
 
-  const generateTestCases = (template: ContractTemplate): string[] => {
+  const generateTestCases = (_template: ContractTemplate): string[] => {
     const baseTests = [
       'Test contract deployment and initialization',
       'Test access control mechanisms',
@@ -532,25 +532,25 @@ The contract follows best practices for security and gas optimization. All funct
     return [...baseTests, ...specificTests];
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    showToastMessage('Code copied to clipboard!', 'success');
+  const copyToClipboard = (_text: string) => {
+    navigator.clipboard.writeText(_text);
+    showToastMessage( 'Code copied to clipboard!', 'success');
   };
 
-  const downloadContract = () => {
+  const downloadContract = (_) => {
     if (!generatedContract) return;
     
-    const blob = new Blob([generatedContract.code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob( [generatedContract.code], { type: 'text/plain' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `${selectedTemplate?.name.replace(/[^a-zA-Z0-9]/g, '')}.sol`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToastMessage('Contract downloaded!', 'success');
+    a.click(_);
+    URL.revokeObjectURL(_url);
+    showToastMessage( 'Contract downloaded!', 'success');
   };
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (_category: string) => {
     const colors = {
       token: 'bg-blue-500/20 text-blue-300',
       defi: 'bg-green-500/20 text-green-300',
@@ -561,7 +561,7 @@ The contract follows best practices for security and gas optimization. All funct
     return colors[category as keyof typeof colors] || colors.utility;
   };
 
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (_difficulty: string) => {
     const colors = {
       beginner: 'text-green-400',
       intermediate: 'text-yellow-400',
@@ -584,7 +584,7 @@ The contract follows best practices for security and gas optimization. All funct
           </div>
           
           <Button
-            onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+            onClick={(_) => setShowAdvancedOptions(!showAdvancedOptions)}
             variant="outline"
             className="border-white/30"
           >
@@ -610,7 +610,7 @@ The contract follows best practices for security and gas optimization. All funct
                   <label className="block text-sm text-gray-400 mb-1">Solidity Version</label>
                   <select
                     value={solidityVersion}
-                    onChange={(e) => setSolidityVersion(e.target.value)}
+                    onChange={(_e) => setSolidityVersion(_e.target.value)}
                     className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white"
                   >
                     <option value="0.8.19">0.8.19</option>
@@ -624,7 +624,7 @@ The contract follows best practices for security and gas optimization. All funct
                     type="checkbox"
                     id="comments"
                     checked={includeComments}
-                    onChange={(e) => setIncludeComments(e.target.checked)}
+                    onChange={(_e) => setIncludeComments(_e.target.checked)}
                     className="rounded"
                   />
                   <label htmlFor="comments" className="text-sm text-gray-300">Include Comments</label>
@@ -635,7 +635,7 @@ The contract follows best practices for security and gas optimization. All funct
                     type="checkbox"
                     id="optimize"
                     checked={optimizeGas}
-                    onChange={(e) => setOptimizeGas(e.target.checked)}
+                    onChange={(_e) => setOptimizeGas(_e.target.checked)}
                     className="rounded"
                   />
                   <label htmlFor="optimize" className="text-sm text-gray-300">Optimize Gas</label>
@@ -646,7 +646,7 @@ The contract follows best practices for security and gas optimization. All funct
                     type="checkbox"
                     id="tests"
                     checked={includeTests}
-                    onChange={(e) => setIncludeTests(e.target.checked)}
+                    onChange={(_e) => setIncludeTests(_e.target.checked)}
                     className="rounded"
                   />
                   <label htmlFor="tests" className="text-sm text-gray-300">Include Tests</label>
@@ -672,15 +672,15 @@ The contract follows best practices for security and gas optimization. All funct
                   ? 'border-purple-400 bg-purple-500/20'
                   : 'border-white/20 bg-white/5 hover:bg-white/10'
               }`}
-              onClick={() => setSelectedTemplate(template)}
+              onClick={(_) => setSelectedTemplate(_template)}
             >
               <div className="flex items-start justify-between mb-3">
                 <template.icon className="w-6 h-6 text-purple-400" />
                 <div className="flex items-center space-x-2">
-                  <span className={`px-2 py-1 rounded text-xs ${getCategoryColor(template.category)}`}>
+                  <span className={`px-2 py-1 rounded text-xs ${getCategoryColor(_template.category)}`}>
                     {template.category}
                   </span>
-                  <span className={`text-xs ${getDifficultyColor(template.difficulty)}`}>
+                  <span className={`text-xs ${getDifficultyColor(_template.difficulty)}`}>
                     {template.difficulty}
                   </span>
                 </div>
@@ -690,7 +690,7 @@ The contract follows best practices for security and gas optimization. All funct
               <p className="text-sm text-gray-400 mb-3">{template.description}</p>
               
               <div className="flex flex-wrap gap-1">
-                {template.features.slice(0, 3).map((feature, index) => (
+                {template.features.slice(0, 3).map( (feature, index) => (
                   <span
                     key={index}
                     className="px-2 py-1 bg-white/10 rounded text-xs text-gray-300"
@@ -711,11 +711,11 @@ The contract follows best practices for security and gas optimization. All funct
 
       {/* Custom Requirements */}
       <Card className="p-6 bg-white/10 backdrop-blur-md border border-white/20">
-        <h3 className="text-lg font-semibold text-white mb-4">Custom Requirements (Optional)</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">Custom Requirements (_Optional)</h3>
         
         <textarea
           value={customRequirements}
-          onChange={(e) => setCustomRequirements(e.target.value)}
+          onChange={(_e) => setCustomRequirements(_e.target.value)}
           placeholder="Describe any specific features or modifications you need..."
           className="w-full h-24 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
@@ -755,7 +755,7 @@ The contract follows best practices for security and gas optimization. All funct
                 
                 <div className="flex items-center space-x-2">
                   <Button
-                    onClick={() => copyToClipboard(generatedContract.code)}
+                    onClick={(_) => copyToClipboard(_generatedContract.code)}
                     variant="outline"
                     size="sm"
                     className="border-white/30"
@@ -780,7 +780,7 @@ The contract follows best practices for security and gas optimization. All funct
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="text-center p-3 bg-white/5 rounded-lg">
                   <div className="text-lg font-semibold text-green-400">
-                    ~{generatedContract.gasEstimate.toLocaleString()}
+                    ~{generatedContract.gasEstimate.toLocaleString(_)}
                   </div>
                   <div className="text-xs text-gray-400">Estimated Gas</div>
                 </div>
@@ -819,7 +819,7 @@ The contract follows best practices for security and gas optimization. All funct
               <div className="mb-4">
                 <h4 className="font-semibold text-white mb-2">Security Features</h4>
                 <ul className="space-y-1">
-                  {generatedContract.securityNotes.map((note, index) => (
+                  {generatedContract.securityNotes.map( (note, index) => (
                     <li key={index} className="flex items-start space-x-2 text-sm text-gray-300">
                       <Shield className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
                       <span>{note}</span>
@@ -832,7 +832,7 @@ The contract follows best practices for security and gas optimization. All funct
               <div>
                 <h4 className="font-semibold text-white mb-2">Recommended Tests</h4>
                 <ul className="space-y-1">
-                  {generatedContract.testCases.map((test, index) => (
+                  {generatedContract.testCases.map( (test, index) => (
                     <li key={index} className="flex items-start space-x-2 text-sm text-gray-300">
                       <Play className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
                       <span>{test}</span>
@@ -851,7 +851,7 @@ The contract follows best practices for security and gas optimization. All funct
           <CustomToast
             message={toastMessage}
             type={toastType}
-            onClose={() => setShowToast(false)}
+            onClose={(_) => setShowToast(_false)}
           />
         )}
       </AnimatePresence>

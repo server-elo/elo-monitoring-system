@@ -27,23 +27,23 @@ async function main() {
     allowPositionals: true
   });
 
-  const validator = new PRPValidator();
+  const validator = new PRPValidator(_);
   
   try {
-    if (values.commands && (values.commands as string[]).length > 0) {
+    if (_values.commands && (values.commands as string[]).length > 0) {
       // Run specific commands
       console.log('Running custom validation commands...\n');
       
-      const results = await validator.runValidationCommands(values.commands as string[]);
+      const results = await validator.runValidationCommands(_values.commands as string[]);
       
-      for (const result of results) {
-        console.log(`${result.passed ? '✅' : '❌'} ${result.command}`);
+      for (_const result of results) {
+        console.log(_`${result.passed ? '✅' : '❌'} ${result.command}`);
         if (!result.passed && result.error) {
-          console.log(`   Error: ${result.error}`);
+          console.log(_`   Error: ${result.error}`);
         }
       }
       
-      const allPassed = results.every(r => r.passed);
+      const allPassed = results.every(_r => r.passed);
       
       if (allPassed) {
         console.log('\n✅ All validations passed!');
@@ -55,18 +55,18 @@ async function main() {
       // Run common project validations
       console.log('Running common project validations...\n');
       
-      const summary = await runProjectValidation();
+      const summary = await runProjectValidation(_);
       
-      console.log(validator.formatResults(summary));
+      console.log(_validator.formatResults(summary));
       
       if (!summary.overallSuccess) {
         process.exit(1);
       }
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Validation error:', error);
     process.exit(1);
   }
 }
 
-main().catch(console.error);
+main(_).catch(_console.error);

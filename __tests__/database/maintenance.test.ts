@@ -17,39 +17,39 @@ import {
 } from '@/lib/database/maintenance';
 import { MigrationManager } from '@/lib/database/migrations';
 
-describe('Database Maintenance System', () => {
+describe( 'Database Maintenance System', () => {
   let cleanupManager: CleanupManager;
   let backupService: BackupService;
   let maintenanceScheduler: MaintenanceScheduler;
   let migrationManager: MigrationManager;
 
   beforeEach(() => {
-    cleanupManager = CleanupManager.getInstance();
-    backupService = BackupService.getInstance();
-    maintenanceScheduler = MaintenanceScheduler.getInstance();
-    migrationManager = MigrationManager.getInstance();
+    cleanupManager = CleanupManager.getInstance(_);
+    backupService = BackupService.getInstance(_);
+    maintenanceScheduler = MaintenanceScheduler.getInstance(_);
+    migrationManager = MigrationManager.getInstance(_);
     
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
-  afterEach(async () => {
-    await maintenanceScheduler.stopScheduler();
-    jest.restoreAllMocks();
+  afterEach( async () => {
+    await maintenanceScheduler.stopScheduler(_);
+    jest.restoreAllMocks(_);
   });
 
-  describe('CleanupManager', () => {
-    it('should register cleanup operations', () => {
-      const operation = new OrphanedAchievementCleanup();
-      cleanupManager.registerOperation(operation);
+  describe( 'CleanupManager', () => {
+    it( 'should register cleanup operations', () => {
+      const operation = new OrphanedAchievementCleanup(_);
+      cleanupManager.registerOperation(_operation);
 
-      const registered = cleanupManager.getOperation(operation.id);
-      expect(registered).toBeDefined();
-      expect(registered?.name).toBe(operation.name);
+      const registered = cleanupManager.getOperation(_operation.id);
+      expect(_registered).toBeDefined(_);
+      expect(_registered?.name).toBe(_operation.name);
     });
 
-    it('should execute cleanup operation in dry run mode', async () => {
-      const operation = new ExpiredTokensCleanup();
-      cleanupManager.registerOperation(operation);
+    it( 'should execute cleanup operation in dry run mode', async () => {
+      const operation = new ExpiredTokensCleanup(_);
+      cleanupManager.registerOperation(_operation);
 
       const options: CleanupOptions = {
         dryRun: true,
@@ -58,20 +58,20 @@ describe('Database Maintenance System', () => {
         maxExecutionTime: 300
       };
 
-      const result = await cleanupManager.executeOperation(operation.id, options);
+      const result = await cleanupManager.executeOperation( operation.id, options);
 
-      expect(result.success).toBe(true);
-      expect(result.operation).toBe(operation.name);
-      expect(result.duration).toBeGreaterThan(0);
-      expect(result.errors).toHaveLength(0);
+      expect(_result.success).toBe(_true);
+      expect(_result.operation).toBe(_operation.name);
+      expect(_result.duration).toBeGreaterThan(0);
+      expect(_result.errors).toHaveLength(0);
     });
 
-    it('should execute batch cleanup operations', async () => {
-      const operation1 = new OrphanedAchievementCleanup();
-      const operation2 = new ExpiredTokensCleanup();
+    it( 'should execute batch cleanup operations', async () => {
+      const operation1 = new OrphanedAchievementCleanup(_);
+      const operation2 = new ExpiredTokensCleanup(_);
       
-      cleanupManager.registerOperation(operation1);
-      cleanupManager.registerOperation(operation2);
+      cleanupManager.registerOperation(_operation1);
+      cleanupManager.registerOperation(_operation2);
 
       const options: CleanupOptions = {
         dryRun: true,
@@ -85,12 +85,12 @@ describe('Database Maintenance System', () => {
         options
       );
 
-      expect(report.operations).toHaveLength(2);
-      expect(report.status).toBe('SUCCESS');
-      expect(report.totalItemsProcessed).toBeGreaterThanOrEqual(0);
+      expect(_report.operations).toHaveLength(_2);
+      expect(_report.status).toBe('SUCCESS');
+      expect(_report.totalItemsProcessed).toBeGreaterThanOrEqual(0);
     });
 
-    it('should handle cleanup operation failures gracefully', async () => {
+    it( 'should handle cleanup operation failures gracefully', async () => {
       const mockOperation = {
         id: 'failing_operation',
         name: 'Failing Operation',
@@ -100,10 +100,10 @@ describe('Database Maintenance System', () => {
         estimatedDuration: 60,
         requiresBackup: false,
         dryRunSupported: true,
-        execute: jest.fn().mockRejectedValue(new Error('Operation failed'))
+        execute: jest.fn(_).mockRejectedValue(_new Error('Operation failed'))
       };
 
-      cleanupManager.registerOperation(mockOperation);
+      cleanupManager.registerOperation(_mockOperation);
 
       const options: CleanupOptions = {
         dryRun: false,
@@ -112,97 +112,97 @@ describe('Database Maintenance System', () => {
         maxExecutionTime: 300
       };
 
-      const result = await cleanupManager.executeOperation(mockOperation.id, options);
+      const result = await cleanupManager.executeOperation( mockOperation.id, options);
 
-      expect(result.success).toBe(false);
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0]).toContain('Operation failed');
+      expect(_result.success).toBe(_false);
+      expect(_result.errors).toHaveLength(1);
+      expect(_result.errors[0]).toContain('Operation failed');
     });
 
-    it('should filter operations by category', () => {
-      const operation1 = new OrphanedAchievementCleanup();
-      const operation2 = new ExpiredTokensCleanup();
+    it( 'should filter operations by category', () => {
+      const operation1 = new OrphanedAchievementCleanup(_);
+      const operation2 = new ExpiredTokensCleanup(_);
       
-      cleanupManager.registerOperation(operation1);
-      cleanupManager.registerOperation(operation2);
+      cleanupManager.registerOperation(_operation1);
+      cleanupManager.registerOperation(_operation2);
 
-      const orphanedOps = cleanupManager.getOperationsByCategory(CleanupCategory.ORPHANED_DATA);
-      const expiredOps = cleanupManager.getOperationsByCategory(CleanupCategory.EXPIRED_DATA);
+      const orphanedOps = cleanupManager.getOperationsByCategory(_CleanupCategory.ORPHANED_DATA);
+      const expiredOps = cleanupManager.getOperationsByCategory(_CleanupCategory.EXPIRED_DATA);
 
-      expect(orphanedOps).toHaveLength(1);
-      expect(orphanedOps[0].id).toBe(operation1.id);
-      expect(expiredOps).toHaveLength(1);
-      expect(expiredOps[0].id).toBe(operation2.id);
+      expect(_orphanedOps).toHaveLength(1);
+      expect(_orphanedOps[0].id).toBe(_operation1.id);
+      expect(_expiredOps).toHaveLength(1);
+      expect(_expiredOps[0].id).toBe(_operation2.id);
     });
 
-    it('should filter operations by severity', () => {
-      const operation1 = new OrphanedProgressCleanup(); // HIGH severity
-      const operation2 = new ExpiredTokensCleanup(); // LOW severity
+    it( 'should filter operations by severity', () => {
+      const operation1 = new OrphanedProgressCleanup(_); // HIGH severity
+      const operation2 = new ExpiredTokensCleanup(_); // LOW severity
       
-      cleanupManager.registerOperation(operation1);
-      cleanupManager.registerOperation(operation2);
+      cleanupManager.registerOperation(_operation1);
+      cleanupManager.registerOperation(_operation2);
 
-      const highSeverityOps = cleanupManager.getOperationsBySeverity(CleanupSeverity.HIGH);
-      const lowSeverityOps = cleanupManager.getOperationsBySeverity(CleanupSeverity.LOW);
+      const highSeverityOps = cleanupManager.getOperationsBySeverity(_CleanupSeverity.HIGH);
+      const lowSeverityOps = cleanupManager.getOperationsBySeverity(_CleanupSeverity.LOW);
 
-      expect(highSeverityOps).toHaveLength(1);
-      expect(highSeverityOps[0].id).toBe(operation1.id);
-      expect(lowSeverityOps).toHaveLength(1);
-      expect(lowSeverityOps[0].id).toBe(operation2.id);
+      expect(_highSeverityOps).toHaveLength(1);
+      expect(_highSeverityOps[0].id).toBe(_operation1.id);
+      expect(_lowSeverityOps).toHaveLength(1);
+      expect(_lowSeverityOps[0].id).toBe(_operation2.id);
     });
   });
 
-  describe('BackupService', () => {
-    it('should create database backup', async () => {
+  describe( 'BackupService', () => {
+    it( 'should create database backup', async () => {
       const tables = ['users', 'lessons', 'progress'];
-      const backupPath = await backupService.createBackup(tables, 'test_backup');
+      const backupPath = await backupService.createBackup( tables, 'test_backup');
 
-      expect(backupPath).toContain('test_backup');
-      expect(backupPath).toContain('.sql');
+      expect(_backupPath).toContain('test_backup');
+      expect(_backupPath).toContain('.sql');
     });
 
-    it('should verify backup integrity', async () => {
+    it( 'should verify backup integrity', async () => {
       const backupPath = 'backups/test_backup.sql';
-      const isValid = await backupService.verifyBackup(backupPath);
+      const isValid = await backupService.verifyBackup(_backupPath);
 
-      expect(isValid).toBe(true);
+      expect(_isValid).toBe(_true);
     });
 
-    it('should list available backups', async () => {
-      const backups = await backupService.listBackups();
+    it( 'should list available backups', async () => {
+      const backups = await backupService.listBackups(_);
 
-      expect(Array.isArray(backups)).toBe(true);
-      expect(backups.length).toBeGreaterThanOrEqual(0);
+      expect(_Array.isArray(backups)).toBe(_true);
+      expect(_backups.length).toBeGreaterThanOrEqual(0);
       
-      if (backups.length > 0) {
-        expect(backups[0]).toHaveProperty('name');
-        expect(backups[0]).toHaveProperty('path');
-        expect(backups[0]).toHaveProperty('size');
-        expect(backups[0]).toHaveProperty('created');
-        expect(backups[0]).toHaveProperty('tables');
+      if (_backups.length > 0) {
+        expect(_backups[0]).toHaveProperty('name');
+        expect(_backups[0]).toHaveProperty('path');
+        expect(_backups[0]).toHaveProperty('size');
+        expect(_backups[0]).toHaveProperty('created');
+        expect(_backups[0]).toHaveProperty('tables');
       }
     });
 
-    it('should delete old backups', async () => {
+    it( 'should delete old backups', async () => {
       const deletedCount = await backupService.deleteOldBackups(30);
 
-      expect(typeof deletedCount).toBe('number');
-      expect(deletedCount).toBeGreaterThanOrEqual(0);
+      expect(_typeof deletedCount).toBe('number');
+      expect(_deletedCount).toBeGreaterThanOrEqual(0);
     });
   });
 
-  describe('MaintenanceScheduler', () => {
-    it('should start and stop scheduler', async () => {
-      await maintenanceScheduler.startScheduler();
-      let status = await maintenanceScheduler.getMaintenanceStatus();
-      expect(status.schedulerRunning).toBe(true);
+  describe( 'MaintenanceScheduler', () => {
+    it( 'should start and stop scheduler', async () => {
+      await maintenanceScheduler.startScheduler(_);
+      let status = await maintenanceScheduler.getMaintenanceStatus(_);
+      expect(_status.schedulerRunning).toBe(_true);
 
-      await maintenanceScheduler.stopScheduler();
-      status = await maintenanceScheduler.getMaintenanceStatus();
-      expect(status.schedulerRunning).toBe(false);
+      await maintenanceScheduler.stopScheduler(_);
+      status = await maintenanceScheduler.getMaintenanceStatus(_);
+      expect(_status.schedulerRunning).toBe(_false);
     });
 
-    it('should add and retrieve maintenance schedules', async () => {
+    it( 'should add and retrieve maintenance schedules', async () => {
       const schedule: MaintenanceSchedule = {
         id: 'test_schedule',
         name: 'Test Schedule',
@@ -232,15 +232,15 @@ describe('Database Maintenance System', () => {
         }
       };
 
-      await maintenanceScheduler.addSchedule(schedule);
-      const retrieved = maintenanceScheduler.getSchedule(schedule.id);
+      await maintenanceScheduler.addSchedule(_schedule);
+      const retrieved = maintenanceScheduler.getSchedule(_schedule.id);
 
-      expect(retrieved).toBeDefined();
-      expect(retrieved?.name).toBe(schedule.name);
-      expect(retrieved?.enabled).toBe(true);
+      expect(_retrieved).toBeDefined(_);
+      expect(_retrieved?.name).toBe(_schedule.name);
+      expect(_retrieved?.enabled).toBe(_true);
     });
 
-    it('should update maintenance schedule', async () => {
+    it( 'should update maintenance schedule', async () => {
       const schedule: MaintenanceSchedule = {
         id: 'update_test_schedule',
         name: 'Update Test Schedule',
@@ -270,19 +270,19 @@ describe('Database Maintenance System', () => {
         }
       };
 
-      await maintenanceScheduler.addSchedule(schedule);
+      await maintenanceScheduler.addSchedule(_schedule);
       
       await maintenanceScheduler.updateSchedule(schedule.id, {
         enabled: false,
         name: 'Updated Schedule Name'
       });
 
-      const updated = maintenanceScheduler.getSchedule(schedule.id);
-      expect(updated?.enabled).toBe(false);
-      expect(updated?.name).toBe('Updated Schedule Name');
+      const updated = maintenanceScheduler.getSchedule(_schedule.id);
+      expect(_updated?.enabled).toBe(_false);
+      expect(_updated?.name).toBe('Updated Schedule Name');
     });
 
-    it('should delete maintenance schedule', async () => {
+    it( 'should delete maintenance schedule', async () => {
       const schedule: MaintenanceSchedule = {
         id: 'delete_test_schedule',
         name: 'Delete Test Schedule',
@@ -312,17 +312,17 @@ describe('Database Maintenance System', () => {
         }
       };
 
-      await maintenanceScheduler.addSchedule(schedule);
-      expect(maintenanceScheduler.getSchedule(schedule.id)).toBeDefined();
+      await maintenanceScheduler.addSchedule(_schedule);
+      expect(_maintenanceScheduler.getSchedule(schedule.id)).toBeDefined(_);
 
-      await maintenanceScheduler.deleteSchedule(schedule.id);
-      expect(maintenanceScheduler.getSchedule(schedule.id)).toBeUndefined();
+      await maintenanceScheduler.deleteSchedule(_schedule.id);
+      expect(_maintenanceScheduler.getSchedule(schedule.id)).toBeUndefined(_);
     });
 
-    it('should execute scheduled maintenance', async () => {
+    it( 'should execute scheduled maintenance', async () => {
       // Register a test cleanup operation
-      const testOperation = new ExpiredTokensCleanup();
-      cleanupManager.registerOperation(testOperation);
+      const testOperation = new ExpiredTokensCleanup(_);
+      cleanupManager.registerOperation(_testOperation);
 
       const schedule: MaintenanceSchedule = {
         id: 'execute_test_schedule',
@@ -353,91 +353,91 @@ describe('Database Maintenance System', () => {
         }
       };
 
-      await maintenanceScheduler.addSchedule(schedule);
-      const report = await maintenanceScheduler.runMaintenanceNow(schedule.id);
+      await maintenanceScheduler.addSchedule(_schedule);
+      const report = await maintenanceScheduler.runMaintenanceNow(_schedule.id);
 
-      expect(report.status).toBe('SUCCESS');
-      expect(report.operations).toHaveLength(1);
-      expect(report.duration).toBeGreaterThan(0);
-      expect(report.systemMetrics).toBeDefined();
+      expect(_report.status).toBe('SUCCESS');
+      expect(_report.operations).toHaveLength(1);
+      expect(_report.duration).toBeGreaterThan(0);
+      expect(_report.systemMetrics).toBeDefined(_);
     });
   });
 
-  describe('MigrationManager', () => {
-    it('should get migration status', async () => {
-      const status = await migrationManager.getMigrationStatus();
+  describe( 'MigrationManager', () => {
+    it( 'should get migration status', async () => {
+      const status = await migrationManager.getMigrationStatus(_);
 
-      expect(status).toHaveProperty('applied');
-      expect(status).toHaveProperty('pending');
-      expect(status).toHaveProperty('total');
-      expect(typeof status.applied).toBe('number');
-      expect(typeof status.pending).toBe('number');
-      expect(typeof status.total).toBe('number');
+      expect(_status).toHaveProperty('applied');
+      expect(_status).toHaveProperty('pending');
+      expect(_status).toHaveProperty('total');
+      expect(_typeof status.applied).toBe('number');
+      expect(_typeof status.pending).toBe('number');
+      expect(_typeof status.total).toBe('number');
     });
 
-    it('should get applied migrations', async () => {
-      const applied = await migrationManager.getAppliedMigrations();
+    it( 'should get applied migrations', async () => {
+      const applied = await migrationManager.getAppliedMigrations(_);
 
-      expect(Array.isArray(applied)).toBe(true);
+      expect(_Array.isArray(applied)).toBe(_true);
       applied.forEach(migration => {
-        expect(migration).toHaveProperty('id');
-        expect(migration).toHaveProperty('appliedAt');
-        expect(migration).toHaveProperty('rollbackAvailable');
-        expect(migration).toHaveProperty('checksum');
+        expect(_migration).toHaveProperty('id');
+        expect(_migration).toHaveProperty('appliedAt');
+        expect(_migration).toHaveProperty('rollbackAvailable');
+        expect(_migration).toHaveProperty('checksum');
       });
     });
 
-    it('should get pending migrations', async () => {
-      const pending = await migrationManager.getPendingMigrations();
+    it( 'should get pending migrations', async () => {
+      const pending = await migrationManager.getPendingMigrations(_);
 
-      expect(Array.isArray(pending)).toBe(true);
+      expect(_Array.isArray(pending)).toBe(_true);
       pending.forEach(migration => {
-        expect(migration).toHaveProperty('id');
-        expect(migration).toHaveProperty('name');
-        expect(migration).toHaveProperty('description');
-        expect(migration).toHaveProperty('version');
-        expect(migration).toHaveProperty('up');
-        expect(migration).toHaveProperty('down');
+        expect(_migration).toHaveProperty('id');
+        expect(_migration).toHaveProperty('name');
+        expect(_migration).toHaveProperty('description');
+        expect(_migration).toHaveProperty('version');
+        expect(_migration).toHaveProperty('up');
+        expect(_migration).toHaveProperty('down');
       });
     });
 
-    it('should create migration plan', async () => {
-      const plan = await migrationManager.createMigrationPlan();
+    it( 'should create migration plan', async () => {
+      const plan = await migrationManager.createMigrationPlan(_);
 
-      expect(plan).toHaveProperty('migrations');
-      expect(plan).toHaveProperty('totalEstimatedDuration');
-      expect(plan).toHaveProperty('requiresBackup');
-      expect(plan).toHaveProperty('dataTransformations');
-      expect(plan).toHaveProperty('dependencies');
-      expect(Array.isArray(plan.migrations)).toBe(true);
-      expect(typeof plan.totalEstimatedDuration).toBe('number');
-      expect(typeof plan.requiresBackup).toBe('boolean');
+      expect(_plan).toHaveProperty('migrations');
+      expect(_plan).toHaveProperty('totalEstimatedDuration');
+      expect(_plan).toHaveProperty('requiresBackup');
+      expect(_plan).toHaveProperty('dataTransformations');
+      expect(_plan).toHaveProperty('dependencies');
+      expect(_Array.isArray(plan.migrations)).toBe(_true);
+      expect(_typeof plan.totalEstimatedDuration).toBe('number');
+      expect(_typeof plan.requiresBackup).toBe('boolean');
     });
 
-    it('should test migration', async () => {
-      const pending = await migrationManager.getPendingMigrations();
+    it( 'should test migration', async () => {
+      const pending = await migrationManager.getPendingMigrations(_);
       
-      if (pending.length > 0) {
-        const testResult = await migrationManager.testMigration(pending[0].id);
+      if (_pending.length > 0) {
+        const testResult = await migrationManager.testMigration(_pending[0].id);
 
-        expect(testResult).toHaveProperty('syntaxValid');
-        expect(testResult).toHaveProperty('dependenciesMet');
-        expect(testResult).toHaveProperty('estimatedImpact');
-        expect(testResult).toHaveProperty('warnings');
-        expect(typeof testResult.syntaxValid).toBe('boolean');
-        expect(typeof testResult.dependenciesMet).toBe('boolean');
-        expect(Array.isArray(testResult.warnings)).toBe(true);
+        expect(_testResult).toHaveProperty('syntaxValid');
+        expect(_testResult).toHaveProperty('dependenciesMet');
+        expect(_testResult).toHaveProperty('estimatedImpact');
+        expect(_testResult).toHaveProperty('warnings');
+        expect(_typeof testResult.syntaxValid).toBe('boolean');
+        expect(_typeof testResult.dependenciesMet).toBe('boolean');
+        expect(_Array.isArray(testResult.warnings)).toBe(_true);
       }
     });
   });
 
-  describe('Integration Tests', () => {
-    it('should execute complete maintenance workflow', async () => {
+  describe( 'Integration Tests', () => {
+    it( 'should execute complete maintenance workflow', async () => {
       // Register cleanup operations
-      const operation1 = new OrphanedAchievementCleanup();
-      const operation2 = new ExpiredTokensCleanup();
-      cleanupManager.registerOperation(operation1);
-      cleanupManager.registerOperation(operation2);
+      const operation1 = new OrphanedAchievementCleanup(_);
+      const operation2 = new ExpiredTokensCleanup(_);
+      cleanupManager.registerOperation(_operation1);
+      cleanupManager.registerOperation(_operation2);
 
       // Create maintenance schedule
       const schedule: MaintenanceSchedule = {
@@ -470,19 +470,19 @@ describe('Database Maintenance System', () => {
       };
 
       // Add schedule and execute
-      await maintenanceScheduler.addSchedule(schedule);
-      const report = await maintenanceScheduler.runMaintenanceNow(schedule.id);
+      await maintenanceScheduler.addSchedule(_schedule);
+      const report = await maintenanceScheduler.runMaintenanceNow(_schedule.id);
 
       // Verify results
-      expect(report.status).toBe('SUCCESS');
-      expect(report.operations).toHaveLength(1);
-      expect(report.operations[0].operations).toHaveLength(2);
-      expect(report.systemMetrics).toBeDefined();
-      expect(report.recommendations).toBeDefined();
-      expect(Array.isArray(report.recommendations)).toBe(true);
+      expect(_report.status).toBe('SUCCESS');
+      expect(_report.operations).toHaveLength(1);
+      expect(_report.operations[0].operations).toHaveLength(_2);
+      expect(_report.systemMetrics).toBeDefined(_);
+      expect(_report.recommendations).toBeDefined(_);
+      expect(_Array.isArray(report.recommendations)).toBe(_true);
 
       // Cleanup
-      await maintenanceScheduler.deleteSchedule(schedule.id);
+      await maintenanceScheduler.deleteSchedule(_schedule.id);
     });
   });
 });

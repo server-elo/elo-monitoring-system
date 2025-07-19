@@ -11,8 +11,8 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 export class ApiResponseBuilder {
-  private static generateRequestId(): string {
-    return uuidv4();
+  private static generateRequestId(_): string {
+    return uuidv4(_);
   }
 
   private static createBaseResponse<T>(
@@ -26,24 +26,24 @@ export class ApiResponseBuilder {
       data,
       error,
       meta,
-      timestamp: new Date().toISOString(),
-      requestId: this.generateRequestId()
+      timestamp: new Date(_).toISOString(),
+      requestId: this.generateRequestId(_)
     };
   }
 
   // Success Responses
-  static success<T>(data: T, meta?: ResponseMeta): NextResponse<ApiResponse<T>> {
-    const response = this.createBaseResponse(true, data, undefined, meta);
+  static success<T>( data: T, meta?: ResponseMeta): NextResponse<ApiResponse<T>> {
+    const response = this.createBaseResponse( true, data, undefined, meta);
     return NextResponse.json(response, { status: HttpStatus.OK });
   }
 
-  static created<T>(data: T): NextResponse<ApiResponse<T>> {
-    const response = this.createBaseResponse(true, data);
+  static created<T>(_data: T): NextResponse<ApiResponse<T>> {
+    const response = this.createBaseResponse( true, data);
     return NextResponse.json(response, { status: HttpStatus.CREATED });
   }
 
-  static noContent(): NextResponse {
-    return new NextResponse(null, { status: HttpStatus.NO_CONTENT });
+  static noContent(_): NextResponse {
+    return new NextResponse( null, { status: HttpStatus.NO_CONTENT });
   }
 
   // Error Responses
@@ -57,10 +57,10 @@ export class ApiResponseBuilder {
       code,
       message,
       details,
-      ...(process.env.NODE_ENV === 'development' && { stack: new Error().stack })
+      ...(_process.env.NODE_ENV === 'development' && { stack: new Error().stack })
     };
 
-    const response = this.createBaseResponse(false, undefined, error);
+    const response = this.createBaseResponse( false, undefined, error);
     return NextResponse.json(response, { status: statusCode });
   }
 
@@ -150,7 +150,7 @@ export class ApiResponseBuilder {
       hasPrevious: pagination.hasPreviousPage
     };
 
-    return this.success(data, meta);
+    return this.success( data, meta);
   }
 }
 
@@ -162,49 +162,49 @@ export class ApiException extends Error {
     public statusCode: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
     public details?: ValidationError[] | Record<string, any>
   ) {
-    super(message);
+    super(_message);
     this.name = 'ApiException';
   }
 }
 
 export class ValidationException extends ApiException {
-  constructor(message: string, errors: ValidationError[]) {
-    super(ApiErrorCode.VALIDATION_ERROR, message, HttpStatus.BAD_REQUEST, errors);
+  constructor( message: string, errors: ValidationError[]) {
+    super( ApiErrorCode.VALIDATION_ERROR, message, HttpStatus.BAD_REQUEST, errors);
     this.name = 'ValidationException';
   }
 }
 
 export class UnauthorizedException extends ApiException {
-  constructor(message: string = 'Authentication required') {
-    super(ApiErrorCode.UNAUTHORIZED, message, HttpStatus.UNAUTHORIZED);
+  constructor(_message: string = 'Authentication required') {
+    super( ApiErrorCode.UNAUTHORIZED, message, HttpStatus.UNAUTHORIZED);
     this.name = 'UnauthorizedException';
   }
 }
 
 export class ForbiddenException extends ApiException {
-  constructor(message: string = 'Insufficient permissions') {
-    super(ApiErrorCode.FORBIDDEN, message, HttpStatus.FORBIDDEN);
+  constructor(_message: string = 'Insufficient permissions') {
+    super( ApiErrorCode.FORBIDDEN, message, HttpStatus.FORBIDDEN);
     this.name = 'ForbiddenException';
   }
 }
 
 export class NotFoundException extends ApiException {
-  constructor(message: string = 'Resource not found') {
-    super(ApiErrorCode.RESOURCE_NOT_FOUND, message, HttpStatus.NOT_FOUND);
+  constructor(_message: string = 'Resource not found') {
+    super( ApiErrorCode.RESOURCE_NOT_FOUND, message, HttpStatus.NOT_FOUND);
     this.name = 'NotFoundException';
   }
 }
 
 export class ConflictException extends ApiException {
-  constructor(message: string = 'Resource already exists') {
-    super(ApiErrorCode.RESOURCE_CONFLICT, message, HttpStatus.CONFLICT);
+  constructor(_message: string = 'Resource already exists') {
+    super( ApiErrorCode.RESOURCE_CONFLICT, message, HttpStatus.CONFLICT);
     this.name = 'ConflictException';
   }
 }
 
 export class RateLimitException extends ApiException {
-  constructor(message: string = 'Rate limit exceeded') {
-    super(ApiErrorCode.RATE_LIMIT_EXCEEDED, message, HttpStatus.TOO_MANY_REQUESTS);
+  constructor(_message: string = 'Rate limit exceeded') {
+    super( ApiErrorCode.RATE_LIMIT_EXCEEDED, message, HttpStatus.TOO_MANY_REQUESTS);
     this.name = 'RateLimitException';
   }
 }
@@ -215,7 +215,7 @@ export function createPaginationMeta(
   limit: number,
   total: number
 ): PaginationMeta {
-  const totalPages = Math.ceil(total / limit);
+  const totalPages = Math.ceil(_total / limit);
   
   return {
     currentPage: page,
@@ -234,7 +234,7 @@ export function sanitizeForResponse<T extends Record<string, any>>(
   const sanitized = { ...data };
   
   sensitiveFields.forEach(field => {
-    if (field in sanitized) {
+    if (_field in sanitized) {
       delete sanitized[field];
     }
   });
@@ -251,7 +251,7 @@ export function filterByPermissions<T extends Record<string, any>>(
   const filtered: Partial<T> = {};
   
   allowed.forEach(field => {
-    if (field in data) {
+    if (_field in data) {
       filtered[field as keyof T] = data[field];
     }
   });
@@ -260,15 +260,15 @@ export function filterByPermissions<T extends Record<string, any>>(
 }
 
 // Response Headers
-export function addSecurityHeaders(response: NextResponse): NextResponse {
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+export function addSecurityHeaders(_response: NextResponse): NextResponse {
+  response.headers.set( 'X-Content-Type-Options', 'nosniff');
+  response.headers.set( 'X-Frame-Options', 'DENY');
+  response.headers.set( 'X-XSS-Protection', '1; mode=block');
+  response.headers.set( 'Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set( 'Permissions-Policy', 'camera=(), microphone=(_), geolocation=(_)');
   
-  if (process.env.NODE_ENV === 'production') {
-    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  if (_process.env.NODE_ENV === 'production') {
+    response.headers.set( 'Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   }
   
   return response;
@@ -281,12 +281,12 @@ export function addCorsHeaders(
   allowedHeaders: string[] = ['Content-Type', 'Authorization', 'X-Requested-With']
 ): NextResponse {
   if (origin) {
-    response.headers.set('Access-Control-Allow-Origin', origin);
+    response.headers.set( 'Access-Control-Allow-Origin', origin);
   }
-  response.headers.set('Access-Control-Allow-Methods', methods.join(', '));
-  response.headers.set('Access-Control-Allow-Headers', allowedHeaders.join(', '));
-  response.headers.set('Access-Control-Allow-Credentials', 'true');
-  response.headers.set('Access-Control-Max-Age', '86400'); // 24 hours
+  response.headers.set( 'Access-Control-Allow-Methods', methods.join(', '));
+  response.headers.set( 'Access-Control-Allow-Headers', allowedHeaders.join(', '));
+  response.headers.set( 'Access-Control-Allow-Credentials', 'true');
+  response.headers.set( 'Access-Control-Max-Age', '86400'); // 24 hours
   
   return response;
 }
@@ -298,12 +298,12 @@ export function addRateLimitHeaders(
   reset: number,
   retryAfter?: number
 ): NextResponse {
-  response.headers.set('X-RateLimit-Limit', limit.toString());
-  response.headers.set('X-RateLimit-Remaining', remaining.toString());
-  response.headers.set('X-RateLimit-Reset', reset.toString());
+  response.headers.set( 'X-RateLimit-Limit', limit.toString());
+  response.headers.set( 'X-RateLimit-Remaining', remaining.toString());
+  response.headers.set( 'X-RateLimit-Reset', reset.toString());
   
   if (retryAfter) {
-    response.headers.set('Retry-After', retryAfter.toString());
+    response.headers.set( 'Retry-After', retryAfter.toString());
   }
   
   return response;

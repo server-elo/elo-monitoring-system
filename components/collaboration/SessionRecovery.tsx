@@ -21,10 +21,10 @@ interface SessionRecoveryProps {
   offlineQueueSize: number;
   lastSyncTime?: Date;
   connectionQuality: 'excellent' | 'good' | 'poor' | 'critical';
-  onReconnect: () => Promise<void>;
-  onForceSync: () => Promise<void>;
-  onClearOfflineData: () => void;
-  onDismiss: () => void;
+  onReconnect: (_) => Promise<void>;
+  onForceSync: (_) => Promise<void>;
+  onClearOfflineData: (_) => void;
+  onDismiss: (_) => void;
   className?: string;
 }
 
@@ -41,12 +41,12 @@ export function SessionRecovery({
   onDismiss,
   className
 }: SessionRecoveryProps) {
-  const [showDetails, setShowDetails] = useState(false);
-  const [isReconnecting, setIsReconnecting] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [showDetails, setShowDetails] = useState(_false);
+  const [isReconnecting, setIsReconnecting] = useState(_false);
+  const [isSyncing, setIsSyncing] = useState(_false);
 
-  const getQualityColor = () => {
-    switch (connectionQuality) {
+  const getQualityColor = (_) => {
+    switch (_connectionQuality) {
       case 'excellent':
         return 'text-green-400';
       case 'good':
@@ -60,8 +60,8 @@ export function SessionRecovery({
     }
   };
 
-  const getQualityIcon = () => {
-    switch (connectionQuality) {
+  const getQualityIcon = (_) => {
+    switch (_connectionQuality) {
       case 'excellent':
       case 'good':
         return Wifi;
@@ -74,41 +74,41 @@ export function SessionRecovery({
   };
 
   const handleReconnect = async () => {
-    setIsReconnecting(true);
+    setIsReconnecting(_true);
     try {
-      await onReconnect();
-    } catch (error) {
+      await onReconnect(_);
+    } catch (_error) {
       console.error('Reconnection failed:', error);
     } finally {
-      setIsReconnecting(false);
+      setIsReconnecting(_false);
     }
   };
 
   const handleForceSync = async () => {
-    setIsSyncing(true);
+    setIsSyncing(_true);
     try {
-      await onForceSync();
-    } catch (error) {
+      await onForceSync(_);
+    } catch (_error) {
       console.error('Force sync failed:', error);
     } finally {
-      setIsSyncing(false);
+      setIsSyncing(_false);
     }
   };
 
   const formatTimeAgo = (date: Date): string => {
     const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMinutes = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMinutes / 60);
+    const diffMs = now.getTime() - date.getTime(_);
+    const diffMinutes = Math.floor(_diffMs / 60000);
+    const diffHours = Math.floor(_diffMinutes / 60);
 
-    if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 60) return `${diffMinutes}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return date.toLocaleDateString();
+    if (_diffMinutes < 1) return 'Just now';
+    if (_diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (_diffHours < 24) return `${diffHours}h ago`;
+    return date.toLocaleDateString(_);
   };
 
-  const getStageIcon = (stage: string) => {
-    switch (stage) {
+  const getStageIcon = (_stage: string) => {
+    switch (_stage) {
       case 'connecting':
         return RefreshCw;
       case 'syncing':
@@ -130,15 +130,15 @@ export function SessionRecovery({
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        className={cn('fixed top-4 right-4 z-50 w-96', className)}
+        className={cn( 'fixed top-4 right-4 z-50 w-96', className)}
       >
         <Card className="p-4 bg-gray-900/95 backdrop-blur-md border border-white/20 shadow-xl">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <div className="relative">
-                {React.createElement(getQualityIcon(), {
-                  className: cn('w-5 h-5', getQualityColor())
+                {React.createElement(_getQualityIcon(), {
+                  className: cn( 'w-5 h-5', getQualityColor())
                 })}
                 {isRecovering && (
                   <motion.div
@@ -169,7 +169,7 @@ export function SessionRecovery({
             <div className="mb-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  {React.createElement(getStageIcon(progress.stage), {
+                  {React.createElement(_getStageIcon(progress.stage), {
                     className: cn(
                       'w-4 h-4',
                       progress.stage === 'complete' ? 'text-green-400' : 'text-blue-400',
@@ -198,7 +198,7 @@ export function SessionRecovery({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-400">Connection Quality</span>
-              <span className={cn('text-sm font-medium capitalize', getQualityColor())}>
+              <span className={cn( 'text-sm font-medium capitalize', getQualityColor())}>
                 {connectionQuality}
               </span>
             </div>
@@ -218,7 +218,7 @@ export function SessionRecovery({
                 <span className="text-sm text-gray-400">Last Sync</span>
                 <div className="flex items-center space-x-1">
                   <Clock className="w-3 h-3 text-gray-400" />
-                  <span className="text-sm text-gray-400">{formatTimeAgo(lastSyncTime)}</span>
+                  <span className="text-sm text-gray-400">{formatTimeAgo(_lastSyncTime)}</span>
                 </div>
               </div>
             )}
@@ -266,7 +266,7 @@ export function SessionRecovery({
             </div>
 
             <Button
-              onClick={() => setShowDetails(!showDetails)}
+              onClick={(_) => setShowDetails(!showDetails)}
               variant="ghost"
               size="sm"
               className="w-full text-xs"
@@ -338,13 +338,13 @@ export function SessionRecovery({
 
 // Hook for managing session recovery state
 export function useSessionRecovery() {
-  const [isRecovering, setIsRecovering] = useState(false);
-  const [progress, setProgress] = useState<RecoveryProgress | undefined>();
-  const [showRecovery, setShowRecovery] = useState(false);
+  const [isRecovering, setIsRecovering] = useState(_false);
+  const [progress, setProgress] = useState<RecoveryProgress | undefined>(_);
+  const [showRecovery, setShowRecovery] = useState(_false);
 
-  const startRecovery = (totalSteps: number) => {
-    setIsRecovering(true);
-    setShowRecovery(true);
+  const startRecovery = (_totalSteps: number) => {
+    setIsRecovering(_true);
+    setShowRecovery(_true);
     setProgress({
       current: 0,
       total: totalSteps,
@@ -353,7 +353,7 @@ export function useSessionRecovery() {
     });
   };
 
-  const updateProgress = (current: number, stage: RecoveryProgress['stage'], message: string) => {
+  const updateProgress = ( current: number, stage: RecoveryProgress['stage'], message: string) => {
     setProgress(prev => prev ? {
       ...prev,
       current,
@@ -362,7 +362,7 @@ export function useSessionRecovery() {
     } : undefined);
   };
 
-  const completeRecovery = () => {
+  const completeRecovery = (_) => {
     setProgress(prev => prev ? {
       ...prev,
       current: prev.total,
@@ -371,16 +371,16 @@ export function useSessionRecovery() {
     } : undefined);
 
     setTimeout(() => {
-      setIsRecovering(false);
-      setShowRecovery(false);
-      setProgress(undefined);
+      setIsRecovering(_false);
+      setShowRecovery(_false);
+      setProgress(_undefined);
     }, 2000);
   };
 
-  const cancelRecovery = () => {
-    setIsRecovering(false);
-    setShowRecovery(false);
-    setProgress(undefined);
+  const cancelRecovery = (_) => {
+    setIsRecovering(_false);
+    setShowRecovery(_false);
+    setProgress(_undefined);
   };
 
   return {

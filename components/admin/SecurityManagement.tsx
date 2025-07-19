@@ -14,39 +14,39 @@ interface SecurityManagementProps {
 }
 
 interface SecurityEventDetailProps {
-  event: SecurityEvent | null;
-  isOpen: boolean;
-  onClose: () => void;
+  event: SecurityEvent | null; 
+  isOpen: boolean; 
+  onClose: () => void; 
   onResolve: (eventId: string, resolution: string) => void;
 }
 
 function SecurityEventDetail({ event, isOpen, onClose, onResolve }: SecurityEventDetailProps) {
   const [resolution, setResolution] = useState('');
-  const [isResolving, setIsResolving] = useState(false);
+  const [isResolving, setIsResolving] = useState(_false);
 
   if (!isOpen || !event) return null;
 
   const handleResolve = async () => {
     if (!resolution.trim()) return;
 
-    setIsResolving(true);
+    setIsResolving(_true);
     try {
       await onResolve(event.id, resolution);
       onClose();
     } catch (error) {
       console.error('Failed to resolve security event:', error);
     } finally {
-      setIsResolving(false);
+      setIsResolving(_false);
     }
   };
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
+  const getSeverityColor = (_severity: string) => {
+    switch (_severity) {
       case 'critical': return 'text-red-400 bg-red-500/10 border-red-400/30';
       case 'high': return 'text-orange-400 bg-orange-500/10 border-orange-400/30';
       case 'medium': return 'text-yellow-400 bg-yellow-500/10 border-yellow-400/30';
       case 'low': return 'text-blue-400 bg-blue-500/10 border-blue-400/30';
-      default: return 'text-gray-400 bg-gray-500/10 border-gray-400/30';
+      default: return 'text-gray-400 bg-gray-500/10 border-gray-400/30'; 
     }
   };
 
@@ -70,7 +70,7 @@ function SecurityEventDetail({ event, isOpen, onClose, onResolve }: SecurityEven
             <p className="text-gray-400 text-sm mt-1">Event ID: {event.id}</p>
           </div>
           <div className="flex items-center space-x-3">
-            <span className={cn('px-3 py-1 rounded-full text-xs font-medium border', getSeverityColor(event.severity))}>
+            <span className={cn("'px-3 py-1 rounded-full text-xs font-medium border', getSeverityColor(event.severity))}>
               {event.severity} severity
             </span>
             <Button
@@ -85,7 +85,7 @@ function SecurityEventDetail({ event, isOpen, onClose, onResolve }: SecurityEven
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+        <div className="p-6 overflow-y-auto max-h-[calc(_90vh-200px)]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Event Information */}
             <Card className="bg-white/5 border-white/10 p-4">
@@ -93,7 +93,7 @@ function SecurityEventDetail({ event, isOpen, onClose, onResolve }: SecurityEven
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Type:</span>
-                  <span className="text-white capitalize">{event.type.replace('_', ' ')}</span>
+                  <span className="text-white capitalize">{event.type.replace('', ' ')}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Timestamp:</span>
@@ -109,7 +109,7 @@ function SecurityEventDetail({ event, isOpen, onClose, onResolve }: SecurityEven
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Status:</span>
-                  <span className={cn('flex items-center space-x-1', event.resolved ? 'text-green-400' : 'text-red-400')}>
+                  <span className={cn("'flex items-center space-x-1', event.resolved ? 'text-green-400' : 'text-red-400')}>
                     {event.resolved ? <CheckCircle className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
                     <span>{event.resolved ? 'Resolved' : 'Unresolved'}</span>
                   </span>
@@ -134,14 +134,14 @@ function SecurityEventDetail({ event, isOpen, onClose, onResolve }: SecurityEven
             </Card>
 
             {/* Metadata */}
-            {event.metadata && Object.keys(event.metadata).length > 0 && (
+            {event.metadata && Object.keys(_event.metadata).length > 0 && (
               <Card className="bg-white/5 border-white/10 p-4 lg:col-span-2">
                 <h3 className="font-medium text-white mb-4">Additional Information</h3>
                 <div className="bg-black/20 rounded p-3 overflow-auto max-h-40">
                   <pre className="text-gray-300 text-xs">{JSON.stringify(event.metadata, null, 2)}</pre>
                 </div>
               </Card>
-            )}
+           )}
           </div>
         </div>
 
@@ -154,7 +154,7 @@ function SecurityEventDetail({ event, isOpen, onClose, onResolve }: SecurityEven
               </label>
               <textarea
                 value={resolution}
-                onChange={(e) => setResolution(e.target.value)}
+                onChange={(_e) => setResolution(_e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 resize-none"
                 placeholder="Describe how this security event was resolved..."
@@ -178,32 +178,32 @@ function SecurityEventDetail({ event, isOpen, onClose, onResolve }: SecurityEven
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     <span>Resolving...</span>
                   </div>
-                ) : (
+               ) : (
                   <>
                     <CheckCircle className="w-4 h-4 mr-2" />
                     Mark as Resolved
                   </>
-                )}
+               )}
               </Button>
             </div>
           </div>
-        )}
+       )}
       </motion.div>
     </motion.div>
-  );
+ );
 }
 
-export function SecurityManagement({ className }: SecurityManagementProps) {
+export function SecurityManagement(_{ className }: SecurityManagementProps) {
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<SecurityEvent | null>(null);
-  const [showEventModal, setShowEventModal] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState<SecurityEvent | null>(_null);
+  const [showEventModal, setShowEventModal] = useState(_false);
+  const [loading, setLoading] = useState(_true);
   const [activeTab, setActiveTab] = useState<'events' | 'access' | 'settings'>('events');
   const [filters, setFilters] = useState({
-    type: 'all',
-    severity: 'all',
-    resolved: 'all',
-    search: ''
+    type: 'all' 
+    severity: 'all' 
+    resolved: 'all' 
+    search: '' 
   });
 
   useEffect(() => {
@@ -211,7 +211,7 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
   }, [filters]);
 
   const loadSecurityEvents = async () => {
-    setLoading(true);
+    setLoading(_true);
 
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -219,134 +219,134 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
     // Mock security events
     const mockEvents: SecurityEvent[] = [
       {
-        id: 'sec_001',
-        type: 'login_failure',
-        severity: 'medium',
-        userId: 'user123',
-        ipAddress: '192.168.1.100',
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-        description: 'Multiple failed login attempts detected from this IP address',
-        metadata: {
-          attemptCount: 5,
-          lastAttempt: new Date(Date.now() - 300000),
-          targetAccount: 'admin@example.com'
-        },
-        resolved: false
-      },
+        id: 'sec001' 
+        type: 'login_failure' 
+        severity: 'medium' 
+        userId: 'user123' 
+        ipAddress: '192.168.1.100' 
+        userAgent: 'Mozilla/5.0 (_Windows NT 10.0; Win64; x64) AppleWebKit/537.36' 
+        timestamp: new Date(_Date.now() - 3600000), // 1 hour ago,
+        description: 'Multiple failed login attempts detected from this IP address' 
+        metadata: { 
+          attemptCount: 5 
+          lastAttempt: new Date(_Date.now() - 300000) 
+          targetAccount: 'admin@example.com' 
+        } 
+        resolved: false 
+      } 
       {
-        id: 'sec_002',
-        type: 'suspicious_activity',
-        severity: 'high',
-        userId: 'user456',
-        ipAddress: '10.0.0.50',
-        userAgent: 'curl/7.68.0',
-        timestamp: new Date(Date.now() - 7200000), // 2 hours ago
-        description: 'Unusual API access pattern detected - potential automated attack',
-        metadata: {
-          requestCount: 1000,
-          timeWindow: '5 minutes',
+        id: 'sec002' 
+        type: 'suspicious_activity' 
+        severity: 'high' 
+        userId: 'user456' 
+        ipAddress: '10.0.0.50' 
+        userAgent: 'curl/7.68.0' 
+        timestamp: new Date(_Date.now() - 7200000), // 2 hours ago,
+        description: 'Unusual API access pattern detected - potential automated attack' 
+        metadata: { 
+          requestCount: 1000 
+          timeWindow: '5 minutes' 
           endpoints: ['/api/users', '/api/content', '/api/admin']
-        },
-        resolved: true,
-        resolvedAt: new Date(Date.now() - 3600000),
-        resolvedBy: 'admin_1'
-      },
+        } 
+        resolved: true 
+        resolvedAt: new Date(_Date.now() - 3600000) 
+        resolvedBy: 'admin1' 
+      } 
       {
-        id: 'sec_003',
-        type: 'unauthorized_access',
-        severity: 'critical',
-        userId: undefined,
-        ipAddress: '203.0.113.42',
-        userAgent: 'Python-requests/2.25.1',
-        timestamp: new Date(Date.now() - 10800000), // 3 hours ago
-        description: 'Attempt to access admin panel without proper authentication',
-        metadata: {
-          attemptedEndpoint: '/admin/users',
-          method: 'POST',
-          payload: 'suspicious'
-        },
-        resolved: false
+        id: 'sec003' 
+        type: 'unauthorized_access' 
+        severity: 'critical' 
+        userId: undefined 
+        ipAddress: '203.0.113.42' 
+        userAgent: 'Python-requests/2.25.1' 
+        timestamp: new Date(_Date.now() - 10800000), // 3 hours ago,
+        description: 'Attempt to access admin panel without proper authentication' 
+        metadata: { 
+          attemptedEndpoint: '/admin/users' 
+          method: 'POST' 
+          payload: 'suspicious' 
+        } 
+        resolved: false 
       }
     ];
 
     // Apply filters
     let filteredEvents = mockEvents;
 
-    if (filters.type !== 'all') {
+    if (_filters.type !== 'all') {
       filteredEvents = filteredEvents.filter(event => event.type === filters.type);
     }
-    if (filters.severity !== 'all') {
+    if (_filters.severity !== 'all') {
       filteredEvents = filteredEvents.filter(event => event.severity === filters.severity);
     }
-    if (filters.resolved !== 'all') {
+    if (_filters.resolved !== 'all') {
       filteredEvents = filteredEvents.filter(event =>
         filters.resolved === 'true' ? event.resolved : !event.resolved
-      );
+     );
     }
-    if (filters.search) {
+    if (_filters.search) {
       const searchLower = filters.search.toLowerCase();
       filteredEvents = filteredEvents.filter(event =>
         event.description.toLowerCase().includes(searchLower) ||
         event.ipAddress.includes(searchLower) ||
         event.type.toLowerCase().includes(searchLower)
-      );
+     );
     }
 
-    setSecurityEvents(filteredEvents);
-    setLoading(false);
+    setSecurityEvents(_filteredEvents);
+    setLoading(_false);
   };
 
-  const handleResolveEvent = async (eventId: string, _resolution: string) => {
+  const handleResolveEvent = async (eventId: string, resolution: string) => {
     setSecurityEvents(prev => prev.map(event => {
-      if (event.id === eventId) {
+      if (_event.id === eventId) {
         return {
-          ...event,
-          resolved: true,
-          resolvedAt: new Date(),
-          resolvedBy: adminAuth.getCurrentUser()?.id || 'unknown'
+          ...event 
+          resolved: true 
+          resolvedAt: new Date() 
+          resolvedBy: adminAuth.getCurrentUser()?.id || 'unknown' 
         };
       }
       return event;
     }));
   };
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
+  const getSeverityColor = (_severity: string) => {
+    switch (_severity) {
       case 'critical': return 'text-red-400 bg-red-500/10';
       case 'high': return 'text-orange-400 bg-orange-500/10';
       case 'medium': return 'text-yellow-400 bg-yellow-500/10';
       case 'low': return 'text-blue-400 bg-blue-500/10';
-      default: return 'text-gray-400 bg-gray-500/10';
+      default: return 'text-gray-400 bg-gray-500/10'; 
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
+  const getTypeIcon = (_type: string) => {
+    switch (_type) {
       case 'login_failure': return Lock;
       case 'suspicious_activity': return AlertTriangle;
       case 'unauthorized_access': return Shield;
       case 'data_breach': return Database;
       case 'permission_escalation': return Key;
-      default: return AlertTriangle;
+      default: return AlertTriangle; 
     }
   };
 
   const formatRelativeTime = (date: Date): string => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+    const minutes = Math.floor(_diff / 60000);
+    const hours = Math.floor(_minutes / 60);
+    const days = Math.floor(_hours / 24);
 
-    if (days > 0) return `${days}d ago`;
-    if (hours > 0) return `${hours}h ago`;
-    if (minutes > 0) return `${minutes}m ago`;
+    if (_days > 0) return `${days}d ago`;
+    if (_hours > 0) return `${hours}h ago`;
+    if (_minutes > 0) return `${minutes}m ago`;
     return 'Just now';
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("'space-y-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -360,7 +360,7 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
             variant="outline"
             className="border-white/20 text-white hover:bg-white/10"
           >
-            <RefreshCw className={cn('w-4 h-4 mr-2', loading && 'animate-spin')} />
+            <RefreshCw className={cn("'w-4 h-4 mr-2', loading && 'animate-spin')} />
             Refresh
           </Button>
           <Button
@@ -375,26 +375,26 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
       {/* Tabs */}
       <div className="flex space-x-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-1">
         {[
-          { id: 'events', label: 'Security Events', icon: AlertTriangle },
-          { id: 'access', label: 'Access Control', icon: Lock },
+          { id: 'events', label: 'Security Events', icon: AlertTriangle } 
+          { id: 'access', label: 'Access Control', icon: Lock } 
           { id: 'settings', label: 'Security Settings', icon: Settings }
         ].map(tab => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(() => setActiveTab(_tab.id as any)}
               className={cn(
-                'flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors',
+                'flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors' 
                 activeTab === tab.id
                   ? 'bg-blue-500 text-white'
                   : 'text-gray-400 hover:text-white hover:bg-white/10'
-              )}
+             )}
             >
               <Icon className="w-4 h-4" />
               <span>{tab.label}</span>
             </button>
-          );
+         );
         })}
       </div>
 
@@ -411,7 +411,7 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                   <input
                     type="text"
                     value={filters.search}
-                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    onChange={(_e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
                     placeholder="Search events..."
                     className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"
                   />
@@ -422,7 +422,7 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                 <label className="block text-sm font-medium text-gray-300 mb-2">Event Type</label>
                 <select
                   value={filters.type}
-                  onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
+                  onChange={(_e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400"
                 >
                   <option value="all">All Types</option>
@@ -438,7 +438,7 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                 <label className="block text-sm font-medium text-gray-300 mb-2">Severity</label>
                 <select
                   value={filters.severity}
-                  onChange={(e) => setFilters(prev => ({ ...prev, severity: e.target.value }))}
+                  onChange={(_e) => setFilters(prev => ({ ...prev, severity: e.target.value }))}
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400"
                 >
                   <option value="all">All Severities</option>
@@ -453,7 +453,7 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                 <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
                 <select
                   value={filters.resolved}
-                  onChange={(e) => setFilters(prev => ({ ...prev, resolved: e.target.value }))}
+                  onChange={(_e) => setFilters(prev => ({ ...prev, resolved: e.target.value }))}
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400"
                 >
                   <option value="all">All</option>
@@ -478,10 +478,10 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                       </div>
                       <div className="w-20 h-6 bg-gray-600 animate-pulse rounded" />
                     </div>
-                  ))}
+                 ))}
                 </div>
               </div>
-            ) : (
+           ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-black/20 border-b border-white/10">
@@ -497,7 +497,7 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                   </thead>
                   <tbody className="divide-y divide-white/10">
                     {securityEvents.map((event) => {
-                      const TypeIcon = getTypeIcon(event.type);
+                      const TypeIcon = getTypeIcon(_event.type);
 
                       return (
                         <motion.tr
@@ -516,13 +516,13 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="text-sm text-white capitalize">{event.type.replace('_', ' ')}</span>
+                            <span className="text-sm text-white capitalize">{event.type.replace('', ' ')}</span>
                           </td>
                           <td className="px-6 py-4">
                             <span className={cn(
-                              'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                              getSeverityColor(event.severity)
-                            )}>
+                              'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium' 
+                              getSeverityColor(_event.severity)
+                           )}>
                               {event.severity}
                             </span>
                           </td>
@@ -531,24 +531,24 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                               <div className="text-white font-mono">{event.ipAddress}</div>
                               {event.userId && (
                                 <div className="text-gray-400 text-xs">User: {event.userId}</div>
-                              )}
+                             )}
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className={cn('flex items-center space-x-1', event.resolved ? 'text-green-400' : 'text-red-400')}>
+                            <div className={cn("'flex items-center space-x-1', event.resolved ? 'text-green-400' : 'text-red-400')}>
                               {event.resolved ? <CheckCircle className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
                               <span className="text-sm">{event.resolved ? 'Resolved' : 'Unresolved'}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="text-sm text-white">{formatRelativeTime(event.timestamp)}</div>
+                            <div className="text-sm text-white">{formatRelativeTime(_event.timestamp)}</div>
                             <div className="text-xs text-gray-400">{event.timestamp.toLocaleString()}</div>
                           </td>
                           <td className="px-6 py-4 text-right">
                             <Button
-                              onClick={() => {
-                                setSelectedEvent(event);
-                                setShowEventModal(true);
+                              onClick={(() => {
+                                setSelectedEvent(_event);
+                                setShowEventModal(_true);
                               }}
                               variant="ghost"
                               size="sm"
@@ -558,15 +558,15 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
                             </Button>
                           </td>
                         </motion.tr>
-                      );
+                     );
                     })}
                   </tbody>
                 </table>
               </div>
-            )}
+           )}
           </Card>
         </>
-      )}
+     )}
 
       {/* Access Control Tab */}
       {activeTab === 'access' && (
@@ -645,7 +645,7 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
             </Button>
           </Card>
         </div>
-      )}
+     )}
 
       {/* Security Settings Tab */}
       {activeTab === 'settings' && (
@@ -722,20 +722,20 @@ export function SecurityManagement({ className }: SecurityManagementProps) {
             </div>
           </Card>
         </div>
-      )}
+     )}
 
       {/* Security Event Detail Modal */}
       <AnimatePresence>
         <SecurityEventDetail
           event={selectedEvent}
           isOpen={showEventModal}
-          onClose={() => {
-            setShowEventModal(false);
-            setSelectedEvent(null);
+          onClose={(() => {
+            setShowEventModal(_false);
+            setSelectedEvent(_null);
           }}
           onResolve={handleResolveEvent}
         />
       </AnimatePresence>
     </div>
-  );
+ );
 }

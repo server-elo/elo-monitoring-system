@@ -7,7 +7,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -15,7 +15,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get all courses (learning paths) with modules and lessons
+    // Get all courses (_learning paths) with modules and lessons
     const courses = await prisma.course.findMany({
       include: {
         modules: {
@@ -110,7 +110,7 @@ export async function GET(_request: NextRequest) {
         modules: transformedModules,
         totalHours: course.estimatedHours || 40,
         completionRate,
-        studentsEnrolled: course._count.progress,
+        studentsEnrolled: course.count.progress,
         rating: 4.8, // TODO: Implement course rating system
         isEnrolled,
         enrolledAt: userEnrollment?.createdAt,
@@ -124,7 +124,7 @@ export async function GET(_request: NextRequest) {
   }
 }
 
-export async function POST(_request: NextRequest) {
+export async function POST( request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -132,7 +132,7 @@ export async function POST(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action, courseId, lessonId } = await _request.json();
+    const { action, courseId, lessonId } = await request.json();
 
     switch (action) {
       case 'enroll':
@@ -214,7 +214,7 @@ export async function POST(_request: NextRequest) {
         // Update lesson progress
         const completedProgress = await prisma.userProgress.upsert({
           where: {
-            userId_courseId_moduleId_lessonId: {
+            userIdcourseId_moduleId_lessonId: {
               userId: session.user.id,
               courseId: lesson.module.courseId,
               moduleId: lesson.moduleId,

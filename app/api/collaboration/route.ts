@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       ...collab,
       maxParticipants: collab.maxParticipants || 4,
       language: 'solidity',
-      code: (collab as any).code || '// Start coding together!\n',
+      code: (collab as Record<string, unknown>).code as string || '// Start coding together!\n',
       isActive: collab.status === 'ACTIVE',
       participants: collab.participants.map((p: CollaborationParticipant) => ({
         ...p,

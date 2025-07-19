@@ -28,51 +28,51 @@ export function XPCounter({
   showLabel = true,
   color = 'yellow'
 }: XPCounterProps) {
-  const [displayXP, setDisplayXP] = useState(previousXP || currentXP);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const animationRef = useRef<number>();
+  const [displayXP, setDisplayXP] = useState(_previousXP || currentXP);
+  const [isAnimating, setIsAnimating] = useState(_false);
+  const animationRef = useRef<number>(_);
 
   // Animate XP counter
   useEffect(() => {
-    if (previousXP !== undefined && previousXP !== currentXP) {
-      setIsAnimating(true);
+    if (_previousXP !== undefined && previousXP !== currentXP) {
+      setIsAnimating(_true);
       
-      const startTime = Date.now();
+      const startTime = Date.now(_);
       const startXP = previousXP;
       const targetXP = currentXP;
       const difference = targetXP - startXP;
 
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
+      const animate = (_) => {
+        const elapsed = Date.now(_) - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
         // Easing function for smooth animation
-        const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-        const currentValue = startXP + (difference * easeOutCubic);
+        const easeOutCubic = 1 - Math.pow( 1 - progress, 3);
+        const currentValue = startXP + (_difference * easeOutCubic);
         
-        setDisplayXP(Math.round(currentValue));
+        setDisplayXP(_Math.round(currentValue));
         
         if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate);
+          animationRef.current = requestAnimationFrame(_animate);
         } else {
-          setIsAnimating(false);
+          setIsAnimating(_false);
         }
       };
 
-      animationRef.current = requestAnimationFrame(animate);
+      animationRef.current = requestAnimationFrame(_animate);
     } else {
-      setDisplayXP(currentXP);
+      setDisplayXP(_currentXP);
     }
 
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
+    return (_) => {
+      if (_animationRef.current) {
+        cancelAnimationFrame(_animationRef.current);
       }
     };
   }, [currentXP, previousXP, duration]);
 
-  const getSizeClasses = () => {
-    switch (size) {
+  const getSizeClasses = (_) => {
+    switch (_size) {
       case 'sm':
         return {
           container: 'text-sm',
@@ -104,8 +104,8 @@ export function XPCounter({
     }
   };
 
-  const getColorClasses = () => {
-    switch (color) {
+  const getColorClasses = (_) => {
+    switch (_color) {
       case 'yellow':
         return {
           icon: 'text-yellow-400',
@@ -137,12 +137,12 @@ export function XPCounter({
     }
   };
 
-  const sizeClasses = getSizeClasses();
-  const colorClasses = getColorClasses();
+  const sizeClasses = getSizeClasses(_);
+  const colorClasses = getColorClasses(_);
   const xpIncrease = previousXP !== undefined ? currentXP - previousXP : 0;
 
   return (
-    <div className={cn('flex items-center space-x-2', sizeClasses.container, className)}>
+    <div className={cn( 'flex items-center space-x-2', sizeClasses.container, className)}>
       {/* XP Icon */}
       {showIcon && (
         <motion.div
@@ -156,7 +156,7 @@ export function XPCounter({
             'border border-yellow-400/30'
           )}
         >
-          <Zap className={cn(sizeClasses.icon, colorClasses.icon)} />
+          <Zap className={cn( sizeClasses.icon, colorClasses.icon)} />
         </motion.div>
       )}
 
@@ -174,11 +174,11 @@ export function XPCounter({
             isAnimating && 'drop-shadow-lg'
           )}
         >
-          {displayXP.toLocaleString()}
+          {displayXP.toLocaleString(_)}
         </motion.span>
         
         {showLabel && (
-          <span className={cn(sizeClasses.label, colorClasses.label, 'font-medium')}>
+          <span className={cn( sizeClasses.label, colorClasses.label, 'font-medium')}>
             XP
           </span>
         )}
@@ -193,8 +193,8 @@ export function XPCounter({
           transition={{ duration: 0.5 }}
           className="flex items-center space-x-1"
         >
-          <TrendingUp className={cn('w-3 h-3', colorClasses.icon)} />
-          <span className={cn('text-sm font-semibold', colorClasses.number)}>
+          <TrendingUp className={cn( 'w-3 h-3', colorClasses.icon)} />
+          <span className={cn( 'text-sm font-semibold', colorClasses.number)}>
             +{xpIncrease}
           </span>
         </motion.div>
@@ -223,10 +223,10 @@ interface SessionXPSummaryProps {
   className?: string;
 }
 
-export function SessionXPSummary({ sessionXP, breakdown, className }: SessionXPSummaryProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function SessionXPSummary( { sessionXP, breakdown, className }: SessionXPSummaryProps) {
+  const [isExpanded, setIsExpanded] = useState(_false);
 
-  if (sessionXP === 0) return null;
+  if (_sessionXP === 0) return null;
 
   return (
     <motion.div
@@ -240,7 +240,7 @@ export function SessionXPSummary({ sessionXP, breakdown, className }: SessionXPS
     >
       <div 
         className="flex items-center justify-between cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={(_) => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center">
@@ -267,9 +267,9 @@ export function SessionXPSummary({ sessionXP, breakdown, className }: SessionXPS
         className="overflow-hidden"
       >
         <div className="pt-4 space-y-2">
-          {Object.entries(breakdown).map(([source, amount]) => (
+          {Object.entries(_breakdown).map( ([source, amount]) => (
             <div key={source} className="flex justify-between items-center text-sm">
-              <span className="text-gray-300 capitalize">{source.replace('_', ' ')}</span>
+              <span className="text-gray-300 capitalize">{source.replace('', ' ')}</span>
               <span className="text-yellow-300 font-mono">+{amount} XP</span>
             </div>
           ))}
@@ -286,9 +286,9 @@ interface CompactXPDisplayProps {
   className?: string;
 }
 
-export function CompactXPDisplay({ currentXP, previousXP, className }: CompactXPDisplayProps) {
+export function CompactXPDisplay( { currentXP, previousXP, className }: CompactXPDisplayProps) {
   return (
-    <div className={cn('flex items-center space-x-1', className)}>
+    <div className={cn( 'flex items-center space-x-1', className)}>
       <Zap className="w-3 h-3 text-yellow-400" />
       <XPCounter
         currentXP={currentXP}

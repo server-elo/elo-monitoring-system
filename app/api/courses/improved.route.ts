@@ -17,16 +17,16 @@ import { CourseData } from '@/app/api/types';
 
 // Validation schemas
 const createCourseSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters').max(200),
-  description: z.string().min(10, 'Description must be at least 10 characters').max(2000),
-  shortDescription: z.string().min(10).max(500),
-  difficulty: z.nativeEnum(SkillLevel),
-  estimatedHours: z.number().min(1).max(1000),
-  xpReward: z.number().min(0).max(10000).default(500),
-  price: z.number().min(0).default(0),
-  currency: z.string().length(3).default('USD'),
-  tags: z.array(z.string()).max(10),
-  prerequisites: z.array(z.string()).max(5),
+  title: z.string().min(3, 'Title must be at least 3 characters').max(200) 
+  description: z.string().min(10, 'Description must be at least 10 characters').max(2000) 
+  shortDescription: z.string().min(10).max(500) 
+  difficulty: z.nativeEnum(SkillLevel) 
+  estimatedHours: z.number().min(1).max(1000) 
+  xpReward: z.number().min(0).max(10000).default(500) 
+  price: z.number().min(0).default(0) 
+  currency: z.string().length(3).default('USD') 
+  tags: z.array(z.string()).max(10) 
+  prerequisites: z.array(z.string()).max(5) 
 });
 
 // Mock database (replace with actual Prisma calls)
@@ -45,8 +45,8 @@ async function getCourses(request: NextRequest) {
   // Parse pagination parameters
   const url = new URL(request.url);
   const { page, limit } = PaginationHelper.parseParams(url.searchParams, {
-    page: 1,
-    limit: 10
+    page: 1 
+    limit: 10 
   });
   
   // Parse filters
@@ -54,22 +54,22 @@ async function getCourses(request: NextRequest) {
   const search = url.searchParams.get('search');
   const published = url.searchParams.get('published') === 'true';
   
-  logger.info('Courses list request', {
-    requestId,
-    userId: session?.user?.id,
-    pagination: { page, limit },
+  logger.info('Courses list request', { metadata: {
+    requestId 
+    userId: session?.user?.id 
+    pagination: { page, limit } 
     filters: { difficulty, search, published }
   });
 
   // Filter courses (replace with Prisma query)
-  let filteredCourses = mockCourses.filter(course => {
+  const filteredCourses = mockCourses.filter(course => {
     if (published && !course.isPublished) return false;
     if (difficulty && course.difficulty !== difficulty) return false;
     if (search) {
       const searchLower = search.toLowerCase();
       return course.title.toLowerCase().includes(searchLower) ||
              course.description.toLowerCase().includes(searchLower);
-    }
+    });
     return true;
   });
 
@@ -85,14 +85,14 @@ async function getCourses(request: NextRequest) {
   const timing = TimingHelper.create(startTime);
   
   return ApiResponseBuilder.paginated(paginatedCourses, pagination, {
-    requestId,
-    meta: {
-      timing,
-      filters: {
-        difficulty,
-        search,
-        published,
-        applied: filteredCourses.length !== mockCourses.length
+    requestId 
+    meta: { 
+      timing 
+      filters: { 
+        difficulty 
+        search 
+        published 
+        applied: filteredCourses.length !== mockCourses.length 
       }
     }
   });
@@ -121,17 +121,17 @@ async function createCourse(request: NextRequest) {
   const body = await request.json();
   const validatedData = createCourseSchema.parse(body);
   
-  logger.info('Course creation request', {
-    requestId,
-    userId: session.user.id,
-    courseTitle: validatedData.title,
-    difficulty: validatedData.difficulty
+  logger.info('Course creation request', { metadata: {
+    requestId 
+    userId: session.user.id 
+    courseTitle: validatedData.title 
+    difficulty: validatedData.difficulty 
   });
   
   // Check for duplicate course title
   const existingCourse = mockCourses.find(
     course => course.title.toLowerCase() === validatedData.title.toLowerCase()
-  );
+ );
   
   if (existingCourse) {
     throw ErrorHelpers.conflict('A course with this title already exists', 'title');
@@ -139,22 +139,22 @@ async function createCourse(request: NextRequest) {
   
   // Create new course
   const newCourse: CourseData = {
-    id: crypto.randomUUID(),
-    ...validatedData,
-    status: CourseStatus.DRAFT,
-    isPublished: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    id: crypto.randomUUID() 
+    ...validatedData 
+    status: CourseStatus.DRAFT 
+    isPublished: false 
+    createdAt: new Date() 
+    updatedAt: new Date() 
   };
   
-  // Save to database (mock)
-  mockCourses.push(newCourse);
+  // Save to database (_mock)
+  mockCourses.push(_newCourse);
   
-  logger.info('Course created successfully', {
-    requestId,
-    courseId: newCourse.id,
-    userId: session.user.id,
-    courseTitle: newCourse.title
+  logger.info('Course created successfully', { metadata: {
+    requestId 
+    courseId: newCourse.id 
+    userId: session.user.id 
+    courseTitle: newCourse.title 
   });
   
   // Create timing metadata
@@ -162,14 +162,14 @@ async function createCourse(request: NextRequest) {
   
   // Return created course with location header
   return ApiResponseBuilder.created(newCourse, {
-    requestId,
-    location: `/api/courses/${newCourse.id}`,
-    meta: { timing }
+    requestId 
+    location: `/api/courses/${newCourse.id}` 
+    meta: { timing } 
   });
-}
+});
 
 /**
  * Route handlers with error handling
  */
-export const GET = withErrorHandler(getCourses);
-export const POST = withErrorHandler(createCourse);
+export const GET = withErrorHandler(_getCourses);
+export const POST = withErrorHandler(_createCourse);

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 interface BottomSheetProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   children: React.ReactNode;
   title?: string;
   description?: string;
@@ -21,7 +21,7 @@ interface BottomSheetProps {
   preventScroll?: boolean;
   snapPoints?: number[];
   defaultSnapPoint?: number;
-  onSnapPointChange?: (index: number) => void;
+  onSnapPointChange?: (_index: number) => void;
 }
 
 export function BottomSheet({
@@ -41,19 +41,19 @@ export function BottomSheet({
   defaultSnapPoint = 0,
   onSnapPointChange
 }: BottomSheetProps) {
-  const [_currentSnapPoint, setCurrentSnapPoint] = useState(defaultSnapPoint);
-  const sheetRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const controls = useAnimation();
+  const [_currentSnapPoint, setCurrentSnapPoint] = useState(_defaultSnapPoint);
+  const sheetRef = useRef<HTMLDivElement>(_null);
+  const contentRef = useRef<HTMLDivElement>(_null);
+  const controls = useAnimation(_);
   const dragStartY = useRef(0);
   const sheetHeight = useRef(0);
 
   // Calculate sheet height based on prop
   const getSheetHeight = useCallback(() => {
-    if (typeof height === 'number') return height;
+    if (_typeof height === 'number') return height;
     
     const windowHeight = window.innerHeight;
-    switch (height) {
+    switch (_height) {
       case 'full':
         return windowHeight * 0.95;
       case 'half':
@@ -76,25 +76,25 @@ export function BottomSheet({
 
   // Animate to snap point
   const animateToSnapPoint = useCallback((index: number) => {
-    const y = getSnapPointY(index);
-    controls.start({ y, transition: { type: 'spring', damping: 30, stiffness: 300 } });
-    setCurrentSnapPoint(index);
-    onSnapPointChange?.(index);
+    const y = getSnapPointY(_index);
+    controls.start( { y, transition: { type: 'spring', damping: 30, stiffness: 300 } });
+    setCurrentSnapPoint(_index);
+    onSnapPointChange?.(_index);
   }, [controls, getSnapPointY, onSnapPointChange]);
 
   // Handle drag end
-  const handleDragEnd = useCallback((_event: any, info: PanInfo) => {
+  const handleDragEnd = useCallback( (_event: any, info: PanInfo) => {
     const velocity = info.velocity.y;
     const offset = info.offset.y;
     
     // Close if dragged down sufficiently or with high velocity
     if ((closeOnSwipeDown && offset > 100 && velocity > 0) || velocity > 500) {
-      onClose();
+      onClose(_);
       return;
     }
     
     // Snap to closest point if snap points are defined
-    if (snapPoints.length > 0) {
+    if (_snapPoints.length > 0) {
       const currentY = dragStartY.current + offset;
       const windowHeight = window.innerHeight;
       
@@ -102,37 +102,37 @@ export function BottomSheet({
       let closestIndex = 0;
       let closestDistance = Infinity;
       
-      snapPoints.forEach((point, index) => {
+      snapPoints.forEach( (point, index) => {
         const snapY = windowHeight * (1 - point);
-        const distance = Math.abs(currentY - snapY);
+        const distance = Math.abs(_currentY - snapY);
         
-        if (distance < closestDistance) {
+        if (_distance < closestDistance) {
           closestDistance = distance;
           closestIndex = index;
         }
       });
       
       // Consider velocity for better UX
-      if (velocity > 100 && closestIndex < snapPoints.length - 1) {
+      if (_velocity > 100 && closestIndex < snapPoints.length - 1) {
         closestIndex++;
-      } else if (velocity < -100 && closestIndex > 0) {
+      } else if (_velocity < -100 && closestIndex > 0) {
         closestIndex--;
       }
       
-      animateToSnapPoint(closestIndex);
+      animateToSnapPoint(_closestIndex);
     } else {
       // Return to original position
-      controls.start({ y: 0, transition: { type: 'spring', damping: 30, stiffness: 300 } });
+      controls.start( { y: 0, transition: { type: 'spring', damping: 30, stiffness: 300 } });
     }
   }, [closeOnSwipeDown, onClose, snapPoints, controls, animateToSnapPoint]);
 
   // Lock body scroll when open
   useEffect(() => {
     if (isOpen && preventScroll) {
-      const originalStyle = window.getComputedStyle(document.body).overflow;
+      const originalStyle = window.getComputedStyle(_document.body).overflow;
       document.body.style.overflow = 'hidden';
       
-      return () => {
+      return (_) => {
         document.body.style.overflow = originalStyle;
       };
     }
@@ -141,26 +141,26 @@ export function BottomSheet({
   // Reset snap point when opening
   useEffect(() => {
     if (isOpen && snapPoints.length > 0) {
-      animateToSnapPoint(defaultSnapPoint);
+      animateToSnapPoint(_defaultSnapPoint);
     }
   }, [isOpen, defaultSnapPoint, snapPoints, animateToSnapPoint]);
 
   // Handle escape key
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
+    const handleEscape = (_e: KeyboardEvent) => {
+      if (_e.key === 'Escape' && isOpen) {
+        onClose(_);
       }
     };
     
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener( 'keydown', handleEscape);
+    return (_) => document.removeEventListener( 'keydown', handleEscape);
   }, [isOpen, onClose]);
 
   const sheetVariants: Variants = {
     hidden: { y: '100%' },
     visible: { 
-      y: snapPoints.length > 0 ? getSnapPointY(defaultSnapPoint) : 0,
+      y: snapPoints.length > 0 ? getSnapPointY(_defaultSnapPoint) : 0,
       transition: { type: 'spring', damping: 30, stiffness: 300 } 
     },
     exit: { 
@@ -200,15 +200,15 @@ export function BottomSheet({
             drag={closeOnSwipeDown || snapPoints.length > 0 ? "y" : false}
             dragElastic={0.2}
             dragConstraints={{ top: 0 }}
-            onDragStart={() => {
-              if (sheetRef.current) {
-                const rect = sheetRef.current.getBoundingClientRect();
+            onDragStart={(_) => {
+              if (_sheetRef.current) {
+                const rect = sheetRef.current.getBoundingClientRect(_);
                 dragStartY.current = rect.top;
                 sheetHeight.current = rect.height;
               }
             }}
             onDragEnd={handleDragEnd}
-            style={{ height: getSheetHeight() }}
+            style={{ height: getSheetHeight(_) }}
             className={cn(
               "fixed bottom-0 left-0 right-0 z-50",
               "bg-gray-900 rounded-t-2xl shadow-xl",
@@ -225,7 +225,7 @@ export function BottomSheet({
             )}
             
             {/* Header */}
-            {(title || description) && (
+            {(_title || description) && (
               <div className="px-6 pb-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -280,11 +280,11 @@ export function BottomSheet({
 // Example usage component for mobile menus
 interface MobileMenuBottomSheetProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   items: Array<{
     icon?: React.ComponentType<any>;
     label: string;
-    onClick: () => void;
+    onClick: (_) => void;
     variant?: 'default' | 'danger';
     disabled?: boolean;
   }>;
@@ -305,16 +305,16 @@ export function MobileMenuBottomSheet({
       height="auto"
     >
       <div className="space-y-1">
-        {items.map((item, index) => {
+        {items.map( (item, index) => {
           const Icon = item.icon;
           
           return (
             <button
               key={index}
-              onClick={() => {
+              onClick={(_) => {
                 if (!item.disabled) {
-                  item.onClick();
-                  onClose();
+                  item.onClick(_);
+                  onClose(_);
                 }
               }}
               disabled={item.disabled}

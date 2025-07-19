@@ -11,13 +11,13 @@ import { logger } from '@/lib/monitoring/simple-logger';
 
 // Validation schemas
 const MaintenanceActionSchema = z.object({
-  action: z.enum(['run_cleanup', 'run_schedule', 'test_migration', 'apply_migration']),
+  action: z.enum( ['run_cleanup', 'run_schedule', 'test_migration', 'apply_migration']),
   target: z.string().optional(),
   options: z.object({
     dryRun: z.boolean().default(true),
     force: z.boolean().default(false),
-    batchSize: z.number().int().min(1).max(10000).default(1000),
-    maxExecutionTime: z.number().int().min(60).max(7200).default(1800)
+    batchSize: z.number(_).int(_).min(1).max(10000).default(1000),
+    maxExecutionTime: z.number(_).int(_).min(_60).max(_7200).default(1800)
   }).optional()
 });
 
@@ -37,28 +37,28 @@ const MaintenanceActionSchema = z.object({
 //   options: z.object({
 //     dryRun: z.boolean().default(false),
 //     force: z.boolean().default(false),
-//     batchSize: z.number().int().min(1).max(10000).default(1000),
-//     maxExecutionTime: z.number().int().min(60).max(7200).default(1800)
+//     batchSize: z.number(_).int(_).min(1).max(10000).default(1000),
+//     maxExecutionTime: z.number(_).int(_).min(_60).max(_7200).default(1800)
 //   }),
 //   notifications: z.object({
 //     onSuccess: z.boolean().default(false),
 //     onFailure: z.boolean().default(true),
 //     onWarnings: z.boolean().default(true),
-//     recipients: z.array(z.string().email()),
+//     recipients: z.array(z.string().email(_)),
 //     channels: z.array(z.enum(['email', 'slack', 'webhook']))
 //   })
 // });
 
 // GET /api/v1/admin/maintenance - Get maintenance status and operations
-export const GET = adminEndpoint(async (request: NextRequest, _context: MiddlewareContext) => {
+export const GET = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
     const action = url.searchParams.get('action');
 
     switch (action) {
       case 'status':
-        const status = await maintenanceScheduler.getMaintenanceStatus();
-        const migrationStatus = await migrationManager.getMigrationStatus();
+        const status = await maintenanceScheduler.getMaintenanceStatus(_);
+        const migrationStatus = await migrationManager.getMigrationStatus(_);
         
         return ApiResponseBuilder.success({
           scheduler: status,
@@ -67,11 +67,11 @@ export const GET = adminEndpoint(async (request: NextRequest, _context: Middlewa
         }) as NextResponse;
 
       case 'schedules':
-        const schedules = maintenanceScheduler.getSchedules();
-        return ApiResponseBuilder.success(schedules) as NextResponse;
+        const schedules = maintenanceScheduler.getSchedules(_);
+        return ApiResponseBuilder.success(_schedules) as NextResponse;
 
       case 'operations':
-        const operations = cleanupManager.getRegisteredOperations().map(op => ({
+        const operations = cleanupManager.getRegisteredOperations(_).map(op => ({
           id: op.id,
           name: op.name,
           description: op.description,
@@ -81,11 +81,11 @@ export const GET = adminEndpoint(async (request: NextRequest, _context: Middlewa
           requiresBackup: op.requiresBackup,
           dryRunSupported: op.dryRunSupported
         }));
-        return ApiResponseBuilder.success(operations);
+        return ApiResponseBuilder.success(_operations);
 
       case 'migrations':
-        const appliedMigrations = await migrationManager.getAppliedMigrations();
-        const pendingMigrations = await migrationManager.getPendingMigrations();
+        const appliedMigrations = await migrationManager.getAppliedMigrations(_);
+        const pendingMigrations = await migrationManager.getPendingMigrations(_);
         
         return ApiResponseBuilder.success({
           applied: appliedMigrations,
@@ -104,18 +104,18 @@ export const GET = adminEndpoint(async (request: NextRequest, _context: Middlewa
       default:
         // Return general maintenance overview
         const overview = {
-          scheduler: await maintenanceScheduler.getMaintenanceStatus(),
+          scheduler: await maintenanceScheduler.getMaintenanceStatus(_),
           operations: {
-            total: cleanupManager.getRegisteredOperations().length,
-            byCategory: cleanupManager.getRegisteredOperations().reduce((acc, op) => {
-              acc[op.category] = (acc[op.category] || 0) + 1;
+            total: cleanupManager.getRegisteredOperations(_).length,
+            byCategory: cleanupManager.getRegisteredOperations(_).reduce((acc, op) => {
+              acc[op.category] = (_acc[op.category] || 0) + 1;
               return acc;
             }, {} as Record<string, number>)
           },
-          migrations: await migrationManager.getMigrationStatus()
+          migrations: await migrationManager.getMigrationStatus(_)
         };
 
-        return ApiResponseBuilder.success(overview);
+        return ApiResponseBuilder.success(_overview);
     }
   } catch (error) {
     logger.error('Get maintenance status error', error as Error);
@@ -126,7 +126,7 @@ export const GET = adminEndpoint(async (request: NextRequest, _context: Middlewa
 // POST /api/v1/admin/maintenance - Execute maintenance actions
 export const POST = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
-    const body = await validateBody(MaintenanceActionSchema, request);
+    const body = await validateBody( MaintenanceActionSchema, request);
     const { action, target, options } = body;
 
     const defaultOptions = {
@@ -142,15 +142,15 @@ export const POST = adminEndpoint(async (request: NextRequest, context: Middlewa
     switch (action) {
       case 'run_cleanup':
         if (!target) {
-          return ApiResponseBuilder.validationError('Target operation required for cleanup', []);
+          return ApiResponseBuilder.validationError( 'Target operation required for cleanup', []);
         }
 
-        const operation = cleanupManager.getOperation(target);
+        const operation = cleanupManager.getOperation(_target);
         if (!operation) {
-          return ApiResponseBuilder.notFound(`Cleanup operation not found: ${target}`);
+          return ApiResponseBuilder.notFound(_`Cleanup operation not found: ${target}`);
         }
 
-        const cleanupResult = await cleanupManager.executeOperation(target, defaultOptions);
+        const cleanupResult = await cleanupManager.executeOperation( target, defaultOptions);
         
         return ApiResponseBuilder.success({
           action: 'cleanup',
@@ -160,15 +160,15 @@ export const POST = adminEndpoint(async (request: NextRequest, context: Middlewa
 
       case 'run_schedule':
         if (!target) {
-          return ApiResponseBuilder.validationError('Target schedule required', []);
+          return ApiResponseBuilder.validationError( 'Target schedule required', []);
         }
 
-        const schedule = maintenanceScheduler.getSchedule(target);
+        const schedule = maintenanceScheduler.getSchedule(_target);
         if (!schedule) {
-          return ApiResponseBuilder.notFound(`Maintenance schedule not found: ${target}`);
+          return ApiResponseBuilder.notFound(_`Maintenance schedule not found: ${target}`);
         }
 
-        const scheduleResult = await maintenanceScheduler.runMaintenanceNow(target);
+        const scheduleResult = await maintenanceScheduler.runMaintenanceNow(_target);
         
         return ApiResponseBuilder.success({
           action: 'schedule',
@@ -178,10 +178,10 @@ export const POST = adminEndpoint(async (request: NextRequest, context: Middlewa
 
       case 'test_migration':
         if (!target) {
-          return ApiResponseBuilder.validationError('Target migration required', []);
+          return ApiResponseBuilder.validationError( 'Target migration required', []);
         }
 
-        const testResult = await migrationManager.testMigration(target);
+        const testResult = await migrationManager.testMigration(_target);
         
         return ApiResponseBuilder.success({
           action: 'test_migration',
@@ -191,10 +191,10 @@ export const POST = adminEndpoint(async (request: NextRequest, context: Middlewa
 
       case 'apply_migration':
         if (!target) {
-          return ApiResponseBuilder.validationError('Target migration required', []);
+          return ApiResponseBuilder.validationError( 'Target migration required', []);
         }
 
-        const migrationResult = await migrationManager.applyMigration(target, defaultOptions.dryRun);
+        const migrationResult = await migrationManager.applyMigration( target, defaultOptions.dryRun);
         
         return ApiResponseBuilder.success({
           action: 'apply_migration',
@@ -203,13 +203,13 @@ export const POST = adminEndpoint(async (request: NextRequest, context: Middlewa
         });
 
       default:
-        return ApiResponseBuilder.validationError('Invalid action', []);
+        return ApiResponseBuilder.validationError( 'Invalid action', []);
     }
   } catch (error) {
     logger.error('Execute maintenance action error', error as Error);
     
     if (error instanceof Error) {
-      return ApiResponseBuilder.validationError(error.message, []);
+      return ApiResponseBuilder.validationError( error.message, []);
     }
     
     return ApiResponseBuilder.internalServerError('Failed to execute maintenance action');
@@ -218,5 +218,5 @@ export const POST = adminEndpoint(async (request: NextRequest, context: Middlewa
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

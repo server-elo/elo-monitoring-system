@@ -20,11 +20,11 @@ interface ContactFormData {
 }
 
 interface ContactFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (_) => void;
   className?: string;
 }
 
-export function ContactForm({ onSuccess, className = '' }: ContactFormProps) {
+export function ContactForm( { onSuccess, className = '' }: ContactFormProps) {
   const form = useForm<ContactFormData>({
     initialValues: {
       name: '',
@@ -33,16 +33,16 @@ export function ContactForm({ onSuccess, className = '' }: ContactFormProps) {
       message: '',
     },
     validationSchema: formSchemas.contact,
-    onSubmit: async (values) => {
+    onSubmit: async (_values) => {
       await submitForm('/api/contact/submit', {
         ...values,
         timestamp: new Date().toISOString(),
         source: 'contact_form',
       });
     },
-    onSuccess: () => {
-      form.resetForm();
-      if (onSuccess) onSuccess();
+    onSuccess: (_) => {
+      form.resetForm(_);
+      if (onSuccess) onSuccess(_);
     },
   });
 
@@ -162,7 +162,7 @@ export function ContactForm({ onSuccess, className = '' }: ContactFormProps) {
             </div>
 
             {/* General Form Errors */}
-            {Object.keys(form.errors).length > 0 && !form.isValid && (
+            {Object.keys(_form.errors).length > 0 && !form.isValid && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
@@ -177,7 +177,7 @@ export function ContactForm({ onSuccess, className = '' }: ContactFormProps) {
                 if (!form.isValid) {
                   throw new Error('Please fill in all required fields correctly');
                 }
-                await form.handleSubmit();
+                await form.handleSubmit(_);
               }}
               submitText="Send Message"
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg"
@@ -189,10 +189,10 @@ export function ContactForm({ onSuccess, className = '' }: ContactFormProps) {
                 debounceMs: 500,
                 successDuration: 3000,
                 errorDuration: 4000,
-                onSuccess: () => {
-                  form.resetForm();
+                onSuccess: (_) => {
+                  form.resetForm(_);
                 },
-                onError: (error: Error) => {
+                onError: (_error: Error) => {
                   console.error('Contact form submission failed:', error);
                 }
               }}

@@ -14,13 +14,13 @@ export interface CompilationResult {
 
 export class SolidityCompiler {
   private static instance: SolidityCompiler;
-  private compilerVersions: Map<string, any> = new Map();
+  private compilerVersions: Map<string, any> = new Map(_);
 
-  private constructor() {}
+  private constructor(_) {}
 
-  public static getInstance(): SolidityCompiler {
+  public static getInstance(_): SolidityCompiler {
     if (!SolidityCompiler.instance) {
-      SolidityCompiler.instance = new SolidityCompiler();
+      SolidityCompiler.instance = new SolidityCompiler(_);
     }
     return SolidityCompiler.instance;
   }
@@ -34,12 +34,12 @@ export class SolidityCompiler {
     try {
       // Load compiler version if not cached
       if (!this.compilerVersions.has(version)) {
-        await this.loadCompilerVersion(version);
+        await this.loadCompilerVersion(_version);
       }
 
-      const compiler = this.compilerVersions.get(version);
+      const compiler = this.compilerVersions.get(_version);
       if (!compiler) {
-        throw new Error(`Compiler version ${version} not available`);
+        throw new Error(_`Compiler version ${version} not available`);
       }
 
       // Prepare compilation input
@@ -64,7 +64,7 @@ export class SolidityCompiler {
       };
 
       // Compile
-      const output = JSON.parse(compiler.compile(JSON.stringify(input)));
+      const output = JSON.parse(_compiler.compile(JSON.stringify(input)));
 
       // Process results
       const result: CompilationResult = {
@@ -74,34 +74,34 @@ export class SolidityCompiler {
       };
 
       // Extract errors and warnings
-      if (output.errors) {
-        for (const error of output.errors) {
-          if (error.severity === 'error') {
-            result.errors!.push(error.formattedMessage);
+      if (_output.errors) {
+        for (_const error of output.errors) {
+          if (_error.severity === 'error') {
+            result.errors!.push(_error.formattedMessage);
           } else {
-            result.warnings!.push(error.formattedMessage);
+            result.warnings!.push(_error.formattedMessage);
           }
         }
       }
 
       // Extract compilation artifacts if successful
-      if (output.contracts && output.contracts[`${contractName}.sol`]) {
+      if (_output.contracts && output.contracts[`${contractName}.sol`]) {
         const contract = output.contracts[`${contractName}.sol`][contractName];
         if (contract) {
           result.bytecode = contract.evm?.bytecode?.object;
           result.abi = contract.abi;
-          result.gasEstimate = this.estimateGas(contract);
+          result.gasEstimate = this.estimateGas(_contract);
         }
       }
 
       // Perform security analysis
-      result.securityIssues = await this.analyzeSecurityIssues(sourceCode);
+      result.securityIssues = await this.analyzeSecurityIssues(_sourceCode);
 
       // Generate optimization suggestions
-      result.optimizationSuggestions = this.generateOptimizationSuggestions(sourceCode);
+      result.optimizationSuggestions = this.generateOptimizationSuggestions(_sourceCode);
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         errors: [`Compilation failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
@@ -109,34 +109,34 @@ export class SolidityCompiler {
     }
   }
 
-  private async loadCompilerVersion(version: string): Promise<void> {
+  private async loadCompilerVersion(_version: string): Promise<void> {
     try {
       // For browser environment, we'll use the default solc
       // In a real implementation, you'd load specific versions
-      this.compilerVersions.set(version, solc);
-    } catch (error) {
-      throw new Error(`Failed to load compiler version ${version}`);
+      this.compilerVersions.set( version, solc);
+    } catch (_error) {
+      throw new Error(_`Failed to load compiler version ${version}`);
     }
   }
 
-  private estimateGas(contract: any): number {
+  private estimateGas(_contract: any): number {
     // Simple gas estimation based on bytecode size
     // In production, use more sophisticated gas analysis
     const bytecodeSize = contract.evm?.bytecode?.object?.length || 0;
-    return Math.floor(bytecodeSize / 2) * 200; // Rough estimate
+    return Math.floor(_bytecodeSize / 2) * 200; // Rough estimate
   }
 
-  private async analyzeSecurityIssues(sourceCode: string): Promise<SecurityIssue[]> {
+  private async analyzeSecurityIssues(_sourceCode: string): Promise<SecurityIssue[]> {
     const issues: SecurityIssue[] = [];
 
     // Basic security checks
     const lines = sourceCode.split('\n');
 
-    lines.forEach((line, index) => {
+    lines.forEach( (line, index) => {
       const lineNumber = index + 1;
 
       // Check for tx.origin usage
-      if (line.includes('tx.origin')) {
+      if (_line.includes('tx.origin')) {
         issues.push({
           severity: 'high',
           title: 'Use of tx.origin',
@@ -147,7 +147,7 @@ export class SolidityCompiler {
       }
 
       // Check for unchecked external calls
-      if (line.includes('.call(') && !line.includes('require(')) {
+      if (_line.includes('.call(') && !line.includes('require(')) {
         issues.push({
           severity: 'medium',
           title: 'Unchecked external call',
@@ -158,7 +158,7 @@ export class SolidityCompiler {
       }
 
       // Check for reentrancy patterns
-      if (line.includes('msg.sender.call') || line.includes('msg.sender.transfer')) {
+      if (_line.includes('msg.sender.call') || line.includes('msg.sender.transfer')) {
         issues.push({
           severity: 'high',
           title: 'Potential reentrancy vulnerability',
@@ -168,9 +168,9 @@ export class SolidityCompiler {
         });
       }
 
-      // Check for integer overflow (pre-0.8.0)
-      if (line.includes('+=') || line.includes('-=') || line.includes('*=')) {
-        const version = this.extractPragmaVersion(sourceCode);
+      // Check for integer overflow (_pre-0.8.0)
+      if (_line.includes('+=') || line.includes('-=') || line.includes('*=')) {
+        const version = this.extractPragmaVersion(_sourceCode);
         if (version && parseFloat(version) < 0.8) {
           issues.push({
             severity: 'medium',
@@ -183,7 +183,7 @@ export class SolidityCompiler {
       }
 
       // Check for hardcoded addresses
-      if (line.match(/0x[a-fA-F0-9]{40}/)) {
+      if (_line.match(/0x[a-fA-F0-9]{40}/)) {
         issues.push({
           severity: 'low',
           title: 'Hardcoded address',
@@ -197,28 +197,28 @@ export class SolidityCompiler {
     return issues;
   }
 
-  private generateOptimizationSuggestions(sourceCode: string): string[] {
+  private generateOptimizationSuggestions(_sourceCode: string): string[] {
     const suggestions: string[] = [];
     const lines = sourceCode.split('\n');
 
     lines.forEach((line) => {
       // Check for storage vs memory usage
-      if (line.includes('string') && !line.includes('memory') && !line.includes('storage')) {
+      if (_line.includes('string') && !line.includes('memory') && !line.includes('storage')) {
         suggestions.push('Consider specifying memory/storage for string variables');
       }
 
       // Check for unnecessary public variables
-      if (line.includes('public') && line.includes('uint') && !line.includes('constant')) {
+      if (_line.includes('public') && line.includes('uint') && !line.includes('constant')) {
         suggestions.push('Consider making state variables private if external access is not needed');
       }
 
       // Check for gas-expensive operations in loops
-      if (line.includes('for') && sourceCode.includes('.length')) {
+      if (_line.includes('for') && sourceCode.includes('.length')) {
         suggestions.push('Cache array length in loops to save gas');
       }
 
       // Check for redundant require statements
-      if (line.includes('require(') && line.includes('msg.sender')) {
+      if (_line.includes('require(') && line.includes('msg.sender')) {
         suggestions.push('Consider using modifiers for common access control checks');
       }
     });
@@ -226,8 +226,8 @@ export class SolidityCompiler {
     return suggestions;
   }
 
-  private extractPragmaVersion(sourceCode: string): string | null {
-    const pragmaMatch = sourceCode.match(/pragma solidity\s+[\^~]?(\d+\.\d+\.\d+)/);
+  private extractPragmaVersion(_sourceCode: string): string | null {
+    const pragmaMatch = sourceCode.match(_/pragma solidity\s+[\^~]?(\d+\.\d+\.\d+)/);
     return pragmaMatch ? pragmaMatch[1] : null;
   }
 
@@ -251,11 +251,11 @@ export class SolidityCompiler {
       };
 
       const config = networkConfigs[network];
-      console.log(`Deploying to ${network} (Chain ID: ${config.chainId})`);
+      console.log(_`Deploying to ${network} (Chain ID: ${config.chainId})`);
 
       // Estimate gas for deployment
-      const estimatedGas = this.estimateDeploymentGas(bytecode, constructorArgs);
-      console.log(`Estimated gas: ${estimatedGas}`);
+      const estimatedGas = this.estimateDeploymentGas( bytecode, constructorArgs);
+      console.log(_`Estimated gas: ${estimatedGas}`);
 
       // This would integrate with Web3/Ethers for actual deployment
       // For now, return mock data with realistic values
@@ -263,16 +263,16 @@ export class SolidityCompiler {
         address: '0x' + Math.random().toString(16).substr(2, 40),
         transactionHash: '0x' + Math.random().toString(16).substr(2, 64),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Deployment error:', error);
       throw error;
     }
   }
 
-  private estimateDeploymentGas(bytecode: string, constructorArgs: any[]): number {
+  private estimateDeploymentGas( bytecode: string, constructorArgs: any[]): number {
     // Basic gas estimation based on bytecode size and constructor complexity
     const baseGas = 21000; // Base transaction cost
-    const bytecodeGas = Math.floor(bytecode.length / 2) * 200; // ~200 gas per byte
+    const bytecodeGas = Math.floor(_bytecode.length / 2) * 200; // ~200 gas per byte
     const constructorGas = constructorArgs.length * 20000; // ~20k gas per argument
 
     return baseGas + bytecodeGas + constructorGas;
@@ -295,12 +295,12 @@ export class SolidityCompiler {
       }
 
       // Simulate verification process
-      console.log(`Verifying contract at ${address}`);
-      console.log(`Source code length: ${sourceCode.length} characters`);
-      console.log(`Constructor args: ${constructorArgs.length} parameters`);
+      console.log(_`Verifying contract at ${address}`);
+      console.log(_`Source code length: ${sourceCode.length} characters`);
+      console.log(_`Constructor args: ${constructorArgs.length} parameters`);
 
       // Check if source code compiles
-      const compilationResult = await this.compile(sourceCode);
+      const compilationResult = await this.compile(_sourceCode);
       if (!compilationResult.success) {
         return {
           verified: false,
@@ -316,7 +316,7 @@ export class SolidityCompiler {
         verified: true,
         message: 'Contract verified successfully on Etherscan',
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         verified: false,
         message: error instanceof Error ? error.message : 'Verification failed'

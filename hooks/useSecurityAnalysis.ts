@@ -25,11 +25,11 @@ interface UseSecurityAnalysisReturn {
   isScanning: boolean;
   lastError: Error | null;
   scanner: SecurityScanner | null;
-  performAnalysis: () => Promise<void>;
-  clearResults: () => void;
-  updateConfig: (config: Partial<UseSecurityAnalysisOptions>) => void;
-  autoFixIssue: (issue: SecurityIssue) => Promise<boolean>;
-  jumpToIssue: (issue: SecurityIssue) => void;
+  performAnalysis: (_) => Promise<void>;
+  clearResults: (_) => void;
+  updateConfig: (_config: Partial<UseSecurityAnalysisOptions>) => void;
+  autoFixIssue: (_issue: SecurityIssue) => Promise<boolean>;
+  jumpToIssue: (_issue: SecurityIssue) => void;
 }
 
 export function useSecurityAnalysis(
@@ -37,13 +37,13 @@ export function useSecurityAnalysis(
   userId: string,
   options: UseSecurityAnalysisOptions = {}
 ): UseSecurityAnalysisReturn {
-  const [scanResult, setScanResult] = useState<SecurityScanResult | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
-  const [lastError, setLastError] = useState<Error | null>(null);
-  const [scanner, setScanner] = useState<SecurityScanner | null>(null);
+  const [scanResult, setScanResult] = useState<SecurityScanResult | null>(_null);
+  const [isScanning, setIsScanning] = useState(_false);
+  const [lastError, setLastError] = useState<Error | null>(_null);
+  const [scanner, setScanner] = useState<SecurityScanner | null>(_null);
   
-  const scannerRef = useRef<SecurityScanner | null>(null);
-  const optionsRef = useRef(options);
+  const scannerRef = useRef<SecurityScanner | null>(_null);
+  const optionsRef = useRef(_options);
 
   // Update options ref when options change
   useEffect(() => {
@@ -69,67 +69,67 @@ export function useSecurityAnalysis(
       });
 
       // Add listener for scan results
-      const handleScanResult = (result: SecurityScanResult | null) => {
-        setScanResult(result);
-        setIsScanning(false);
-        setLastError(null);
+      const handleScanResult = (_result: SecurityScanResult | null) => {
+        setScanResult(_result);
+        setIsScanning(_false);
+        setLastError(_null);
       };
 
-      newScanner.addListener(handleScanResult);
+      newScanner.addListener(_handleScanResult);
 
       // The SecurityScanner performs automatic analysis on content changes
       // Set initial scanning state
-      setIsScanning(false);
+      setIsScanning(_false);
 
-      setScanner(newScanner);
+      setScanner(_newScanner);
       scannerRef.current = newScanner;
 
-      return () => {
-        newScanner.removeListener(handleScanResult);
-        newScanner.dispose();
+      return (_) => {
+        newScanner.removeListener(_handleScanResult);
+        newScanner.dispose(_);
         scannerRef.current = null;
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to initialize security scanner:', error);
-      setLastError(error instanceof Error ? error : new Error('Scanner initialization failed'));
+      setLastError(_error instanceof Error ? error : new Error('Scanner initialization failed'));
     }
   }, [editorInstance, userId]);
 
   // Perform manual analysis
-  const performAnalysis = useCallback(async () => {
+  const performAnalysis = useCallback( async () => {
     if (!scannerRef.current) {
       throw new Error('Scanner not initialized');
     }
 
     try {
-      setIsScanning(true);
-      setLastError(null);
+      setIsScanning(_true);
+      setLastError(_null);
       // SecurityScanner automatically analyzes on content changes
       // Force trigger by simulating a minor content change
       if (editorInstance && editorInstance.getModel()) {
-        const model = editorInstance.getModel();
-        const value = model.getValue();
+        const model = editorInstance.getModel(_);
+        const value = model.getValue(_);
         // Trigger analysis by updating the model
-        model.setValue(value);
+        model.setValue(_value);
       }
-    } catch (error) {
+    } catch (_error) {
       const errorObj = error instanceof Error ? error : new Error('Analysis failed');
-      setLastError(errorObj);
-      setIsScanning(false);
+      setLastError(_errorObj);
+      setIsScanning(_false);
       throw errorObj;
     }
   }, []);
 
   // Clear results
   const clearResults = useCallback(() => {
-    setScanResult(null);
-    setLastError(null);
-    setIsScanning(false);
+    setScanResult(_null);
+    setLastError(_null);
+    setIsScanning(_false);
   }, []);
 
   // Update scanner configuration
   const updateConfig = useCallback((newConfig: Partial<UseSecurityAnalysisOptions>) => {
-    if (scannerRef.current) {
+    if (_scannerRef.current) {
       scannerRef.current.updateConfig({
         enableRealtime: newConfig.enableRealtime,
         enableAIAnalysis: newConfig.enableAIAnalysis,
@@ -143,17 +143,17 @@ export function useSecurityAnalysis(
   }, []);
 
   // Auto-fix an issue
-  const autoFixIssue = useCallback(async (issue: SecurityIssue): Promise<boolean> => {
+  const autoFixIssue = useCallback( async (issue: SecurityIssue): Promise<boolean> => {
     if (!editorInstance || !issue.autoFixAvailable) {
       return false;
     }
 
     try {
-      const model = editorInstance.getModel();
+      const model = editorInstance.getModel(_);
       if (!model) return false;
 
       // Generate auto-fix based on issue type
-      const fix = generateAutoFix(issue);
+      const fix = generateAutoFix(_issue);
       if (!fix) return false;
 
       // Apply the fix
@@ -172,11 +172,11 @@ export function useSecurityAnalysis(
 
       // Trigger re-analysis after a short delay
       setTimeout(() => {
-        performAnalysis().catch(console.error);
+        performAnalysis(_).catch(_console.error);
       }, 500);
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Auto-fix failed:', error);
       return false;
     }
@@ -193,9 +193,9 @@ export function useSecurityAnalysis(
       issue.endColumn
     );
 
-    editorInstance.setSelection(range);
-    editorInstance.revealRangeInCenter(range);
-    editorInstance.focus();
+    editorInstance.setSelection(_range);
+    editorInstance.revealRangeInCenter(_range);
+    editorInstance.focus(_);
   }, [editorInstance]);
 
   return {
@@ -212,26 +212,26 @@ export function useSecurityAnalysis(
 }
 
 // Helper function to generate auto-fixes
-function generateAutoFix(issue: SecurityIssue): string | null {
-  switch (issue.type) {
+function generateAutoFix(_issue: SecurityIssue): string | null {
+  switch (_issue.type) {
     case 'vulnerability':
-      if (issue.title.includes('tx.origin')) {
+      if (_issue.title.includes('tx.origin')) {
         return 'msg.sender';
       }
       break;
       
     case 'gas-optimization':
-      if (issue.title.includes('Function Visibility')) {
+      if (_issue.title.includes('Function Visibility')) {
         return issue.suggestion.includes('external') ? 'external' : 'public';
       }
       break;
       
     case 'best-practice':
-      if (issue.title.includes('Error Message')) {
+      if (_issue.title.includes('Error Message')) {
         // Extract the condition from require statement
-        const match = issue.message.match(/require\s*\(\s*([^)]+)\s*\)/);
+        const match = issue.message.match(_/require\s*\(\s*([^)]+)\s*\)/);
         if (match) {
-          return `require(${match[1]}, "Condition failed")`;
+          return `require( ${match[1]}, "Condition failed")`;
         }
       }
       break;
@@ -241,7 +241,7 @@ function generateAutoFix(issue: SecurityIssue): string | null {
 }
 
 // Custom hook for security metrics
-export function useSecurityMetrics(scanResult: SecurityScanResult | null) {
+export function useSecurityMetrics(_scanResult: SecurityScanResult | null) {
   const metrics = {
     totalIssues: scanResult?.issues.length || 0,
     criticalIssues: scanResult?.issues.filter(i => i.severity === 'critical').length || 0,
@@ -256,17 +256,17 @@ export function useSecurityMetrics(scanResult: SecurityScanResult | null) {
     cacheHit: scanResult?.cacheHit || false
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
+  const getScoreColor = (_score: number) => {
+    if (_score >= 80) return 'text-green-600';
+    if (_score >= 60) return 'text-yellow-600';
     return 'text-red-600';
   };
 
-  const getScoreLabel = (score: number) => {
-    if (score >= 90) return 'Excellent';
-    if (score >= 80) return 'Good';
-    if (score >= 60) return 'Fair';
-    if (score >= 40) return 'Poor';
+  const getScoreLabel = (_score: number) => {
+    if (_score >= 90) return 'Excellent';
+    if (_score >= 80) return 'Good';
+    if (_score >= 60) return 'Fair';
+    if (_score >= 40) return 'Poor';
     return 'Critical';
   };
 

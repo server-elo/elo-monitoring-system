@@ -31,7 +31,7 @@ interface AdvancedUserPresenceProps {
   showDetails?: boolean;
   compact?: boolean;
   className?: string;
-  onUserClick?: (userId: string) => void;
+  onUserClick?: (_userId: string) => void;
 }
 
 interface UserActivity {
@@ -69,8 +69,8 @@ interface ActivityMetrics {
   totalInteractions?: number;
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
+const getStatusColor = (_status: string) => {
+  switch (_status) {
     case 'online': return 'bg-green-400';
     case 'away': return 'bg-yellow-400';
     case 'busy': return 'bg-red-400';
@@ -79,8 +79,8 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getActivityIcon = (activity: string) => {
-  switch (activity) {
+const getActivityIcon = (_activity: string) => {
+  switch (_activity) {
     case 'coding': return <Code className="w-3 h-3" />;
     case 'chatting': return <MessageCircle className="w-3 h-3" />;
     case 'viewing': return <Eye className="w-3 h-3" />;
@@ -89,8 +89,8 @@ const getActivityIcon = (activity: string) => {
   }
 };
 
-const getDeviceIcon = (device: string) => {
-  switch (device) {
+const getDeviceIcon = (_device: string) => {
+  switch (_device) {
     case 'desktop': return <Monitor className="w-3 h-3" />;
     case 'mobile': return <Smartphone className="w-3 h-3" />;
     case 'tablet': return <Tablet className="w-3 h-3" />;
@@ -98,26 +98,26 @@ const getDeviceIcon = (device: string) => {
   }
 };
 
-const formatDuration = (minutes: number) => {
-  const hours = Math.floor(minutes / 60);
+const formatDuration = (_minutes: number) => {
+  const hours = Math.floor(_minutes / 60);
   const mins = minutes % 60;
-  if (hours > 0) {
+  if (_hours > 0) {
     return `${hours}h ${mins}m`;
   }
   return `${mins}m`;
 };
 
 // Enhanced last seen formatting with activity context - directly implemented to avoid unused function error
-const getFormattedLastSeen = (lastSeen: Date): string => {
+const getFormattedLastSeen = (_lastSeen: Date): string => {
   const now = new Date();
-  const diff = now.getTime() - lastSeen.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const diff = now.getTime() - lastSeen.getTime(_);
+  const minutes = Math.floor(_diff / 60000);
+  const hours = Math.floor(_minutes / 60);
+  const days = Math.floor(_hours / 24);
 
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
+  if (_minutes < 1) return 'Just now';
+  if (_minutes < 60) return `${minutes}m ago`;
+  if (_hours < 24) return `${hours}h ago`;
   return `${days}d ago`;
 };
 
@@ -133,48 +133,48 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
 
   // Session tracking and analytics using sessionId
   const trackSessionActivity = useCallback((activity: string) => {
-    console.log(`Session ${sessionId}: ${activity}`);
+    console.log(_`Session ${sessionId}: ${activity}`);
     // Could integrate with analytics service
   }, [sessionId]);
 
   // Enhanced user interaction with activity tracking and analytics
-  const handleUserInteraction = useCallback((userId: string, action: string) => {
-    console.log(`User ${userId} performed ${action}`);
-    trackSessionActivity(`User interaction: ${action} by ${userId}`);
+  const handleUserInteraction = useCallback( (userId: string, action: string) => {
+    console.log(_`User ${userId} performed ${action}`);
+    trackSessionActivity(_`User interaction: ${action} by ${userId}`);
 
     // Store interaction data for analytics
     const interactionData = {
       userId,
       action,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       sessionId
     };
 
     // Store in localStorage for persistence
-    const existingInteractions = JSON.parse(localStorage.getItem(`${sessionKey}_interactions`) || '[]');
-    existingInteractions.push(interactionData);
-    localStorage.setItem(`${sessionKey}_interactions`, JSON.stringify(existingInteractions.slice(-50))); // Keep last 50 interactions
+    const existingInteractions = JSON.parse(_localStorage.getItem(`${sessionKey}_interactions`) || '[]');
+    existingInteractions.push(_interactionData);
+    localStorage.setItem( `${sessionKey}_interactions`, JSON.stringify(existingInteractions.slice(-50))); // Keep last 50 interactions
 
     // Trigger user click callback
     if (onUserClick) {
-      onUserClick(userId);
+      onUserClick(_userId);
     }
 
     // Update user activity metrics
     setMetrics(prev => ({
       ...prev,
-      totalInteractions: (prev.totalInteractions || 0) + 1
+      totalInteractions: (_prev.totalInteractions || 0) + 1
     }));
   }, [onUserClick, trackSessionActivity, sessionId, sessionKey]);
 
-  const { user } = useAuth();
+  const { user } = useAuth(_);
   const { 
     isConnected, 
     presence, 
     participants, 
     typingUsers,
     updateUserStatus 
-  } = useSocket();
+  } = useSocket(_);
 
   const [userActivities, setUserActivities] = useState<UserActivity[]>([]);
   const [metrics, setMetrics] = useState<ActivityMetrics>({
@@ -188,12 +188,12 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
 
   // Store session-specific data in localStorage for persistence
   useEffect(() => {
-    const storedData = localStorage.getItem(sessionKey);
+    const storedData = localStorage.getItem(_sessionKey);
     if (storedData) {
       try {
-        const parsed = JSON.parse(storedData);
-        setMetrics(prev => ({ ...prev, ...parsed }));
-      } catch (error) {
+        const parsed = JSON.parse(_storedData);
+        setMetrics( prev => ({ ...prev, ...parsed }));
+      } catch (_error) {
         console.warn('Failed to parse stored session data:', error);
       }
     }
@@ -203,58 +203,58 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
   const handleUserStatusUpdate = useCallback((newStatus: string) => {
     // Validate status before updating
     const validStatuses = ['online', 'away', 'offline'] as const;
-    const validatedStatus = validStatuses.includes(newStatus as any) ? newStatus as typeof validStatuses[number] : 'online';
+    const validatedStatus = validStatuses.includes(_newStatus as any) ? newStatus as typeof validStatuses[number] : 'online';
 
-    updateUserStatus(validatedStatus);
+    updateUserStatus(_validatedStatus);
 
     // Store status change in session data
     const statusData = {
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       status: validatedStatus,
       sessionId,
-      previousStatus: localStorage.getItem(`${sessionKey}_status`) ? JSON.parse(localStorage.getItem(`${sessionKey}_status`)!).status : 'unknown'
+      previousStatus: localStorage.getItem(_`${sessionKey}_status`) ? JSON.parse(_localStorage.getItem(`${sessionKey}_status`)!).status : 'unknown'
     };
-    localStorage.setItem(`${sessionKey}_status`, JSON.stringify(statusData));
+    localStorage.setItem( `${sessionKey}_status`, JSON.stringify(statusData));
 
     // Track status change analytics
-    trackSessionActivity(`Status changed to ${validatedStatus}`);
+    trackSessionActivity(_`Status changed to ${validatedStatus}`);
   }, [updateUserStatus, sessionKey, sessionId, trackSessionActivity]);
 
   // Enhanced location tracking functionality using MapPin
   const handleLocationUpdate = useCallback((location: { city: string; country: string }) => {
     const locationData = {
       ...location,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       sessionId
     };
-    localStorage.setItem(`${sessionKey}_location`, JSON.stringify(locationData));
+    localStorage.setItem( `${sessionKey}_location`, JSON.stringify(locationData));
   }, [sessionKey, sessionId]);
 
   // Mouse pointer tracking for collaborative cursor
   const handleMousePointerUpdate = useCallback((position: { x: number; y: number }) => {
     const pointerData = {
       position,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       userId: user?.id
     };
-    localStorage.setItem(`${sessionKey}_pointer`, JSON.stringify(pointerData));
+    localStorage.setItem( `${sessionKey}_pointer`, JSON.stringify(pointerData));
   }, [sessionKey, user?.id]);
 
   // Edit functionality for user profile updates
   const handleEditProfile = useCallback(() => {
     const profileData = {
-      lastEdited: Date.now(),
+      lastEdited: Date.now(_),
       sessionId,
       userId: user?.id
     };
-    localStorage.setItem(`${sessionKey}_profile`, JSON.stringify(profileData));
+    localStorage.setItem( `${sessionKey}_profile`, JSON.stringify(profileData));
   }, [sessionKey, sessionId, user?.id]);
-  const [showAllUsers, setShowAllUsers] = useState(false);
+  const [showAllUsers, setShowAllUsers] = useState(_false);
   const [sortBy, setSortBy] = useState<'name' | 'activity' | 'duration'>('activity');
 
-  // Simulate user activity data (in real app, this would come from API/socket)
+  // Simulate user activity data ( in real app, this would come from API/socket)
   useEffect(() => {
-    const activities: UserActivity[] = participants.map((participant, index) => {
+    const activities: UserActivity[] = participants.map( (participant, index) => {
       const userPresence = presence.find(p => p.userId === participant.id);
       const typingUser = typingUsers.find(t => t.userId === participant.id);
       
@@ -267,33 +267,33 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
       const activityAnalytics = {
         totalActivities: activities.length,
         mostCommonActivity: activities[0], // coding is most common
-        activityDistribution: activities.reduce((acc, activity, idx) => {
-          acc[activity] = Math.floor(Math.random() * 100) + idx * 10;
+        activityDistribution: activities.reduce( (acc, activity, idx) => {
+          acc[activity] = Math.floor(_Math.random() * 100) + idx * 10;
           return acc;
         }, {} as Record<string, number>),
         sessionActivityScore: activities.length * 20 // scoring system
       };
 
       // Store activity analytics for session tracking
-      localStorage.setItem(`${sessionKey}_analytics`, JSON.stringify(activityAnalytics));
+      localStorage.setItem( `${sessionKey}_analytics`, JSON.stringify(activityAnalytics));
 
       // Use activities array for intelligent activity detection
-      const getSmartActivity = () => {
-        if (typingUser?.isTyping) {
+      const getSmartActivity = (_) => {
+        if (_typingUser?.isTyping) {
           return typingUser.typingLocation === 'code' ? activities[0] : activities[1]; // coding or chatting
-        } else if (userPresence?.cursor) {
+        } else if (_userPresence?.cursor) {
           return activities[0]; // coding
         } else if (userPresence?.lastSeen &&
-                   new Date().getTime() - userPresence.lastSeen.getTime() < 30000) {
+                   new Date().getTime(_) - userPresence.lastSeen.getTime(_) < 30000) {
           return activities[2]; // viewing
         } else if (userPresence?.lastSeen &&
-                   new Date().getTime() - userPresence.lastSeen.getTime() < 300000) {
-          return activities[4]; // debugging (recently active)
+                   new Date().getTime(_) - userPresence.lastSeen.getTime(_) < 300000) {
+          return activities[4]; // debugging (_recently active)
         }
         return activities[3]; // idle
       };
       
-      const currentActivity = getSmartActivity();
+      const currentActivity = getSmartActivity(_);
 
       return {
         userId: participant.id,
@@ -310,9 +310,9 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
           city: ['New York', 'London', 'Toronto', 'Berlin', 'Paris'][index % 5],
           timezone: 'UTC-5'
         },
-        sessionDuration: Math.floor(Math.random() * 120) + 10, // 10-130 minutes
-        linesOfCode: Math.floor(Math.random() * 500) + 50,
-        messagesCount: Math.floor(Math.random() * 50) + 5,
+        sessionDuration: Math.floor(_Math.random() * 120) + 10, // 10-130 minutes
+        linesOfCode: Math.floor(_Math.random() * 500) + 50,
+        messagesCount: Math.floor(_Math.random() * 50) + 5,
         cursorPosition: userPresence?.cursor,
         selection: userPresence?.selection ? {
           start: { line: userPresence.selection.startLine, column: userPresence.selection.startColumn },
@@ -324,18 +324,18 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
       };
     });
 
-    setUserActivities(activities);
+    setUserActivities(_activities);
 
     // Calculate metrics
     const activeUsers = activities.filter(a => a.status === 'online').length;
-    const totalSessionTime = activities.reduce((sum, a) => sum + a.sessionDuration, 0);
-    const totalLines = activities.reduce((sum, a) => sum + a.linesOfCode, 0);
-    const totalMessages = activities.reduce((sum, a) => sum + a.messagesCount, 0);
+    const totalSessionTime = activities.reduce( (sum, a) => sum + a.sessionDuration, 0);
+    const totalLines = activities.reduce( (sum, a) => sum + a.linesOfCode, 0);
+    const totalMessages = activities.reduce( (sum, a) => sum + a.messagesCount, 0);
 
     setMetrics({
       totalUsers: activities.length,
       activeUsers,
-      averageSessionTime: activities.length > 0 ? Math.round(totalSessionTime / activities.length) : 0,
+      averageSessionTime: activities.length > 0 ? Math.round(_totalSessionTime / activities.length) : 0,
       totalLinesWritten: totalLines,
       totalMessages: totalMessages,
       peakConcurrentUsers: Math.max(activeUsers, metrics.peakConcurrentUsers)
@@ -344,31 +344,31 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
 
   // Auto-update user status based on activity
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
+    const handleVisibilityChange = (_) => {
+      if (_document.hidden) {
         updateUserStatus('away');
       } else {
         updateUserStatus('online');
       }
     };
 
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = (_) => {
       updateUserStatus('offline');
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener( 'visibilitychange', handleVisibilityChange);
+    window.addEventListener( 'beforeunload', handleBeforeUnload);
 
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+    return (_) => {
+      document.removeEventListener( 'visibilitychange', handleVisibilityChange);
+      window.removeEventListener( 'beforeunload', handleBeforeUnload);
     };
   }, [updateUserStatus]);
 
-  const sortedUsers = [...userActivities].sort((a, b) => {
-    switch (sortBy) {
+  const sortedUsers = [...userActivities].sort( (a, b) => {
+    switch (_sortBy) {
       case 'name':
-        return a.userName.localeCompare(b.userName);
+        return a.userName.localeCompare(_b.userName);
       case 'duration':
         return b.sessionDuration - a.sessionDuration;
       case 'activity':
@@ -400,15 +400,15 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
               key={activity.userId}
               className="relative cursor-pointer"
               title={`${activity.userName} - ${activity.status} - ${activity.currentActivity}`}
-              onClick={() => {
-                handleUserInteraction(activity.userId, 'user-click');
-                onUserClick?.(activity.userId);
+              onClick={(_) => {
+                handleUserInteraction( activity.userId, 'user-click');
+                onUserClick?.(_activity.userId);
               }}
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-semibold border-2 border-slate-800">
                 {activity.userName.charAt(0)}
               </div>
-              <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-800 ${getStatusColor(activity.status)}`} />
+              <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-800 ${getStatusColor(_activity.status)}`} />
               {activity.isTyping && (
                 <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
@@ -444,7 +444,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
           <div className="flex items-center space-x-2">
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(_e) => setSortBy(_e.target.value as any)}
               className="text-xs bg-slate-700 border-slate-600 text-white rounded px-2 py-1"
             >
               <option value="activity">By Activity</option>
@@ -456,7 +456,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setShowAllUsers(!showAllUsers)}
+                onClick={(_) => setShowAllUsers(!showAllUsers)}
                 className="text-xs"
               >
                 {showAllUsers ? 'Show Less' : `+${userActivities.length - 8} more`}
@@ -473,7 +473,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
               <div className="text-xs text-gray-400">Active Now</div>
             </div>
             <div className="text-center p-3 bg-slate-700/50 rounded-lg">
-              <div className="text-lg font-bold text-green-400">{formatDuration(metrics.averageSessionTime)}</div>
+              <div className="text-lg font-bold text-green-400">{formatDuration(_metrics.averageSessionTime)}</div>
               <div className="text-xs text-gray-400">Avg Session</div>
             </div>
             <div className="text-center p-3 bg-slate-700/50 rounded-lg">
@@ -497,9 +497,9 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg hover:bg-slate-700/70 transition-colors cursor-pointer"
-              onClick={() => {
-                handleUserInteraction(activity.userId, 'detailed-user-click');
-                onUserClick?.(activity.userId);
+              onClick={(_) => {
+                handleUserInteraction( activity.userId, 'detailed-user-click');
+                onUserClick?.(_activity.userId);
               }}
             >
               <div className="flex items-center space-x-3 flex-1">
@@ -515,7 +515,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
                       {activity.userName.charAt(0)}
                     </div>
                   )}
-                  <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-700 ${getStatusColor(activity.status)}`} />
+                  <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-700 ${getStatusColor(_activity.status)}`} />
                   {activity.isTyping && (
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
@@ -532,10 +532,10 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
                     <span className="font-medium text-white truncate">
                       {activity.userName}
                       {activity.userId === user?.id && (
-                        <span className="text-xs text-gray-400 ml-1">(You)</span>
+                        <span className="text-xs text-gray-400 ml-1">(_You)</span>
                       )}
                     </span>
-                    {getDeviceIcon(activity.device)}
+                    {getDeviceIcon(_activity.device)}
                     {activity.location && (
                       <div className="flex items-center space-x-1">
                         <MapPin className="w-3 h-3 text-gray-500" />
@@ -547,7 +547,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
                   </div>
                   
                   <div className="flex items-center space-x-2 text-xs text-gray-400">
-                    {getActivityIcon(activity.currentActivity)}
+                    {getActivityIcon(_activity.currentActivity)}
                     <span>
                       {activity.isTyping
                         ? `Typing in ${activity.typingLocation}...`
@@ -563,7 +563,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
                     )}
                     <span>•</span>
                     <Clock className="w-3 h-3" />
-                    <span>{formatDuration(activity.sessionDuration)}</span>
+                    <span>{formatDuration(_activity.sessionDuration)}</span>
                     <span>•</span>
                     <span>{getFormattedLastSeen(new Date(Date.now() - Math.random() * 3600000))}</span>
                   </div>
@@ -578,7 +578,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
                         </div>
                       </div>
                       <Progress 
-                        value={(activity.sessionDuration / 120) * 100} 
+                        value={(_activity.sessionDuration / 120) * 100} 
                         className="h-1"
                       />
                     </div>
@@ -625,11 +625,11 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
                     )}
                     {activity.userId === user?.id && (
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={(_e) => {
+                          e.stopPropagation(_);
                           // Enhanced edit functionality with profile updates
-                          handleEditProfile();
-                          handleUserStatusUpdate(activity.status === 'away' ? 'online' : 'away');
+                          handleEditProfile(_);
+                          handleUserStatusUpdate(_activity.status === 'away' ? 'online' : 'away');
                         }}
                         className="p-1 hover:bg-slate-600 rounded relative group"
                       >
@@ -641,7 +641,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
                     )}
                     {/* Location tracking feature */}
                     <button
-                      onClick={() => handleLocationUpdate({ city: 'Remote', country: 'Global' })}
+                      onClick={(_) => handleLocationUpdate( { city: 'Remote', country: 'Global' })}
                       className="p-1 hover:bg-slate-600 rounded relative group"
                     >
                       <MapPin className="w-3 h-3 text-gray-400 hover:text-green-400" />
@@ -651,7 +651,7 @@ export const AdvancedUserPresence: React.FC<AdvancedUserPresenceProps> = ({
                     </button>
                     {/* Mouse pointer tracking feature */}
                     <button
-                      onClick={() => handleMousePointerUpdate({ x: 100, y: 100 })}
+                      onClick={(_) => handleMousePointerUpdate( { x: 100, y: 100 })}
                       className="p-1 hover:bg-slate-600 rounded relative group"
                     >
                       <MousePointer className="w-3 h-3 text-gray-400 hover:text-blue-400" />

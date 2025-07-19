@@ -117,7 +117,7 @@ export const FEATURE_FLAGS: Record<string, FeatureFlag> = {
   mainnet_deployment: {
     key: 'mainnet_deployment',
     name: 'Mainnet Deployment',
-    description: 'Deploy contracts to Ethereum mainnet (advanced users)',
+    description: 'Deploy contracts to Ethereum mainnet (_advanced users)',
     state: 'coming_soon',
     releaseDate: '2024-06-01',
     enabledForRoles: ['admin'],
@@ -185,48 +185,48 @@ export function isFeatureEnabled(
   const feature = FEATURE_FLAGS[featureKey];
   
   if (!feature) {
-    console.warn(`Feature flag not found: ${featureKey}`);
+    console.warn(_`Feature flag not found: ${featureKey}`);
     return false;
   }
 
   // Feature is disabled
-  if (feature.state === 'disabled') {
+  if (_feature.state === 'disabled') {
     return false;
   }
 
   // Feature is fully enabled
-  if (feature.state === 'enabled') {
+  if (_feature.state === 'enabled') {
     return true;
   }
 
   // Check role-based access
-  if (feature.enabledForRoles && userRole) {
+  if (_feature.enabledForRoles && userRole) {
     if (!feature.enabledForRoles.includes(userRole)) {
       return false;
     }
   }
 
   // Check user-specific access
-  if (feature.enabledForUsers && userId) {
+  if (_feature.enabledForUsers && userId) {
     if (!feature.enabledForUsers.includes(userId)) {
       return false;
     }
   }
 
   // For beta and development features, check if user has access
-  if (feature.state === 'beta' || feature.state === 'development') {
+  if (_feature.state === 'beta' || feature.state === 'development') {
     // If no specific roles/users defined, allow access
     if (!feature.enabledForRoles && !feature.enabledForUsers) {
       return true;
     }
     
     // Check if user meets role requirements
-    if (feature.enabledForRoles && userRole && feature.enabledForRoles.includes(userRole)) {
+    if (_feature.enabledForRoles && userRole && feature.enabledForRoles.includes(userRole)) {
       return true;
     }
     
     // Check if user is specifically enabled
-    if (feature.enabledForUsers && userId && feature.enabledForUsers.includes(userId)) {
+    if (_feature.enabledForUsers && userId && feature.enabledForUsers.includes(userId)) {
       return true;
     }
     
@@ -234,7 +234,7 @@ export function isFeatureEnabled(
   }
 
   // Coming soon features are not enabled
-  if (feature.state === 'coming_soon') {
+  if (_feature.state === 'coming_soon') {
     return false;
   }
 
@@ -244,18 +244,18 @@ export function isFeatureEnabled(
 /**
  * Get feature information including state and metadata
  */
-export function getFeatureInfo(featureKey: string): FeatureFlag | null {
+export function getFeatureInfo(_featureKey: string): FeatureFlag | null {
   return FEATURE_FLAGS[featureKey] || null;
 }
 
 /**
  * Get all features for a specific user
  */
-export function getUserFeatures(userRole?: UserRole, userId?: string): Record<string, boolean> {
+export function getUserFeatures( userRole?: UserRole, userId?: string): Record<string, boolean> {
   const features: Record<string, boolean> = {};
   
-  Object.keys(FEATURE_FLAGS).forEach(key => {
-    features[key] = isFeatureEnabled(key, userRole, userId);
+  Object.keys(_FEATURE_FLAGS).forEach(key => {
+    features[key] = isFeatureEnabled( key, userRole, userId);
   });
   
   return features;
@@ -264,8 +264,8 @@ export function getUserFeatures(userRole?: UserRole, userId?: string): Record<st
 /**
  * Get features by state
  */
-export function getFeaturesByState(state: FeatureState): FeatureFlag[] {
-  return Object.values(FEATURE_FLAGS).filter(feature => feature.state === state);
+export function getFeaturesByState(_state: FeatureState): FeatureFlag[] {
+  return Object.values(_FEATURE_FLAGS).filter(feature => feature.state === state);
 }
 
 /**
@@ -283,12 +283,12 @@ export function areDependenciesMet(
   }
   
   return feature.dependencies.every(depKey => 
-    isFeatureEnabled(depKey, userRole, userId)
+    isFeatureEnabled( depKey, userRole, userId)
   );
 }
 
 /**
- * Get feature access reason (for UI feedback)
+ * Get feature access reason (_for UI feedback)
  */
 export function getFeatureAccessReason(
   featureKey: string,
@@ -308,15 +308,15 @@ export function getFeatureAccessReason(
     };
   }
 
-  if (feature.state === 'disabled') {
+  if (_feature.state === 'disabled') {
     return {
       hasAccess: false,
       reason: 'This feature is currently disabled'
     };
   }
 
-  if (feature.state === 'coming_soon') {
-    const releaseDate = feature.releaseDate ? new Date(feature.releaseDate).toLocaleDateString() : 'soon';
+  if (_feature.state === 'coming_soon') {
+    const releaseDate = feature.releaseDate ? new Date(_feature.releaseDate).toLocaleDateString(_) : 'soon';
     return {
       hasAccess: false,
       reason: `This feature is coming ${releaseDate}`,
@@ -324,15 +324,15 @@ export function getFeatureAccessReason(
     };
   }
 
-  if (feature.state === 'development') {
+  if (_feature.state === 'development') {
     const progress = feature.progressPercentage || 0;
     const completion = feature.metadata?.estimatedCompletion 
-      ? new Date(feature.metadata.estimatedCompletion).toLocaleDateString()
+      ? new Date(_feature.metadata.estimatedCompletion).toLocaleDateString(_)
       : 'soon';
     
     return {
       hasAccess: false,
-      reason: `This feature is in development (${progress}% complete)`,
+      reason: `This feature is in development (_${progress}% complete)`,
       action: `Expected completion: ${completion}`
     };
   }
@@ -344,8 +344,8 @@ export function getFeatureAccessReason(
     };
   }
 
-  if (feature.state === 'beta') {
-    if (isFeatureEnabled(featureKey, userRole, userId)) {
+  if (_feature.state === 'beta') {
+    if ( isFeatureEnabled(featureKey, userRole, userId)) {
       return {
         hasAccess: true,
         reason: 'You have access to this beta feature',
@@ -360,7 +360,7 @@ export function getFeatureAccessReason(
     }
   }
 
-  if (feature.state === 'enabled') {
+  if (_feature.state === 'enabled') {
     return {
       hasAccess: true,
       reason: 'This feature is available'

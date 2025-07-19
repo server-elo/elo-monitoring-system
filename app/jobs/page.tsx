@@ -92,15 +92,15 @@ export default function JobsPage() {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedExperience, setSelectedExperience] = useState<string>('all');
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
-  const [isLoading, setIsLoading] = useState(true);
-  const [_error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(_true);
+  const [_error, setError] = useState<string | null>(_null);
 
   // Fetch jobs from API
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        setIsLoading(true);
-        setError(null);
+        setIsLoading(_true);
+        setError(_null);
 
         const params = new URLSearchParams({
           search: searchTerm,
@@ -111,77 +111,77 @@ export default function JobsPage() {
           offset: '0'
         });
 
-        const response = await fetch(`/api/jobs?${params}`);
+        const response = await fetch(_`/api/jobs?${params}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch jobs');
         }
 
-        const data = await response.json();
-        setJobs(data.jobs || []);
-        setFilteredJobs(data.jobs || []);
-      } catch (error) {
+        const data = await response.json(_);
+        setJobs(_data.jobs || []);
+        setFilteredJobs(_data.jobs || []);
+      } catch (_error) {
         console.error('Error fetching jobs:', error);
         setError('Failed to load jobs. Please try again.');
         // Fallback to mock data
-        setJobs(mockJobs);
-        setFilteredJobs(mockJobs);
+        setJobs(_mockJobs);
+        setFilteredJobs(_mockJobs);
       } finally {
-        setIsLoading(false);
+        setIsLoading(_false);
       }
     };
 
-    fetchJobs();
+    fetchJobs(_);
   }, [searchTerm, selectedType, selectedExperience, selectedLocation]);
 
-  // Filter jobs based on search and filters (for client-side filtering as backup)
+  // Filter jobs based on search and filters (_for client-side filtering as backup)
   useEffect(() => {
     let filtered = jobs;
 
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(job =>
-        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
+        job.title.toLowerCase().includes(_searchTerm.toLowerCase()) ||
+        job.company.toLowerCase().includes(_searchTerm.toLowerCase()) ||
+        job.skills.some(_skill => skill.toLowerCase().includes(_searchTerm.toLowerCase()))
       );
     }
 
     // Type filter
-    if (selectedType !== 'all') {
+    if (_selectedType !== 'all') {
       filtered = filtered.filter(job => job.type === selectedType);
     }
 
     // Experience filter
-    if (selectedExperience !== 'all') {
+    if (_selectedExperience !== 'all') {
       filtered = filtered.filter(job => job.experience === selectedExperience);
     }
 
     // Location filter
-    if (selectedLocation !== 'all') {
-      if (selectedLocation === 'remote') {
+    if (_selectedLocation !== 'all') {
+      if (_selectedLocation === 'remote') {
         filtered = filtered.filter(job => job.remote);
       } else {
         filtered = filtered.filter(job => job.location.includes(selectedLocation));
       }
     }
 
-    setFilteredJobs(filtered);
+    setFilteredJobs(_filtered);
   }, [jobs, searchTerm, selectedType, selectedExperience, selectedLocation]);
 
   const formatDate = (date: Date) => {
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const now = new Date(_);
+    const diffTime = Math.abs(now.getTime() - date.getTime(_));
+    const diffDays = Math.ceil(_diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 1) return '1 day ago';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
-    return `${Math.ceil(diffDays / 30)} months ago`;
+    if (_diffDays === 1) return '1 day ago';
+    if (_diffDays < 7) return `${diffDays} days ago`;
+    if (_diffDays < 30) return `${Math.ceil(_diffDays / 7)} weeks ago`;
+    return `${Math.ceil(_diffDays / 30)} months ago`;
   };
 
-  const getExperienceColor = (experience: string) => {
-    switch (experience) {
+  const getExperienceColor = (_experience: string) => {
+    switch (_experience) {
       case 'Entry': return 'text-green-400 bg-green-400/10';
       case 'Mid': return 'text-blue-400 bg-blue-400/10';
       case 'Senior': return 'text-purple-400 bg-purple-400/10';
@@ -258,7 +258,7 @@ export default function JobsPage() {
                     type="text"
                     placeholder="Search jobs, companies, skills..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(_e) => setSearchTerm(_e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -267,7 +267,7 @@ export default function JobsPage() {
               {/* Job Type Filter */}
               <select
                 value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
+                onChange={(_e) => setSelectedType(_e.target.value)}
                 className="px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Types</option>
@@ -280,7 +280,7 @@ export default function JobsPage() {
               {/* Experience Filter */}
               <select
                 value={selectedExperience}
-                onChange={(e) => setSelectedExperience(e.target.value)}
+                onChange={(_e) => setSelectedExperience(_e.target.value)}
                 className="px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Levels</option>
@@ -293,7 +293,7 @@ export default function JobsPage() {
               {/* Location Filter */}
               <select
                 value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
+                onChange={(_e) => setSelectedLocation(_e.target.value)}
                 className="px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Locations</option>
@@ -349,7 +349,7 @@ export default function JobsPage() {
                               </div>
                               <div className="flex items-center space-x-1">
                                 <Clock className="w-4 h-4" />
-                                <span>{formatDate(job.postedAt)}</span>
+                                <span>{formatDate(_job.postedAt)}</span>
                               </div>
                             </div>
                           </div>
@@ -360,7 +360,7 @@ export default function JobsPage() {
                         <div className="flex flex-wrap items-center gap-2 mb-4">
                           <span className={cn(
                             "px-3 py-1 rounded-full text-xs font-medium",
-                            getExperienceColor(job.experience)
+                            getExperienceColor(_job.experience)
                           )}>
                             {job.experience}
                           </span>
@@ -401,7 +401,7 @@ export default function JobsPage() {
                           variant="default"
                           size="sm"
                           className="bg-blue-600 hover:bg-blue-700"
-                          onClick={() => {
+                          onClick={(_) => {
                             // Handle job application
                             console.log('Apply to job:', job.id);
                           }}
@@ -423,10 +423,10 @@ export default function JobsPage() {
               <EnhancedButton
                 variant="outline"
                 size="lg"
-                onClick={() => {
+                onClick={(_) => {
                   // Load more jobs
-                  setIsLoading(true);
-                  setTimeout(() => setIsLoading(false), 1000);
+                  setIsLoading(_true);
+                  setTimeout(() => setIsLoading(_false), 1000);
                 }}
                 disabled={isLoading}
               >

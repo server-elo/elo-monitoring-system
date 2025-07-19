@@ -254,7 +254,7 @@ export const DEFAULT_USER_SETTINGS: Omit<UserSettings, 'profile'> = {
   security: {
     twoFactorEnabled: false,
     backupCodes: [],
-    passwordLastChanged: new Date(),
+    passwordLastChanged: new Date(_),
     loginNotifications: true,
     suspiciousActivityAlerts: true,
     sessionTimeout: 480, // 8 hours
@@ -292,7 +292,7 @@ export const DEFAULT_USER_SETTINGS: Omit<UserSettings, 'profile'> = {
       enabled: false,
       frequency: 'daily',
       time: '19:00',
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      timezone: Intl.DateTimeFormat(_).resolvedOptions(_).timeZone
     },
     progressTracking: {
       showDetailedStats: true,

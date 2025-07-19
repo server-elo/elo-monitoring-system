@@ -8,12 +8,12 @@ import { UserRole } from '@prisma/client';
 import { PasswordUtils, loginSchema } from '@/lib/auth/password';
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(_prisma),
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      profile(profile) {
+      profile(_profile) {
         return {
           id: profile.id.toString(),
           name: profile.name || profile.login,
@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      profile(profile) {
+      profile(_profile) {
         return {
           id: profile.sub,
           name: profile.name,
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(_credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
             return null;
@@ -88,7 +88,7 @@ export const authOptions: NextAuthOptions = {
             image: user.image,
             role: user.role,
           };
-        } catch (error) {
+        } catch (_error) {
           console.error('Credentials auth error:', error);
           return null;
         }
@@ -102,13 +102,13 @@ export const authOptions: NextAuthOptions = {
         signature: { label: 'Signature', type: 'text' },
         address: { label: 'Address', type: 'text' },
       },
-      async authorize(credentials) {
+      async authorize(_credentials) {
         try {
           if (!credentials?.message || !credentials?.signature || !credentials?.address) {
             return null;
           }
 
-          // Verify the signature (implement your verification logic)
+          // Verify the signature (_implement your verification logic)
           const isValid = await verifySignature(
             credentials.message,
             credentials.signature,
@@ -148,7 +148,7 @@ export const authOptions: NextAuthOptions = {
             image: user.image,
             role: user.role,
           };
-        } catch (error) {
+        } catch (_error) {
           console.error('MetaMask auth error:', error);
           return null;
         }
@@ -160,22 +160,22 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt( { token, user }) {
       if (user) {
         token.role = user.role;
         token.id = user.id;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session( { session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as any;
       }
       return session;
     },
-    async signIn({ user, account, profile }) {
-      if (account?.provider === 'github' || account?.provider === 'google') {
+    async signIn( { user, account, profile }) {
+      if (_account?.provider === 'github' || account?.provider === 'google') {
         try {
           // Create user profile if it doesn't exist
           const existingProfile = await prisma.userProfile.findUnique({
@@ -186,11 +186,11 @@ export const authOptions: NextAuthOptions = {
             await prisma.userProfile.create({
               data: {
                 userId: user.id,
-                githubUsername: account.provider === 'github' ? (profile as any)?.login : undefined,
+                githubUsername: account.provider === 'github' ? (_profile as any)?.login : undefined,
               },
             });
           }
-        } catch (error) {
+        } catch (_error) {
           console.error('Error creating user profile:', error);
         }
       }
@@ -202,22 +202,22 @@ export const authOptions: NextAuthOptions = {
     error: '/auth/error',
   },
   events: {
-    async signIn({ user, isNewUser }) {
+    async signIn( { user, isNewUser }) {
       if (isNewUser) {
         // Send welcome email or perform other onboarding tasks
-        console.log(`New user signed up: ${user.email}`);
+        console.log(_`New user signed up: ${user.email}`);
       }
     },
   },
 };
 
-async function verifySignature(message: string, signature: string, address: string): Promise<boolean> {
+async function verifySignature( message: string, signature: string, address: string): Promise<boolean> {
   try {
     // Implement signature verification using ethers.js
     const { ethers } = await import('ethers');
-    const recoveredAddress = ethers.verifyMessage(message, signature);
+    const recoveredAddress = ethers.verifyMessage( message, signature);
     return recoveredAddress.toLowerCase() === address.toLowerCase();
-  } catch (error) {
+  } catch (_error) {
     console.error('Signature verification error:', error);
     return false;
   }

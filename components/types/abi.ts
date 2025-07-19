@@ -1,5 +1,5 @@
 /**
- * Ethereum ABI (Application Binary Interface) type definitions
+ * Ethereum ABI (_Application Binary Interface) type definitions
  */
 
 export type ABIType = 'function' | 'constructor' | 'event' | 'fallback' | 'receive';

@@ -42,12 +42,12 @@ interface LearningInsights {
 export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboardProps> = ({
   className = ''
 }) => {
-  const { user, isAuthenticated } = useAuth();
-  const { toast } = useToast();
+  const { user, isAuthenticated } = useAuth(_);
+  const { toast } = useToast(_);
 
-  const [insights, setInsights] = useState<LearningInsights | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [_selectedRecommendation, setSelectedRecommendation] = useState<LearningRecommendation | null>(null);
+  const [insights, setInsights] = useState<LearningInsights | null>(_null);
+  const [loading, setLoading] = useState(_true);
+  const [_selectedRecommendation, setSelectedRecommendation] = useState<LearningRecommendation | null>(_null);
   const [activeTab, setActiveTab] = useState<'overview' | 'recommendations' | 'analytics'>('overview');
 
   useEffect(() => {
@@ -55,26 +55,26 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
 
     const loadInsights = async () => {
       try {
-        setLoading(true);
-        const data = await adaptiveLearning.getLearningInsights(user.id);
-        setInsights(data);
-      } catch (error) {
-        logger.error('Failed to load learning insights:', {}, error as Error);
+        setLoading(_true);
+        const data = await adaptiveLearning.getLearningInsights(_user.id);
+        setInsights(_data);
+      } catch (_error) {
+        logger.error( 'Failed to load learning insights:', { metadata: {}, error as Error);
         toast({
           title: 'Error loading insights',
           description: 'Failed to load your personalized learning data.',
           variant: 'destructive'
         });
       } finally {
-        setLoading(false);
+        setLoading(_false);
       }
     };
 
-    loadInsights();
+    loadInsights(_);
   }, [isAuthenticated, user, toast]);
 
-  const handleRecommendationClick = (recommendation: LearningRecommendation) => {
-    setSelectedRecommendation(recommendation);
+  const handleRecommendationClick = (_recommendation: LearningRecommendation) => {
+    setSelectedRecommendation(_recommendation);
     // Here you would navigate to the recommended content
     toast({
       title: 'Starting Learning Activity',
@@ -83,8 +83,8 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
     });
   };
 
-  const getPriorityColor = (priority: LearningRecommendation['priority']) => {
-    switch (priority) {
+  const getPriorityColor = (_priority: LearningRecommendation['priority']) => {
+    switch (_priority) {
       case 'critical': return 'text-red-600 bg-red-100 dark:bg-red-900/20';
       case 'high': return 'text-orange-600 bg-orange-100 dark:bg-orange-900/20';
       case 'medium': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20';
@@ -92,8 +92,8 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
     }
   };
 
-  const getSkillLevelColor = (level: string) => {
-    switch (level) {
+  const getSkillLevelColor = (_level: string) => {
+    switch (_level) {
       case 'EXPERT': return 'text-purple-600 bg-purple-100 dark:bg-purple-900/20';
       case 'ADVANCED': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20';
       case 'INTERMEDIATE': return 'text-green-600 bg-green-100 dark:bg-green-900/20';
@@ -148,7 +148,7 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
         ].map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={(_) => setActiveTab(_tab.id as any)}
             className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
               activeTab === tab.id
                 ? 'bg-white dark:bg-gray-700 shadow-sm text-blue-600'
@@ -173,12 +173,12 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">Skill Level</span>
-                <Badge className={getSkillLevelColor(profile.skillLevel)}>
+                <Badge className={getSkillLevelColor(_profile.skillLevel)}>
                   {profile.skillLevel}
                 </Badge>
               </div>
               <div className="text-2xl font-bold">Level {profile.currentLevel}</div>
-              <div className="text-sm text-gray-500">{profile.totalXP.toLocaleString()} XP</div>
+              <div className="text-sm text-gray-500">{profile.totalXP.toLocaleString(_)} XP</div>
             </Card>
 
             <Card className="p-4">
@@ -209,7 +209,7 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
               </div>
               <Badge variant="outline">
                 <Calendar className="w-3 h-3 mr-1" />
-                {nextMilestone.eta.toLocaleDateString()}
+                {nextMilestone.eta.toLocaleDateString(_)}
               </Badge>
             </div>
             
@@ -234,10 +234,10 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
                 Your Strengths
               </h4>
               <div className="space-y-2">
-                {analysis.strengthAreas.slice(0, 3).map((strength, index) => (
+                {analysis.strengthAreas.slice(0, 3).map( (strength, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <span className="text-sm capitalize">{strength.concept.replace('-', ' ')}</span>
-                    <Badge variant="secondary">{Math.round(strength.mastery * 100)}%</Badge>
+                    <Badge variant="secondary">{Math.round(_strength.mastery * 100)}%</Badge>
                   </div>
                 ))}
               </div>
@@ -249,10 +249,10 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
                 Areas to Improve
               </h4>
               <div className="space-y-2">
-                {analysis.improvementAreas.slice(0, 3).map((area, index) => (
+                {analysis.improvementAreas.slice(0, 3).map( (area, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <span className="text-sm capitalize">{area.concept.replace('-', ' ')}</span>
-                    <Badge variant="outline">{Math.round(area.mastery * 100)}%</Badge>
+                    <Badge variant="outline">{Math.round(_area.mastery * 100)}%</Badge>
                   </div>
                 ))}
               </div>
@@ -275,7 +275,7 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
 
           <div className="grid gap-4">
             <AnimatePresence>
-              {recommendations.map((recommendation, index) => (
+              {recommendations.map( (recommendation, index) => (
                 <motion.div
                   key={recommendation.title}
                   initial={{ opacity: 0, y: 20 }}
@@ -283,7 +283,7 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer"
-                        onClick={() => handleRecommendationClick(recommendation)}>
+                        onClick={(_) => handleRecommendationClick(_recommendation)}>
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20">
@@ -299,7 +299,7 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
                       </div>
                       
                       <div className="flex items-center gap-2">
-                        <Badge className={getPriorityColor(recommendation.priority)}>
+                        <Badge className={getPriorityColor(_recommendation.priority)}>
                           {recommendation.priority}
                         </Badge>
                         <ArrowRight className="w-4 h-4 text-gray-400" />
@@ -357,7 +357,7 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
 
             <Card className="p-4 text-center">
               <Clock className="w-8 h-8 mx-auto mb-2 text-purple-500" />
-              <div className="text-2xl font-bold">{Math.round(profile.performanceMetrics.timeSpentLearning / 60)}h</div>
+              <div className="text-2xl font-bold">{Math.round(_profile.performanceMetrics.timeSpentLearning / 60)}h</div>
               <div className="text-sm text-gray-500">Time spent</div>
             </Card>
           </div>
@@ -409,7 +409,7 @@ export const PersonalizedLearningDashboard: React.FC<PersonalizedLearningDashboa
                 <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded">
                   <div className="text-sm font-medium mb-2">Risk Factors:</div>
                   <ul className="text-xs space-y-1">
-                    {analysis.predictedOutcomes.riskFactors.map((risk, index) => (
+                    {analysis.predictedOutcomes.riskFactors.map( (risk, index) => (
                       <li key={index} className="flex items-center gap-2">
                         <AlertCircle className="w-3 h-3 text-yellow-600" />
                         {risk}

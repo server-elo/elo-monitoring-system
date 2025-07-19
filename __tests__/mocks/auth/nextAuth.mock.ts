@@ -14,7 +14,7 @@ export const mockUser: User = {
   image: 'https://example.com/avatar.jpg',
   role: 'STUDENT',
   status: 'ACTIVE',
-  emailVerified: new Date(),
+  emailVerified: new Date(_),
 };
 
 export const mockAdminUser: User = {
@@ -24,7 +24,7 @@ export const mockAdminUser: User = {
   image: 'https://example.com/admin-avatar.jpg',
   role: 'ADMIN',
   status: 'ACTIVE',
-  emailVerified: new Date(),
+  emailVerified: new Date(_),
 };
 
 export const mockInstructorUser: User = {
@@ -34,19 +34,19 @@ export const mockInstructorUser: User = {
   image: 'https://example.com/instructor-avatar.jpg',
   role: 'INSTRUCTOR',
   status: 'ACTIVE',
-  emailVerified: new Date(),
+  emailVerified: new Date(_),
 };
 
 // Mock session data
 export const mockSession: Session = {
   user: mockUser,
-  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
+  expires: new Date(_Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
   sessionToken: 'mock-session-token',
 };
 
 export const mockAdminSession: Session = {
   user: mockAdminUser,
-  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  expires: new Date(_Date.now() + 24 * 60 * 60 * 1000).toISOString(),
   sessionToken: 'mock-admin-session-token',
 };
 
@@ -57,8 +57,8 @@ export const mockJWT: JWT = {
   name: mockUser.name,
   picture: mockUser.image,
   role: mockUser.role,
-  iat: Math.floor(Date.now() / 1000),
-  exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // 24 hours
+  iat: Math.floor(_Date.now() / 1000),
+  exp: Math.floor(_Date.now() / 1000) + 24 * 60 * 60, // 24 hours
 };
 
 // Mock credentials provider
@@ -70,7 +70,7 @@ export const mockCredentialsProvider = {
     email: { label: 'Email', type: 'email' },
     password: { label: 'Password', type: 'password' },
   },
-  authorize: vi.fn(),
+  authorize: vi.fn(_),
 };
 
 // Mock Google provider
@@ -84,7 +84,7 @@ export const mockGoogleProvider = {
 
 // Mock callbacks
 export const mockCallbacks = {
-  jwt: vi.fn(async ({ token, user, account, profile, trigger, session }) => {
+  jwt: vi.fn( async ({ token, user, account, profile, trigger, session }) => {
     if (user) {
       token.role = user.role;
       token.status = user.status;
@@ -92,7 +92,7 @@ export const mockCallbacks = {
     return token;
   }),
 
-  session: vi.fn(async ({ session, token, user }) => {
+  session: vi.fn( async ({ session, token, user }) => {
     if (token) {
       session.user.id = token.sub;
       session.user.role = token.role as string;
@@ -101,15 +101,15 @@ export const mockCallbacks = {
     return session;
   }),
 
-  signIn: vi.fn(async ({ user, account, profile, email, credentials }) => {
+  signIn: vi.fn( async ({ user, account, profile, email, credentials }) => {
     // Mock sign-in validation
-    if (user.status === 'BANNED') {
+    if (_user.status === 'BANNED') {
       return false;
     }
     return true;
   }),
 
-  redirect: vi.fn(async ({ url, baseUrl }) => {
+  redirect: vi.fn( async ({ url, baseUrl }) => {
     return baseUrl;
   }),
 };
@@ -125,12 +125,12 @@ export const mockPages = {
 
 // Mock events
 export const mockEvents = {
-  signIn: vi.fn(),
-  signOut: vi.fn(),
-  createUser: vi.fn(),
-  updateUser: vi.fn(),
-  linkAccount: vi.fn(),
-  session: vi.fn(),
+  signIn: vi.fn(_),
+  signOut: vi.fn(_),
+  createUser: vi.fn(_),
+  updateUser: vi.fn(_),
+  linkAccount: vi.fn(_),
+  session: vi.fn(_),
 };
 
 // Complete NextAuth configuration mock
@@ -163,18 +163,18 @@ export const mockNextAuthConfig: Partial<NextAuthConfig> = {
 
 // Mock NextAuth functions
 export const mockNextAuth = {
-  getServerSession: vi.fn(),
-  getToken: vi.fn(),
-  encode: vi.fn(),
-  decode: vi.fn(),
+  getServerSession: vi.fn(_),
+  getToken: vi.fn(_),
+  encode: vi.fn(_),
+  decode: vi.fn(_),
 };
 
 // Mock auth response helpers
-export const createMockAuthResponse = (success: boolean, data?: any, error?: string) => ({
+export const createMockAuthResponse = ( success: boolean, data?: any, error?: string) => ({
   success,
   data,
   error,
-  timestamp: new Date().toISOString(),
+  timestamp: new Date(_).toISOString(),
 });
 
 export const mockAuthErrors = {
@@ -198,31 +198,31 @@ export const mockSessionStates = {
 };
 
 // Helper functions for tests
-export const createMockUser = (overrides: Partial<User> = {}): User => ({
+export const createMockUser = (_overrides: Partial<User> = {}): User => ({
   ...mockUser,
   ...overrides,
 });
 
-export const createMockSession = (userOverrides: Partial<User> = {}): Session => ({
+export const createMockSession = (_userOverrides: Partial<User> = {}): Session => ({
   ...mockSession,
-  user: createMockUser(userOverrides),
+  user: createMockUser(_userOverrides),
 });
 
-export const createMockJWT = (overrides: Partial<JWT> = {}): JWT => ({
+export const createMockJWT = (_overrides: Partial<JWT> = {}): JWT => ({
   ...mockJWT,
   ...overrides,
 });
 
 // Reset all mocks
-export const resetAuthMocks = () => {
-  vi.clearAllMocks();
-  mockCredentialsProvider.authorize.mockClear();
-  mockCallbacks.jwt.mockClear();
-  mockCallbacks.session.mockClear();
-  mockCallbacks.signIn.mockClear();
-  mockCallbacks.redirect.mockClear();
-  Object.values(mockEvents).forEach(event => event.mockClear());
-  Object.values(mockNextAuth).forEach(fn => fn.mockClear());
+export const resetAuthMocks = (_) => {
+  vi.clearAllMocks(_);
+  mockCredentialsProvider.authorize.mockClear(_);
+  mockCallbacks.jwt.mockClear(_);
+  mockCallbacks.session.mockClear(_);
+  mockCallbacks.signIn.mockClear(_);
+  mockCallbacks.redirect.mockClear(_);
+  Object.values(_mockEvents).forEach(_event => event.mockClear());
+  Object.values(_mockNextAuth).forEach(_fn => fn.mockClear());
 };
 
 export default mockNextAuthConfig;

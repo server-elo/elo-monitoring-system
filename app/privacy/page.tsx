@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
       title: 'Information We Collect',
       icon: <Database className="w-6 h-6" />,
       content: [
-        'Account information (email, username, profile data)',
+        'Account information ( email, username, profile data)',
         'Learning progress and achievements',
         'Code submissions and project data',
         'Usage analytics and performance metrics',
@@ -74,7 +74,7 @@ export default function PrivacyPolicyPage() {
               Your privacy is important to us. This policy explains how we collect, use, and protect your information.
             </p>
             <p className="text-sm text-gray-400">
-              Last updated: {new Date().toLocaleDateString()}
+              Last updated: {new Date(_).toLocaleDateString(_)}
             </p>
           </motion.div>
 
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
 
           {/* Main Sections */}
           <div className="space-y-8">
-            {sections.map((section, index) => (
+            {sections.map( (section, index) => (
               <motion.div
                 key={section.title}
                 initial={{ opacity: 0, y: 20 }}
@@ -114,7 +114,7 @@ export default function PrivacyPolicyPage() {
                   </h3>
                 </div>
                 <ul className="space-y-2">
-                  {section.content.map((item, itemIndex) => (
+                  {section.content.map( (item, itemIndex) => (
                     <li key={itemIndex} className="text-gray-300 flex items-start">
                       <span className="text-blue-400 mr-2">•</span>
                       {item}

@@ -49,41 +49,41 @@ interface CollaborationState {
 
 interface CollaborationActions {
   // Session management
-  startCollaboration: (sessionId: string, lessonId?: string) => Promise<void>;
-  endCollaboration: () => void;
-  joinSession: (sessionId: string) => Promise<void>;
-  leaveSession: () => void;
+  startCollaboration: ( sessionId: string, lessonId?: string) => Promise<void>;
+  endCollaboration: (_) => void;
+  joinSession: (_sessionId: string) => Promise<void>;
+  leaveSession: (_) => void;
 
   // Code collaboration
-  sendCodeOperation: (operation: TextOperation) => Promise<void>;
-  sendCursorUpdate: (cursor: any) => void;
-  sendCompilationRequest: (code: string) => void;
+  sendCodeOperation: (_operation: TextOperation) => Promise<void>;
+  sendCursorUpdate: (_cursor: any) => void;
+  sendCompilationRequest: (_code: string) => void;
 
   // User management
-  updateUserStatus: (status: 'online' | 'idle' | 'offline') => void;
-  setTyping: (isTyping: boolean) => void;
-  kickUser: (userId: string) => void;
-  promoteUser: (userId: string, role: 'instructor' | 'student' | 'observer') => void;
+  updateUserStatus: (_status: 'online' | 'idle' | 'offline') => void;
+  setTyping: (_isTyping: boolean) => void;
+  kickUser: (_userId: string) => void;
+  promoteUser: ( userId: string, role: 'instructor' | 'student' | 'observer') => void;
 
   // Chat
-  sendChatMessage: (content: string, type?: 'text' | 'code' | 'file') => void;
-  addChatReaction: (messageId: string, emoji: string) => void;
-  markChatAsRead: (messageId: string) => void;
+  sendChatMessage: ( content: string, type?: 'text' | 'code' | 'file') => void;
+  addChatReaction: ( messageId: string, emoji: string) => void;
+  markChatAsRead: (_messageId: string) => void;
 
   // File sharing
-  uploadFile: (file: File, description?: string) => Promise<any>;
-  downloadFile: (fileId: string) => void;
-  deleteFile: (fileId: string) => void;
+  uploadFile: ( file: File, description?: string) => Promise<any>;
+  downloadFile: (_fileId: string) => void;
+  deleteFile: (_fileId: string) => void;
 
   // Connection management
-  reconnect: () => Promise<void>;
-  forceSync: () => Promise<void>;
-  clearOfflineData: () => void;
+  reconnect: (_) => Promise<void>;
+  forceSync: (_) => Promise<void>;
+  clearOfflineData: (_) => void;
 
   // Integration with learning systems
-  syncLessonProgress: (lessonId: string, progress: any) => void;
-  shareXPReward: (amount: number, reason: string) => void;
-  triggerCollaborativeAchievement: (achievementId: string, participants: string[]) => void;
+  syncLessonProgress: ( lessonId: string, progress: any) => void;
+  shareXPReward: ( amount: number, reason: string) => void;
+  triggerCollaborativeAchievement: ( achievementId: string, participants: string[]) => void;
 }
 
 interface CollaborationContextType {
@@ -92,18 +92,18 @@ interface CollaborationContextType {
   // Direct property access for convenience
   currentSession: CollaborationSession | null;
   isConnected: boolean;
-  updateCode: (code: string) => void;
-  updateCursor: (cursor: any) => void;
-  sendChatMessage: (content: string, type?: 'text' | 'code' | 'file') => void;
+  updateCode: (_code: string) => void;
+  updateCursor: (_cursor: any) => void;
+  sendChatMessage: ( content: string, type?: 'text' | 'code' | 'file') => void;
   chatMessages: any[];
-  leaveSession: () => void;
+  leaveSession: (_) => void;
 }
 
-const CollaborationContext = createContext<CollaborationContextType | null>(null);
+const CollaborationContext = createContext<CollaborationContextType | null>(_null);
 
 // Reducer for managing collaboration state
-function collaborationReducer(state: CollaborationState, action: any): CollaborationState {
-  switch (action.type) {
+function collaborationReducer( state: CollaborationState, action: any): CollaborationState {
+  switch (_action.type) {
     case 'SET_SESSION':
       return { ...state, sessionId: action.payload, isEnabled: true };
 
@@ -199,7 +199,7 @@ export function CollaborationProvider({
   userEmail,
   userRole = 'student'
 }: CollaborationProviderProps) {
-  const [state, dispatch] = useReducer(collaborationReducer, initialState);
+  const [state, dispatch] = useReducer( collaborationReducer, initialState);
 
   // Initialize collaboration connection
   const connection = useCollaborationConnection({
@@ -210,28 +210,28 @@ export function CollaborationProvider({
     maxReconnectAttempts: 5,
     reconnectDelay: 1000,
     enableOfflineMode: true,
-    onConnectionChange: (connectionState) => {
+    onConnectionChange: (_connectionState) => {
       dispatch({
         type: 'UPDATE_CONNECTION',
         payload: connectionState
       });
     },
-    onOperationReceived: (operation) => {
+    onOperationReceived: (_operation) => {
       // Handle received operations - would integrate with editor
       console.log('Received operation:', operation);
     },
-    onUserPresenceUpdate: (users) => {
-      dispatch({ type: 'UPDATE_USERS', payload: users });
+    onUserPresenceUpdate: (_users) => {
+      dispatch( { type: 'UPDATE_USERS', payload: users });
     },
-    onChatMessage: (message) => {
+    onChatMessage: (_message) => {
       // Handle chat messages
       console.log('Received chat message:', message);
     },
-    onCompilationResult: (result) => {
+    onCompilationResult: (_result) => {
       // Handle compilation results
       console.log('Received compilation result:', result);
     },
-    onError: (error) => {
+    onError: (_error) => {
       console.error('Collaboration error:', error);
     }
   });
@@ -239,41 +239,41 @@ export function CollaborationProvider({
   // User presence management
   const userPresence = useUserPresence({
     currentUserId: userId,
-    onUserJoined: (user) => {
+    onUserJoined: (_user) => {
       console.log('User joined:', user);
     },
-    onUserLeft: (userId) => {
+    onUserLeft: (_userId) => {
       console.log('User left:', userId);
     },
-    onUserStatusChanged: (userId, status) => {
+    onUserStatusChanged: ( userId, status) => {
       console.log('User status changed:', userId, status);
     },
-    onTypingChanged: (userId, isTyping) => {
+    onTypingChanged: ( userId, isTyping) => {
       const currentTyping = state.typingUsers;
       if (isTyping && !currentTyping.includes(userId)) {
-        dispatch({ type: 'SET_TYPING_USERS', payload: [...currentTyping, userId] });
+        dispatch( { type: 'SET_TYPING_USERS', payload: [...currentTyping, userId] });
       } else if (!isTyping) {
-        dispatch({ type: 'SET_TYPING_USERS', payload: currentTyping.filter(id => id !== userId) });
+        dispatch( { type: 'SET_TYPING_USERS', payload: currentTyping.filter(id => id !== userId) });
       }
     }
   });
 
   // User color management
-  const userColors = useUserColors();
+  const userColors = useUserColors(_);
 
   // Chat message management
-  const chatMessages = useChatMessages(state.sessionId || '');
+  const chatMessages = useChatMessages(_state.sessionId || '');
 
   // Session recovery - kept for future session recovery implementation
-  // const sessionRecovery = useSessionRecovery();
+  // const sessionRecovery = useSessionRecovery(_);
 
   // Update session duration
   useEffect(() => {
-    if (state.isEnabled) {
+    if (_state.isEnabled) {
       const interval = setInterval(() => {
-        dispatch({ type: 'SET_SESSION_DURATION', payload: userPresence.sessionDuration });
+        dispatch( { type: 'SET_SESSION_DURATION', payload: userPresence.sessionDuration });
       }, 1000);
-      return () => clearInterval(interval);
+      return (_) => clearInterval(_interval);
     }
   }, [state.isEnabled, userPresence.sessionDuration]);
 
@@ -281,7 +281,7 @@ export function CollaborationProvider({
   const actions: CollaborationActions = {
     // Session management
     startCollaboration: async (sessionId: string, _lessonId?: string) => {
-      dispatch({ type: 'SET_SESSION', payload: sessionId });
+      dispatch( { type: 'SET_SESSION', payload: sessionId });
 
       // Create current user
       const currentUser: CollaborationUser = {
@@ -290,140 +290,140 @@ export function CollaborationProvider({
         email: userEmail,
         role: userRole,
         status: 'online',
-        lastActivity: new Date(),
-        color: userColors.assignColor(userId)
+        lastActivity: new Date(_),
+        color: userColors.assignColor(_userId)
       };
 
-      dispatch({ type: 'SET_CURRENT_USER', payload: currentUser });
-      userPresence.addUser(currentUser);
+      dispatch( { type: 'SET_CURRENT_USER', payload: currentUser });
+      userPresence.addUser(_currentUser);
 
-      await connection.connect();
+      await connection.connect(_);
     },
 
-    endCollaboration: () => {
-      connection.disconnect();
-      userPresence.resetSession();
-      userColors.resetColors();
-      dispatch({ type: 'RESET' });
+    endCollaboration: (_) => {
+      connection.disconnect(_);
+      userPresence.resetSession(_);
+      userColors.resetColors(_);
+      dispatch({ type: 'RESET'  });
     },
 
-    joinSession: async (sessionId: string) => {
-      await actions.startCollaboration(sessionId);
+    joinSession: async (_sessionId: string) => {
+      await actions.startCollaboration(_sessionId);
     },
 
-    leaveSession: () => {
-      actions.endCollaboration();
+    leaveSession: (_) => {
+      actions.endCollaboration(_);
     },
 
     // Code collaboration
-    sendCodeOperation: async (operation: TextOperation) => {
-      await connection.sendOperation(operation);
+    sendCodeOperation: async (_operation: TextOperation) => {
+      await connection.sendOperation(_operation);
     },
 
-    sendCursorUpdate: (cursor: any) => {
-      connection.sendCursorUpdate(cursor);
-      userPresence.updateUserCursor(userId, cursor);
+    sendCursorUpdate: (_cursor: any) => {
+      connection.sendCursorUpdate(_cursor);
+      userPresence.updateUserCursor( userId, cursor);
     },
 
-    sendCompilationRequest: (code: string) => {
-      connection.sendCompilationRequest(code);
+    sendCompilationRequest: (_code: string) => {
+      connection.sendCompilationRequest(_code);
     },
 
     // User management
-    updateUserStatus: (status: 'online' | 'idle' | 'offline') => {
-      userPresence.updateUserStatus(userId, status);
-      connection.sendPresenceUpdate(status);
+    updateUserStatus: (_status: 'online' | 'idle' | 'offline') => {
+      userPresence.updateUserStatus( userId, status);
+      connection.sendPresenceUpdate(_status);
     },
 
-    setTyping: (isTyping: boolean) => {
-      userPresence.setTyping(userId, isTyping);
+    setTyping: (_isTyping: boolean) => {
+      userPresence.setTyping( userId, isTyping);
     },
 
-    kickUser: (userId: string) => {
-      userPresence.removeUser(userId);
+    kickUser: (_userId: string) => {
+      userPresence.removeUser(_userId);
       // Would send kick command to server
     },
 
-    promoteUser: (userId: string, role: 'instructor' | 'student' | 'observer') => {
-      userPresence.updateUserRole(userId, role);
+    promoteUser: ( userId: string, role: 'instructor' | 'student' | 'observer') => {
+      userPresence.updateUserRole( userId, role);
       // Would send promotion command to server
     },
 
     // Chat
-    sendChatMessage: (content: string, type: 'text' | 'code' | 'file' = 'text') => {
-      connection.sendChatMessage(content, type);
+    sendChatMessage: ( content: string, type: 'text' | 'code' | 'file' = 'text') => {
+      connection.sendChatMessage( content, type);
 
       // Add to local chat
       chatMessages.addMessage({
         userId,
         userName,
-        userColor: userColors.assignColor(userId),
+        userColor: userColors.assignColor(_userId),
         content,
         type
       });
     },
 
-    addChatReaction: (messageId: string, emoji: string) => {
-      chatMessages.addReaction(messageId, emoji, userId);
+    addChatReaction: ( messageId: string, emoji: string) => {
+      chatMessages.addReaction( messageId, emoji, userId);
     },
 
-    markChatAsRead: (messageId: string) => {
-      chatMessages.markAsRead(messageId, userId);
+    markChatAsRead: (_messageId: string) => {
+      chatMessages.markAsRead( messageId, userId);
     },
 
     // File sharing
     uploadFile: async (file: File, description?: string) => {
       // Simulate file upload
-      const fileUrl = URL.createObjectURL(file);
+      const fileUrl = URL.createObjectURL(_file);
       return {
-        id: `file_${Date.now()}`,
+        id: `file_${Date.now(_)}`,
         name: file.name,
         size: file.size,
         type: file.type,
         url: fileUrl,
         uploadedBy: userId,
-        uploadedAt: new Date(),
+        uploadedAt: new Date(_),
         downloadCount: 0,
         isPublic: true,
         description
       };
     },
 
-    downloadFile: (fileId: string) => {
+    downloadFile: (_fileId: string) => {
       // Handle file download
       console.log('Downloading file:', fileId);
     },
 
-    deleteFile: (fileId: string) => {
+    deleteFile: (_fileId: string) => {
       // Handle file deletion
       console.log('Deleting file:', fileId);
     },
 
     // Connection management
     reconnect: async () => {
-      await connection.reconnect();
+      await connection.reconnect(_);
     },
 
     forceSync: async () => {
-      await connection.forceSync();
+      await connection.forceSync(_);
     },
 
-    clearOfflineData: () => {
-      connection.clearOfflineData();
+    clearOfflineData: (_) => {
+      connection.clearOfflineData(_);
     },
 
     // Integration with learning systems
-    syncLessonProgress: (lessonId: string, progress: any) => {
+    syncLessonProgress: ( lessonId: string, progress: any) => {
       // Sync lesson progress with other participants
       console.log('Syncing lesson progress:', lessonId, progress);
     },
 
-    shareXPReward: (amount: number, reason: string) => {
+    shareXPReward: ( amount: number, reason: string) => {
       // Share XP rewards with collaborators
       console.log('Sharing XP reward:', amount, reason);
     },
 
-    triggerCollaborativeAchievement: (achievementId: string, participants: string[]) => {
+    triggerCollaborativeAchievement: ( achievementId: string, participants: string[]) => {
       // Trigger achievements for all participants
       console.log('Triggering collaborative achievement:', achievementId, participants);
     }
@@ -437,7 +437,7 @@ export function CollaborationProvider({
 }
 
 export function useCollaboration() {
-  const context = useContext(CollaborationContext);
+  const context = useContext(_CollaborationContext);
   if (!context) {
     throw new Error('useCollaboration must be used within a CollaborationProvider');
   }
@@ -447,7 +447,7 @@ export function useCollaboration() {
     ...context,
     currentSession: context.state.currentSession,
     isConnected: context.state.isConnected,
-    updateCode: (code: string) => context.actions.sendCodeOperation({ type: 'insert', payload: code } as any),
+    updateCode: (_code: string) => context.actions.sendCodeOperation( { type: 'insert', payload: code } as any),
     updateCursor: context.actions.sendCursorUpdate,
     sendChatMessage: context.actions.sendChatMessage,
     chatMessages: context.state.chatMessages,

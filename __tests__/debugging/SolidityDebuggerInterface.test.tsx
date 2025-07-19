@@ -4,7 +4,7 @@ import { jest } from '@jest/globals';
 import { SolidityDebuggerInterface } from '@/components/debugging/SolidityDebuggerInterface';
 
 // Mock the debugger hook
-jest.mock('@/lib/hooks/useSolidityDebugger', () => ({
+jest.mock( '@/lib/hooks/useSolidityDebugger', () => ({
   useSolidityDebugger: jest.fn(() => ({
     isInitialized: true,
     activeSessionId: null,
@@ -19,32 +19,32 @@ jest.mock('@/lib/hooks/useSolidityDebugger', () => ({
     currentLine: 0,
     gasUsed: 0,
     gasLimit: 3000000,
-    startSession: jest.fn(),
-    stopSession: jest.fn(),
-    setBreakpoint: jest.fn(),
-    removeBreakpoint: jest.fn(),
-    toggleBreakpoint: jest.fn(),
-    stepInto: jest.fn(),
-    stepOver: jest.fn(),
-    stepOut: jest.fn(),
-    continueExecution: jest.fn(),
-    pauseExecution: jest.fn(),
-    getVariableValue: jest.fn(),
-    evaluateExpression: jest.fn()
+    startSession: jest.fn(_),
+    stopSession: jest.fn(_),
+    setBreakpoint: jest.fn(_),
+    removeBreakpoint: jest.fn(_),
+    toggleBreakpoint: jest.fn(_),
+    stepInto: jest.fn(_),
+    stepOver: jest.fn(_),
+    stepOut: jest.fn(_),
+    continueExecution: jest.fn(_),
+    pauseExecution: jest.fn(_),
+    getVariableValue: jest.fn(_),
+    evaluateExpression: jest.fn(_)
   }))
 }));
 
 // Mock notifications
-jest.mock('@/components/ui/NotificationSystem', () => ({
-  useNotifications: () => ({
-    showSuccess: jest.fn(),
-    showError: jest.fn(),
-    showInfo: jest.fn(),
-    showWarning: jest.fn()
+jest.mock( '@/components/ui/NotificationSystem', () => ({
+  useNotifications: (_) => ({
+    showSuccess: jest.fn(_),
+    showError: jest.fn(_),
+    showInfo: jest.fn(_),
+    showWarning: jest.fn(_)
   })
 }));
 
-describe('SolidityDebuggerInterface', () => {
+describe( 'SolidityDebuggerInterface', () => {
   const defaultProps = {
     contractAddress: '0x1234567890123456789012345678901234567890',
     transactionHash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
@@ -54,21 +54,21 @@ describe('SolidityDebuggerInterface', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
-  describe('Basic Rendering', () => {
-    test('renders debugger interface when initialized', () => {
+  describe( 'Basic Rendering', () => {
+    test( 'renders debugger interface when initialized', () => {
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      expect(screen.getByText(/start debug/i)).toBeInTheDocument();
-      expect(screen.getByText(/variables/i)).toBeInTheDocument();
-      expect(screen.getByText(/call stack/i)).toBeInTheDocument();
-      expect(screen.getByText(/console/i)).toBeInTheDocument();
-      expect(screen.getByText(/breakpoints/i)).toBeInTheDocument();
+      expect(_screen.getByText(/start debug/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/variables/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/call stack/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/console/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/breakpoints/i)).toBeInTheDocument(_);
     });
 
-    test('shows loading state when initializing', () => {
+    test( 'shows loading state when initializing', () => {
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: false,
@@ -78,10 +78,10 @@ describe('SolidityDebuggerInterface', () => {
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      expect(screen.getByText(/initializing debugger/i)).toBeInTheDocument();
+      expect(_screen.getByText(/initializing debugger/i)).toBeInTheDocument(_);
     });
 
-    test('shows error state when initialization fails', () => {
+    test( 'shows error state when initialization fails', () => {
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: false,
@@ -91,40 +91,40 @@ describe('SolidityDebuggerInterface', () => {
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      expect(screen.getByText(/debugger error/i)).toBeInTheDocument();
-      expect(screen.getByText(/failed to initialize debugger/i)).toBeInTheDocument();
+      expect(_screen.getByText(/debugger error/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/failed to initialize debugger/i)).toBeInTheDocument(_);
     });
   });
 
-  describe('Session Management', () => {
-    test('starts debug session when button clicked', async () => {
-      const mockStartSession = jest.fn().mockResolvedValue('session-123');
+  describe( 'Session Management', () => {
+    test( 'starts debug session when button clicked', async () => {
+      const mockStartSession = jest.fn(_).mockResolvedValue('session-123');
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: true,
         canDebug: true,
         hasActiveSession: false,
         startSession: mockStartSession,
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      const startButton = screen.getByText(/start debug/i);
-      fireEvent.click(startButton);
+      const startButton = screen.getByText(_/start debug/i);
+      fireEvent.click(_startButton);
       
       await waitFor(() => {
-        expect(mockStartSession).toHaveBeenCalledWith(
+        expect(_mockStartSession).toHaveBeenCalledWith(
           defaultProps.contractAddress,
           defaultProps.transactionHash,
           defaultProps.bytecode,
@@ -134,7 +134,7 @@ describe('SolidityDebuggerInterface', () => {
       });
     });
 
-    test('shows execution controls when session is active', () => {
+    test( 'shows execution controls when session is active', () => {
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: true,
@@ -144,119 +144,119 @@ describe('SolidityDebuggerInterface', () => {
         currentLine: 10,
         gasUsed: 21000,
         gasLimit: 3000000,
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      expect(screen.getByText(/stop/i)).toBeInTheDocument();
-      expect(screen.getByTitle(/step into/i)).toBeInTheDocument();
-      expect(screen.getByTitle(/step over/i)).toBeInTheDocument();
-      expect(screen.getByTitle(/step out/i)).toBeInTheDocument();
-      expect(screen.getByTitle(/continue execution/i)).toBeInTheDocument();
+      expect(_screen.getByText(/stop/i)).toBeInTheDocument(_);
+      expect(_screen.getByTitle(/step into/i)).toBeInTheDocument(_);
+      expect(_screen.getByTitle(/step over/i)).toBeInTheDocument(_);
+      expect(_screen.getByTitle(/step out/i)).toBeInTheDocument(_);
+      expect(_screen.getByTitle(/continue execution/i)).toBeInTheDocument(_);
     });
   });
 
-  describe('Execution Controls', () => {
-    test('step into calls correct function', async () => {
-      const mockStepInto = jest.fn();
+  describe( 'Execution Controls', () => {
+    test( 'step into calls correct function', async () => {
+      const mockStepInto = jest.fn(_);
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: true,
         hasActiveSession: true,
         isExecutionRunning: false,
         stepInto: mockStepInto,
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      const stepIntoButton = screen.getByTitle(/step into/i);
-      fireEvent.click(stepIntoButton);
+      const stepIntoButton = screen.getByTitle(_/step into/i);
+      fireEvent.click(_stepIntoButton);
       
-      expect(mockStepInto).toHaveBeenCalled();
+      expect(_mockStepInto).toHaveBeenCalled(_);
     });
 
-    test('continue execution calls correct function', async () => {
-      const mockContinue = jest.fn();
+    test( 'continue execution calls correct function', async () => {
+      const mockContinue = jest.fn(_);
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: true,
         hasActiveSession: true,
         isExecutionRunning: false,
         continueExecution: mockContinue,
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        pauseExecution: jest.fn(),
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      const continueButton = screen.getByTitle(/continue execution/i);
-      fireEvent.click(continueButton);
+      const continueButton = screen.getByTitle(_/continue execution/i);
+      fireEvent.click(_continueButton);
       
-      expect(mockContinue).toHaveBeenCalled();
+      expect(_mockContinue).toHaveBeenCalled(_);
     });
 
-    test('disables step controls when execution is running', () => {
+    test( 'disables step controls when execution is running', () => {
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: true,
         hasActiveSession: true,
         isExecutionRunning: true,
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      expect(screen.getByTitle(/step into/i)).toBeDisabled();
-      expect(screen.getByTitle(/step over/i)).toBeDisabled();
-      expect(screen.getByTitle(/step out/i)).toBeDisabled();
+      expect(_screen.getByTitle(/step into/i)).toBeDisabled(_);
+      expect(_screen.getByTitle(/step over/i)).toBeDisabled(_);
+      expect(_screen.getByTitle(/step out/i)).toBeDisabled(_);
     });
   });
 
-  describe('Breakpoint Management', () => {
-    test('displays breakpoints in panel', () => {
+  describe( 'Breakpoint Management', () => {
+    test( 'displays breakpoints in panel', () => {
       const mockBreakpoints = [
         {
           id: 'bp-1',
@@ -281,32 +281,32 @@ describe('SolidityDebuggerInterface', () => {
         isInitialized: true,
         breakpoints: mockBreakpoints,
         hasActiveSession: true,
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
       // Switch to breakpoints tab
-      fireEvent.click(screen.getByText(/breakpoints/i));
+      fireEvent.click(_screen.getByText(/breakpoints/i));
       
-      expect(screen.getByText(/line 10/i)).toBeInTheDocument();
-      expect(screen.getByText(/line 25/i)).toBeInTheDocument();
-      expect(screen.getByText(/condition: x > 100/i)).toBeInTheDocument();
+      expect(_screen.getByText(/line 10/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/line 25/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/condition: x > 100/i)).toBeInTheDocument(_);
     });
 
-    test('toggles breakpoint when clicked', async () => {
-      const mockToggleBreakpoint = jest.fn();
+    test( 'toggles breakpoint when clicked', async () => {
+      const mockToggleBreakpoint = jest.fn(_);
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: true,
@@ -318,34 +318,34 @@ describe('SolidityDebuggerInterface', () => {
           hitCount: 0
         }],
         toggleBreakpoint: mockToggleBreakpoint,
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
       // Switch to breakpoints tab
-      fireEvent.click(screen.getByText(/breakpoints/i));
+      fireEvent.click(_screen.getByText(/breakpoints/i));
       
       // Find and click toggle button
-      const toggleButton = screen.getByTitle(/disable/i);
-      fireEvent.click(toggleButton);
+      const toggleButton = screen.getByTitle(_/disable/i);
+      fireEvent.click(_toggleButton);
       
-      expect(mockToggleBreakpoint).toHaveBeenCalledWith(10);
+      expect(_mockToggleBreakpoint).toHaveBeenCalledWith(10);
     });
   });
 
-  describe('Variable Inspection', () => {
-    test('displays variables in variables panel', () => {
+  describe( 'Variable Inspection', () => {
+    test( 'displays variables in variables panel', () => {
       const mockExecutionState = {
         isRunning: false,
         isPaused: true,
@@ -377,29 +377,29 @@ describe('SolidityDebuggerInterface', () => {
         isInitialized: true,
         hasActiveSession: true,
         executionState: mockExecutionState,
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
       // Variables tab should be active by default
-      expect(screen.getByText(/balance/i)).toBeInTheDocument();
-      expect(screen.getByText(/owner/i)).toBeInTheDocument();
-      expect(screen.getByText(/1000/i)).toBeInTheDocument();
+      expect(_screen.getByText(/balance/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/owner/i)).toBeInTheDocument(_);
+      expect(_screen.getByText(/1000/i)).toBeInTheDocument(_);
     });
 
-    test('shows empty state when no variables', () => {
+    test( 'shows empty state when no variables', () => {
       const mockExecutionState = {
         isRunning: false,
         isPaused: true,
@@ -416,29 +416,29 @@ describe('SolidityDebuggerInterface', () => {
         isInitialized: true,
         hasActiveSession: true,
         executionState: mockExecutionState,
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        getVariableValue: jest.fn(),
-        evaluateExpression: jest.fn()
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        getVariableValue: jest.fn(_),
+        evaluateExpression: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
-      expect(screen.getByText(/no variables in current scope/i)).toBeInTheDocument();
+      expect(_screen.getByText(/no variables in current scope/i)).toBeInTheDocument(_);
     });
   });
 
-  describe('Console Functionality', () => {
-    test('evaluates expressions in console', async () => {
-      const mockEvaluateExpression = jest.fn().mockResolvedValue({
+  describe( 'Console Functionality', () => {
+    test( 'evaluates expressions in console', async () => {
+      const mockEvaluateExpression = jest.fn(_).mockResolvedValue({
         success: true,
         result: '42',
         type: 'uint256'
@@ -449,82 +449,82 @@ describe('SolidityDebuggerInterface', () => {
         isInitialized: true,
         hasActiveSession: true,
         evaluateExpression: mockEvaluateExpression,
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        getVariableValue: jest.fn()
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        getVariableValue: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
       // Switch to console tab
-      fireEvent.click(screen.getByText(/console/i));
+      fireEvent.click(_screen.getByText(/console/i));
       
       // Enter expression
-      const input = screen.getByPlaceholderText(/enter solidity expression/i);
-      fireEvent.change(input, { target: { value: 'balance + 10' } });
+      const input = screen.getByPlaceholderText(_/enter solidity expression/i);
+      fireEvent.change( input, { target: { value: 'balance + 10' } });
       
       // Execute
-      const executeButton = screen.getByText(/execute/i);
-      fireEvent.click(executeButton);
+      const executeButton = screen.getByText(_/execute/i);
+      fireEvent.click(_executeButton);
       
       await waitFor(() => {
-        expect(mockEvaluateExpression).toHaveBeenCalledWith('balance + 10');
+        expect(_mockEvaluateExpression).toHaveBeenCalledWith('balance + 10');
       });
     });
 
-    test('shows console history', async () => {
+    test( 'shows console history', async () => {
       const mockHook = require('@/lib/hooks/useSolidityDebugger').useSolidityDebugger;
       mockHook.mockReturnValue({
         isInitialized: true,
         hasActiveSession: true,
-        evaluateExpression: jest.fn().mockResolvedValue({ result: '42' }),
-        startSession: jest.fn(),
-        stopSession: jest.fn(),
-        setBreakpoint: jest.fn(),
-        removeBreakpoint: jest.fn(),
-        toggleBreakpoint: jest.fn(),
-        stepInto: jest.fn(),
-        stepOver: jest.fn(),
-        stepOut: jest.fn(),
-        continueExecution: jest.fn(),
-        pauseExecution: jest.fn(),
-        getVariableValue: jest.fn()
+        evaluateExpression: jest.fn(_).mockResolvedValue({ result: '42'  }),
+        startSession: jest.fn(_),
+        stopSession: jest.fn(_),
+        setBreakpoint: jest.fn(_),
+        removeBreakpoint: jest.fn(_),
+        toggleBreakpoint: jest.fn(_),
+        stepInto: jest.fn(_),
+        stepOver: jest.fn(_),
+        stepOut: jest.fn(_),
+        continueExecution: jest.fn(_),
+        pauseExecution: jest.fn(_),
+        getVariableValue: jest.fn(_)
       });
 
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
       // Switch to console tab
-      fireEvent.click(screen.getByText(/console/i));
+      fireEvent.click(_screen.getByText(/console/i));
       
       // Should show console ready message
-      expect(screen.getByText(/console ready for expressions/i)).toBeInTheDocument();
+      expect(_screen.getByText(/console ready for expressions/i)).toBeInTheDocument(_);
     });
   });
 
-  describe('Accessibility', () => {
-    test('has proper ARIA labels and roles', () => {
+  describe( 'Accessibility', () => {
+    test( 'has proper ARIA labels and roles', () => {
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
       // Check for accessible buttons
-      expect(screen.getByTitle(/step into/i)).toHaveAttribute('title');
-      expect(screen.getByTitle(/step over/i)).toHaveAttribute('title');
-      expect(screen.getByTitle(/continue execution/i)).toHaveAttribute('title');
+      expect(_screen.getByTitle(/step into/i)).toHaveAttribute('title');
+      expect(_screen.getByTitle(/step over/i)).toHaveAttribute('title');
+      expect(_screen.getByTitle(/continue execution/i)).toHaveAttribute('title');
     });
 
-    test('supports keyboard navigation', () => {
+    test( 'supports keyboard navigation', () => {
       render(<SolidityDebuggerInterface {...defaultProps} />);
       
       // Tab navigation should work
-      const startButton = screen.getByText(/start debug/i);
-      expect(startButton).toHaveAttribute('tabIndex', '0');
+      const startButton = screen.getByText(_/start debug/i);
+      expect(_startButton).toHaveAttribute( 'tabIndex', '0');
     });
   });
 });

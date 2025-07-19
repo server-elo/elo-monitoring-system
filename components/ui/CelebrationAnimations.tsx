@@ -34,9 +34,9 @@ export function ConfettiExplosion({
   className?: string;
 }) {
   const [particles, setParticles] = useState<ConfettiParticle[]>([]);
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(_false);
   // Animation ref removed - not needed with current implementation
-  const { settings } = useSettings();
+  const { settings } = useSettings(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   useEffect(() => {
@@ -48,21 +48,21 @@ export function ConfettiExplosion({
           id: i,
           x: Math.random() * 100,
           y: Math.random() * 100,
-          vx: (Math.random() - 0.5) * 10,
-          vy: (Math.random() - 0.5) * 10,
-          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (_Math.random() - 0.5) * 10,
+          vy: (_Math.random() - 0.5) * 10,
+          color: colors[Math.floor(_Math.random() * colors.length)],
           size: Math.random() * 8 + 4,
           rotation: Math.random() * 360,
-          rotationSpeed: (Math.random() - 0.5) * 10
+          rotationSpeed: (_Math.random() - 0.5) * 10
         });
       }
       
-      setParticles(newParticles);
-      setIsActive(true);
+      setParticles(_newParticles);
+      setIsActive(_true);
 
       // Auto-cleanup after duration
       setTimeout(() => {
-        setIsActive(false);
+        setIsActive(_false);
         setParticles([]);
       }, duration);
     }
@@ -71,7 +71,7 @@ export function ConfettiExplosion({
   if (!isActive || !shouldAnimate) return null;
 
   return (
-    <div className={cn("fixed inset-0 pointer-events-none z-50", className)}>
+    <div className={cn( "fixed inset-0 pointer-events-none z-50", className)}>
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
@@ -117,7 +117,7 @@ export function CelebrationModal({
   autoCloseDelay = 5000
 }: {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   type?: 'achievement' | 'level-up' | 'course-complete' | 'streak' | 'milestone';
   title: string;
   description?: string;
@@ -127,22 +127,22 @@ export function CelebrationModal({
   autoClose?: boolean;
   autoCloseDelay?: number;
 }) {
-  const { settings } = useSettings();
+  const { settings } = useSettings(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
-  const [showConfetti, setShowConfetti] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(_false);
 
   useEffect(() => {
     if (isOpen) {
-      setShowConfetti(true);
+      setShowConfetti(_true);
       if (autoClose) {
-        const timer = setTimeout(onClose, autoCloseDelay);
-        return () => clearTimeout(timer);
+        const timer = setTimeout( onClose, autoCloseDelay);
+        return (_) => clearTimeout(_timer);
       }
     }
   }, [isOpen, autoClose, autoCloseDelay, onClose]);
 
-  const getTypeConfig = () => {
-    switch (type) {
+  const getTypeConfig = (_) => {
+    switch (_type) {
       case 'level-up':
         return {
           icon: Crown,
@@ -191,7 +191,7 @@ export function CelebrationModal({
     }
   };
 
-  const config = getTypeConfig();
+  const config = getTypeConfig(_);
   const Icon = config.icon;
 
   return (
@@ -217,7 +217,7 @@ export function CelebrationModal({
                 stiffness: 300,
                 duration: shouldAnimate ? 0.6 : 0
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(_e) => e.stopPropagation(_)}
               className="relative"
             >
               <GlassContainer 
@@ -247,7 +247,7 @@ export function CelebrationModal({
                       "border-2"
                     )}
                   >
-                    <Icon className={cn("w-10 h-10", config.color)} />
+                    <Icon className={cn( "w-10 h-10", config.color)} />
                   </motion.div>
                   
                   {/* Floating sparkles */}
@@ -271,7 +271,7 @@ export function CelebrationModal({
                         ease: "easeInOut"
                       }}
                     >
-                      <Sparkles className={cn("w-4 h-4", config.color)} />
+                      <Sparkles className={cn( "w-4 h-4", config.color)} />
                     </motion.div>
                   ))}
                 </div>
@@ -367,15 +367,15 @@ export function QuickSuccessAnimation({
   position?: 'center' | 'top' | 'bottom';
   duration?: number;
 }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const { settings } = useSettings();
+  const [isVisible, setIsVisible] = useState(_false);
+  const { settings } = useSettings(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   useEffect(() => {
     if (trigger) {
-      setIsVisible(true);
-      const timer = setTimeout(() => setIsVisible(false), duration);
-      return () => clearTimeout(timer);
+      setIsVisible(_true);
+      const timer = setTimeout(() => setIsVisible(_false), duration);
+      return (_) => clearTimeout(_timer);
     }
   }, [trigger, duration]);
 
@@ -436,15 +436,15 @@ export function ProgressCelebration({
   label?: string;
   showParticles?: boolean;
 }) {
-  const [showCelebration, setShowCelebration] = useState(false);
-  const { settings } = useSettings();
+  const [showCelebration, setShowCelebration] = useState(_false);
+  const { settings } = useSettings(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   useEffect(() => {
     if (progress >= milestone && progress > 0) {
-      setShowCelebration(true);
-      const timer = setTimeout(() => setShowCelebration(false), 3000);
-      return () => clearTimeout(timer);
+      setShowCelebration(_true);
+      const timer = setTimeout(() => setShowCelebration(_false), 3000);
+      return (_) => clearTimeout(_timer);
     }
   }, [progress, milestone]);
 

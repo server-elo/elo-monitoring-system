@@ -38,18 +38,18 @@ export interface ErrorMetrics {
 class ErrorTracker {
   private events: ErrorEvent[] = [];
   private maxEvents = 1000; // Keep last 1000 events in memory
-  private listeners: Array<(event: ErrorEvent) => void> = [];
+  private listeners: Array<(_event: ErrorEvent) => void> = [];
 
-  constructor() {
-    this.setupGlobalErrorHandlers();
+  constructor(_) {
+    this.setupGlobalErrorHandlers(_);
   }
 
-  private setupGlobalErrorHandlers() {
-    if (typeof window === 'undefined') return;
+  private setupGlobalErrorHandlers(_) {
+    if (_typeof window === 'undefined') return;
 
     // Unhandled JavaScript errors
-    window.addEventListener('error', (event) => {
-      this.captureError(event.error || new Error(event.message), {
+    window.addEventListener( 'error', (event) => {
+      this.captureError(_event.error || new Error(event.message), {
         component: 'global',
         action: 'unhandled_error',
         metadata: {
@@ -61,8 +61,8 @@ class ErrorTracker {
     });
 
     // Unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
-      this.captureError(new Error(`Unhandled Promise Rejection: ${event.reason}`), {
+    window.addEventListener( 'unhandledrejection', (event) => {
+      this.captureError(_new Error(`Unhandled Promise Rejection: ${event.reason}`), {
         component: 'global',
         action: 'unhandled_rejection',
         metadata: {
@@ -71,18 +71,18 @@ class ErrorTracker {
       });
     });
 
-    // React error boundary errors (if using React)
-    if (typeof window !== 'undefined' && 'React' in window) {
+    // React error boundary errors (_if using React)
+    if (_typeof window !== 'undefined' && 'React' in window) {
       const originalConsoleError = console.error;
       console.error = (...args) => {
         // Check if this is a React error boundary error
-        if (args[0] && typeof args[0] === 'string' && args[0].includes('React')) {
-          this.captureError(new Error(args.join(' ')), {
+        if (_args[0] && typeof args[0] === 'string' && args[0].includes('React')) {
+          this.captureError(_new Error(args.join(' ')), {
             component: 'react',
             action: 'error_boundary'
           });
         }
-        originalConsoleError.apply(console, args);
+        originalConsoleError.apply( console, args);
       };
     }
   }
@@ -90,108 +90,108 @@ class ErrorTracker {
   /**
    * Capture an error event
    */
-  captureError(error: Error, context: Partial<ErrorEvent['context']> = {}) {
+  captureError( error: Error, context: Partial<ErrorEvent['context']> = {}) {
     const event: ErrorEvent = {
-      id: this.generateId(),
-      timestamp: new Date().toISOString(),
+      id: this.generateId(_),
+      timestamp: new Date(_).toISOString(),
       level: 'error',
       message: error.message,
       stack: error.stack,
       context: {
         url: typeof window !== 'undefined' ? window.location.href : '',
         userAgent: typeof window !== 'undefined' ? navigator.userAgent : '',
-        userId: this.getUserId(),
-        sessionId: this.getSessionId(),
+        userId: this.getUserId(_),
+        sessionId: this.getSessionId(_),
         ...context
       },
-      fingerprint: this.generateFingerprint(error, context),
-      tags: this.generateTags(error, context)
+      fingerprint: this.generateFingerprint( error, context),
+      tags: this.generateTags( error, context)
     };
 
-    this.addEvent(event);
-    this.notifyListeners(event);
-    this.sendToExternalService(event);
+    this.addEvent(_event);
+    this.notifyListeners(_event);
+    this.sendToExternalService(_event);
   }
 
   /**
    * Capture a warning event
    */
-  captureWarning(message: string, context: Partial<ErrorEvent['context']> = {}) {
+  captureWarning( message: string, context: Partial<ErrorEvent['context']> = {}) {
     const event: ErrorEvent = {
-      id: this.generateId(),
-      timestamp: new Date().toISOString(),
+      id: this.generateId(_),
+      timestamp: new Date(_).toISOString(),
       level: 'warning',
       message,
       context: {
         url: typeof window !== 'undefined' ? window.location.href : '',
         userAgent: typeof window !== 'undefined' ? navigator.userAgent : '',
-        userId: this.getUserId(),
-        sessionId: this.getSessionId(),
+        userId: this.getUserId(_),
+        sessionId: this.getSessionId(_),
         ...context
       },
-      fingerprint: this.generateFingerprint(new Error(message), context),
-      tags: this.generateTags(new Error(message), context)
+      fingerprint: this.generateFingerprint(_new Error(message), context),
+      tags: this.generateTags(_new Error(message), context)
     };
 
-    this.addEvent(event);
-    this.notifyListeners(event);
+    this.addEvent(_event);
+    this.notifyListeners(_event);
   }
 
   /**
    * Capture an info event
    */
-  captureInfo(message: string, context: Partial<ErrorEvent['context']> = {}) {
+  captureInfo( message: string, context: Partial<ErrorEvent['context']> = {}) {
     const event: ErrorEvent = {
-      id: this.generateId(),
-      timestamp: new Date().toISOString(),
+      id: this.generateId(_),
+      timestamp: new Date(_).toISOString(),
       level: 'info',
       message,
       context: {
         url: typeof window !== 'undefined' ? window.location.href : '',
         userAgent: typeof window !== 'undefined' ? navigator.userAgent : '',
-        userId: this.getUserId(),
-        sessionId: this.getSessionId(),
+        userId: this.getUserId(_),
+        sessionId: this.getSessionId(_),
         ...context
       },
-      fingerprint: this.generateFingerprint(new Error(message), context),
-      tags: this.generateTags(new Error(message), context)
+      fingerprint: this.generateFingerprint(_new Error(message), context),
+      tags: this.generateTags(_new Error(message), context)
     };
 
-    this.addEvent(event);
-    this.notifyListeners(event);
+    this.addEvent(_event);
+    this.notifyListeners(_event);
   }
 
   /**
    * Add event listener
    */
-  addListener(listener: (event: ErrorEvent) => void) {
-    this.listeners.push(listener);
+  addListener(_listener: (event: ErrorEvent) => void) {
+    this.listeners.push(_listener);
   }
 
   /**
    * Remove event listener
    */
-  removeListener(listener: (event: ErrorEvent) => void) {
-    const index = this.listeners.indexOf(listener);
-    if (index > -1) {
-      this.listeners.splice(index, 1);
+  removeListener(_listener: (event: ErrorEvent) => void) {
+    const index = this.listeners.indexOf(_listener);
+    if (_index > -1) {
+      this.listeners.splice( index, 1);
     }
   }
 
   /**
    * Get error metrics
    */
-  getMetrics(timeRange: number = 3600000): ErrorMetrics { // Default: last hour
-    const cutoff = Date.now() - timeRange;
+  getMetrics(_timeRange: number = 3600000): ErrorMetrics { // Default: last hour
+    const cutoff = Date.now(_) - timeRange;
     const recentEvents = this.events.filter(
-      event => new Date(event.timestamp).getTime() > cutoff
+      event => new Date(_event.timestamp).getTime(_) > cutoff
     );
 
     const errorEvents = recentEvents.filter(event => event.level === 'error');
-    const errorRate = errorEvents.length / (timeRange / 60000); // errors per minute
+    const errorRate = errorEvents.length / (_timeRange / 60000); // errors per minute
 
     // Group errors by fingerprint
-    const errorGroups = errorEvents.reduce((acc, event) => {
+    const errorGroups = errorEvents.reduce( (acc, event) => {
       if (!acc[event.fingerprint]) {
         acc[event.fingerprint] = {
           fingerprint: event.fingerprint,
@@ -201,34 +201,34 @@ class ErrorTracker {
         };
       }
       acc[event.fingerprint].count++;
-      if (new Date(event.timestamp) > new Date(acc[event.fingerprint].lastSeen)) {
+      if (new Date(event.timestamp) > new Date(_acc[event.fingerprint].lastSeen)) {
         acc[event.fingerprint].lastSeen = event.timestamp;
       }
       return acc;
     }, {} as Record<string, any>);
 
-    const topErrors = Object.values(errorGroups)
-      .sort((a: any, b: any) => b.count - a.count)
+    const topErrors = Object.values(_errorGroups)
+      .sort( (a: any, b: any) => b.count - a.count)
       .slice(0, 10);
 
     // Errors by page
-    const errorsByPage = errorEvents.reduce((acc, event) => {
-      const page = new URL(event.context.url).pathname;
-      acc[page] = (acc[page] || 0) + 1;
+    const errorsByPage = errorEvents.reduce( (acc, event) => {
+      const page = new URL(_event.context.url).pathname;
+      acc[page] = (_acc[page] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     // Errors by browser
-    const errorsByBrowser = errorEvents.reduce((acc, event) => {
-      const browser = this.getBrowserFromUserAgent(event.context.userAgent);
-      acc[browser] = (acc[browser] || 0) + 1;
+    const errorsByBrowser = errorEvents.reduce( (acc, event) => {
+      const browser = this.getBrowserFromUserAgent(_event.context.userAgent);
+      acc[browser] = (_acc[browser] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     // Errors by user
-    const errorsByUser = errorEvents.reduce((acc, event) => {
-      if (event.context.userId) {
-        acc[event.context.userId] = (acc[event.context.userId] || 0) + 1;
+    const errorsByUser = errorEvents.reduce( (acc, event) => {
+      if (_event.context.userId) {
+        acc[event.context.userId] = (_acc[event.context.userId] || 0) + 1;
       }
       return acc;
     }, {} as Record<string, number>);
@@ -246,55 +246,55 @@ class ErrorTracker {
   /**
    * Get recent events
    */
-  getRecentEvents(limit: number = 50): ErrorEvent[] {
-    return this.events.slice(-limit).reverse();
+  getRecentEvents(_limit: number = 50): ErrorEvent[] {
+    return this.events.slice(_-limit).reverse(_);
   }
 
   /**
    * Clear all events
    */
-  clearEvents() {
+  clearEvents(_) {
     this.events = [];
   }
 
-  private addEvent(event: ErrorEvent) {
-    this.events.push(event);
+  private addEvent(_event: ErrorEvent) {
+    this.events.push(_event);
     
     // Keep only the most recent events
-    if (this.events.length > this.maxEvents) {
-      this.events = this.events.slice(-this.maxEvents);
+    if (_this.events.length > this.maxEvents) {
+      this.events = this.events.slice(_-this.maxEvents);
     }
 
     // Store in localStorage for persistence
     try {
       const recentEvents = this.events.slice(-100); // Keep last 100 in storage
-      localStorage.setItem('error_events', JSON.stringify(recentEvents));
-    } catch (error) {
+      localStorage.setItem( 'error_events', JSON.stringify(recentEvents));
+    } catch (_error) {
       // Ignore localStorage errors
     }
   }
 
-  private notifyListeners(event: ErrorEvent) {
+  private notifyListeners(_event: ErrorEvent) {
     this.listeners.forEach(listener => {
       try {
-        listener(event);
-      } catch (error) {
+        listener(_event);
+      } catch (_error) {
         console.error('Error in error tracker listener:', error);
       }
     });
   }
 
-  private sendToExternalService(event: ErrorEvent) {
+  private sendToExternalService(_event: ErrorEvent) {
     // In production, send to your error tracking service
-    if (process.env.NODE_ENV === 'production') {
+    if (_process.env.NODE_ENV === 'production') {
       // Example: Send to Sentry, LogRocket, etc.
-      // sentry.captureException(event);
+      // sentry.captureException(_event);
       
       // Or send to your own API
       fetch('/api/errors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(event)
+        body: JSON.stringify(_event)
       }).catch(() => {
         // Ignore network errors when reporting errors
       });
@@ -303,11 +303,11 @@ class ErrorTracker {
     }
   }
 
-  private generateId(): string {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  private generateId(_): string {
+    return `${Date.now(_)}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private generateFingerprint(error: Error, context: Partial<ErrorEvent['context']>): string {
+  private generateFingerprint( error: Error, context: Partial<ErrorEvent['context']>): string {
     // Create a fingerprint for grouping similar errors
     const parts = [
       error.message,
@@ -316,34 +316,34 @@ class ErrorTracker {
     ];
     
     // Add stack trace info if available
-    if (error.stack) {
+    if (_error.stack) {
       const stackLines = error.stack.split('\n').slice(0, 3);
       parts.push(...stackLines);
     }
     
-    return btoa(parts.join('|')).substr(0, 16);
+    return btoa(_parts.join('|')).substr(0, 16);
   }
 
-  private generateTags(error: Error, context: Partial<ErrorEvent['context']>): string[] {
+  private generateTags( error: Error, context: Partial<ErrorEvent['context']>): string[] {
     const tags: string[] = [];
     
-    if (context.component) tags.push(`component:${context.component}`);
-    if (context.action) tags.push(`action:${context.action}`);
-    if (context.url) {
-      const url = new URL(context.url);
-      tags.push(`page:${url.pathname}`);
+    if (_context.component) tags.push(_`component:${context.component}`);
+    if (_context.action) tags.push(_`action:${context.action}`);
+    if (_context.url) {
+      const url = new URL(_context.url);
+      tags.push(_`page:${url.pathname}`);
     }
     
     // Add browser info
-    if (context.userAgent) {
-      const browser = this.getBrowserFromUserAgent(context.userAgent);
-      tags.push(`browser:${browser}`);
+    if (_context.userAgent) {
+      const browser = this.getBrowserFromUserAgent(_context.userAgent);
+      tags.push(_`browser:${browser}`);
     }
     
     return tags;
   }
 
-  private getUserId(): string | undefined {
+  private getUserId(_): string | undefined {
     // Get user ID from your auth system
     try {
       return localStorage.getItem('userId') || undefined;
@@ -352,13 +352,13 @@ class ErrorTracker {
     }
   }
 
-  private getSessionId(): string | undefined {
+  private getSessionId(_): string | undefined {
     // Get or create session ID
     try {
       let sessionId = sessionStorage.getItem('sessionId');
       if (!sessionId) {
-        sessionId = this.generateId();
-        sessionStorage.setItem('sessionId', sessionId);
+        sessionId = this.generateId(_);
+        sessionStorage.setItem( 'sessionId', sessionId);
       }
       return sessionId;
     } catch {
@@ -377,13 +377,13 @@ class ErrorTracker {
   /**
    * Add breadcrumb for navigation tracking
    */
-  addBreadcrumb(message: string, category: string = 'navigation', level: 'info' | 'warning' | 'error' = 'info', data?: any) {
+  addBreadcrumb( message: string, category: string = 'navigation', level: 'info' | 'warning' | 'error' = 'info', data?: any) {
     const breadcrumb = {
       message,
       category,
       level,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date(_).toISOString()
     };
 
     // Add to recent events for context
@@ -396,19 +396,19 @@ class ErrorTracker {
 }
 
 // Global error tracker instance
-export const errorTracker = new ErrorTracker();
+export const errorTracker = new ErrorTracker(_);
 
 // Convenience functions
-export const captureError = (error: Error, context?: Partial<ErrorEvent['context']>) => {
-  errorTracker.captureError(error, context);
+export const captureError = ( error: Error, context?: Partial<ErrorEvent['context']>) => {
+  errorTracker.captureError( error, context);
 };
 
-export const captureWarning = (message: string, context?: Partial<ErrorEvent['context']>) => {
-  errorTracker.captureWarning(message, context);
+export const captureWarning = ( message: string, context?: Partial<ErrorEvent['context']>) => {
+  errorTracker.captureWarning( message, context);
 };
 
-export const captureInfo = (message: string, context?: Partial<ErrorEvent['context']>) => {
-  errorTracker.captureInfo(message, context);
+export const captureInfo = ( message: string, context?: Partial<ErrorEvent['context']>) => {
+  errorTracker.captureInfo( message, context);
 };
 
 // React hook for error tracking
@@ -417,7 +417,7 @@ export function useErrorTracking() {
     captureError,
     captureWarning,
     captureInfo,
-    getMetrics: () => errorTracker.getMetrics(),
-    getRecentEvents: () => errorTracker.getRecentEvents()
+    getMetrics: (_) => errorTracker.getMetrics(_),
+    getRecentEvents: (_) => errorTracker.getRecentEvents(_)
   };
 }

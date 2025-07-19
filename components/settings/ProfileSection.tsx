@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils';
 
 export interface ProfileSectionProps {
   profile: UserProfile;
-  onUpdate: (data: Partial<UserProfile>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
+  onUpdate: (_data: Partial<UserProfile>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
   isLoading?: boolean;
   validationErrors?: SettingsValidationError[];
   className?: string;
@@ -38,12 +38,12 @@ export function ProfileSection({
   validationErrors = [],
   className
 }: ProfileSectionProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<Partial<UserProfile>>(profile);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isEditing, setIsEditing] = useState(_false);
+  const [formData, setFormData] = useState<Partial<UserProfile>>(_profile);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(_null);
+  const [isDragOver, setIsDragOver] = useState(_false);
+  const [isSaving, setIsSaving] = useState(_false);
+  const fileInputRef = useRef<HTMLInputElement>(_null);
 
   // Get validation error for a specific field
   const getFieldError = useCallback((field: string) => {
@@ -51,8 +51,8 @@ export function ProfileSection({
   }, [validationErrors]);
 
   // Handle form field changes
-  const handleFieldChange = useCallback((field: keyof UserProfile, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleFieldChange = useCallback( (field: keyof UserProfile, value: string) => {
+    setFormData( prev => ({ ...prev, [field]: value }));
   }, []);
 
   // Handle avatar upload
@@ -61,37 +61,37 @@ export function ProfileSection({
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+    if (_file.size > 5 * 1024 * 1024) { // 5MB limit
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
+    const reader = new FileReader(_);
+    reader.onload = (_e) => {
       const result = e.target?.result as string;
-      setAvatarPreview(result);
-      setFormData(prev => ({ ...prev, avatar: result }));
+      setAvatarPreview(_result);
+      setFormData( prev => ({ ...prev, avatar: result }));
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(_file);
   }, []);
 
   // Handle drag and drop
   const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
+    e.preventDefault(_);
+    setIsDragOver(_true);
   }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
+    e.preventDefault(_);
+    setIsDragOver(_false);
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
+    e.preventDefault(_);
+    setIsDragOver(_false);
     
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleAvatarUpload(files[0]);
+    const files = Array.from(_e.dataTransfer.files);
+    if (_files.length > 0) {
+      handleAvatarUpload(_files[0]);
     }
   }, [handleAvatarUpload]);
 
@@ -99,35 +99,35 @@ export function ProfileSection({
   const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      handleAvatarUpload(files[0]);
+      handleAvatarUpload(_files[0]);
     }
   }, [handleAvatarUpload]);
 
   // Save changes
-  const handleSave = useCallback(async () => {
-    setIsSaving(true);
+  const handleSave = useCallback( async () => {
+    setIsSaving(_true);
     try {
-      const result = await onUpdate(formData);
-      if (result.success) {
-        setIsEditing(false);
-        setAvatarPreview(null);
+      const result = await onUpdate(_formData);
+      if (_result.success) {
+        setIsEditing(_false);
+        setAvatarPreview(_null);
       }
     } finally {
-      setIsSaving(false);
+      setIsSaving(_false);
     }
   }, [formData, onUpdate]);
 
   // Cancel editing
   const handleCancel = useCallback(() => {
-    setFormData(profile);
-    setAvatarPreview(null);
-    setIsEditing(false);
+    setFormData(_profile);
+    setAvatarPreview(_null);
+    setIsEditing(_false);
   }, [profile]);
 
   // Remove avatar
   const handleRemoveAvatar = useCallback(() => {
-    setAvatarPreview(null);
-    setFormData(prev => ({ ...prev, avatar: undefined }));
+    setAvatarPreview(_null);
+    setFormData( prev => ({ ...prev, avatar: undefined }));
   }, []);
 
   return (
@@ -135,7 +135,7 @@ export function ProfileSection({
       intensity="medium"
       tint="neutral"
       border
-      className={cn('p-6', className)}
+      className={cn( 'p-6', className)}
     >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
@@ -145,7 +145,7 @@ export function ProfileSection({
         
         {!isEditing && (
           <button
-            onClick={() => setIsEditing(true)}
+            onClick={(_) => setIsEditing(_true)}
             disabled={isLoading}
             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
           >
@@ -168,9 +168,9 @@ export function ProfileSection({
               onDragOver={isEditing ? handleDragOver : undefined}
               onDragLeave={isEditing ? handleDragLeave : undefined}
               onDrop={isEditing ? handleDrop : undefined}
-              onClick={isEditing ? () => fileInputRef.current?.click() : undefined}
+              onClick={isEditing ? (_) => fileInputRef.current?.click(_) : undefined}
             >
-              {(avatarPreview || formData.avatar || profile.avatar) ? (
+              {(_avatarPreview || formData.avatar || profile.avatar) ? (
                 <img
                   src={avatarPreview || formData.avatar || profile.avatar}
                   alt="Profile avatar"
@@ -192,14 +192,14 @@ export function ProfileSection({
             {isEditing && (
               <div className="absolute -bottom-2 -right-2 flex space-x-1">
                 <button
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={(_) => fileInputRef.current?.click(_)}
                   className="p-1 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors"
                   title="Upload new avatar"
                 >
                   <Upload className="w-3 h-3" />
                 </button>
                 
-                {(avatarPreview || formData.avatar || profile.avatar) && (
+                {(_avatarPreview || formData.avatar || profile.avatar) && (
                   <button
                     onClick={handleRemoveAvatar}
                     className="p-1 bg-red-600 hover:bg-red-700 text-white rounded-full transition-colors"
@@ -226,9 +226,9 @@ export function ProfileSection({
             </h3>
             <p className="text-gray-400 text-sm mb-2">{profile.email}</p>
             <div className="flex items-center space-x-4 text-xs text-gray-500">
-              <span>Joined {new Date(profile.createdAt).toLocaleDateString()}</span>
+              <span>Joined {new Date(_profile.createdAt).toLocaleDateString(_)}</span>
               <span>•</span>
-              <span>Last updated {new Date(profile.updatedAt).toLocaleDateString()}</span>
+              <span>Last updated {new Date(_profile.updatedAt).toLocaleDateString(_)}</span>
             </div>
           </div>
         </div>
@@ -245,7 +245,7 @@ export function ProfileSection({
                 <input
                   type="text"
                   value={formData.displayName || ''}
-                  onChange={(e) => handleFieldChange('displayName', e.target.value)}
+                  onChange={(_e) => handleFieldChange( 'displayName', e.target.value)}
                   className={cn(
                     'w-full px-3 py-2 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors',
                     getFieldError('displayName') 
@@ -277,7 +277,7 @@ export function ProfileSection({
                   <input
                     type="email"
                     value={formData.email || ''}
-                    onChange={(e) => handleFieldChange('email', e.target.value)}
+                    onChange={(_e) => handleFieldChange( 'email', e.target.value)}
                     className={cn(
                       'w-full px-3 py-2 pr-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors',
                       getFieldError('email') 
@@ -322,7 +322,7 @@ export function ProfileSection({
               <input
                 type="text"
                 value={formData.firstName || ''}
-                onChange={(e) => handleFieldChange('firstName', e.target.value)}
+                onChange={(_e) => handleFieldChange( 'firstName', e.target.value)}
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 placeholder="Enter your first name"
               />
@@ -340,7 +340,7 @@ export function ProfileSection({
               <input
                 type="text"
                 value={formData.lastName || ''}
-                onChange={(e) => handleFieldChange('lastName', e.target.value)}
+                onChange={(_e) => handleFieldChange( 'lastName', e.target.value)}
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 placeholder="Enter your last name"
               />
@@ -359,7 +359,7 @@ export function ProfileSection({
                 <input
                   type="text"
                   value={formData.location || ''}
-                  onChange={(e) => handleFieldChange('location', e.target.value)}
+                  onChange={(_e) => handleFieldChange( 'location', e.target.value)}
                   className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                   placeholder="City, Country"
                 />
@@ -380,7 +380,7 @@ export function ProfileSection({
                 <input
                   type="url"
                   value={formData.website || ''}
-                  onChange={(e) => handleFieldChange('website', e.target.value)}
+                  onChange={(_e) => handleFieldChange( 'website', e.target.value)}
                   className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                   placeholder="https://yourwebsite.com"
                 />
@@ -413,7 +413,7 @@ export function ProfileSection({
           {isEditing ? (
             <textarea
               value={formData.bio || ''}
-              onChange={(e) => handleFieldChange('bio', e.target.value)}
+              onChange={(_e) => handleFieldChange( 'bio', e.target.value)}
               rows={4}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
               placeholder="Tell us about yourself..."
@@ -437,7 +437,7 @@ export function ProfileSection({
                   <input
                     type="text"
                     value={formData.githubUsername || ''}
-                    onChange={(e) => handleFieldChange('githubUsername', e.target.value)}
+                    onChange={(_e) => handleFieldChange( 'githubUsername', e.target.value)}
                     className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     placeholder="username"
                   />
@@ -472,7 +472,7 @@ export function ProfileSection({
                   <input
                     type="text"
                     value={formData.twitterUsername || ''}
-                    onChange={(e) => handleFieldChange('twitterUsername', e.target.value)}
+                    onChange={(_e) => handleFieldChange( 'twitterUsername', e.target.value)}
                     className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     placeholder="username"
                   />
@@ -507,7 +507,7 @@ export function ProfileSection({
                   <input
                     type="text"
                     value={formData.linkedinUsername || ''}
-                    onChange={(e) => handleFieldChange('linkedinUsername', e.target.value)}
+                    onChange={(_e) => handleFieldChange( 'linkedinUsername', e.target.value)}
                     className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     placeholder="username"
                   />

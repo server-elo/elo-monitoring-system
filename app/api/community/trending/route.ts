@@ -5,7 +5,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Mock trending topics data
 const mockTrendingTopics: TrendingTopic[] = [
   {
-    id: 'topic_1',
+    id: 'topic1',
     title: 'Smart Contract Security',
     category: 'Security',
     mentions: 234,
@@ -23,7 +23,7 @@ const mockTrendingTopics: TrendingTopic[] = [
     trendPercentage: 8.3
   },
   {
-    id: 'topic_3',
+    id: 'topic3',
     title: 'Gas Optimization',
     category: 'Optimization',
     mentions: 156,
@@ -41,7 +41,7 @@ const mockTrendingTopics: TrendingTopic[] = [
     trendPercentage: -5.2
   },
   {
-    id: 'topic_5',
+    id: 'topic5',
     title: 'Layer 2 Solutions',
     category: 'Scaling',
     mentions: 98,
@@ -86,7 +86,7 @@ const mockTrendingTopics: TrendingTopic[] = [
     trendPercentage: 9.1
   },
   {
-    id: 'topic_10',
+    id: 'topic10',
     title: 'Deployment Strategies',
     category: 'DevOps',
     mentions: 43,

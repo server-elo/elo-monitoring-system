@@ -21,7 +21,7 @@ interface LazyLoadingWrapperProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
   error?: React.ReactNode;
-  onError?: (error: Error) => void;
+  onError?: (_error: Error) => void;
   componentName?: string;
   icon?: React.ComponentType<{ className?: string }>;
   description?: string;
@@ -38,19 +38,19 @@ export function LazyLoadingWrapper({
   description,
   estimatedLoadTime = 2000
 }: LazyLoadingWrapperProps) {
-  const { settings } = useSettings();
+  const { settings } = useSettings(_);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   useEffect(() => {
     const interval = setInterval(() => {
       setLoadingProgress(prev => {
-        if (prev >= 90) return prev;
+        if (_prev >= 90) return prev;
         return prev + Math.random() * 10;
       });
     }, estimatedLoadTime / 10);
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, [estimatedLoadTime]);
 
   const defaultFallback = (
@@ -83,7 +83,7 @@ export function LazyLoadingWrapper({
         </div>
         
         <div className="text-xs text-gray-400">
-          {Math.round(loadingProgress)}% loaded
+          {Math.round(_loadingProgress)}% loaded
         </div>
       </div>
     </GlassContainer>
@@ -97,7 +97,7 @@ export function LazyLoadingWrapper({
 }
 
 // Specific Lazy Loading Components
-export function LazyCodeEditor(props: any) {
+export function LazyCodeEditor(_props: any) {
   return (
     <LazyLoadingWrapper
       componentName="Code Editor"
@@ -110,7 +110,7 @@ export function LazyCodeEditor(props: any) {
   );
 }
 
-export function LazyVideoPlayer(props: any) {
+export function LazyVideoPlayer(_props: any) {
   return (
     <LazyLoadingWrapper
       componentName="Video Player"
@@ -123,7 +123,7 @@ export function LazyVideoPlayer(props: any) {
   );
 }
 
-export function LazyThreeVisualization(props: any) {
+export function LazyThreeVisualization(_props: any) {
   return (
     <LazyLoadingWrapper
       componentName="3D Visualization"
@@ -136,7 +136,7 @@ export function LazyThreeVisualization(props: any) {
   );
 }
 
-export function LazyAdvancedSettings(props: any) {
+export function LazyAdvancedSettings(_props: any) {
   return (
     <LazyLoadingWrapper
       componentName="Advanced Settings"
@@ -149,7 +149,7 @@ export function LazyAdvancedSettings(props: any) {
   );
 }
 
-export function LazyCollaborationPanel(props: any) {
+export function LazyCollaborationPanel(_props: any) {
   return (
     <LazyLoadingWrapper
       componentName="Collaboration Panel"
@@ -162,7 +162,7 @@ export function LazyCollaborationPanel(props: any) {
   );
 }
 
-export function LazyAnalyticsDashboard(props: any) {
+export function LazyAnalyticsDashboard(_props: any) {
   return (
     <LazyLoadingWrapper
       componentName="Analytics Dashboard"
@@ -176,19 +176,19 @@ export function LazyAnalyticsDashboard(props: any) {
 }
 
 // Debounced Loading Hook
-export function useDebouncedLoading(isLoading: boolean, delay: number = 300) {
-  const [showLoading, setShowLoading] = useState(false);
+export function useDebouncedLoading( isLoading: boolean, delay: number = 300) {
+  const [showLoading, setShowLoading] = useState(_false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
     if (isLoading) {
-      timer = setTimeout(() => setShowLoading(true), delay);
+      timer = setTimeout(() => setShowLoading(_true), delay);
     } else {
-      setShowLoading(false);
+      setShowLoading(_false);
     }
     
-    return () => clearTimeout(timer);
+    return (_) => clearTimeout(_timer);
   }, [isLoading, delay]);
 
   return showLoading;
@@ -210,8 +210,8 @@ export function DebouncedLoading({
   fallback,
   className
 }: DebouncedLoadingProps) {
-  const showLoading = useDebouncedLoading(isLoading, delay);
-  const { settings } = useSettings();
+  const showLoading = useDebouncedLoading( isLoading, delay);
+  const { settings } = useSettings(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   if (showLoading) {
@@ -249,24 +249,24 @@ interface ProgressiveLoadingProps {
   className?: string;
 }
 
-export function ProgressiveLoading({ stages, className }: ProgressiveLoadingProps) {
+export function ProgressiveLoading( { stages, className }: ProgressiveLoadingProps) {
   const [currentStage, setCurrentStage] = useState(0);
-  const { settings } = useSettings();
+  const { settings } = useSettings(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   useEffect(() => {
-    if (currentStage < stages.length - 1) {
+    if (_currentStage < stages.length - 1) {
       const timer = setTimeout(() => {
-        setCurrentStage(prev => prev + 1);
+        setCurrentStage(_prev => prev + 1);
       }, stages[currentStage].delay);
       
-      return () => clearTimeout(timer);
+      return (_) => clearTimeout(_timer);
     }
   }, [currentStage, stages]);
 
   return (
     <div className={className}>
-      {stages.map((stage, index) => (
+      {stages.map( (stage, index) => (
         <motion.div
           key={index}
           initial={{ opacity: 0, y: 20 }}
@@ -303,31 +303,31 @@ export function IntersectionLoading({
   rootMargin = '50px',
   className
 }: IntersectionLoadingProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(_false);
+  const [hasLoaded, setHasLoaded] = useState(_false);
+  const ref = React.useRef<HTMLDivElement>(_null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasLoaded) {
-          setIsVisible(true);
-          setHasLoaded(true);
+        if (_entry.isIntersecting && !hasLoaded) {
+          setIsVisible(_true);
+          setHasLoaded(_true);
         }
       },
       { threshold, rootMargin }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    if (_ref.current) {
+      observer.observe(_ref.current);
     }
 
-    return () => observer.disconnect();
+    return (_) => observer.disconnect(_);
   }, [threshold, rootMargin, hasLoaded]);
 
   return (
     <div ref={ref} className={className}>
-      {isVisible ? children : (fallback || <div className="h-32" />)}
+      {isVisible ? children : (_fallback || <div className="h-32" />)}
     </div>
   );
 }
@@ -348,19 +348,19 @@ export function NetworkAwareLoading({
 
   useEffect(() => {
     // Check connection speed
-    const connection = (navigator as any).connection;
+    const connection = (_navigator as any).connection;
     if (connection) {
-      const updateConnectionSpeed = () => {
+      const updateConnectionSpeed = (_) => {
         const effectiveType = connection.effectiveType;
         setConnectionSpeed(
           effectiveType === 'slow-2g' || effectiveType === '2g' ? 'slow' : 'fast'
         );
       };
 
-      updateConnectionSpeed();
-      connection.addEventListener('change', updateConnectionSpeed);
+      updateConnectionSpeed(_);
+      connection.addEventListener( 'change', updateConnectionSpeed);
       
-      return () => connection.removeEventListener('change', updateConnectionSpeed);
+      return (_) => connection.removeEventListener( 'change', updateConnectionSpeed);
     }
   }, []);
 

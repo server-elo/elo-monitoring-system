@@ -17,7 +17,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 
 // Validation schema for error reports
 const errorReportSchema = z.object({
-  level: z.enum(['error', 'warning', 'info']),
+  level: z.enum( ['error', 'warning', 'info']),
   message: z.string().min(1, 'Message is required').max(1000, 'Message must be less than 1000 characters'),
   stack: z.string().optional(),
   context: z.object({
@@ -37,7 +37,7 @@ async function getErrorsHandler(request: NextRequest) {
     // TODO: Check if user has admin permissions
     // const user = await getUserFromToken(request);
     // if (user.role !== 'ADMIN') {
-    //   return forbiddenResponse('Admin access required', requestId);
+    //   return forbiddenResponse( 'Admin access required', requestId);
     // }
 
     const url = new URL(request.url);
@@ -52,7 +52,7 @@ async function getErrorsHandler(request: NextRequest) {
 
     // Get error metrics from error tracker
     const timeRange = 24 * 60 * 60 * 1000; // 24 hours
-    const metrics = errorTracker.getMetrics(timeRange);
+    const metrics = errorTracker.getMetrics(_timeRange);
     const recentEvents = errorTracker.getRecentEvents(1000); // Get more events for filtering
 
     // Filter events based on query parameters
@@ -62,19 +62,19 @@ async function getErrorsHandler(request: NextRequest) {
       if (search && !event.message.toLowerCase().includes(search.toLowerCase())) return false;
       
       if (startDate) {
-        const start = new Date(startDate);
+        const start = new Date(_startDate);
         if (new Date(event.timestamp) < start) return false;
       }
       
       if (endDate) {
-        const end = new Date(endDate);
+        const end = new Date(_endDate);
         if (new Date(event.timestamp) > end) return false;
       }
       
       return true;
     });
 
-    // Sort by timestamp (newest first)
+    // Sort by timestamp (_newest first)
     filteredEvents.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     // Paginate
@@ -82,7 +82,7 @@ async function getErrorsHandler(request: NextRequest) {
     const paginatedEvents = filteredEvents.slice(offset, offset + limit);
 
     // Create pagination metadata
-    const meta = createPaginationMeta(page, limit, total);
+    const meta = createPaginationMeta( page, limit, total);
 
     // Add summary metrics
     const responseData = {
@@ -131,7 +131,7 @@ async function reportErrorHandler(request: NextRequest) {
     const { level, message, stack, context } = validation.data;
     
     // Create error object
-    const error = new Error(message);
+    const error = new Error(_message);
     if (stack) {
       error.stack = stack;
     }
@@ -192,7 +192,7 @@ async function reportErrorHandler(request: NextRequest) {
   }
 }
 
-// DELETE /api/errors - Clear error reports (admin only)
+// DELETE /api/errors - Clear error reports (_admin only)
 async function clearErrorsHandler(request: NextRequest) {
   const requestId = generateRequestId();
   
@@ -200,7 +200,7 @@ async function clearErrorsHandler(request: NextRequest) {
     // TODO: Check if user has admin permissions
     // const user = await getUserFromToken(request);
     // if (user.role !== 'ADMIN') {
-    //   return forbiddenResponse('Admin access required', requestId);
+    //   return forbiddenResponse( 'Admin access required', requestId);
     // }
 
     const url = new URL(request.url);
@@ -208,8 +208,8 @@ async function clearErrorsHandler(request: NextRequest) {
     
     if (olderThan) {
       // Clear errors older than specified date
-      const cutoffDate = new Date(olderThan);
-      if (isNaN(cutoffDate.getTime())) {
+      const cutoffDate = new Date(_olderThan);
+      if (_isNaN(cutoffDate.getTime())) {
         return errorResponse(
           ApiErrorCode.INVALID_INPUT,
           'Invalid date format for olderThan parameter',
@@ -250,6 +250,6 @@ async function clearErrorsHandler(request: NextRequest) {
 }
 
 // Route handlers
-export const GET = withErrorHandling(getErrorsHandler);
-export const POST = withErrorHandling(reportErrorHandler);
-export const DELETE = withErrorHandling(clearErrorsHandler);
+export const GET = withErrorHandling(_getErrorsHandler);
+export const POST = withErrorHandling(_reportErrorHandler);
+export const DELETE = withErrorHandling(_clearErrorsHandler);

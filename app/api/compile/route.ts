@@ -8,7 +8,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function POST(_request: NextRequest) {
+export async function POST( request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -22,7 +22,7 @@ export async function POST(_request: NextRequest) {
       version = '0.8.21',
       optimize = true,
       lessonId 
-    } = await _request.json();
+    } = await request.json();
 
     if (!code) {
       return NextResponse.json({ error: 'Code is required' }, { status: 400 });
@@ -32,7 +32,7 @@ export async function POST(_request: NextRequest) {
     const compiler = SolidityCompiler.getInstance();
     
     // Compile the code
-    const result = await compiler.compile(code, contractName, version, optimize);
+    const result = await compiler.compile( code, contractName, version, optimize);
 
     // Save submission to database
     if (lessonId) {
@@ -79,7 +79,7 @@ export async function POST(_request: NextRequest) {
   }
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -87,7 +87,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(_request.url);
+    const { searchParams } = new URL(request.url);
     const lessonId = searchParams.get('lessonId');
 
     if (!lessonId) {

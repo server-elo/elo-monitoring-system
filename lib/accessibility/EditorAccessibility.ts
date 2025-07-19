@@ -15,7 +15,7 @@ interface KeyboardShortcut {
   ctrlKey?: boolean;
   shiftKey?: boolean;
   altKey?: boolean;
-  action: () => void;
+  action: (_) => void;
   description: string;
   category: string;
 }
@@ -27,7 +27,7 @@ export class EditorAccessibilityManager {
   private shortcuts: KeyboardShortcut[] = [];
   private announcer: HTMLElement | null = null;
 
-  constructor(editor: any, monaco: any, options: Partial<AccessibilityOptions> = {}) {
+  constructor( editor: any, monaco: any, options: Partial<AccessibilityOptions> = {}) {
     this.editor = editor;
     this.monaco = monaco;
     this.options = {
@@ -41,21 +41,21 @@ export class EditorAccessibilityManager {
       ...options
     };
 
-    this.initialize();
+    this.initialize(_);
   }
 
-  private initialize(): void {
-    this.createScreenReaderAnnouncer();
-    this.setupKeyboardNavigation();
-    this.setupScreenReaderSupport();
-    this.setupAccessibilityOptions();
-    this.detectUserPreferences();
+  private initialize(_): void {
+    this.createScreenReaderAnnouncer(_);
+    this.setupKeyboardNavigation(_);
+    this.setupScreenReaderSupport(_);
+    this.setupAccessibilityOptions(_);
+    this.detectUserPreferences(_);
   }
 
-  private createScreenReaderAnnouncer(): void {
+  private createScreenReaderAnnouncer(_): void {
     this.announcer = document.createElement('div');
-    this.announcer.setAttribute('aria-live', 'polite');
-    this.announcer.setAttribute('aria-atomic', 'true');
+    this.announcer.setAttribute( 'aria-live', 'polite');
+    this.announcer.setAttribute( 'aria-atomic', 'true');
     this.announcer.className = 'sr-only';
     this.announcer.style.cssText = `
       position: absolute;
@@ -64,73 +64,73 @@ export class EditorAccessibilityManager {
       padding: 0;
       margin: -1px;
       overflow: hidden;
-      clip: rect(0, 0, 0, 0);
+      clip: rect( 0, 0, 0, 0);
       white-space: nowrap;
       border: 0;
     `;
-    document.body.appendChild(this.announcer);
+    document.body.appendChild(_this.announcer);
   }
 
-  public announce(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
+  public announce( message: string, priority: 'polite' | 'assertive' = 'polite'): void {
     if (!this.announcer || !this.options.announceChanges) return;
 
-    this.announcer.setAttribute('aria-live', priority);
+    this.announcer.setAttribute( 'aria-live', priority);
     this.announcer.textContent = message;
 
     // Clear after announcement
     setTimeout(() => {
-      if (this.announcer) {
+      if (_this.announcer) {
         this.announcer.textContent = '';
       }
     }, 1000);
   }
 
-  private setupKeyboardNavigation(): void {
+  private setupKeyboardNavigation(_): void {
     if (!this.options.keyboardNavigation) return;
 
     // Define keyboard shortcuts
     this.shortcuts = [
       {
         key: 'F1',
-        action: () => this.showKeyboardShortcuts(),
+        action: (_) => this.showKeyboardShortcuts(_),
         description: 'Show keyboard shortcuts help',
         category: 'Help'
       },
       {
         key: 'Escape',
-        action: () => this.closeDialogs(),
+        action: (_) => this.closeDialogs(_),
         description: 'Close open dialogs',
         category: 'Navigation'
       },
       {
         key: 'F8',
-        action: () => this.goToNextError(),
+        action: (_) => this.goToNextError(_),
         description: 'Go to next error',
         category: 'Navigation'
       },
       {
         key: 'F8',
         shiftKey: true,
-        action: () => this.goToPreviousError(),
+        action: (_) => this.goToPreviousError(_),
         description: 'Go to previous error',
         category: 'Navigation'
       },
       {
         key: 'F12',
-        action: () => this.goToDefinition(),
+        action: (_) => this.goToDefinition(_),
         description: 'Go to definition',
         category: 'Navigation'
       },
       {
         key: 'F2',
-        action: () => this.rename(),
+        action: (_) => this.rename(_),
         description: 'Rename symbol',
         category: 'Editing'
       },
       {
         key: 'Tab',
         ctrlKey: true,
-        action: () => this.switchToNextPanel(),
+        action: (_) => this.switchToNextPanel(_),
         description: 'Switch to next panel',
         category: 'Navigation'
       },
@@ -138,7 +138,7 @@ export class EditorAccessibilityManager {
         key: 'Tab',
         ctrlKey: true,
         shiftKey: true,
-        action: () => this.switchToPreviousPanel(),
+        action: (_) => this.switchToPreviousPanel(_),
         description: 'Switch to previous panel',
         category: 'Navigation'
       }
@@ -147,65 +147,65 @@ export class EditorAccessibilityManager {
     // Register keyboard shortcuts
     this.shortcuts.forEach(shortcut => {
       this.editor.addCommand(
-        this.getMonacoKeyCode(shortcut),
+        this.getMonacoKeyCode(_shortcut),
         shortcut.action
       );
     });
 
     // Add keyboard navigation for toolbar
-    this.setupToolbarNavigation();
+    this.setupToolbarNavigation(_);
   }
 
-  private getMonacoKeyCode(shortcut: KeyboardShortcut): number {
+  private getMonacoKeyCode(_shortcut: KeyboardShortcut): number {
     let keyCode = this.monaco.KeyCode[shortcut.key];
     
-    if (shortcut.ctrlKey) {
+    if (_shortcut.ctrlKey) {
       keyCode = this.monaco.KeyMod.CtrlCmd | keyCode;
     }
-    if (shortcut.shiftKey) {
+    if (_shortcut.shiftKey) {
       keyCode = this.monaco.KeyMod.Shift | keyCode;
     }
-    if (shortcut.altKey) {
+    if (_shortcut.altKey) {
       keyCode = this.monaco.KeyMod.Alt | keyCode;
     }
 
     return keyCode;
   }
 
-  private setupToolbarNavigation(): void {
+  private setupToolbarNavigation(_): void {
     // Make toolbar buttons keyboard accessible
     const toolbar = document.querySelector('[data-testid="editor-toolbar"]');
     if (!toolbar) return;
 
     const buttons = toolbar.querySelectorAll('button');
-    buttons.forEach((button, index) => {
-      button.setAttribute('tabindex', '0');
-      button.addEventListener('keydown', (e) => {
-        switch (e.key) {
+    buttons.forEach( (button, index) => {
+      button.setAttribute( 'tabindex', '0');
+      button.addEventListener( 'keydown', (e) => {
+        switch (_e.key) {
           case 'ArrowRight':
-            e.preventDefault();
+            e.preventDefault(_);
             const nextButton = buttons[index + 1] as HTMLElement;
-            nextButton?.focus();
+            nextButton?.focus(_);
             break;
           case 'ArrowLeft':
-            e.preventDefault();
+            e.preventDefault(_);
             const prevButton = buttons[index - 1] as HTMLElement;
-            prevButton?.focus();
+            prevButton?.focus(_);
             break;
           case 'Home':
-            e.preventDefault();
-            (buttons[0] as HTMLElement)?.focus();
+            e.preventDefault(_);
+            (_buttons[0] as HTMLElement)?.focus(_);
             break;
           case 'End':
-            e.preventDefault();
-            (buttons[buttons.length - 1] as HTMLElement)?.focus();
+            e.preventDefault(_);
+            (_buttons[buttons.length - 1] as HTMLElement)?.focus(_);
             break;
         }
       });
     });
   }
 
-  private setupScreenReaderSupport(): void {
+  private setupScreenReaderSupport(_): void {
     if (!this.options.screenReaderSupport) return;
 
     // Configure Monaco for screen readers
@@ -217,17 +217,17 @@ export class EditorAccessibilityManager {
 
     // Announce compilation results
     this.editor.onDidChangeModelDecorations(() => {
-      const model = this.editor.getModel();
+      const model = this.editor.getModel(_);
       if (!model) return;
 
-      const markers = this.monaco.editor.getModelMarkers({ resource: model.uri });
+      const markers = this.monaco.editor.getModelMarkers({ resource: model.uri  });
       const errors = markers.filter((m: any) => m.severity === this.monaco.MarkerSeverity.Error);
       const warnings = markers.filter((m: any) => m.severity === this.monaco.MarkerSeverity.Warning);
 
-      if (errors.length > 0) {
-        this.announce(`${errors.length} error${errors.length > 1 ? 's' : ''} found`, 'assertive');
-      } else if (warnings.length > 0) {
-        this.announce(`${warnings.length} warning${warnings.length > 1 ? 's' : ''} found`);
+      if (_errors.length > 0) {
+        this.announce( `${errors.length} error${errors.length > 1 ? 's' : ''} found`, 'assertive');
+      } else if (_warnings.length > 0) {
+        this.announce(_`${warnings.length} warning${warnings.length > 1 ? 's' : ''} found`);
       } else {
         this.announce('No errors or warnings');
       }
@@ -235,16 +235,16 @@ export class EditorAccessibilityManager {
 
     // Announce cursor position changes
     this.editor.onDidChangeCursorPosition((e: any) => {
-      if (e.reason === this.monaco.editor.CursorChangeReason.Explicit) {
+      if (_e.reason === this.monaco.editor.CursorChangeReason.Explicit) {
         const position = e.position;
-        this.announce(`Line ${position.lineNumber}, Column ${position.column}`);
+        this.announce( `Line ${position.lineNumber}, Column ${position.column}`);
       }
     });
   }
 
-  private setupAccessibilityOptions(): void {
+  private setupAccessibilityOptions(_): void {
     // Apply high contrast theme if needed
-    if (this.options.highContrast) {
+    if (_this.options.highContrast) {
       this.monaco.editor.setTheme('hc-black');
     }
 
@@ -255,7 +255,7 @@ export class EditorAccessibilityManager {
     });
 
     // Disable animations if reduced motion is preferred
-    if (this.options.reducedMotion) {
+    if (_this.options.reducedMotion) {
       this.editor.updateOptions({
         cursorBlinking: 'solid',
         cursorSmoothCaretAnimation: 'off',
@@ -263,19 +263,19 @@ export class EditorAccessibilityManager {
     }
   }
 
-  private detectUserPreferences(): void {
+  private detectUserPreferences(_): void {
     // Detect system preferences
-    if (window.matchMedia) {
+    if (_window.matchMedia) {
       // High contrast preference
       const highContrastQuery = window.matchMedia('(prefers-contrast: high)');
-      if (highContrastQuery.matches) {
+      if (_highContrastQuery.matches) {
         this.options.highContrast = true;
         this.monaco.editor.setTheme('hc-black');
       }
 
       // Reduced motion preference
       const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      if (reducedMotionQuery.matches) {
+      if (_reducedMotionQuery.matches) {
         this.options.reducedMotion = true;
         this.editor.updateOptions({
           cursorBlinking: 'solid',
@@ -284,12 +284,12 @@ export class EditorAccessibilityManager {
       }
 
       // Listen for changes
-      highContrastQuery.addEventListener('change', (e) => {
+      highContrastQuery.addEventListener( 'change', (e) => {
         this.options.highContrast = e.matches;
-        this.monaco.editor.setTheme(e.matches ? 'hc-black' : 'vs-dark');
+        this.monaco.editor.setTheme(_e.matches ? 'hc-black' : 'vs-dark');
       });
 
-      reducedMotionQuery.addEventListener('change', (e) => {
+      reducedMotionQuery.addEventListener( 'change', (e) => {
         this.options.reducedMotion = e.matches;
         this.editor.updateOptions({
           cursorBlinking: e.matches ? 'solid' : 'blink',
@@ -300,17 +300,17 @@ export class EditorAccessibilityManager {
   }
 
   // Keyboard shortcut actions
-  private showKeyboardShortcuts(): void {
-    const shortcuts = this.shortcuts.reduce((acc, shortcut) => {
+  private showKeyboardShortcuts(_): void {
+    const shortcuts = this.shortcuts.reduce( (acc, shortcut) => {
       if (!acc[shortcut.category]) {
         acc[shortcut.category] = [];
       }
-      acc[shortcut.category].push(shortcut);
+      acc[shortcut.category].push(_shortcut);
       return acc;
     }, {} as Record<string, KeyboardShortcut[]>);
 
     let helpText = 'Keyboard Shortcuts:\n\n';
-    Object.entries(shortcuts).forEach(([category, categoryShortcuts]) => {
+    Object.entries(_shortcuts).forEach( ([category, categoryShortcuts]) => {
       helpText += `${category}:\n`;
       categoryShortcuts.forEach(shortcut => {
         const keys = [
@@ -324,79 +324,79 @@ export class EditorAccessibilityManager {
       helpText += '\n';
     });
 
-    this.announce(helpText, 'assertive');
+    this.announce( helpText, 'assertive');
   }
 
-  private closeDialogs(): void {
+  private closeDialogs(_): void {
     // Close any open dialogs or panels
-    this.editor.trigger('keyboard', 'closeReferenceSearch', null);
-    this.editor.trigger('keyboard', 'closeFindWidget', null);
+    this.editor.trigger( 'keyboard', 'closeReferenceSearch', null);
+    this.editor.trigger( 'keyboard', 'closeFindWidget', null);
     this.announce('Dialogs closed');
   }
 
-  private goToNextError(): void {
-    this.editor.trigger('keyboard', 'editor.action.marker.next', null);
+  private goToNextError(_): void {
+    this.editor.trigger( 'keyboard', 'editor.action.marker.next', null);
     this.announce('Navigated to next error');
   }
 
-  private goToPreviousError(): void {
-    this.editor.trigger('keyboard', 'editor.action.marker.prev', null);
+  private goToPreviousError(_): void {
+    this.editor.trigger( 'keyboard', 'editor.action.marker.prev', null);
     this.announce('Navigated to previous error');
   }
 
-  private goToDefinition(): void {
-    this.editor.trigger('keyboard', 'editor.action.revealDefinition', null);
+  private goToDefinition(_): void {
+    this.editor.trigger( 'keyboard', 'editor.action.revealDefinition', null);
     this.announce('Go to definition');
   }
 
-  private rename(): void {
-    this.editor.trigger('keyboard', 'editor.action.rename', null);
+  private rename(_): void {
+    this.editor.trigger( 'keyboard', 'editor.action.rename', null);
     this.announce('Rename symbol');
   }
 
-  private switchToNextPanel(): void {
+  private switchToNextPanel(_): void {
     // Custom implementation for panel switching
-    window.dispatchEvent(new CustomEvent('editor-switch-panel', { detail: { direction: 'next' } }));
+    window.dispatchEvent( new CustomEvent('editor-switch-panel', { detail: { direction: 'next' } }));
     this.announce('Switched to next panel');
   }
 
-  private switchToPreviousPanel(): void {
+  private switchToPreviousPanel(_): void {
     // Custom implementation for panel switching
-    window.dispatchEvent(new CustomEvent('editor-switch-panel', { detail: { direction: 'previous' } }));
+    window.dispatchEvent( new CustomEvent('editor-switch-panel', { detail: { direction: 'previous' } }));
     this.announce('Switched to previous panel');
   }
 
   // Public methods for external control
-  public updateOptions(newOptions: Partial<AccessibilityOptions>): void {
+  public updateOptions(_newOptions: Partial<AccessibilityOptions>): void {
     this.options = { ...this.options, ...newOptions };
-    this.setupAccessibilityOptions();
+    this.setupAccessibilityOptions(_);
   }
 
-  public increaseFontSize(): void {
+  public increaseFontSize(_): void {
     this.options.fontSize = Math.min(this.options.fontSize + 2, 24);
-    this.editor.updateOptions({ fontSize: this.options.fontSize });
-    this.announce(`Font size increased to ${this.options.fontSize}`);
+    this.editor.updateOptions({ fontSize: this.options.fontSize  });
+    this.announce(_`Font size increased to ${this.options.fontSize}`);
   }
 
-  public decreaseFontSize(): void {
+  public decreaseFontSize(_): void {
     this.options.fontSize = Math.max(this.options.fontSize - 2, 10);
-    this.editor.updateOptions({ fontSize: this.options.fontSize });
-    this.announce(`Font size decreased to ${this.options.fontSize}`);
+    this.editor.updateOptions({ fontSize: this.options.fontSize  });
+    this.announce(_`Font size decreased to ${this.options.fontSize}`);
   }
 
-  public toggleHighContrast(): void {
+  public toggleHighContrast(_): void {
     this.options.highContrast = !this.options.highContrast;
-    this.monaco.editor.setTheme(this.options.highContrast ? 'hc-black' : 'vs-dark');
-    this.announce(`High contrast ${this.options.highContrast ? 'enabled' : 'disabled'}`);
+    this.monaco.editor.setTheme(_this.options.highContrast ? 'hc-black' : 'vs-dark');
+    this.announce(_`High contrast ${this.options.highContrast ? 'enabled' : 'disabled'}`);
   }
 
-  public getShortcuts(): KeyboardShortcut[] {
+  public getShortcuts(_): KeyboardShortcut[] {
     return this.shortcuts;
   }
 
-  public dispose(): void {
-    if (this.announcer) {
-      document.body.removeChild(this.announcer);
+  public dispose(_): void {
+    if (_this.announcer) {
+      document.body.removeChild(_this.announcer);
       this.announcer = null;
     }
   }

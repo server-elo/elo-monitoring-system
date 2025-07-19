@@ -5,38 +5,38 @@ import { AchievementNotification } from '@/components/achievements/AchievementNo
 import { Achievement, AchievementNotification as NotificationType } from '@/lib/achievements/types';
 
 // Mock framer-motion
-jest.mock('framer-motion', () => ({
+jest.mock( 'framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ( { children, ...props }: any) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: (_{ children }: any) => <>{children}</>,
 }));
 
 // Mock lucide-react icons
-jest.mock('lucide-react', () => ({
-  Trophy: () => <div data-testid="trophy-icon">🏆</div>,
-  X: () => <div data-testid="x-icon">✕</div>,
-  Star: () => <div data-testid="star-icon">⭐</div>,
-  Zap: () => <div data-testid="zap-icon">⚡</div>,
-  Gift: () => <div data-testid="gift-icon">🎁</div>,
-  Crown: () => <div data-testid="crown-icon">👑</div>,
-  Sparkles: () => <div data-testid="sparkles-icon">✨</div>,
-  CheckCircle: () => <div data-testid="check-circle-icon">✓</div>,
-  Award: () => <div data-testid="award-icon">🏅</div>,
-  Eye: () => <div data-testid="eye-icon">👁</div>,
+jest.mock( 'lucide-react', () => ({
+  Trophy: (_) => <div data-testid="trophy-icon">🏆</div>,
+  X: (_) => <div data-testid="x-icon">✕</div>,
+  Star: (_) => <div data-testid="star-icon">⭐</div>,
+  Zap: (_) => <div data-testid="zap-icon">⚡</div>,
+  Gift: (_) => <div data-testid="gift-icon">🎁</div>,
+  Crown: (_) => <div data-testid="crown-icon">👑</div>,
+  Sparkles: (_) => <div data-testid="sparkles-icon">✨</div>,
+  CheckCircle: (_) => <div data-testid="check-circle-icon">✓</div>,
+  Award: (_) => <div data-testid="award-icon">🏅</div>,
+  Eye: (_) => <div data-testid="eye-icon">👁</div>,
 }));
 
 // Mock components
-jest.mock('@/components/ui/GlassCard', () => ({
-  GlassCard: ({ children, className }: any) => (
+jest.mock( '@/components/ui/GlassCard', () => ({
+  GlassCard: ( { children, className }: any) => (
     <div className={`glass-card ${className}`} data-testid="glass-card">
       {children}
     </div>
   ),
 }));
 
-jest.mock('@/components/ui/EnhancedButton', () => ({
-  EnhancedButton: ({ children, onClick, className, variant, touchTarget, ...props }: any) => (
+jest.mock( '@/components/ui/EnhancedButton', () => ({
+  EnhancedButton: ( { children, onClick, className, variant, touchTarget, ...props }: any) => (
     <button
       onClick={onClick}
       className={`enhanced-button ${className} ${variant}`}
@@ -78,7 +78,7 @@ const mockNotification: NotificationType = {
   type: 'unlock',
   title: 'Achievement Unlocked: First Steps',
   message: 'You completed your first Solidity lesson!',
-  timestamp: new Date(),
+  timestamp: new Date(_),
   read: false,
   rewards: {
     xp: 100,
@@ -88,22 +88,22 @@ const mockNotification: NotificationType = {
   }
 };
 
-describe('AchievementNotification Component - Comprehensive Test Suite', () => {
-  const mockOnDismiss = jest.fn();
-  const mockOnCelebrate = jest.fn();
+describe( 'AchievementNotification Component - Comprehensive Test Suite', () => {
+  const mockOnDismiss = jest.fn(_);
+  const mockOnCelebrate = jest.fn(_);
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    jest.clearAllMocks(_);
+    jest.useFakeTimers(_);
   });
 
   afterEach(() => {
-    jest.useRealTimers();
-    jest.restoreAllMocks();
+    jest.useRealTimers(_);
+    jest.restoreAllMocks(_);
   });
 
-  describe('Component Rendering', () => {
-    it('should render achievement notification with basic information', () => {
+  describe( 'Component Rendering', () => {
+    it( 'should render achievement notification with basic information', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -113,13 +113,13 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByText('Achievement Unlocked!')).toBeInTheDocument();
-      expect(screen.getByText('First Steps')).toBeInTheDocument();
-      expect(screen.getByText('Complete your first Solidity lesson')).toBeInTheDocument();
-      expect(screen.getByText('You completed your first Solidity lesson!')).toBeInTheDocument();
+      expect(_screen.getByText('Achievement Unlocked!')).toBeInTheDocument(_);
+      expect(_screen.getByText('First Steps')).toBeInTheDocument(_);
+      expect(_screen.getByText('Complete your first Solidity lesson')).toBeInTheDocument(_);
+      expect(_screen.getByText('You completed your first Solidity lesson!')).toBeInTheDocument(_);
     });
 
-    it('should render achievement icon and rarity information', () => {
+    it( 'should render achievement icon and rarity information', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -128,11 +128,11 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByText('🎯')).toBeInTheDocument();
-      expect(screen.getByText('Common Achievement')).toBeInTheDocument();
+      expect(_screen.getByText('🎯')).toBeInTheDocument(_);
+      expect(_screen.getByText('Common Achievement')).toBeInTheDocument(_);
     });
 
-    it('should render rewards section when rewards are provided', () => {
+    it( 'should render rewards section when rewards are provided', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -141,13 +141,13 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByText('Rewards')).toBeInTheDocument();
-      expect(screen.getByText('+100 XP')).toBeInTheDocument();
-      expect(screen.getByText('1 badge(s)')).toBeInTheDocument();
-      expect(screen.getByText('1 item(s)')).toBeInTheDocument();
+      expect(_screen.getByText('Rewards')).toBeInTheDocument(_);
+      expect(_screen.getByText('+100 XP')).toBeInTheDocument(_);
+      expect(_screen.getByText('1 badge(s)')).toBeInTheDocument(_);
+      expect(_screen.getByText('1 item(s)')).toBeInTheDocument(_);
     });
 
-    it('should render dismiss button', () => {
+    it( 'should render dismiss button', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -157,11 +157,11 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       );
 
       const dismissButton = screen.getByLabelText('Dismiss notification');
-      expect(dismissButton).toBeInTheDocument();
-      expect(screen.getByTestId('x-icon')).toBeInTheDocument();
+      expect(_dismissButton).toBeInTheDocument(_);
+      expect(_screen.getByTestId('x-icon')).toBeInTheDocument(_);
     });
 
-    it('should render action buttons', () => {
+    it( 'should render action buttons', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -170,13 +170,13 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByText('Awesome!')).toBeInTheDocument();
-      expect(screen.getByTestId('check-circle-icon')).toBeInTheDocument();
+      expect(_screen.getByText('Awesome!')).toBeInTheDocument(_);
+      expect(_screen.getByTestId('check-circle-icon')).toBeInTheDocument(_);
     });
   });
 
-  describe('User Interactions', () => {
-    it('should call onDismiss when dismiss button is clicked', () => {
+  describe( 'User Interactions', () => {
+    it( 'should call onDismiss when dismiss button is clicked', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -186,17 +186,17 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       );
 
       const dismissButton = screen.getByLabelText('Dismiss notification');
-      fireEvent.click(dismissButton);
+      fireEvent.click(_dismissButton);
 
       // Should call onDismiss after animation delay
       act(() => {
         jest.advanceTimersByTime(500);
       });
 
-      expect(mockOnDismiss).toHaveBeenCalledTimes(1);
+      expect(_mockOnDismiss).toHaveBeenCalledTimes(1);
     });
 
-    it('should call onDismiss when "Awesome!" button is clicked', () => {
+    it( 'should call onDismiss when "Awesome!" button is clicked', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -206,16 +206,16 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       );
 
       const awesomeButton = screen.getByText('Awesome!');
-      fireEvent.click(awesomeButton);
+      fireEvent.click(_awesomeButton);
 
       act(() => {
         jest.advanceTimersByTime(500);
       });
 
-      expect(mockOnDismiss).toHaveBeenCalledTimes(1);
+      expect(_mockOnDismiss).toHaveBeenCalledTimes(1);
     });
 
-    it('should call onCelebrate when provided', () => {
+    it( 'should call onCelebrate when provided', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -225,13 +225,13 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      // Simulate celebration trigger (implementation dependent)
-      expect(mockOnCelebrate).toBeDefined();
+      // Simulate celebration trigger (_implementation dependent)
+      expect(_mockOnCelebrate).toBeDefined(_);
     });
   });
 
-  describe('Auto-hide Functionality', () => {
-    it('should auto-hide after specified delay', () => {
+  describe( 'Auto-hide Functionality', () => {
+    it( 'should auto-hide after specified delay', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -242,7 +242,7 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByText('First Steps')).toBeInTheDocument();
+      expect(_screen.getByText('First Steps')).toBeInTheDocument(_);
 
       act(() => {
         jest.advanceTimersByTime(3000);
@@ -252,10 +252,10 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         jest.advanceTimersByTime(500); // Animation delay
       });
 
-      expect(mockOnDismiss).toHaveBeenCalledTimes(1);
+      expect(_mockOnDismiss).toHaveBeenCalledTimes(1);
     });
 
-    it('should not auto-hide when autoHide is false', () => {
+    it( 'should not auto-hide when autoHide is false', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -269,10 +269,10 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         jest.advanceTimersByTime(10000); // Long delay
       });
 
-      expect(mockOnDismiss).not.toHaveBeenCalled();
+      expect(_mockOnDismiss).not.toHaveBeenCalled(_);
     });
 
-    it('should use default hide delay when not specified', () => {
+    it( 'should use default hide delay when not specified', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -283,19 +283,19 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       );
 
       act(() => {
-        jest.advanceTimersByTime(8000); // Default delay
+        jest.advanceTimersByTime(_8000); // Default delay
       });
 
       act(() => {
         jest.advanceTimersByTime(500);
       });
 
-      expect(mockOnDismiss).toHaveBeenCalledTimes(1);
+      expect(_mockOnDismiss).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('Position and Layout', () => {
-    it('should apply correct position classes', () => {
+  describe( 'Position and Layout', () => {
+    it( 'should apply correct position classes', () => {
       const { rerender } = render(
         <AchievementNotification
           notification={mockNotification}
@@ -305,7 +305,7 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('glass-card').parentElement).toHaveClass('top-4', 'right-4');
+      expect(_screen.getByTestId('glass-card').parentElement).toHaveClass( 'top-4', 'right-4');
 
       rerender(
         <AchievementNotification
@@ -316,10 +316,10 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('glass-card').parentElement).toHaveClass('bottom-4', 'left-4');
+      expect(_screen.getByTestId('glass-card').parentElement).toHaveClass( 'bottom-4', 'left-4');
     });
 
-    it('should apply center position correctly', () => {
+    it( 'should apply center position correctly', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -330,12 +330,12 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       );
 
       const container = screen.getByTestId('glass-card').parentElement;
-      expect(container).toHaveClass('top-1/2', 'left-1/2', 'transform', '-translate-x-1/2', '-translate-y-1/2');
+      expect(_container).toHaveClass( 'top-1/2', 'left-1/2', 'transform', '-translate-x-1/2', '-translate-y-1/2');
     });
   });
 
-  describe('Rarity-based Styling', () => {
-    it('should apply common rarity styling', () => {
+  describe( 'Rarity-based Styling', () => {
+    it( 'should apply common rarity styling', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -345,10 +345,10 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       );
 
       const glassCard = screen.getByTestId('glass-card');
-      expect(glassCard).toHaveClass('border-gray-400');
+      expect(_glassCard).toHaveClass('border-gray-400');
     });
 
-    it('should apply rare rarity styling', () => {
+    it( 'should apply rare rarity styling', () => {
       const rareAchievement = { ...mockAchievement, rarity: 'rare' as const };
       
       render(
@@ -360,10 +360,10 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       );
 
       const glassCard = screen.getByTestId('glass-card');
-      expect(glassCard).toHaveClass('border-blue-400');
+      expect(_glassCard).toHaveClass('border-blue-400');
     });
 
-    it('should apply legendary rarity styling with special effects', () => {
+    it( 'should apply legendary rarity styling with special effects', () => {
       const legendaryAchievement = { ...mockAchievement, rarity: 'legendary' as const };
       
       render(
@@ -375,15 +375,15 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       );
 
       const glassCard = screen.getByTestId('glass-card');
-      expect(glassCard).toHaveClass('border-yellow-400');
+      expect(_glassCard).toHaveClass('border-yellow-400');
       
       // Should have shimmer effect for legendary
-      expect(screen.getByTestId('glass-card')).toBeInTheDocument();
+      expect(_screen.getByTestId('glass-card')).toBeInTheDocument(_);
     });
   });
 
-  describe('Accessibility', () => {
-    it('should have proper ARIA labels', () => {
+  describe( 'Accessibility', () => {
+    it( 'should have proper ARIA labels', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -392,10 +392,10 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByLabelText('Dismiss notification')).toBeInTheDocument();
+      expect(_screen.getByLabelText('Dismiss notification')).toBeInTheDocument(_);
     });
 
-    it('should be keyboard accessible', () => {
+    it( 'should be keyboard accessible', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -407,15 +407,15 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       const dismissButton = screen.getByLabelText('Dismiss notification');
       
       // Should be focusable
-      dismissButton.focus();
-      expect(document.activeElement).toBe(dismissButton);
+      dismissButton.focus(_);
+      expect(_document.activeElement).toBe(_dismissButton);
 
       // Should respond to Enter key
-      fireEvent.keyDown(dismissButton, { key: 'Enter', code: 'Enter' });
+      fireEvent.keyDown( dismissButton, { key: 'Enter', code: 'Enter' });
       // Implementation would handle keyboard events
     });
 
-    it('should have proper touch targets for mobile', () => {
+    it( 'should have proper touch targets for mobile', () => {
       render(
         <AchievementNotification
           notification={mockNotification}
@@ -426,13 +426,13 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
 
       const enhancedButtons = screen.getAllByTestId('enhanced-button');
       enhancedButtons.forEach(button => {
-        expect(button).toHaveAttribute('data-touch-target', 'true');
+        expect(_button).toHaveAttribute( 'data-touch-target', 'true');
       });
     });
   });
 
-  describe('Edge Cases and Error Handling', () => {
-    it('should handle missing rewards gracefully', () => {
+  describe( 'Edge Cases and Error Handling', () => {
+    it( 'should handle missing rewards gracefully', () => {
       const notificationWithoutRewards = { ...mockNotification, rewards: undefined };
       
       expect(() => {
@@ -443,12 +443,12 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
             onDismiss={mockOnDismiss}
           />
         );
-      }).not.toThrow();
+      }).not.toThrow(_);
 
-      expect(screen.queryByText('Rewards')).not.toBeInTheDocument();
+      expect(_screen.queryByText('Rewards')).not.toBeInTheDocument(_);
     });
 
-    it('should handle missing achievement icon', () => {
+    it( 'should handle missing achievement icon', () => {
       const achievementWithoutIcon = { ...mockAchievement, icon: '' };
       
       expect(() => {
@@ -459,10 +459,10 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
             onDismiss={mockOnDismiss}
           />
         );
-      }).not.toThrow();
+      }).not.toThrow(_);
     });
 
-    it('should handle very long achievement titles and descriptions', () => {
+    it( 'should handle very long achievement titles and descriptions', () => {
       const longAchievement = {
         ...mockAchievement,
         title: 'A'.repeat(100),
@@ -477,11 +477,11 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByText('A'.repeat(100))).toBeInTheDocument();
-      expect(screen.getByText('B'.repeat(500))).toBeInTheDocument();
+      expect(_screen.getByText('A'.repeat(100))).toBeInTheDocument(_);
+      expect(_screen.getByText('B'.repeat(500))).toBeInTheDocument(_);
     });
 
-    it('should handle null or undefined callbacks', () => {
+    it( 'should handle null or undefined callbacks', () => {
       expect(() => {
         render(
           <AchievementNotification
@@ -491,22 +491,22 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
             onCelebrate={undefined}
           />
         );
-      }).not.toThrow();
+      }).not.toThrow(_);
     });
   });
 
-  describe('Performance', () => {
-    it('should render efficiently with complex achievement data', () => {
+  describe( 'Performance', () => {
+    it( 'should render efficiently with complex achievement data', () => {
       const complexAchievement = {
         ...mockAchievement,
-        requirements: Array.from({ length: 10 }, (_, i) => ({
+        requirements: Array.from( { length: 10 }, (_, i) => ({
           type: 'lesson_complete' as const,
           target: i + 1,
           current: i
         }))
       };
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
       
       render(
         <AchievementNotification
@@ -516,13 +516,13 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       const renderTime = endTime - startTime;
 
-      expect(renderTime).toBeLessThan(50); // Should render within 50ms
+      expect(_renderTime).toBeLessThan(50); // Should render within 50ms
     });
 
-    it('should clean up timers on unmount', () => {
+    it( 'should clean up timers on unmount', () => {
       const { unmount } = render(
         <AchievementNotification
           notification={mockNotification}
@@ -533,7 +533,7 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
         />
       );
 
-      unmount();
+      unmount(_);
 
       // Advance timers past the hide delay
       act(() => {
@@ -541,7 +541,7 @@ describe('AchievementNotification Component - Comprehensive Test Suite', () => {
       });
 
       // onDismiss should not be called after unmount
-      expect(mockOnDismiss).not.toHaveBeenCalled();
+      expect(_mockOnDismiss).not.toHaveBeenCalled(_);
     });
   });
 });

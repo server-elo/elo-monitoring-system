@@ -32,46 +32,46 @@ export function NotificationTestingPage() {
     showLevelUp,
     showCollaboration,
     showBanner
-  } = useNotifications();
+  } = useNotifications(_);
 
-  const manualTriggers = useManualNotificationTriggers();
-  const { connectionStatus, sendNotificationToRoom, joinRoom, leaveRoom } = useNotificationSocket();
+  const manualTriggers = useManualNotificationTriggers(_);
+  const { connectionStatus, sendNotificationToRoom, joinRoom, leaveRoom } = useNotificationSocket(_);
 
   const [testRoom, setTestRoom] = useState('test-room-123');
-  const [isInRoom, setIsInRoom] = useState(false);
+  const [isInRoom, setIsInRoom] = useState(_false);
 
   // Basic notification tests
   const basicTests = [
     {
       name: 'Success Notification',
       icon: <CheckCircle className="w-4 h-4 text-green-400" />,
-      action: () => showSuccess('Success!', 'This is a success notification with auto-dismiss'),
+      action: (_) => showSuccess( 'Success!', 'This is a success notification with auto-dismiss'),
     },
     {
       name: 'Error Notification',
       icon: <AlertCircle className="w-4 h-4 text-red-400" />,
-      action: () => showError('Error!', 'This is an error notification', {
+      action: (_) => showError('Error!', 'This is an error notification', {
         persistent: true,
         action: {
           label: 'Retry',
-          onClick: () => showInfo('Retry', 'Retry action triggered!')
+          onClick: (_) => showInfo( 'Retry', 'Retry action triggered!')
         }
       }),
     },
     {
       name: 'Warning Notification',
       icon: <AlertCircle className="w-4 h-4 text-yellow-400" />,
-      action: () => showWarning('Warning!', 'This is a warning notification'),
+      action: (_) => showWarning( 'Warning!', 'This is a warning notification'),
     },
     {
       name: 'Info Notification',
       icon: <Info className="w-4 h-4 text-blue-400" />,
-      action: () => showInfo('Information', 'This is an informational notification'),
+      action: (_) => showInfo( 'Information', 'This is an informational notification'),
     },
     {
       name: 'Banner Notification',
       icon: <Bell className="w-4 h-4 text-purple-400" />,
-      action: () => showBanner('System Notice', 'This is a banner notification that appears at the top', 'info'),
+      action: (_) => showBanner( 'System Notice', 'This is a banner notification that appears at the top', 'info'),
     },
   ];
 
@@ -80,17 +80,17 @@ export function NotificationTestingPage() {
     {
       name: 'XP Gain',
       icon: <Zap className="w-4 h-4 text-blue-400" />,
-      action: () => showXPGain(50, 'Completed a lesson!'),
+      action: (_) => showXPGain( 50, 'Completed a lesson!'),
     },
     {
       name: 'Level Up',
       icon: <Star className="w-4 h-4 text-yellow-400" />,
-      action: () => showLevelUp(5, 'Congratulations on reaching level 5!'),
+      action: (_) => showLevelUp( 5, 'Congratulations on reaching level 5!'),
     },
     {
       name: 'Achievement',
       icon: <Trophy className="w-4 h-4 text-yellow-400" />,
-      action: () => showAchievement('First Contract!', 'You deployed your first smart contract!', {
+      action: (_) => showAchievement('First Contract!', 'You deployed your first smart contract!', {
         achievement: 'first-contract',
         category: 'milestone',
         priority: 'high'
@@ -99,7 +99,7 @@ export function NotificationTestingPage() {
     {
       name: 'Collaboration',
       icon: <Users className="w-4 h-4 text-purple-400" />,
-      action: () => showCollaboration('Alice joined your coding session', 'Alice'),
+      action: (_) => showCollaboration( 'Alice joined your coding session', 'Alice'),
     },
   ];
 
@@ -107,23 +107,23 @@ export function NotificationTestingPage() {
   const integrationTests = [
     {
       name: 'Trigger XP Gain',
-      action: () => manualTriggers.triggerXPGain(25, 'Testing'),
+      action: (_) => manualTriggers.triggerXPGain( 25, 'Testing'),
     },
     {
       name: 'Trigger Level Up',
-      action: () => manualTriggers.triggerLevelUp(3, 2),
+      action: (_) => manualTriggers.triggerLevelUp( 3, 2),
     },
     {
       name: 'Trigger Achievement',
-      action: () => manualTriggers.triggerAchievement('Test Achievement', 'This is a test achievement'),
+      action: (_) => manualTriggers.triggerAchievement( 'Test Achievement', 'This is a test achievement'),
     },
     {
       name: 'Trigger User Joined',
-      action: () => manualTriggers.triggerUserJoined('TestUser', 'Test Room'),
+      action: (_) => manualTriggers.triggerUserJoined( 'TestUser', 'Test Room'),
     },
     {
       name: 'Trigger Code Change',
-      action: () => manualTriggers.triggerCodeChange('TestUser', 'contract.sol'),
+      action: (_) => manualTriggers.triggerCodeChange( 'TestUser', 'contract.sol'),
     },
   ];
 
@@ -131,32 +131,32 @@ export function NotificationTestingPage() {
   const stressTests = [
     {
       name: 'Spam Notifications (5)',
-      action: () => {
+      action: (_) => {
         for (let i = 0; i < 5; i++) {
           setTimeout(() => {
-            showInfo(`Spam ${i + 1}`, `This is spam notification ${i + 1}`);
+            showInfo( `Spam ${i + 1}`, `This is spam notification ${i + 1}`);
           }, i * 100);
         }
       },
     },
     {
       name: 'Mixed Type Spam',
-      action: () => {
+      action: (_) => {
         const types = ['success', 'error', 'warning', 'info'];
-        types.forEach((type, i) => {
+        types.forEach( (type, i) => {
           setTimeout(() => {
-            switch (type) {
+            switch (_type) {
               case 'success':
-                showSuccess(`Success ${i + 1}`, 'Success message');
+                showSuccess( `Success ${i + 1}`, 'Success message');
                 break;
               case 'error':
-                showError(`Error ${i + 1}`, 'Error message');
+                showError( `Error ${i + 1}`, 'Error message');
                 break;
               case 'warning':
-                showWarning(`Warning ${i + 1}`, 'Warning message');
+                showWarning( `Warning ${i + 1}`, 'Warning message');
                 break;
               case 'info':
-                showInfo(`Info ${i + 1}`, 'Info message');
+                showInfo( `Info ${i + 1}`, 'Info message');
                 break;
             }
           }, i * 200);
@@ -165,7 +165,7 @@ export function NotificationTestingPage() {
     },
     {
       name: 'Long Message Test',
-      action: () => showInfo(
+      action: (_) => showInfo(
         'Very Long Notification Title That Should Be Handled Properly',
         'This is a very long notification message that should test how the notification system handles lengthy content. It should wrap properly and maintain readability while not breaking the layout or causing any visual issues.'
       ),
@@ -173,19 +173,19 @@ export function NotificationTestingPage() {
   ];
 
   // Socket tests
-  const handleJoinRoom = () => {
-    joinRoom(testRoom);
-    setIsInRoom(true);
-    showSuccess('Joined Room', `Joined room: ${testRoom}`);
+  const handleJoinRoom = (_) => {
+    joinRoom(_testRoom);
+    setIsInRoom(_true);
+    showSuccess( 'Joined Room', `Joined room: ${testRoom}`);
   };
 
-  const handleLeaveRoom = () => {
-    leaveRoom(testRoom);
-    setIsInRoom(false);
-    showInfo('Left Room', `Left room: ${testRoom}`);
+  const handleLeaveRoom = (_) => {
+    leaveRoom(_testRoom);
+    setIsInRoom(_false);
+    showInfo( 'Left Room', `Left room: ${testRoom}`);
   };
 
-  const handleSendToRoom = () => {
+  const handleSendToRoom = (_) => {
     sendNotificationToRoom(testRoom, {
       type: 'info',
       title: 'Room Notification',
@@ -345,7 +345,7 @@ export function NotificationTestingPage() {
           >
             <h2 className="text-lg font-semibold text-white mb-4">Basic Notifications</h2>
             <div className="space-y-3">
-              {basicTests.map((test, index) => (
+              {basicTests.map( (test, index) => (
                 <button
                   key={index}
                   onClick={test.action}
@@ -369,7 +369,7 @@ export function NotificationTestingPage() {
           >
             <h2 className="text-lg font-semibold text-white mb-4">Gamification</h2>
             <div className="space-y-3">
-              {gamificationTests.map((test, index) => (
+              {gamificationTests.map( (test, index) => (
                 <button
                   key={index}
                   onClick={test.action}
@@ -393,7 +393,7 @@ export function NotificationTestingPage() {
           >
             <h2 className="text-lg font-semibold text-white mb-4">Integration Tests</h2>
             <div className="space-y-3">
-              {integrationTests.map((test, index) => (
+              {integrationTests.map( (test, index) => (
                 <button
                   key={index}
                   onClick={test.action}
@@ -421,7 +421,7 @@ export function NotificationTestingPage() {
                 <input
                   type="text"
                   value={testRoom}
-                  onChange={(e) => setTestRoom(e.target.value)}
+                  onChange={(_e) => setTestRoom(_e.target.value)}
                   placeholder="Room ID"
                   className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-gray-400"
                 />
@@ -460,7 +460,7 @@ export function NotificationTestingPage() {
         >
           <h2 className="text-lg font-semibold text-white mb-4">Stress Tests</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {stressTests.map((test, index) => (
+            {stressTests.map( (test, index) => (
               <button
                 key={index}
                 onClick={test.action}

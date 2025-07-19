@@ -6,39 +6,39 @@ import { InteractiveCodeEditor } from '@/components/learning/InteractiveCodeEdit
 // Mock Monaco Editor
 const mockEditor = {
   getValue: jest.fn(() => 'pragma solidity ^0.8.0;'),
-  setValue: jest.fn(),
-  onDidChangeModelContent: jest.fn(),
-  onDidChangeCursorPosition: jest.fn(),
-  onDidChangeCursorSelection: jest.fn(),
-  dispose: jest.fn(),
-  focus: jest.fn(),
+  setValue: jest.fn(_),
+  onDidChangeModelContent: jest.fn(_),
+  onDidChangeCursorPosition: jest.fn(_),
+  onDidChangeCursorSelection: jest.fn(_),
+  dispose: jest.fn(_),
+  focus: jest.fn(_),
   getModel: jest.fn(() => ({
-    onDidChangeContent: jest.fn(),
-    setValue: jest.fn(),
+    onDidChangeContent: jest.fn(_),
+    setValue: jest.fn(_),
     getValue: jest.fn(() => 'pragma solidity ^0.8.0;')
   })),
-  addAction: jest.fn(),
-  trigger: jest.fn(),
-  setPosition: jest.fn(),
-  revealLine: jest.fn(),
+  addAction: jest.fn(_),
+  trigger: jest.fn(_),
+  setPosition: jest.fn(_),
+  revealLine: jest.fn(_),
   deltaDecorations: jest.fn(() => []),
   getLineCount: jest.fn(() => 10),
   getScrollTop: jest.fn(() => 0),
-  setScrollTop: jest.fn()
+  setScrollTop: jest.fn(_)
 };
 
 const mockMonaco = {
   editor: {
     create: jest.fn(() => mockEditor),
-    defineTheme: jest.fn(),
-    setTheme: jest.fn(),
+    defineTheme: jest.fn(_),
+    setTheme: jest.fn(_),
     getModels: jest.fn(() => []),
-    createModel: jest.fn()
+    createModel: jest.fn(_)
   },
   languages: {
-    register: jest.fn(),
-    setMonarchTokensProvider: jest.fn(),
-    registerCompletionItemProvider: jest.fn(),
+    register: jest.fn(_),
+    setMonarchTokensProvider: jest.fn(_),
+    registerCompletionItemProvider: jest.fn(_),
     CompletionItemKind: {
       Function: 1,
       Keyword: 2,
@@ -59,11 +59,11 @@ const mockMonaco = {
 };
 
 // Mock @monaco-editor/react
-jest.mock('@monaco-editor/react', () => ({
-  Editor: ({ onChange, onMount, value, ...props }: any) => {
+jest.mock( '@monaco-editor/react', () => ({
+  Editor: ( { onChange, onMount, value, ...props }: any) => {
     React.useEffect(() => {
       if (onMount) {
-        onMount(mockEditor, mockMonaco);
+        onMount( mockEditor, mockMonaco);
       }
     }, [onMount]);
 
@@ -71,7 +71,7 @@ jest.mock('@monaco-editor/react', () => ({
       <div
         data-testid="monaco-editor"
         data-value={value}
-        onClick={() => onChange?.(value)}
+        onClick={(_) => onChange?.(_value)}
         {...props}
       >
         Monaco Editor Mock
@@ -81,61 +81,61 @@ jest.mock('@monaco-editor/react', () => ({
 }));
 
 // Mock hooks and dependencies
-jest.mock('@/hooks/useAutoSave', () => ({
-  useAutoSave: () => ({
-    saveCode: jest.fn(),
-    loadCode: jest.fn().mockResolvedValue(''),
+jest.mock( '@/hooks/useAutoSave', () => ({
+  useAutoSave: (_) => ({
+    saveCode: jest.fn(_),
+    loadCode: jest.fn(_).mockResolvedValue(''),
     saveStatus: { status: 'idle' },
     hasUnsavedChanges: false,
     lastSaved: null,
-    toggleAutoSave: jest.fn(),
-    clearSavedCode: jest.fn()
+    toggleAutoSave: jest.fn(_),
+    clearSavedCode: jest.fn(_)
   })
 }));
 
-jest.mock('@/lib/errors/ErrorContext', () => ({
-  useError: () => ({
-    showApiError: jest.fn(),
-    showFormError: jest.fn()
+jest.mock( '@/lib/errors/ErrorContext', () => ({
+  useError: (_) => ({
+    showApiError: jest.fn(_),
+    showFormError: jest.fn(_)
   })
 }));
 
-jest.mock('@/lib/context/LearningContext', () => ({
-  useLearning: () => ({
-    completeLesson: jest.fn(),
-    addXP: jest.fn()
+jest.mock( '@/lib/context/LearningContext', () => ({
+  useLearning: (_) => ({
+    completeLesson: jest.fn(_),
+    addXP: jest.fn(_)
   })
 }));
 
-jest.mock('@/hooks/useGitIntegration', () => ({
-  useAutoGit: () => ({
-    commitCode: jest.fn(),
-    pushChanges: jest.fn(),
-    getCommitHistory: jest.fn().mockResolvedValue([])
+jest.mock( '@/hooks/useGitIntegration', () => ({
+  useAutoGit: (_) => ({
+    commitCode: jest.fn(_),
+    pushChanges: jest.fn(_),
+    getCommitHistory: jest.fn(_).mockResolvedValue([])
   })
 }));
 
-jest.mock('@/hooks/useLessonProgress', () => ({
-  useLessonProgress: () => ({
+jest.mock( '@/hooks/useLessonProgress', () => ({
+  useLessonProgress: (_) => ({
     currentStep: 0,
     totalSteps: 5,
     progress: 20,
-    completeStep: jest.fn(),
-    resetProgress: jest.fn()
+    completeStep: jest.fn(_),
+    resetProgress: jest.fn(_)
   })
 }));
 
 // Mock UI components
-jest.mock('@/components/ui/card', () => ({
-  Card: ({ children, className }: any) => (
+jest.mock( '@/components/ui/card', () => ({
+  Card: ( { children, className }: any) => (
     <div className={`card ${className}`} data-testid="card">
       {children}
     </div>
   )
 }));
 
-jest.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, className, disabled, ...props }: any) => (
+jest.mock( '@/components/ui/button', () => ({
+  Button: ( { children, onClick, className, disabled, ...props }: any) => (
     <button
       onClick={onClick}
       className={`button ${className}`}
@@ -148,77 +148,77 @@ jest.mock('@/components/ui/button', () => ({
   )
 }));
 
-jest.mock('@/components/ui/use-toast', () => ({
-  useToast: () => ({
-    toast: jest.fn()
+jest.mock( '@/components/ui/use-toast', () => ({
+  useToast: (_) => ({
+    toast: jest.fn(_)
   })
 }));
 
 // Mock collaboration components
-jest.mock('@/lib/collaboration/CollaborativeEditor', () => ({
-  CollaborativeEditor: jest.fn().mockImplementation(() => ({
-    initialize: jest.fn().mockResolvedValue(undefined),
-    onUserJoin: jest.fn(),
-    onUserLeave: jest.fn(),
-    onCodeChange: jest.fn(),
-    dispose: jest.fn()
+jest.mock( '@/lib/collaboration/CollaborativeEditor', () => ({
+  CollaborativeEditor: jest.fn(_).mockImplementation(() => ({
+    initialize: jest.fn(_).mockResolvedValue(_undefined),
+    onUserJoin: jest.fn(_),
+    onUserLeave: jest.fn(_),
+    onCodeChange: jest.fn(_),
+    dispose: jest.fn(_)
   }))
 }));
 
-describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
-  const mockOnCodeChange = jest.fn();
-  const mockOnCompile = jest.fn();
-  const mockOnSubmitSolution = jest.fn();
-  const mockOnLessonComplete = jest.fn();
+describe( 'InteractiveCodeEditor - Comprehensive Test Suite', () => {
+  const mockOnCodeChange = jest.fn(_);
+  const mockOnCompile = jest.fn(_);
+  const mockOnSubmitSolution = jest.fn(_);
+  const mockOnLessonComplete = jest.fn(_);
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    jest.clearAllMocks(_);
+    jest.useFakeTimers(_);
   });
 
   afterEach(() => {
-    jest.useRealTimers();
-    jest.restoreAllMocks();
+    jest.useRealTimers(_);
+    jest.restoreAllMocks(_);
   });
 
-  describe('Component Initialization', () => {
-    it('should render with default props', () => {
+  describe( 'Component Initialization', () => {
+    it( 'should render with default props', () => {
       render(<InteractiveCodeEditor />);
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
-      expect(screen.getByText('Monaco Editor Mock')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
+      expect(_screen.getByText('Monaco Editor Mock')).toBeInTheDocument(_);
     });
 
-    it('should initialize with provided initial code', () => {
+    it( 'should initialize with provided initial code', () => {
       const initialCode = 'contract Test { }';
       
       render(<InteractiveCodeEditor initialCode={initialCode} />);
 
       const editor = screen.getByTestId('monaco-editor');
-      expect(editor).toHaveAttribute('data-value', initialCode);
+      expect(_editor).toHaveAttribute( 'data-value', initialCode);
     });
 
-    it('should setup Monaco editor on mount', () => {
+    it( 'should setup Monaco editor on mount', () => {
       render(<InteractiveCodeEditor />);
 
-      expect(mockMonaco.languages.register).toHaveBeenCalledWith({ id: 'solidity' });
-      expect(mockMonaco.languages.setMonarchTokensProvider).toHaveBeenCalled();
-      expect(mockMonaco.languages.registerCompletionItemProvider).toHaveBeenCalled();
+      expect(_mockMonaco.languages.register).toHaveBeenCalledWith({ id: 'solidity'  });
+      expect(_mockMonaco.languages.setMonarchTokensProvider).toHaveBeenCalled(_);
+      expect(_mockMonaco.languages.registerCompletionItemProvider).toHaveBeenCalled(_);
     });
 
-    it('should apply correct theme', () => {
+    it( 'should apply correct theme', () => {
       const { rerender } = render(<InteractiveCodeEditor theme="dark" />);
       
-      expect(screen.getByTestId('monaco-editor')).toHaveAttribute('theme', 'vs-dark');
+      expect(_screen.getByTestId('monaco-editor')).toHaveAttribute( 'theme', 'vs-dark');
 
       rerender(<InteractiveCodeEditor theme="light" />);
       
-      expect(screen.getByTestId('monaco-editor')).toHaveAttribute('theme', 'light');
+      expect(_screen.getByTestId('monaco-editor')).toHaveAttribute( 'theme', 'light');
     });
   });
 
-  describe('Code Editing and Change Handling', () => {
-    it('should handle code changes', () => {
+  describe( 'Code Editing and Change Handling', () => {
+    it( 'should handle code changes', () => {
       render(
         <InteractiveCodeEditor
           onCodeChange={mockOnCodeChange}
@@ -226,34 +226,34 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
       );
 
       const editor = screen.getByTestId('monaco-editor');
-      fireEvent.click(editor);
+      fireEvent.click(_editor);
 
-      expect(mockOnCodeChange).toHaveBeenCalledWith('pragma solidity ^0.8.0;');
+      expect(_mockOnCodeChange).toHaveBeenCalledWith('pragma solidity ^0.8.0;');
     });
 
-    it('should trigger syntax checking on code change', async () => {
+    it( 'should trigger syntax checking on code change', async () => {
       render(<InteractiveCodeEditor />);
 
       const editor = screen.getByTestId('monaco-editor');
-      fireEvent.click(editor);
+      fireEvent.click(_editor);
 
       // Advance timers to trigger debounced syntax checking
       act(() => {
-        jest.advanceTimersByTime(800);
+        jest.advanceTimersByTime(_800);
       });
 
-      // Syntax checking should be triggered (implementation dependent)
-      expect(mockEditor.getValue).toHaveBeenCalled();
+      // Syntax checking should be triggered (_implementation dependent)
+      expect(_mockEditor.getValue).toHaveBeenCalled(_);
     });
 
-    it('should handle read-only mode', () => {
+    it( 'should handle read-only mode', () => {
       render(<InteractiveCodeEditor readOnly={true} />);
 
       const editor = screen.getByTestId('monaco-editor');
-      expect(editor).toHaveAttribute('options', expect.stringContaining('readOnly'));
+      expect(_editor).toHaveAttribute( 'options', expect.stringContaining('readOnly'));
     });
 
-    it('should handle empty code gracefully', () => {
+    it( 'should handle empty code gracefully', () => {
       render(
         <InteractiveCodeEditor
           initialCode=""
@@ -261,71 +261,71 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
   });
 
-  describe('Auto-save Functionality', () => {
-    it('should enable auto-save by default', () => {
+  describe( 'Auto-save Functionality', () => {
+    it( 'should enable auto-save by default', () => {
       render(<InteractiveCodeEditor enableAutoSave={true} />);
 
       // Auto-save should be initialized
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should disable auto-save when specified', () => {
+    it( 'should disable auto-save when specified', () => {
       render(<InteractiveCodeEditor enableAutoSave={false} />);
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should trigger auto-save on code change', async () => {
-      const mockSaveCode = jest.fn();
+    it( 'should trigger auto-save on code change', async () => {
+      const mockSaveCode = jest.fn(_);
       
       // Mock the auto-save hook to return our mock function
-      jest.doMock('@/hooks/useAutoSave', () => ({
-        useAutoSave: () => ({
+      jest.doMock( '@/hooks/useAutoSave', () => ({
+        useAutoSave: (_) => ({
           saveCode: mockSaveCode,
-          loadCode: jest.fn().mockResolvedValue(''),
+          loadCode: jest.fn(_).mockResolvedValue(''),
           saveStatus: { status: 'idle' },
           hasUnsavedChanges: false,
           lastSaved: null,
-          toggleAutoSave: jest.fn(),
-          clearSavedCode: jest.fn()
+          toggleAutoSave: jest.fn(_),
+          clearSavedCode: jest.fn(_)
         })
       }));
 
       render(<InteractiveCodeEditor enableAutoSave={true} />);
 
       const editor = screen.getByTestId('monaco-editor');
-      fireEvent.click(editor);
+      fireEvent.click(_editor);
 
       // Auto-save should be triggered after debounce
       act(() => {
-        jest.advanceTimersByTime(2500);
+        jest.advanceTimersByTime(_2500);
       });
 
-      expect(mockSaveCode).toHaveBeenCalled();
+      expect(_mockSaveCode).toHaveBeenCalled(_);
     });
   });
 
-  describe('Compilation and Testing', () => {
-    it('should handle compilation requests', async () => {
+  describe( 'Compilation and Testing', () => {
+    it( 'should handle compilation requests', async () => {
       render(
         <InteractiveCodeEditor
           onCompile={mockOnCompile}
         />
       );
 
-      // Look for compile button (implementation dependent)
-      const compileButtons = screen.queryAllByText(/compile/i);
-      if (compileButtons.length > 0) {
-        fireEvent.click(compileButtons[0]);
-        expect(mockOnCompile).toHaveBeenCalled();
+      // Look for compile button (_implementation dependent)
+      const compileButtons = screen.queryAllByText(_/compile/i);
+      if (_compileButtons.length > 0) {
+        fireEvent.click(_compileButtons[0]);
+        expect(_mockOnCompile).toHaveBeenCalled(_);
       }
     });
 
-    it('should handle solution submission', async () => {
+    it( 'should handle solution submission', async () => {
       render(
         <InteractiveCodeEditor
           onSubmitSolution={mockOnSubmitSolution}
@@ -333,15 +333,15 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      // Look for submit button (implementation dependent)
-      const submitButtons = screen.queryAllByText(/submit/i);
-      if (submitButtons.length > 0) {
-        fireEvent.click(submitButtons[0]);
-        expect(mockOnSubmitSolution).toHaveBeenCalled();
+      // Look for submit button (_implementation dependent)
+      const submitButtons = screen.queryAllByText(_/submit/i);
+      if (_submitButtons.length > 0) {
+        fireEvent.click(_submitButtons[0]);
+        expect(_mockOnSubmitSolution).toHaveBeenCalled(_);
       }
     });
 
-    it('should handle lesson completion', async () => {
+    it( 'should handle lesson completion', async () => {
       render(
         <InteractiveCodeEditor
           onLessonComplete={mockOnLessonComplete}
@@ -350,13 +350,13 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      // Lesson completion logic (implementation dependent)
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      // Lesson completion logic (_implementation dependent)
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
   });
 
-  describe('Collaboration Features', () => {
-    it('should initialize collaboration when enabled', () => {
+  describe( 'Collaboration Features', () => {
+    it( 'should initialize collaboration when enabled', () => {
       render(
         <InteractiveCodeEditor
           enableCollaboration={true}
@@ -368,10 +368,10 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should handle collaboration user events', () => {
+    it( 'should handle collaboration user events', () => {
       const collaborationUsers = [
         { id: 'user1', name: 'User 1', color: '#ff0000' },
         { id: 'user2', name: 'User 2', color: '#00ff00' }
@@ -386,16 +386,16 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
       );
 
       // Collaboration should be set up
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should handle collaboration errors gracefully', () => {
+    it( 'should handle collaboration errors gracefully', () => {
       // Mock collaboration error
-      const mockCollaborativeEditor = jest.fn().mockImplementation(() => {
+      const mockCollaborativeEditor = jest.fn(_).mockImplementation(() => {
         throw new Error('Collaboration failed');
       });
 
-      jest.doMock('@/lib/collaboration/CollaborativeEditor', () => ({
+      jest.doMock( '@/lib/collaboration/CollaborativeEditor', () => ({
         CollaborativeEditor: mockCollaborativeEditor
       }));
 
@@ -406,52 +406,52 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
             collaborationSessionId="session-123"
           />
         );
-      }).not.toThrow();
+      }).not.toThrow(_);
     });
   });
 
-  describe('Accessibility Features', () => {
-    it('should support keyboard navigation', () => {
+  describe( 'Accessibility Features', () => {
+    it( 'should support keyboard navigation', () => {
       render(<InteractiveCodeEditor enableAccessibility={true} />);
 
       const editor = screen.getByTestId('monaco-editor');
       
       // Should be focusable
-      editor.focus();
-      expect(document.activeElement).toBe(editor);
+      editor.focus(_);
+      expect(_document.activeElement).toBe(_editor);
     });
 
-    it('should provide proper ARIA labels', () => {
+    it( 'should provide proper ARIA labels', () => {
       render(<InteractiveCodeEditor enableAccessibility={true} />);
 
-      // Check for accessibility attributes (implementation dependent)
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      // Check for accessibility attributes (_implementation dependent)
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should support screen readers', () => {
+    it( 'should support screen readers', () => {
       render(<InteractiveCodeEditor enableAccessibility={true} />);
 
-      // Screen reader support (implementation dependent)
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      // Screen reader support (_implementation dependent)
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
   });
 
-  describe('Performance and Optimization', () => {
-    it('should render efficiently with large code files', () => {
+  describe( 'Performance and Optimization', () => {
+    it( 'should render efficiently with large code files', () => {
       const largeCode = 'contract Test {\n'.repeat(1000) + '}';
       
-      const startTime = performance.now();
+      const startTime = performance.now(_);
       
       render(<InteractiveCodeEditor initialCode={largeCode} />);
       
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       const renderTime = endTime - startTime;
 
-      expect(renderTime).toBeLessThan(100); // Should render within 100ms
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_renderTime).toBeLessThan(100); // Should render within 100ms
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should handle rapid code changes efficiently', () => {
+    it( 'should handle rapid code changes efficiently', () => {
       render(
         <InteractiveCodeEditor
           onCodeChange={mockOnCodeChange}
@@ -462,35 +462,35 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
       
       // Simulate rapid changes
       for (let i = 0; i < 10; i++) {
-        fireEvent.click(editor);
+        fireEvent.click(_editor);
       }
 
       // Should handle all changes without performance issues
-      expect(mockOnCodeChange).toHaveBeenCalledTimes(10);
+      expect(_mockOnCodeChange).toHaveBeenCalledTimes(10);
     });
 
-    it('should debounce syntax checking appropriately', () => {
+    it( 'should debounce syntax checking appropriately', () => {
       render(<InteractiveCodeEditor />);
 
       const editor = screen.getByTestId('monaco-editor');
       
       // Trigger multiple rapid changes
-      fireEvent.click(editor);
-      fireEvent.click(editor);
-      fireEvent.click(editor);
+      fireEvent.click(_editor);
+      fireEvent.click(_editor);
+      fireEvent.click(_editor);
 
       // Only one syntax check should be scheduled
       act(() => {
-        jest.advanceTimersByTime(800);
+        jest.advanceTimersByTime(_800);
       });
 
       // Syntax checking should be debounced
-      expect(mockEditor.getValue).toHaveBeenCalled();
+      expect(_mockEditor.getValue).toHaveBeenCalled(_);
     });
   });
 
-  describe('Error Handling and Edge Cases', () => {
-    it('should handle Monaco editor initialization failure', () => {
+  describe( 'Error Handling and Edge Cases', () => {
+    it( 'should handle Monaco editor initialization failure', () => {
       const mockFailingEditor = {
         ...mockEditor,
         getValue: jest.fn(() => {
@@ -498,11 +498,11 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         })
       };
 
-      jest.doMock('@monaco-editor/react', () => ({
-        Editor: ({ onMount }: any) => {
+      jest.doMock( '@monaco-editor/react', () => ({
+        Editor: (_{ onMount }: any) => {
           React.useEffect(() => {
             if (onMount) {
-              onMount(mockFailingEditor, mockMonaco);
+              onMount( mockFailingEditor, mockMonaco);
             }
           }, [onMount]);
 
@@ -512,18 +512,18 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
 
       expect(() => {
         render(<InteractiveCodeEditor />);
-      }).not.toThrow();
+      }).not.toThrow(_);
     });
 
-    it('should handle invalid initial code', () => {
+    it( 'should handle invalid initial code', () => {
       const invalidCode = null as any;
       
       expect(() => {
         render(<InteractiveCodeEditor initialCode={invalidCode} />);
-      }).not.toThrow();
+      }).not.toThrow(_);
     });
 
-    it('should handle missing callback functions', () => {
+    it( 'should handle missing callback functions', () => {
       expect(() => {
         render(
           <InteractiveCodeEditor
@@ -532,20 +532,20 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
             onSubmitSolution={undefined}
           />
         );
-      }).not.toThrow();
+      }).not.toThrow(_);
     });
 
-    it('should clean up resources on unmount', () => {
+    it( 'should clean up resources on unmount', () => {
       const { unmount } = render(<InteractiveCodeEditor />);
 
-      unmount();
+      unmount(_);
 
-      expect(mockEditor.dispose).toHaveBeenCalled();
+      expect(_mockEditor.dispose).toHaveBeenCalled(_);
     });
   });
 
-  describe('Integration with Learning System', () => {
-    it('should track lesson progress', () => {
+  describe( 'Integration with Learning System', () => {
+    it( 'should track lesson progress', () => {
       render(
         <InteractiveCodeEditor
           enableProgressTracking={true}
@@ -554,10 +554,10 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should integrate with XP system', () => {
+    it( 'should integrate with XP system', () => {
       render(
         <InteractiveCodeEditor
           xpReward={100}
@@ -565,11 +565,11 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should handle lesson step completion', () => {
-      const mockOnStepComplete = jest.fn();
+    it( 'should handle lesson step completion', () => {
+      const mockOnStepComplete = jest.fn(_);
       
       render(
         <InteractiveCodeEditor
@@ -578,31 +578,31 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
   });
 
-  describe('Real-time Features', () => {
-    it('should handle real-time syntax checking', async () => {
+  describe( 'Real-time Features', () => {
+    it( 'should handle real-time syntax checking', async () => {
       render(<InteractiveCodeEditor />);
 
       const editor = screen.getByTestId('monaco-editor');
-      fireEvent.click(editor);
+      fireEvent.click(_editor);
 
       // Wait for real-time syntax checking
       await waitFor(() => {
-        expect(mockEditor.getValue).toHaveBeenCalled();
+        expect(_mockEditor.getValue).toHaveBeenCalled(_);
       }, { timeout: 1000 });
     });
 
-    it('should provide real-time error highlighting', () => {
+    it( 'should provide real-time error highlighting', () => {
       render(<InteractiveCodeEditor />);
 
       // Error highlighting should be initialized
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should handle real-time collaboration updates', () => {
+    it( 'should handle real-time collaboration updates', () => {
       render(
         <InteractiveCodeEditor
           enableCollaboration={true}
@@ -611,42 +611,42 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
       );
 
       // Real-time updates should be handled
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
   });
 
-  describe('Advanced Features', () => {
-    it('should support code templates', () => {
+  describe( 'Advanced Features', () => {
+    it( 'should support code templates', () => {
       render(<InteractiveCodeEditor enableTemplates={true} />);
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should support debugging features', () => {
+    it( 'should support debugging features', () => {
       render(<InteractiveCodeEditor enableDebugging={true} />);
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should support testing integration', () => {
+    it( 'should support testing integration', () => {
       render(<InteractiveCodeEditor enableTesting={true} />);
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should handle minimap toggle', () => {
+    it( 'should handle minimap toggle', () => {
       const { rerender } = render(<InteractiveCodeEditor showMinimap={true} />);
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
 
       rerender(<InteractiveCodeEditor showMinimap={false} />);
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
   });
 
-  describe('Session Management', () => {
-    it('should handle session persistence', () => {
+  describe( 'Session Management', () => {
+    it( 'should handle session persistence', () => {
       render(
         <InteractiveCodeEditor
           sessionId="session-123"
@@ -654,10 +654,10 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
 
-    it('should restore session on reload', async () => {
+    it( 'should restore session on reload', async () => {
       render(
         <InteractiveCodeEditor
           sessionId="session-123"
@@ -667,11 +667,11 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
 
       // Session restoration should be handled
       await waitFor(() => {
-        expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+        expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
       });
     });
 
-    it('should handle session conflicts', () => {
+    it( 'should handle session conflicts', () => {
       render(
         <InteractiveCodeEditor
           sessionId="session-123"
@@ -679,7 +679,7 @@ describe('InteractiveCodeEditor - Comprehensive Test Suite', () => {
         />
       );
 
-      expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+      expect(_screen.getByTestId('monaco-editor')).toBeInTheDocument(_);
     });
   });
 });

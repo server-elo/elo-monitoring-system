@@ -5,7 +5,7 @@ import { LearningAssistant } from '@/lib/ai/LearningAssistant';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/monitoring/simple-logger';
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -22,126 +22,112 @@ export async function POST(_request: NextRequest) {
       currentSkills,
       goals,
       timeAvailable 
-    } = await _request.json();
+    } = await request.json();
 
     if (!type) {
       return NextResponse.json({ error: 'Request type is required' }, { status: 400 });
     }
 
-    // Get user profile for context
-    const userProfile = await prisma.userProfile.findUnique({
-      where: { userId: session.user.id },
-      include: {
-        user: {
-          include: {
-            progress: {
-              include: {
-                lesson: true,
-              },
-              orderBy: {
-                updatedAt: 'desc',
-              },
-              take: 5,
-            },
-          },
-        },
-      },
-    });
-
-    if (!userProfile) {
-      return NextResponse.json({ error: 'User profile not found' }, { status: 404 });
-    }
-
-    // Build learning context
-    const context = {
-      userLevel: userProfile.skillLevel.toLowerCase() as 'beginner' | 'intermediate' | 'advanced',
-      currentLesson: userProfile.user.progress[0]?.lesson?.title,
-      recentCode: code,
-      recentErrors: error ? [error] : [],
-      learningGoals: goals || [],
-    };
-
     // Initialize AI assistant
     const assistant = new LearningAssistant();
+
     let response;
-
-    // Handle different request types
+    
     switch (type) {
-      case 'question':
-        if (!question) {
-          return NextResponse.json({ error: 'Question is required' }, { status: 400 });
-        }
-        response = await assistant.askQuestion(question, context);
+      case 'help':
+        response = await assistant.provideHelp({
+          question,
+          code,
+          error,
+          userId: session.user.id
+        });
         break;
-
-      case 'code-review':
+        
+      case 'explain':
+        response = await assistant.explainConcept({
+          concept,
+          userLevel: await getUserLevel(session.user.id),
+          userId: session.user.id
+        });
+        break;
+        
+      case 'suggest':
+        response = await assistant.suggestNext({
+          currentSkills,
+          goals,
+          timeAvailable,
+          userId: session.user.id
+        });
+        break;
+        
+      case 'optimize':
         if (!code) {
-          return NextResponse.json({ error: 'Code is required for review' }, { status: 400 });
+          return NextResponse.json({ error: 'Code is required for optimization' }, { status: 400 });
         }
-        response = await assistant.reviewCode(code, context);
+        response = await assistant.optimizeCode({
+          code,
+          userId: session.user.id
+        });
         break;
-
-      case 'explain-concept':
-        if (!concept) {
-          return NextResponse.json({ error: 'Concept is required' }, { status: 400 });
+        
+      case 'security':
+        if (!code) {
+          return NextResponse.json({ error: 'Code is required for security analysis' }, { status: 400 });
         }
-        response = await assistant.explainConcept(concept, context);
+        response = await assistant.analyzeSecurityVulnerabilities({
+          code,
+          userId: session.user.id
+        });
         break;
-
+        
       case 'debug':
         if (!code || !error) {
           return NextResponse.json({ error: 'Code and error are required for debugging' }, { status: 400 });
         }
-        response = await assistant.debugCode(code, error, context);
+        response = await assistant.debugCode({
+          code,
+          error,
+          userId: session.user.id
+        });
         break;
-
-      case 'generate-exercise':
-        response = await assistant.generatePersonalizedExercise(context);
+        
+      case 'personalized':
+        response = await assistant.getPersonalizedAdvice({
+          userId: session.user.id,
+          context: { question, code, error }
+        });
         break;
-
-      case 'learning-path':
-        if (!currentSkills || !goals) {
-          return NextResponse.json({ error: 'Current skills and goals are required' }, { status: 400 });
+        
+      case 'gas_optimization':
+        if (!code) {
+          return NextResponse.json({ error: 'Code is required for gas optimization' }, { status: 400 });
         }
-        response = await assistant.provideLearningPath(currentSkills, goals, timeAvailable || '1 hour per day');
+        response = await assistant.optimizeGas({
+          code,
+          userId: session.user.id
+        });
         break;
-
+        
       default:
         return NextResponse.json({ error: 'Invalid request type' }, { status: 400 });
     }
 
     // Log the interaction for analytics
-    await prisma.chatMessage.create({
-      data: {
-        userId: session.user.id,
-        content: JSON.stringify({
-          type,
-          question: question || concept || 'AI interaction',
-          response: response.message.substring(0, 500), // Truncate for storage
-        }),
-        type: 'TEXT',
-        metadata: {
-          aiInteraction: true,
-          requestType: type,
-        },
-      },
-    });
+    await logInteraction(session.user.id, type, { question, concept, code });
 
-    return NextResponse.json({
+    return NextResponse.json({ 
       success: true,
       response,
+      timestamp: new Date().toISOString()
     });
 
   } catch (error) {
-    logger.error('AI Assistant error', error as Error);
-    return NextResponse.json({ 
-      error: 'AI Assistant temporarily unavailable',
-      message: 'Please try again later or contact support if the issue persists.'
-    }, { status: 500 });
+    logger.error('Error in AI assistant', error as Error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -149,31 +135,59 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get recent AI interactions
-    const recentInteractions = await prisma.chatMessage.findMany({
-      where: {
-        userId: session.user.id,
-        metadata: {
-          path: 'aiInteraction',
-          equals: true,
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: 20,
+    // Get user's AI interaction history
+    const interactions = await prisma.aiInteraction.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      select: {
+        id: true,
+        type: true,
+        request: true,
+        response: true,
+        createdAt: true,
+        helpful: true
+      }
     });
 
-    const interactions = recentInteractions.map((interaction: any) => ({
-      id: interaction.id,
-      content: JSON.parse(interaction.content),
-      createdAt: interaction.createdAt,
-    }));
-
-    return NextResponse.json({ interactions });
+    return NextResponse.json({ 
+      interactions,
+      count: interactions.length
+    });
 
   } catch (error) {
     logger.error('Error fetching AI interactions', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// Helper function to get user's current level
+async function getUserLevel(userId: string): Promise<string> {
+  const profile = await prisma.userProfile.findUnique({
+    where: { userId },
+    select: { skillLevel: true }
+  });
+  
+  return profile?.skillLevel || 'beginner';
+}
+
+// Helper function to log AI interactions
+async function logInteraction(
+  userId: string, 
+  type: string, 
+  request: Record<string, unknown>
+): Promise<void> {
+  try {
+    await prisma.aiInteraction.create({
+      data: {
+        userId,
+        type,
+        request,
+        response: {},
+        helpful: null
+      }
+    });
+  } catch (error) {
+    logger.error('Error logging AI interaction', error as Error);
   }
 }

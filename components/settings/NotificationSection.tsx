@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 export interface NotificationSectionProps {
   notifications: NotificationSettings;
-  onUpdate: (data: Partial<NotificationSettings>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
+  onUpdate: (_data: Partial<NotificationSettings>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
   validationErrors?: SettingsValidationError[];
   className?: string;
 }
@@ -47,7 +47,7 @@ export function NotificationSection({
       intensity="medium"
       tint="neutral"
       border
-      className={cn('p-6', className)}
+      className={cn( 'p-6', className)}
     >
       <div className="flex items-center space-x-3 mb-6">
         <Bell className="w-6 h-6 text-yellow-400" />
@@ -65,7 +65,7 @@ export function NotificationSection({
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(_) => setActiveTab(_tab.id as any)}
               className={cn(
                 'flex items-center space-x-2 px-4 py-2 text-sm transition-colors',
                 activeTab === tab.id
@@ -116,7 +116,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('email', 'courseUpdates', !notifications.email.courseUpdates)}
+                    onClick={(_) => handleNotificationUpdate( 'email', 'courseUpdates', !notifications.email.courseUpdates)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.email.courseUpdates ? 'bg-yellow-600' : 'bg-gray-600'
@@ -142,7 +142,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('email', 'achievementUnlocked', !notifications.email.achievementUnlocked)}
+                    onClick={(_) => handleNotificationUpdate( 'email', 'achievementUnlocked', !notifications.email.achievementUnlocked)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.email.achievementUnlocked ? 'bg-yellow-600' : 'bg-gray-600'
@@ -168,7 +168,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('email', 'weeklyProgress', !notifications.email.weeklyProgress)}
+                    onClick={(_) => handleNotificationUpdate( 'email', 'weeklyProgress', !notifications.email.weeklyProgress)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.email.weeklyProgress ? 'bg-yellow-600' : 'bg-gray-600'
@@ -194,7 +194,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('email', 'collaborationInvites', !notifications.email.collaborationInvites)}
+                    onClick={(_) => handleNotificationUpdate( 'email', 'collaborationInvites', !notifications.email.collaborationInvites)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.email.collaborationInvites ? 'bg-yellow-600' : 'bg-gray-600'
@@ -220,7 +220,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('email', 'systemAnnouncements', !notifications.email.systemAnnouncements)}
+                    onClick={(_) => handleNotificationUpdate( 'email', 'systemAnnouncements', !notifications.email.systemAnnouncements)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.email.systemAnnouncements ? 'bg-yellow-600' : 'bg-gray-600'
@@ -246,7 +246,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('email', 'securityAlerts', !notifications.email.securityAlerts)}
+                    onClick={(_) => handleNotificationUpdate( 'email', 'securityAlerts', !notifications.email.securityAlerts)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.email.securityAlerts ? 'bg-yellow-600' : 'bg-gray-600'
@@ -272,7 +272,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('email', 'marketingEmails', !notifications.email.marketingEmails)}
+                    onClick={(_) => handleNotificationUpdate( 'email', 'marketingEmails', !notifications.email.marketingEmails)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.email.marketingEmails ? 'bg-yellow-600' : 'bg-gray-600'
@@ -317,7 +317,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('push', 'courseReminders', !notifications.push.courseReminders)}
+                    onClick={(_) => handleNotificationUpdate( 'push', 'courseReminders', !notifications.push.courseReminders)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.push.courseReminders ? 'bg-green-600' : 'bg-gray-600'
@@ -343,7 +343,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('push', 'achievementUnlocked', !notifications.push.achievementUnlocked)}
+                    onClick={(_) => handleNotificationUpdate( 'push', 'achievementUnlocked', !notifications.push.achievementUnlocked)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.push.achievementUnlocked ? 'bg-green-600' : 'bg-gray-600'
@@ -369,7 +369,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('push', 'collaborationActivity', !notifications.push.collaborationActivity)}
+                    onClick={(_) => handleNotificationUpdate( 'push', 'collaborationActivity', !notifications.push.collaborationActivity)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.push.collaborationActivity ? 'bg-green-600' : 'bg-gray-600'
@@ -395,7 +395,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('push', 'systemAlerts', !notifications.push.systemAlerts)}
+                    onClick={(_) => handleNotificationUpdate( 'push', 'systemAlerts', !notifications.push.systemAlerts)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.push.systemAlerts ? 'bg-green-600' : 'bg-gray-600'
@@ -440,7 +440,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('inApp', 'realTimeCollaboration', !notifications.inApp.realTimeCollaboration)}
+                    onClick={(_) => handleNotificationUpdate( 'inApp', 'realTimeCollaboration', !notifications.inApp.realTimeCollaboration)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.inApp.realTimeCollaboration ? 'bg-purple-600' : 'bg-gray-600'
@@ -466,7 +466,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('inApp', 'codeAnalysisResults', !notifications.inApp.codeAnalysisResults)}
+                    onClick={(_) => handleNotificationUpdate( 'inApp', 'codeAnalysisResults', !notifications.inApp.codeAnalysisResults)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.inApp.codeAnalysisResults ? 'bg-purple-600' : 'bg-gray-600'
@@ -492,7 +492,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('inApp', 'debuggingAlerts', !notifications.inApp.debuggingAlerts)}
+                    onClick={(_) => handleNotificationUpdate( 'inApp', 'debuggingAlerts', !notifications.inApp.debuggingAlerts)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.inApp.debuggingAlerts ? 'bg-purple-600' : 'bg-gray-600'
@@ -518,7 +518,7 @@ export function NotificationSection({
                   </div>
                   
                   <button
-                    onClick={() => handleNotificationUpdate('inApp', 'versionControlUpdates', !notifications.inApp.versionControlUpdates)}
+                    onClick={(_) => handleNotificationUpdate( 'inApp', 'versionControlUpdates', !notifications.inApp.versionControlUpdates)}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       notifications.inApp.versionControlUpdates ? 'bg-purple-600' : 'bg-gray-600'

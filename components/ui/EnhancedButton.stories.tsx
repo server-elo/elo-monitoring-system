@@ -10,7 +10,7 @@ import { action } from '@storybook/addon-actions';
  * 
  * ## Accessibility Features
  * - WCAG 2.1 AA compliant
- * - Keyboard navigation support (Enter, Space)
+ * - Keyboard navigation support ( Enter, Space)
  * - Screen reader compatible with proper ARIA labels
  * - 44px minimum touch targets for mobile
  * - Focus indicators and states
@@ -130,7 +130,7 @@ export const Default: Story = {
  * All button variants showcase
  */
 export const Variants: Story = {
-  render: () => (
+  render: (_) => (
     <div className="flex flex-wrap gap-4">
       <EnhancedButton variant="default">Primary</EnhancedButton>
       <EnhancedButton variant="secondary">Secondary</EnhancedButton>
@@ -152,7 +152,7 @@ export const Variants: Story = {
  * Different button sizes
  */
 export const Sizes: Story = {
-  render: () => (
+  render: (_) => (
     <div className="flex items-center gap-4">
       <EnhancedButton size="sm">Small</EnhancedButton>
       <EnhancedButton size="default">Medium</EnhancedButton>
@@ -175,7 +175,7 @@ export const Sizes: Story = {
  * Buttons with icons
  */
 export const WithIcons: Story = {
-  render: () => (
+  render: (_) => (
     <div className="flex flex-wrap gap-4">
       <EnhancedButton>
         <Play className="w-4 h-4 mr-2" />
@@ -208,7 +208,7 @@ export const WithIcons: Story = {
  * Loading states
  */
 export const LoadingStates: Story = {
-  render: () => (
+  render: (_) => (
     <div className="flex flex-wrap gap-4">
       <EnhancedButton loading>Loading...</EnhancedButton>
       <EnhancedButton variant="secondary" loading>
@@ -232,7 +232,7 @@ export const LoadingStates: Story = {
  * Disabled states
  */
 export const DisabledStates: Story = {
-  render: () => (
+  render: (_) => (
     <div className="flex flex-wrap gap-4">
       <EnhancedButton disabled>Disabled Primary</EnhancedButton>
       <EnhancedButton variant="secondary" disabled>
@@ -256,7 +256,7 @@ export const DisabledStates: Story = {
  * Mobile-optimized buttons with touch targets
  */
 export const MobileOptimized: Story = {
-  render: () => (
+  render: (_) => (
     <div className="flex flex-col gap-4 w-full max-w-sm">
       <EnhancedButton touchTarget className="w-full">
         Full Width Touch Button
@@ -307,7 +307,7 @@ export const WithRipple: Story = {
  * Accessibility demonstration
  */
 export const AccessibilityDemo: Story = {
-  render: () => (
+  render: (_) => (
     <div className="space-y-4">
       <div className="text-white mb-4">
         <h3 className="font-semibold mb-2">Keyboard Navigation Test</h3>
@@ -365,7 +365,7 @@ export const AccessibilityDemo: Story = {
  * Real-world usage examples
  */
 export const RealWorldExamples: Story = {
-  render: () => (
+  render: (_) => (
     <div className="space-y-6">
       {/* Call to Action */}
       <div className="text-center">

@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import 'jest-extended';
 import { TextEncoder, TextDecoder } from 'util';
 import { ReadableStream, WritableStream, TransformStream } from 'stream/web';
+import React from 'react';
 
 // Polyfills for Node.js environment
 global.TextEncoder = TextEncoder;
@@ -9,6 +10,9 @@ global.TextDecoder = TextDecoder;
 global.ReadableStream = ReadableStream;
 global.WritableStream = WritableStream;
 global.TransformStream = TransformStream;
+
+// Make React available globally for tests
+global.React = React;
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
@@ -206,6 +210,24 @@ beforeAll(() => {
 afterAll(() => {
   console.error = originalError;
   console.warn = originalWarn;
+});
+
+// Mock Socket.IO for WebSocket tests
+jest.mock('socket.io-client', () => {
+  const mockSocket = {
+    on: jest.fn(),
+    emit: jest.fn(),
+    off: jest.fn(),
+    connect: jest.fn(),
+    disconnect: jest.fn(),
+    connected: true,
+    id: 'mock-socket-id',
+  };
+  
+  return {
+    io: jest.fn(() => mockSocket),
+    Socket: jest.fn(() => mockSocket),
+  };
 });
 
 // Global test utilities

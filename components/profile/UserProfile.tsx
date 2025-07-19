@@ -66,8 +66,8 @@ interface UserProfile {
 }
 
 export function UserProfile() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [profile, setProfile] = useState<UserProfile | null>(_null);
+  const [isEditing, setIsEditing] = useState(_false);
   const [editForm, setEditForm] = useState({
     name: '',
     bio: '',
@@ -87,20 +87,20 @@ export function UserProfile() {
       linkedin: '',
     },
     validationSchema: formSchemas.profile,
-    onSubmit: async (values) => {
-      await updateForm('/api/user/profile', values);
+    onSubmit: async (_values) => {
+      await updateForm( '/api/user/profile', values);
     },
-    onSuccess: () => {
-      setIsEditing(false);
+    onSuccess: (_) => {
+      setIsEditing(_false);
       // Update local profile state
       if (profile) {
-        setProfile({ ...profile, ...profileForm.values });
+        setProfile( { ...profile, ...profileForm.values });
       }
     },
   });
 
   useEffect(() => {
-    loadUserProfile();
+    loadUserProfile(_);
   }, []);
 
   const loadUserProfile = async () => {
@@ -155,7 +155,7 @@ export function UserProfile() {
       ],
     };
 
-    setProfile(mockProfile);
+    setProfile(_mockProfile);
     setEditForm({
       name: mockProfile.name,
       bio: mockProfile.bio,
@@ -166,8 +166,8 @@ export function UserProfile() {
     });
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
+  const handleEdit = (_) => {
+    setIsEditing(_true);
   };
 
   const handleSave = async () => {
@@ -179,11 +179,11 @@ export function UserProfile() {
       ...editForm,
     };
 
-    setProfile(updatedProfile);
-    setIsEditing(false);
+    setProfile(_updatedProfile);
+    setIsEditing(_false);
   };
 
-  const handleCancel = () => {
+  const handleCancel = (_) => {
     if (!profile) return;
     
     setEditForm({
@@ -194,11 +194,11 @@ export function UserProfile() {
       twitter: profile.twitter || '',
       linkedin: profile.linkedin || '',
     });
-    setIsEditing(false);
+    setIsEditing(_false);
   };
 
-  const getActivityIcon = (type: string) => {
-    switch (type) {
+  const getActivityIcon = (_type: string) => {
+    switch (_type) {
       case 'course_completed': return <Target className="w-4 h-4" />;
       case 'contract_deployed': return <Code className="w-4 h-4" />;
       case 'achievement_unlocked': return <Trophy className="w-4 h-4" />;
@@ -207,8 +207,8 @@ export function UserProfile() {
     }
   };
 
-  const getActivityColor = (type: string) => {
-    switch (type) {
+  const getActivityColor = (_type: string) => {
+    switch (_type) {
       case 'course_completed': return 'text-blue-400';
       case 'contract_deployed': return 'text-green-400';
       case 'achievement_unlocked': return 'text-yellow-400';
@@ -225,7 +225,7 @@ export function UserProfile() {
     );
   }
 
-  const xpToNextLevel = (profile.stats.level * 500) - (profile.stats.totalXP % 500);
+  const xpToNextLevel = (_profile.stats.level * 500) - (_profile.stats.totalXP % 500);
   const levelProgress = ((profile.stats.totalXP % 500) / 500) * 100;
 
   return (
@@ -286,20 +286,20 @@ export function UserProfile() {
                   <div className="space-y-4">
                     <Input
                       value={editForm.name}
-                      onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                      onChange={(_e) => setEditForm( { ...editForm, name: e.target.value })}
                       placeholder="Full Name"
                       className="bg-white/10 border-white/20"
                     />
                     <Textarea
                       value={editForm.bio}
-                      onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
+                      onChange={(_e) => setEditForm( { ...editForm, bio: e.target.value })}
                       placeholder="Bio"
                       rows={3}
                       className="bg-white/10 border-white/20"
                     />
                     <Input
                       value={editForm.location}
-                      onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                      onChange={(_e) => setEditForm( { ...editForm, location: e.target.value })}
                       placeholder="Location"
                       className="bg-white/10 border-white/20"
                     />
@@ -319,7 +319,7 @@ export function UserProfile() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-4 h-4" />
-                        <span>Joined {profile.joinedAt.toLocaleDateString()}</span>
+                        <span>Joined {profile.joinedAt.toLocaleDateString(_)}</span>
                       </div>
                     </div>
                   </div>
@@ -336,7 +336,7 @@ export function UserProfile() {
                     <Github className="w-5 h-5 text-gray-400" />
                     <Input
                       value={editForm.github}
-                      onChange={(e) => setEditForm({ ...editForm, github: e.target.value })}
+                      onChange={(_e) => setEditForm( { ...editForm, github: e.target.value })}
                       placeholder="GitHub username"
                       className="bg-white/10 border-white/20"
                     />
@@ -345,7 +345,7 @@ export function UserProfile() {
                     <Twitter className="w-5 h-5 text-gray-400" />
                     <Input
                       value={editForm.twitter}
-                      onChange={(e) => setEditForm({ ...editForm, twitter: e.target.value })}
+                      onChange={(_e) => setEditForm( { ...editForm, twitter: e.target.value })}
                       placeholder="Twitter username"
                       className="bg-white/10 border-white/20"
                     />
@@ -354,7 +354,7 @@ export function UserProfile() {
                     <Linkedin className="w-5 h-5 text-gray-400" />
                     <Input
                       value={editForm.linkedin}
-                      onChange={(e) => setEditForm({ ...editForm, linkedin: e.target.value })}
+                      onChange={(_e) => setEditForm( { ...editForm, linkedin: e.target.value })}
                       placeholder="LinkedIn username"
                       className="bg-white/10 border-white/20"
                     />
@@ -416,7 +416,7 @@ export function UserProfile() {
               <div className="space-y-2">
                 <Progress value={levelProgress} className="h-3" />
                 <div className="text-sm text-gray-400">
-                  {profile.stats.totalXP % 500} / 500 XP ({xpToNextLevel} XP needed)
+                  {profile.stats.totalXP % 500} / 500 XP (_{xpToNextLevel} XP needed)
                 </div>
               </div>
               <div className="text-lg text-white">
@@ -466,7 +466,7 @@ export function UserProfile() {
                   <Clock className="w-4 h-4 text-yellow-400" />
                   <span className="text-gray-300">Study Time</span>
                 </div>
-                <span className="text-white font-semibold">{Math.floor(profile.stats.totalStudyTime / 60)}h</span>
+                <span className="text-white font-semibold">{Math.floor(_profile.stats.totalStudyTime / 60)}h</span>
               </div>
             </div>
           </GlassCard>
@@ -481,7 +481,7 @@ export function UserProfile() {
                   <div className="flex-1">
                     <div className="text-sm font-medium text-white">{achievement.title}</div>
                     <div className="text-xs text-gray-400">
-                      {achievement.unlockedAt.toLocaleDateString()}
+                      {achievement.unlockedAt.toLocaleDateString(_)}
                     </div>
                   </div>
                 </div>
@@ -502,13 +502,13 @@ export function UserProfile() {
           <div className="space-y-4">
             {profile.recentActivity.map((activity) => (
               <div key={activity.id} className="flex items-center space-x-4 p-4 rounded-lg bg-white/5">
-                <div className={`p-2 rounded-full bg-white/10 ${getActivityColor(activity.type)}`}>
-                  {getActivityIcon(activity.type)}
+                <div className={`p-2 rounded-full bg-white/10 ${getActivityColor(_activity.type)}`}>
+                  {getActivityIcon(_activity.type)}
                 </div>
                 <div className="flex-1">
                   <div className="text-white font-medium">{activity.title}</div>
                   <div className="text-sm text-gray-400">
-                    {activity.timestamp.toLocaleDateString()} at {activity.timestamp.toLocaleTimeString()}
+                    {activity.timestamp.toLocaleDateString(_)} at {activity.timestamp.toLocaleTimeString(_)}
                   </div>
                 </div>
                 {activity.xpGained && (

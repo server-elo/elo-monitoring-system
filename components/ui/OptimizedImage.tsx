@@ -17,8 +17,8 @@ interface OptimizedImageProps {
   sizes?: string;
   fill?: boolean;
   loading?: 'lazy' | 'eager';
-  onLoad?: () => void;
-  onError?: () => void;
+  onLoad?: (_) => void;
+  onError?: (_) => void;
   fallbackSrc?: string;
   responsive?: boolean;
   aspectRatio?: string;
@@ -45,52 +45,52 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   aspectRatio,
   objectFit = 'cover',
 }) => {
-  const [imageSrc, setImageSrc] = useState(src);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const [imageSrc, setImageSrc] = useState(_src);
+  const [isLoading, setIsLoading] = useState(_true);
+  const [hasError, setHasError] = useState(_false);
+  const imgRef = useRef<HTMLImageElement>(_null);
 
   // Generate responsive sizes if not provided
   const responsiveSizes = sizes || (responsive ? 
-    '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw' : 
+    '(_max-width: 640px) 100vw, (_max-width: 1024px) 50vw, 33vw' : 
     undefined
   );
 
   // Handle image load
-  const handleLoad = () => {
-    setIsLoading(false);
-    onLoad?.();
+  const handleLoad = (_) => {
+    setIsLoading(_false);
+    onLoad?.(_);
   };
 
   // Handle image error with fallback
-  const handleError = () => {
-    setHasError(true);
-    setIsLoading(false);
+  const handleError = (_) => {
+    setHasError(_true);
+    setIsLoading(_false);
     
     if (fallbackSrc && imageSrc !== fallbackSrc) {
-      setImageSrc(fallbackSrc);
-      setHasError(false);
-      setIsLoading(true);
+      setImageSrc(_fallbackSrc);
+      setHasError(_false);
+      setIsLoading(_true);
     } else {
-      onError?.();
+      onError?.(_);
     }
   };
 
   // Generate blur placeholder for better UX
-  const generateBlurDataURL = (w: number = 10, h: number = 10) => {
+  const generateBlurDataURL = ( w: number = 10, h: number = 10) => {
     const canvas = document.createElement('canvas');
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.fillStyle = '#f3f4f6';
-      ctx.fillRect(0, 0, w, h);
+      ctx.fillRect( 0, 0, w, h);
     }
-    return canvas.toDataURL();
+    return canvas.toDataURL(_);
   };
 
   // Auto-generate blur placeholder if not provided
-  const autoBlurDataURL = blurDataURL || (placeholder === 'blur' ? generateBlurDataURL() : undefined);
+  const autoBlurDataURL = blurDataURL || (_placeholder === 'blur' ? generateBlurDataURL() : undefined);
 
   // Container styles for aspect ratio
   const containerStyles = aspectRatio ? {
@@ -101,7 +101,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   if (fill) {
     return (
       <div 
-        className={cn('relative overflow-hidden', className)}
+        className={cn( 'relative overflow-hidden', className)}
         style={containerStyles}
       >
         <Image
@@ -145,7 +145,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   return (
     <div 
-      className={cn('relative', className)}
+      className={cn( 'relative', className)}
       style={containerStyles}
     >
       <Image
@@ -228,7 +228,7 @@ export const OptimizedAvatar: React.FC<OptimizedAvatarProps> = ({
   };
 
   return (
-    <div className={cn('relative rounded-full overflow-hidden', sizeClasses[size], className)}>
+    <div className={cn( 'relative rounded-full overflow-hidden', sizeClasses[size], className)}>
       <OptimizedImage
         src={src}
         alt={alt}
@@ -268,7 +268,7 @@ export const HeroImage: React.FC<HeroImageProps> = ({
   overlay = false,
 }) => {
   return (
-    <div className={cn('relative w-full h-full', className)}>
+    <div className={cn( 'relative w-full h-full', className)}>
       <OptimizedImage
         src={src}
         alt={alt}

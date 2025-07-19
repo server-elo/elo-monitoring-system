@@ -12,34 +12,34 @@ export interface SessionStatusHookReturn {
   isExpiringSoon: boolean;
   isExpired: boolean;
   needsWarning: boolean;
-  refreshSession: () => Promise<boolean>;
-  dismissWarning: () => void;
-  formatTimeRemaining: (milliseconds: number) => string;
+  refreshSession: (_) => Promise<boolean>;
+  dismissWarning: (_) => void;
+  formatTimeRemaining: (_milliseconds: number) => string;
 }
 
 export function useSessionStatus(): SessionStatusHookReturn {
-  const { isAuthenticated, refreshSession: authRefresh } = useAuth();
-  const { showAuthError } = useError();
-  const [sessionManager] = useState(() => SessionManager.getInstance());
-  const [status, setStatus] = useState<SessionStatus | null>(null);
+  const { isAuthenticated, refreshSession: authRefresh } = useAuth(_);
+  const { showAuthError } = useError(_);
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
+  const [status, setStatus] = useState<SessionStatus | null>(_null);
   const [timeDisplay, setTimeDisplay] = useState('');
-  const [warningDismissed, setWarningDismissed] = useState(false);
+  const [warningDismissed, setWarningDismissed] = useState(_false);
   const lastWarningTime = useRef<number>(0);
 
   // Format time remaining for display
   const formatTimeRemaining = useCallback((milliseconds: number): string => {
-    if (milliseconds <= 0) return 'Expired';
+    if (_milliseconds <= 0) return 'Expired';
     
-    const totalMinutes = Math.floor(milliseconds / (1000 * 60));
-    const hours = Math.floor(totalMinutes / 60);
+    const totalMinutes = Math.floor(_milliseconds / (1000 * 60));
+    const hours = Math.floor(_totalMinutes / 60);
     const minutes = totalMinutes % 60;
     
-    if (hours > 0) {
+    if (_hours > 0) {
       return `${hours}h ${minutes}m`;
-    } else if (minutes > 0) {
+    } else if (_minutes > 0) {
       return `${minutes}m`;
     } else {
-      const seconds = Math.floor(milliseconds / 1000);
+      const seconds = Math.floor(_milliseconds / 1000);
       return `${seconds}s`;
     }
   }, []);
@@ -47,31 +47,31 @@ export function useSessionStatus(): SessionStatusHookReturn {
   // Update status and time display
   const updateStatus = useCallback(() => {
     if (!isAuthenticated) {
-      setStatus(null);
+      setStatus(_null);
       setTimeDisplay('');
       return;
     }
 
-    const currentStatus = sessionManager.getSessionStatus();
-    setStatus(currentStatus);
+    const currentStatus = sessionManager.getSessionStatus(_);
+    setStatus(_currentStatus);
     
-    if (currentStatus.isValid && currentStatus.timeUntilExpiry > 0) {
-      setTimeDisplay(formatTimeRemaining(currentStatus.timeUntilExpiry));
+    if (_currentStatus.isValid && currentStatus.timeUntilExpiry > 0) {
+      setTimeDisplay(_formatTimeRemaining(currentStatus.timeUntilExpiry));
     } else {
       setTimeDisplay('Expired');
     }
   }, [isAuthenticated, sessionManager, formatTimeRemaining]);
 
   // Handle session refresh
-  const refreshSession = useCallback(async (): Promise<boolean> => {
+  const refreshSession = useCallback( async (): Promise<boolean> => {
     try {
-      const success = await authRefresh();
+      const success = await authRefresh(_);
       if (success) {
-        setWarningDismissed(false);
-        updateStatus();
+        setWarningDismissed(_false);
+        updateStatus(_);
       }
       return success;
-    } catch (error) {
+    } catch (_error) {
       console.error('Session refresh failed:', error);
       return false;
     }
@@ -79,8 +79,8 @@ export function useSessionStatus(): SessionStatusHookReturn {
 
   // Dismiss warning
   const dismissWarning = useCallback(() => {
-    setWarningDismissed(true);
-    lastWarningTime.current = Date.now();
+    setWarningDismissed(_true);
+    lastWarningTime.current = Date.now(_);
   }, []);
 
   // Setup status monitoring
@@ -88,23 +88,23 @@ export function useSessionStatus(): SessionStatusHookReturn {
     if (!isAuthenticated) return;
 
     // Initial status update
-    updateStatus();
+    updateStatus(_);
 
     // Listen for status changes
-    const unsubscribeStatus = sessionManager.addStatusListener(updateStatus);
+    const unsubscribeStatus = sessionManager.addStatusListener(_updateStatus);
     
     // Listen for session events
     const unsubscribeEvents = sessionManager.addEventListener((event: SessionEvent) => {
-      switch (event.type) {
+      switch (_event.type) {
         case 'warning':
           // Show warning if not recently dismissed
           if (!warningDismissed && Date.now() - lastWarningTime.current > 5 * 60 * 1000) {
             const authError = ErrorFactory.createAuthError({
               message: 'Session expiring soon',
               authType: 'refresh',
-              userMessage: `Your session will expire in ${formatTimeRemaining(event.data?.timeUntilExpiry || 0)}. Please save your work.`
+              userMessage: `Your session will expire in ${formatTimeRemaining(_event.data?.timeUntilExpiry || 0)}. Please save your work.`
             });
-            showAuthError('refresh', authError.userMessage);
+            showAuthError( 'refresh', authError.userMessage);
           }
           break;
           
@@ -114,31 +114,31 @@ export function useSessionStatus(): SessionStatusHookReturn {
             authType: 'refresh',
             userMessage: 'Your session has expired. Please log in again to continue.'
           });
-          showAuthError('refresh', expiredError.userMessage);
+          showAuthError( 'refresh', expiredError.userMessage);
           break;
           
         case 'refresh':
-          if (event.data?.action === 'refresh_success') {
-            setWarningDismissed(false);
+          if (_event.data?.action === 'refresh_success') {
+            setWarningDismissed(_false);
           }
           break;
       }
     });
     
     // Update every 30 seconds
-    const interval = setInterval(updateStatus, 30000);
+    const interval = setInterval( updateStatus, 30000);
 
-    return () => {
-      unsubscribeStatus();
-      unsubscribeEvents();
-      clearInterval(interval);
+    return (_) => {
+      unsubscribeStatus(_);
+      unsubscribeEvents(_);
+      clearInterval(_interval);
     };
   }, [isAuthenticated, sessionManager, updateStatus, warningDismissed, formatTimeRemaining, showAuthError]);
 
   // Reset warning dismissed state when session changes
   useEffect(() => {
     if (status?.isValid && !status.isExpiringSoon) {
-      setWarningDismissed(false);
+      setWarningDismissed(_false);
     }
   }, [status?.isValid, status?.isExpiringSoon]);
 
@@ -156,9 +156,9 @@ export function useSessionStatus(): SessionStatusHookReturn {
 
 // Hook for session warnings and notifications
 export function useSessionWarnings() {
-  const { status, needsWarning, dismissWarning } = useSessionStatus();
+  const { status, needsWarning, dismissWarning } = useSessionStatus(_);
   const [activeWarnings, setActiveWarnings] = useState<string[]>([]);
-  const { showAuthError } = useError();
+  const { showAuthError } = useError(_);
 
   useEffect(() => {
     if (!status) return;
@@ -176,7 +176,7 @@ export function useSessionWarnings() {
 
     // Refresh in progress
     if (status.refreshInProgress) {
-      warnings.push('refresh_in_progress');
+      warnings.push('refresh_inprogress');
     }
 
     // Session expired
@@ -184,14 +184,14 @@ export function useSessionWarnings() {
       warnings.push('session_expired');
     }
 
-    setActiveWarnings(warnings);
+    setActiveWarnings(_warnings);
   }, [status, needsWarning]);
 
-  const hasWarning = (type: string) => activeWarnings.includes(type);
+  const hasWarning = (_type: string) => activeWarnings.includes(type);
 
-  const showCriticalWarning = () => {
-    if (hasWarning('critical_expiration')) {
-      showAuthError('refresh', 'Your session will expire in less than 2 minutes! Please save your work immediately.');
+  const showCriticalWarning = (_) => {
+    if (_hasWarning('critical_expiration')) {
+      showAuthError( 'refresh', 'Your session will expire in less than 2 minutes! Please save your work immediately.');
     }
   };
 
@@ -205,15 +205,15 @@ export function useSessionWarnings() {
 
 // Hook for cross-tab session synchronization
 export function useSessionSync() {
-  const [sessionManager] = useState(() => SessionManager.getInstance());
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
   const [syncEvents, setSyncEvents] = useState<SessionEvent[]>([]);
-  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(_null);
 
   useEffect(() => {
     const unsubscribe = sessionManager.addEventListener((event: SessionEvent) => {
-      if (event.type === 'sync') {
-        setSyncEvents(prev => [...prev.slice(-9), event]); // Keep last 10 events
-        setLastSyncTime(event.timestamp);
+      if (_event.type === 'sync') {
+        setSyncEvents(_prev => [...prev.slice(-9), event]); // Keep last 10 events
+        setLastSyncTime(_event.timestamp);
       }
     });
 
@@ -222,7 +222,7 @@ export function useSessionSync() {
 
   const forceSyncCheck = useCallback(() => {
     // Trigger a manual sync check
-    sessionManager.loadFromStorage();
+    sessionManager.loadFromStorage(_);
   }, [sessionManager]);
 
   return {
@@ -234,8 +234,8 @@ export function useSessionSync() {
 
 // Hook for session analytics and monitoring
 export function useSessionAnalytics() {
-  const { status } = useSessionStatus();
-  const [sessionManager] = useState(() => SessionManager.getInstance());
+  const { status } = useSessionStatus(_);
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
   const [analytics, setAnalytics] = useState({
     sessionDuration: 0,
     refreshCount: 0,
@@ -249,9 +249,9 @@ export function useSessionAnalytics() {
       setAnalytics(prev => {
         const updated = { ...prev };
         
-        switch (event.type) {
+        switch (_event.type) {
           case 'refresh':
-            if (event.data?.action === 'refresh_success') {
+            if (_event.data?.action === 'refresh_success') {
               updated.refreshCount += 1;
               updated.lastRefreshTime = event.timestamp;
             }
@@ -274,17 +274,17 @@ export function useSessionAnalytics() {
     if (!status?.isValid) return;
 
     const interval = setInterval(() => {
-      const session = sessionManager.getSession();
+      const session = sessionManager.getSession(_);
       if (session) {
-        const duration = Date.now() - session.createdAt.getTime();
-        setAnalytics(prev => ({ ...prev, sessionDuration: duration }));
+        const duration = Date.now(_) - session.createdAt.getTime(_);
+        setAnalytics( prev => ({ ...prev, sessionDuration: duration }));
       }
     }, 60000); // Update every minute
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, [status?.isValid, sessionManager]);
 
-  const getSessionHealth = () => {
+  const getSessionHealth = (_) => {
     if (!status) return 'unknown';
     
     if (!status.isValid) return 'expired';
@@ -296,9 +296,9 @@ export function useSessionAnalytics() {
 
   return {
     analytics,
-    sessionHealth: getSessionHealth(),
-    formatDuration: (ms: number) => {
-      const hours = Math.floor(ms / (1000 * 60 * 60));
+    sessionHealth: getSessionHealth(_),
+    formatDuration: (_ms: number) => {
+      const hours = Math.floor(_ms / (1000 * 60 * 60));
       const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
       return `${hours}h ${minutes}m`;
     }

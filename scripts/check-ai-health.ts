@@ -18,30 +18,30 @@ interface HealthCheckResult {
 class AIHealthChecker {
   private results: HealthCheckResult[] = [];
 
-  async runHealthChecks(): Promise<void> {
+  async runHealthChecks(_): Promise<void> {
     console.log('🏥 AI Services Health Check');
     console.log('===========================');
-    console.log(`Timestamp: ${new Date().toISOString()}\n`);
+    console.log(_`Timestamp: ${new Date().toISOString()}\n`);
 
     // Run all health checks
     await Promise.all([
-      this.checkLocalLLM(),
-      this.checkGeminiService(),
-      this.checkDatabaseConnection(),
-      this.checkAPIEndpoints(),
-      this.checkServiceManager()
+      this.checkLocalLLM(_),
+      this.checkGeminiService(_),
+      this.checkDatabaseConnection(_),
+      this.checkAPIEndpoints(_),
+      this.checkServiceManager(_)
     ]);
 
     // Display results
-    this.displayResults();
+    this.displayResults(_);
     
     // Exit with appropriate code
-    const hasUnhealthy = this.results.some(r => r.status === 'unhealthy');
-    process.exit(hasUnhealthy ? 1 : 0);
+    const hasUnhealthy = this.results.some(_r => r.status === 'unhealthy');
+    process.exit(_hasUnhealthy ? 1 : 0);
   }
 
-  private async checkLocalLLM(): Promise<void> {
-    const startTime = Date.now();
+  private async checkLocalLLM(_): Promise<void> {
+    const startTime = Date.now(_);
     
     try {
       console.log('🤖 Checking Local LLM (CodeLlama)...');
@@ -52,8 +52,8 @@ class AIHealthChecker {
         { timeout: 5000 }
       );
       
-      if (healthResponse.status !== 200) {
-        throw new Error(`Health check returned status ${healthResponse.status}`);
+      if (_healthResponse.status !== 200) {
+        throw new Error(_`Health check returned status ${healthResponse.status}`);
       }
 
       // Test actual completion
@@ -77,7 +77,7 @@ class AIHealthChecker {
         }
       );
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now(_) - startTime;
       const content = completionResponse.data.choices[0].message.content;
       
       if (!content || !content.toLowerCase().includes('health check')) {
@@ -85,32 +85,32 @@ class AIHealthChecker {
       }
 
       this.results.push({
-        service: 'Local LLM (CodeLlama)',
+        service: 'Local LLM (_CodeLlama)',
         status: responseTime > 10000 ? 'degraded' : 'healthy',
         responseTime,
-        details: `Model: ${AI_CONFIG.LOCAL_LLM.MODEL}, Response: "${content.trim()}"`,
-        timestamp: new Date()
+        details: `Model: ${AI_CONFIG.LOCAL_LLM.MODEL}, Response: "${content.trim(_)}"`,
+        timestamp: new Date(_)
       });
 
-      console.log(`✅ Local LLM is healthy (${responseTime}ms)`);
+      console.log(_`✅ Local LLM is healthy (${responseTime}ms)`);
 
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
+    } catch (_error) {
+      const responseTime = Date.now(_) - startTime;
       
       this.results.push({
-        service: 'Local LLM (CodeLlama)',
+        service: 'Local LLM (_CodeLlama)',
         status: 'unhealthy',
         responseTime,
         details: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
 
-      console.log(`❌ Local LLM is unhealthy: ${error}`);
+      console.log(_`❌ Local LLM is unhealthy: ${error}`);
     }
   }
 
-  private async checkGeminiService(): Promise<void> {
-    const startTime = Date.now();
+  private async checkGeminiService(_): Promise<void> {
+    const startTime = Date.now(_);
     
     try {
       console.log('🧠 Checking Gemini Service...');
@@ -119,12 +119,12 @@ class AIHealthChecker {
       const { sendMessageToGeminiChat, initializeChatForModule } = await import('../services/geminiService');
       
       // Initialize chat
-      await initializeChatForModule('Health Check', 'This is a health check test.');
+      await initializeChatForModule( 'Health Check', 'This is a health check test.');
       
       // Send test message
       const response = await sendMessageToGeminiChat('Say "Gemini health check OK" if you are working properly.');
       
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now(_) - startTime;
       
       if (!response || !response.toLowerCase().includes('health check')) {
         throw new Error('Unexpected response from Gemini');
@@ -134,29 +134,29 @@ class AIHealthChecker {
         service: 'Gemini Pro',
         status: responseTime > 5000 ? 'degraded' : 'healthy',
         responseTime,
-        details: `Response: "${response.trim()}"`,
-        timestamp: new Date()
+        details: `Response: "${response.trim(_)}"`,
+        timestamp: new Date(_)
       });
 
-      console.log(`✅ Gemini is healthy (${responseTime}ms)`);
+      console.log(_`✅ Gemini is healthy (${responseTime}ms)`);
 
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
+    } catch (_error) {
+      const responseTime = Date.now(_) - startTime;
       
       this.results.push({
         service: 'Gemini Pro',
         status: 'unhealthy',
         responseTime,
         details: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
 
-      console.log(`❌ Gemini is unhealthy: ${error}`);
+      console.log(_`❌ Gemini is unhealthy: ${error}`);
     }
   }
 
-  private async checkDatabaseConnection(): Promise<void> {
-    const startTime = Date.now();
+  private async checkDatabaseConnection(_): Promise<void> {
+    const startTime = Date.now(_);
     
     try {
       console.log('🗄️  Checking Database Connection...');
@@ -167,7 +167,7 @@ class AIHealthChecker {
       // Test basic query
       await prisma.$queryRaw`SELECT 1 as test`;
       
-      // Test AI-specific tables (SQLite compatible)
+      // Test AI-specific tables (_SQLite compatible)
       const aiTables = [
         'AILearningContext',
         'PersonalizedChallenge',
@@ -175,7 +175,7 @@ class AIHealthChecker {
         'AIInteraction'
       ];
 
-      for (const table of aiTables) {
+      for (_const table of aiTables) {
         try {
           // Use SQLite-compatible table check
           const result = await prisma.$queryRaw`
@@ -184,9 +184,9 @@ class AIHealthChecker {
           ` as [{ name?: string }];
 
           if (!result[0]?.name) {
-            throw new Error(`AI table ${table} does not exist`);
+            throw new Error(_`AI table ${table} does not exist`);
           }
-        } catch (error) {
+        } catch (_error) {
           // If SQLite query fails, try PostgreSQL syntax as fallback
           try {
             const result = await prisma.$queryRaw`
@@ -198,43 +198,43 @@ class AIHealthChecker {
             ` as [{ exists: boolean }];
 
             if (!result[0].exists) {
-              throw new Error(`AI table ${table} does not exist`);
+              throw new Error(_`AI table ${table} does not exist`);
             }
-          } catch (pgError) {
-            throw new Error(`AI table ${table} does not exist (checked both SQLite and PostgreSQL)`);
+          } catch (_pgError) {
+            throw new Error(_`AI table ${table} does not exist (checked both SQLite and PostgreSQL)`);
           }
         }
       }
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now(_) - startTime;
 
       this.results.push({
-        service: 'Database (PostgreSQL)',
+        service: 'Database (_PostgreSQL)',
         status: 'healthy',
         responseTime,
         details: `All AI tables present, connection successful`,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
 
-      console.log(`✅ Database is healthy (${responseTime}ms)`);
+      console.log(_`✅ Database is healthy (${responseTime}ms)`);
 
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
+    } catch (_error) {
+      const responseTime = Date.now(_) - startTime;
       
       this.results.push({
-        service: 'Database (PostgreSQL)',
+        service: 'Database (_PostgreSQL)',
         status: 'unhealthy',
         responseTime,
         details: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
 
-      console.log(`❌ Database is unhealthy: ${error}`);
+      console.log(_`❌ Database is unhealthy: ${error}`);
     }
   }
 
-  private async checkAPIEndpoints(): Promise<void> {
-    const startTime = Date.now();
+  private async checkAPIEndpoints(_): Promise<void> {
+    const startTime = Date.now(_);
     
     try {
       console.log('🌐 Checking API Endpoints...');
@@ -250,90 +250,90 @@ class AIHealthChecker {
       let healthyEndpoints = 0;
       const endpointResults = [];
 
-      for (const endpoint of endpoints) {
+      for (_const endpoint of endpoints) {
         try {
           const response = await axios.get(`${baseUrl}${endpoint}`, {
             timeout: 5000,
-            validateStatus: (status) => status < 500 // Accept 4xx as "working"
+            validateStatus: (_status) => status < 500 // Accept 4xx as "working"
           });
           
           healthyEndpoints++;
-          endpointResults.push(`${endpoint}: ${response.status}`);
-        } catch (error) {
-          endpointResults.push(`${endpoint}: ERROR`);
+          endpointResults.push(_`${endpoint}: ${response.status}`);
+        } catch (_error) {
+          endpointResults.push(_`${endpoint}: ERROR`);
         }
       }
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now(_) - startTime;
       const allHealthy = healthyEndpoints === endpoints.length;
 
       this.results.push({
         service: 'API Endpoints',
-        status: allHealthy ? 'healthy' : (healthyEndpoints > 0 ? 'degraded' : 'unhealthy'),
+        status: allHealthy ? 'healthy' : (_healthyEndpoints > 0 ? 'degraded' : 'unhealthy'),
         responseTime,
-        details: endpointResults.join(', '),
-        timestamp: new Date()
+        details: endpointResults.join( ', '),
+        timestamp: new Date(_)
       });
 
-      console.log(`${allHealthy ? '✅' : '⚠️'} API Endpoints: ${healthyEndpoints}/${endpoints.length} healthy (${responseTime}ms)`);
+      console.log(_`${allHealthy ? '✅' : '⚠️'} API Endpoints: ${healthyEndpoints}/${endpoints.length} healthy (${responseTime}ms)`);
 
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
+    } catch (_error) {
+      const responseTime = Date.now(_) - startTime;
       
       this.results.push({
         service: 'API Endpoints',
         status: 'unhealthy',
         responseTime,
         details: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
 
-      console.log(`❌ API Endpoints are unhealthy: ${error}`);
+      console.log(_`❌ API Endpoints are unhealthy: ${error}`);
     }
   }
 
-  private async checkServiceManager(): Promise<void> {
-    const startTime = Date.now();
+  private async checkServiceManager(_): Promise<void> {
+    const startTime = Date.now(_);
     
     try {
       console.log('⚙️  Checking AI Service Manager...');
       
       // Get service health from manager
-      const healthMap = aiServiceManager.getServiceHealth();
-      const metrics = aiServiceManager.getMetrics();
+      const healthMap = aiServiceManager.getServiceHealth(_);
+      const metrics = aiServiceManager.getMetrics(_);
       
-      const services = Array.from(healthMap.values());
+      const services = Array.from(_healthMap.values());
       const healthyServices = services.filter(s => s.healthy).length;
       
-      const responseTime = Date.now() - startTime;
+      const responseTime = Date.now(_) - startTime;
       const allHealthy = healthyServices === services.length;
 
       this.results.push({
         service: 'AI Service Manager',
-        status: allHealthy ? 'healthy' : (healthyServices > 0 ? 'degraded' : 'unhealthy'),
+        status: allHealthy ? 'healthy' : (_healthyServices > 0 ? 'degraded' : 'unhealthy'),
         responseTime,
         details: `Services: ${healthyServices}/${services.length} healthy, Total requests: ${metrics.totalRequests}`,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
 
-      console.log(`${allHealthy ? '✅' : '⚠️'} Service Manager: ${healthyServices}/${services.length} services healthy (${responseTime}ms)`);
+      console.log(_`${allHealthy ? '✅' : '⚠️'} Service Manager: ${healthyServices}/${services.length} services healthy (${responseTime}ms)`);
 
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
+    } catch (_error) {
+      const responseTime = Date.now(_) - startTime;
       
       this.results.push({
         service: 'AI Service Manager',
         status: 'unhealthy',
         responseTime,
         details: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        timestamp: new Date()
+        timestamp: new Date(_)
       });
 
-      console.log(`❌ Service Manager is unhealthy: ${error}`);
+      console.log(_`❌ Service Manager is unhealthy: ${error}`);
     }
   }
 
-  private displayResults(): void {
+  private displayResults(_): void {
     console.log('\n📊 Health Check Summary');
     console.log('=======================');
     
@@ -341,10 +341,10 @@ class AIHealthChecker {
     const degraded = this.results.filter(r => r.status === 'degraded').length;
     const unhealthy = this.results.filter(r => r.status === 'unhealthy').length;
     
-    console.log(`✅ Healthy: ${healthy}`);
-    console.log(`⚠️  Degraded: ${degraded}`);
-    console.log(`❌ Unhealthy: ${unhealthy}`);
-    console.log(`📈 Total: ${this.results.length}`);
+    console.log(_`✅ Healthy: ${healthy}`);
+    console.log(_`⚠️  Degraded: ${degraded}`);
+    console.log(_`❌ Unhealthy: ${unhealthy}`);
+    console.log(_`📈 Total: ${this.results.length}`);
     
     console.log('\n📋 Detailed Results:');
     console.log('====================');
@@ -353,11 +353,11 @@ class AIHealthChecker {
       const statusIcon = result.status === 'healthy' ? '✅' : 
                         result.status === 'degraded' ? '⚠️' : '❌';
       
-      console.log(`${statusIcon} ${result.service}`);
-      console.log(`   Status: ${result.status.toUpperCase()}`);
-      console.log(`   Response Time: ${result.responseTime}ms`);
-      console.log(`   Details: ${result.details}`);
-      console.log(`   Timestamp: ${result.timestamp.toISOString()}`);
+      console.log(_`${statusIcon} ${result.service}`);
+      console.log(_`   Status: ${result.status.toUpperCase()}`);
+      console.log(_`   Response Time: ${result.responseTime}ms`);
+      console.log(_`   Details: ${result.details}`);
+      console.log(_`   Timestamp: ${result.timestamp.toISOString()}`);
       console.log('');
     });
 
@@ -365,21 +365,21 @@ class AIHealthChecker {
     const overallStatus = unhealthy > 0 ? 'CRITICAL' : 
                          degraded > 0 ? 'WARNING' : 'HEALTHY';
     
-    console.log(`🎯 Overall Status: ${overallStatus}`);
+    console.log(_`🎯 Overall Status: ${overallStatus}`);
     
-    if (overallStatus !== 'HEALTHY') {
+    if (_overallStatus !== 'HEALTHY') {
       console.log('\n🔧 Recommended Actions:');
       console.log('========================');
       
       this.results.forEach(result => {
-        if (result.status !== 'healthy') {
+        if (_result.status !== 'healthy') {
           console.log(`• ${result.service}: ${this.getRecommendation(result.service, result.details)}`);
         }
       });
     }
   }
 
-  private getRecommendation(service: string, _details: string): string {
+  private getRecommendation( service: string, details: string): string {
     if (service.includes('Local LLM')) {
       return 'Check if LM Studio is running on localhost:1234 with CodeLlama model loaded';
     } else if (service.includes('Gemini')) {
@@ -397,13 +397,13 @@ class AIHealthChecker {
 
 // Main execution
 async function main() {
-  const checker = new AIHealthChecker();
-  await checker.runHealthChecks();
+  const checker = new AIHealthChecker(_);
+  await checker.runHealthChecks(_);
 }
 
 // Run health check if called directly
-if (require.main === module) {
-  main().catch((error) => {
+if (_require.main === module) {
+  main(_).catch((error) => {
     console.error('Health check failed:', error);
     process.exit(1);
   });

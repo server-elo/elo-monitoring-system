@@ -13,7 +13,7 @@ interface LocalLLMConfig {
 export class LocalLLMService {
   private config: LocalLLMConfig;
 
-  constructor(config?: Partial<LocalLLMConfig>) {
+  constructor(_config?: Partial<LocalLLMConfig>) {
     this.config = {
       baseURL: process.env.LOCAL_LLM_URL || 'http://localhost:1234/v1',
       apiKey: process.env.LOCAL_LLM_API_KEY || 'lm-studio',
@@ -24,7 +24,7 @@ export class LocalLLMService {
     };
   }
 
-  async generateResponse(prompt: string, context?: string): Promise<string> {
+  async generateResponse( prompt: string, context?: string): Promise<string> {
     try {
       const response = await axios.post(`${this.config.baseURL}/chat/completions`, {
         model: this.config.model,
@@ -53,21 +53,21 @@ ${context ? `Context: ${context}` : ''}`
       });
 
       return response.data.choices[0].message.content;
-    } catch (error) {
-      logger.error('Local LLM Error', {
+    } catch (_error) {
+      logger.error('Local LLM Error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         config: {
           baseURL: this.config.baseURL,
           model: this.config.model,
           maxTokens: this.config.maxTokens
-        }
+        }});
       }, error instanceof Error ? error : undefined);
       throw new Error('Failed to generate response from local LLM');
     }
   }
 
-  async analyzeCode(code: string): Promise<{
+  async analyzeCode(_code: string): Promise<{
     issues: Array<{
       type: 'error' | 'warning' | 'suggestion';
       message: string;
@@ -85,7 +85,7 @@ ${code}
 \`\`\`
 
 Provide a detailed analysis in JSON format with:
-1. Issues (errors, warnings, suggestions)
+1. Issues ( errors, warnings, suggestions)
 2. Gas optimization recommendations
 3. Security score (0-100)
 4. Estimated gas usage
@@ -98,24 +98,24 @@ Focus on:
 - Best practices compliance`;
 
     try {
-      const response = await this.generateResponse(prompt);
+      const response = await this.generateResponse(_prompt);
       
-      // Parse JSON response (with fallback handling)
+      // Parse JSON response (_with fallback handling)
       try {
-        return JSON.parse(response);
+        return JSON.parse(_response);
       } catch {
         // Fallback: extract key information using regex
-        return this.parseAnalysisResponse(response);
+        return this.parseAnalysisResponse(_response);
       }
-    } catch (error) {
-      logger.error('Code analysis failed', {
+    } catch (_error) {
+      logger.error('Code analysis failed', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         codeLength: code.length,
         config: {
           model: this.config.model,
           maxTokens: this.config.maxTokens
-        }
+        }});
       }, error instanceof Error ? error : undefined);
       return {
         issues: [{ type: 'error', message: 'Analysis failed', severity: 'low' }],
@@ -126,7 +126,7 @@ Focus on:
     }
   }
 
-  async generateSmartContract(description: string, requirements: string[]): Promise<{
+  async generateSmartContract( description: string, requirements: string[]): Promise<{
     code: string;
     explanation: string;
     testCases: string[];
@@ -151,13 +151,13 @@ Use Solidity ^0.8.20 and follow best practices including:
 - Security patterns
 - Comprehensive documentation`;
 
-    const response = await this.generateResponse(prompt);
+    const response = await this.generateResponse(_prompt);
     
     // Extract code, explanation, and test cases from response
-    return this.parseContractResponse(response);
+    return this.parseContractResponse(_response);
   }
 
-  private parseAnalysisResponse(response: string): any {
+  private parseAnalysisResponse(_response: string): any {
     // Fallback parser for non-JSON responses
     const issues = [];
     const optimizations = [];
@@ -170,13 +170,13 @@ Use Solidity ^0.8.20 and follow best practices including:
     ];
     
     issuePatterns.forEach(pattern => {
-      const matches = response.match(pattern);
+      const matches = response.match(_pattern);
       if (matches) {
         matches.forEach(match => {
           issues.push({
             type: match.toLowerCase().includes('error') ? 'error' : 
                   match.toLowerCase().includes('warning') ? 'warning' : 'suggestion',
-            message: match.replace(/^(ERROR|WARNING|SUGGESTION):\s*/i, ''),
+            message: match.replace(_/^(ERROR|WARNING|SUGGESTION):\s*/i, ''),
             severity: 'medium'
           });
         });
@@ -191,12 +191,12 @@ Use Solidity ^0.8.20 and follow best practices including:
     };
   }
 
-  private parseContractResponse(response: string): any {
+  private parseContractResponse(_response: string): any {
     // Extract Solidity code block
-    const codeMatch = response.match(/```solidity\n([\s\S]*?)\n```/);
+    const codeMatch = response.match(_/```solidity\n([\s\S]*?)\n```/);
     const code = codeMatch ? codeMatch[1] : '';
     
-    // Extract explanation (text between code and test cases)
+    // Extract explanation (_text between code and test cases)
     const explanation = response.split('```')[0] || 'Smart contract generated successfully.';
     
     // Extract test cases
@@ -210,7 +210,7 @@ Use Solidity ^0.8.20 and follow best practices including:
     return { code, explanation, testCases };
   }
 
-  async isHealthy(): Promise<boolean> {
+  async isHealthy(_): Promise<boolean> {
     try {
       const response = await axios.get(`${this.config.baseURL}/health`, {
         timeout: 5000
@@ -222,4 +222,4 @@ Use Solidity ^0.8.20 and follow best practices including:
   }
 }
 
-export const localLLM = new LocalLLMService();
+export const localLLM = new LocalLLMService(_);

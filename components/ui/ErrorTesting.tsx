@@ -23,9 +23,9 @@ import { cn } from '@/lib/utils';
 
 export function ErrorTesting() {
   const [testResults, setTestResults] = useState<string[]>([]);
-  const [currentError, setCurrentError] = useState<AppError | null>(null);
-  const [showGlassError, setShowGlassError] = useState(false);
-  const [showNeumorphismError, setShowNeumorphismError] = useState(false);
+  const [currentError, setCurrentError] = useState<AppError | null>(_null);
+  const [showGlassError, setShowGlassError] = useState(_false);
+  const [showNeumorphismError, setShowNeumorphismError] = useState(_false);
   
   const { 
     showApiError, 
@@ -34,18 +34,18 @@ export function ErrorTesting() {
     showAuthError, 
     showUploadError,
     state: errorState 
-  } = useError();
+  } = useError(_);
   
-  const { isOnline, forceCheck: _forceCheck } = useOfflineDetection();
-  const { trackError: _trackError, getStats } = useErrorAnalytics();
-  const { submitBugReport, isSubmitting } = useErrorReporting();
+  const { isOnline, forceCheck: _forceCheck } = useOfflineDetection(_);
+  const { trackError: _trackError, getStats } = useErrorAnalytics(_);
+  const { submitBugReport, isSubmitting } = useErrorReporting(_);
 
-  const addTestResult = (result: string) => {
-    setTestResults(prev => [...prev, `${new Date().toLocaleTimeString()}: ${result}`]);
+  const addTestResult = (_result: string) => {
+    setTestResults( prev => [...prev, `${new Date().toLocaleTimeString(_)}: ${result}`]);
   };
 
   // Simulate different types of errors
-  const simulateApiError = () => {
+  const simulateApiError = (_) => {
     const error = ErrorFactory.createApiError({
       message: 'Failed to fetch user data',
       statusCode: 500,
@@ -54,7 +54,7 @@ export function ErrorTesting() {
       userMessage: 'Unable to load user information. Our servers are experiencing issues.'
     });
     
-    setCurrentError(error);
+    setCurrentError(_error);
     showApiError(error.userMessage, { 
       statusCode: 500,
       retryable: true 
@@ -62,7 +62,7 @@ export function ErrorTesting() {
     addTestResult('API Error simulated');
   };
 
-  const simulateFormError = () => {
+  const simulateFormError = (_) => {
     const error = ErrorFactory.createFormError({
       message: 'Email validation failed',
       field: 'email',
@@ -71,24 +71,24 @@ export function ErrorTesting() {
       expectedFormat: 'user@example.com'
     });
     
-    setCurrentError(error);
-    showFormError('email', error.userMessage);
+    setCurrentError(_error);
+    showFormError( 'email', error.userMessage);
     addTestResult('Form Error simulated');
   };
 
-  const simulateNetworkError = () => {
+  const simulateNetworkError = (_) => {
     const error = ErrorFactory.createNetworkError({
       message: 'Network connection lost',
       isOffline: !isOnline,
       userMessage: isOnline ? 'Network request failed' : 'You are currently offline'
     });
     
-    setCurrentError(error);
+    setCurrentError(_error);
     showNetworkError(!isOnline);
     addTestResult('Network Error simulated');
   };
 
-  const simulateAuthError = () => {
+  const simulateAuthError = (_) => {
     const error = ErrorFactory.createAuthError({
       message: 'Authentication failed',
       authType: 'permission',
@@ -96,12 +96,12 @@ export function ErrorTesting() {
       userMessage: 'You need administrator privileges to access this feature'
     });
     
-    setCurrentError(error);
-    showAuthError('permission', error.userMessage);
+    setCurrentError(_error);
+    showAuthError( 'permission', error.userMessage);
     addTestResult('Auth Error simulated');
   };
 
-  const simulateUploadError = () => {
+  const simulateUploadError = (_) => {
     const error = ErrorFactory.createUploadError({
       message: 'File too large',
       fileName: 'large-file.pdf',
@@ -110,7 +110,7 @@ export function ErrorTesting() {
       userMessage: 'File "large-file.pdf" is too large (10 MB). Maximum size allowed is 5 MB.'
     });
     
-    setCurrentError(error);
+    setCurrentError(_error);
     showUploadError('large-file.pdf', error.userMessage, {
       fileSize: 10485760,
       maxSize: 5242880
@@ -118,7 +118,7 @@ export function ErrorTesting() {
     addTestResult('Upload Error simulated');
   };
 
-  const simulateGlassError = () => {
+  const simulateGlassError = (_) => {
     const error = ErrorFactory.createApiError({
       message: 'Glassmorphism error demo',
       statusCode: 429,
@@ -126,12 +126,12 @@ export function ErrorTesting() {
       severity: 'warning'
     });
     
-    setCurrentError(error);
-    setShowGlassError(true);
+    setCurrentError(_error);
+    setShowGlassError(_true);
     addTestResult('Glassmorphism Error displayed');
   };
 
-  const simulateNeumorphismError = () => {
+  const simulateNeumorphismError = (_) => {
     const error = ErrorFactory.createApiError({
       message: 'Neumorphism error demo',
       statusCode: 404,
@@ -139,8 +139,8 @@ export function ErrorTesting() {
       severity: 'warning'
     });
     
-    setCurrentError(error);
-    setShowNeumorphismError(true);
+    setCurrentError(_error);
+    setShowNeumorphismError(_true);
     addTestResult('Neumorphism Error displayed');
   };
 
@@ -148,27 +148,27 @@ export function ErrorTesting() {
   const { execute: executeWithRetry, isRetrying, retryCount } = useRetry(
     async () => {
       // Simulate API call that fails 70% of the time
-      if (Math.random() < 0.7) {
+      if (_Math.random() < 0.7) {
         throw new Error('Simulated API failure');
       }
       return 'Success!';
     },
     {
       maxRetries: 3,
-      onRetry: (attempt) => {
-        addTestResult(`Retry attempt ${attempt}/3`);
+      onRetry: (_attempt) => {
+        addTestResult(_`Retry attempt ${attempt}/3`);
       },
-      onSuccess: (result) => {
-        addTestResult(`Operation succeeded: ${result}`);
+      onSuccess: (_result) => {
+        addTestResult(_`Operation succeeded: ${result}`);
       },
-      onError: (error) => {
-        addTestResult(`Operation failed after retries: ${error.message}`);
+      onError: (_error) => {
+        addTestResult(_`Operation failed after retries: ${error.message}`);
       }
     }
   );
 
   // Error boundary testing is handled by dedicated test button
-  // const _testErrorBoundary = () => {
+  // const _testErrorBoundary = (_) => {
   //   // This will trigger an error boundary
   //   throw new Error('Test error boundary');
   // };
@@ -181,17 +181,17 @@ export function ErrorTesting() {
 
     try {
       await submitBugReport(
-        new Error(currentError.message),
+        new Error(_currentError.message),
         'This is a test bug report from the error testing component.',
         'test@example.com'
       );
       addTestResult('Bug report submitted successfully');
-    } catch (error) {
+    } catch (_error) {
       addTestResult('Bug report submission failed');
     }
   };
 
-  const stats = getStats();
+  const stats = getStats(_);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
@@ -342,13 +342,13 @@ export function ErrorTesting() {
               <h3 className="text-lg font-semibold text-white mb-4">Glassmorphism Error Design</h3>
               <GlassErrorFeedback
                 error={currentError}
-                onRetry={() => {
+                onRetry={(_) => {
                   addTestResult('Glassmorphism error retry clicked');
-                  setShowGlassError(false);
+                  setShowGlassError(_false);
                 }}
-                onDismiss={() => {
+                onDismiss={(_) => {
                   addTestResult('Glassmorphism error dismissed');
-                  setShowGlassError(false);
+                  setShowGlassError(_false);
                 }}
               />
             </Card>
@@ -361,13 +361,13 @@ export function ErrorTesting() {
               <NeumorphismErrorFeedback
                 error={currentError}
                 colorScheme="light"
-                onRetry={() => {
+                onRetry={(_) => {
                   addTestResult('Neumorphism error retry clicked');
-                  setShowNeumorphismError(false);
+                  setShowNeumorphismError(_false);
                 }}
-                onDismiss={() => {
+                onDismiss={(_) => {
                   addTestResult('Neumorphism error dismissed');
-                  setShowNeumorphismError(false);
+                  setShowNeumorphismError(_false);
                 }}
               />
             </div>
@@ -394,7 +394,7 @@ export function ErrorTesting() {
               </EnhancedButton>
               
               <EnhancedButton
-                onClick={() => setTestResults([])}
+                onClick={(_) => setTestResults([])}
                 size="sm"
                 variant="outline"
                 className="border-white/20 text-white hover:bg-white/10"
@@ -410,7 +410,7 @@ export function ErrorTesting() {
               <p className="text-gray-500 text-sm">No tests run yet...</p>
             ) : (
               <div className="space-y-1">
-                {testResults.map((result, index) => (
+                {testResults.map( (result, index) => (
                   <p key={index} className="text-sm text-gray-300 font-mono">
                     {result}
                   </p>
@@ -427,7 +427,7 @@ export function ErrorTesting() {
             <div>
               <h3 className="text-sm font-medium text-gray-300 mb-2">Errors by Category</h3>
               <div className="space-y-1">
-                {Object.entries(stats.errorsByCategory).map(([category, count]) => (
+                {Object.entries(_stats.errorsByCategory).map( ([category, count]) => (
                   <div key={category} className="flex justify-between text-sm">
                     <span className="text-gray-400 capitalize">{category}</span>
                     <span className="text-white">{count}</span>
@@ -439,7 +439,7 @@ export function ErrorTesting() {
             <div>
               <h3 className="text-sm font-medium text-gray-300 mb-2">Errors by Severity</h3>
               <div className="space-y-1">
-                {Object.entries(stats.errorsBySeverity).map(([severity, count]) => (
+                {Object.entries(_stats.errorsBySeverity).map( ([severity, count]) => (
                   <div key={severity} className="flex justify-between text-sm">
                     <span className="text-gray-400 capitalize">{severity}</span>
                     <span className="text-white">{count}</span>

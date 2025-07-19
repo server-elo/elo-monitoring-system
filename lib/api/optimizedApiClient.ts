@@ -46,9 +46,9 @@ class OptimizedApiClient {
   private baseURL: string;
   private defaultHeaders: Record<string, string>;
   // Request queue for deduplication - kept for future implementation
-  // private requestQueue: Map<string, Promise<ApiResponse<unknown>>> = new Map();
+  // private requestQueue: Map<string, Promise<ApiResponse<unknown>>> = new Map(_);
 
-  constructor(baseURL: string = '/api', defaultHeaders: Record<string, string> = {}) {
+  constructor( baseURL: string = '/api', defaultHeaders: Record<string, string> = {}) {
     this.baseURL = baseURL;
     this.defaultHeaders = {
       'Content-Type': 'application/json',
@@ -73,31 +73,31 @@ class OptimizedApiClient {
     } = config;
 
     const url = `${this.baseURL}${endpoint}`;
-    const cacheKey = this.generateCacheKey(method, url, body);
-    const startTime = performance.now();
+    const cacheKey = this.generateCacheKey( method, url, body);
+    const startTime = performance.now(_);
 
     // Check cache first for GET requests
     if (cache && method === 'GET') {
-      const cachedData = apiCache.get(cacheKey);
+      const cachedData = apiCache.get(_cacheKey);
       if (cachedData) {
         return {
           data: cachedData,
           status: 200,
-          headers: new Headers(),
+          headers: new Headers(_),
           cached: true,
-          duration: performance.now() - startTime,
+          duration: performance.now(_) - startTime,
         };
       }
     }
 
     // Use deduplication for GET requests
     if (deduplicate && method === 'GET') {
-      return requestDeduplicator.deduplicate(cacheKey, () =>
-        this.executeRequest<T>(url, method, headers, body, retries, timeout, startTime, cache, cacheTTL, cacheKey)
+      return requestDeduplicator.deduplicate( cacheKey, () =>
+        this.executeRequest<T>( url, method, headers, body, retries, timeout, startTime, cache, cacheTTL, cacheKey)
       );
     }
 
-    return this.executeRequest<T>(url, method, headers, body, retries, timeout, startTime, cache, cacheTTL, cacheKey);
+    return this.executeRequest<T>( url, method, headers, body, retries, timeout, startTime, cache, cacheTTL, cacheKey);
   }
 
   private async executeRequest<T>(
@@ -114,10 +114,10 @@ class OptimizedApiClient {
   ): Promise<ApiResponse<T>> {
     let lastError: Error | null = null;
 
-    for (let attempt = 0; attempt <= retries; attempt++) {
+    for (_let attempt = 0; attempt <= retries; attempt++) {
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        const controller = new AbortController(_);
+        const timeoutId = setTimeout(() => controller.abort(_), timeout);
 
         const response = await fetch(url, {
           method,
@@ -125,12 +125,12 @@ class OptimizedApiClient {
             ...this.defaultHeaders,
             ...headers,
           },
-          body: body ? JSON.stringify(body) : undefined,
+          body: body ? JSON.stringify(_body) : undefined,
           signal: controller.signal,
         });
 
-        clearTimeout(timeoutId);
-        const endTime = performance.now();
+        clearTimeout(_timeoutId);
+        const endTime = performance.now(_);
         const duration = endTime - startTime;
 
         // Record performance metrics
@@ -139,21 +139,21 @@ class OptimizedApiClient {
           method,
           duration,
           status: response.status,
-          timestamp: Date.now(),
-          size: parseInt(response.headers.get('content-length') || '0'),
+          timestamp: Date.now(_),
+          size: parseInt(_response.headers.get('content-length') || '0'),
           cached: false,
           retryCount: attempt,
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          throw new Error(_`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json();
+        const data = await response.json(_);
 
         // Cache successful GET requests
         if (cache && method === 'GET') {
-          apiCache.set(cacheKey, data, cacheTTL);
+          apiCache.set( cacheKey, data, cacheTTL);
         }
 
         return {
@@ -163,25 +163,25 @@ class OptimizedApiClient {
           cached: false,
           duration,
         };
-      } catch (error) {
+      } catch (_error) {
         lastError = error as Error;
 
-        // Don't retry on client errors (4xx) or abort errors
-        if (error instanceof Error) {
-          if (error.message.includes('HTTP 4') || error.name === 'AbortError') {
+        // Don't retry on client errors (_4xx) or abort errors
+        if (_error instanceof Error) {
+          if (_error.message.includes('HTTP 4') || error.name === 'AbortError') {
             break;
           }
         }
 
         // Wait before retry with exponential backoff
-        if (attempt < retries) {
+        if (_attempt < retries) {
           await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
         }
       }
     }
 
     // Record failed request
-    const endTime = performance.now();
+    const endTime = performance.now(_);
     const duration = endTime - startTime;
 
     apiPerformanceMonitor.recordMetric({
@@ -189,78 +189,78 @@ class OptimizedApiClient {
       method,
       duration,
       status: 0,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       retryCount: retries,
     });
 
     throw lastError || new Error('Request failed after retries');
   }
 
-  private generateCacheKey(method: string, url: string, body?: RequestBody): string {
-    const bodyHash = body ? JSON.stringify(body) : '';
+  private generateCacheKey( method: string, url: string, body?: RequestBody): string {
+    const bodyHash = body ? JSON.stringify(_body) : '';
     return `${method}:${url}:${bodyHash}`;
   }
 
   // Convenience methods
-  async get<T = unknown>(endpoint: string, config?: Omit<ApiRequestConfig, 'method'>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...config, method: 'GET' });
+  async get<T = unknown>( endpoint: string, config?: Omit<ApiRequestConfig, 'method'>): Promise<ApiResponse<T>> {
+    return this.request<T>( endpoint, { ...config, method: 'GET' });
   }
 
-  async post<T = unknown>(endpoint: string, data?: RequestBody, config?: Omit<ApiRequestConfig, 'method' | 'body'>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...config, method: 'POST', body: data, cache: false, deduplicate: false });
+  async post<T = unknown>( endpoint: string, data?: RequestBody, config?: Omit<ApiRequestConfig, 'method' | 'body'>): Promise<ApiResponse<T>> {
+    return this.request<T>( endpoint, { ...config, method: 'POST', body: data, cache: false, deduplicate: false });
   }
 
-  async put<T = unknown>(endpoint: string, data?: RequestBody, config?: Omit<ApiRequestConfig, 'method' | 'body'>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...config, method: 'PUT', body: data, cache: false, deduplicate: false });
+  async put<T = unknown>( endpoint: string, data?: RequestBody, config?: Omit<ApiRequestConfig, 'method' | 'body'>): Promise<ApiResponse<T>> {
+    return this.request<T>( endpoint, { ...config, method: 'PUT', body: data, cache: false, deduplicate: false });
   }
 
-  async delete<T = unknown>(endpoint: string, config?: Omit<ApiRequestConfig, 'method'>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...config, method: 'DELETE', cache: false, deduplicate: false });
+  async delete<T = unknown>( endpoint: string, config?: Omit<ApiRequestConfig, 'method'>): Promise<ApiResponse<T>> {
+    return this.request<T>( endpoint, { ...config, method: 'DELETE', cache: false, deduplicate: false });
   }
 
-  async patch<T = unknown>(endpoint: string, data?: RequestBody, config?: Omit<ApiRequestConfig, 'method' | 'body'>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...config, method: 'PATCH', body: data, cache: false, deduplicate: false });
+  async patch<T = unknown>( endpoint: string, data?: RequestBody, config?: Omit<ApiRequestConfig, 'method' | 'body'>): Promise<ApiResponse<T>> {
+    return this.request<T>( endpoint, { ...config, method: 'PATCH', body: data, cache: false, deduplicate: false });
   }
 
   // Batch requests
-  async batch<T = unknown>(requests: Array<{ endpoint: string; config?: ApiRequestConfig }>): Promise<Array<ApiResponse<T>>> {
+  async batch<T = unknown>(_requests: Array<{ endpoint: string; config?: ApiRequestConfig }>): Promise<Array<ApiResponse<T>>> {
     return Promise.all(
-      requests.map(({ endpoint, config }) => this.request<T>(endpoint, config))
+      requests.map( ({ endpoint, config }) => this.request<T>( endpoint, config))
     );
   }
 
   // Prefetch for performance
-  async prefetch(endpoint: string, config?: ApiRequestConfig): Promise<void> {
+  async prefetch( endpoint: string, config?: ApiRequestConfig): Promise<void> {
     try {
-      await this.request(endpoint, { ...config, priority: 'low' });
-    } catch (error) {
+      await this.request( endpoint, { ...config, priority: 'low' });
+    } catch (_error) {
       // Ignore prefetch errors
-      logger.warn('Prefetch failed', {
+      logger.warn('Prefetch failed', { metadata: {
         endpoint,
         error: error instanceof Error ? error.message : 'Unknown error',
         operation: 'prefetch'
       });
-    }
+    }});
   }
 
   // Clear cache
-  clearCache(): void {
-    apiCache.clear();
+  clearCache(_): void {
+    apiCache.clear(_);
   }
 
   // Get performance stats
-  getPerformanceStats() {
-    return apiPerformanceMonitor.getStats();
+  getPerformanceStats(_) {
+    return apiPerformanceMonitor.getStats(_);
   }
 }
 
 // Create singleton instance
-export const apiClient = new OptimizedApiClient();
+export const apiClient = new OptimizedApiClient(_);
 
 // React Query integration
-export const createQueryKey = (endpoint: string, params?: QueryParams): string[] => {
+export const createQueryKey = ( endpoint: string, params?: QueryParams): string[] => {
   const baseKey = endpoint.split('/').filter(Boolean);
-  return params ? [...baseKey, JSON.stringify(params)] : baseKey;
+  return params ? [...baseKey, JSON.stringify(_params)] : baseKey;
 };
 
 // Custom hooks for common API patterns
@@ -276,12 +276,12 @@ export const useOptimizedQuery = <T = unknown>(
   const { enabled = true, refetchInterval, staleTime = 300000 } = options || {};
 
   return {
-    queryKey: createQueryKey(endpoint),
-    queryFn: () => apiClient.get<T>(endpoint, config),
+    queryKey: createQueryKey(_endpoint),
+    queryFn: (_) => apiClient.get<T>( endpoint, config),
     enabled,
     refetchInterval,
     staleTime,
-    retry: (failureCount: number, error: ApiError | Error) => {
+    retry: ( failureCount: number, error: ApiError | Error) => {
       // Don't retry on 4xx errors
       if ('status' in error && error.status && error.status >= 400 && error.status < 500) {
         return false;
@@ -297,26 +297,26 @@ export const useOptimizedMutation = <T = unknown, V = RequestBody>(
   config?: ApiRequestConfig
 ) => {
   return {
-    mutationFn: (variables: V) => {
-      switch (method) {
+    mutationFn: (_variables: V) => {
+      switch (_method) {
         case 'POST':
-          return apiClient.post<T>(endpoint, variables, config);
+          return apiClient.post<T>( endpoint, variables, config);
         case 'PUT':
-          return apiClient.put<T>(endpoint, variables, config);
+          return apiClient.put<T>( endpoint, variables, config);
         case 'PATCH':
-          return apiClient.patch<T>(endpoint, variables, config);
+          return apiClient.patch<T>( endpoint, variables, config);
         case 'DELETE':
-          return apiClient.delete<T>(endpoint, config);
+          return apiClient.delete<T>( endpoint, config);
         default:
-          throw new Error(`Unsupported method: ${method}`);
+          throw new Error(_`Unsupported method: ${method}`);
       }
     },
-    onSuccess: () => {
+    onSuccess: (_) => {
       // Invalidate related queries
       // This would integrate with React Query's query client
     },
-    onError: (error: ApiError | Error) => {
-      logger.error('Mutation failed', {
+    onError: (_error: ApiError | Error) => {
+      logger.error('Mutation failed', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'mutation'

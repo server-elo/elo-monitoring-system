@@ -57,7 +57,7 @@ class HealthCheckService {
     }
   }
 
-  static async checkExternalServices(): Promise<Record<string, ServiceHealth>> {
+  static async checkExternalServices(_): Promise<Record<string, ServiceHealth>> {
     const services: Record<string, ServiceHealth> = {};
 
     // Check external API services
@@ -102,34 +102,34 @@ class HealthCheckService {
     return services;
   }
 
-  static getUptime(): number {
+  static getUptime(_): number {
     return Date.now() - this.startTime;
   }
 
-  static getVersion(): string {
+  static getVersion(_): string {
     return process.env.APP_VERSION || '1.0.0';
   }
 
-  static getEnvironment(): string {
+  static getEnvironment(_): string {
     return process.env.NODE_ENV || 'development';
   }
 
-  static async performHealthCheck(): Promise<HealthCheck> {
+  static async performHealthCheck(_): Promise<HealthCheck> {
     const [database, redis, external] = await Promise.all([
       this.checkDatabase(),
       this.checkRedis(),
-      this.checkExternalServices()
+      this.checkExternalServices(_)
     ]);
 
     // Determine overall status
-    const allServices = [database, redis, ...Object.values(external)];
+    const allServices = [database, redis, ...Object.values(_external)];
     const unhealthyServices = allServices.filter(service => service.status === 'unhealthy');
     
     let overallStatus: 'healthy' | 'unhealthy' | 'degraded';
     
-    if (unhealthyServices.length === 0) {
+    if (codeSnippets.length === 0) {
       overallStatus = 'healthy';
-    } else if (unhealthyServices.length === allServices.length) {
+    } else if (codeSnippets.length === allServices.length) {
       overallStatus = 'unhealthy';
     } else {
       overallStatus = 'degraded';
@@ -138,9 +138,9 @@ class HealthCheckService {
     return {
       status: overallStatus,
       timestamp: new Date().toISOString(),
-      uptime: this.getUptime(),
-      version: this.getVersion(),
-      environment: this.getEnvironment(),
+      uptime: this.getUptime(_),
+      version: this.getVersion(_),
+      environment: this.getEnvironment(_),
       services: {
         database,
         redis,
@@ -151,16 +151,16 @@ class HealthCheckService {
 }
 
 // GET /api/v1/health - Health check endpoint
-export const GET = publicEndpoint(async (_request: NextRequest, context: MiddlewareContext): Promise<NextResponse> => {
+export const GET = publicEndpoint(async (request: NextRequest, context: MiddlewareContext): Promise<NextResponse> => {
   try {
-    const healthCheck = await HealthCheckService.performHealthCheck();
+    const healthCheck = await HealthCheckService.performHealthCheck(_);
     
     // Return appropriate HTTP status based on health
     if (healthCheck.status === 'healthy') {
-      return ApiResponseBuilder.success(healthCheck);
+      return ApiResponseBuilder.success(_healthCheck);
     } else if (healthCheck.status === 'degraded') {
       // Return 200 but indicate degraded status
-      return ApiResponseBuilder.success(healthCheck);
+      return ApiResponseBuilder.success(_healthCheck);
     } else {
       // Return 503 for unhealthy status
       return NextResponse.json({
@@ -178,9 +178,9 @@ export const GET = publicEndpoint(async (_request: NextRequest, context: Middlew
     const errorHealthCheck: HealthCheck = {
       status: 'unhealthy',
       timestamp: new Date().toISOString(),
-      uptime: HealthCheckService.getUptime(),
-      version: HealthCheckService.getVersion(),
-      environment: HealthCheckService.getEnvironment(),
+      uptime: HealthCheckService.getUptime(_),
+      version: HealthCheckService.getVersion(_),
+      environment: HealthCheckService.getEnvironment(_),
       services: {
         database: {
           status: 'unhealthy',
@@ -207,5 +207,5 @@ export const GET = publicEndpoint(async (_request: NextRequest, context: Middlew
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

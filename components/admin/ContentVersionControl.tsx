@@ -16,25 +16,25 @@ interface ContentVersionControlProps {
 interface VersionCompareProps {
   version1: ContentVersion;
   version2: ContentVersion;
-  onClose: () => void;
+  onClose: (_) => void;
 }
 
-function VersionCompare({ version1, version2, onClose }: VersionCompareProps) {
-  const [showDiff, setShowDiff] = useState(true);
+function VersionCompare( { version1, version2, onClose }: VersionCompareProps) {
+  const [showDiff, setShowDiff] = useState(_true);
 
-  // Simple diff highlighting (in a real implementation, use a proper diff library)
-  const highlightDifferences = (text1: string, text2: string) => {
+  // Simple diff highlighting ( in a real implementation, use a proper diff library)
+  const highlightDifferences = ( text1: string, text2: string) => {
     const words1 = text1.split(' ');
     const words2 = text2.split(' ');
     
     // This is a simplified diff - in production, use a proper diff algorithm
     return {
-      left: words1.map((word, index) => ({
+      left: words1.map( (word, index) => ({
         word,
         changed: words2[index] !== word,
         type: words2[index] ? 'modified' : 'removed'
       })),
-      right: words2.map((word, index) => ({
+      right: words2.map( (word, index) => ({
         word,
         changed: words1[index] !== word,
         type: words1[index] ? 'modified' : 'added'
@@ -42,7 +42,7 @@ function VersionCompare({ version1, version2, onClose }: VersionCompareProps) {
     };
   };
 
-  const diff = highlightDifferences(version1.content, version2.content);
+  const diff = highlightDifferences( version1.content, version2.content);
 
   return (
     <motion.div
@@ -67,7 +67,7 @@ function VersionCompare({ version1, version2, onClose }: VersionCompareProps) {
           </div>
           <div className="flex items-center space-x-3">
             <Button
-              onClick={() => setShowDiff(!showDiff)}
+              onClick={(_) => setShowDiff(!showDiff)}
               variant="outline"
               size="sm"
               className="border-white/20 text-white hover:bg-white/10"
@@ -99,7 +99,7 @@ function VersionCompare({ version1, version2, onClose }: VersionCompareProps) {
               </div>
               <div className="flex items-center space-x-2 text-gray-300">
                 <Calendar className="w-3 h-3" />
-                <span>{version1.createdAt.toLocaleDateString()}</span>
+                <span>{version1.createdAt.toLocaleDateString(_)}</span>
               </div>
               <div className="text-gray-400">{version1.changeLog}</div>
             </div>
@@ -120,7 +120,7 @@ function VersionCompare({ version1, version2, onClose }: VersionCompareProps) {
               </div>
               <div className="flex items-center space-x-2 text-gray-300">
                 <Calendar className="w-3 h-3" />
-                <span>{version2.createdAt.toLocaleDateString()}</span>
+                <span>{version2.createdAt.toLocaleDateString(_)}</span>
               </div>
               <div className="text-gray-400">{version2.changeLog}</div>
             </div>
@@ -134,7 +134,7 @@ function VersionCompare({ version1, version2, onClose }: VersionCompareProps) {
               <div>
                 <h3 className="font-medium text-white mb-3">Version {version1.version}</h3>
                 <div className="bg-black/20 rounded-lg p-4 font-mono text-sm">
-                  {diff.left.map((item, index) => (
+                  {diff.left.map( (item, index) => (
                     <span
                       key={index}
                       className={cn(
@@ -150,7 +150,7 @@ function VersionCompare({ version1, version2, onClose }: VersionCompareProps) {
               <div>
                 <h3 className="font-medium text-white mb-3">Version {version2.version}</h3>
                 <div className="bg-black/20 rounded-lg p-4 font-mono text-sm">
-                  {diff.right.map((item, index) => (
+                  {diff.right.map( (item, index) => (
                     <span
                       key={index}
                       className={cn(
@@ -186,12 +186,12 @@ function VersionCompare({ version1, version2, onClose }: VersionCompareProps) {
   );
 }
 
-export function ContentVersionControl({ contentId, className }: ContentVersionControlProps) {
+export function ContentVersionControl( { contentId, className }: ContentVersionControlProps) {
   const [versions, setVersions] = useState<ContentVersion[]>([]);
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
-  const [showCompare, setShowCompare] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [showCreateVersion, setShowCreateVersion] = useState(false);
+  const [showCompare, setShowCompare] = useState(_false);
+  const [loading, setLoading] = useState(_true);
+  const [showCreateVersion, setShowCreateVersion] = useState(_false);
   const [newVersionData, setNewVersionData] = useState({
     title: '',
     changeLog: '',
@@ -199,11 +199,11 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
   });
 
   useEffect(() => {
-    loadVersions();
+    loadVersions(_);
   }, [contentId]);
 
   const loadVersions = async () => {
-    setLoading(true);
+    setLoading(_true);
     
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -245,15 +245,15 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
       }
     ];
 
-    setVersions(mockVersions);
-    setLoading(false);
+    setVersions(_mockVersions);
+    setLoading(_false);
   };
 
-  const handleVersionSelect = (versionId: string) => {
+  const handleVersionSelect = (_versionId: string) => {
     setSelectedVersions(prev => {
-      if (prev.includes(versionId)) {
+      if (_prev.includes(versionId)) {
         return prev.filter(id => id !== versionId);
-      } else if (prev.length < 2) {
+      } else if (_prev.length < 2) {
         return [...prev, versionId];
       } else {
         return [prev[1], versionId];
@@ -261,13 +261,13 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
     });
   };
 
-  const handleCompareVersions = () => {
-    if (selectedVersions.length === 2) {
-      setShowCompare(true);
+  const handleCompareVersions = (_) => {
+    if (_selectedVersions.length === 2) {
+      setShowCompare(_true);
     }
   };
 
-  const handleRevertToVersion = (versionId: string) => {
+  const handleRevertToVersion = (_versionId: string) => {
     console.log('Reverting to version:', versionId);
     // Implement version revert logic
   };
@@ -276,7 +276,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
     if (!newVersionData.title || !newVersionData.changeLog) return;
 
     const newVersion: ContentVersion = {
-      id: `v${Date.now()}`,
+      id: `v${Date.now(_)}`,
       contentId,
       version: Math.max(...versions.map(v => v.version)) + 1,
       title: newVersionData.title,
@@ -287,18 +287,18 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
       isActive: false
     };
 
-    setVersions(prev => [newVersion, ...prev]);
-    setNewVersionData({ title: '', changeLog: '', content: '' });
-    setShowCreateVersion(false);
+    setVersions( prev => [newVersion, ...prev]);
+    setNewVersionData( { title: '', changeLog: '', content: '' });
+    setShowCreateVersion(_false);
   };
 
-  const getSelectedVersionsData = () => {
+  const getSelectedVersionsData = (_) => {
     return selectedVersions.map(id => versions.find(v => v.id === id)).filter(Boolean) as ContentVersion[];
   };
 
   if (loading) {
     return (
-      <div className={cn('space-y-4', className)}>
+      <div className={cn( 'space-y-4', className)}>
         {[1, 2, 3].map(i => (
           <Card key={i} className="bg-white/10 backdrop-blur-md border-white/20 p-4">
             <div className="flex items-center space-x-4">
@@ -316,7 +316,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn( 'space-y-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -334,7 +334,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
             Compare Selected
           </Button>
           <Button
-            onClick={() => setShowCreateVersion(true)}
+            onClick={(_) => setShowCreateVersion(_true)}
             className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -352,7 +352,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
               {selectedVersions.length === 2 && ' for comparison'}
             </span>
             <Button
-              onClick={() => setSelectedVersions([])}
+              onClick={(_) => setSelectedVersions([])}
               variant="ghost"
               size="sm"
               className="text-blue-400 hover:text-blue-300"
@@ -365,7 +365,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
 
       {/* Version List */}
       <div className="space-y-4">
-        {versions.map((version, index) => (
+        {versions.map( (version, index) => (
           <motion.div
             key={version.id}
             initial={{ opacity: 0, y: 20 }}
@@ -374,13 +374,13 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
           >
             <Card className={cn(
               'bg-white/10 backdrop-blur-md border-white/20 p-6 hover:bg-white/15 transition-colors cursor-pointer',
-              selectedVersions.includes(version.id) && 'border-blue-400/50 bg-blue-500/10'
+              selectedVersions.includes(_version.id) && 'border-blue-400/50 bg-blue-500/10'
             )}>
               <div className="flex items-center space-x-4">
                 <input
                   type="checkbox"
-                  checked={selectedVersions.includes(version.id)}
-                  onChange={() => handleVersionSelect(version.id)}
+                  checked={selectedVersions.includes(_version.id)}
+                  onChange={(_) => handleVersionSelect(_version.id)}
                   className="rounded border-white/20 bg-white/10 text-blue-500 focus:ring-blue-500"
                 />
                 
@@ -408,7 +408,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
                     </div>
                     <div className="flex items-center space-x-1">
                       <Calendar className="w-3 h-3" />
-                      <span>{version.createdAt.toLocaleDateString()}</span>
+                      <span>{version.createdAt.toLocaleDateString(_)}</span>
                     </div>
                   </div>
                 </div>
@@ -432,7 +432,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
                   </Button>
                   {!version.isActive && (
                     <Button
-                      onClick={() => handleRevertToVersion(version.id)}
+                      onClick={(_) => handleRevertToVersion(_version.id)}
                       variant="ghost"
                       size="sm"
                       className="text-yellow-400 hover:text-yellow-300"
@@ -452,9 +452,9 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
       <AnimatePresence>
         {showCompare && selectedVersions.length === 2 && (
           <VersionCompare
-            version1={getSelectedVersionsData()[0]}
-            version2={getSelectedVersionsData()[1]}
-            onClose={() => setShowCompare(false)}
+            version1={getSelectedVersionsData(_)[0]}
+            version2={getSelectedVersionsData(_)[1]}
+            onClose={(_) => setShowCompare(_false)}
           />
         )}
       </AnimatePresence>
@@ -478,7 +478,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-xl font-bold text-white">Create New Version</h3>
                   <Button
-                    onClick={() => setShowCreateVersion(false)}
+                    onClick={(_) => setShowCreateVersion(_false)}
                     variant="ghost"
                     size="sm"
                     className="text-gray-400 hover:text-white"
@@ -495,7 +495,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
                     <input
                       type="text"
                       value={newVersionData.title}
-                      onChange={(e) => setNewVersionData(prev => ({ ...prev, title: e.target.value }))}
+                      onChange={(_e) => setNewVersionData( prev => ({ ...prev, title: e.target.value }))}
                       className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"
                       placeholder="Enter version title..."
                     />
@@ -507,7 +507,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
                     </label>
                     <textarea
                       value={newVersionData.changeLog}
-                      onChange={(e) => setNewVersionData(prev => ({ ...prev, changeLog: e.target.value }))}
+                      onChange={(_e) => setNewVersionData( prev => ({ ...prev, changeLog: e.target.value }))}
                       rows={3}
                       className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 resize-none"
                       placeholder="Describe what changed in this version..."
@@ -516,7 +516,7 @@ export function ContentVersionControl({ contentId, className }: ContentVersionCo
 
                   <div className="flex justify-end space-x-3">
                     <Button
-                      onClick={() => setShowCreateVersion(false)}
+                      onClick={(_) => setShowCreateVersion(_false)}
                       variant="outline"
                       className="border-white/20 text-white hover:bg-white/10"
                     >

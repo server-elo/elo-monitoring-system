@@ -9,17 +9,17 @@ import { cn } from '@/lib/utils';
 
 interface NotificationPreferencesModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
 }
 
-export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPreferencesModalProps) {
-  const { preferences, updatePreferences } = useNotifications();
-  const [localPreferences, setLocalPreferences] = useState<NotificationPreferences>(preferences);
-  const [hasChanges, setHasChanges] = useState(false);
+export function NotificationPreferencesModal( { isOpen, onClose }: NotificationPreferencesModalProps) {
+  const { preferences, updatePreferences } = useNotifications(_);
+  const [localPreferences, setLocalPreferences] = useState<NotificationPreferences>(_preferences);
+  const [hasChanges, setHasChanges] = useState(_false);
 
-  const handlePreferenceChange = (key: keyof NotificationPreferences, value: any) => {
-    setLocalPreferences(prev => ({ ...prev, [key]: value }));
-    setHasChanges(true);
+  const handlePreferenceChange = ( key: keyof NotificationPreferences, value: any) => {
+    setLocalPreferences( prev => ({ ...prev, [key]: value }));
+    setHasChanges(_true);
   };
 
   const handleTypePreferenceChange = (
@@ -37,17 +37,17 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
         }
       }
     }));
-    setHasChanges(true);
+    setHasChanges(_true);
   };
 
-  const handleSave = () => {
-    updatePreferences(localPreferences);
-    setHasChanges(false);
+  const handleSave = (_) => {
+    updatePreferences(_localPreferences);
+    setHasChanges(_false);
   };
 
-  const handleReset = () => {
-    setLocalPreferences(preferences);
-    setHasChanges(false);
+  const handleReset = (_) => {
+    setLocalPreferences(_preferences);
+    setHasChanges(_false);
   };
 
   const notificationTypes: { type: NotificationType; label: string; description: string }[] = [
@@ -87,7 +87,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(_e) => e.stopPropagation(_)}
           className="w-full max-w-4xl max-h-[90vh] overflow-hidden"
         >
           <GlassContainer
@@ -132,7 +132,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                       </p>
                     </div>
                     <button
-                      onClick={() => handlePreferenceChange('enabled', !localPreferences.enabled)}
+                      onClick={(_) => handlePreferenceChange( 'enabled', !localPreferences.enabled)}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         localPreferences.enabled ? 'bg-blue-600' : 'bg-gray-600'
@@ -158,7 +158,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                       </p>
                     </div>
                     <button
-                      onClick={() => handlePreferenceChange('soundEnabled', !localPreferences.soundEnabled)}
+                      onClick={(_) => handlePreferenceChange( 'soundEnabled', !localPreferences.soundEnabled)}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         localPreferences.soundEnabled ? 'bg-blue-600' : 'bg-gray-600'
@@ -184,7 +184,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                       </p>
                     </div>
                     <button
-                      onClick={() => handlePreferenceChange('vibrationEnabled', !localPreferences.vibrationEnabled)}
+                      onClick={(_) => handlePreferenceChange( 'vibrationEnabled', !localPreferences.vibrationEnabled)}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         localPreferences.vibrationEnabled ? 'bg-blue-600' : 'bg-gray-600'
@@ -210,7 +210,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                       </p>
                     </div>
                     <button
-                      onClick={() => handlePreferenceChange('groupSimilar', !localPreferences.groupSimilar)}
+                      onClick={(_) => handlePreferenceChange( 'groupSimilar', !localPreferences.groupSimilar)}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         localPreferences.groupSimilar ? 'bg-blue-600' : 'bg-gray-600'
@@ -235,7 +235,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     {positions.map((position) => (
                       <button
                         key={position.value}
-                        onClick={() => handlePreferenceChange('position', position.value)}
+                        onClick={(_) => handlePreferenceChange( 'position', position.value)}
                         className={cn(
                           'p-2 text-sm rounded-lg border transition-colors',
                           localPreferences.position === position.value
@@ -259,7 +259,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     min="1"
                     max="10"
                     value={localPreferences.maxVisible}
-                    onChange={(e) => handlePreferenceChange('maxVisible', parseInt(e.target.value))}
+                    onChange={(_e) => handlePreferenceChange( 'maxVisible', parseInt(e.target.value))}
                     className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
@@ -284,7 +284,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                           </p>
                         </div>
                         <button
-                          onClick={() => 
+                          onClick={(_) => 
                             handleTypePreferenceChange(
                               notifType.type, 
                               'enabled', 
@@ -311,8 +311,8 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                             <input
                               type="checkbox"
                               checked={localPreferences.types[notifType.type].sound}
-                              onChange={(e) => 
-                                handleTypePreferenceChange(notifType.type, 'sound', e.target.checked)
+                              onChange={(_e) => 
+                                handleTypePreferenceChange( notifType.type, 'sound', e.target.checked)
                               }
                               className="rounded border-gray-600 bg-gray-700 text-blue-600"
                             />
@@ -322,8 +322,8 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                             <input
                               type="checkbox"
                               checked={localPreferences.types[notifType.type].vibration}
-                              onChange={(e) => 
-                                handleTypePreferenceChange(notifType.type, 'vibration', e.target.checked)
+                              onChange={(_e) => 
+                                handleTypePreferenceChange( notifType.type, 'vibration', e.target.checked)
                               }
                               className="rounded border-gray-600 bg-gray-700 text-blue-600"
                             />

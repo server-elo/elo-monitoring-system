@@ -8,7 +8,7 @@ interface SessionProviderProps {
   session?: any;
 }
 
-export function SessionProvider({ children, session }: SessionProviderProps) {
+export function SessionProvider( { children, session }: SessionProviderProps) {
   return (
     <NextAuthSessionProvider 
       session={session}

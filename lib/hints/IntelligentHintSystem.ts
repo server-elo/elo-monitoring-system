@@ -93,9 +93,9 @@ export interface SocraticQuestion {
 export class IntelligentHintSystem {
   private securityScanner: SecurityScanner;
   private gasAnalyzer: GasOptimizationAnalyzer;
-  private hintHistory: Map<string, Hint[]> = new Map();
-  private effectivenessData: Map<string, HintEffectiveness[]> = new Map();
-  private activeSequences: Map<string, HintSequence> = new Map();
+  private hintHistory: Map<string, Hint[]> = new Map(_);
+  private effectivenessData: Map<string, HintEffectiveness[]> = new Map(_);
+  private activeSequences: Map<string, HintSequence> = new Map(_);
 
   constructor(
     securityScanner: SecurityScanner,
@@ -106,32 +106,32 @@ export class IntelligentHintSystem {
   }
 
   // Main hint generation method
-  async generateHint(context: HintContext): Promise<Hint> {
-    console.log(`💡 Generating hint for user ${context.userId} at level ${context.userLevel}`);
+  async generateHint(_context: HintContext): Promise<Hint> {
+    console.log(_`💡 Generating hint for user ${context.userId} at level ${context.userLevel}`);
     
     try {
       // Get user's learning profile
-      const profile = await adaptiveLearningEngine.analyzeUserPerformance(context.userId);
+      const profile = await adaptiveLearningEngine.analyzeUserPerformance(_context.userId);
       
       // Analyze current code state
-      const codeAnalysis = await this.analyzeCodeState(context.currentCode, context.userId);
+      const codeAnalysis = await this.analyzeCodeState( context.currentCode, context.userId);
       
       // Determine appropriate hint level and type
-      const hintLevel = this.calculateOptimalHintLevel(context, profile);
-      const hintType = this.determineHintType(context, codeAnalysis);
+      const hintLevel = this.calculateOptimalHintLevel( context, profile);
+      const hintType = this.determineHintType( context, codeAnalysis);
       
       // Generate contextual hint using AI
-      const hint = await this.generateContextualHint(context, profile, codeAnalysis, hintLevel, hintType);
+      const hint = await this.generateContextualHint( context, profile, codeAnalysis, hintLevel, hintType);
       
       // Record hint in history
-      this.recordHint(context.userId, hint);
+      this.recordHint( context.userId, hint);
       
-      console.log(`✅ Generated ${hint.type} hint at level ${hint.level}`);
+      console.log(_`✅ Generated ${hint.type} hint at level ${hint.level}`);
       return hint;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Hint generation failed:', error);
-      return this.generateFallbackHint(context);
+      return this.generateFallbackHint(_context);
     }
   }
 
@@ -165,7 +165,7 @@ export class IntelligentHintSystem {
       'explanation'
     );
     
-    return this.parseSocraticQuestions(response.content, targetConcept);
+    return this.parseSocraticQuestions( response.content, targetConcept);
   }
 
   // Create interactive hint with guided exploration
@@ -173,26 +173,26 @@ export class IntelligentHintSystem {
     context: HintContext,
     focusArea: 'security' | 'gas' | 'syntax' | 'logic'
   ): Promise<Hint> {
-    const interactiveContent = await this.generateInteractiveContent(context, focusArea);
+    const interactiveContent = await this.generateInteractiveContent( context, focusArea);
     
     return {
-      id: `interactive-${Date.now()}`,
-      level: this.calculateOptimalHintLevel(context),
+      id: `interactive-${Date.now(_)}`,
+      level: this.calculateOptimalHintLevel(_context),
       type: 'explanation',
       content: interactiveContent,
-      codeHighlight: this.identifyRelevantCodeSection(context, focusArea),
-      followUpQuestions: await this.generateFollowUpQuestions(context, focusArea),
-      relatedConcepts: this.getRelatedConcepts(focusArea),
+      codeHighlight: this.identifyRelevantCodeSection( context, focusArea),
+      followUpQuestions: await this.generateFollowUpQuestions( context, focusArea),
+      relatedConcepts: this.getRelatedConcepts(_focusArea),
       unlockCondition: 'immediate',
       estimatedHelpfulness: 85,
       learningValue: 90,
-      difficulty: this.mapUserLevelToDifficulty(context.userLevel),
+      difficulty: this.mapUserLevelToDifficulty(_context.userLevel),
       category: focusArea,
       interactionType: 'interactive',
       metadata: {
-        generatedAt: new Date(),
+        generatedAt: new Date(_),
         aiConfidence: 0.9,
-        userRelevance: this.calculateUserRelevance(context, focusArea),
+        userRelevance: this.calculateUserRelevance( context, focusArea),
         contextualFit: 0.95
       }
     };
@@ -204,13 +204,13 @@ export class IntelligentHintSystem {
     currentHintId: string,
     userResponse: 'helpful' | 'confusing' | 'too-easy' | 'too-hard'
   ): Promise<Hint | null> {
-    const sequence = this.activeSequences.get(userId);
+    const sequence = this.activeSequences.get(_userId);
     if (!sequence) return null;
     
     // Adjust progression based on user feedback
     let nextLevel = sequence.currentLevel;
     
-    switch (userResponse) {
+    switch (_userResponse) {
       case 'helpful':
         nextLevel = Math.min(sequence.maxLevel, sequence.currentLevel + 1);
         break;
@@ -228,10 +228,10 @@ export class IntelligentHintSystem {
     
     // Update sequence
     sequence.currentLevel = nextLevel;
-    this.activeSequences.set(userId, sequence);
+    this.activeSequences.set( userId, sequence);
     
     // Generate next hint in sequence
-    return this.generateSequenceHint(sequence, nextLevel);
+    return this.generateSequenceHint( sequence, nextLevel);
   }
 
   // Track hint effectiveness
@@ -240,12 +240,12 @@ export class IntelligentHintSystem {
     userId: string,
     outcome: HintEffectiveness
   ): Promise<void> {
-    const userEffectiveness = this.effectivenessData.get(userId) || [];
-    userEffectiveness.push(outcome);
-    this.effectivenessData.set(userId, userEffectiveness);
+    const userEffectiveness = this.effectivenessData.get(_userId) || [];
+    userEffectiveness.push(_outcome);
+    this.effectivenessData.set( userId, userEffectiveness);
     
     // Use effectiveness data to improve future hints
-    await this.updateHintStrategy(userId, outcome);
+    await this.updateHintStrategy( userId, outcome);
   }
 
   // Generate contextual code examples
@@ -259,7 +259,7 @@ export class IntelligentHintSystem {
       Context:
       - User Level: ${context.userLevel}/100
       - Current Code Context: ${context.currentCode.substring(0, 150)}...
-      - Learning Objectives: ${context.learningObjectives.join(', ')}
+      - Learning Objectives: ${context.learningObjectives.join( ', ')}
       
       Create a minimal example that:
       1. Demonstrates the concept clearly
@@ -277,7 +277,7 @@ export class IntelligentHintSystem {
       'code'
     );
     
-    return this.extractCodeFromResponse(response.content);
+    return this.extractCodeFromResponse(_response.content);
   }
 
   // Private helper methods
@@ -288,23 +288,23 @@ export class IntelligentHintSystem {
     let level = 1;
     
     // Increase level based on time stuck
-    if (context.timeStuck > 60) level++; // 1 minute
-    if (context.timeStuck > 180) level++; // 3 minutes
-    if (context.timeStuck > 300) level++; // 5 minutes
-    if (context.timeStuck > 600) level++; // 10 minutes
+    if (_context.timeStuck > 60) level++; // 1 minute
+    if (_context.timeStuck > 180) level++; // 3 minutes
+    if (_context.timeStuck > 300) level++; // 5 minutes
+    if (_context.timeStuck > 600) level++; // 10 minutes
     
     // Adjust based on previous hints
     level += Math.min(2, context.previousHints.length);
     
     // Adjust based on frustration level
-    if (context.sessionContext.frustrationLevel > 7) {
+    if (_context.sessionContext.frustrationLevel > 7) {
       level = Math.min(5, level + 1); // More direct help when frustrated
     }
     
     // Adjust based on user skill level
-    if (context.userLevel < 30) {
+    if (_context.userLevel < 30) {
       level = Math.min(level + 1, 5); // More help for beginners
-    } else if (context.userLevel > 70) {
+    } else if (_context.userLevel > 70) {
       level = Math.max(level - 1, 1); // Less direct help for advanced users
     }
     
@@ -321,19 +321,19 @@ export class IntelligentHintSystem {
     codeAnalysis: any
   ): 'question' | 'suggestion' | 'example' | 'explanation' | 'direction' {
     // Determine best hint type based on context
-    if (context.sessionContext.frustrationLevel > 8) {
+    if (_context.sessionContext.frustrationLevel > 8) {
       return 'explanation'; // Direct help when very frustrated
     }
     
-    if (context.userLevel < 40) {
+    if (_context.userLevel < 40) {
       return 'example'; // Examples work well for beginners
     }
     
-    if (context.timeStuck < 120) {
+    if (_context.timeStuck < 120) {
       return 'question'; // Socratic method for initial guidance
     }
     
-    if (codeAnalysis.syntaxErrors.length > 0) {
+    if (_codeAnalysis.syntaxErrors.length > 0) {
       return 'direction'; // Direct guidance for syntax issues
     }
     
@@ -347,7 +347,7 @@ export class IntelligentHintSystem {
     hintLevel: number,
     hintType: string
   ): Promise<Hint> {
-    const prompt = this.buildHintPrompt(context, profile, codeAnalysis, hintLevel, hintType);
+    const prompt = this.buildHintPrompt( context, profile, codeAnalysis, hintLevel, hintType);
     
     const response = await enhancedTutor.getAIResponse(
       prompt,
@@ -355,7 +355,7 @@ export class IntelligentHintSystem {
       'explanation'
     );
     
-    return this.parseHintResponse(response.content, hintLevel, hintType, context);
+    return this.parseHintResponse( response.content, hintLevel, hintType, context);
   }
 
   private buildHintPrompt(
@@ -384,7 +384,7 @@ export class IntelligentHintSystem {
       - Current Concept: ${context.currentConcept}
       - Time Stuck: ${context.timeStuck} seconds
       - Frustration Level: ${context.sessionContext.frustrationLevel}/10
-      - Weakness Patterns: ${profile.weaknessPatterns.join(', ')}
+      - Weakness Patterns: ${profile.weaknessPatterns.join( ', ')}
       
       Current Code Context:
       \`\`\`solidity
@@ -396,11 +396,11 @@ export class IntelligentHintSystem {
       Code Analysis:
       - Security Issues: ${codeAnalysis.securityIssues}
       - Gas Optimizations: ${codeAnalysis.gasOptimizations}
-      - Syntax Errors: ${codeAnalysis.syntaxErrors.join(', ')}
+      - Syntax Errors: ${codeAnalysis.syntaxErrors.join( ', ')}
       
       Previous Hints: ${context.previousHints.map(h => h.content).join('; ')}
       
-      Learning Objectives: ${context.learningObjectives.join(', ')}
+      Learning Objectives: ${context.learningObjectives.join( ', ')}
       
       Generate a ${hintType} that:
       1. ${hintStrategies[hintLevel]}
@@ -415,21 +415,21 @@ export class IntelligentHintSystem {
     `;
   }
 
-  private async analyzeCodeState(_code: string, _userId: string): Promise<any> {
+  private async analyzeCodeState( _code: string, userId: string): Promise<any> {
     // Analyze current code for context
-    const securityResult = await this.securityScanner.getLastResult();
-    const gasResult = await this.gasAnalyzer.getLastAnalysis();
+    const securityResult = await this.securityScanner.getLastResult(_);
+    const gasResult = await this.gasAnalyzer.getLastAnalysis(_);
     
     return {
       securityIssues: securityResult?.issues.length || 0,
       gasOptimizations: gasResult?.optimizations.length || 0,
-      syntaxErrors: this.detectSyntaxErrors(code),
-      codeComplexity: this.calculateCodeComplexity(code),
-      conceptsUsed: this.identifyConceptsInCode(code)
+      syntaxErrors: this.detectSyntaxErrors(_code),
+      codeComplexity: this.calculateCodeComplexity(_code),
+      conceptsUsed: this.identifyConceptsInCode(_code)
     };
   }
 
-  private detectSyntaxErrors(code: string): string[] {
+  private detectSyntaxErrors(_code: string): string[] {
     // Simple syntax error detection
     const errors = [];
     
@@ -437,18 +437,18 @@ export class IntelligentHintSystem {
       errors.push('Missing pragma directive');
     }
     
-    const openBraces = (code.match(/{/g) || []).length;
-    const closeBraces = (code.match(/}/g) || []).length;
-    if (openBraces !== closeBraces) {
+    const openBraces = (_code.match(/{/g) || []).length;
+    const closeBraces = (_code.match(/}/g) || []).length;
+    if (_openBraces !== closeBraces) {
       errors.push('Mismatched braces');
     }
     
     return errors;
   }
 
-  private generateFallbackHint(context: HintContext): Hint {
+  private generateFallbackHint(_context: HintContext): Hint {
     return {
-      id: `fallback-${Date.now()}`,
+      id: `fallback-${Date.now(_)}`,
       level: 2,
       type: 'suggestion',
       content: `Consider reviewing the ${context.currentConcept} concept. Take a step back and think about what you're trying to achieve.`,
@@ -459,7 +459,7 @@ export class IntelligentHintSystem {
       category: 'concept',
       interactionType: 'passive',
       metadata: {
-        generatedAt: new Date(),
+        generatedAt: new Date(_),
         aiConfidence: 0.5,
         userRelevance: 0.6,
         contextualFit: 0.5
@@ -467,27 +467,27 @@ export class IntelligentHintSystem {
     };
   }
 
-  private recordHint(userId: string, hint: Hint): void {
-    const userHints = this.hintHistory.get(userId) || [];
-    userHints.push(hint);
-    this.hintHistory.set(userId, userHints.slice(-20)); // Keep last 20 hints
+  private recordHint( userId: string, hint: Hint): void {
+    const userHints = this.hintHistory.get(_userId) || [];
+    userHints.push(_hint);
+    this.hintHistory.set( userId, userHints.slice(-20)); // Keep last 20 hints
   }
 
   // Parse Socratic questions from AI response
-  private parseSocraticQuestions(content: string, concept: string): string[] {
+  private parseSocraticQuestions( content: string, concept: string): string[] {
     const questions: string[] = [];
     const lines = content.split('\n');
     
     lines.forEach(line => {
-      const trimmed = line.trim();
-      if (trimmed.endsWith('?') || trimmed.includes('consider') || trimmed.includes('think about')) {
-        questions.push(trimmed);
+      const trimmed = line.trim(_);
+      if (_trimmed.endsWith('?') || trimmed.includes('consider') || trimmed.includes('think about')) {
+        questions.push(_trimmed);
       }
     });
     
     // Ensure we have at least one question
-    if (questions.length === 0) {
-      questions.push(`What do you think happens when you ${concept}?`);
+    if (_questions.length === 0) {
+      questions.push(_`What do you think happens when you ${concept}?`);
     }
     
     return questions.slice(0, 3); // Return max 3 questions
@@ -519,11 +519,11 @@ export class IntelligentHintSystem {
     let endLine = lines.length;
     
     // Find the most relevant section based on focus area
-    lines.forEach((line, index) => {
-      if (focusArea === 'security' && line.includes('transfer')) {
+    lines.forEach( (line, index) => {
+      if (_focusArea === 'security' && line.includes('transfer')) {
         startLine = Math.max(1, index - 2);
         endLine = Math.min(lines.length, index + 3);
-      } else if (focusArea === 'gas' && line.includes('for')) {
+      } else if (_focusArea === 'gas' && line.includes('for')) {
         startLine = Math.max(1, index - 1);
         endLine = Math.min(lines.length, index + 5);
       }
@@ -543,7 +543,7 @@ export class IntelligentHintSystem {
   ): Promise<string[]> {
     const questions = [];
     
-    switch (focusArea) {
+    switch (_focusArea) {
       case 'security':
         questions.push('Have you considered reentrancy attacks?');
         questions.push('What happens if the transfer fails?');
@@ -566,7 +566,7 @@ export class IntelligentHintSystem {
   }
 
   // Get related concepts based on focus area
-  private getRelatedConcepts(focusArea: string): string[] {
+  private getRelatedConcepts(_focusArea: string): string[] {
     const conceptMap: Record<string, string[]> = {
       security: ['reentrancy', 'access-control', 'overflow', 'underflow'],
       gas: ['storage-optimization', 'loop-efficiency', 'batch-operations'],
@@ -585,18 +585,18 @@ export class IntelligentHintSystem {
   }
 
   // Calculate user relevance score
-  private calculateUserRelevance(context: HintContext, focusArea: string): number {
+  private calculateUserRelevance( context: HintContext, focusArea: string): number {
     let relevance = 0.5; // Base relevance
     
     // Increase relevance based on error type
-    if (context.errorType === focusArea) {
+    if (_context.errorType === focusArea) {
       relevance += 0.3;
     }
     
     // Adjust based on user level
-    if (context.userLevel === 'beginner' && focusArea === 'syntax') {
+    if (_context.userLevel === 'beginner' && focusArea === 'syntax') {
       relevance += 0.2;
-    } else if (context.userLevel === 'advanced' && focusArea === 'gas') {
+    } else if (_context.userLevel === 'advanced' && focusArea === 'gas') {
       relevance += 0.2;
     }
     
@@ -609,7 +609,7 @@ export class IntelligentHintSystem {
     targetConcept: string,
     stepNumber: number
   ): Promise<SequenceHint> {
-    const totalSteps = this.calculateTotalSteps(targetConcept, context.userLevel);
+    const totalSteps = this.calculateTotalSteps( targetConcept, context.userLevel);
     
     return {
       currentStep: stepNumber,
@@ -617,29 +617,29 @@ export class IntelligentHintSystem {
       stepContent: `Step ${stepNumber}: Focus on ${targetConcept}`,
       nextStepPreview: stepNumber < totalSteps ? `Next: Continue with advanced ${targetConcept}` : undefined,
       previousStepRecap: stepNumber > 1 ? `Previous: Basic ${targetConcept} setup` : undefined,
-      progressPercentage: (stepNumber / totalSteps) * 100
+      progressPercentage: (_stepNumber / totalSteps) * 100
     };
   }
 
   // Calculate total steps for a concept
-  private calculateTotalSteps(concept: string, userLevel: string): number {
+  private calculateTotalSteps( concept: string, userLevel: string): number {
     const baseSteps = 3;
     const levelMultiplier = userLevel === 'beginner' ? 2 : userLevel === 'intermediate' ? 1.5 : 1;
-    return Math.ceil(baseSteps * levelMultiplier);
+    return Math.ceil(_baseSteps * levelMultiplier);
   }
 
   // Parse hint response from AI
-  private parseHintResponse(aiResponse: any): string {
-    if (typeof aiResponse === 'string') {
+  private parseHintResponse(_aiResponse: any): string {
+    if (_typeof aiResponse === 'string') {
       return aiResponse;
     }
     return aiResponse.content || 'Consider reviewing your approach';
   }
 
   // Extract code from AI response
-  private extractCodeFromResponse(response: string): string | undefined {
-    const codeMatch = response.match(/```(?:solidity)?\n([\s\S]*?)```/);
-    return codeMatch ? codeMatch[1].trim() : undefined;
+  private extractCodeFromResponse(_response: string): string | undefined {
+    const codeMatch = response.match(_/```(?:solidity)?\n([\s\S]*?)```/);
+    return codeMatch ? codeMatch[1].trim(_) : undefined;
   }
 
   // Update hint strategy based on usage
@@ -647,64 +647,64 @@ export class IntelligentHintSystem {
     userId: string,
     feedback: HintFeedback
   ): Promise<void> {
-    const strategies = this.userHintStrategies.get(userId) || {
+    const strategies = this.userHintStrategies.get(_userId) || {
       preferredTypes: ['explanation'],
       effectiveStrategies: [],
       ineffectiveStrategies: []
     };
     
-    if (feedback.wasHelpful) {
-      strategies.effectiveStrategies.push(feedback.hintType);
+    if (_feedback.wasHelpful) {
+      strategies.effectiveStrategies.push(_feedback.hintType);
     } else {
-      strategies.ineffectiveStrategies.push(feedback.hintType);
+      strategies.ineffectiveStrategies.push(_feedback.hintType);
     }
     
     // Update preferred types based on effectiveness
-    const effectiveCounts = strategies.effectiveStrategies.reduce((acc, type) => {
-      acc[type] = (acc[type] || 0) + 1;
+    const effectiveCounts = strategies.effectiveStrategies.reduce( (acc, type) => {
+      acc[type] = (_acc[type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
     
-    strategies.preferredTypes = Object.entries(effectiveCounts)
-      .sort(([, a], [, b]) => b - a)
+    strategies.preferredTypes = Object.entries(_effectiveCounts)
+      .sort( ([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([type]) => type as HintType);
     
-    this.userHintStrategies.set(userId, strategies);
+    this.userHintStrategies.set( userId, strategies);
   }
 
   // Calculate code complexity
-  private calculateCodeComplexity(code: string): number {
+  private calculateCodeComplexity(_code: string): number {
     let complexity = 1; // Base complexity
     
     // Count control structures
     const controlStructures = ['if', 'for', 'while', 'require', 'assert'];
     controlStructures.forEach(structure => {
-      complexity += (code.match(new RegExp(`\\b${structure}\\b`, 'g')) || []).length;
+      complexity += ( code.match(new RegExp(`\\b${structure}\\b`, 'g')) || []).length;
     });
     
     // Count functions
-    complexity += (code.match(/function\s+\w+/g) || []).length;
+    complexity += (_code.match(/function\s+\w+/g) || []).length;
     
     // Count modifiers
-    complexity += (code.match(/modifier\s+\w+/g) || []).length;
+    complexity += (_code.match(/modifier\s+\w+/g) || []).length;
     
     return complexity;
   }
 
   // Identify concepts in code
-  private identifyConceptsInCode(code: string): string[] {
+  private identifyConceptsInCode(_code: string): string[] {
     const concepts: string[] = [];
     
     // Check for common Solidity patterns
-    if (code.includes('modifier')) concepts.push('modifiers');
-    if (code.includes('mapping')) concepts.push('mappings');
-    if (code.includes('event')) concepts.push('events');
-    if (code.includes('require') || code.includes('assert')) concepts.push('error-handling');
-    if (code.includes('payable')) concepts.push('ether-handling');
-    if (code.includes('external') || code.includes('public')) concepts.push('visibility');
+    if (_code.includes('modifier')) concepts.push('modifiers');
+    if (_code.includes('mapping')) concepts.push('mappings');
+    if (_code.includes('event')) concepts.push('events');
+    if (_code.includes('require') || code.includes('assert')) concepts.push('error-handling');
+    if (_code.includes('payable')) concepts.push('ether-handling');
+    if (_code.includes('external') || code.includes('public')) concepts.push('visibility');
     
-    return [...new Set(concepts)]; // Remove duplicates
+    return [...new Set(_concepts)]; // Remove duplicates
   }
 }
 
@@ -713,5 +713,5 @@ export function createIntelligentHintSystem(
   securityScanner: SecurityScanner,
   gasAnalyzer: GasOptimizationAnalyzer
 ): IntelligentHintSystem {
-  return new IntelligentHintSystem(securityScanner, gasAnalyzer);
+  return new IntelligentHintSystem( securityScanner, gasAnalyzer);
 }

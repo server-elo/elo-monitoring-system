@@ -1,6 +1,4 @@
 'use client';
-
-;
 import { motion } from 'framer-motion';
 import { Trophy, Star, Target, Zap, Crown, Calendar } from 'lucide-react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';

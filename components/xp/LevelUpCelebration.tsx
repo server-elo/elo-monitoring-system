@@ -38,8 +38,8 @@ export interface LevelUpData {
 
 interface LevelUpCelebrationProps {
   levelUpData: LevelUpData;
-  onClose: () => void;
-  onContinue?: () => void;
+  onClose: (_) => void;
+  onContinue?: (_) => void;
   autoClose?: boolean;
   autoCloseDelay?: number;
 }
@@ -51,7 +51,7 @@ export function LevelUpCelebration({
   autoClose = false,
   autoCloseDelay = 8000
 }: LevelUpCelebrationProps) {
-  const [showRewards, setShowRewards] = useState(false);
+  const [showRewards, setShowRewards] = useState(_false);
   const [_celebrationPhase, setCelebrationPhase] = useState<'entrance' | 'celebration' | 'rewards'>('entrance');
 
   useEffect(() => {
@@ -59,27 +59,27 @@ export function LevelUpCelebration({
     const timer1 = setTimeout(() => setCelebrationPhase('celebration'), 500);
     const timer2 = setTimeout(() => {
       setCelebrationPhase('rewards');
-      setShowRewards(true);
+      setShowRewards(_true);
     }, 2000);
 
     // Auto close
     let autoCloseTimer: NodeJS.Timeout;
     if (autoClose) {
-      autoCloseTimer = setTimeout(onClose, autoCloseDelay);
+      autoCloseTimer = setTimeout( onClose, autoCloseDelay);
     }
 
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    return (_) => {
+      clearTimeout(_timer1);
+      clearTimeout(_timer2);
+      if (autoCloseTimer) clearTimeout(_autoCloseTimer);
     };
   }, [autoClose, autoCloseDelay, onClose]);
 
-  const handleContinue = () => {
+  const handleContinue = (_) => {
     if (onContinue) {
-      onContinue();
+      onContinue(_);
     } else {
-      onClose();
+      onClose(_);
     }
   };
 
@@ -93,7 +93,7 @@ export function LevelUpCelebration({
       >
         {/* Confetti Background */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(50)].map((_, i) => (
+          {[...Array(50)].map( (_, i) => (
             <motion.div
               key={i}
               initial={{ 
@@ -123,7 +123,7 @@ export function LevelUpCelebration({
                   'bg-purple-400',
                   'bg-red-400',
                   'bg-orange-400'
-                ][Math.floor(Math.random() * 6)]
+                ][Math.floor(_Math.random() * 6)]
               )}
             />
           ))}
@@ -258,7 +258,7 @@ export function LevelUpCelebration({
                 size="lg"
                 animated={true}
                 glowEffect={true}
-                onComplete={() => {
+                onComplete={(_) => {
                   // Trigger confetti or other effects
                 }}
               />
@@ -310,7 +310,7 @@ export function LevelUpCelebration({
                           {levelUpData.rewards.badges.length} New Badge{levelUpData.rewards.badges.length > 1 ? 's' : ''}
                         </div>
                         <div className="text-sm text-gray-400">
-                          {levelUpData.rewards.badges.join(', ')}
+                          {levelUpData.rewards.badges.join( ', ')}
                         </div>
                       </motion.div>
                     )}
@@ -328,7 +328,7 @@ export function LevelUpCelebration({
                           New Title{levelUpData.rewards.titles.length > 1 ? 's' : ''}
                         </div>
                         <div className="text-sm text-gray-400">
-                          {levelUpData.rewards.titles.join(', ')}
+                          {levelUpData.rewards.titles.join( ', ')}
                         </div>
                       </motion.div>
                     )}
@@ -346,7 +346,7 @@ export function LevelUpCelebration({
                           Content Unlocked
                         </div>
                         <div className="text-sm text-gray-400">
-                          {levelUpData.rewards.unlocks.join(', ')}
+                          {levelUpData.rewards.unlocks.join( ', ')}
                         </div>
                       </motion.div>
                     )}
@@ -374,7 +374,7 @@ export function LevelUpCelebration({
 
             {/* Sparkle Effects */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {[...Array(20)].map((_, i) => (
+              {[...Array(_20)].map( (_, i) => (
                 <motion.div
                   key={i}
                   initial={{ 
@@ -410,25 +410,25 @@ interface LevelUpManagerProps {
   className?: string;
 }
 
-export function LevelUpManager({ className }: LevelUpManagerProps) {
-  const [levelUpData, setLevelUpData] = useState<LevelUpData | null>(null);
+export function LevelUpManager(_{ className }: LevelUpManagerProps) {
+  const [levelUpData, setLevelUpData] = useState<LevelUpData | null>(_null);
 
   // Function to trigger level up celebration
-  const triggerLevelUp = (data: LevelUpData) => {
-    setLevelUpData(data);
+  const triggerLevelUp = (_data: LevelUpData) => {
+    setLevelUpData(_data);
   };
 
   // Function to close celebration
-  const closeLevelUp = () => {
-    setLevelUpData(null);
+  const closeLevelUp = (_) => {
+    setLevelUpData(_null);
   };
 
   // Expose triggerLevelUp globally for easy access
   useEffect(() => {
-    (window as any).triggerLevelUp = triggerLevelUp;
+    (_window as any).triggerLevelUp = triggerLevelUp;
     
-    return () => {
-      delete (window as any).triggerLevelUp;
+    return (_) => {
+      delete (_window as any).triggerLevelUp;
     };
   }, []);
 
@@ -446,9 +446,9 @@ export function LevelUpManager({ className }: LevelUpManagerProps) {
 
 // Hook for triggering level up celebrations
 export function useLevelUp() {
-  const triggerLevelUp = (data: LevelUpData) => {
-    if (typeof window !== 'undefined' && (window as any).triggerLevelUp) {
-      (window as any).triggerLevelUp(data);
+  const triggerLevelUp = (_data: LevelUpData) => {
+    if (_typeof window !== 'undefined' && (window as any).triggerLevelUp) {
+      (_window as any).triggerLevelUp(_data);
     }
   };
 

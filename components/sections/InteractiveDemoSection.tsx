@@ -31,9 +31,9 @@ interface CodeStep {
 
 export function InteractiveDemoSection() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isExecuting, setIsExecuting] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(_false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [showOutput, setShowOutput] = useState(false);
+  const [showOutput, setShowOutput] = useState(_false);
 
   const codeSteps: CodeStep[] = [
     {
@@ -53,9 +53,9 @@ contract SimpleStorage {
       id: 1,
       title: "Constructor Function",
       description: "Initialize your contract with a constructor",
-      code: `    constructor(uint256 _initialValue) {
+      code: `    constructor(_uint256 _initialValue) {
         storedData = _initialValue;
-        emit DataStored(_initialValue);
+        emit DataStored( initialValue);
     }`,
       explanation: "The constructor runs once when the contract is deployed. It's perfect for setting initial values.",
       output: "✅ Constructor added - Contract will initialize with a value"
@@ -64,14 +64,14 @@ contract SimpleStorage {
       id: 2,
       title: "Events & Functions",
       description: "Add events and functions for interaction",
-      code: `    event DataStored(uint256 value);
+      code: `    event DataStored(_uint256 value);
     
-    function set(uint256 _value) public {
+    function set(_uint256 _value) public {
         storedData = _value;
-        emit DataStored(_value);
+        emit DataStored( value);
     }
     
-    function get() public view returns (uint256) {
+    function get() public view returns (_uint256) {
         return storedData;
     }`,
       explanation: "Events provide a way to log contract activity. Functions allow external interaction with your contract.",
@@ -79,57 +79,57 @@ contract SimpleStorage {
     }
   ];
 
-  const executeStep = async (stepIndex: number) => {
-    setIsExecuting(true);
-    setCurrentStep(stepIndex);
+  const executeStep = async (_stepIndex: number) => {
+    setIsExecuting(_true);
+    setCurrentStep(_stepIndex);
     
     // Simulate compilation/execution time
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    setCompletedSteps(prev => [...prev, stepIndex]);
-    setShowOutput(true);
-    setIsExecuting(false);
+    setCompletedSteps( prev => [...prev, stepIndex]);
+    setShowOutput(_true);
+    setIsExecuting(_false);
     
     // Auto-advance to next step after showing output
     setTimeout(() => {
-      setShowOutput(false);
-      if (stepIndex < codeSteps.length - 1) {
-        setCurrentStep(stepIndex + 1);
+      setShowOutput(_false);
+      if (_stepIndex < codeSteps.length - 1) {
+        setCurrentStep(_stepIndex + 1);
       }
     }, 3000);
   };
 
-  const resetDemo = () => {
+  const resetDemo = (_) => {
     setCurrentStep(0);
     setCompletedSteps([]);
-    setShowOutput(false);
-    setIsExecuting(false);
+    setShowOutput(_false);
+    setIsExecuting(_false);
   };
 
-  const copyCode = () => {
+  const copyCode = (_) => {
     const fullCode = `pragma solidity ^0.8.0;
 
 contract SimpleStorage {
     uint256 private storedData;
     
-    event DataStored(uint256 value);
+    event DataStored(_uint256 value);
     
-    constructor(uint256 _initialValue) {
+    constructor(_uint256 _initialValue) {
         storedData = _initialValue;
-        emit DataStored(_initialValue);
+        emit DataStored( initialValue);
     }
     
-    function set(uint256 _value) public {
+    function set(_uint256 _value) public {
         storedData = _value;
-        emit DataStored(_value);
+        emit DataStored( value);
     }
     
-    function get() public view returns (uint256) {
+    function get() public view returns (_uint256) {
         return storedData;
     }
 }`;
     
-    navigator.clipboard.writeText(fullCode);
+    navigator.clipboard.writeText(_fullCode);
   };
 
   return (
@@ -166,7 +166,7 @@ contract SimpleStorage {
               </div>
 
               <div className="space-y-4">
-                {codeSteps.map((step, index) => (
+                {codeSteps.map( (step, index) => (
                   <motion.div
                     key={step.id}
                     className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-300 ${
@@ -176,7 +176,7 @@ contract SimpleStorage {
                         ? 'bg-green-500/20 border-green-500/50'
                         : 'bg-white/5 border-white/10 hover:bg-white/10'
                     }`}
-                    onClick={() => !isExecuting && setCurrentStep(index)}
+                    onClick={(_) => !isExecuting && setCurrentStep(_index)}
                     whileHover={{ scale: 1.02 }}
                   >
                     <div className="flex items-center space-x-3">
@@ -204,7 +204,7 @@ contract SimpleStorage {
 
               <div className="mt-6 space-y-3">
                 <Button 
-                  onClick={() => executeStep(currentStep)}
+                  onClick={(_) => executeStep(_currentStep)}
                   disabled={isExecuting || completedSteps.includes(currentStep)}
                   className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
                 >
@@ -277,7 +277,7 @@ contract SimpleStorage {
                   >
                     <pre className="text-gray-300 whitespace-pre-wrap">
                       <code dangerouslySetInnerHTML={{
-                        __html: codeSteps[currentStep].code
+                         html: codeSteps[currentStep].code
                           .replace(/pragma/g, '<span class="text-purple-400">pragma</span>')
                           .replace(/solidity/g, '<span class="text-purple-400">solidity</span>')
                           .replace(/contract/g, '<span class="text-blue-400">contract</span>')
@@ -364,7 +364,7 @@ contract SimpleStorage {
           viewport={{ once: true }}
         >
           <div className="flex justify-center space-x-2 mb-4">
-            {codeSteps.map((_, index) => (
+            {codeSteps.map( (_, index) => (
               <div
                 key={index}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${

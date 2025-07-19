@@ -39,7 +39,7 @@ export interface SharedAnalysis {
 
 export class CollaborativeCoding {
   private io: SocketIOServer;
-  private sessions: Map<string, CollaborationSession> = new Map();
+  private sessions: Map<string, CollaborationSession> = new Map(_);
   private securityScanner: SecurityScanner;
   private gasAnalyzer: GasOptimizationAnalyzer;
 
@@ -51,7 +51,7 @@ export class CollaborativeCoding {
     this.io = io;
     this.securityScanner = securityScanner;
     this.gasAnalyzer = gasAnalyzer;
-    this.setupSocketHandlers();
+    this.setupSocketHandlers(_);
   }
 
   async createSession(
@@ -60,7 +60,7 @@ export class CollaborativeCoding {
     sessionName: string
   ): Promise<CollaborationSession> {
     const session: CollaborationSession = {
-      id: `session-${Date.now()}`,
+      id: `session-${Date.now(_)}`,
       name: sessionName,
       createdBy: userId,
       participants: [{
@@ -69,27 +69,27 @@ export class CollaborativeCoding {
         role: 'owner',
         cursor: { line: 1, column: 1 },
         isActive: true,
-        joinedAt: new Date()
+        joinedAt: new Date(_)
       }],
       code: '// Start coding together!\npragma solidity ^0.8.20;\n\ncontract MyContract {\n    \n}',
       language: 'solidity',
       isActive: true,
-      createdAt: new Date(),
-      lastActivity: new Date(),
+      createdAt: new Date(_),
+      lastActivity: new Date(_),
       sharedAnalysis: {
         security: null,
         gasOptimization: null,
-        lastUpdated: new Date(),
+        lastUpdated: new Date(_),
         triggeredBy: userId
       }
     };
 
-    this.sessions.set(session.id, session);
+    this.sessions.set( session.id, session);
     return session;
   }
 
-  async joinSession(sessionId: string, userId: string, username: string): Promise<void> {
-    const session = this.sessions.get(sessionId);
+  async joinSession( sessionId: string, userId: string, username: string): Promise<void> {
+    const session = this.sessions.get(_sessionId);
     if (!session) throw new Error('Session not found');
 
     const participant: Participant = {
@@ -98,79 +98,79 @@ export class CollaborativeCoding {
       role: 'collaborator',
       cursor: { line: 1, column: 1 },
       isActive: true,
-      joinedAt: new Date()
+      joinedAt: new Date(_)
     };
 
-    session.participants.push(participant);
-    session.lastActivity = new Date();
+    session.participants.push(_participant);
+    session.lastActivity = new Date(_);
 
     // Notify all participants
-    this.io.to(sessionId).emit('participant-joined', participant);
+    this.io.to(_sessionId).emit( 'participant-joined', participant);
   }
 
-  async updateCode(sessionId: string, userId: string, newCode: string): Promise<void> {
-    const session = this.sessions.get(sessionId);
+  async updateCode( sessionId: string, userId: string, newCode: string): Promise<void> {
+    const session = this.sessions.get(_sessionId);
     if (!session) return;
 
     session.code = newCode;
-    session.lastActivity = new Date();
+    session.lastActivity = new Date(_);
 
     // Broadcast code change to all participants except sender
-    this.io.to(sessionId).except(userId).emit('code-updated', {
+    this.io.to(_sessionId).except(_userId).emit('code-updated', {
       code: newCode,
       updatedBy: userId,
-      timestamp: new Date()
+      timestamp: new Date(_)
     });
 
     // Trigger shared analysis after debounce
-    this.scheduleSharedAnalysis(sessionId, userId);
+    this.scheduleSharedAnalysis( sessionId, userId);
   }
 
-  private async performSharedAnalysis(sessionId: string, triggeredBy: string): Promise<void> {
-    const session = this.sessions.get(sessionId);
+  private async performSharedAnalysis( sessionId: string, triggeredBy: string): Promise<void> {
+    const session = this.sessions.get(_sessionId);
     if (!session) return;
 
     try {
       // Run security and gas analysis
       const [securityResult, gasResult] = await Promise.all([
-        this.securityScanner.performAnalysis(),
-        this.gasAnalyzer.analyzeGasUsage(triggeredBy)
+        this.securityScanner.performAnalysis(_),
+        this.gasAnalyzer.analyzeGasUsage(_triggeredBy)
       ]);
 
       session.sharedAnalysis = {
         security: securityResult,
         gasOptimization: gasResult,
-        lastUpdated: new Date(),
+        lastUpdated: new Date(_),
         triggeredBy
       };
 
       // Broadcast analysis results to all participants
-      this.io.to(sessionId).emit('analysis-updated', session.sharedAnalysis);
-    } catch (error) {
+      this.io.to(_sessionId).emit( 'analysis-updated', session.sharedAnalysis);
+    } catch (_error) {
       console.error('Shared analysis failed:', error);
     }
   }
 
-  private scheduleSharedAnalysis(sessionId: string, userId: string): void {
+  private scheduleSharedAnalysis( sessionId: string, userId: string): void {
     // Debounce analysis to avoid excessive API calls
     setTimeout(() => {
-      this.performSharedAnalysis(sessionId, userId);
+      this.performSharedAnalysis( sessionId, userId);
     }, 2000);
   }
 
-  private setupSocketHandlers(): void {
-    this.io.on('connection', (socket) => {
-      socket.on('join-session', async (data) => {
-        await this.joinSession(data.sessionId, data.userId, data.username);
-        socket.join(data.sessionId);
+  private setupSocketHandlers(_): void {
+    this.io.on( 'connection', (socket) => {
+      socket.on( 'join-session', async (data) => {
+        await this.joinSession( data.sessionId, data.userId, data.username);
+        socket.join(_data.sessionId);
       });
 
-      socket.on('code-change', async (data) => {
-        await this.updateCode(data.sessionId, data.userId, data.code);
+      socket.on( 'code-change', async (data) => {
+        await this.updateCode( data.sessionId, data.userId, data.code);
       });
 
-      socket.on('cursor-move', (data) => {
-        socket.to(data.sessionId).emit('cursor-updated', {
+      socket.on( 'cursor-move', (data) => {
+        socket.to(_data.sessionId).emit('cursor-updated', {
           userId: data.userId,
           cursor: data.cursor
         });
@@ -184,5 +184,5 @@ export function createCollaborativeCoding(
   securityScanner: SecurityScanner,
   gasAnalyzer: GasOptimizationAnalyzer
 ): CollaborativeCoding {
-  return new CollaborativeCoding(io, securityScanner, gasAnalyzer);
+  return new CollaborativeCoding( io, securityScanner, gasAnalyzer);
 }

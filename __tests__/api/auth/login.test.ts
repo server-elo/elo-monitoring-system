@@ -52,7 +52,7 @@ interface LoginResponse {
 }
 
 class MockAuthService {
-  async validateCredentials(email: string, password: string) {
+  async validateCredentials( email: string, password: string) {
     // Mock user database
     const users = {
       'student@example.com': {
@@ -94,34 +94,34 @@ class MockAuthService {
       return { success: false, error: 'Invalid credentials' };
     }
 
-    if (user.status === 'BANNED') {
+    if (_user.status === 'BANNED') {
       return { success: false, error: 'Account has been banned' };
     }
 
     // Simulate password verification
-    if (password === 'wrongpassword') {
+    if (_password === 'wrongpassword') {
       return { success: false, error: 'Invalid credentials' };
     }
 
     return { success: true, user };
   }
 
-  async checkRateLimit(ip: string): Promise<{ allowed: boolean; remaining: number }> {
+  async checkRateLimit(_ip: string): Promise<{ allowed: boolean; remaining: number }> {
     const key = `login_attempts:${ip}`;
-    const attempts = parseInt(await mockRedisClient.get(key) || '0');
+    const attempts = parseInt(_await mockRedisClient.get(key) || '0');
     const maxAttempts = 5;
     
-    if (attempts >= maxAttempts) {
+    if (_attempts >= maxAttempts) {
       return { allowed: false, remaining: 0 };
     }
 
-    await mockRedisClient.incr(key);
-    await mockRedisClient.expire(key, 900); // 15 minutes
+    await mockRedisClient.incr(_key);
+    await mockRedisClient.expire( key, 900); // 15 minutes
 
     return { allowed: true, remaining: maxAttempts - attempts - 1 };
   }
 
-  async createUserSession(user: any, rememberMe: boolean = false) {
+  async createUserSession( user: any, rememberMe: boolean = false) {
     const expiresIn = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 30 days or 24 hours
     
     const sessionResult = await mockSessionManager.createSession(user.id, {
@@ -139,15 +139,15 @@ class MockAuthService {
     return {
       token: sessionResult.token,
       refreshToken: sessionResult.refreshToken,
-      expiresAt: new Date(Date.now() + expiresIn).toISOString(),
+      expiresAt: new Date(_Date.now() + expiresIn).toISOString(),
     };
   }
 }
 
-const mockAuthService = new MockAuthService();
+const mockAuthService = new MockAuthService(_);
 
 // Mock login endpoint implementation
-async function mockLoginHandler(request: LoginRequest, ip: string = '127.0.0.1'): Promise<LoginResponse> {
+async function mockLoginHandler( request: LoginRequest, ip: string = '127.0.0.1'): Promise<LoginResponse> {
   try {
     // Input validation
     if (!request.email || !request.password) {
@@ -167,7 +167,7 @@ async function mockLoginHandler(request: LoginRequest, ip: string = '127.0.0.1')
     }
 
     // Rate limiting check
-    const rateLimitResult = await mockAuthService.checkRateLimit(ip);
+    const rateLimitResult = await mockAuthService.checkRateLimit(_ip);
     if (!rateLimitResult.allowed) {
       return {
         success: false,
@@ -176,7 +176,7 @@ async function mockLoginHandler(request: LoginRequest, ip: string = '127.0.0.1')
     }
 
     // Validate credentials
-    const authResult = await mockAuthService.validateCredentials(request.email, request.password);
+    const authResult = await mockAuthService.validateCredentials( request.email, request.password);
     if (!authResult.success) {
       return {
         success: false,
@@ -185,7 +185,7 @@ async function mockLoginHandler(request: LoginRequest, ip: string = '127.0.0.1')
     }
 
     // Create session
-    const sessionData = await mockAuthService.createUserSession(authResult.user, request.rememberMe);
+    const sessionData = await mockAuthService.createUserSession( authResult.user, request.rememberMe);
 
     return {
       success: true,
@@ -200,7 +200,7 @@ async function mockLoginHandler(request: LoginRequest, ip: string = '127.0.0.1')
       expiresAt: sessionData.expiresAt,
     };
 
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       error: 'Internal server error',
@@ -208,18 +208,18 @@ async function mockLoginHandler(request: LoginRequest, ip: string = '127.0.0.1')
   }
 }
 
-describe('Login API Endpoint Tests', () => {
+describe( 'Login API Endpoint Tests', () => {
   beforeEach(() => {
-    resetSessionMocks();
-    resetRedisMocks();
+    resetSessionMocks(_);
+    resetRedisMocks(_);
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(_);
   });
 
-  describe('Successful Login Scenarios', () => {
-    it('should successfully log in a student user', async () => {
+  describe( 'Successful Login Scenarios', () => {
+    it( 'should successfully log in a student user', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'student@example.com',
@@ -228,24 +228,24 @@ describe('Login API Endpoint Tests', () => {
 
       // Act
       const { result, duration } = await measureExecutionTime(() =>
-        mockLoginHandler(loginRequest)
+        mockLoginHandler(_loginRequest)
       );
 
       // Assert
-      expect(result.success).toBe(true);
-      expect(result.user).toBeDefined();
-      expect(result.user?.email).toBe('student@example.com');
-      expect(result.user?.role).toBe('STUDENT');
-      expect(result.token).toBeDefined();
-      expect(result.refreshToken).toBeDefined();
-      expect(result.expiresAt).toBeDefined();
-      expect(duration).toBeLessThan(500); // Should complete within 500ms
+      expect(_result.success).toBe(_true);
+      expect(_result.user).toBeDefined(_);
+      expect(_result.user?.email).toBe('student@example.com');
+      expect(_result.user?.role).toBe('STUDENT');
+      expect(_result.token).toBeDefined(_);
+      expect(_result.refreshToken).toBeDefined(_);
+      expect(_result.expiresAt).toBeDefined(_);
+      expect(_duration).toBeLessThan(500); // Should complete within 500ms
 
-      expectValidApiResponse(result);
-      expectValidJWT(result.token!);
+      expectValidApiResponse(_result);
+      expectValidJWT(_result.token!);
     });
 
-    it('should successfully log in an instructor user', async () => {
+    it( 'should successfully log in an instructor user', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'instructor@example.com',
@@ -253,15 +253,15 @@ describe('Login API Endpoint Tests', () => {
       };
 
       // Act
-      const result = await mockLoginHandler(loginRequest);
+      const result = await mockLoginHandler(_loginRequest);
 
       // Assert
-      expect(result.success).toBe(true);
-      expect(result.user?.role).toBe('INSTRUCTOR');
-      expectValidApiResponse(result);
+      expect(_result.success).toBe(_true);
+      expect(_result.user?.role).toBe('INSTRUCTOR');
+      expectValidApiResponse(_result);
     });
 
-    it('should successfully log in an admin user', async () => {
+    it( 'should successfully log in an admin user', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'admin@example.com',
@@ -269,15 +269,15 @@ describe('Login API Endpoint Tests', () => {
       };
 
       // Act
-      const result = await mockLoginHandler(loginRequest);
+      const result = await mockLoginHandler(_loginRequest);
 
       // Assert
-      expect(result.success).toBe(true);
-      expect(result.user?.role).toBe('ADMIN');
-      expectValidApiResponse(result);
+      expect(_result.success).toBe(_true);
+      expect(_result.user?.role).toBe('ADMIN');
+      expectValidApiResponse(_result);
     });
 
-    it('should handle remember me functionality', async () => {
+    it( 'should handle remember me functionality', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'student@example.com',
@@ -286,23 +286,23 @@ describe('Login API Endpoint Tests', () => {
       };
 
       // Act
-      const result = await mockLoginHandler(loginRequest);
+      const result = await mockLoginHandler(_loginRequest);
 
       // Assert
-      expect(result.success).toBe(true);
-      expect(result.expiresAt).toBeDefined();
+      expect(_result.success).toBe(_true);
+      expect(_result.expiresAt).toBeDefined(_);
       
       // Verify extended expiration time
-      const expiresAt = new Date(result.expiresAt!);
-      const now = new Date();
-      const diffHours = (expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60);
+      const expiresAt = new Date(_result.expiresAt!);
+      const now = new Date(_);
+      const diffHours = (_expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60);
       
-      expect(diffHours).toBeGreaterThan(24); // Should be more than 24 hours
+      expect(_diffHours).toBeGreaterThan(_24); // Should be more than 24 hours
     });
   });
 
-  describe('Authentication Failures', () => {
-    it('should reject invalid email addresses', async () => {
+  describe( 'Authentication Failures', () => {
+    it( 'should reject invalid email addresses', async () => {
       const invalidEmails = [
         'invalid-email',
         '@example.com',
@@ -311,35 +311,35 @@ describe('Login API Endpoint Tests', () => {
         '',
       ];
 
-      for (const email of invalidEmails) {
+      for (_const email of invalidEmails) {
         const result = await mockLoginHandler({
           email,
           password: 'validpassword',
         });
 
-        expect(result.success).toBe(false);
-        expect(result.error).toBe('Invalid email format');
-        expectValidErrorResponse(result);
+        expect(_result.success).toBe(_false);
+        expect(_result.error).toBe('Invalid email format');
+        expectValidErrorResponse(_result);
       }
     });
 
-    it('should reject missing credentials', async () => {
+    it( 'should reject missing credentials', async () => {
       const testCases = [
         { email: '', password: 'password' },
         { email: 'test@example.com', password: '' },
         { email: '', password: '' },
       ];
 
-      for (const testCase of testCases) {
-        const result = await mockLoginHandler(testCase);
+      for (_const testCase of testCases) {
+        const result = await mockLoginHandler(_testCase);
         
-        expect(result.success).toBe(false);
-        expect(result.error).toBe('Email and password are required');
-        expectValidErrorResponse(result);
+        expect(_result.success).toBe(_false);
+        expect(_result.error).toBe('Email and password are required');
+        expectValidErrorResponse(_result);
       }
     });
 
-    it('should reject non-existent users', async () => {
+    it( 'should reject non-existent users', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'nonexistent@example.com',
@@ -347,15 +347,15 @@ describe('Login API Endpoint Tests', () => {
       };
 
       // Act
-      const result = await mockLoginHandler(loginRequest);
+      const result = await mockLoginHandler(_loginRequest);
 
       // Assert
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Invalid credentials');
-      expectValidErrorResponse(result);
+      expect(_result.success).toBe(_false);
+      expect(_result.error).toBe('Invalid credentials');
+      expectValidErrorResponse(_result);
     });
 
-    it('should reject incorrect passwords', async () => {
+    it( 'should reject incorrect passwords', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'student@example.com',
@@ -363,15 +363,15 @@ describe('Login API Endpoint Tests', () => {
       };
 
       // Act
-      const result = await mockLoginHandler(loginRequest);
+      const result = await mockLoginHandler(_loginRequest);
 
       // Assert
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Invalid credentials');
-      expectValidErrorResponse(result);
+      expect(_result.success).toBe(_false);
+      expect(_result.error).toBe('Invalid credentials');
+      expectValidErrorResponse(_result);
     });
 
-    it('should reject banned users', async () => {
+    it( 'should reject banned users', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'banned@example.com',
@@ -379,17 +379,17 @@ describe('Login API Endpoint Tests', () => {
       };
 
       // Act
-      const result = await mockLoginHandler(loginRequest);
+      const result = await mockLoginHandler(_loginRequest);
 
       // Assert
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Account has been banned');
-      expectValidErrorResponse(result);
+      expect(_result.success).toBe(_false);
+      expect(_result.error).toBe('Account has been banned');
+      expectValidErrorResponse(_result);
     });
   });
 
-  describe('Rate Limiting', () => {
-    it('should implement rate limiting for login attempts', async () => {
+  describe( 'Rate Limiting', () => {
+    it( 'should implement rate limiting for login attempts', async () => {
       const ip = '192.168.1.100';
       const loginRequest: LoginRequest = {
         email: 'nonexistent@example.com',
@@ -398,17 +398,17 @@ describe('Login API Endpoint Tests', () => {
 
       // Make 5 failed attempts
       for (let i = 0; i < 5; i++) {
-        const result = await mockLoginHandler(loginRequest, ip);
-        expect(result.success).toBe(false);
+        const result = await mockLoginHandler( loginRequest, ip);
+        expect(_result.success).toBe(_false);
       }
 
       // 6th attempt should be rate limited
-      const rateLimitedResult = await mockLoginHandler(loginRequest, ip);
-      expect(rateLimitedResult.success).toBe(false);
-      expect(rateLimitedResult.error).toBe('Too many login attempts. Please try again later.');
+      const rateLimitedResult = await mockLoginHandler( loginRequest, ip);
+      expect(_rateLimitedResult.success).toBe(_false);
+      expect(_rateLimitedResult.error).toBe('Too many login attempts. Please try again later.');
     });
 
-    it('should track rate limits per IP address', async () => {
+    it( 'should track rate limits per IP address', async () => {
       const ip1 = '192.168.1.101';
       const ip2 = '192.168.1.102';
       const loginRequest: LoginRequest = {
@@ -418,107 +418,107 @@ describe('Login API Endpoint Tests', () => {
 
       // Make 5 failed attempts from IP1
       for (let i = 0; i < 5; i++) {
-        await mockLoginHandler(loginRequest, ip1);
+        await mockLoginHandler( loginRequest, ip1);
       }
 
       // IP1 should be rate limited
-      const ip1Result = await mockLoginHandler(loginRequest, ip1);
-      expect(ip1Result.error).toBe('Too many login attempts. Please try again later.');
+      const ip1Result = await mockLoginHandler( loginRequest, ip1);
+      expect(_ip1Result.error).toBe('Too many login attempts. Please try again later.');
 
       // IP2 should still be allowed
-      const ip2Result = await mockLoginHandler(loginRequest, ip2);
-      expect(ip2Result.error).toBe('Invalid credentials'); // Normal validation error
+      const ip2Result = await mockLoginHandler( loginRequest, ip2);
+      expect(_ip2Result.error).toBe('Invalid credentials'); // Normal validation error
     });
   });
 
-  describe('Security Validations', () => {
-    it('should sanitize user input to prevent XSS', async () => {
+  describe( 'Security Validations', () => {
+    it( 'should sanitize user input to prevent XSS', async () => {
       const xssPayloads = [
         '<script>alert("xss")</script>',
         'javascript:alert("xss")',
         '<img src="x" onerror="alert(1)">',
       ];
 
-      for (const payload of xssPayloads) {
+      for (_const payload of xssPayloads) {
         const result = await mockLoginHandler({
           email: payload,
           password: 'password',
         });
 
-        expect(result.success).toBe(false);
-        expectSecureData({ email: payload });
+        expect(_result.success).toBe(_false);
+        expectSecureData({ email: payload  });
       }
     });
 
-    it('should prevent SQL injection attempts', async () => {
+    it( 'should prevent SQL injection attempts', async () => {
       const sqlInjectionPayloads = [
         "admin'; DROP TABLE users; --",
         "' OR '1'='1",
         "' UNION SELECT * FROM users --",
       ];
 
-      for (const payload of sqlInjectionPayloads) {
+      for (_const payload of sqlInjectionPayloads) {
         const result = await mockLoginHandler({
           email: payload,
           password: 'password',
         });
 
-        expect(result.success).toBe(false);
-        expectSecureData({ email: payload });
+        expect(_result.success).toBe(_false);
+        expectSecureData({ email: payload  });
       }
     });
 
-    it('should not expose sensitive information in error messages', async () => {
+    it( 'should not expose sensitive information in error messages', async () => {
       // Test with various invalid inputs
       const testCases = [
         { email: 'admin@example.com', password: 'wrongpassword' },
         { email: 'nonexistent@example.com', password: 'anypassword' },
       ];
 
-      for (const testCase of testCases) {
-        const result = await mockLoginHandler(testCase);
+      for (_const testCase of testCases) {
+        const result = await mockLoginHandler(_testCase);
         
-        expect(result.success).toBe(false);
-        expect(result.error).toBe('Invalid credentials'); // Generic message
+        expect(_result.success).toBe(_false);
+        expect(_result.error).toBe('Invalid credentials'); // Generic message
         
         // Ensure no password hash or user details in response
-        const responseString = JSON.stringify(result);
-        expect(responseString).not.toContain('passwordHash');
-        expect(responseString).not.toContain('hashed-password');
+        const responseString = JSON.stringify(_result);
+        expect(_responseString).not.toContain('passwordHash');
+        expect(_responseString).not.toContain('hashed-password');
       }
     });
   });
 
-  describe('Performance Requirements', () => {
-    it('should respond within acceptable time limits', async () => {
+  describe( 'Performance Requirements', () => {
+    it( 'should respond within acceptable time limits', async () => {
       const loginRequest: LoginRequest = {
         email: 'student@example.com',
         password: 'validpassword',
       };
 
       const { duration } = await measureExecutionTime(() =>
-        mockLoginHandler(loginRequest)
+        mockLoginHandler(_loginRequest)
       );
 
-      expect(duration).toBeLessThan(1000); // Should complete within 1 second
+      expect(_duration).toBeLessThan(1000); // Should complete within 1 second
     });
 
-    it('should handle concurrent login requests', async () => {
-      const loginRequests = Array.from({ length: 10 }, (_, i) => ({
+    it( 'should handle concurrent login requests', async () => {
+      const loginRequests = Array.from( { length: 10 }, (_, i) => ({
         email: `user${i}@example.com`,
         password: 'password',
       }));
 
-      const startTime = Date.now();
+      const startTime = Date.now(_);
       const promises = loginRequests.map(request => mockLoginHandler(request));
-      const results = await Promise.all(promises);
-      const endTime = Date.now();
+      const results = await Promise.all(_promises);
+      const endTime = Date.now(_);
 
-      expect(results).toHaveLength(10);
-      expect(endTime - startTime).toBeLessThan(2000); // Should handle 10 concurrent requests within 2 seconds
+      expect(_results).toHaveLength(10);
+      expect(_endTime - startTime).toBeLessThan(2000); // Should handle 10 concurrent requests within 2 seconds
     });
 
-    it('should not cause memory leaks with repeated requests', async () => {
+    it( 'should not cause memory leaks with repeated requests', async () => {
       const initialMemory = process.memoryUsage().heapUsed;
 
       const loginRequest: LoginRequest = {
@@ -528,21 +528,21 @@ describe('Login API Endpoint Tests', () => {
 
       // Make 100 requests
       for (let i = 0; i < 100; i++) {
-        await mockLoginHandler(loginRequest);
+        await mockLoginHandler(_loginRequest);
       }
 
       // Force garbage collection if available
-      if (global.gc) global.gc();
+      if (_global.gc) global.gc(_);
 
       const finalMemory = process.memoryUsage().heapUsed;
       const memoryIncrease = finalMemory - initialMemory;
 
-      expect(memoryIncrease).toBeLessThan(5 * 1024 * 1024); // Less than 5MB increase
+      expect(_memoryIncrease).toBeLessThan(5 * 1024 * 1024); // Less than 5MB increase
     });
   });
 
-  describe('Session Management Integration', () => {
-    it('should create valid sessions for authenticated users', async () => {
+  describe( 'Session Management Integration', () => {
+    it( 'should create valid sessions for authenticated users', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'student@example.com',
@@ -550,18 +550,18 @@ describe('Login API Endpoint Tests', () => {
       };
 
       // Act
-      const result = await mockLoginHandler(loginRequest);
+      const result = await mockLoginHandler(_loginRequest);
 
       // Assert
-      expect(result.success).toBe(true);
-      expect(mockSessionManager.createSession).toHaveBeenCalled();
+      expect(_result.success).toBe(_true);
+      expect(_mockSessionManager.createSession).toHaveBeenCalled(_);
       
       // Verify session can be validated
-      const sessionValidation = await mockSessionManager.validateSession(result.token!);
-      expect(sessionValidation.success).toBe(true);
+      const sessionValidation = await mockSessionManager.validateSession(_result.token!);
+      expect(_sessionValidation.success).toBe(_true);
     });
 
-    it('should handle session creation failures gracefully', async () => {
+    it( 'should handle session creation failures gracefully', async () => {
       // Arrange
       const loginRequest: LoginRequest = {
         email: 'student@example.com',
@@ -574,16 +574,16 @@ describe('Login API Endpoint Tests', () => {
       );
 
       // Act
-      const result = await mockLoginHandler(loginRequest);
+      const result = await mockLoginHandler(_loginRequest);
 
       // Assert
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Internal server error');
+      expect(_result.success).toBe(_false);
+      expect(_result.error).toBe('Internal server error');
     });
   });
 
-  describe('Edge Cases and Error Handling', () => {
-    it('should handle malformed request data', async () => {
+  describe( 'Edge Cases and Error Handling', () => {
+    it( 'should handle malformed request data', async () => {
       const malformedRequests = [
         null,
         undefined,
@@ -592,13 +592,13 @@ describe('Login API Endpoint Tests', () => {
         { email: undefined, password: undefined },
       ];
 
-      for (const request of malformedRequests) {
-        const result = await mockLoginHandler(request as any);
-        expect(result.success).toBe(false);
+      for (_const request of malformedRequests) {
+        const result = await mockLoginHandler(_request as any);
+        expect(_result.success).toBe(_false);
       }
     });
 
-    it('should handle very long input strings', async () => {
+    it( 'should handle very long input strings', async () => {
       const longString = 'a'.repeat(10000);
       
       const result = await mockLoginHandler({
@@ -606,11 +606,11 @@ describe('Login API Endpoint Tests', () => {
         password: longString,
       });
 
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Invalid email format');
+      expect(_result.success).toBe(_false);
+      expect(_result.error).toBe('Invalid email format');
     });
 
-    it('should handle special characters in credentials', async () => {
+    it( 'should handle special characters in credentials', async () => {
       const specialCharacters = [
         'test+tag@example.com',
         'test.email@example.com',
@@ -618,14 +618,14 @@ describe('Login API Endpoint Tests', () => {
         'test-email@example.com',
       ];
 
-      for (const email of specialCharacters) {
+      for (_const email of specialCharacters) {
         const result = await mockLoginHandler({
           email,
           password: 'validpassword',
         });
 
         // Should not crash, either succeed or fail gracefully
-        expect(typeof result.success).toBe('boolean');
+        expect(_typeof result.success).toBe('boolean');
       }
     });
   });

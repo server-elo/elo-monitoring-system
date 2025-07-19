@@ -7,7 +7,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function DELETE(_request: NextRequest) {
+export async function DELETE( request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -15,7 +15,7 @@ export async function DELETE(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { messageId, sessionId } = await _request.json();
+    const { messageId, sessionId } = await request.json();
 
     if (!messageId || !sessionId) {
       return NextResponse.json({ error: 'Message ID and session ID are required' }, { status: 400 });

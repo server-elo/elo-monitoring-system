@@ -29,22 +29,22 @@ export class APICache {
     averageResponseTime: 0
   };
 
-  constructor(namespace = 'api') {
+  constructor(_namespace = 'api') {
     this.namespace = namespace;
   }
 
-  private getKey(key: string, namespace?: string, version?: string): string {
+  private getKey( key: string, namespace?: string, version?: string): string {
     const ns = namespace || this.namespace;
     const versionSuffix = version ? `:v${version}` : '';
     return `${ns}:${key}${versionSuffix}`;
   }
 
-  private getTagKey(tag: string, namespace?: string): string {
+  private getTagKey( tag: string, namespace?: string): string {
     const ns = namespace || this.namespace;
     return `${ns}:tag:${tag}`;
   }
 
-  private updateStats(hit: boolean, responseTime: number): void {
+  private updateStats( hit: boolean, responseTime: number): void {
     if (hit) {
       this.stats.hits++;
     } else {
@@ -56,27 +56,27 @@ export class APICache {
     
     // Calculate rolling average
     this.stats.averageResponseTime = 
-      (this.stats.averageResponseTime * (total - 1) + responseTime) / total;
+      (_this.stats.averageResponseTime * (total - 1) + responseTime) / total;
   }
 
-  async get<T>(key: string, options: CacheOptions = {}): Promise<T | null> {
-    const startTime = Date.now();
-    const cacheKey = this.getKey(key, options.namespace, options.version);
+  async get<T>( key: string, options: CacheOptions = {}): Promise<T | null> {
+    const startTime = Date.now(_);
+    const cacheKey = this.getKey( key, options.namespace, options.version);
     
     try {
-      const data = await redis.get<T>(cacheKey);
-      const responseTime = Date.now() - startTime;
+      const data = await redis.get<T>(_cacheKey);
+      const responseTime = Date.now(_) - startTime;
       
-      this.updateStats(data !== null, responseTime);
+      this.updateStats( data !== null, responseTime);
       
       if (data && process.env.NODE_ENV === 'development') {
-        console.log(`Cache HIT: ${cacheKey} (${responseTime}ms)`);
+        console.log(_`Cache HIT: ${cacheKey} (${responseTime}ms)`);
       }
       
       return data;
-    } catch (error) {
+    } catch (_error) {
       console.error('Cache GET error:', error);
-      this.updateStats(false, Date.now() - startTime);
+      this.updateStats( false, Date.now() - startTime);
       return null;
     }
   }
@@ -94,7 +94,7 @@ export class APICache {
       compress = false
     } = options;
     
-    const cacheKey = this.getKey(key, namespace, version);
+    const cacheKey = this.getKey( key, namespace, version);
     
     try {
       // Store the main cache entry
@@ -107,19 +107,19 @@ export class APICache {
         dataToStore = value;
       }
       
-      const success = await redis.set(cacheKey, dataToStore, ttl);
+      const success = await redis.set( cacheKey, dataToStore, ttl);
       
       if (success) {
         // Store tag associations for cache invalidation
-        await this.storeTags(cacheKey, tags, namespace, ttl);
+        await this.storeTags( cacheKey, tags, namespace, ttl);
         
-        if (process.env.NODE_ENV === 'development') {
+        if (_process.env.NODE_ENV === 'development') {
           console.log(`Cache SET: ${cacheKey} (TTL: ${ttl}s, Tags: ${tags.join(', ')})`);
         }
       }
       
       return success;
-    } catch (error) {
+    } catch (_error) {
       console.error('Cache SET error:', error);
       return false;
     }
@@ -131,120 +131,120 @@ export class APICache {
     namespace?: string,
     ttl?: number
   ): Promise<void> {
-    for (const tag of tags) {
-      const tagKey = this.getTagKey(tag, namespace);
+    for (_const tag of tags) {
+      const tagKey = this.getTagKey( tag, namespace);
       
       try {
         // Get existing keys for this tag
-        const existingKeys = await redis.get<string[]>(tagKey) || [];
+        const existingKeys = await redis.get<string[]>(_tagKey) || [];
         
         // Add the new key if not already present
         if (!existingKeys.includes(cacheKey)) {
-          existingKeys.push(cacheKey);
+          existingKeys.push(_cacheKey);
           
           // Store updated tag association with same TTL as cache entry
-          await redis.set(tagKey, existingKeys, ttl || 3600);
+          await redis.set( tagKey, existingKeys, ttl || 3600);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Error storing tag ${tag}:`, error);
       }
     }
   }
 
-  async invalidate(key: string, options: CacheOptions = {}): Promise<boolean> {
-    const cacheKey = this.getKey(key, options.namespace, options.version);
+  async invalidate( key: string, options: CacheOptions = {}): Promise<boolean> {
+    const cacheKey = this.getKey( key, options.namespace, options.version);
     
     try {
-      const success = await redis.delete(cacheKey);
+      const success = await redis.delete(_cacheKey);
       
       if (success && process.env.NODE_ENV === 'development') {
-        console.log(`Cache INVALIDATE: ${cacheKey}`);
+        console.log(_`Cache INVALIDATE: ${cacheKey}`);
       }
       
       return success;
-    } catch (error) {
+    } catch (_error) {
       console.error('Cache INVALIDATE error:', error);
       return false;
     }
   }
 
-  async invalidateByTag(tag: string, options: CacheOptions = {}): Promise<number> {
-    const tagKey = this.getTagKey(tag, options.namespace);
+  async invalidateByTag( tag: string, options: CacheOptions = {}): Promise<number> {
+    const tagKey = this.getTagKey( tag, options.namespace);
     let invalidatedCount = 0;
     
     try {
-      const keys = await redis.get<string[]>(tagKey);
+      const keys = await redis.get<string[]>(_tagKey);
       
       if (keys && keys.length > 0) {
         // Delete all cache entries associated with this tag
-        for (const key of keys) {
-          const success = await redis.delete(key);
+        for (_const key of keys) {
+          const success = await redis.delete(_key);
           if (success) invalidatedCount++;
         }
         
         // Delete the tag association
-        await redis.delete(tagKey);
+        await redis.delete(_tagKey);
         
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`Cache INVALIDATE BY TAG: ${tag} (${invalidatedCount} keys)`);
+        if (_process.env.NODE_ENV === 'development') {
+          console.log(_`Cache INVALIDATE BY TAG: ${tag} (${invalidatedCount} keys)`);
         }
       }
       
       return invalidatedCount;
-    } catch (error) {
+    } catch (_error) {
       console.error(`Cache invalidate by tag error for ${tag}:`, error);
       return 0;
     }
   }
 
-  async invalidatePattern(pattern: string, options: CacheOptions = {}): Promise<number> {
-    const fullPattern = this.getKey(pattern, options.namespace);
+  async invalidatePattern( pattern: string, options: CacheOptions = {}): Promise<number> {
+    const fullPattern = this.getKey( pattern, options.namespace);
     
     try {
-      const success = await redis.deletePattern(fullPattern);
+      const success = await redis.deletePattern(_fullPattern);
       
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`Cache INVALIDATE PATTERN: ${fullPattern}`);
+      if (_process.env.NODE_ENV === 'development') {
+        console.log(_`Cache INVALIDATE PATTERN: ${fullPattern}`);
       }
       
       return success ? 1 : 0;
-    } catch (error) {
+    } catch (_error) {
       console.error('Cache invalidate pattern error:', error);
       return 0;
     }
   }
 
-  async exists(key: string, options: CacheOptions = {}): Promise<boolean> {
-    const cacheKey = this.getKey(key, options.namespace, options.version);
-    return await redis.exists(cacheKey);
+  async exists( key: string, options: CacheOptions = {}): Promise<boolean> {
+    const cacheKey = this.getKey( key, options.namespace, options.version);
+    return await redis.exists(_cacheKey);
   }
 
-  async increment(key: string, by = 1, options: CacheOptions = {}): Promise<number | null> {
-    const cacheKey = this.getKey(key, options.namespace, options.version);
-    return await redis.increment(cacheKey, by);
+  async increment( key: string, by = 1, options: CacheOptions = {}): Promise<number | null> {
+    const cacheKey = this.getKey( key, options.namespace, options.version);
+    return await redis.increment( cacheKey, by);
   }
 
-  async flush(namespace?: string): Promise<boolean> {
+  async flush(_namespace?: string): Promise<boolean> {
     try {
       if (namespace) {
         // Flush specific namespace
         const pattern = `${namespace}:*`;
-        return await redis.deletePattern(pattern);
+        return await redis.deletePattern(_pattern);
       } else {
         // Flush entire cache
-        return await redis.flush();
+        return await redis.flush(_);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Cache flush error:', error);
       return false;
     }
   }
 
-  getStats(): CacheStats {
+  getStats(_): CacheStats {
     return { ...this.stats };
   }
 
-  resetStats(): void {
+  resetStats(_): void {
     this.stats = {
       hits: 0,
       misses: 0,
@@ -264,56 +264,56 @@ export const sessionCache = new APICache('session');
 export class CacheWarmer {
   private cache: APICache;
   
-  constructor(cache: APICache) {
+  constructor(_cache: APICache) {
     this.cache = cache;
   }
   
   async warmup(entries: Array<{
     key: string;
-    fetcher: () => Promise<any>;
+    fetcher: (_) => Promise<any>;
     options?: CacheOptions;
   }>): Promise<void> {
-    console.log(`Warming up ${entries.length} cache entries...`);
+    console.log(_`Warming up ${entries.length} cache entries...`);
     
-    const promises = entries.map(async ({ key, fetcher, options }) => {
+    const promises = entries.map( async ({ key, fetcher, options }) => {
       try {
         // Check if already cached
-        const exists = await this.cache.exists(key, options);
+        const exists = await this.cache.exists( key, options);
         if (!exists) {
-          const data = await fetcher();
-          await this.cache.set(key, data, options);
-          console.log(`Warmed cache entry: ${key}`);
+          const data = await fetcher(_);
+          await this.cache.set( key, data, options);
+          console.log(_`Warmed cache entry: ${key}`);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Failed to warm cache entry ${key}:`, error);
       }
     });
     
-    await Promise.allSettled(promises);
+    await Promise.allSettled(_promises);
     console.log('Cache warmup completed');
   }
 }
 
 // Middleware for automatic cache warming
-export function createCacheMiddleware(cache: APICache) {
+export function createCacheMiddleware(_cache: APICache) {
   return {
     // Automatic cache-first wrapper
     async withCache<T>(
       key: string,
-      fetcher: () => Promise<T>,
+      fetcher: (_) => Promise<T>,
       options: CacheOptions = {}
     ): Promise<T> {
       // Try to get from cache first
-      const cached = await cache.get<T>(key, options);
-      if (cached !== null) {
+      const cached = await cache.get<T>( key, options);
+      if (_cached !== null) {
         return cached;
       }
       
       // Fetch fresh data
-      const data = await fetcher();
+      const data = await fetcher(_);
       
       // Store in cache for next time
-      await cache.set(key, data, options);
+      await cache.set( key, data, options);
       
       return data;
     },
@@ -321,52 +321,52 @@ export function createCacheMiddleware(cache: APICache) {
     // Background refresh pattern
     async withBackgroundRefresh<T>(
       key: string,
-      fetcher: () => Promise<T>,
+      fetcher: (_) => Promise<T>,
       options: CacheOptions & { staleTime?: number } = {}
     ): Promise<T> {
       const { staleTime = 300, ...cacheOptions } = options; // 5 minutes stale time
       
-      const cached = await cache.get<T>(key, cacheOptions);
+      const cached = await cache.get<T>( key, cacheOptions);
       
-      if (cached !== null) {
+      if (_cached !== null) {
         // Return cached data immediately
         
         // Check if we should refresh in background
-        const cacheAge = await this.getCacheAge(key, cacheOptions);
-        if (cacheAge > staleTime) {
-          // Refresh in background (don't await)
-          this.refreshInBackground(key, fetcher, cacheOptions);
+        const cacheAge = await this.getCacheAge( key, cacheOptions);
+        if (_cacheAge > staleTime) {
+          // Refresh in background (_don't await)
+          this.refreshInBackground( key, fetcher, cacheOptions);
         }
         
         return cached;
       }
       
       // No cached data, fetch synchronously
-      const data = await fetcher();
-      await cache.set(key, data, cacheOptions);
+      const data = await fetcher(_);
+      await cache.set( key, data, cacheOptions);
       return data;
     },
     
-    async getCacheAge(key: string, options: CacheOptions): Promise<number> {
+    async getCacheAge( key: string, options: CacheOptions): Promise<number> {
       // This would require additional Redis commands to track cache timestamps
-      // For now, return 0 (implementation can be enhanced)
+      // For now, return 0 (_implementation can be enhanced)
       return 0;
     },
     
     refreshInBackground(
       key: string,
-      fetcher: () => Promise<any>,
+      fetcher: (_) => Promise<any>,
       options: CacheOptions
     ): void {
       // Don't await this - it runs in background
-      fetcher()
-        .then(data => cache.set(key, data, options))
-        .catch(error => console.error(`Background refresh failed for ${key}:`, error));
+      fetcher(_)
+        .then( data => cache.set(key, data, options))
+        .catch( error => console.error(`Background refresh failed for ${key}:`, error));
     }
   };
 }
 
 // Export middleware instances
-export const apiCacheMiddleware = createCacheMiddleware(apiCache);
-export const userCacheMiddleware = createCacheMiddleware(userCache);
-export const courseCacheMiddleware = createCacheMiddleware(courseCache);
+export const apiCacheMiddleware = createCacheMiddleware(_apiCache);
+export const userCacheMiddleware = createCacheMiddleware(_userCache);
+export const courseCacheMiddleware = createCacheMiddleware(_courseCache);

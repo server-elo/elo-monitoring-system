@@ -85,7 +85,7 @@ interface QueryTracker {
  * Database monitoring class
  */
 class DatabaseMonitor {
-  private queryTracker: Map<string, QueryTracker> = new Map();
+  private queryTracker: Map<string, QueryTracker> = new Map(_);
   private metrics: DatabaseMetrics;
   private redis: any; // Redis client
   private redisMetrics: RedisMetrics;
@@ -96,17 +96,17 @@ class DatabaseMonitor {
     cacheHitRate: 0.8
   };
 
-  constructor() {
-    this.metrics = this.initializeMetrics();
-    this.redisMetrics = this.initializeRedisMetrics();
-    this.setupRedisConnection();
-    this.startMetricsCollection();
+  constructor(_) {
+    this.metrics = this.initializeMetrics(_);
+    this.redisMetrics = this.initializeRedisMetrics(_);
+    this.setupRedisConnection(_);
+    this.startMetricsCollection(_);
   }
 
   /**
    * Initialize database metrics
    */
-  private initializeMetrics(): DatabaseMetrics {
+  private initializeMetrics(_): DatabaseMetrics {
     return {
       connectionPool: {
         active: 0,
@@ -127,7 +127,7 @@ class DatabaseMonitor {
       },
       health: {
         status: 'healthy',
-        lastCheck: new Date(),
+        lastCheck: new Date(_),
         uptime: 0
       }
     };
@@ -136,7 +136,7 @@ class DatabaseMonitor {
   /**
    * Initialize Redis metrics
    */
-  private initializeRedisMetrics(): RedisMetrics {
+  private initializeRedisMetrics(_): RedisMetrics {
     return {
       connection: {
         status: 'disconnected',
@@ -166,7 +166,7 @@ class DatabaseMonitor {
   /**
    * Setup Redis connection monitoring
    */
-  private async setupRedisConnection(): Promise<void> {
+  private async setupRedisConnection(_): Promise<void> {
     try {
       // Dynamically import Redis
       const Redis = await import('ioredis');
@@ -176,77 +176,77 @@ class DatabaseMonitor {
         database: redisConfig.db,
       });
 
-      this.redis.on('connect', () => {
+      this.redis.on( 'connect', () => {
         this.redisMetrics.connection.status = 'connecting';
         logger.info('Redis connection establishing');
       });
 
-      this.redis.on('ready', () => {
+      this.redis.on( 'ready', () => {
         this.redisMetrics.connection.status = 'connected';
-        this.redisMetrics.connection.uptime = Date.now();
+        this.redisMetrics.connection.uptime = Date.now(_);
         logger.info('Redis connection established');
       });
 
-      this.redis.on('error', (error: Error) => {
+      this.redis.on( 'error', (error: Error) => {
         this.redisMetrics.connection.status = 'error';
-        logger.error('Redis connection error', error);
-        sentryUtils.reportPerformanceIssue('redis_connection_error', 0, { error: error.message });
+        logger.error( 'Redis connection error', error);
+        sentryUtils.reportPerformanceIssue( 'redis_connection_error', 0, { error: error.message });
       });
 
-      this.redis.on('end', () => {
+      this.redis.on( 'end', () => {
         this.redisMetrics.connection.status = 'disconnected';
         logger.warn('Redis connection ended');
       });
 
-      await this.redis.connect();
-    } catch (error) {
-      logger.error('Failed to setup Redis monitoring', error);
+      await this.redis.connect(_);
+    } catch (_error) {
+      logger.error( 'Failed to setup Redis monitoring', error);
     }
   }
 
   /**
    * Start metrics collection intervals
    */
-  private startMetricsCollection(): void {
+  private startMetricsCollection(_): void {
     // Collect database metrics every 30 seconds
     setInterval(() => {
-      this.collectDatabaseMetrics();
+      this.collectDatabaseMetrics(_);
     }, 30000);
 
     // Collect Redis metrics every 15 seconds
     setInterval(() => {
-      this.collectRedisMetrics();
+      this.collectRedisMetrics(_);
     }, 15000);
 
     // Health check every 60 seconds
     setInterval(() => {
-      this.performHealthCheck();
+      this.performHealthCheck(_);
     }, 60000);
 
     // Alert check every 5 minutes
     setInterval(() => {
-      this.checkAlertConditions();
+      this.checkAlertConditions(_);
     }, 300000);
   }
 
   /**
    * Collect database metrics from Prisma
    */
-  private async collectDatabaseMetrics(): Promise<void> {
+  private async collectDatabaseMetrics(_): Promise<void> {
     try {
       // Note: Prisma metrics require Prisma v5+ with metrics extension
       // For now, we'll track through our query monitoring
       
-      const activeQueries = Array.from(this.queryTracker.values())
+      const activeQueries = Array.from(_this.queryTracker.values())
         .filter(query => !query.endTime);
 
       this.metrics.queryPerformance.totalQueries = this.queryTracker.size;
       
-      const completedQueries = Array.from(this.queryTracker.values())
+      const completedQueries = Array.from(_this.queryTracker.values())
         .filter(query => query.endTime);
 
-      if (completedQueries.length > 0) {
-        const totalDuration = completedQueries.reduce((sum, query) => sum + (query.duration || 0), 0);
+      if (_completedQueries.length > 0) {
+        const totalDuration = completedQueries.reduce( (sum, query) => sum + (_query.duration || 0), 0);
         this.metrics.queryPerformance.averageExecutionTime = totalDuration / completedQueries.length;
         
         this.metrics.queryPerformance.slowQueries = completedQueries
@@ -256,7 +256,7 @@ class DatabaseMonitor {
           .filter(query => !query.success).length;
       }
 
-      // Simulate connection pool metrics (would be actual in real implementation)
+      // Simulate connection pool metrics (_would be actual in real implementation)
       this.metrics.connectionPool = {
         active: activeQueries.length,
         idle: Math.max(0, 10 - activeQueries.length),
@@ -264,36 +264,36 @@ class DatabaseMonitor {
         waiting: 0
       };
 
-    } catch (error) {
-      logger.error('Failed to collect database metrics', error);
+    } catch (_error) {
+      logger.error( 'Failed to collect database metrics', error);
     }
   }
 
   /**
    * Collect Redis metrics
    */
-  private async collectRedisMetrics(): Promise<void> {
+  private async collectRedisMetrics(_): Promise<void> {
     if (!this.redis || this.redisMetrics.connection.status !== 'connected') {
       return;
     }
 
     try {
-      const startTime = Date.now();
+      const startTime = Date.now(_);
       
       // Test ping
-      await this.redis.ping();
-      this.redisMetrics.connection.lastPing = Date.now() - startTime;
+      await this.redis.ping(_);
+      this.redisMetrics.connection.lastPing = Date.now(_) - startTime;
 
       // Get Redis info
-      const info = await this.redis.info();
-      this.parseRedisInfo(info);
+      const info = await this.redis.info(_);
+      this.parseRedisInfo(_info);
 
       // Get keyspace info
-      const dbSize = await this.redis.dbSize();
+      const dbSize = await this.redis.dbSize(_);
       this.redisMetrics.keyspace.totalKeys = dbSize;
 
-    } catch (error) {
-      logger.error('Failed to collect Redis metrics', error);
+    } catch (_error) {
+      logger.error( 'Failed to collect Redis metrics', error);
       this.redisMetrics.connection.status = 'error';
     }
   }
@@ -301,30 +301,30 @@ class DatabaseMonitor {
   /**
    * Parse Redis INFO command output
    */
-  private parseRedisInfo(info: string): void {
+  private parseRedisInfo(_info: string): void {
     const lines = info.split('\r\n');
     
-    for (const line of lines) {
+    for (_const line of lines) {
       const [key, value] = line.split(':');
       
-      switch (key) {
+      switch (_key) {
         case 'used_memory':
-          this.redisMetrics.memory.used = parseInt(value) || 0;
+          this.redisMetrics.memory.used = parseInt(_value) || 0;
           break;
         case 'used_memory_peak':
-          this.redisMetrics.memory.peak = parseInt(value) || 0;
+          this.redisMetrics.memory.peak = parseInt(_value) || 0;
           break;
         case 'mem_fragmentation_ratio':
-          this.redisMetrics.memory.fragmentation = parseFloat(value) || 0;
+          this.redisMetrics.memory.fragmentation = parseFloat(_value) || 0;
           break;
         case 'total_commands_processed':
-          this.redisMetrics.performance.totalCommands = parseInt(value) || 0;
+          this.redisMetrics.performance.totalCommands = parseInt(_value) || 0;
           break;
         case 'expired_keys':
-          this.redisMetrics.keyspace.expiredKeys = parseInt(value) || 0;
+          this.redisMetrics.keyspace.expiredKeys = parseInt(_value) || 0;
           break;
         case 'evicted_keys':
-          this.redisMetrics.keyspace.evictedKeys = parseInt(value) || 0;
+          this.redisMetrics.keyspace.evictedKeys = parseInt(_value) || 0;
           break;
       }
     }
@@ -333,27 +333,27 @@ class DatabaseMonitor {
   /**
    * Track database query performance
    */
-  public trackQuery(operation: string, model: string, query: string): string {
-    const queryId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  public trackQuery( operation: string, model: string, query: string): string {
+    const queryId = `${Date.now(_)}-${Math.random().toString(36).substr(2, 9)}`;
     
     const tracker: QueryTracker = {
       id: queryId,
       query: query.substring(0, 200), // Limit query length for storage
-      startTime: Date.now(),
+      startTime: Date.now(_),
       success: true,
       model,
       operation
     };
 
-    this.queryTracker.set(queryId, tracker);
+    this.queryTracker.set( queryId, tracker);
     
-    // Clean up old queries (keep last 1000)
-    if (this.queryTracker.size > 1000) {
-      const oldestEntries = Array.from(this.queryTracker.entries())
-        .sort(([, a], [, b]) => a.startTime - b.startTime)
+    // Clean up old queries (_keep last 1000)
+    if (_this.queryTracker.size > 1000) {
+      const oldestEntries = Array.from(_this.queryTracker.entries())
+        .sort( ([, a], [, b]) => a.startTime - b.startTime)
         .slice(0, this.queryTracker.size - 1000);
       
-      oldestEntries.forEach(([id]) => this.queryTracker.delete(id));
+      oldestEntries.forEach(([id]) => this.queryTracker.delete(_id));
     }
 
     return queryId;
@@ -362,18 +362,18 @@ class DatabaseMonitor {
   /**
    * Complete query tracking
    */
-  public completeQuery(queryId: string, success: boolean, error?: string): void {
-    const tracker = this.queryTracker.get(queryId);
+  public completeQuery( queryId: string, success: boolean, error?: string): void {
+    const tracker = this.queryTracker.get(_queryId);
     if (!tracker) return;
 
-    tracker.endTime = Date.now();
+    tracker.endTime = Date.now(_);
     tracker.duration = tracker.endTime - tracker.startTime;
     tracker.success = success;
     tracker.error = error;
 
     // Log slow queries
-    if (tracker.duration > this.alertThresholds.slowQueryMs) {
-      logger.warn('Slow database query detected', {
+    if (_tracker.duration > this.alertThresholds.slowQueryMs) {
+      logger.warn('Slow database query detected', { metadata: {
         queryId,
         duration: tracker.duration,
         model: tracker.model,
@@ -386,27 +386,27 @@ class DatabaseMonitor {
         operation: tracker.operation,
         query: tracker.query
       });
-    }
+    }});
 
     // Log failed queries
     if (!success && error) {
-      logger.error('Database query failed', {
+      logger.error('Database query failed', { metadata: {
         queryId,
         error,
         model: tracker.model,
         operation: tracker.operation,
         query: tracker.query
       });
-    }
+    }});
 
-    this.queryTracker.set(queryId, tracker);
+    this.queryTracker.set( queryId, tracker);
   }
 
   /**
    * Track Redis operations
    */
-  public trackRedisOperation(operation: string, startTime: number, success: boolean): void {
-    const duration = Date.now() - startTime;
+  public trackRedisOperation( operation: string, startTime: number, success: boolean): void {
+    const duration = Date.now(_) - startTime;
     
     this.redisMetrics.performance.totalCommands++;
     
@@ -414,27 +414,27 @@ class DatabaseMonitor {
     const currentAvg = this.redisMetrics.performance.averageResponseTime;
     const totalCommands = this.redisMetrics.performance.totalCommands;
     this.redisMetrics.performance.averageResponseTime = 
-      (currentAvg * (totalCommands - 1) + duration) / totalCommands;
+      (_currentAvg * (totalCommands - 1) + duration) / totalCommands;
 
     // Track slow operations
-    if (duration > 100) { // 100ms threshold for Redis
+    if (_duration > 100) { // 100ms threshold for Redis
       this.redisMetrics.performance.slowCommands++;
       
-      logger.warn('Slow Redis operation detected', {
+      logger.warn('Slow Redis operation detected', { metadata: {
         operation,
         duration,
         threshold: 100
       });
-    }
+    }});
 
-    // Update hit/miss rates (simplified - would need more sophisticated tracking)
-    if (operation.includes('get') || operation.includes('hget')) {
+    // Update hit/miss rates (_simplified - would need more sophisticated tracking)
+    if (_operation.includes('get') || operation.includes('hget')) {
       if (success) {
         this.redisMetrics.performance.hitRate = 
-          (this.redisMetrics.performance.hitRate * 0.9) + (1 * 0.1);
+          (_this.redisMetrics.performance.hitRate * 0.9) + (1 * 0.1);
       } else {
         this.redisMetrics.performance.missRate = 
-          (this.redisMetrics.performance.missRate * 0.9) + (1 * 0.1);
+          (_this.redisMetrics.performance.missRate * 0.9) + (1 * 0.1);
       }
     }
   }
@@ -442,7 +442,7 @@ class DatabaseMonitor {
   /**
    * Perform health check
    */
-  private async performHealthCheck(): Promise<void> {
+  private async performHealthCheck(_): Promise<void> {
     try {
       let healthStatus: 'healthy' | 'degraded' | 'critical' = 'healthy';
       
@@ -466,32 +466,32 @@ class DatabaseMonitor {
 
       this.metrics.health = {
         status: healthStatus,
-        lastCheck: new Date(),
-        uptime: Date.now() - (this.redisMetrics.connection.uptime || Date.now())
+        lastCheck: new Date(_),
+        uptime: Date.now(_) - (_this.redisMetrics.connection.uptime || Date.now())
       };
 
-      logger.info('Health check completed', {
+      logger.info('Health check completed', { metadata: {
         status: healthStatus,
         databaseErrors: this.metrics.queryPerformance.failedQueries,
         redisStatus: this.redisMetrics.connection.status,
         poolUtilization: poolUtilization
       });
 
-    } catch (error) {
+    } catch (_error) {
       this.metrics.health.status = 'critical';
-      logger.error('Health check failed', error);
-    }
+      logger.error( 'Health check failed', error);
+    }});
   }
 
   /**
    * Check alert conditions
    */
-  private checkAlertConditions(): void {
+  private checkAlertConditions(_): void {
     // Database alerts
     const errorRate = this.metrics.queryPerformance.failedQueries / 
                      Math.max(this.metrics.queryPerformance.totalQueries, 1);
     
-    if (errorRate > this.alertThresholds.errorRate) {
+    if (_errorRate > this.alertThresholds.errorRate) {
       sentryUtils.reportPerformanceIssue('high_database_error_rate', errorRate * 100, {
         errorRate: errorRate,
         threshold: this.alertThresholds.errorRate,
@@ -501,7 +501,7 @@ class DatabaseMonitor {
     }
 
     // Redis alerts
-    if (this.redisMetrics.performance.hitRate < this.alertThresholds.cacheHitRate) {
+    if (_this.redisMetrics.performance.hitRate < this.alertThresholds.cacheHitRate) {
       sentryUtils.reportPerformanceIssue('low_cache_hit_rate', this.redisMetrics.performance.hitRate * 100, {
         hitRate: this.redisMetrics.performance.hitRate,
         threshold: this.alertThresholds.cacheHitRate,
@@ -510,7 +510,7 @@ class DatabaseMonitor {
     }
 
     // Memory alerts for Redis
-    if (this.redisMetrics.memory.fragmentation > 1.5) {
+    if (_this.redisMetrics.memory.fragmentation > 1.5) {
       sentryUtils.reportPerformanceIssue('high_redis_fragmentation', this.redisMetrics.memory.fragmentation, {
         fragmentation: this.redisMetrics.memory.fragmentation,
         usedMemory: this.redisMetrics.memory.used,
@@ -522,55 +522,55 @@ class DatabaseMonitor {
   /**
    * Get current database metrics
    */
-  public getDatabaseMetrics(): DatabaseMetrics {
+  public getDatabaseMetrics(_): DatabaseMetrics {
     return { ...this.metrics };
   }
 
   /**
    * Get current Redis metrics
    */
-  public getRedisMetrics(): RedisMetrics {
+  public getRedisMetrics(_): RedisMetrics {
     return { ...this.redisMetrics };
   }
 
   /**
    * Get query performance data
    */
-  public getQueryPerformance(limit: number = 100): QueryTracker[] {
-    return Array.from(this.queryTracker.values())
-      .sort((a, b) => (b.startTime || 0) - (a.startTime || 0))
+  public getQueryPerformance(_limit: number = 100): QueryTracker[] {
+    return Array.from(_this.queryTracker.values())
+      .sort( (a, b) => (_b.startTime || 0) - (_a.startTime || 0))
       .slice(0, limit);
   }
 
   /**
    * Export monitoring data for analysis
    */
-  public exportMonitoringData(): {
+  public exportMonitoringData(_): {
     database: DatabaseMetrics;
     redis: RedisMetrics;
     queries: QueryTracker[];
     timestamp: string;
   } {
     return {
-      database: this.getDatabaseMetrics(),
-      redis: this.getRedisMetrics(),
+      database: this.getDatabaseMetrics(_),
+      redis: this.getRedisMetrics(_),
       queries: this.getQueryPerformance(50),
-      timestamp: new Date().toISOString()
+      timestamp: new Date(_).toISOString()
     };
   }
 
   /**
    * Close monitoring connections
    */
-  public async close(): Promise<void> {
-    if (this.redis) {
-      await this.redis.quit();
+  public async close(_): Promise<void> {
+    if (_this.redis) {
+      await this.redis.quit(_);
     }
   }
 }
 
 // Create singleton instance
-export const databaseMonitor = new DatabaseMonitor();
+export const databaseMonitor = new DatabaseMonitor(_);
 
 /**
  * Prisma middleware for automatic query tracking
@@ -580,15 +580,15 @@ export function createPrismaMonitoringMiddleware() {
     const queryId = databaseMonitor.trackQuery(
       params.action,
       params.model || 'unknown',
-      JSON.stringify(params.args || {})
+      JSON.stringify(_params.args || {})
     );
 
     try {
-      const result = await next(params);
-      databaseMonitor.completeQuery(queryId, true);
+      const result = await next(_params);
+      databaseMonitor.completeQuery( queryId, true);
       return result;
-    } catch (error) {
-      databaseMonitor.completeQuery(queryId, false, error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      databaseMonitor.completeQuery( queryId, false, error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
   };
@@ -599,17 +599,17 @@ export function createPrismaMonitoringMiddleware() {
  */
 export function createMonitoredRedisOperation<T>(
   operation: string,
-  fn: () => Promise<T>
+  fn: (_) => Promise<T>
 ): Promise<T> {
-  const startTime = Date.now();
+  const startTime = Date.now(_);
   
-  return fn()
+  return fn(_)
     .then(result => {
-      databaseMonitor.trackRedisOperation(operation, startTime, true);
+      databaseMonitor.trackRedisOperation( operation, startTime, true);
       return result;
     })
     .catch(error => {
-      databaseMonitor.trackRedisOperation(operation, startTime, false);
+      databaseMonitor.trackRedisOperation( operation, startTime, false);
       throw error;
     });
 }

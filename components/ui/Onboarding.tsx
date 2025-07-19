@@ -11,7 +11,7 @@ interface OnboardingStep {
   position?: 'top' | 'bottom' | 'left' | 'right';
   action?: {
     text: string;
-    onClick: () => void;
+    onClick: (_) => void;
   };
 }
 
@@ -19,17 +19,17 @@ interface OnboardingContextType {
   isActive: boolean;
   currentStep: number;
   steps: OnboardingStep[];
-  startTour: (steps: OnboardingStep[]) => void;
-  nextStep: () => void;
-  prevStep: () => void;
-  skipTour: () => void;
-  endTour: () => void;
+  startTour: (_steps: OnboardingStep[]) => void;
+  nextStep: (_) => void;
+  prevStep: (_) => void;
+  skipTour: (_) => void;
+  endTour: (_) => void;
 }
 
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+const OnboardingContext = createContext<OnboardingContextType | undefined>(_undefined);
 
-export const useOnboarding = () => {
-  const context = useContext(OnboardingContext);
+export const useOnboarding = (_) => {
+  const context = useContext(_OnboardingContext);
   if (!context) {
     throw new Error('useOnboarding must be used within OnboardingProvider');
   }
@@ -41,37 +41,37 @@ interface OnboardingProviderProps {
   children: React.ReactNode;
 }
 
-export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({ children }) => {
-  const [isActive, setIsActive] = useState(false);
+export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({ children  }) => {
+  const [isActive, setIsActive] = useState(_false);
   const [currentStep, setCurrentStep] = useState(0);
   const [steps, setSteps] = useState<OnboardingStep[]>([]);
 
-  const startTour = (tourSteps: OnboardingStep[]) => {
-    setSteps(tourSteps);
+  const startTour = (_tourSteps: OnboardingStep[]) => {
+    setSteps(_tourSteps);
     setCurrentStep(0);
-    setIsActive(true);
+    setIsActive(_true);
   };
 
-  const nextStep = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+  const nextStep = (_) => {
+    if (_currentStep < steps.length - 1) {
+      setCurrentStep(_currentStep + 1);
     } else {
-      endTour();
+      endTour(_);
     }
   };
 
-  const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+  const prevStep = (_) => {
+    if (_currentStep > 0) {
+      setCurrentStep(_currentStep - 1);
     }
   };
 
-  const skipTour = () => {
-    endTour();
+  const skipTour = (_) => {
+    endTour(_);
   };
 
-  const endTour = () => {
-    setIsActive(false);
+  const endTour = (_) => {
+    setIsActive(_false);
     setCurrentStep(0);
     setSteps([]);
   };
@@ -96,19 +96,19 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({ children
 };
 
 // Onboarding Overlay
-const OnboardingOverlay: React.FC = () => {
-  const { steps, currentStep } = useOnboarding();
-  const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
-  const [highlightStyle, setHighlightStyle] = useState<React.CSSProperties>({});
+const OnboardingOverlay: React.FC = (_) => {
+  const { steps, currentStep } = useOnboarding(_);
+  const [targetElement, setTargetElement] = useState<HTMLElement | null>(_null);
+  const [highlightStyle, setHighlightStyle] = useState<React.CSSProperties>({  });
 
   const currentStepData = steps[currentStep];
 
   useEffect(() => {
-    if (currentStepData?.target) {
-      const element = document.querySelector(currentStepData.target) as HTMLElement;
+    if (_currentStepData?.target) {
+      const element = document.querySelector(_currentStepData.target) as HTMLElement;
       if (element) {
-        setTargetElement(element);
-        const rect = element.getBoundingClientRect();
+        setTargetElement(_element);
+        const rect = element.getBoundingClientRect(_);
         setHighlightStyle({
           top: rect.top - 8,
           left: rect.left - 8,
@@ -117,11 +117,11 @@ const OnboardingOverlay: React.FC = () => {
         });
         
         // Scroll element into view
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.scrollIntoView( { behavior: 'smooth', block: 'center' });
       }
     } else {
-      setTargetElement(null);
-      setHighlightStyle({});
+      setTargetElement(_null);
+      setHighlightStyle({  });
     }
   }, [currentStepData]);
 
@@ -157,51 +157,51 @@ const OnboardingOverlay: React.FC = () => {
 };
 
 // Onboarding Tooltip
-const OnboardingTooltip: React.FC = () => {
-  const { steps, currentStep, nextStep, prevStep, skipTour } = useOnboarding();
+const OnboardingTooltip: React.FC = (_) => {
+  const { steps, currentStep, nextStep, prevStep, skipTour } = useOnboarding(_);
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
 
   // Enhanced navigation with progress tracking
-  const handleNextStep = () => {
+  const handleNextStep = (_) => {
     if (isLastStep) {
       // Complete the tour and save progress
-      localStorage.setItem('onboardingCompleted', 'true');
-      localStorage.setItem('onboardingCompletedAt', new Date().toISOString());
+      localStorage.setItem( 'onboardingCompleted', 'true');
+      localStorage.setItem( 'onboardingCompletedAt', new Date().toISOString());
 
       // Track completion analytics
       const tourData = {
         completedSteps: steps.length,
-        totalTime: Date.now() - parseInt(localStorage.getItem('onboardingStartTime') || '0'),
+        totalTime: Date.now(_) - parseInt(_localStorage.getItem('onboardingStartTime') || '0'),
         completionRate: 100,
         skippedSteps: 0
       };
-      localStorage.setItem('onboardingAnalytics', JSON.stringify(tourData));
+      localStorage.setItem( 'onboardingAnalytics', JSON.stringify(tourData));
 
-      skipTour(); // This will close the tour
+      skipTour(_); // This will close the tour
     } else {
       // Track step progress
       const stepProgress = {
         stepIndex: currentStep,
         stepId: currentStepData.id,
         timestamp: new Date().toISOString(),
-        timeSpent: Date.now() - parseInt(localStorage.getItem(`step_${currentStep}_startTime`) || '0')
+        timeSpent: Date.now(_) - parseInt(_localStorage.getItem(`step_${currentStep}startTime`) || '0')
       };
 
       // Save individual step completion
-      const completedSteps = JSON.parse(localStorage.getItem('completedOnboardingSteps') || '[]');
-      completedSteps.push(stepProgress);
-      localStorage.setItem('completedOnboardingSteps', JSON.stringify(completedSteps));
+      const completedSteps = JSON.parse(_localStorage.getItem('completedOnboardingSteps') || '[]');
+      completedSteps.push(_stepProgress);
+      localStorage.setItem( 'completedOnboardingSteps', JSON.stringify(completedSteps));
 
       // Set start time for next step
-      localStorage.setItem(`step_${currentStep + 1}_startTime`, Date.now().toString());
+      localStorage.setItem( `step_${currentStep + 1}startTime`, Date.now().toString());
 
-      nextStep();
+      nextStep(_);
     }
   };
 
-  const handlePrevStep = () => {
+  const handlePrevStep = (_) => {
     // Track backward navigation
     const backNavigation = {
       fromStep: currentStep,
@@ -209,68 +209,68 @@ const OnboardingTooltip: React.FC = () => {
       timestamp: new Date().toISOString()
     };
 
-    const backNavigations = JSON.parse(localStorage.getItem('onboardingBackNavigations') || '[]');
-    backNavigations.push(backNavigation);
-    localStorage.setItem('onboardingBackNavigations', JSON.stringify(backNavigations));
+    const backNavigations = JSON.parse(_localStorage.getItem('onboardingBackNavigations') || '[]');
+    backNavigations.push(_backNavigation);
+    localStorage.setItem( 'onboardingBackNavigations', JSON.stringify(backNavigations));
 
-    prevStep();
+    prevStep(_);
   };
 
-  const handleSkipTour = () => {
+  const handleSkipTour = (_) => {
     // Track skip analytics
     const skipData = {
       skippedAtStep: currentStep,
       totalStepsCompleted: currentStep,
       completionRate: Math.round((currentStep / steps.length) * 100),
-      timeSpent: Date.now() - parseInt(localStorage.getItem('onboardingStartTime') || '0')
+      timeSpent: Date.now(_) - parseInt(_localStorage.getItem('onboardingStartTime') || '0')
     };
-    localStorage.setItem('onboardingSkipAnalytics', JSON.stringify(skipData));
-    localStorage.setItem('onboardingSkipped', 'true');
+    localStorage.setItem( 'onboardingSkipAnalytics', JSON.stringify(skipData));
+    localStorage.setItem( 'onboardingSkipped', 'true');
 
-    skipTour();
+    skipTour(_);
   };
 
-  const getTooltipPosition = () => {
+  const getTooltipPosition = (_) => {
     if (!currentStepData.target) {
-      return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+      return { top: '50%', left: '50%', transform: 'translate( -50%, -50%)' };
     }
 
-    const element = document.querySelector(currentStepData.target);
+    const element = document.querySelector(_currentStepData.target);
     if (!element) return {};
 
-    const rect = element.getBoundingClientRect();
+    const rect = element.getBoundingClientRect(_);
     const position = currentStepData.position || 'bottom';
 
-    switch (position) {
+    switch (_position) {
       case 'top':
         return {
           top: rect.top - 20,
           left: rect.left + rect.width / 2,
-          transform: 'translate(-50%, -100%)',
+          transform: 'translate( -50%, -100%)',
         };
       case 'bottom':
         return {
           top: rect.bottom + 20,
           left: rect.left + rect.width / 2,
-          transform: 'translate(-50%, 0)',
+          transform: 'translate( -50%, 0)',
         };
       case 'left':
         return {
           top: rect.top + rect.height / 2,
           left: rect.left - 20,
-          transform: 'translate(-100%, -50%)',
+          transform: 'translate( -100%, -50%)',
         };
       case 'right':
         return {
           top: rect.top + rect.height / 2,
           left: rect.right + 20,
-          transform: 'translate(0, -50%)',
+          transform: 'translate( 0, -50%)',
         };
       default:
         return {
           top: rect.bottom + 20,
           left: rect.left + rect.width / 2,
-          transform: 'translate(-50%, 0)',
+          transform: 'translate( -50%, 0)',
         };
     }
   };
@@ -278,7 +278,7 @@ const OnboardingTooltip: React.FC = () => {
   return (
     <motion.div
       className="absolute bg-brand-bg-medium rounded-xl shadow-2xl border border-brand-bg-light/20 p-6 max-w-sm"
-      style={getTooltipPosition()}
+      style={getTooltipPosition(_)}
       initial={{ opacity: 0, scale: 0.9, y: 10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -286,7 +286,7 @@ const OnboardingTooltip: React.FC = () => {
       {/* Progress indicator */}
       <div className="flex items-center gap-2 mb-4">
         <div className="flex gap-1">
-          {steps.map((_, index) => (
+          {steps.map( (_, index) => (
             <div
               key={index}
               className={`w-2 h-2 rounded-full transition-colors ${
@@ -356,7 +356,7 @@ const OnboardingTooltip: React.FC = () => {
 
         {/* Step completion indicator */}
         <div className="mt-2 flex items-center gap-1">
-          {steps.map((step, index) => (
+          {steps.map( (step, index) => (
             <div
               key={step.id}
               className={`flex-1 h-1 rounded-full transition-all duration-300 ${
@@ -383,8 +383,8 @@ const OnboardingTooltip: React.FC = () => {
 // Welcome Modal
 interface WelcomeModalProps {
   isOpen: boolean;
-  onClose: () => void;
-  onStartTour: () => void;
+  onClose: (_) => void;
+  onStartTour: (_) => void;
   title?: string;
   description?: string;
 }
@@ -399,29 +399,29 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
   // Check if user has completed onboarding before
   const hasCompletedBefore = localStorage.getItem('onboardingCompleted') === 'true';
   const lastCompletionDate = localStorage.getItem('onboardingCompletedAt');
-  const skipAnalytics = JSON.parse(localStorage.getItem('onboardingSkipAnalytics') || 'null');
+  const skipAnalytics = JSON.parse(_localStorage.getItem('onboardingSkipAnalytics') || 'null');
 
-  const handleStartTour = () => {
+  const handleStartTour = (_) => {
     // Initialize tour tracking
-    localStorage.setItem('onboardingStartTime', Date.now().toString());
-    localStorage.setItem('step_0_startTime', Date.now().toString());
+    localStorage.setItem( 'onboardingStartTime', Date.now().toString());
+    localStorage.setItem( 'step0startTime', Date.now().toString());
     localStorage.removeItem('onboardingSkipped');
     localStorage.removeItem('completedOnboardingSteps');
     localStorage.removeItem('onboardingBackNavigations');
 
-    onStartTour();
+    onStartTour(_);
   };
 
-  const handleSkipForNow = () => {
+  const handleSkipForNow = (_) => {
     // Track skip from welcome modal
     const skipData = {
       skippedAtStep: -1, // Before starting
       skippedFromWelcome: true,
       timestamp: new Date().toISOString()
     };
-    localStorage.setItem('onboardingSkipAnalytics', JSON.stringify(skipData));
+    localStorage.setItem( 'onboardingSkipAnalytics', JSON.stringify(skipData));
 
-    onClose();
+    onClose(_);
   };
 
   if (!isOpen) return null;
@@ -462,7 +462,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>You completed the tour on {new Date(lastCompletionDate).toLocaleDateString()}</span>
+                <span>You completed the tour on {new Date(_lastCompletionDate).toLocaleDateString(_)}</span>
               </div>
               <p className="text-xs text-green-300 mt-1">
                 Want to take it again or show someone else?
@@ -512,11 +512,11 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
 
 // Help Button
 interface HelpButtonProps {
-  onClick: () => void;
+  onClick: (_) => void;
   className?: string;
 }
 
-export const HelpButton: React.FC<HelpButtonProps> = ({ onClick, className = '' }) => (
+export const HelpButton: React.FC<HelpButtonProps> = ( { onClick, className = '' }) => (
   <Button
     onClick={onClick}
     variant="ghost"

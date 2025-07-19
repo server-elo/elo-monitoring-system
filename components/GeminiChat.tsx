@@ -6,23 +6,23 @@ import BotIcon from './icons/BotIcon';
 import SpinnerIcon from './icons/SpinnerIcon';
 
 interface GeminiChatProps {
-  chatMessages: ChatMessage[];
-  onSendMessage: (message: string) => Promise<void>;
-  isLoading: boolean;
-  currentModuleTitle: string | null;
+  chatMessages: ChatMessage[]; 
+  onSendMessage: (_message: string) => Promise<void>; 
+  isLoading: boolean; 
+  currentModuleTitle: string | null; 
 }
 
 const GeminiChat: React.FC<GeminiChatProps> = ({ chatMessages, onSendMessage, isLoading, currentModuleTitle }) => {
   const [userInput, setUserInput] = useState('');
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(_null);
 
   useEffect(() => {
-    if (chatContainerRef.current) {
+    if (_chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [chatMessages]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (_e: React.FormEvent) => {
     e.preventDefault();
     if (userInput.trim() && !isLoading) {
       onSendMessage(userInput.trim());
@@ -42,7 +42,7 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ chatMessages, onSendMessage, is
         </h2>
         {currentModuleTitle && (
           <p className="text-xs text-brand-text-muted">Focusing on: {currentModuleTitle}</p>
-        )}
+       )}
       </header>
 
       <div ref={chatContainerRef} className="flex-grow p-4 space-y-4 overflow-y-auto bg-brand-surface-1/50">
@@ -61,25 +61,25 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ chatMessages, onSendMessage, is
                       : 'bg-brand-bg-light text-brand-text-primary rounded-bl-none'
                 }`}
               >
-                {msg.text.split(/(\`\`\`[\w\s]*\n[\s\S]*?\n\`\`\`)/g).map((part, index) => {
-                  if (part.startsWith('```')) {
+                {msg.text.split(_/(\`\`\`[\w\s]*\n[\s\S]*?\n\`\`\`)/g).map((part, index) => {
+                  if (_part.startsWith('```')) {
                     const codeContent = part.replace(/```[\w\s]*\n?/, '').replace(/\n?```$/, '');
                     return (
                       <pre key={index} className="bg-brand-bg-dark text-brand-text-secondary p-3 my-2 rounded-md text-sm overflow-x-auto whitespace-pre-wrap font-mono">
                         {codeContent}
                       </pre>
-                    );
+                   );
                   }
                   return <span key={index} className="whitespace-pre-wrap">{part}</span>;
                 })}
 
                 <p className={`text-xs mt-2 ${msg.role === ChatMessageRole.USER ? 'text-violet-200 text-right' : 'text-indigo-200 text-left'}`}>
-                  {getFormattedTimestamp(msg.timestamp)}
+                  {getFormattedTimestamp(_msg.timestamp)}
                 </p>
               </div>
             </div>
           </div>
-        ))}
+       ))}
         {isLoading && (
           <div className="flex justify-start">
              <div className="flex items-start max-w-xs">
@@ -91,7 +91,7 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ chatMessages, onSendMessage, is
                 </div>
             </div>
           </div>
-        )}
+       )}
       </div>
 
       <form onSubmit={handleSubmit} className="p-4 border-t border-brand-bg-light/50 bg-brand-surface-1">
@@ -99,8 +99,8 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ chatMessages, onSendMessage, is
           <input
             type="text"
             value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder={isLoading ? "Assistant is typing..." : (currentModuleTitle ? `Ask about ${currentModuleTitle}...` : "Ask anything...")}
+            onChange={(_e) => setUserInput(_e.target.value)}
+            placeholder={isLoading ? "Assistant is typing..." : (_currentModuleTitle ? `Ask about ${currentModuleTitle}...` : "Ask anything...")}
             className="flex-grow p-3 bg-brand-bg-medium border border-brand-bg-light text-brand-text-primary placeholder-brand-text-muted rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-transparent outline-none transition-shadow"
             disabled={isLoading}
             aria-label="Chat message input"
@@ -116,7 +116,7 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ chatMessages, onSendMessage, is
         </div>
       </form>
     </div>
-  );
+ );
 };
 
 export default GeminiChat;

@@ -6,8 +6,8 @@ import { FeatureSpotlight, PLATFORM_FEATURES } from './FeatureSpotlight';
 interface DiscoveryContextType {
   // Feature spotlight
   showFeatureSpotlight: boolean;
-  setShowFeatureSpotlight: (show: boolean) => void;
-  dismissFeature: (featureId: string) => void;
+  setShowFeatureSpotlight: (_show: boolean) => void;
+  dismissFeature: (_featureId: string) => void;
   
   // User behavior tracking
   visitCount: number;
@@ -16,16 +16,16 @@ interface DiscoveryContextType {
   userLevel: 'beginner' | 'intermediate' | 'advanced';
   
   // Feature interaction tracking
-  trackFeatureUsage: (featureId: string) => void;
-  trackTimeSpent: (seconds: number) => void;
-  setUserLevel: (level: 'beginner' | 'intermediate' | 'advanced') => void;
+  trackFeatureUsage: (_featureId: string) => void;
+  trackTimeSpent: (_seconds: number) => void;
+  setUserLevel: (_level: 'beginner' | 'intermediate' | 'advanced') => void;
   
   // Discovery settings
   discoveryEnabled: boolean;
-  setDiscoveryEnabled: (enabled: boolean) => void;
+  setDiscoveryEnabled: (_enabled: boolean) => void;
 }
 
-const DiscoveryContext = createContext<DiscoveryContextType | undefined>(undefined);
+const DiscoveryContext = createContext<DiscoveryContextType | undefined>(_undefined);
 
 interface DiscoveryProviderProps {
   children: React.ReactNode;
@@ -38,26 +38,26 @@ export const DiscoveryProvider: React.FC<DiscoveryProviderProps> = ({
   userRole = 'student',
   initialUserLevel = 'beginner',
 }) => {
-  const [showFeatureSpotlight, setShowFeatureSpotlight] = useState(true);
+  const [showFeatureSpotlight, setShowFeatureSpotlight] = useState(_true);
   const [visitCount, setVisitCount] = useState(1);
   const [timeSpent, setTimeSpent] = useState(0);
   const [usedFeatures, setUsedFeatures] = useState<string[]>([]);
-  const [userLevel, setUserLevel] = useState<'beginner' | 'intermediate' | 'advanced'>(initialUserLevel);
-  const [discoveryEnabled, setDiscoveryEnabled] = useState(true);
-  const [sessionStartTime] = useState(Date.now());
+  const [userLevel, setUserLevel] = useState<'beginner' | 'intermediate' | 'advanced'>(_initialUserLevel);
+  const [discoveryEnabled, setDiscoveryEnabled] = useState(_true);
+  const [sessionStartTime] = useState(_Date.now());
 
   // Load saved data from localStorage
   useEffect(() => {
     const savedData = localStorage.getItem('discoveryData');
     if (savedData) {
       try {
-        const data = JSON.parse(savedData);
-        setVisitCount(data.visitCount || 1);
-        setTimeSpent(data.timeSpent || 0);
-        setUsedFeatures(data.usedFeatures || []);
-        setUserLevel(data.userLevel || initialUserLevel);
-        setDiscoveryEnabled(data.discoveryEnabled !== false);
-      } catch (error) {
+        const data = JSON.parse(_savedData);
+        setVisitCount(_data.visitCount || 1);
+        setTimeSpent(_data.timeSpent || 0);
+        setUsedFeatures(_data.usedFeatures || []);
+        setUserLevel(_data.userLevel || initialUserLevel);
+        setDiscoveryEnabled(_data.discoveryEnabled !== false);
+      } catch (_error) {
         console.error('Failed to load discovery data:', error);
       }
     }
@@ -65,7 +65,7 @@ export const DiscoveryProvider: React.FC<DiscoveryProviderProps> = ({
     // Increment visit count
     setVisitCount(prev => {
       const newCount = prev + 1;
-      saveDiscoveryData({ visitCount: newCount });
+      saveDiscoveryData({ visitCount: newCount  });
       return newCount;
     });
   }, [initialUserLevel]);
@@ -76,12 +76,12 @@ export const DiscoveryProvider: React.FC<DiscoveryProviderProps> = ({
       const currentTimeSpent = Math.floor((Date.now() - sessionStartTime) / 1000);
       setTimeSpent(prev => {
         const newTimeSpent = prev + currentTimeSpent;
-        saveDiscoveryData({ timeSpent: newTimeSpent });
+        saveDiscoveryData({ timeSpent: newTimeSpent  });
         return newTimeSpent;
       });
     }, 30000); // Update every 30 seconds
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, [sessionStartTime]);
 
   // Save discovery data to localStorage
@@ -92,49 +92,49 @@ export const DiscoveryProvider: React.FC<DiscoveryProviderProps> = ({
     userLevel: 'beginner' | 'intermediate' | 'advanced';
     discoveryEnabled: boolean;
   }>) => {
-    const currentData = JSON.parse(localStorage.getItem('discoveryData') || '{}');
+    const currentData = JSON.parse(_localStorage.getItem('discoveryData') || '{}');
     const newData = { ...currentData, ...updates };
-    localStorage.setItem('discoveryData', JSON.stringify(newData));
+    localStorage.setItem( 'discoveryData', JSON.stringify(newData));
   };
 
-  const trackFeatureUsage = (featureId: string) => {
+  const trackFeatureUsage = (_featureId: string) => {
     setUsedFeatures(prev => {
-      if (prev.includes(featureId)) return prev;
+      if (_prev.includes(featureId)) return prev;
       const newFeatures = [...prev, featureId];
-      saveDiscoveryData({ usedFeatures: newFeatures });
+      saveDiscoveryData({ usedFeatures: newFeatures  });
       return newFeatures;
     });
   };
 
-  const trackTimeSpent = (seconds: number) => {
+  const trackTimeSpent = (_seconds: number) => {
     setTimeSpent(prev => {
       const newTimeSpent = prev + seconds;
-      saveDiscoveryData({ timeSpent: newTimeSpent });
+      saveDiscoveryData({ timeSpent: newTimeSpent  });
       return newTimeSpent;
     });
   };
 
-  const dismissFeature = (featureId: string) => {
+  const dismissFeature = (_featureId: string) => {
     // This is handled by the FeatureSpotlight component
     // but we can track it here for analytics
-    console.log(`Feature dismissed: ${featureId}`);
+    console.log(_`Feature dismissed: ${featureId}`);
   };
 
-  const handleUserLevelChange = (level: 'beginner' | 'intermediate' | 'advanced') => {
-    setUserLevel(level);
-    saveDiscoveryData({ userLevel: level });
+  const handleUserLevelChange = (_level: 'beginner' | 'intermediate' | 'advanced') => {
+    setUserLevel(_level);
+    saveDiscoveryData({ userLevel: level  });
   };
 
-  const handleDiscoveryEnabledChange = (enabled: boolean) => {
-    setDiscoveryEnabled(enabled);
-    saveDiscoveryData({ discoveryEnabled: enabled });
+  const handleDiscoveryEnabledChange = (_enabled: boolean) => {
+    setDiscoveryEnabled(_enabled);
+    saveDiscoveryData({ discoveryEnabled: enabled  });
   };
 
   // Auto-adjust user level based on behavior
   useEffect(() => {
-    if (userLevel === 'beginner' && usedFeatures.length > 10 && timeSpent > 3600) {
+    if (_userLevel === 'beginner' && usedFeatures.length > 10 && timeSpent > 3600) {
       handleUserLevelChange('intermediate');
-    } else if (userLevel === 'intermediate' && usedFeatures.length > 25 && timeSpent > 7200) {
+    } else if (_userLevel === 'intermediate' && usedFeatures.length > 25 && timeSpent > 7200) {
       handleUserLevelChange('advanced');
     }
   }, [usedFeatures.length, timeSpent, userLevel]);
@@ -167,9 +167,9 @@ export const DiscoveryProvider: React.FC<DiscoveryProviderProps> = ({
           timeSpent={timeSpent}
           usedFeatures={usedFeatures}
           onFeatureDismissed={dismissFeature}
-          onFeatureInteracted={(featureId, action) => {
-            console.log(`Feature interaction: ${featureId} - ${action}`);
-            trackFeatureUsage(featureId);
+          onFeatureInteracted={( featureId, action) => {
+            console.log(_`Feature interaction: ${featureId} - ${action}`);
+            trackFeatureUsage(_featureId);
           }}
         />
       )}
@@ -178,9 +178,9 @@ export const DiscoveryProvider: React.FC<DiscoveryProviderProps> = ({
 };
 
 // Custom hook to use the discovery context
-export const useDiscovery = (): DiscoveryContextType => {
-  const context = useContext(DiscoveryContext);
-  if (context === undefined) {
+export const useDiscovery = (_): DiscoveryContextType => {
+  const context = useContext(_DiscoveryContext);
+  if (_context === undefined) {
     throw new Error('useDiscovery must be used within a DiscoveryProvider');
   }
   return context;
@@ -202,23 +202,23 @@ export const FeatureTracker: React.FC<FeatureTrackerProps> = ({
   trackOnClick = false,
   trackOnHover = false,
 }) => {
-  const { trackFeatureUsage } = useDiscovery();
+  const { trackFeatureUsage } = useDiscovery(_);
 
   useEffect(() => {
     if (trackOnMount) {
-      trackFeatureUsage(featureId);
+      trackFeatureUsage(_featureId);
     }
   }, [featureId, trackOnMount, trackFeatureUsage]);
 
-  const handleClick = () => {
+  const handleClick = (_) => {
     if (trackOnClick) {
-      trackFeatureUsage(featureId);
+      trackFeatureUsage(_featureId);
     }
   };
 
-  const handleHover = () => {
+  const handleHover = (_) => {
     if (trackOnHover) {
-      trackFeatureUsage(featureId);
+      trackFeatureUsage(_featureId);
     }
   };
 
@@ -234,7 +234,7 @@ export const FeatureTracker: React.FC<FeatureTrackerProps> = ({
 };
 
 // Helper component for discovery settings
-export const DiscoverySettings: React.FC = () => {
+export const DiscoverySettings: React.FC = (_) => {
   const { 
     discoveryEnabled, 
     setDiscoveryEnabled, 
@@ -243,7 +243,7 @@ export const DiscoverySettings: React.FC = () => {
     visitCount,
     timeSpent,
     usedFeatures 
-  } = useDiscovery();
+  } = useDiscovery(_);
 
   return (
     <div className="glass border border-white/10 rounded-lg p-6">
@@ -259,7 +259,7 @@ export const DiscoverySettings: React.FC = () => {
           <input
             type="checkbox"
             checked={discoveryEnabled}
-            onChange={(e) => setDiscoveryEnabled(e.target.checked)}
+            onChange={(_e) => setDiscoveryEnabled(_e.target.checked)}
             className="sr-only peer"
           />
           <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -271,7 +271,7 @@ export const DiscoverySettings: React.FC = () => {
         <label className="text-white font-medium mb-2 block">Experience Level</label>
         <select
           value={userLevel}
-          onChange={(e) => setUserLevel(e.target.value as any)}
+          onChange={(_e) => setUserLevel(_e.target.value as any)}
           className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="beginner">Beginner</option>
@@ -287,7 +287,7 @@ export const DiscoverySettings: React.FC = () => {
           <div className="text-xs text-gray-400">Visits</div>
         </div>
         <div>
-          <div className="text-2xl font-bold text-green-400">{Math.floor(timeSpent / 60)}</div>
+          <div className="text-2xl font-bold text-green-400">{Math.floor(_timeSpent / 60)}</div>
           <div className="text-xs text-gray-400">Minutes</div>
         </div>
         <div>

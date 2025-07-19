@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-const SpinnerIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => {
+const SpinnerIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5"  }) => {
   return (
     <svg 
       className={`animate-spin ${className}`} 

@@ -24,13 +24,13 @@ export class AdvancedEditorConfig {
   private monaco: any;
   private editor: any;
 
-  constructor(monaco: any, editor: any) {
+  constructor( monaco: any, editor: any) {
     this.monaco = monaco;
     this.editor = editor;
   }
 
   // Configure advanced Solidity language features
-  configureSolidityLanguage(): void {
+  configureSolidityLanguage(_): void {
     // Enhanced syntax highlighting
     this.monaco.languages.setMonarchTokensProvider('solidity', {
       tokenizer: {
@@ -42,39 +42,39 @@ export class AdvancedEditorConfig {
           [/\/\/\s*SPDX-License-Identifier:.*/, 'license'],
           
           // Contract declarations
-          [/\b(contract|interface|library|abstract)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/, ['keyword.contract', 'type.identifier']],
+          [/\b(_contract|interface|library|abstract)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/, ['keyword.contract', 'type.identifier']],
           
           // Function declarations
-          [/\b(function|modifier|constructor|fallback|receive)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/, ['keyword.function', 'function.identifier']],
+          [/\b(_function|modifier|constructor|fallback|receive)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/, ['keyword.function', 'function.identifier']],
           
           // Visibility modifiers
-          [/\b(public|private|internal|external)\b/, 'keyword.visibility'],
+          [/\b(_public|private|internal|external)\b/, 'keyword.visibility'],
           
           // State mutability
-          [/\b(pure|view|payable|nonpayable)\b/, 'keyword.mutability'],
+          [/\b(_pure|view|payable|nonpayable)\b/, 'keyword.mutability'],
           
           // Storage location
-          [/\b(memory|storage|calldata)\b/, 'keyword.storage'],
+          [/\b(_memory|storage|calldata)\b/, 'keyword.storage'],
           
           // Data types
-          [/\b(uint|int|address|bool|string|bytes)\d*\b/, 'type.primitive'],
-          [/\b(mapping|struct|enum|event)\b/, 'keyword.type'],
+          [/\b(_uint|int|address|bool|string|bytes)\d*\b/, 'type.primitive'],
+          [/\b(_mapping|struct|enum|event)\b/, 'keyword.type'],
           
           // Control flow
-          [/\b(if|else|for|while|do|break|continue|return|try|catch)\b/, 'keyword.control'],
+          [/\b(_if|else|for|while|do|break|continue|return|try|catch)\b/, 'keyword.control'],
           
           // Built-in functions
-          [/\b(require|assert|revert)\b/, 'function.builtin'],
+          [/\b(_require|assert|revert)\b/, 'function.builtin'],
           
           // Global variables
-          [/\b(msg|block|tx|now)\b/, 'variable.global'],
-          [/\.(sender|value|data|gas|timestamp|number|difficulty|coinbase)\b/, 'property.global'],
+          [/\b(_msg|block|tx|now)\b/, 'variable.global'],
+          [/\.(_sender|value|data|gas|timestamp|number|difficulty|coinbase)\b/, 'property.global'],
           
           // Operators
           [/[+\-*/%=!<>&|^~]/, 'operator'],
           
           // Numbers
-          [/\b\d+(\.\d+)?(e[+-]?\d+)?\b/, 'number'],
+          [/\b\d+(_\.\d+)?(_e[+-]?\d+)?\b/, 'number'],
           [/\b0x[0-9a-fA-F]+\b/, 'number.hex'],
           
           // Strings
@@ -89,7 +89,7 @@ export class AdvancedEditorConfig {
           [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifier'],
           
           // Delimiters
-          [/[{}()\[\]]/, 'delimiter'],
+          [/[{}(_)\[\]]/, 'delimiter'],
           [/[;,.]/, 'delimiter'],
         ]
       }
@@ -97,8 +97,8 @@ export class AdvancedEditorConfig {
 
     // Enhanced auto-completion
     this.monaco.languages.registerCompletionItemProvider('solidity', {
-      provideCompletionItems: (model: any, position: any) => {
-        const word = model.getWordUntilPosition(position);
+      provideCompletionItems: ( model: any, position: any) => {
+        const word = model.getWordUntilPosition(_position);
         const range = {
           startLineNumber: position.lineNumber,
           endLineNumber: position.lineNumber,
@@ -127,7 +127,7 @@ export class AdvancedEditorConfig {
               label: 'function',
               kind: this.monaco.languages.CompletionItemKind.Snippet,
               insertText: [
-                'function ${1:functionName}(${2:parameters}) ${3:public} ${4:returns (${5:returnType})} {',
+                'function ${1:functionName}(_${2:parameters}) ${3:public} ${4:returns (_${5:returnType})} {',
                 '\t${6:// Function body}',
                 '}'
               ].join('\n'),
@@ -141,7 +141,7 @@ export class AdvancedEditorConfig {
               label: 'constructor',
               kind: this.monaco.languages.CompletionItemKind.Snippet,
               insertText: [
-                'constructor(${1:parameters}) {',
+                'constructor(_${1:parameters}) {',
                 '\t${2:// Constructor body}',
                 '}'
               ].join('\n'),
@@ -155,7 +155,7 @@ export class AdvancedEditorConfig {
               label: 'modifier',
               kind: this.monaco.languages.CompletionItemKind.Snippet,
               insertText: [
-                'modifier ${1:modifierName}(${2:parameters}) {',
+                'modifier ${1:modifierName}(_${2:parameters}) {',
                 '\t${3:// Modifier body}',
                 '\t_;',
                 '}'
@@ -169,7 +169,7 @@ export class AdvancedEditorConfig {
             {
               label: 'event',
               kind: this.monaco.languages.CompletionItemKind.Snippet,
-              insertText: 'event ${1:EventName}(${2:parameters});',
+              insertText: 'event ${1:EventName}(_${2:parameters});',
               insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
               documentation: 'Create an event',
               range
@@ -179,7 +179,7 @@ export class AdvancedEditorConfig {
             {
               label: 'require',
               kind: this.monaco.languages.CompletionItemKind.Function,
-              insertText: 'require(${1:condition}, "${2:error message}");',
+              insertText: 'require( ${1:condition}, "${2:error message}");',
               insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
               documentation: 'Add a require statement',
               range
@@ -209,11 +209,11 @@ export class AdvancedEditorConfig {
 
     // Hover provider for documentation
     this.monaco.languages.registerHoverProvider('solidity', {
-      provideHover: (model: any, position: any) => {
-        const word = model.getWordAtPosition(position);
+      provideHover: ( model: any, position: any) => {
+        const word = model.getWordAtPosition(_position);
         if (!word) return null;
 
-        const documentation = this.getSolidityDocumentation(word.word);
+        const documentation = this.getSolidityDocumentation(_word.word);
         if (!documentation) return null;
 
         return {
@@ -233,7 +233,7 @@ export class AdvancedEditorConfig {
   }
 
   // Configure custom themes
-  configureThemes(): void {
+  configureThemes(_): void {
     // Solidity Dark Theme
     const solidityDarkTheme: EditorTheme = {
       name: 'solidity-dark',
@@ -268,7 +268,7 @@ export class AdvancedEditorConfig {
       }
     };
 
-    this.monaco.editor.defineTheme('solidity-dark', solidityDarkTheme);
+    this.monaco.editor.defineTheme( 'solidity-dark', solidityDarkTheme);
 
     // Solidity Light Theme
     const solidityLightTheme: EditorTheme = {
@@ -304,11 +304,11 @@ export class AdvancedEditorConfig {
       }
     };
 
-    this.monaco.editor.defineTheme('solidity-light', solidityLightTheme);
+    this.monaco.editor.defineTheme( 'solidity-light', solidityLightTheme);
   }
 
   // Configure keyboard shortcuts
-  configureKeyboardShortcuts(): void {
+  configureKeyboardShortcuts(_): void {
     const shortcuts: KeyboardShortcut[] = [
       {
         key: 'ctrl+shift+c',
@@ -347,16 +347,16 @@ export class AdvancedEditorConfig {
         this.monaco.KeyMod.chord(
           this.monaco.KeyCode[shortcut.key.replace(/ctrl\+|shift\+|alt\+/g, '').toUpperCase()]
         ),
-        () => {
+        (_) => {
           // Emit custom event for the parent component to handle
-          window.dispatchEvent(new CustomEvent(`editor-${shortcut.command}`));
+          window.dispatchEvent(_new CustomEvent(`editor-${shortcut.command}`));
         }
       );
     });
   }
 
   // Get documentation for Solidity keywords
-  private getSolidityDocumentation(word: string): string | null {
+  private getSolidityDocumentation(_word: string): string | null {
     const docs: Record<string, string> = {
       'pragma': 'Pragma directive specifies the compiler version',
       'contract': 'Defines a contract - the fundamental building block of Ethereum applications',
@@ -391,7 +391,7 @@ export class AdvancedEditorConfig {
   }
 
   // Configure accessibility features
-  configureAccessibility(): void {
+  configureAccessibility(_): void {
     // Enable screen reader support
     this.editor.updateOptions({
       accessibilitySupport: 'on',
@@ -400,25 +400,25 @@ export class AdvancedEditorConfig {
     });
 
     // Add ARIA labels to editor elements
-    const editorElement = this.editor.getDomNode();
+    const editorElement = this.editor.getDomNode(_);
     if (editorElement) {
-      editorElement.setAttribute('role', 'textbox');
-      editorElement.setAttribute('aria-label', 'Solidity code editor');
-      editorElement.setAttribute('aria-multiline', 'true');
-      editorElement.setAttribute('aria-autocomplete', 'list');
+      editorElement.setAttribute( 'role', 'textbox');
+      editorElement.setAttribute( 'aria-label', 'Solidity code editor');
+      editorElement.setAttribute( 'aria-multiline', 'true');
+      editorElement.setAttribute( 'aria-autocomplete', 'list');
     }
   }
 
   // Configure responsive design
-  configureResponsiveDesign(): void {
+  configureResponsiveDesign(_): void {
     // Auto-resize editor on window resize
     const resizeObserver = new ResizeObserver(() => {
-      this.editor.layout();
+      this.editor.layout(_);
     });
 
-    const editorElement = this.editor.getDomNode();
+    const editorElement = this.editor.getDomNode(_);
     if (editorElement) {
-      resizeObserver.observe(editorElement);
+      resizeObserver.observe(_editorElement);
     }
 
     // Mobile-friendly options

@@ -19,7 +19,7 @@ interface SaveStatusIndicatorProps {
   lastSaved?: Date | null;
   hasUnsavedChanges?: boolean;
   isAutoSaveEnabled?: boolean;
-  onToggleAutoSave?: () => void;
+  onToggleAutoSave?: (_) => void;
   className?: string;
   compact?: boolean;
 }
@@ -33,8 +33,8 @@ export function SaveStatusIndicator({
   className,
   compact = false
 }: SaveStatusIndicatorProps) {
-  const getStatusConfig = () => {
-    switch (status.status) {
+  const getStatusConfig = (_) => {
+    switch (_status.status) {
       case 'saving':
         return {
           icon: Loader2,
@@ -79,21 +79,21 @@ export function SaveStatusIndicator({
     }
   };
 
-  const config = getStatusConfig();
+  const config = getStatusConfig(_);
   const Icon = config.icon;
 
   const formatLastSaved = (date: Date) => {
     const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMinutes = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMinutes / 60);
-    const diffDays = Math.floor(diffHours / 24);
+    const diffMs = now.getTime() - date.getTime(_);
+    const diffMinutes = Math.floor(_diffMs / 60000);
+    const diffHours = Math.floor(_diffMinutes / 60);
+    const diffDays = Math.floor(_diffHours / 24);
 
-    if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 60) return `${diffMinutes}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
+    if (_diffMinutes < 1) return 'Just now';
+    if (_diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (_diffHours < 24) return `${diffHours}h ago`;
+    if (_diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString(_);
   };
 
   if (compact) {
@@ -117,7 +117,7 @@ export function SaveStatusIndicator({
             status.status === 'saving' && 'animate-spin'
           )} 
         />
-        <span className={cn('text-sm font-medium', config.color)}>
+        <span className={cn( 'text-sm font-medium', config.color)}>
           {config.text}
         </span>
       </motion.div>
@@ -154,7 +154,7 @@ export function SaveStatusIndicator({
         </div>
         
         <div>
-          <div className={cn('font-medium', config.color)}>
+          <div className={cn( 'font-medium', config.color)}>
             {config.text}
           </div>
           
@@ -176,7 +176,7 @@ export function SaveStatusIndicator({
                 animate={{ opacity: 1 }}
                 className="text-sm text-gray-400 mt-1"
               >
-                Last saved: {formatLastSaved(lastSaved)}
+                Last saved: {formatLastSaved(_lastSaved)}
               </motion.div>
             )}
           </AnimatePresence>
@@ -222,7 +222,7 @@ export function FloatingSaveStatus({
   className
 }: Pick<SaveStatusIndicatorProps, 'status' | 'lastSaved' | 'hasUnsavedChanges' | 'className'>) {
   const config = (() => {
-    switch (status.status) {
+    switch (_status.status) {
       case 'saving':
         return {
           icon: Loader2,
@@ -251,7 +251,7 @@ export function FloatingSaveStatus({
         }
         return null; // Don't show when idle and no changes
     }
-  })();
+  })(_);
 
   if (!config) return null;
 
@@ -279,7 +279,7 @@ export function FloatingSaveStatus({
             status.status === 'saving' && 'animate-spin'
           )} 
         />
-        <span className={cn('text-sm font-medium', config.color)}>
+        <span className={cn( 'text-sm font-medium', config.color)}>
           {status.status === 'saving' && 'Saving...'}
           {status.status === 'saved' && 'Saved'}
           {status.status === 'error' && 'Save failed'}
@@ -313,7 +313,7 @@ export function SaveProgressIndicator({
             'origin-left',
             className
           )}
-          style={{ transform: `scaleX(${progress / 100})` }}
+          style={{ transform: `scaleX(_${progress / 100})` }}
         />
       )}
     </AnimatePresence>

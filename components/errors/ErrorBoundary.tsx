@@ -19,7 +19,7 @@ interface ErrorBoundaryProps {
   fallback?: ReactNode;
   level: 'page' | 'feature' | 'component';
   name?: string;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  onError?: ( error: Error, errorInfo: ErrorInfo) => void;
   enableRetry?: boolean;
   maxRetries?: number;
   showErrorDetails?: boolean;
@@ -29,8 +29,8 @@ interface ErrorBoundaryProps {
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   private retryTimeoutId: NodeJS.Timeout | null = null;
 
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
+  constructor(_props: ErrorBoundaryProps) {
+    super(_props);
     
     this.state = {
       hasError: false,
@@ -41,35 +41,35 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+  static getDerivedStateFromError(_error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
       error,
-      errorId: `boundary_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      errorId: `boundary_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch( error: Error, errorInfo: ErrorInfo) {
     this.setState({
       errorInfo
     });
 
     // Log error details
-    console.error(`Error Boundary (${this.props.level}):`, error, errorInfo);
+    console.error(_`Error Boundary (${this.props.level}):`, error, errorInfo);
 
     // Call custom error handler
-    this.props.onError?.(error, errorInfo);
+    this.props.onError?.( error, errorInfo);
 
     // Report to error monitoring service
-    this.reportError(error, errorInfo);
+    this.reportError( error, errorInfo);
 
-    // Auto-retry for transient errors (component level only)
-    if (this.props.level === 'component' && this.props.enableRetry && this.state.retryCount < (this.props.maxRetries || 3)) {
-      this.scheduleRetry();
+    // Auto-retry for transient errors (_component level only)
+    if (_this.props.level === 'component' && this.props.enableRetry && this.state.retryCount < (this.props.maxRetries || 3)) {
+      this.scheduleRetry(_);
     }
   }
 
-  private reportError = (error: Error, errorInfo: ErrorInfo) => {
+  private reportError = ( error: Error, errorInfo: ErrorInfo) => {
     const errorReport = {
       message: error.message,
       stack: error.stack,
@@ -93,24 +93,24 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     // Report to structured logger
     if (typeof window !== 'undefined') {
       try {
-        // Send to monitoring service (Sentry integration ready)
+        // Send to monitoring service (_Sentry integration ready)
         if (process.env.NODE_ENV === 'production' && window.Sentry) {
           window.Sentry.withScope((scope) => {
-            scope.setTag('errorBoundary.level', this.props.level);
-            scope.setTag('errorBoundary.name', this.props.name || 'unknown');
-            scope.setTag('errorBoundary.retryCount', this.state.retryCount);
+            scope.setTag( 'errorBoundary.level', this.props.level);
+            scope.setTag( 'errorBoundary.name', this.props.name || 'unknown');
+            scope.setTag( 'errorBoundary.retryCount', this.state.retryCount);
             scope.setContext('errorBoundary', {
               errorId: this.state.errorId,
               componentStack: errorInfo.componentStack,
               level: this.props.level,
               name: this.props.name
             });
-            window.Sentry?.captureException(error);
+            window.Sentry?.captureException(_error);
           });
         }
 
         // Send to analytics/logging service
-        if (window.gtag) {
+        if (_window.gtag) {
           window.gtag('event', 'error_boundary_triggered', {
             error_boundary_level: this.props.level,
             error_boundary_name: this.props.name || 'unknown',
@@ -120,14 +120,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         }
 
         // Development logging
-        if (process.env.NODE_ENV === 'development') {
-          console.group(`🚨 Error Boundary (${this.props.level}): ${this.props.name || 'unnamed'}`);
+        if (_process.env.NODE_ENV === 'development') {
+          console.group(_`🚨 Error Boundary (${this.props.level}): ${this.props.name || 'unnamed'}`);
           console.error('Error:', error);
           console.error('Error Info:', errorInfo);
           console.error('Full Report:', errorReport);
-          console.groupEnd();
+          console.groupEnd(_);
         }
-      } catch (reportingError) {
+      } catch (_reportingError) {
         // Fallback if error reporting fails
         console.error('Error reporting failed:', reportingError);
         console.error('Original error:', error);
@@ -135,15 +135,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
   };
 
-  private scheduleRetry = () => {
+  private scheduleRetry = (_) => {
     const delay = Math.min(1000 * Math.pow(2, this.state.retryCount), 5000);
     
     this.retryTimeoutId = setTimeout(() => {
-      this.handleRetry();
+      this.handleRetry(_);
     }, delay);
   };
 
-  private handleRetry = () => {
+  private handleRetry = (_) => {
     this.setState(prevState => ({
       hasError: false,
       error: null,
@@ -152,16 +152,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }));
   };
 
-  private handleManualRetry = () => {
-    if (this.retryTimeoutId) {
-      clearTimeout(this.retryTimeoutId);
+  private handleManualRetry = (_) => {
+    if (_this.retryTimeoutId) {
+      clearTimeout(_this.retryTimeoutId);
       this.retryTimeoutId = null;
     }
     
-    this.handleRetry();
+    this.handleRetry(_);
   };
 
-  private handleReportBug = () => {
+  private handleReportBug = (_) => {
     const { error, errorInfo, errorId } = this.state;
     const bugReport = {
       errorId,
@@ -174,10 +174,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     };
 
     // Open bug report form or email
-    const subject = encodeURIComponent(`Bug Report: ${this.props.level} Error - ${errorId}`);
+    const subject = encodeURIComponent(_`Bug Report: ${this.props.level} Error - ${errorId}`);
     const body = encodeURIComponent(`
 Error Details:
-${JSON.stringify(bugReport, null, 2)}
+${JSON.stringify( bugReport, null, 2)}
 
 Steps to reproduce:
 1. 
@@ -194,45 +194,45 @@ Additional context:
 
     `);
     
-    window.open(`mailto:support@example.com?subject=${subject}&body=${body}`);
+    window.open(_`mailto:support@example.com?subject=${subject}&body=${body}`);
   };
 
-  componentWillUnmount() {
-    if (this.retryTimeoutId) {
-      clearTimeout(this.retryTimeoutId);
+  componentWillUnmount(_) {
+    if (_this.retryTimeoutId) {
+      clearTimeout(_this.retryTimeoutId);
     }
   }
 
-  render() {
-    if (this.state.hasError) {
+  render(_) {
+    if (_this.state.hasError) {
       // Use custom fallback if provided
-      if (this.props.fallback) {
+      if (_this.props.fallback) {
         return this.props.fallback;
       }
 
       // Render appropriate error UI based on level
-      return this.renderErrorUI();
+      return this.renderErrorUI(_);
     }
 
     return this.props.children;
   }
 
-  private renderErrorUI = () => {
+  private renderErrorUI = (_) => {
     const { level } = this.props;
 
-    switch (level) {
+    switch (_level) {
       case 'page':
-        return this.renderPageError();
+        return this.renderPageError(_);
       case 'feature':
-        return this.renderFeatureError();
+        return this.renderFeatureError(_);
       case 'component':
-        return this.renderComponentError();
+        return this.renderComponentError(_);
       default:
-        return this.renderGenericError();
+        return this.renderGenericError(_);
     }
   };
 
-  private renderPageError = () => {
+  private renderPageError = (_) => {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <motion.div
@@ -256,7 +256,7 @@ Additional context:
 
             <div className="space-y-3">
               <EnhancedButton
-                onClick={() => window.location.reload()}
+                onClick={(_) => window.location.reload(_)}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 touchTarget
               >
@@ -265,7 +265,7 @@ Additional context:
               </EnhancedButton>
               
               <EnhancedButton
-                onClick={() => window.location.href = '/'}
+                onClick={(_) => window.location.href = '/'}
                 variant="outline"
                 className="w-full border-white/20 text-white hover:bg-white/10"
                 touchTarget
@@ -288,7 +288,7 @@ Additional context:
             {this.props.showErrorDetails && (
               <details className="mt-6 text-left">
                 <summary className="text-sm text-gray-400 cursor-pointer">
-                  Error Details (ID: {this.state.errorId})
+                  Error Details (_ID: {this.state.errorId})
                 </summary>
                 <pre className="mt-2 p-3 bg-black/20 rounded text-xs text-gray-300 overflow-auto">
                   {this.state.error?.stack}
@@ -301,7 +301,7 @@ Additional context:
     );
   };
 
-  private renderFeatureError = () => {
+  private renderFeatureError = (_) => {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -326,7 +326,7 @@ Additional context:
               </p>
 
               <div className="flex flex-wrap gap-2">
-                {this.props.enableRetry && this.state.retryCount < (this.props.maxRetries || 3) && (
+                {this.props.enableRetry && this.state.retryCount < (_this.props.maxRetries || 3) && (
                   <EnhancedButton
                     onClick={this.handleManualRetry}
                     size="sm"
@@ -356,7 +356,7 @@ Additional context:
     );
   };
 
-  private renderComponentError = () => {
+  private renderComponentError = (_) => {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -372,7 +372,7 @@ Additional context:
             </span>
           </div>
           
-          {this.props.enableRetry && this.state.retryCount < (this.props.maxRetries || 3) && (
+          {this.props.enableRetry && this.state.retryCount < (_this.props.maxRetries || 3) && (
             <EnhancedButton
               onClick={this.handleManualRetry}
               size="sm"
@@ -387,7 +387,7 @@ Additional context:
     );
   };
 
-  private renderGenericError = () => {
+  private renderGenericError = (_) => {
     return (
       <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 rounded-lg">
         <div className="flex items-center space-x-2">
@@ -402,7 +402,7 @@ Additional context:
 }
 
 // Convenience wrapper components
-export function PageErrorBoundary({ children, ...props }: Omit<ErrorBoundaryProps, 'level'>) {
+export function PageErrorBoundary( { children, ...props }: Omit<ErrorBoundaryProps, 'level'>) {
   return (
     <ErrorBoundary level="page" {...props}>
       {children}
@@ -410,7 +410,7 @@ export function PageErrorBoundary({ children, ...props }: Omit<ErrorBoundaryProp
   );
 }
 
-export function FeatureErrorBoundary({ children, ...props }: Omit<ErrorBoundaryProps, 'level'>) {
+export function FeatureErrorBoundary( { children, ...props }: Omit<ErrorBoundaryProps, 'level'>) {
   return (
     <ErrorBoundary level="feature" enableRetry maxRetries={2} {...props}>
       {children}
@@ -418,7 +418,7 @@ export function FeatureErrorBoundary({ children, ...props }: Omit<ErrorBoundaryP
   );
 }
 
-export function ComponentErrorBoundary({ children, ...props }: Omit<ErrorBoundaryProps, 'level'>) {
+export function ComponentErrorBoundary( { children, ...props }: Omit<ErrorBoundaryProps, 'level'>) {
   return (
     <ErrorBoundary level="component" enableRetry maxRetries={3} {...props}>
       {children}

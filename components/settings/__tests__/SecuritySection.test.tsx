@@ -4,11 +4,11 @@ import { SecuritySection } from '../SecuritySection';
 import { SecuritySettings, ActiveSession } from '@/types/settings';
 
 // Mock framer-motion
-jest.mock('framer-motion', () => ({
+jest.mock( 'framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ( { children, ...props }: any) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: (_{ children }: any) => <>{children}</>,
 }));
 
 const mockSecurity: SecuritySettings = {
@@ -47,25 +47,25 @@ const mockActiveSessions: ActiveSession[] = [
       city: 'San Francisco',
       country: 'United States'
     },
-    lastActivity: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    lastActivity: new Date(_Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     isCurrentSession: false
   }
 ];
 
-describe('SecuritySection', () => {
-  const mockOnUpdateSecurity = jest.fn();
-  const mockOnChangePassword = jest.fn();
-  const mockOnSetupTwoFactor = jest.fn();
-  const mockOnEnableTwoFactor = jest.fn();
-  const mockOnDisableTwoFactor = jest.fn();
-  const mockOnRevokeSession = jest.fn();
-  const mockOnRefreshSessions = jest.fn();
+describe( 'SecuritySection', () => {
+  const mockOnUpdateSecurity = jest.fn(_);
+  const mockOnChangePassword = jest.fn(_);
+  const mockOnSetupTwoFactor = jest.fn(_);
+  const mockOnEnableTwoFactor = jest.fn(_);
+  const mockOnDisableTwoFactor = jest.fn(_);
+  const mockOnRevokeSession = jest.fn(_);
+  const mockOnRefreshSessions = jest.fn(_);
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
-  it('renders security settings correctly', () => {
+  it( 'renders security settings correctly', () => {
     render(
       <SecuritySection
         security={mockSecurity}
@@ -80,14 +80,14 @@ describe('SecuritySection', () => {
       />
     );
     
-    expect(screen.getByText('Security & Privacy')).toBeInTheDocument();
-    expect(screen.getByText('Password')).toBeInTheDocument();
-    expect(screen.getByText('Two-Factor Authentication')).toBeInTheDocument();
-    expect(screen.getByText('Active Sessions')).toBeInTheDocument();
+    expect(_screen.getByText('Security & Privacy')).toBeInTheDocument(_);
+    expect(_screen.getByText('Password')).toBeInTheDocument(_);
+    expect(_screen.getByText('Two-Factor Authentication')).toBeInTheDocument(_);
+    expect(_screen.getByText('Active Sessions')).toBeInTheDocument(_);
   });
 
-  it('handles password change', async () => {
-    mockOnChangePassword.mockResolvedValue({ success: true });
+  it( 'handles password change', async () => {
+    mockOnChangePassword.mockResolvedValue({ success: true  });
     
     render(
       <SecuritySection
@@ -104,28 +104,28 @@ describe('SecuritySection', () => {
     );
     
     // Click change password button
-    fireEvent.click(screen.getByText('Change Password'));
+    fireEvent.click(_screen.getByText('Change Password'));
     
     // Fill in password form
-    fireEvent.change(screen.getByLabelText('Current Password'), {
+    fireEvent.change(_screen.getByLabelText('Current Password'), {
       target: { value: 'current123' }
     });
-    fireEvent.change(screen.getByLabelText('New Password'), {
+    fireEvent.change(_screen.getByLabelText('New Password'), {
       target: { value: 'newpassword123' }
     });
-    fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+    fireEvent.change(_screen.getByLabelText('Confirm New Password'), {
       target: { value: 'newpassword123' }
     });
     
     // Submit form
-    fireEvent.click(screen.getByText('Update Password'));
+    fireEvent.click(_screen.getByText('Update Password'));
     
     await waitFor(() => {
-      expect(mockOnChangePassword).toHaveBeenCalledWith('current123', 'newpassword123');
+      expect(_mockOnChangePassword).toHaveBeenCalledWith( 'current123', 'newpassword123');
     });
   });
 
-  it('validates password confirmation', async () => {
+  it( 'validates password confirmation', async () => {
     render(
       <SecuritySection
         security={mockSecurity}
@@ -141,25 +141,25 @@ describe('SecuritySection', () => {
     );
     
     // Click change password button
-    fireEvent.click(screen.getByText('Change Password'));
+    fireEvent.click(_screen.getByText('Change Password'));
     
     // Fill in mismatched passwords
-    fireEvent.change(screen.getByLabelText('New Password'), {
+    fireEvent.change(_screen.getByLabelText('New Password'), {
       target: { value: 'newpassword123' }
     });
-    fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+    fireEvent.change(_screen.getByLabelText('Confirm New Password'), {
       target: { value: 'differentpassword' }
     });
     
     // Submit form
-    fireEvent.click(screen.getByText('Update Password'));
+    fireEvent.click(_screen.getByText('Update Password'));
     
     await waitFor(() => {
-      expect(screen.getByText('Passwords do not match')).toBeInTheDocument();
+      expect(_screen.getByText('Passwords do not match')).toBeInTheDocument(_);
     });
   });
 
-  it('handles two-factor authentication setup', async () => {
+  it( 'handles two-factor authentication setup', async () => {
     mockOnSetupTwoFactor.mockResolvedValue({
       success: true,
       setup: {
@@ -184,17 +184,17 @@ describe('SecuritySection', () => {
     );
     
     // Switch to 2FA tab
-    fireEvent.click(screen.getByText('Two-Factor Authentication'));
+    fireEvent.click(_screen.getByText('Two-Factor Authentication'));
     
     // Click setup 2FA
-    fireEvent.click(screen.getByText('Setup 2FA'));
+    fireEvent.click(_screen.getByText('Setup 2FA'));
     
     await waitFor(() => {
-      expect(mockOnSetupTwoFactor).toHaveBeenCalled();
+      expect(_mockOnSetupTwoFactor).toHaveBeenCalled(_);
     });
   });
 
-  it('displays active sessions correctly', () => {
+  it( 'displays active sessions correctly', () => {
     render(
       <SecuritySection
         security={mockSecurity}
@@ -210,15 +210,15 @@ describe('SecuritySection', () => {
     );
     
     // Switch to sessions tab
-    fireEvent.click(screen.getByText('Active Sessions'));
+    fireEvent.click(_screen.getByText('Active Sessions'));
     
-    expect(screen.getByText('Chrome on Windows 10')).toBeInTheDocument();
-    expect(screen.getByText('Safari on iOS 15')).toBeInTheDocument();
-    expect(screen.getByText('Current')).toBeInTheDocument();
+    expect(_screen.getByText('Chrome on Windows 10')).toBeInTheDocument(_);
+    expect(_screen.getByText('Safari on iOS 15')).toBeInTheDocument(_);
+    expect(_screen.getByText('Current')).toBeInTheDocument(_);
   });
 
-  it('handles session revocation', async () => {
-    mockOnRevokeSession.mockResolvedValue({ success: true });
+  it( 'handles session revocation', async () => {
+    mockOnRevokeSession.mockResolvedValue({ success: true  });
     
     render(
       <SecuritySection
@@ -235,19 +235,19 @@ describe('SecuritySection', () => {
     );
     
     // Switch to sessions tab
-    fireEvent.click(screen.getByText('Active Sessions'));
+    fireEvent.click(_screen.getByText('Active Sessions'));
     
     // Find and click revoke button for non-current session
     const revokeButtons = screen.getAllByText('Revoke');
-    fireEvent.click(revokeButtons[0]);
+    fireEvent.click(_revokeButtons[0]);
     
     await waitFor(() => {
-      expect(mockOnRevokeSession).toHaveBeenCalledWith('2');
+      expect(_mockOnRevokeSession).toHaveBeenCalledWith('2');
     });
   });
 
-  it('updates security settings', async () => {
-    mockOnUpdateSecurity.mockResolvedValue({ success: true });
+  it( 'updates security settings', async () => {
+    mockOnUpdateSecurity.mockResolvedValue({ success: true  });
     
     render(
       <SecuritySection
@@ -264,7 +264,7 @@ describe('SecuritySection', () => {
     );
     
     // Switch to settings tab
-    fireEvent.click(screen.getByText('Security Settings'));
+    fireEvent.click(_screen.getByText('Security Settings'));
     
     // Toggle login notifications
     const toggles = screen.getAllByRole('button');
@@ -273,15 +273,15 @@ describe('SecuritySection', () => {
     );
     
     if (loginNotificationToggle) {
-      fireEvent.click(loginNotificationToggle);
+      fireEvent.click(_loginNotificationToggle);
       
       await waitFor(() => {
-        expect(mockOnUpdateSecurity).toHaveBeenCalledWith({ loginNotifications: false });
+        expect(_mockOnUpdateSecurity).toHaveBeenCalledWith({ loginNotifications: false  });
       });
     }
   });
 
-  it('shows 2FA enabled state correctly', () => {
+  it( 'shows 2FA enabled state correctly', () => {
     const securityWith2FA = {
       ...mockSecurity,
       twoFactorEnabled: true,
@@ -303,14 +303,14 @@ describe('SecuritySection', () => {
     );
     
     // Switch to 2FA tab
-    fireEvent.click(screen.getByText('Two-Factor Authentication'));
+    fireEvent.click(_screen.getByText('Two-Factor Authentication'));
     
-    expect(screen.getByText('Enabled')).toBeInTheDocument();
-    expect(screen.getByText('You have 3 backup codes remaining')).toBeInTheDocument();
-    expect(screen.getByText('Disable 2FA')).toBeInTheDocument();
+    expect(_screen.getByText('Enabled')).toBeInTheDocument(_);
+    expect(_screen.getByText('You have 3 backup codes remaining')).toBeInTheDocument(_);
+    expect(_screen.getByText('Disable 2FA')).toBeInTheDocument(_);
   });
 
-  it('refreshes sessions when refresh button is clicked', async () => {
+  it( 'refreshes sessions when refresh button is clicked', async () => {
     render(
       <SecuritySection
         security={mockSecurity}
@@ -326,11 +326,11 @@ describe('SecuritySection', () => {
     );
     
     // Switch to sessions tab
-    fireEvent.click(screen.getByText('Active Sessions'));
+    fireEvent.click(_screen.getByText('Active Sessions'));
     
     // Click refresh button
-    fireEvent.click(screen.getByText('Refresh'));
+    fireEvent.click(_screen.getByText('Refresh'));
     
-    expect(mockOnRefreshSessions).toHaveBeenCalled();
+    expect(_mockOnRefreshSessions).toHaveBeenCalled(_);
   });
 });

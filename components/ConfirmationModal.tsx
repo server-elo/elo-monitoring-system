@@ -2,8 +2,8 @@ import React from 'react';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
+  onClose: (_) => void;
+  onConfirm: (_) => void;
   title: string;
   message: string;
   confirmText?: string;

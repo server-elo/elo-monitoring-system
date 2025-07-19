@@ -23,8 +23,8 @@ interface ConnectionStatusIndicatorProps {
   latency?: number; // in milliseconds
   pendingOperations?: number;
   queuedMessages?: number;
-  onReconnect?: () => void;
-  onTroubleshoot?: () => void;
+  onReconnect?: (_) => void;
+  onTroubleshoot?: (_) => void;
   className?: string;
   compact?: boolean;
 }
@@ -47,7 +47,7 @@ export function ConnectionStatusIndicator({
   className,
   compact = false
 }: ConnectionStatusIndicatorProps) {
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(_false);
   const [metrics, setMetrics] = useState<ConnectionMetrics>({
     latency: 0,
     packetsLost: 0,
@@ -67,11 +67,11 @@ export function ConnectionStatusIndicator({
       }
     }, 1000);
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, [status, latency]);
 
-  const getStatusConfig = () => {
-    switch (status) {
+  const getStatusConfig = (_) => {
+    switch (_status) {
       case 'connected':
         return {
           icon: Wifi,
@@ -129,52 +129,52 @@ export function ConnectionStatusIndicator({
     }
   };
 
-  const getSignalIcon = () => {
+  const getSignalIcon = (_) => {
     if (status !== 'connected') return Signal;
     
-    if (latency < 50) return SignalHigh;
-    if (latency < 150) return SignalMedium;
+    if (_latency < 50) return SignalHigh;
+    if (_latency < 150) return SignalMedium;
     return SignalLow;
   };
 
-  const getLatencyColor = () => {
-    if (latency < 50) return 'text-green-400';
-    if (latency < 150) return 'text-yellow-400';
+  const getLatencyColor = (_) => {
+    if (_latency < 50) return 'text-green-400';
+    if (_latency < 150) return 'text-yellow-400';
     return 'text-red-400';
   };
 
-  const formatUptime = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
+  const formatUptime = (_seconds: number): string => {
+    const hours = Math.floor(_seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
-    if (hours > 0) {
+    if (_hours > 0) {
       return `${hours}h ${minutes}m`;
     }
-    if (minutes > 0) {
+    if (_minutes > 0) {
       return `${minutes}m ${secs}s`;
     }
     return `${secs}s`;
   };
 
-  const config = getStatusConfig();
+  const config = getStatusConfig(_);
   const Icon = config.icon;
-  const SignalIcon = getSignalIcon();
+  const SignalIcon = getSignalIcon(_);
 
   if (compact) {
     return (
-      <div className={cn('flex items-center space-x-2', className)}>
+      <div className={cn( 'flex items-center space-x-2', className)}>
         <div className="relative">
           <Icon 
             className={cn(
               'w-4 h-4',
               config.color,
-              (status === 'connecting' || status === 'reconnecting') && 'animate-spin'
+              (_status === 'connecting' || status === 'reconnecting') && 'animate-spin'
             )} 
           />
           {status === 'connected' && (
             <motion.div
-              className={cn('absolute -top-1 -right-1 w-2 h-2 rounded-full', config.pulseColor)}
+              className={cn( 'absolute -top-1 -right-1 w-2 h-2 rounded-full', config.pulseColor)}
               animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
@@ -183,12 +183,12 @@ export function ConnectionStatusIndicator({
 
         {status === 'connected' && latency > 0 && (
           <div className="flex items-center space-x-1">
-            <SignalIcon className={cn('w-3 h-3', getLatencyColor())} />
-            <span className={cn('text-xs', getLatencyColor())}>{latency}ms</span>
+            <SignalIcon className={cn( 'w-3 h-3', getLatencyColor())} />
+            <span className={cn( 'text-xs', getLatencyColor())}>{latency}ms</span>
           </div>
         )}
 
-        {(pendingOperations > 0 || queuedMessages > 0) && (
+        {(_pendingOperations > 0 || queuedMessages > 0) && (
           <div className="flex items-center space-x-1">
             <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
             <span className="text-xs text-orange-400">
@@ -201,7 +201,7 @@ export function ConnectionStatusIndicator({
   }
 
   return (
-    <Card className={cn('p-4 bg-white/10 backdrop-blur-md border border-white/20', className)}>
+    <Card className={cn( 'p-4 bg-white/10 backdrop-blur-md border border-white/20', className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className={cn(
@@ -213,27 +213,27 @@ export function ConnectionStatusIndicator({
               className={cn(
                 'w-5 h-5',
                 config.color,
-                (status === 'connecting' || status === 'reconnecting') && 'animate-spin'
+                (_status === 'connecting' || status === 'reconnecting') && 'animate-spin'
               )} 
             />
           </div>
 
           <div>
-            <div className={cn('font-medium', config.color)}>
+            <div className={cn( 'font-medium', config.color)}>
               {config.text}
             </div>
             
             {status === 'connected' && (
               <div className="flex items-center space-x-3 text-sm text-gray-400 mt-1">
                 <div className="flex items-center space-x-1">
-                  <SignalIcon className={cn('w-3 h-3', getLatencyColor())} />
-                  <span className={getLatencyColor()}>{latency}ms</span>
+                  <SignalIcon className={cn( 'w-3 h-3', getLatencyColor())} />
+                  <span className={getLatencyColor(_)}>{latency}ms</span>
                 </div>
-                <span>Uptime: {formatUptime(metrics.uptime)}</span>
+                <span>Uptime: {formatUptime(_metrics.uptime)}</span>
               </div>
             )}
 
-            {(status === 'reconnecting' || status === 'error') && metrics.reconnectAttempts > 0 && (
+            {(_status === 'reconnecting' || status === 'error') && metrics.reconnectAttempts > 0 && (
               <div className="text-sm text-gray-400 mt-1">
                 Attempt {metrics.reconnectAttempts}/5
               </div>
@@ -243,7 +243,7 @@ export function ConnectionStatusIndicator({
 
         <div className="flex items-center space-x-2">
           {/* Pending operations indicator */}
-          {(pendingOperations > 0 || queuedMessages > 0) && (
+          {(_pendingOperations > 0 || queuedMessages > 0) && (
             <div className="flex items-center space-x-2 px-2 py-1 rounded-lg bg-orange-500/10 border border-orange-400/30">
               <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
               <span className="text-xs text-orange-400">
@@ -255,7 +255,7 @@ export function ConnectionStatusIndicator({
           {/* Action buttons */}
           <div className="flex space-x-1">
             <Button
-              onClick={() => setShowDetails(!showDetails)}
+              onClick={(_) => setShowDetails(!showDetails)}
               variant="ghost"
               size="sm"
               className="h-8 w-8 p-0"
@@ -264,7 +264,7 @@ export function ConnectionStatusIndicator({
               <Signal className="w-4 h-4" />
             </Button>
 
-            {(status === 'disconnected' || status === 'error') && onReconnect && (
+            {(_status === 'disconnected' || status === 'error') && onReconnect && (
               <Button
                 onClick={onReconnect}
                 variant="ghost"
@@ -291,7 +291,7 @@ export function ConnectionStatusIndicator({
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="text-gray-400">Latency</div>
-                <div className={cn('font-medium', getLatencyColor())}>
+                <div className={cn( 'font-medium', getLatencyColor())}>
                   {latency}ms
                 </div>
               </div>
@@ -299,7 +299,7 @@ export function ConnectionStatusIndicator({
               <div>
                 <div className="text-gray-400">Uptime</div>
                 <div className="font-medium text-white">
-                  {formatUptime(metrics.uptime)}
+                  {formatUptime(_metrics.uptime)}
                 </div>
               </div>
 
@@ -337,7 +337,7 @@ export function ConnectionStatusIndicator({
             </div>
 
             {/* Troubleshooting */}
-            {(status === 'error' || status === 'disconnected') && (
+            {(_status === 'error' || status === 'disconnected') && (
               <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-400/30">
                 <div className="flex items-start space-x-2">
                   <AlertCircle className="w-4 h-4 text-red-400 mt-0.5" />

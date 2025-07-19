@@ -7,122 +7,122 @@ import { KeyboardShortcuts } from './KeyboardShortcuts';
 interface HelpContextType {
   isHelpOpen: boolean;
   isShortcutsOpen: boolean;
-  openHelp: (query?: string, context?: string) => void;
-  closeHelp: () => void;
-  openShortcuts: () => void;
-  closeShortcuts: () => void;
-  toggleHelp: () => void;
-  toggleShortcuts: () => void;
+  openHelp: ( query?: string, context?: string) => void;
+  closeHelp: (_) => void;
+  openShortcuts: (_) => void;
+  closeShortcuts: (_) => void;
+  toggleHelp: (_) => void;
+  toggleShortcuts: (_) => void;
 }
 
-const HelpContext = createContext<HelpContextType | undefined>(undefined);
+const HelpContext = createContext<HelpContextType | undefined>(_undefined);
 
 interface HelpProviderProps {
   children: React.ReactNode;
 }
 
-export const HelpProvider: React.FC<HelpProviderProps> = ({ children }) => {
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+export const HelpProvider: React.FC<HelpProviderProps> = ({ children  }) => {
+  const [isHelpOpen, setIsHelpOpen] = useState(_false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(_false);
   const [helpQuery, setHelpQuery] = useState('');
-  const [helpContext, setHelpContext] = useState<string | undefined>();
+  const [helpContext, setHelpContext] = useState<string | undefined>(_);
 
-  const openHelp = (query?: string, context?: string) => {
-    setHelpQuery(query || '');
-    setHelpContext(context);
-    setIsHelpOpen(true);
-    setIsShortcutsOpen(false);
+  const openHelp = ( query?: string, context?: string) => {
+    setHelpQuery(_query || '');
+    setHelpContext(_context);
+    setIsHelpOpen(_true);
+    setIsShortcutsOpen(_false);
   };
 
-  const closeHelp = () => {
-    setIsHelpOpen(false);
+  const closeHelp = (_) => {
+    setIsHelpOpen(_false);
     setHelpQuery('');
-    setHelpContext(undefined);
+    setHelpContext(_undefined);
   };
 
-  const openShortcuts = () => {
-    setIsShortcutsOpen(true);
-    setIsHelpOpen(false);
+  const openShortcuts = (_) => {
+    setIsShortcutsOpen(_true);
+    setIsHelpOpen(_false);
   };
 
-  const closeShortcuts = () => {
-    setIsShortcutsOpen(false);
+  const closeShortcuts = (_) => {
+    setIsShortcutsOpen(_false);
   };
 
-  const toggleHelp = () => {
+  const toggleHelp = (_) => {
     if (isHelpOpen) {
-      closeHelp();
+      closeHelp(_);
     } else {
-      openHelp();
+      openHelp(_);
     }
   };
 
-  const toggleShortcuts = () => {
+  const toggleShortcuts = (_) => {
     if (isShortcutsOpen) {
-      closeShortcuts();
+      closeShortcuts(_);
     } else {
-      openShortcuts();
+      openShortcuts(_);
     }
   };
 
   // Global keyboard shortcuts
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (_event: KeyboardEvent) => {
       // Help system shortcuts
-      if (event.key === '?' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
+      if (_event.key === '?' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
         // Only trigger if not in an input field
         const target = event.target as HTMLElement;
-        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA' && !target.isContentEditable) {
-          event.preventDefault();
-          toggleHelp();
+        if (_target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA' && !target.isContentEditable) {
+          event.preventDefault(_);
+          toggleHelp(_);
         }
       }
 
       // Accessibility help
-      if (event.altKey && event.key === 'h') {
-        event.preventDefault();
-        openHelp('accessibility', 'accessibility');
+      if (_event.altKey && event.key === 'h') {
+        event.preventDefault(_);
+        openHelp( 'accessibility', 'accessibility');
       }
 
       // Keyboard shortcuts
-      if (event.ctrlKey && event.shiftKey && event.key === '?') {
-        event.preventDefault();
-        toggleShortcuts();
+      if (_event.ctrlKey && event.shiftKey && event.key === '?') {
+        event.preventDefault(_);
+        toggleShortcuts(_);
       }
 
       // Close on Escape
-      if (event.key === 'Escape') {
+      if (_event.key === 'Escape') {
         if (isHelpOpen) {
-          closeHelp();
+          closeHelp(_);
         } else if (isShortcutsOpen) {
-          closeShortcuts();
+          closeShortcuts(_);
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener( 'keydown', handleKeyDown);
+    return (_) => window.removeEventListener( 'keydown', handleKeyDown);
   }, [isHelpOpen, isShortcutsOpen]);
 
   // Announce help system availability to screen readers
   useEffect(() => {
-    const announceHelp = () => {
+    const announceHelp = (_) => {
       const announcement = document.createElement('div');
-      announcement.setAttribute('aria-live', 'polite');
-      announcement.setAttribute('aria-atomic', 'true');
+      announcement.setAttribute( 'aria-live', 'polite');
+      announcement.setAttribute( 'aria-atomic', 'true');
       announcement.className = 'sr-only';
       announcement.textContent = 'Help system available. Press question mark for help, Alt+H for accessibility help, or Ctrl+Shift+? for keyboard shortcuts.';
       
-      document.body.appendChild(announcement);
+      document.body.appendChild(_announcement);
       
       setTimeout(() => {
-        document.body.removeChild(announcement);
+        document.body.removeChild(_announcement);
       }, 3000);
     };
 
     // Announce after a short delay to avoid interfering with page load
-    const timer = setTimeout(announceHelp, 2000);
-    return () => clearTimeout(timer);
+    const timer = setTimeout( announceHelp, 2000);
+    return (_) => clearTimeout(_timer);
   }, []);
 
   const value: HelpContextType = {
@@ -158,9 +158,9 @@ export const HelpProvider: React.FC<HelpProviderProps> = ({ children }) => {
 };
 
 // Custom hook to use the help context
-export const useHelp = (): HelpContextType => {
-  const context = useContext(HelpContext);
-  if (context === undefined) {
+export const useHelp = (_): HelpContextType => {
+  const context = useContext(_HelpContext);
+  if (_context === undefined) {
     throw new Error('useHelp must be used within a HelpProvider');
   }
   return context;
@@ -180,11 +180,11 @@ export const HelpTrigger: React.FC<HelpTriggerProps> = ({
   context,
   className = '',
 }) => {
-  const { openHelp } = useHelp();
+  const { openHelp } = useHelp(_);
 
   return (
     <button
-      onClick={() => openHelp(query, context)}
+      onClick={(_) => openHelp( query, context)}
       className={className}
       aria-label={`Open help${query ? ` for ${query}` : ''}`}
     >
@@ -203,7 +203,7 @@ export const ShortcutsTrigger: React.FC<ShortcutsTriggerProps> = ({
   children,
   className = '',
 }) => {
-  const { openShortcuts } = useHelp();
+  const { openShortcuts } = useHelp(_);
 
   return (
     <button

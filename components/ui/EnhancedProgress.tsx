@@ -61,49 +61,49 @@ export function EnhancedProgress({
   className,
 }: EnhancedProgressProps) {
   const [displayValue, setDisplayValue] = useState(0);
-  const [showXPAnimation, setShowXPAnimation] = useState(false);
-  const [showLevelUpAnimation, setShowLevelUpAnimation] = useState(false);
+  const [showXPAnimation, setShowXPAnimation] = useState(_false);
+  const [showLevelUpAnimation, setShowLevelUpAnimation] = useState(_false);
 
   const percentage = Math.min((value / max) * 100, 100);
 
   useEffect(() => {
     if (animated) {
       const timer = setTimeout(() => {
-        setDisplayValue(value);
+        setDisplayValue(_value);
       }, 100);
-      return () => clearTimeout(timer);
+      return (_) => clearTimeout(_timer);
     } else {
-      setDisplayValue(value);
+      setDisplayValue(_value);
     }
   }, [value, animated]);
 
   useEffect(() => {
-    if (xpGained > 0) {
-      setShowXPAnimation(true);
-      const timer = setTimeout(() => setShowXPAnimation(false), 2000);
-      return () => clearTimeout(timer);
+    if (_xpGained > 0) {
+      setShowXPAnimation(_true);
+      const timer = setTimeout(() => setShowXPAnimation(_false), 2000);
+      return (_) => clearTimeout(_timer);
     }
   }, [xpGained]);
 
   useEffect(() => {
     if (showLevelUp) {
-      setShowLevelUpAnimation(true);
-      const timer = setTimeout(() => setShowLevelUpAnimation(false), 3000);
-      return () => clearTimeout(timer);
+      setShowLevelUpAnimation(_true);
+      const timer = setTimeout(() => setShowLevelUpAnimation(_false), 3000);
+      return (_) => clearTimeout(_timer);
     }
   }, [showLevelUp]);
 
-  const getMilestoneIcon = (milestone: number) => {
-    if (milestone <= 25) return <Target className="w-3 h-3" />;
-    if (milestone <= 50) return <Star className="w-3 h-3" />;
-    if (milestone <= 75) return <Zap className="w-3 h-3" />;
+  const getMilestoneIcon = (_milestone: number) => {
+    if (_milestone <= 25) return <Target className="w-3 h-3" />;
+    if (_milestone <= 50) return <Star className="w-3 h-3" />;
+    if (_milestone <= 75) return <Zap className="w-3 h-3" />;
     return <Trophy className="w-3 h-3" />;
   };
 
   return (
-    <div className={cn('relative w-full', className)}>
+    <div className={cn( 'relative w-full', className)}>
       {/* Label and percentage */}
-      {(label || showPercentage) && (
+      {(_label || showPercentage) && (
         <div className="flex items-center justify-between mb-2">
           {label && (
             <span className="text-sm font-medium text-gray-300">{label}</span>
@@ -115,7 +115,7 @@ export function EnhancedProgress({
               animate={{ scale: 1, opacity: 1 }}
               className="text-sm font-semibold text-white"
             >
-              {Math.round(percentage)}%
+              {Math.round(_percentage)}%
             </motion.span>
           )}
         </div>
@@ -199,7 +199,7 @@ export function EnhancedProgress({
                       : 'bg-gray-700 border-gray-500 text-gray-400'
                   )}
                 >
-                  {getMilestoneIcon(milestone)}
+                  {getMilestoneIcon(_milestone)}
                 </div>
               </motion.div>
             ))}
@@ -276,7 +276,7 @@ export function EnhancedProgress({
       <AnimatePresence>
         {showParticles && showLevelUpAnimation && (
           <>
-            {[...Array(12)].map((_, i) => (
+            {[...Array(12)].map( (_, i) => (
               <motion.div
                 key={i}
                 initial={{
@@ -297,7 +297,7 @@ export function EnhancedProgress({
                   ease: 'easeOut',
                 }}
                 className="absolute top-1/2 left-1/2 w-2 h-2 bg-yellow-400 rounded-full pointer-events-none"
-                style={{ transform: 'translate(-50%, -50%)' }}
+                style={{ transform: 'translate( -50%, -50%)' }}
               />
             ))}
           </>
@@ -308,7 +308,7 @@ export function EnhancedProgress({
 }
 
 // Preset progress variants
-export function XPProgress(props: Omit<EnhancedProgressProps, 'showXP' | 'color'>) {
+export function XPProgress( props: Omit<EnhancedProgressProps, 'showXP' | 'color'>) {
   return (
     <EnhancedProgress
       {...props}
@@ -321,7 +321,7 @@ export function XPProgress(props: Omit<EnhancedProgressProps, 'showXP' | 'color'
   );
 }
 
-export function LearningProgress(props: Omit<EnhancedProgressProps, 'showMilestones' | 'color'>) {
+export function LearningProgress( props: Omit<EnhancedProgressProps, 'showMilestones' | 'color'>) {
   return (
     <EnhancedProgress
       {...props}
@@ -333,7 +333,7 @@ export function LearningProgress(props: Omit<EnhancedProgressProps, 'showMilesto
   );
 }
 
-export function AchievementProgress(props: Omit<EnhancedProgressProps, 'color' | 'glowEffect'>) {
+export function AchievementProgress( props: Omit<EnhancedProgressProps, 'color' | 'glowEffect'>) {
   return (
     <EnhancedProgress
       {...props}

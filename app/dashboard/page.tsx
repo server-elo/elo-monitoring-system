@@ -21,14 +21,14 @@ import { withPageErrorBoundary } from '@/lib/components/ErrorBoundaryHOCs';
 type DashboardView = 'overview' | 'modules' | 'path' | 'analytics';
 
 function DashboardContent() {
-  const { user } = useAuth();
-  const { state: _learningState } = useLearning();
-  const { currentXP, levelInfo, sessionXP: _sessionXP } = useRealTimeXP();
+  const { user } = useAuth(_);
+  const { state: _learningState } = useLearning(_);
+  const { currentXP, levelInfo, sessionXP: _sessionXP } = useRealTimeXP(_);
   
   const [activeView, setActiveView] = useState<DashboardView>('overview');
-  const [userProgress, setUserProgress] = useState<UserCurriculumProgress | null>(null);
-  const [curriculumManager] = useState(() => CurriculumManager.getInstance());
-  const [isLoading, setIsLoading] = useState(true);
+  const [userProgress, setUserProgress] = useState<UserCurriculumProgress | null>(_null);
+  const [curriculumManager] = useState(() => CurriculumManager.getInstance(_));
+  const [isLoading, setIsLoading] = useState(_true);
   const [selectedPath, setSelectedPath] = useState<string>('solidity-beginner');
 
   // Load user progress
@@ -37,8 +37,8 @@ function DashboardContent() {
       if (!user?.id) return;
       
       try {
-        setIsLoading(true);
-        const progress = await curriculumManager.loadUserProgress(user.id);
+        setIsLoading(_true);
+        const progress = await curriculumManager.loadUserProgress(_user.id);
         setUserProgress(progress);
         
         // Set current path if not set
@@ -48,71 +48,71 @@ function DashboardContent() {
         } else {
           setSelectedPath(progress.currentPath);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to load user progress:', error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(_false);
       }
     };
 
-    loadProgress();
+    loadProgress(_);
   }, [user?.id, curriculumManager, selectedPath]);
 
   // Event handlers
-  const handleModuleClick = (module: any) => {
+  const handleModuleClick = (_module: any) => {
     console.log('Navigate to module:', module.id);
     // In a real app, this would navigate to the module page
   };
 
-  const handleLessonClick = (lesson: any) => {
+  const handleLessonClick = (_lesson: any) => {
     console.log('Navigate to lesson:', lesson.id);
     // In a real app, this would navigate to the lesson page
   };
 
-  const handleStartModule = async (moduleId: string) => {
+  const handleStartModule = async (_moduleId: string) => {
     if (!user?.id || !userProgress) return;
     
     try {
       // Mark module as started
       const module = SOLIDITY_MODULES.find(m => m.id === moduleId);
       if (module && module.lessons.length > 0) {
-        await curriculumManager.startLesson(user.id, module.lessons[0].id);
+        await curriculumManager.startLesson( user.id, module.lessons[0].id);
         
         // Reload progress
-        const updatedProgress = await curriculumManager.loadUserProgress(user.id);
-        setUserProgress(updatedProgress);
+        const updatedProgress = await curriculumManager.loadUserProgress(_user.id);
+        setUserProgress(_updatedProgress);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to start module:', error);
     }
   };
 
-  const handleStartLesson = async (lessonId: string) => {
+  const handleStartLesson = async (_lessonId: string) => {
     if (!user?.id) return;
     
     try {
-      await curriculumManager.startLesson(user.id, lessonId);
+      await curriculumManager.startLesson( user.id, lessonId);
       
       // Reload progress
-      const updatedProgress = await curriculumManager.loadUserProgress(user.id);
-      setUserProgress(updatedProgress);
-    } catch (error) {
+      const updatedProgress = await curriculumManager.loadUserProgress(_user.id);
+      setUserProgress(_updatedProgress);
+    } catch (_error) {
       console.error('Failed to start lesson:', error);
     }
   };
 
-  const checkPrerequisites = (itemId: string): boolean => {
+  const checkPrerequisites = (_itemId: string): boolean => {
     if (!user?.id || !userProgress) return false;
-    return checkPrerequisitesSync(itemId, userProgress);
+    return checkPrerequisitesSync( itemId, userProgress);
   };
 
-  const getUnmetPrerequisites = (_itemId: string): string[] => {
+  const getUnmetPrerequisites = ( itemId: string): string[] => {
     if (!user?.id || !userProgress) return [];
     // This would be async in real implementation
     return [];
   };
 
-  if (isLoading || !userProgress) {
+  if (_isLoading || !userProgress) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
@@ -124,7 +124,7 @@ function DashboardContent() {
   }
 
   const currentPath = LEARNING_PATHS.find(p => p.id === selectedPath);
-  const pathModules = currentPath ? getModulesForPath(currentPath.id) : SOLIDITY_MODULES;
+  const pathModules = currentPath ? getModulesForPath(_currentPath.id) : SOLIDITY_MODULES;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -164,13 +164,13 @@ function DashboardContent() {
             </div>
             
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-400 mb-1">{currentXP.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-yellow-400 mb-1">{currentXP.toLocaleString(_)}</div>
               <div className="text-sm text-gray-400">Total XP</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-green-400 mb-1">
-                {Object.values(userProgress.modules).filter(m => m.status === 'completed').length}
+                {Object.values(_userProgress.modules).filter(m => m.status === 'completed').length}
               </div>
               <div className="text-sm text-gray-400">Modules Completed</div>
             </div>
@@ -194,7 +194,7 @@ function DashboardContent() {
             return (
               <EnhancedButton
                 key={tab.id}
-                onClick={() => setActiveView(tab.id as DashboardView)}
+                onClick={(_) => setActiveView(_tab.id as DashboardView)}
                 variant={activeView === tab.id ? 'default' : 'ghost'}
                 className={cn(
                   'flex-1 justify-center',
@@ -253,7 +253,7 @@ function DashboardContent() {
                   <h3 className="text-lg font-semibold text-white">Learning Path</h3>
                   <select
                     value={selectedPath}
-                    onChange={(e) => setSelectedPath(e.target.value)}
+                    onChange={(_e) => setSelectedPath(_e.target.value)}
                     className="bg-black/20 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   >
                     {LEARNING_PATHS.map(path => (

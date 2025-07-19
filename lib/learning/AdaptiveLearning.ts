@@ -81,8 +81,8 @@ export interface PerformanceAnalysis {
 }
 
 export class AdaptiveLearningEngine {
-  private profileCache: Map<string, LearningProfile> = new Map();
-  private analysisCache: Map<string, PerformanceAnalysis> = new Map();
+  private profileCache: Map<string, LearningProfile> = new Map(_);
+  private analysisCache: Map<string, PerformanceAnalysis> = new Map(_);
   private cacheExpiry: number = 30 * 60 * 1000; // 30 minutes
 
   // Core concept hierarchy for Solidity learning
@@ -119,14 +119,14 @@ export class AdaptiveLearningEngine {
     }
   };
 
-  async getLearningProfile(userId: string): Promise<LearningProfile> {
+  async getLearningProfile(_userId: string): Promise<LearningProfile> {
     // Check cache first
-    const cached = this.profileCache.get(userId);
+    const cached = this.profileCache.get(_userId);
     if (cached) return cached;
 
     try {
       // Load from database
-      const dbProfile = await prisma.aiLearningContext.findUnique({
+      const dbProfile = await prisma.aILearningContext.findUnique({
         where: { userId },
         include: {
           user: {
@@ -143,23 +143,23 @@ export class AdaptiveLearningEngine {
       let profile: LearningProfile;
 
       if (dbProfile) {
-        profile = this.transformDbProfile(dbProfile);
+        profile = this.transformDbProfile(_dbProfile);
       } else {
         // Create new profile
-        profile = await this.createNewProfile(userId);
+        profile = await this.createNewProfile(_userId);
       }
 
       // Cache the profile
-      this.profileCache.set(userId, profile);
+      this.profileCache.set( userId, profile);
       
       return profile;
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load learning profile:', error);
-      return this.createDefaultProfile(userId);
+      return this.createDefaultProfile(_userId);
     }
   }
 
-  private transformDbProfile(dbProfile: any): LearningProfile {
+  private transformDbProfile(_dbProfile: any): LearningProfile {
     const metadata = dbProfile.metadata || {};
     
     return {
@@ -193,9 +193,9 @@ export class AdaptiveLearningEngine {
       learningPath: {
         currentModule: dbProfile.recentTopics[0] || 'basics',
         completedModules: metadata.completedModules || [],
-        recommendedNext: this.calculateRecommendedModules(dbProfile),
+        recommendedNext: this.calculateRecommendedModules(_dbProfile),
         customPath: metadata.customPath || false,
-        estimatedCompletion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days default
+        estimatedCompletion: new Date(_Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days default
       },
       
       personalizedContent: {
@@ -208,11 +208,11 @@ export class AdaptiveLearningEngine {
     };
   }
 
-  private async createNewProfile(userId: string): Promise<LearningProfile> {
-    const profile: LearningProfile = this.createDefaultProfile(userId);
+  private async createNewProfile(_userId: string): Promise<LearningProfile> {
+    const profile: LearningProfile = this.createDefaultProfile(_userId);
     
     // Save to database
-    await prisma.aiLearningContext.create({
+    await prisma.aILearningContext.create({
       data: {
         userId,
         skillLevel: profile.skillLevel,
@@ -223,7 +223,7 @@ export class AdaptiveLearningEngine {
         preferredLearningStyle: profile.learningStyle,
         totalXP: 0,
         streak: 0,
-        lastActiveDate: new Date(),
+        lastActiveDate: new Date(_),
         metadata: {
           performanceMetrics: profile.performanceMetrics,
           adaptiveDifficulty: profile.adaptiveSettings,
@@ -236,7 +236,7 @@ export class AdaptiveLearningEngine {
     return profile;
   }
 
-  private createDefaultProfile(userId: string): LearningProfile {
+  private createDefaultProfile(_userId: string): LearningProfile {
     return {
       userId,
       skillLevel: 'BEGINNER',
@@ -270,7 +270,7 @@ export class AdaptiveLearningEngine {
         completedModules: [],
         recommendedNext: ['basics'],
         customPath: false,
-        estimatedCompletion: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) // 60 days for beginners
+        estimatedCompletion: new Date(_Date.now() + 60 * 24 * 60 * 60 * 1000) // 60 days for beginners
       },
       
       personalizedContent: {
@@ -283,21 +283,21 @@ export class AdaptiveLearningEngine {
     };
   }
 
-  async generatePersonalizedRecommendations(userId: string): Promise<LearningRecommendation[]> {
-    const profile = await this.getLearningProfile(userId);
-    const analysis = await this.analyzePerformance(userId);
+  async generatePersonalizedRecommendations(_userId: string): Promise<LearningRecommendation[]> {
+    const profile = await this.getLearningProfile(_userId);
+    const analysis = await this.analyzePerformance(_userId);
     
     const recommendations: LearningRecommendation[] = [];
 
     // 1. Address weak areas with high priority
-    for (const weakArea of profile.personalizedContent.weakAreas.slice(0, 2)) {
+    for ( const weakArea of profile.personalizedContent.weakAreas.slice(0, 2)) {
       recommendations.push({
         type: 'concept',
         title: `Master ${weakArea}`,
         description: `Focused practice on ${weakArea} to improve your understanding`,
         difficulty: Math.max(1, profile.adaptiveSettings.difficultyLevel - 1),
         estimatedTime: 30,
-        prerequisites: this.getPrerequisites(weakArea),
+        prerequisites: this.getPrerequisites(_weakArea),
         learningObjectives: [`Understand ${weakArea} concepts`, `Apply ${weakArea} in practice`],
         personalizedReason: `You've struggled with ${weakArea} in recent sessions`,
         priority: 'high'
@@ -305,8 +305,8 @@ export class AdaptiveLearningEngine {
     }
 
     // 2. Build on strong areas
-    for (const strongArea of profile.personalizedContent.strongAreas.slice(0, 1)) {
-      const nextLevel = this.getNextLevelConcept(strongArea);
+    for ( const strongArea of profile.personalizedContent.strongAreas.slice(0, 1)) {
+      const nextLevel = this.getNextLevelConcept(_strongArea);
       if (nextLevel) {
         recommendations.push({
           type: 'challenge',
@@ -323,7 +323,7 @@ export class AdaptiveLearningEngine {
     }
 
     // 3. Security-focused recommendations if security awareness is low
-    if (profile.performanceMetrics.securityAwareness < 70) {
+    if (_profile.performanceMetrics.securityAwareness < 70) {
       recommendations.push({
         type: 'concept',
         title: 'Smart Contract Security Fundamentals',
@@ -338,7 +338,7 @@ export class AdaptiveLearningEngine {
     }
 
     // 4. Gas optimization if skill is low
-    if (profile.performanceMetrics.gasOptimizationSkill < 70) {
+    if (_profile.performanceMetrics.gasOptimizationSkill < 70) {
       recommendations.push({
         type: 'project',
         title: 'Gas Optimization Challenge',
@@ -353,9 +353,9 @@ export class AdaptiveLearningEngine {
     }
 
     // 5. Review recommendations based on retention
-    if (analysis.retentionRate < 80) {
+    if (_analysis.retentionRate < 80) {
       const reviewTopics = profile.personalizedContent.recentTopics.slice(0, 3);
-      for (const topic of reviewTopics) {
+      for (_const topic of reviewTopics) {
         recommendations.push({
           type: 'review',
           title: `Review ${topic}`,
@@ -372,89 +372,89 @@ export class AdaptiveLearningEngine {
 
     // Sort by priority and difficulty
     return recommendations
-      .sort((a, b) => {
+      .sort( (a, b) => {
         const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
         return priorityOrder[b.priority] - priorityOrder[a.priority];
       })
       .slice(0, 8); // Return top 8 recommendations
   }
 
-  async analyzePerformance(userId: string): Promise<PerformanceAnalysis> {
+  async analyzePerformance(_userId: string): Promise<PerformanceAnalysis> {
     // Check cache
-    const cached = this.analysisCache.get(userId);
+    const cached = this.analysisCache.get(_userId);
     if (cached) return cached;
 
-    const profile = await this.getLearningProfile(userId);
+    const profile = await this.getLearningProfile(_userId);
     
     // Calculate performance metrics
     const analysis: PerformanceAnalysis = {
-      overallProgress: this.calculateOverallProgress(profile),
-      strengthAreas: this.identifyStrengths(profile),
-      improvementAreas: this.identifyImprovementAreas(profile),
-      learningVelocity: this.calculateLearningVelocity(profile),
-      retentionRate: this.calculateRetentionRate(profile),
-      engagementScore: this.calculateEngagementScore(profile),
-      predictedOutcomes: await this.predictOutcomes(profile)
+      overallProgress: this.calculateOverallProgress(_profile),
+      strengthAreas: this.identifyStrengths(_profile),
+      improvementAreas: this.identifyImprovementAreas(_profile),
+      learningVelocity: this.calculateLearningVelocity(_profile),
+      retentionRate: this.calculateRetentionRate(_profile),
+      engagementScore: this.calculateEngagementScore(_profile),
+      predictedOutcomes: await this.predictOutcomes(_profile)
     };
 
     // Cache the analysis
-    this.analysisCache.set(userId, analysis);
-    setTimeout(() => this.analysisCache.delete(userId), this.cacheExpiry);
+    this.analysisCache.set( userId, analysis);
+    setTimeout(() => this.analysisCache.delete(_userId), this.cacheExpiry);
 
     return analysis;
   }
 
-  private calculateOverallProgress(profile: LearningProfile): number {
-    const totalConcepts = Object.values(this.conceptHierarchy).reduce(
-      (sum, module) => sum + module.concepts.length, 0
+  private calculateOverallProgress(_profile: LearningProfile): number {
+    const totalConcepts = Object.values(_this.conceptHierarchy).reduce(
+      ( sum, module) => sum + module.concepts.length, 0
     );
-    const masteredConcepts = Object.values(profile.performanceMetrics.conceptMastery)
+    const masteredConcepts = Object.values(_profile.performanceMetrics.conceptMastery)
       .filter(mastery => mastery > 0.7).length;
     
     return Math.round((masteredConcepts / totalConcepts) * 100);
   }
 
-  private identifyStrengths(profile: LearningProfile): Array<{ concept: string; mastery: number; confidence: number }> {
-    return Object.entries(profile.performanceMetrics.conceptMastery)
-      .filter(([_, mastery]) => mastery > 0.8)
-      .map(([concept, mastery]) => ({
+  private identifyStrengths(_profile: LearningProfile): Array<{ concept: string; mastery: number; confidence: number }> {
+    return Object.entries(_profile.performanceMetrics.conceptMastery)
+      .filter( ([_, mastery]) => mastery > 0.8)
+      .map( ([concept, mastery]) => ({
         concept,
         mastery,
         confidence: Math.min(mastery * 1.2, 1.0) // Boost confidence for strong areas
       }))
-      .sort((a, b) => b.mastery - a.mastery)
+      .sort( (a, b) => b.mastery - a.mastery)
       .slice(0, 5);
   }
 
-  private identifyImprovementAreas(profile: LearningProfile): Array<{ concept: string; mastery: number; suggestions: string[] }> {
-    return Object.entries(profile.performanceMetrics.conceptMastery)
-      .filter(([_, mastery]) => mastery < 0.6)
-      .map(([concept, mastery]) => ({
+  private identifyImprovementAreas(_profile: LearningProfile): Array<{ concept: string; mastery: number; suggestions: string[] }> {
+    return Object.entries(_profile.performanceMetrics.conceptMastery)
+      .filter( ([_, mastery]) => mastery < 0.6)
+      .map( ([concept, mastery]) => ({
         concept,
         mastery,
-        suggestions: this.generateImprovementSuggestions(concept, mastery)
+        suggestions: this.generateImprovementSuggestions( concept, mastery)
       }))
-      .sort((a, b) => a.mastery - b.mastery)
+      .sort( (a, b) => a.mastery - b.mastery)
       .slice(0, 5);
   }
 
-  private calculateLearningVelocity(profile: LearningProfile): number {
+  private calculateLearningVelocity(_profile: LearningProfile): number {
     // Concepts learned per week based on recent activity
     const recentTopics = profile.personalizedContent.recentTopics.length;
     const weeksActive = Math.max(1, profile.streak / 7);
     return Math.round((recentTopics / weeksActive) * 10) / 10;
   }
 
-  private calculateRetentionRate(profile: LearningProfile): number {
+  private calculateRetentionRate(_profile: LearningProfile): number {
     // Based on concept mastery stability over time
-    const masteredConcepts = Object.values(profile.performanceMetrics.conceptMastery)
+    const masteredConcepts = Object.values(_profile.performanceMetrics.conceptMastery)
       .filter(mastery => mastery > 0.7).length;
-    const totalStudiedConcepts = Object.keys(profile.performanceMetrics.conceptMastery).length;
+    const totalStudiedConcepts = Object.keys(_profile.performanceMetrics.conceptMastery).length;
     
     return totalStudiedConcepts > 0 ? Math.round((masteredConcepts / totalStudiedConcepts) * 100) : 100;
   }
 
-  private calculateEngagementScore(profile: LearningProfile): number {
+  private calculateEngagementScore(_profile: LearningProfile): number {
     let score = 0;
     
     // Streak contribution (0-40 points)
@@ -467,52 +467,52 @@ export class AdaptiveLearningEngine {
     const diversityScore = Math.min(profile.personalizedContent.recentTopics.length * 3, 30);
     score += diversityScore;
     
-    return Math.min(Math.round(score), 100);
+    return Math.min(_Math.round(score), 100);
   }
 
-  private async predictOutcomes(profile: LearningProfile): Promise<PerformanceAnalysis['predictedOutcomes']> {
-    const currentProgress = this.calculateOverallProgress(profile);
-    const velocity = this.calculateLearningVelocity(profile);
+  private async predictOutcomes(_profile: LearningProfile): Promise<PerformanceAnalysis['predictedOutcomes']> {
+    const currentProgress = this.calculateOverallProgress(_profile);
+    const velocity = this.calculateLearningVelocity(_profile);
     
     // Predict next level ETA
     const progressNeeded = ((profile.currentLevel + 1) * 20) - currentProgress; // Assuming 20% per level
     const weeksToNextLevel = velocity > 0 ? Math.ceil(progressNeeded / (velocity * 5)) : 12;
-    const nextLevelETA = new Date(Date.now() + weeksToNextLevel * 7 * 24 * 60 * 60 * 1000);
+    const nextLevelETA = new Date(_Date.now() + weeksToNextLevel * 7 * 24 * 60 * 60 * 1000);
     
     // Calculate completion probability
     const completionProbability = Math.min(
-      (profile.streak / 30) * 0.3 + // Consistency factor
-      (profile.performanceMetrics.averageScore / 100) * 0.4 + // Performance factor
-      (this.calculateEngagementScore(profile) / 100) * 0.3, // Engagement factor
+      (_profile.streak / 30) * 0.3 + // Consistency factor
+      (_profile.performanceMetrics.averageScore / 100) * 0.4 + // Performance factor
+      (_this.calculateEngagementScore(profile) / 100) * 0.3, // Engagement factor
       1.0
     );
     
     // Identify risk factors
     const riskFactors: string[] = [];
-    if (profile.streak < 7) riskFactors.push('Low consistency');
-    if (profile.performanceMetrics.averageScore < 70) riskFactors.push('Below average performance');
-    if (profile.personalizedContent.weakAreas.length > 3) riskFactors.push('Multiple weak areas');
-    if (velocity < 1) riskFactors.push('Slow learning pace');
+    if (_profile.streak < 7) riskFactors.push('Low consistency');
+    if (_profile.performanceMetrics.averageScore < 70) riskFactors.push('Below average performance');
+    if (_profile.personalizedContent.weakAreas.length > 3) riskFactors.push('Multiple weak areas');
+    if (_velocity < 1) riskFactors.push('Slow learning pace');
     
     return {
       nextLevelETA,
-      completionProbability: Math.round(completionProbability * 100),
+      completionProbability: Math.round(_completionProbability * 100),
       riskFactors
     };
   }
 
-  private calculateRecommendedModules(dbProfile: any): string[] {
+  private calculateRecommendedModules(_dbProfile: any): string[] {
     const completed = dbProfile.metadata?.completedModules || [];
     const current = dbProfile.recentTopics[0] || 'basics';
     
     // Find next logical modules based on hierarchy
     const recommendations: string[] = [];
     
-    for (const [moduleId, module] of Object.entries(this.conceptHierarchy)) {
+    for ( const [moduleId, module] of Object.entries(this.conceptHierarchy)) {
       if (!completed.includes(moduleId) && moduleId !== current) {
-        const hasPrerequisites = module.prerequisites.every(prereq => completed.includes(prereq));
+        const hasPrerequisites = module.prerequisites.every(_prereq => completed.includes(prereq));
         if (hasPrerequisites) {
-          recommendations.push(moduleId);
+          recommendations.push(_moduleId);
         }
       }
     }
@@ -520,22 +520,22 @@ export class AdaptiveLearningEngine {
     return recommendations.slice(0, 3);
   }
 
-  private getPrerequisites(concept: string): string[] {
-    for (const moduleData of Object.values(this.conceptHierarchy)) {
-      if (moduleData.concepts.includes(concept)) {
+  private getPrerequisites(_concept: string): string[] {
+    for (_const moduleData of Object.values(this.conceptHierarchy)) {
+      if (_moduleData.concepts.includes(concept)) {
         return moduleData.prerequisites;
       }
     }
     return [];
   }
 
-  private getNextLevelConcept(concept: string): string | null {
+  private getNextLevelConcept(_concept: string): string | null {
     // Find more advanced concepts in the same domain
-    const conceptModules = Object.entries(this.conceptHierarchy);
+    const conceptModules = Object.entries(_this.conceptHierarchy);
     
     for (let i = 0; i < conceptModules.length - 1; i++) {
       const [, moduleData] = conceptModules[i];
-      if (moduleData.concepts.includes(concept)) {
+      if (_moduleData.concepts.includes(concept)) {
         const nextModule = conceptModules[i + 1];
         return nextModule ? nextModule[1].concepts[0] : null;
       }
@@ -544,15 +544,15 @@ export class AdaptiveLearningEngine {
     return null;
   }
 
-  private generateImprovementSuggestions(concept: string, mastery: number): string[] {
+  private generateImprovementSuggestions( concept: string, mastery: number): string[] {
     const suggestions = [
       `Practice ${concept} with interactive exercises`,
       `Review ${concept} fundamentals`,
       `Apply ${concept} in a real project`
     ];
     
-    if (mastery < 0.3) {
-      suggestions.unshift(`Start with ${concept} basics tutorial`);
+    if (_mastery < 0.3) {
+      suggestions.unshift(_`Start with ${concept} basics tutorial`);
     }
     
     return suggestions;
@@ -565,35 +565,35 @@ export class AdaptiveLearningEngine {
     score: number, 
     timeSpent: number
   ): Promise<void> {
-    const profile = await this.getLearningProfile(userId);
+    const profile = await this.getLearningProfile(_userId);
     
     // Update concept mastery
     const currentMastery = profile.performanceMetrics.conceptMastery[concept] || 0;
-    const newMastery = (currentMastery * 0.7) + ((score / 100) * 0.3); // Weighted average
+    const newMastery = (_currentMastery * 0.7) + ((score / 100) * 0.3); // Weighted average
     profile.performanceMetrics.conceptMastery[concept] = Math.min(newMastery, 1.0);
     
     // Update performance metrics
     profile.performanceMetrics.timeSpentLearning += timeSpent;
     profile.performanceMetrics.averageScore = 
-      (profile.performanceMetrics.averageScore * 0.9) + (score * 0.1);
+      (_profile.performanceMetrics.averageScore * 0.9) + (_score * 0.1);
     
     // Update recent topics
     if (!profile.personalizedContent.recentTopics.includes(concept)) {
-      profile.personalizedContent.recentTopics.unshift(concept);
+      profile.personalizedContent.recentTopics.unshift(_concept);
       profile.personalizedContent.recentTopics = profile.personalizedContent.recentTopics.slice(0, 10);
     }
     
     // Save to cache and database
-    this.profileCache.set(userId, profile);
-    await this.saveLearningProfile(profile);
+    this.profileCache.set( userId, profile);
+    await this.saveLearningProfile(_profile);
     
     // Clear analysis cache to force recalculation
-    this.analysisCache.delete(userId);
+    this.analysisCache.delete(_userId);
   }
 
-  private async saveLearningProfile(profile: LearningProfile): Promise<void> {
+  private async saveLearningProfile(_profile: LearningProfile): Promise<void> {
     try {
-      await prisma.aiLearningContext.upsert({
+      await prisma.aILearningContext.upsert({
         where: { userId: profile.userId },
         update: {
           skillLevel: profile.skillLevel,
@@ -620,7 +620,7 @@ export class AdaptiveLearningEngine {
           preferredLearningStyle: profile.learningStyle,
           totalXP: profile.totalXP,
           streak: profile.streak,
-          lastActiveDate: new Date(),
+          lastActiveDate: new Date(_),
           metadata: {
             performanceMetrics: profile.performanceMetrics,
             adaptiveDifficulty: profile.adaptiveSettings,
@@ -629,22 +629,22 @@ export class AdaptiveLearningEngine {
           }
         }
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to save learning profile:', error);
     }
   }
 
   // Method to get learning insights for dashboard
-  async getLearningInsights(userId: string): Promise<{
+  async getLearningInsights(_userId: string): Promise<{
     profile: LearningProfile;
     analysis: PerformanceAnalysis;
     recommendations: LearningRecommendation[];
     nextMilestone: { title: string; progress: number; eta: Date };
   }> {
     const [profile, analysis, recommendations] = await Promise.all([
-      this.getLearningProfile(userId),
-      this.analyzePerformance(userId),
-      this.generatePersonalizedRecommendations(userId)
+      this.getLearningProfile(_userId),
+      this.analyzePerformance(_userId),
+      this.generatePersonalizedRecommendations(_userId)
     ]);
 
     const nextMilestone = {
@@ -657,29 +657,29 @@ export class AdaptiveLearningEngine {
   }
 
   // Method to adjust difficulty based on performance
-  async adjustDifficulty(userId: string, performanceScore: number): Promise<void> {
-    const profile = await this.getLearningProfile(userId);
+  async adjustDifficulty( userId: string, performanceScore: number): Promise<void> {
+    const profile = await this.getLearningProfile(_userId);
 
     if (!profile.adaptiveSettings.autoAdjustEnabled) return;
 
     let newDifficulty = profile.adaptiveSettings.difficultyLevel;
 
     // Adjust based on performance
-    if (performanceScore > 90 && newDifficulty < 10) {
+    if (_performanceScore > 90 && newDifficulty < 10) {
       newDifficulty = Math.min(10, newDifficulty + 1);
-    } else if (performanceScore < 60 && newDifficulty > 1) {
+    } else if (_performanceScore < 60 && newDifficulty > 1) {
       newDifficulty = Math.max(1, newDifficulty - 1);
     }
 
-    if (newDifficulty !== profile.adaptiveSettings.difficultyLevel) {
+    if (_newDifficulty !== profile.adaptiveSettings.difficultyLevel) {
       profile.adaptiveSettings.difficultyLevel = newDifficulty;
-      this.profileCache.set(userId, profile);
-      await this.saveLearningProfile(profile);
+      this.profileCache.set( userId, profile);
+      await this.saveLearningProfile(_profile);
 
-      console.log(`🎯 Adjusted difficulty for user ${userId}: ${profile.adaptiveSettings.difficultyLevel} → ${newDifficulty}`);
+      console.log(_`🎯 Adjusted difficulty for user ${userId}: ${profile.adaptiveSettings.difficultyLevel} → ${newDifficulty}`);
     }
   }
 }
 
 // Export singleton instance
-export const adaptiveLearning = new AdaptiveLearningEngine();
+export const adaptiveLearning = new AdaptiveLearningEngine(_);

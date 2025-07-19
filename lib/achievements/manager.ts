@@ -15,46 +15,46 @@ import { ErrorAnalyticsManager } from '@/lib/errors/recovery';
 
 export class AchievementManager implements IAchievementManager {
   private static instance: AchievementManager;
-  private userProgress: Map<string, AchievementProgress> = new Map();
-  private notifications: Map<string, AchievementNotification[]> = new Map();
-  private eventListeners: Set<(event: AchievementEvent) => void> = new Set();
-  private unlockListeners: Set<(achievement: Achievement, notification: AchievementNotification) => void> = new Set();
+  private userProgress: Map<string, AchievementProgress> = new Map(_);
+  private notifications: Map<string, AchievementNotification[]> = new Map(_);
+  private eventListeners: Set<(_event: AchievementEvent) => void> = new Set(_);
+  private unlockListeners: Set<( achievement: Achievement, notification: AchievementNotification) => void> = new Set(_);
   private errorAnalytics: ErrorAnalyticsManager;
 
-  private constructor() {
-    this.errorAnalytics = ErrorAnalyticsManager.getInstance();
+  private constructor(_) {
+    this.errorAnalytics = ErrorAnalyticsManager.getInstance(_);
   }
 
-  static getInstance(): AchievementManager {
+  static getInstance(_): AchievementManager {
     if (!this.instance) {
-      this.instance = new AchievementManager();
+      this.instance = new AchievementManager(_);
     }
     return this.instance;
   }
 
   // Core functionality
-  async loadUserProgress(userId: string): Promise<AchievementProgress> {
+  async loadUserProgress(_userId: string): Promise<AchievementProgress> {
     try {
       // Try to load from cache first
-      if (this.userProgress.has(userId)) {
-        return this.userProgress.get(userId)!;
+      if (_this.userProgress.has(userId)) {
+        return this.userProgress.get(_userId)!;
       }
 
-      // Load from storage (localStorage for now, could be API)
-      const stored = localStorage.getItem(`achievements_${userId}`);
+      // Load from storage ( localStorage for now, could be API)
+      const stored = localStorage.getItem(_`achievements_${userId}`);
       if (stored) {
-        const progress = JSON.parse(stored);
+        const progress = JSON.parse(_stored);
         // Convert date strings back to Date objects
         progress.lastUpdated = new Date(progress.lastUpdated);
         progress.streaks.lastActivity = new Date(progress.streaks.lastActivity);
         
         Object.values(progress.achievements).forEach((achievement: any) => {
-          if (achievement.unlockedAt) {
-            achievement.unlockedAt = new Date(achievement.unlockedAt);
+          if (_achievement.unlockedAt) {
+            achievement.unlockedAt = new Date(_achievement.unlockedAt);
           }
         });
 
-        this.userProgress.set(userId, progress);
+        this.userProgress.set( userId, progress);
         return progress;
       }
 
@@ -68,7 +68,7 @@ export class AchievementManager implements IAchievementManager {
         streaks: {
           current: 0,
           longest: 0,
-          lastActivity: new Date()
+          lastActivity: new Date(_)
         },
         statistics: {
           totalUnlocked: 0,
@@ -88,7 +88,7 @@ export class AchievementManager implements IAchievementManager {
           },
           completionRate: 0
         },
-        lastUpdated: new Date()
+        lastUpdated: new Date(_)
       };
 
       // Initialize all achievements as locked
@@ -100,10 +100,10 @@ export class AchievementManager implements IAchievementManager {
         };
       });
 
-      this.userProgress.set(userId, newProgress);
-      await this.saveUserProgress(newProgress);
+      this.userProgress.set( userId, newProgress);
+      await this.saveUserProgress(_newProgress);
       return newProgress;
-    } catch (error) {
+    } catch (_error) {
       this.errorAnalytics.trackError(error as Error, {
         category: 'achievement_load',
         severity: 'error',
@@ -115,12 +115,12 @@ export class AchievementManager implements IAchievementManager {
 
   async saveUserProgress(progress: AchievementProgress): Promise<void> {
     try {
-      progress.lastUpdated = new Date();
-      this.userProgress.set(progress.userId, progress);
+      progress.lastUpdated = new Date(_);
+      this.userProgress.set( progress.userId, progress);
       
-      // Save to localStorage (in production, this would be an API call)
-      localStorage.setItem(`achievements_${progress.userId}`, JSON.stringify(progress));
-    } catch (error) {
+      // Save to localStorage ( in production, this would be an API call)
+      localStorage.setItem( `achievements_${progress.userId}`, JSON.stringify(progress));
+    } catch (_error) {
       this.errorAnalytics.trackError(error as Error, {
         category: 'achievement_save',
         severity: 'error',
@@ -130,29 +130,29 @@ export class AchievementManager implements IAchievementManager {
     }
   }
 
-  async processEvent(event: AchievementEvent): Promise<AchievementNotification[]> {
+  async processEvent(_event: AchievementEvent): Promise<AchievementNotification[]> {
     try {
       const notifications: AchievementNotification[] = [];
-      const progress = await this.loadUserProgress(event.userId);
+      const progress = await this.loadUserProgress(_event.userId);
 
       // Notify event listeners
       this.eventListeners.forEach(listener => {
         try {
-          listener(event);
-        } catch (error) {
+          listener(_event);
+        } catch (_error) {
           console.error('Error in achievement event listener:', error);
         }
       });
 
       // Check all achievements for progress updates
-      for (const achievement of ACHIEVEMENTS) {
+      for (_const achievement of ACHIEVEMENTS) {
         const userAchievement = progress.achievements[achievement.id];
         
         // Skip if already unlocked
-        if (userAchievement.status === 'unlocked') continue;
+        if (_userAchievement.status === 'unlocked') continue;
 
         // Check prerequisites
-        if (achievement.prerequisites) {
+        if (_achievement.prerequisites) {
           const prerequisitesMet = achievement.prerequisites.every(prereqId => 
             progress.achievements[prereqId]?.status === 'unlocked'
           );
@@ -160,30 +160,30 @@ export class AchievementManager implements IAchievementManager {
         }
 
         // Calculate new progress
-        const newProgress = this.calculateProgressForEvent(achievement, event, progress);
+        const newProgress = this.calculateProgressForEvent( achievement, event, progress);
         const oldProgress = userAchievement.progress;
 
-        if (newProgress > oldProgress) {
+        if (_newProgress > oldProgress) {
           userAchievement.progress = newProgress;
           
           // Check if achievement should be unlocked
-          if (newProgress >= 100 && userAchievement.status !== 'unlocked') {
-            const notification = await this.unlockAchievement(event.userId, achievement.id);
-            notifications.push(notification);
-          } else if (userAchievement.status === 'locked') {
-            userAchievement.status = 'in_progress';
+          if (_newProgress >= 100 && userAchievement.status !== 'unlocked') {
+            const notification = await this.unlockAchievement( event.userId, achievement.id);
+            notifications.push(_notification);
+          } else if (_userAchievement.status === 'locked') {
+            userAchievement.status = 'inprogress';
           }
         }
       }
 
       // Update streak information
-      this.updateStreaks(progress, event);
+      this.updateStreaks( progress, event);
 
       // Save updated progress
       await this.saveUserProgress(progress);
 
       return notifications;
-    } catch (error) {
+    } catch (_error) {
       this.errorAnalytics.trackError(error as Error, {
         category: 'achievement_process_event',
         severity: 'error',
@@ -193,27 +193,27 @@ export class AchievementManager implements IAchievementManager {
     }
   }
 
-  private calculateProgressForEvent(achievement: Achievement, event: AchievementEvent, progress: AchievementProgress): number {
+  private calculateProgressForEvent( achievement: Achievement, event: AchievementEvent, progress: AchievementProgress): number {
     // This is a simplified calculation - in a real app, you'd have more sophisticated logic
     const userStats = {
-      lessonsCompleted: this.getUserStat(progress, 'lessons_completed'),
+      lessonsCompleted: this.getUserStat( progress, 'lessons_completed'),
       totalXP: progress.totalXP,
       currentStreak: progress.streaks.current,
-      projectsSubmitted: this.getUserStat(progress, 'projects_submitted'),
-      highestQuizScore: this.getUserStat(progress, 'highest_quiz_score'),
-      consecutivePerfectQuizzes: this.getUserStat(progress, 'consecutive_perfect_quizzes'),
-      totalTimeSpent: this.getUserStat(progress, 'total_time_spent'),
-      socialActions: this.getUserStat(progress, 'social_actions')
+      projectsSubmitted: this.getUserStat( progress, 'projects_submitted'),
+      highestQuizScore: this.getUserStat( progress, 'highest_quiz_score'),
+      consecutivePerfectQuizzes: this.getUserStat( progress, 'consecutive_perfect_quizzes'),
+      totalTimeSpent: this.getUserStat( progress, 'total_time_spent'),
+      socialActions: this.getUserStat( progress, 'social_actions')
     };
 
     // Update stats based on event
-    switch (event.type) {
+    switch (_event.type) {
       case 'lesson_complete':
         userStats.lessonsCompleted += 1;
         break;
       case 'quiz_complete':
-        if (event.data.score === 100) {
-          userStats.consecutivePerfectQuizzes = (userStats.consecutivePerfectQuizzes || 0) + 1;
+        if (_event.data.score === 100) {
+          userStats.consecutivePerfectQuizzes = (_userStats.consecutivePerfectQuizzes || 0) + 1;
         } else {
           userStats.consecutivePerfectQuizzes = 0;
         }
@@ -227,18 +227,18 @@ export class AchievementManager implements IAchievementManager {
         break;
     }
 
-    return calculateAchievementProgress(achievement, userStats);
+    return calculateAchievementProgress( achievement, userStats);
   }
 
-  private getUserStat(progress: AchievementProgress, statName: string): any {
+  private getUserStat( progress: AchievementProgress, statName: string): any {
     return (progress as any)[statName] || 0;
   }
 
-  private updateStreaks(progress: AchievementProgress, event: AchievementEvent): void {
-    if (event.type === 'login' || event.type === 'lesson_complete') {
-      const now = new Date();
+  private updateStreaks( progress: AchievementProgress, event: AchievementEvent): void {
+    if (_event.type === 'login' || event.type === 'lesson_complete') {
+      const now = new Date(_);
       const lastActivity = progress.streaks.lastActivity;
-      const daysDiff = Math.floor((now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
+      const daysDiff = Math.floor((now.getTime() - lastActivity.getTime(_)) / (1000 * 60 * 60 * 24));
 
       if (daysDiff === 1) {
         // Consecutive day
@@ -255,41 +255,41 @@ export class AchievementManager implements IAchievementManager {
   }
 
   // Achievement queries
-  getAllAchievements(): Achievement[] {
+  getAllAchievements(_): Achievement[] {
     return [...ACHIEVEMENTS];
   }
 
-  getAchievement(id: string): Achievement | null {
+  getAchievement(_id: string): Achievement | null {
     return ACHIEVEMENTS.find(a => a.id === id) || null;
   }
 
-  async getUserAchievements(userId: string, filter?: AchievementFilter): Promise<UserAchievement[]> {
-    const progress = await this.loadUserProgress(userId);
+  async getUserAchievements( userId: string, filter?: AchievementFilter): Promise<UserAchievement[]> {
+    const progress = await this.loadUserProgress(_userId);
     let achievements = Object.values(progress.achievements);
 
     if (filter) {
-      if (filter.status) {
+      if (_filter.status) {
         achievements = achievements.filter(a => filter.status!.includes(a.status));
       }
       
-      if (filter.category) {
+      if (_filter.category) {
         achievements = achievements.filter(a => {
-          const achievement = this.getAchievement(a.achievementId);
-          return achievement && filter.category!.includes(achievement.category);
+          const achievement = this.getAchievement(_a.achievementId);
+          return achievement && filter.category!.includes(_achievement.category);
         });
       }
 
-      if (filter.rarity) {
+      if (_filter.rarity) {
         achievements = achievements.filter(a => {
-          const achievement = this.getAchievement(a.achievementId);
-          return achievement && filter.rarity!.includes(achievement.rarity);
+          const achievement = this.getAchievement(_a.achievementId);
+          return achievement && filter.rarity!.includes(_achievement.rarity);
         });
       }
 
-      if (filter.search) {
+      if (_filter.search) {
         const searchLower = filter.search.toLowerCase();
         achievements = achievements.filter(a => {
-          const achievement = this.getAchievement(a.achievementId);
+          const achievement = this.getAchievement(_a.achievementId);
           return achievement && (
             achievement.title.toLowerCase().includes(searchLower) ||
             achievement.description.toLowerCase().includes(searchLower)
@@ -301,19 +301,19 @@ export class AchievementManager implements IAchievementManager {
     return achievements;
   }
 
-  async getAchievementStats(userId: string): Promise<AchievementStats> {
-    const progress = await this.loadUserProgress(userId);
+  async getAchievementStats(_userId: string): Promise<AchievementStats> {
+    const progress = await this.loadUserProgress(_userId);
     const achievements = Object.values(progress.achievements);
     
     const unlockedCount = achievements.filter(a => a.status === 'unlocked').length;
-    const inProgressCount = achievements.filter(a => a.status === 'in_progress').length;
+    const inProgressCount = achievements.filter(a => a.status === 'inprogress').length;
     const lockedCount = achievements.filter(a => a.status === 'locked').length;
     
     const levelInfo = getLevelInfo(progress.totalXP);
     
     const recentUnlocks = achievements
       .filter(a => a.status === 'unlocked' && a.unlockedAt)
-      .sort((a, b) => (b.unlockedAt?.getTime() || 0) - (a.unlockedAt?.getTime() || 0))
+      .sort( (a, b) => (_b.unlockedAt?.getTime() || 0) - (_a.unlockedAt?.getTime() || 0))
       .slice(0, 5);
 
     return {
@@ -321,7 +321,7 @@ export class AchievementManager implements IAchievementManager {
       unlockedCount,
       inProgressCount,
       lockedCount,
-      completionPercentage: (unlockedCount / ACHIEVEMENTS.length) * 100,
+      completionPercentage: (_unlockedCount / ACHIEVEMENTS.length) * 100,
       totalXPEarned: progress.totalXP,
       currentLevel: levelInfo.currentLevel,
       nextLevelXP: levelInfo.nextLevelXP,
@@ -333,33 +333,33 @@ export class AchievementManager implements IAchievementManager {
   }
 
   // Progress tracking
-  async updateProgress(userId: string, achievementId: string, progressUpdate: Partial<UserAchievement>): Promise<void> {
-    const progress = await this.loadUserProgress(userId);
+  async updateProgress( userId: string, achievementId: string, progressUpdate: Partial<UserAchievement>): Promise<void> {
+    const progress = await this.loadUserProgress(_userId);
     const userAchievement = progress.achievements[achievementId];
     
     if (userAchievement) {
-      Object.assign(userAchievement, progressUpdate);
+      Object.assign( userAchievement, progressUpdate);
       await this.saveUserProgress(progress);
     }
   }
 
-  async unlockAchievement(userId: string, achievementId: string): Promise<AchievementNotification> {
-    const progress = await this.loadUserProgress(userId);
-    const achievement = this.getAchievement(achievementId);
+  async unlockAchievement( userId: string, achievementId: string): Promise<AchievementNotification> {
+    const progress = await this.loadUserProgress(_userId);
+    const achievement = this.getAchievement(_achievementId);
     
     if (!achievement) {
-      throw new Error(`Achievement not found: ${achievementId}`);
+      throw new Error(_`Achievement not found: ${achievementId}`);
     }
 
     const userAchievement = progress.achievements[achievementId];
     userAchievement.status = 'unlocked';
     userAchievement.progress = 100;
-    userAchievement.unlockedAt = new Date();
+    userAchievement.unlockedAt = new Date(_);
 
     // Apply rewards
     progress.totalXP += achievement.rewards.xp;
-    if (achievement.rewards.badge) {
-      progress.badges.push(achievement.rewards.badge);
+    if (_achievement.rewards.badge) {
+      progress.badges.push(_achievement.rewards.badge);
     }
 
     // Update statistics
@@ -376,27 +376,27 @@ export class AchievementManager implements IAchievementManager {
 
     // Create notification
     const notification: AchievementNotification = {
-      id: `${achievementId}_${Date.now()}`,
+      id: `${achievementId}_${Date.now(_)}`,
       achievementId,
       type: 'unlock',
       title: `Achievement Unlocked: ${achievement.title}`,
       message: achievement.description,
-      timestamp: new Date(),
+      timestamp: new Date(_),
       read: false,
       rewards: achievement.rewards
     };
 
     // Store notification
     if (!this.notifications.has(userId)) {
-      this.notifications.set(userId, []);
+      this.notifications.set( userId, []);
     }
-    this.notifications.get(userId)!.push(notification);
+    this.notifications.get(_userId)!.push(_notification);
 
     // Notify unlock listeners
     this.unlockListeners.forEach(listener => {
       try {
-        listener(achievement, notification);
-      } catch (error) {
+        listener( achievement, notification);
+      } catch (_error) {
         console.error('Error in achievement unlock listener:', error);
       }
     });
@@ -405,18 +405,18 @@ export class AchievementManager implements IAchievementManager {
   }
 
   // Notifications
-  async getNotifications(userId: string, unreadOnly?: boolean): Promise<AchievementNotification[]> {
-    const notifications = this.notifications.get(userId) || [];
+  async getNotifications( userId: string, unreadOnly?: boolean): Promise<AchievementNotification[]> {
+    const notifications = this.notifications.get(_userId) || [];
     
     if (unreadOnly) {
       return notifications.filter(n => !n.read);
     }
     
-    return notifications.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    return notifications.sort( (a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
-  async markNotificationRead(userId: string, notificationId: string): Promise<void> {
-    const notifications = this.notifications.get(userId) || [];
+  async markNotificationRead( userId: string, notificationId: string): Promise<void> {
+    const notifications = this.notifications.get(_userId) || [];
     const notification = notifications.find(n => n.id === notificationId);
     
     if (notification) {
@@ -425,23 +425,23 @@ export class AchievementManager implements IAchievementManager {
   }
 
   // Event listeners
-  addEventListener(listener: (event: AchievementEvent) => void): () => void {
-    this.eventListeners.add(listener);
-    return () => this.eventListeners.delete(listener);
+  addEventListener(_listener: (event: AchievementEvent) => void): (_) => void {
+    this.eventListeners.add(_listener);
+    return (_) => this.eventListeners.delete(_listener);
   }
 
-  addUnlockListener(listener: (achievement: Achievement, notification: AchievementNotification) => void): () => void {
-    this.unlockListeners.add(listener);
-    return () => this.unlockListeners.delete(listener);
+  addUnlockListener( listener: (achievement: Achievement, notification: AchievementNotification) => void): (_) => void {
+    this.unlockListeners.add(_listener);
+    return (_) => this.unlockListeners.delete(_listener);
   }
 
-  // Placeholder methods for leaderboards (would be implemented with backend)
-  async getLeaderboard(type: any, _limit?: number): Promise<any> {
+  // Placeholder methods for leaderboards (_would be implemented with backend)
+  async getLeaderboard( type: any, _limit?: number): Promise<any> {
     // Placeholder implementation
-    return { type, entries: [], lastUpdated: new Date() };
+    return { type, entries: [], lastUpdated: new Date(_) };
   }
 
-  async getUserRank(_userId: string, _type: any): Promise<number> {
+  async getUserRank( _userId: string, type: any): Promise<number> {
     // Placeholder implementation
     return 1;
   }

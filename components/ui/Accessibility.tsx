@@ -9,13 +9,13 @@ interface SkipLinkProps {
   children: React.ReactNode;
 }
 
-const SkipLink: React.FC<SkipLinkProps> = ({ targetId, children }) => {
-  const handleSkip = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const target = document.getElementById(targetId);
+const SkipLink: React.FC<SkipLinkProps> = ( { targetId, children }) => {
+  const handleSkip = (_e: React.MouseEvent) => {
+    e.preventDefault(_);
+    const target = document.getElementById(_targetId);
     if (target) {
-      target.focus();
-      target.scrollIntoView({ behavior: 'smooth' });
+      target.focus(_);
+      target.scrollIntoView({ behavior: 'smooth'  });
     }
   };
 
@@ -42,8 +42,8 @@ const FocusTrap: React.FC<FocusTrapProps> = ({
   active, 
   restoreFocus = true 
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const previousActiveElement = useRef<HTMLElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(_null);
+  const previousActiveElement = useRef<HTMLElement | null>(_null);
 
   useEffect(() => {
     if (!active) return;
@@ -64,35 +64,35 @@ const FocusTrap: React.FC<FocusTrapProps> = ({
 
     // Focus the first element
     if (firstElement) {
-      firstElement.focus();
+      firstElement.focus(_);
     }
 
-    const handleTabKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
+    const handleTabKey = (_e: KeyboardEvent) => {
+      if (_e.key !== 'Tab') return;
 
-      if (e.shiftKey) {
+      if (_e.shiftKey) {
         // Shift + Tab
-        if (document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement?.focus();
+        if (_document.activeElement === firstElement) {
+          e.preventDefault(_);
+          lastElement?.focus(_);
         }
       } else {
         // Tab
-        if (document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement?.focus();
+        if (_document.activeElement === lastElement) {
+          e.preventDefault(_);
+          firstElement?.focus(_);
         }
       }
     };
 
-    document.addEventListener('keydown', handleTabKey);
+    document.addEventListener( 'keydown', handleTabKey);
 
-    return () => {
-      document.removeEventListener('keydown', handleTabKey);
+    return (_) => {
+      document.removeEventListener( 'keydown', handleTabKey);
       
       // Restore focus to the previously focused element
       if (restoreFocus && previousActiveElement.current) {
-        previousActiveElement.current.focus();
+        previousActiveElement.current.focus(_);
       }
     };
   }, [active, restoreFocus]);
@@ -107,12 +107,12 @@ const FocusTrap: React.FC<FocusTrapProps> = ({
 // Keyboard Navigation Helper
 interface KeyboardNavigationProps {
   children: React.ReactNode;
-  onEscape?: () => void;
-  onEnter?: () => void;
-  onArrowUp?: () => void;
-  onArrowDown?: () => void;
-  onArrowLeft?: () => void;
-  onArrowRight?: () => void;
+  onEscape?: (_) => void;
+  onEnter?: (_) => void;
+  onArrowUp?: (_) => void;
+  onArrowDown?: (_) => void;
+  onArrowLeft?: (_) => void;
+  onArrowRight?: (_) => void;
 }
 
 const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
@@ -124,29 +124,29 @@ const KeyboardNavigation: React.FC<KeyboardNavigationProps> = ({
   onArrowLeft,
   onArrowRight,
 }) => {
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    switch (e.key) {
+  const handleKeyDown = (_e: React.KeyboardEvent) => {
+    switch (_e.key) {
       case 'Escape':
-        onEscape?.();
+        onEscape?.(_);
         break;
       case 'Enter':
-        onEnter?.();
+        onEnter?.(_);
         break;
       case 'ArrowUp':
-        e.preventDefault();
-        onArrowUp?.();
+        e.preventDefault(_);
+        onArrowUp?.(_);
         break;
       case 'ArrowDown':
-        e.preventDefault();
-        onArrowDown?.();
+        e.preventDefault(_);
+        onArrowDown?.(_);
         break;
       case 'ArrowLeft':
-        e.preventDefault();
-        onArrowLeft?.();
+        e.preventDefault(_);
+        onArrowLeft?.(_);
         break;
       case 'ArrowRight':
-        e.preventDefault();
-        onArrowRight?.();
+        e.preventDefault(_);
+        onArrowRight?.(_);
         break;
     }
   };
@@ -163,7 +163,7 @@ interface ScreenReaderOnlyProps {
   children: React.ReactNode;
 }
 
-const ScreenReaderOnly: React.FC<ScreenReaderOnlyProps> = ({ children }) => (
+const ScreenReaderOnly: React.FC<ScreenReaderOnlyProps> = ({ children  }) => (
   <span className="sr-only">{children}</span>
 );
 
@@ -203,19 +203,19 @@ interface ReducedMotionProps {
   fallback?: React.ReactNode;
 }
 
-const ReducedMotion: React.FC<ReducedMotionProps> = ({ children, fallback }) => {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+const ReducedMotion: React.FC<ReducedMotionProps> = ( { children, fallback }) => {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(_false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
+    setPrefersReducedMotion(_mediaQuery.matches);
 
-    const handleChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
+    const handleChange = (_e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(_e.matches);
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener( 'change', handleChange);
+    return (_) => mediaQuery.removeEventListener( 'change', handleChange);
   }, []);
 
   if (prefersReducedMotion && fallback) {
@@ -226,45 +226,45 @@ const ReducedMotion: React.FC<ReducedMotionProps> = ({ children, fallback }) => 
 };
 
 // High Contrast Mode Detection
-const useHighContrast = () => {
-  const [isHighContrast, setIsHighContrast] = useState(false);
+const useHighContrast = (_) => {
+  const [isHighContrast, setIsHighContrast] = useState(_false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-contrast: high)');
-    setIsHighContrast(mediaQuery.matches);
+    setIsHighContrast(_mediaQuery.matches);
 
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsHighContrast(e.matches);
+    const handleChange = (_e: MediaQueryListEvent) => {
+      setIsHighContrast(_e.matches);
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener( 'change', handleChange);
+    return (_) => mediaQuery.removeEventListener( 'change', handleChange);
   }, []);
 
   return isHighContrast;
 };
 
 // Focus Visible Utility
-const useFocusVisible = () => {
-  const [isFocusVisible, setIsFocusVisible] = useState(false);
+const useFocusVisible = (_) => {
+  const [isFocusVisible, setIsFocusVisible] = useState(_false);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Tab') {
-        setIsFocusVisible(true);
+    const handleKeyDown = (_e: KeyboardEvent) => {
+      if (_e.key === 'Tab') {
+        setIsFocusVisible(_true);
       }
     };
 
-    const handleMouseDown = () => {
-      setIsFocusVisible(false);
+    const handleMouseDown = (_) => {
+      setIsFocusVisible(_false);
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener( 'keydown', handleKeyDown);
+    document.addEventListener( 'mousedown', handleMouseDown);
 
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleMouseDown);
+    return (_) => {
+      document.removeEventListener( 'keydown', handleKeyDown);
+      document.removeEventListener( 'mousedown', handleMouseDown);
     };
   }, []);
 
@@ -290,7 +290,7 @@ const AccessibleButton: React.FC<AccessibleButtonProps> = ({
   'aria-label': ariaLabel,
   ...props
 }) => {
-  const isFocusVisible = useFocusVisible();
+  const isFocusVisible = useFocusVisible(_);
 
   // Create motion-compatible props by filtering out conflicting HTML events
   const motionProps = {
@@ -304,7 +304,7 @@ const AccessibleButton: React.FC<AccessibleButtonProps> = ({
       ${size === 'sm' ? 'px-3 py-1.5 text-sm' : ''}
       ${size === 'md' ? 'px-4 py-2 text-sm' : ''}
       ${size === 'lg' ? 'px-6 py-3 text-base' : ''}
-      ${(disabled || loading) ? 'opacity-50 cursor-not-allowed' : ''}
+      ${(_disabled || loading) ? 'opacity-50 cursor-not-allowed' : ''}
     `,
     disabled: disabled || loading,
     'aria-label': loading ? loadingText : ariaLabel,
@@ -318,7 +318,7 @@ const AccessibleButton: React.FC<AccessibleButtonProps> = ({
     onKeyDown: props.onKeyDown,
     type: props.type,
     id: props.id,
-    'data-testid': (props as any)['data-testid']
+    'data-testid': (_props as any)['data-testid']
   };
 
   return (
@@ -410,7 +410,7 @@ const AccessibleField: React.FC<AccessibleFieldProps> = ({
 interface AriaExpandableProps {
   children: React.ReactNode;
   isExpanded: boolean;
-  onToggle: () => void;
+  onToggle: (_) => void;
   label: string;
   className?: string;
 }
@@ -422,8 +422,8 @@ const AriaExpandable: React.FC<AriaExpandableProps> = ({
   label,
   className = ''
 }) => {
-  const buttonId = useId();
-  const contentId = useId();
+  const buttonId = useId(_);
+  const contentId = useId(_);
 
   return (
     <div className={className}>
@@ -457,7 +457,7 @@ interface AriaTabsProps {
     disabled?: boolean;
   }>;
   activeTab: string;
-  onTabChange: (tabId: string) => void;
+  onTabChange: (_tabId: string) => void;
   orientation?: 'horizontal' | 'vertical';
   className?: string;
 }
@@ -469,7 +469,7 @@ const AriaTabs: React.FC<AriaTabsProps> = ({
   orientation = 'horizontal',
   className = ''
 }) => {
-  const tabListId = useId();
+  const tabListId = useId(_);
 
   return (
     <div className={className}>
@@ -487,7 +487,7 @@ const AriaTabs: React.FC<AriaTabsProps> = ({
             aria-controls={`panel-${tab.id}`}
             aria-selected={activeTab === tab.id}
             disabled={tab.disabled}
-            onClick={() => onTabChange(tab.id)}
+            onClick={(_) => onTabChange(_tab.id)}
             className={`px-4 py-2 ${
               activeTab === tab.id ? 'bg-blue-500 text-white' : 'bg-gray-200'
             }`}
@@ -531,8 +531,8 @@ const AriaProgress: React.FC<AriaProgressProps> = ({
   className = ''
 }) => {
   const percentage = Math.round((value / max) * 100);
-  const progressId = useId();
-  const descriptionId = useId();
+  const progressId = useId(_);
+  const descriptionId = useId(_);
 
   return (
     <div className={className}>

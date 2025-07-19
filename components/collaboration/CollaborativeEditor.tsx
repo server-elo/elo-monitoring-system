@@ -43,14 +43,14 @@ interface ChatMessage {
 }
 
 // Utility functions to ensure interfaces are used
-const createParticipant = (id: string, name: string): Participant => ({
+const createParticipant = ( id: string, name: string): Participant => ({
   id,
   name,
   isActive: true
 });
 
-const createChatMessage = (userId: string, userName: string, message: string): ChatMessage => ({
-  id: Date.now().toString(),
+const createChatMessage = ( userId: string, userName: string, message: string): ChatMessage => ({
+  id: Date.now(_).toString(),
   userId,
   userName,
   message,
@@ -61,16 +61,16 @@ const createChatMessage = (userId: string, userName: string, message: string): C
 export function CollaborativeEditor() {
   const [code, setCode] = useState('');
   const [chatInput, setChatInput] = useState('');
-  const [showChat, setShowChat] = useState(true);
-  const [isCompiling, setIsCompiling] = useState(false);
-  const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
-  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const [showChat, setShowChat] = useState(_true);
+  const [isCompiling, setIsCompiling] = useState(_false);
+  const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(_null);
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(_false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(_false);
+  const [showSettings, setShowSettings] = useState(_false);
   const [activeParticipants, setActiveParticipants] = useState<Participant[]>([]);
   const [localChatMessages, setLocalChatMessages] = useState<ChatMessage[]>([]);
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(_null);
+  const chatScrollRef = useRef<HTMLDivElement>(_null);
   
   const { 
     currentSession, 
@@ -80,13 +80,13 @@ export function CollaborativeEditor() {
     sendChatMessage, 
     chatMessages,
     leaveSession 
-  } = useCollaboration();
+  } = useCollaboration(_);
   
-  const { toast } = useToast();
+  const { toast } = useToast(_);
 
   useEffect(() => {
     if (currentSession) {
-      setCode(currentSession.code);
+      setCode(_currentSession.code);
       // Initialize active participants with proper typing
       const typedParticipants: Participant[] = currentSession.participants.map(p => ({
         id: p.id,
@@ -95,13 +95,13 @@ export function CollaborativeEditor() {
         cursor: p.cursor,
         isActive: true
       }));
-      setActiveParticipants(typedParticipants);
+      setActiveParticipants(_typedParticipants);
     }
   }, [currentSession]);
 
   useEffect(() => {
     // Auto-scroll chat to bottom
-    if (chatScrollRef.current) {
+    if (_chatScrollRef.current) {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
     }
   }, [chatMessages]);
@@ -114,35 +114,35 @@ export function CollaborativeEditor() {
         userId: msg.userId,
         userName: msg.userName,
         message: msg.message,
-        timestamp: new Date(msg.timestamp)
+        timestamp: new Date(_msg.timestamp)
       }));
-      setLocalChatMessages(typedMessages);
+      setLocalChatMessages(_typedMessages);
     }
   }, [chatMessages]);
 
-  const handleEditorChange = (value: string | undefined) => {
-    if (value !== undefined && value !== code) {
-      setCode(value);
-      updateCode(value);
+  const handleEditorChange = (_value: string | undefined) => {
+    if (_value !== undefined && value !== code) {
+      setCode(_value);
+      updateCode(_value);
     }
   };
 
-  const handleCursorChange = (position: any) => {
+  const handleCursorChange = (_position: any) => {
     if (position) {
-      updateCursor({ line: position.lineNumber, column: position.column });
+      updateCursor( { line: position.lineNumber, column: position.column });
     }
   };
 
-  const handleSendMessage = () => {
-    if (chatInput.trim()) {
+  const handleSendMessage = (_) => {
+    if (_chatInput.trim()) {
       // Use the utility function to create a properly typed message
-      const newMessage = createChatMessage('current-user', 'Current User', chatInput.trim());
+      const newMessage = createChatMessage( 'current-user', 'Current User', chatInput.trim());
 
       // Add the message to local state for immediate UI feedback
-      setLocalChatMessages(prev => [...prev, newMessage]);
+      setLocalChatMessages( prev => [...prev, newMessage]);
 
       // Send to collaboration service
-      sendChatMessage(chatInput.trim());
+      sendChatMessage(_chatInput.trim());
       setChatInput('');
 
       // Show toast notification for message sent
@@ -153,16 +153,16 @@ export function CollaborativeEditor() {
     }
   };
 
-  const handleAddParticipant = (name: string) => {
+  const handleAddParticipant = (_name: string) => {
     // Use the utility function to create a properly typed participant
-    const newParticipant = createParticipant(Date.now().toString(), name);
+    const newParticipant = createParticipant(_Date.now().toString(), name);
 
     // Add participant to active participants list
-    setActiveParticipants(prev => [...prev, newParticipant]);
+    setActiveParticipants( prev => [...prev, newParticipant]);
 
     // Show welcome message in chat
-    const welcomeMessage = createChatMessage('system', 'System', `${newParticipant.name} joined the session`);
-    setLocalChatMessages(prev => [...prev, welcomeMessage]);
+    const welcomeMessage = createChatMessage( 'system', 'System', `${newParticipant.name} joined the session`);
+    setLocalChatMessages( prev => [...prev, welcomeMessage]);
 
     // Show toast notification
     toast({
@@ -183,7 +183,7 @@ export function CollaborativeEditor() {
       return;
     }
 
-    setIsCompiling(true);
+    setIsCompiling(_true);
     try {
       const response = await fetch('/api/compile', {
         method: 'POST',
@@ -196,10 +196,10 @@ export function CollaborativeEditor() {
         }),
       });
 
-      const result = await response.json();
-      setCompilationResult(result);
+      const result = await response.json(_);
+      setCompilationResult(_result);
 
-      if (result.success) {
+      if (_result.success) {
         toast({
           title: "Compilation successful!",
           description: "Your contract compiled without errors.",
@@ -211,29 +211,29 @@ export function CollaborativeEditor() {
           variant: "destructive",
         });
       }
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: "Compilation error",
         description: "Failed to compile the contract. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setIsCompiling(false);
+      setIsCompiling(_false);
     }
   };
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(code);
+  const handleCopyCode = (_) => {
+    navigator.clipboard.writeText(_code);
     toast({
       title: "Code copied!",
       description: "The code has been copied to your clipboard.",
     });
   };
 
-  const handleShareSession = () => {
+  const handleShareSession = (_) => {
     if (currentSession) {
       const shareUrl = `${window.location.origin}/collaborate/session/${currentSession.id}`;
-      navigator.clipboard.writeText(shareUrl);
+      navigator.clipboard.writeText(_shareUrl);
       toast({
         title: "Session link copied!",
         description: "Share this link with others to invite them to collaborate.",
@@ -245,17 +245,17 @@ export function CollaborativeEditor() {
     try {
       if (!isVoiceEnabled) {
         // Request microphone access
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true  });
         console.log('Microphone access granted');
         // In production, this would connect to WebRTC
-        stream.getTracks().forEach(track => track.stop()); // Clean up for demo
+        stream.getTracks(_).forEach(_track => track.stop()); // Clean up for demo
       }
       setIsVoiceEnabled(!isVoiceEnabled);
       toast({
         title: isVoiceEnabled ? 'Voice chat disabled' : 'Voice chat enabled',
         description: isVoiceEnabled ? 'Microphone turned off' : 'Microphone turned on',
       });
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Microphone access denied',
         description: 'Please allow microphone access to use voice chat.',
@@ -268,17 +268,17 @@ export function CollaborativeEditor() {
     try {
       if (!isVideoEnabled) {
         // Request camera access
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true  });
         console.log('Camera access granted');
         // In production, this would connect to WebRTC
-        stream.getTracks().forEach(track => track.stop()); // Clean up for demo
+        stream.getTracks(_).forEach(_track => track.stop()); // Clean up for demo
       }
       setIsVideoEnabled(!isVideoEnabled);
       toast({
         title: isVideoEnabled ? 'Video chat disabled' : 'Video chat enabled',
         description: isVideoEnabled ? 'Camera turned off' : 'Camera turned on',
       });
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Camera access denied',
         description: 'Please allow camera access to use video chat.',
@@ -287,16 +287,16 @@ export function CollaborativeEditor() {
     }
   };
 
-  const handleDownloadCode = () => {
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  const handleDownloadCode = (_) => {
+    const blob = new Blob( [code], { type: 'text/plain' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `${currentSession?.title || 'collaborative-contract'}.sol`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    document.body.appendChild(_a);
+    a.click(_);
+    document.body.removeChild(_a);
+    URL.revokeObjectURL(_url);
     toast({
       title: 'Code downloaded!',
       description: 'The Solidity file has been saved to your downloads.',
@@ -349,7 +349,7 @@ export function CollaborativeEditor() {
                 >
                   {isVideoEnabled ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setShowSettings(!showSettings)}>
+                <Button size="sm" variant="outline" onClick={(_) => setShowSettings(!showSettings)}>
                   <Settings className="w-4 h-4" />
                 </Button>
                 <Button size="sm" variant="outline" onClick={handleShareSession}>
@@ -379,7 +379,7 @@ export function CollaborativeEditor() {
               <h3 className="text-lg font-semibold text-white">{currentSession.title}</h3>
               <div className="flex items-center space-x-4 text-sm text-gray-400">
                 <span>{currentSession.participants.length} participants</span>
-                <span>Created {new Date(currentSession.createdAt).toLocaleTimeString()}</span>
+                <span>Created {new Date(_currentSession.createdAt).toLocaleTimeString(_)}</span>
               </div>
             </div>
           </CardHeader>
@@ -393,10 +393,10 @@ export function CollaborativeEditor() {
               language="solidity"
               value={code}
               onChange={handleEditorChange}
-              onMount={(editor) => {
+              onMount={(_editor) => {
                 editorRef.current = editor;
                 editor.onDidChangeCursorPosition((e) => {
-                  handleCursorChange(e.position);
+                  handleCursorChange(_e.position);
                 });
               }}
               theme="vs-dark"
@@ -438,12 +438,12 @@ export function CollaborativeEditor() {
                     <div className="space-y-2 text-sm">
                       <p className="text-gray-300">Contract compiled successfully!</p>
                       {compilationResult.gasEstimate && (
-                        <p className="text-gray-400">Estimated gas: {compilationResult.gasEstimate.toLocaleString()}</p>
+                        <p className="text-gray-400">Estimated gas: {compilationResult.gasEstimate.toLocaleString(_)}</p>
                       )}
                       {compilationResult.warnings && compilationResult.warnings.length > 0 && (
                         <div className="mt-2">
                           <p className="text-yellow-400 font-medium">Warnings:</p>
-                          {compilationResult.warnings.map((warning: string, index: number) => (
+                          {compilationResult.warnings.map( (warning: string, index: number) => (
                             <p key={index} className="text-yellow-300 text-xs mt-1">{warning}</p>
                           ))}
                         </div>
@@ -451,7 +451,7 @@ export function CollaborativeEditor() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      {compilationResult.errors?.map((error: string, index: number) => (
+                      {compilationResult.errors?.map( (error: string, index: number) => (
                         <p key={index} className="text-red-300 text-sm">{error}</p>
                       ))}
                     </div>
@@ -471,15 +471,15 @@ export function CollaborativeEditor() {
             <CardTitle className="text-sm flex items-center justify-between">
               <div className="flex items-center">
                 <Users className="w-4 h-4 mr-2" />
-                Participants ({currentSession.participants.length})
+                Participants ({ currentSession.participants.length })
               </div>
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => {
+                onClick={(_) => {
                   const name = prompt('Enter participant name:');
-                  if (name?.trim()) {
-                    handleAddParticipant(name.trim());
+                  if (_name?.trim()) {
+                    handleAddParticipant(_name.trim());
                   }
                 }}
                 className="text-xs"
@@ -524,7 +524,7 @@ export function CollaborativeEditor() {
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => setShowChat(!showChat)}
+                onClick={(_) => setShowChat(!showChat)}
               >
                 {showChat ? 'Hide' : 'Show'}
               </Button>
@@ -539,7 +539,7 @@ export function CollaborativeEditor() {
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-medium text-blue-400">{message.userName}</span>
                         <span className="text-xs text-gray-500">
-                          {message.timestamp.toLocaleTimeString()}
+                          {message.timestamp.toLocaleTimeString(_)}
                         </span>
                       </div>
                       <p className="text-sm text-gray-300 break-words">{message.message}</p>
@@ -559,8 +559,8 @@ export function CollaborativeEditor() {
                 <Input
                   placeholder="Type a message..."
                   value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  onChange={(_e) => setChatInput(_e.target.value)}
+                  onKeyPress={(_e) => e.key === 'Enter' && handleSendMessage(_)}
                   className="flex-1"
                 />
                 <Button size="sm" onClick={handleSendMessage}>
@@ -615,7 +615,7 @@ export function CollaborativeEditor() {
                     <div className="text-xs space-y-1">
                       <p>ID: {currentSession?.id.slice(0, 8)}...</p>
                       <p>Language: {currentSession?.language}</p>
-                      <p>Created: {new Date(currentSession?.createdAt || '').toLocaleString()}</p>
+                      <p>Created: {new Date(_currentSession?.createdAt || '').toLocaleString(_)}</p>
                     </div>
                   </div>
                 </CardContent>

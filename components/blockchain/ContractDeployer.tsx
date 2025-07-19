@@ -35,15 +35,15 @@ interface ContractDeployerProps {
   contractName?: string;
 }
 
-export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: ContractDeployerProps) {
-  const [isDeploying, setIsDeploying] = useState(false);
-  const [deploymentResult, setDeploymentResult] = useState<DeploymentResult | null>(null);
+export function ContractDeployer( { bytecode, abi, contractName = 'Contract' }: ContractDeployerProps) {
+  const [isDeploying, setIsDeploying] = useState(_false);
+  const [deploymentResult, setDeploymentResult] = useState<DeploymentResult | null>(_null);
   const [constructorArgs, setConstructorArgs] = useState<string>('');
   const [customBytecode, setCustomBytecode] = useState('');
   const [customAbi, setCustomAbi] = useState('');
   
-  const { account, chainId, isConnected, deployContract } = useWeb3();
-  const { toast } = useToast();
+  const { account, chainId, isConnected, deployContract } = useWeb3(_);
+  const { toast } = useToast(_);
 
   const currentNetwork = chainId ? SUPPORTED_NETWORKS[chainId as keyof typeof SUPPORTED_NETWORKS] : null;
 
@@ -67,7 +67,7 @@ export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: C
     }
 
     const deployBytecode = bytecode || customBytecode;
-    const deployAbi = abi || (customAbi ? JSON.parse(customAbi) : []);
+    const deployAbi = abi || (_customAbi ? JSON.parse(customAbi) : []);
 
     if (!deployBytecode) {
       toast({
@@ -78,30 +78,30 @@ export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: C
       return;
     }
 
-    setIsDeploying(true);
+    setIsDeploying(_true);
     try {
       // Parse constructor arguments
       let args: unknown[] = [];
-      if (constructorArgs.trim()) {
+      if (_constructorArgs.trim()) {
         try {
-          args = JSON.parse(`[${constructorArgs}]`);
-        } catch (error) {
+          args = JSON.parse(_`[${constructorArgs}]`);
+        } catch (_error) {
           throw new Error('Invalid constructor arguments format. Use comma-separated values.');
         }
       }
 
       // Deploy the contract
-      const contractAddress = await deployContract(deployBytecode, deployAbi, args);
+      const contractAddress = await deployContract( deployBytecode, deployAbi, args);
       
-      // Mock deployment result (in real implementation, get from transaction receipt)
+      // Mock deployment result ( in real implementation, get from transaction receipt)
       const result: DeploymentResult = {
         address: contractAddress,
         transactionHash: '0x' + Math.random().toString(16).substr(2, 64),
-        gasUsed: (Math.random() * 1000000 + 500000).toFixed(0),
-        deploymentCost: (Math.random() * 0.01 + 0.001).toFixed(6),
+        gasUsed: (_Math.random() * 1000000 + 500000).toFixed(0),
+        deploymentCost: (_Math.random() * 0.01 + 0.001).toFixed(_6),
       };
 
-      setDeploymentResult(result);
+      setDeploymentResult(_result);
       
       toast({
         title: "Contract deployed successfully!",
@@ -123,7 +123,7 @@ export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: C
         }),
       });
 
-    } catch (error) {
+    } catch (_error) {
       console.error('Deployment error:', error);
       toast({
         title: "Deployment failed",
@@ -131,13 +131,13 @@ export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: C
         variant: "destructive",
       });
     } finally {
-      setIsDeploying(false);
+      setIsDeploying(_false);
     }
   };
 
-  const handleCopyAddress = () => {
+  const handleCopyAddress = (_) => {
     if (deploymentResult) {
-      navigator.clipboard.writeText(deploymentResult.address);
+      navigator.clipboard.writeText(_deploymentResult.address);
       toast({
         title: "Address copied!",
         description: "Contract address has been copied to clipboard.",
@@ -145,9 +145,9 @@ export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: C
     }
   };
 
-  const handleCopyTxHash = () => {
+  const handleCopyTxHash = (_) => {
     if (deploymentResult) {
-      navigator.clipboard.writeText(deploymentResult.transactionHash);
+      navigator.clipboard.writeText(_deploymentResult.transactionHash);
       toast({
         title: "Transaction hash copied!",
         description: "Transaction hash has been copied to clipboard.",
@@ -203,13 +203,13 @@ export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: C
                   
                   <div>
                     <Label htmlFor="constructor-args" className="text-white">
-                      Constructor Arguments (optional)
+                      Constructor Arguments (_optional)
                     </Label>
                     <Input
                       id="constructor-args"
                       placeholder='e.g., "Hello World", 42, true'
                       value={constructorArgs}
-                      onChange={(e) => setConstructorArgs(e.target.value)}
+                      onChange={(_e) => setConstructorArgs(_e.target.value)}
                       className="mt-1"
                     />
                     <p className="text-xs text-gray-400 mt-1">
@@ -239,33 +239,33 @@ export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: C
                   id="custom-bytecode"
                   placeholder="0x608060405234801561001057600080fd5b50..."
                   value={customBytecode}
-                  onChange={(e) => setCustomBytecode(e.target.value)}
+                  onChange={(_e) => setCustomBytecode(_e.target.value)}
                   className="mt-1 h-24"
                 />
               </div>
               
               <div>
                 <Label htmlFor="custom-abi" className="text-white">
-                  Contract ABI (JSON)
+                  Contract ABI (_JSON)
                 </Label>
                 <Textarea
                   id="custom-abi"
                   placeholder='[{"inputs":[],"name":"myFunction","outputs":[],"type":"function"}]'
                   value={customAbi}
-                  onChange={(e) => setCustomAbi(e.target.value)}
+                  onChange={(_e) => setCustomAbi(_e.target.value)}
                   className="mt-1 h-24"
                 />
               </div>
               
               <div>
                 <Label htmlFor="constructor-args-custom" className="text-white">
-                  Constructor Arguments (optional)
+                  Constructor Arguments (_optional)
                 </Label>
                 <Input
                   id="constructor-args-custom"
                   placeholder='e.g., "Hello World", 42, true'
                   value={constructorArgs}
-                  onChange={(e) => setConstructorArgs(e.target.value)}
+                  onChange={(_e) => setConstructorArgs(_e.target.value)}
                   className="mt-1"
                 />
               </div>
@@ -336,7 +336,7 @@ export function ContractDeployer({ bytecode, abi, contractName = 'Contract' }: C
                 <div className="p-3 rounded-lg bg-white/5">
                   <Label className="text-gray-400">Gas Used</Label>
                   <p className="text-sm text-white">
-                    {parseInt(deploymentResult.gasUsed).toLocaleString()}
+                    {parseInt(_deploymentResult.gasUsed).toLocaleString(_)}
                   </p>
                 </div>
                 

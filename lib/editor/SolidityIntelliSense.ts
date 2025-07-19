@@ -36,14 +36,14 @@ export interface CompletionContext {
  * Advanced Solidity IntelliSense provider with context-aware suggestions
  */
 export class SolidityIntelliSense {
-  private symbols: Map<string, SoliditySymbol> = new Map();
-  private contractSymbols: Map<string, SoliditySymbol[]> = new Map();
+  private symbols: Map<string, SoliditySymbol> = new Map(_);
+  private contractSymbols: Map<string, SoliditySymbol[]> = new Map(_);
   private builtinSymbols: SoliditySymbol[] = [];
-  private standardLibraries: Map<string, SoliditySymbol[]> = new Map();
+  private standardLibraries: Map<string, SoliditySymbol[]> = new Map(_);
 
-  constructor() {
-    this.initializeBuiltinSymbols();
-    this.initializeStandardLibraries();
+  constructor(_) {
+    this.initializeBuiltinSymbols(_);
+    this.initializeStandardLibraries(_);
   }
 
   /**
@@ -54,29 +54,29 @@ export class SolidityIntelliSense {
     position: Position,
     context: languages.CompletionContext
   ): languages.ProviderResult<languages.CompletionList> {
-    const completionContext = this.analyzeContext(model, position, context);
+    const completionContext = this.analyzeContext( model, position, context);
     const suggestions: languages.CompletionItem[] = [];
 
     // Add context-specific suggestions
-    this.addContextualSuggestions(suggestions, completionContext);
+    this.addContextualSuggestions( suggestions, completionContext);
     
     // Add builtin suggestions
-    this.addBuiltinSuggestions(suggestions, completionContext);
+    this.addBuiltinSuggestions( suggestions, completionContext);
     
     // Add user-defined symbols
-    this.addUserDefinedSuggestions(suggestions, completionContext);
+    this.addUserDefinedSuggestions( suggestions, completionContext);
     
     // Add snippet suggestions
-    this.addSnippetSuggestions(suggestions, completionContext);
+    this.addSnippetSuggestions( suggestions, completionContext);
     
     // Add import suggestions
-    this.addImportSuggestions(suggestions, completionContext);
+    this.addImportSuggestions( suggestions, completionContext);
 
     // Sort suggestions by relevance
-    suggestions.sort((a, b) => {
+    suggestions.sort( (a, b) => {
       const aSort = a.sortText || a.label;
       const bSort = b.sortText || b.label;
-      return aSort.localeCompare(bSort);
+      return aSort.localeCompare(_bSort);
     });
 
     return {
@@ -93,11 +93,11 @@ export class SolidityIntelliSense {
     position: Position,
     context: languages.CompletionContext
   ): CompletionContext {
-    const lineText = model.getLineContent(position.lineNumber);
-    const word = model.getWordUntilPosition(position);
+    const lineText = model.getLineContent(_position.lineNumber);
+    const word = model.getWordUntilPosition(_position);
     
     // Determine scope and context
-    const fullText = model.getValue();
+    const fullText = model.getValue(_);
     const lines = fullText.split('\n');
     
     let isInContract = false;
@@ -111,7 +111,7 @@ export class SolidityIntelliSense {
       const line = lines[i];
       
       // Check for contract declaration
-      const contractMatch = line.match(/^\s*contract\s+(\w+)/);
+      const contractMatch = line.match(_/^\s*contract\s+(\w+)/);
       if (contractMatch) {
         isInContract = true;
         contractName = contractMatch[1];
@@ -120,7 +120,7 @@ export class SolidityIntelliSense {
       }
       
       // Check for function declaration
-      const functionMatch = line.match(/^\s*function\s+(\w+)/);
+      const functionMatch = line.match(_/^\s*function\s+(\w+)/);
       if (functionMatch) {
         isInFunction = true;
         functionName = functionMatch[1];
@@ -128,7 +128,7 @@ export class SolidityIntelliSense {
       }
       
       // Check for modifier declaration
-      const modifierMatch = line.match(/^\s*modifier\s+(\w+)/);
+      const modifierMatch = line.match(_/^\s*modifier\s+(\w+)/);
       if (modifierMatch) {
         scope = 'modifier';
       }
@@ -140,8 +140,8 @@ export class SolidityIntelliSense {
       triggerKind: context.triggerKind,
       word: word.word,
       lineText,
-      isInString: this.isInString(lineText, position.column),
-      isInComment: this.isInComment(lineText, position.column),
+      isInString: this.isInString( lineText, position.column),
+      isInComment: this.isInComment( lineText, position.column),
       isInContract,
       isInFunction,
       contractName,
@@ -157,16 +157,16 @@ export class SolidityIntelliSense {
     suggestions: languages.CompletionItem[],
     context: CompletionContext
   ): void {
-    const range = this.getWordRange(context);
+    const range = this.getWordRange(_context);
 
     // Contract-level suggestions
-    if (context.scope === 'contract') {
+    if (_context.scope === 'contract') {
       suggestions.push(
         {
           label: 'function',
           kind: languages.CompletionItemKind.Keyword,
           insertText: [
-            'function ${1:functionName}(${2:parameters}) ${3:public} ${4:returns (${5:returnType})} {',
+            'function ${1:functionName}(_${2:parameters}) ${3:public} ${4:returns (_${5:returnType})} {',
             '\t$0',
             '}'
           ].join('\n'),
@@ -179,7 +179,7 @@ export class SolidityIntelliSense {
           label: 'constructor',
           kind: languages.CompletionItemKind.Constructor,
           insertText: [
-            'constructor(${1:parameters}) ${2:public} {',
+            'constructor(_${1:parameters}) ${2:public} {',
             '\t$0',
             '}'
           ].join('\n'),
@@ -192,8 +192,8 @@ export class SolidityIntelliSense {
           label: 'modifier',
           kind: languages.CompletionItemKind.Function,
           insertText: [
-            'modifier ${1:modifierName}(${2:parameters}) {',
-            '\t${3:require(${4:condition}, "${5:error message}");}',
+            'modifier ${1:modifierName}(_${2:parameters}) {',
+            '\t${3:require( ${4:condition}, "${5:error message}");}',
             '\t_;',
             '}'
           ].join('\n'),
@@ -205,7 +205,7 @@ export class SolidityIntelliSense {
         {
           label: 'event',
           kind: languages.CompletionItemKind.Event,
-          insertText: 'event ${1:EventName}(${2:parameters});',
+          insertText: 'event ${1:EventName}(_${2:parameters});',
           insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
           documentation: 'Create an event',
           range,
@@ -215,12 +215,12 @@ export class SolidityIntelliSense {
     }
 
     // Function-level suggestions
-    if (context.scope === 'function') {
+    if (_context.scope === 'function') {
       suggestions.push(
         {
           label: 'require',
           kind: languages.CompletionItemKind.Function,
-          insertText: 'require(${1:condition}, "${2:error message}");',
+          insertText: 'require( ${1:condition}, "${2:error message}");',
           insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
           documentation: 'Require condition with error message',
           range,
@@ -229,7 +229,7 @@ export class SolidityIntelliSense {
         {
           label: 'emit',
           kind: languages.CompletionItemKind.Keyword,
-          insertText: 'emit ${1:EventName}(${2:parameters});',
+          insertText: 'emit ${1:EventName}(_${2:parameters});',
           insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
           documentation: 'Emit an event',
           range,
@@ -248,18 +248,18 @@ export class SolidityIntelliSense {
     }
 
     // Type suggestions after variable declarations
-    if (context.lineText.match(/^\s*(uint|int|bool|address|string|bytes)\s*$/)) {
-      this.addTypeSuggestions(suggestions, context);
+    if (_context.lineText.match(/^\s*(uint|int|bool|address|string|bytes)\s*$/)) {
+      this.addTypeSuggestions( suggestions, context);
     }
 
     // Visibility suggestions after function/variable declarations
-    if (context.lineText.includes('function') && !context.lineText.match(/\b(public|private|internal|external)\b/)) {
-      this.addVisibilitySuggestions(suggestions, context);
+    if (_context.lineText.includes('function') && !context.lineText.match(_/\b(public|private|internal|external)\b/)) {
+      this.addVisibilitySuggestions( suggestions, context);
     }
 
     // State mutability suggestions
-    if (context.lineText.includes('function') && !context.lineText.match(/\b(pure|view|payable)\b/)) {
-      this.addMutabilitySuggestions(suggestions, context);
+    if (_context.lineText.includes('function') && !context.lineText.match(_/\b(pure|view|payable)\b/)) {
+      this.addMutabilitySuggestions( suggestions, context);
     }
   }
 
@@ -270,12 +270,12 @@ export class SolidityIntelliSense {
     suggestions: languages.CompletionItem[],
     context: CompletionContext
   ): void {
-    if (context.isInString || context.isInComment) return;
+    if (_context.isInString || context.isInComment) return;
 
-    const range = this.getWordRange(context);
+    const range = this.getWordRange(_context);
     
     this.builtinSymbols.forEach(symbol => {
-      if (symbol.name.toLowerCase().includes(context.word.toLowerCase())) {
+      if (_symbol.name.toLowerCase().includes(_context.word.toLowerCase())) {
         suggestions.push({
           label: symbol.name,
           kind: symbol.kind,
@@ -297,15 +297,15 @@ export class SolidityIntelliSense {
     suggestions: languages.CompletionItem[],
     context: CompletionContext
   ): void {
-    if (context.isInString || context.isInComment) return;
+    if (_context.isInString || context.isInComment) return;
 
-    const range = this.getWordRange(context);
+    const range = this.getWordRange(_context);
     
     // Add symbols from current contract
-    if (context.contractName) {
-      const contractSymbols = this.contractSymbols.get(context.contractName) || [];
+    if (_context.contractName) {
+      const contractSymbols = this.contractSymbols.get(_context.contractName) || [];
       contractSymbols.forEach(symbol => {
-        if (symbol.name.toLowerCase().includes(context.word.toLowerCase())) {
+        if (_symbol.name.toLowerCase().includes(_context.word.toLowerCase())) {
           suggestions.push({
             label: symbol.name,
             kind: symbol.kind,
@@ -321,7 +321,7 @@ export class SolidityIntelliSense {
 
     // Add global symbols
     this.symbols.forEach(symbol => {
-      if (symbol.name.toLowerCase().includes(context.word.toLowerCase())) {
+      if (_symbol.name.toLowerCase().includes(_context.word.toLowerCase())) {
         suggestions.push({
           label: symbol.name,
           kind: symbol.kind,
@@ -342,16 +342,16 @@ export class SolidityIntelliSense {
     suggestions: languages.CompletionItem[],
     context: CompletionContext
   ): void {
-    if (context.isInString || context.isInComment) return;
+    if (_context.isInString || context.isInComment) return;
 
-    const range = this.getWordRange(context);
+    const range = this.getWordRange(_context);
     
     // Common patterns
     const snippets = [
       {
         label: 'for loop',
         insertText: [
-          'for (uint ${1:i} = 0; ${1:i} < ${2:length}; ${1:i}++) {',
+          'for (_uint ${1:i} = 0; ${1:i} < ${2:length}; ${1:i}++) {',
           '\t$0',
           '}'
         ].join('\n'),
@@ -360,7 +360,7 @@ export class SolidityIntelliSense {
       {
         label: 'if statement',
         insertText: [
-          'if (${1:condition}) {',
+          'if (_${1:condition}) {',
           '\t$0',
           '}'
         ].join('\n'),
@@ -368,7 +368,7 @@ export class SolidityIntelliSense {
       },
       {
         label: 'mapping',
-        insertText: 'mapping(${1:keyType} => ${2:valueType}) ${3:public} ${4:mappingName};',
+        insertText: 'mapping(_${1:keyType} => ${2:valueType}) ${3:public} ${4:mappingName};',
         documentation: 'Mapping declaration'
       },
       {
@@ -384,7 +384,7 @@ export class SolidityIntelliSense {
     ];
 
     snippets.forEach(snippet => {
-      if (snippet.label.toLowerCase().includes(context.word.toLowerCase())) {
+      if (_snippet.label.toLowerCase().includes(_context.word.toLowerCase())) {
         suggestions.push({
           label: snippet.label,
           kind: languages.CompletionItemKind.Snippet,
@@ -407,7 +407,7 @@ export class SolidityIntelliSense {
   ): void {
     if (!context.lineText.startsWith('import')) return;
 
-    const range = this.getWordRange(context);
+    const range = this.getWordRange(_context);
     
     // Common OpenZeppelin imports
     const commonImports = [
@@ -432,9 +432,9 @@ export class SolidityIntelliSense {
   }
 
   // Helper methods
-  private addTypeSuggestions(suggestions: languages.CompletionItem[], context: CompletionContext): void {
+  private addTypeSuggestions( suggestions: languages.CompletionItem[], context: CompletionContext): void {
     const types = ['uint256', 'int256', 'bool', 'address', 'string', 'bytes32', 'bytes'];
-    const range = this.getWordRange(context);
+    const range = this.getWordRange(_context);
     
     types.forEach(type => {
       suggestions.push({
@@ -447,9 +447,9 @@ export class SolidityIntelliSense {
     });
   }
 
-  private addVisibilitySuggestions(suggestions: languages.CompletionItem[], context: CompletionContext): void {
+  private addVisibilitySuggestions( suggestions: languages.CompletionItem[], context: CompletionContext): void {
     const visibilities = ['public', 'private', 'internal', 'external'];
-    const range = this.getWordRange(context);
+    const range = this.getWordRange(_context);
     
     visibilities.forEach(visibility => {
       suggestions.push({
@@ -462,9 +462,9 @@ export class SolidityIntelliSense {
     });
   }
 
-  private addMutabilitySuggestions(suggestions: languages.CompletionItem[], context: CompletionContext): void {
+  private addMutabilitySuggestions( suggestions: languages.CompletionItem[], context: CompletionContext): void {
     const mutabilities = ['pure', 'view', 'payable'];
-    const range = this.getWordRange(context);
+    const range = this.getWordRange(_context);
     
     mutabilities.forEach(mutability => {
       suggestions.push({
@@ -477,7 +477,7 @@ export class SolidityIntelliSense {
     });
   }
 
-  private getWordRange(context: CompletionContext): IRange {
+  private getWordRange(_context: CompletionContext): IRange {
     return new monaco.Range(
       context.position.lineNumber,
       context.position.column - context.word.length,
@@ -486,19 +486,19 @@ export class SolidityIntelliSense {
     );
   }
 
-  private isInString(lineText: string, column: number): boolean {
-    const beforeCursor = lineText.substring(0, column - 1);
-    const singleQuotes = (beforeCursor.match(/'/g) || []).length;
-    const doubleQuotes = (beforeCursor.match(/"/g) || []).length;
-    return (singleQuotes % 2 === 1) || (doubleQuotes % 2 === 1);
+  private isInString( lineText: string, column: number): boolean {
+    const beforeCursor = lineText.substring( 0, column - 1);
+    const singleQuotes = (_beforeCursor.match(/'/g) || []).length;
+    const doubleQuotes = (_beforeCursor.match(/"/g) || []).length;
+    return (_singleQuotes % 2 === 1) || (_doubleQuotes % 2 === 1);
   }
 
-  private isInComment(lineText: string, column: number): boolean {
-    const beforeCursor = lineText.substring(0, column - 1);
+  private isInComment( lineText: string, column: number): boolean {
+    const beforeCursor = lineText.substring( 0, column - 1);
     return beforeCursor.includes('//') || beforeCursor.includes('/*');
   }
 
-  private initializeBuiltinSymbols(): void {
+  private initializeBuiltinSymbols(_): void {
     // Global variables and functions
     this.builtinSymbols = [
       {
@@ -529,33 +529,33 @@ export class SolidityIntelliSense {
         name: 'require',
         type: 'function',
         kind: languages.CompletionItemKind.Function,
-        detail: 'function require(bool condition, string memory message)',
+        detail: 'function require( bool condition, string memory message)',
         documentation: 'Throws an error if the condition is not met',
-        insertText: 'require(${1:condition}, "${2:message}")',
+        insertText: 'require( ${1:condition}, "${2:message}")',
         insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet
       },
       {
         name: 'keccak256',
         type: 'function',
         kind: languages.CompletionItemKind.Function,
-        detail: 'function keccak256(bytes memory data) returns (bytes32)',
+        detail: 'function keccak256(_bytes memory data) returns (_bytes32)',
         documentation: 'Computes the Keccak-256 hash of the input',
-        insertText: 'keccak256(${1:data})',
+        insertText: 'keccak256(_${1:data})',
         insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet
       }
     ];
   }
 
-  private initializeStandardLibraries(): void {
+  private initializeStandardLibraries(_): void {
     // Initialize common library symbols
     this.standardLibraries.set('SafeMath', [
       {
         name: 'add',
         type: 'function',
         kind: languages.CompletionItemKind.Method,
-        detail: 'function add(uint256 a, uint256 b) returns (uint256)',
+        detail: 'function add( uint256 a, uint256 b) returns (_uint256)',
         documentation: 'Safe addition that reverts on overflow',
-        insertText: 'add(${1:a}, ${2:b})',
+        insertText: 'add( ${1:a}, ${2:b})',
         insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet
       }
     ]);
@@ -564,17 +564,17 @@ export class SolidityIntelliSense {
   /**
    * Update symbols from parsed code
    */
-  updateSymbols(symbols: SoliditySymbol[]): void {
-    this.symbols.clear();
+  updateSymbols(_symbols: SoliditySymbol[]): void {
+    this.symbols.clear(_);
     symbols.forEach(symbol => {
-      this.symbols.set(symbol.name, symbol);
+      this.symbols.set( symbol.name, symbol);
     });
   }
 
   /**
    * Update contract-specific symbols
    */
-  updateContractSymbols(contractName: string, symbols: SoliditySymbol[]): void {
-    this.contractSymbols.set(contractName, symbols);
+  updateContractSymbols( contractName: string, symbols: SoliditySymbol[]): void {
+    this.contractSymbols.set( contractName, symbols);
   }
 }

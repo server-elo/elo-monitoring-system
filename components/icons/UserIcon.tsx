@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-const UserIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => {
+const UserIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6"  }) => {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 

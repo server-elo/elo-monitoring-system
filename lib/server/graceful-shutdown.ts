@@ -5,7 +5,7 @@
 
 interface ShutdownCallback {
   name: string;
-  handler: () => Promise<void>;
+  handler: (_) => Promise<void>;
   timeout?: number;
 }
 
@@ -14,32 +14,32 @@ class GracefulShutdownManager {
   private isShuttingDown = false;
   private shutdownTimeout = 30000; // 30 seconds default
 
-  constructor() {
-    this.setupSignalHandlers();
+  constructor(_) {
+    this.setupSignalHandlers(_);
   }
 
   /**
    * Register a shutdown callback
    */
-  register(callback: ShutdownCallback): void {
-    this.shutdownCallbacks.push(callback);
+  register(_callback: ShutdownCallback): void {
+    this.shutdownCallbacks.push(_callback);
   }
 
   /**
    * Setup signal handlers for graceful shutdown
    */
-  private setupSignalHandlers(): void {
+  private setupSignalHandlers(_): void {
     // Handle termination signals
-    process.on('SIGTERM', () => this.shutdown('SIGTERM'));
-    process.on('SIGINT', () => this.shutdown('SIGINT'));
+    process.on( 'SIGTERM', () => this.shutdown('SIGTERM'));
+    process.on( 'SIGINT', () => this.shutdown('SIGINT'));
 
     // Handle uncaught errors
-    process.on('uncaughtException', (error) => {
+    process.on( 'uncaughtException', (error) => {
       console.error('Uncaught Exception:', error);
       this.shutdown('uncaughtException');
     });
 
-    process.on('unhandledRejection', (reason, promise) => {
+    process.on( 'unhandledRejection', (reason, promise) => {
       console.error('Unhandled Rejection at:', promise, 'reason:', reason);
       this.shutdown('unhandledRejection');
     });
@@ -48,8 +48,8 @@ class GracefulShutdownManager {
   /**
    * Perform graceful shutdown
    */
-  private async shutdown(signal: string): Promise<void> {
-    if (this.isShuttingDown) {
+  private async shutdown(_signal: string): Promise<void> {
+    if (_this.isShuttingDown) {
       console.log('Shutdown already in progress...');
       return;
     }
@@ -65,23 +65,23 @@ class GracefulShutdownManager {
 
     try {
       // Execute all shutdown callbacks
-      for (const callback of this.shutdownCallbacks) {
+      for (_const callback of this.shutdownCallbacks) {
         try {
-          console.log(`Executing shutdown handler: ${callback.name}`);
+          console.log(_`Executing shutdown handler: ${callback.name}`);
           const timeout = callback.timeout || 10000;
-          await this.executeWithTimeout(callback.handler(), timeout);
-          console.log(`✓ ${callback.name} completed`);
-        } catch (error) {
+          await this.executeWithTimeout(_callback.handler(), timeout);
+          console.log(_`✓ ${callback.name} completed`);
+        } catch (_error) {
           console.error(`✗ ${callback.name} failed:`, error);
         }
       }
 
-      clearTimeout(forceShutdownTimer);
+      clearTimeout(_forceShutdownTimer);
       console.log('Graceful shutdown completed successfully');
       process.exit(0);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error during graceful shutdown:', error);
-      clearTimeout(forceShutdownTimer);
+      clearTimeout(_forceShutdownTimer);
       process.exit(1);
     }
   }
@@ -89,24 +89,24 @@ class GracefulShutdownManager {
   /**
    * Execute a promise with timeout
    */
-  private executeWithTimeout(promise: Promise<void>, timeout: number): Promise<void> {
+  private executeWithTimeout( promise: Promise<void>, timeout: number): Promise<void> {
     return Promise.race([
       promise,
-      new Promise<void>((_, reject) =>
-        setTimeout(() => reject(new Error(`Timeout after ${timeout}ms`)), timeout)
+      new Promise<void>( (_, reject) =>
+        setTimeout(() => reject(_new Error(`Timeout after ${timeout}ms`)), timeout)
       ),
     ]);
   }
 }
 
 // Export singleton instance
-export const gracefulShutdown = new GracefulShutdownManager();
+export const gracefulShutdown = new GracefulShutdownManager(_);
 
 // Example usage:
 // gracefulShutdown.register({
 //   name: 'Database Connection',
 //   handler: async () => {
-//     await database.disconnect();
+//     await database.disconnect(_);
 //   },
 //   timeout: 5000
 // });

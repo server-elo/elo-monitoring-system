@@ -44,38 +44,38 @@ export function VersionControlInterface({
   const [activeTab, setActiveTab] = useState<'commits' | 'branches' | 'mergeRequests'>('commits');
   const [commitMessage, setCommitMessage] = useState('');
   const [newBranchName, setNewBranchName] = useState('');
-  const [showNewBranchForm, setShowNewBranchForm] = useState(false);
-  const [showCommitForm, setShowCommitForm] = useState(false);
-  const [expandedCommits, setExpandedCommits] = useState<Set<string>>(new Set());
+  const [showNewBranchForm, setShowNewBranchForm] = useState(_false);
+  const [showCommitForm, setShowCommitForm] = useState(_false);
+  const [expandedCommits, setExpandedCommits] = useState<Set<string>>(_new Set());
 
   // Handle commit creation
   const handleCreateCommit = async () => {
     if (!commitMessage.trim()) return;
 
-    const commitId = await createCommit(commitMessage.trim());
+    const commitId = await createCommit(_commitMessage.trim());
     if (commitId) {
       setCommitMessage('');
-      setShowCommitForm(false);
+      setShowCommitForm(_false);
     }
   };
 
   // Handle branch creation
-  const handleCreateBranch = () => {
+  const handleCreateBranch = (_) => {
     if (!newBranchName.trim()) return;
 
-    createBranch(newBranchName.trim());
+    createBranch(_newBranchName.trim());
     setNewBranchName('');
-    setShowNewBranchForm(false);
+    setShowNewBranchForm(_false);
   };
 
   // Toggle commit expansion
-  const toggleCommitExpansion = (commitId: string) => {
+  const toggleCommitExpansion = (_commitId: string) => {
     setExpandedCommits(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(commitId)) {
-        newSet.delete(commitId);
+      const newSet = new Set(_prev);
+      if (_newSet.has(commitId)) {
+        newSet.delete(_commitId);
       } else {
-        newSet.add(commitId);
+        newSet.add(_commitId);
       }
       return newSet;
     });
@@ -83,7 +83,7 @@ export function VersionControlInterface({
 
   if (!isInitialized && isLoading) {
     return (
-      <div className={cn('flex items-center justify-center p-8', className)}>
+      <div className={cn( 'flex items-center justify-center p-8', className)}>
         <div className="text-center">
           <GitBranch className="w-8 h-8 mx-auto mb-4 text-blue-400 animate-pulse" />
           <p className="text-gray-400">Initializing version control...</p>
@@ -94,7 +94,7 @@ export function VersionControlInterface({
 
   if (error) {
     return (
-      <div className={cn('flex items-center justify-center p-8', className)}>
+      <div className={cn( 'flex items-center justify-center p-8', className)}>
         <div className="text-center">
           <X className="w-8 h-8 mx-auto mb-4 text-red-400" />
           <p className="text-red-400 font-medium">Version Control Error</p>
@@ -105,7 +105,7 @@ export function VersionControlInterface({
   }
 
   return (
-    <div className={cn('flex flex-col h-full', className)}>
+    <div className={cn( 'flex flex-col h-full', className)}>
       {/* Header */}
       <GlassContainer
         intensity="light"
@@ -126,16 +126,16 @@ export function VersionControlInterface({
         <div className="flex items-center space-x-2">
           {stagedFiles.length > 0 && (
             <button
-              onClick={() => setShowCommitForm(true)}
+              onClick={(_) => setShowCommitForm(_true)}
               className="flex items-center space-x-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
             >
               <GitCommit className="w-4 h-4" />
-              <span>Commit ({stagedFiles.length})</span>
+              <span>Commit ({ stagedFiles.length })</span>
             </button>
           )}
 
           <button
-            onClick={() => setShowNewBranchForm(true)}
+            onClick={(_) => setShowNewBranchForm(_true)}
             className="flex items-center space-x-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
           >
             <Plus className="w-4 h-4" />
@@ -153,7 +153,7 @@ export function VersionControlInterface({
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={(_) => setActiveTab(_tab.id as any)}
             className={cn(
               'flex items-center space-x-2 px-4 py-2 text-sm transition-colors',
               activeTab === tab.id
@@ -201,10 +201,10 @@ export function VersionControlInterface({
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
                             <button
-                              onClick={() => toggleCommitExpansion(commit.id)}
+                              onClick={(_) => toggleCommitExpansion(_commit.id)}
                               className="text-gray-400 hover:text-white"
                             >
-                              {expandedCommits.has(commit.id) ? (
+                              {expandedCommits.has(_commit.id) ? (
                                 <ChevronDown className="w-4 h-4" />
                               ) : (
                                 <ChevronRight className="w-4 h-4" />
@@ -220,7 +220,7 @@ export function VersionControlInterface({
                             </div>
                             <div className="flex items-center space-x-1">
                               <Clock className="w-3 h-3" />
-                              <span>{new Date(commit.timestamp).toLocaleDateString()}</span>
+                              <span>{new Date(_commit.timestamp).toLocaleDateString(_)}</span>
                             </div>
                             <div className="flex items-center space-x-1">
                               <GitCommit className="w-3 h-3" />
@@ -231,7 +231,7 @@ export function VersionControlInterface({
                       </div>
 
                       <AnimatePresence>
-                        {expandedCommits.has(commit.id) && (
+                        {expandedCommits.has(_commit.id) && (
                           <motion.div
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
@@ -239,10 +239,10 @@ export function VersionControlInterface({
                             className="mt-4 pt-4 border-t border-gray-600"
                           >
                             <h4 className="text-sm font-medium text-white mb-2">
-                              Changes ({commit.changes.length} files)
+                              Changes (_{commit.changes.length} files)
                             </h4>
                             <div className="space-y-2">
-                              {commit.changes.map((change, index) => (
+                              {commit.changes.map( (change, index) => (
                                 <div key={index} className="flex items-center space-x-2 text-sm">
                                   <div className={cn(
                                     'w-2 h-2 rounded-full',
@@ -252,7 +252,7 @@ export function VersionControlInterface({
                                     'bg-blue-400'
                                   )} />
                                   <span className="text-gray-300">{change.path}</span>
-                                  <span className="text-gray-500">({change.type})</span>
+                                  <span className="text-gray-500">({ change.type })</span>
                                 </div>
                               ))}
                             </div>
@@ -296,14 +296,14 @@ export function VersionControlInterface({
                             )}
                           </div>
                           <p className="text-sm text-gray-400">
-                            Last activity: {new Date(branch.lastActivity).toLocaleDateString()}
+                            Last activity: {new Date(_branch.lastActivity).toLocaleDateString(_)}
                           </p>
                         </div>
                       </div>
 
                       {branch.name !== currentBranch && (
                         <button
-                          onClick={() => switchBranch(branch.name)}
+                          onClick={(_) => switchBranch(_branch.name)}
                           className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors"
                         >
                           Switch
@@ -344,7 +344,7 @@ export function VersionControlInterface({
                             </div>
                             <div className="flex items-center space-x-1">
                               <Clock className="w-3 h-3" />
-                              <span>{new Date(mr.createdAt).toLocaleDateString()}</span>
+                              <span>{new Date(_mr.createdAt).toLocaleDateString(_)}</span>
                             </div>
                           </div>
                         </div>
@@ -396,14 +396,14 @@ export function VersionControlInterface({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setShowCommitForm(false)}
+            onClick={(_) => setShowCommitForm(_false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-gray-800 p-6 rounded-lg border border-gray-600 w-96"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(_e) => e.stopPropagation(_)}
             >
               <h3 className="text-lg font-semibold text-white mb-4">Create Commit</h3>
               
@@ -414,7 +414,7 @@ export function VersionControlInterface({
                   </label>
                   <textarea
                     value={commitMessage}
-                    onChange={(e) => setCommitMessage(e.target.value)}
+                    onChange={(_e) => setCommitMessage(_e.target.value)}
                     placeholder="Enter commit message..."
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                     rows={3}
@@ -423,7 +423,7 @@ export function VersionControlInterface({
 
                 <div>
                   <p className="text-sm text-gray-400 mb-2">
-                    Staged files ({stagedFiles.length}):
+                    Staged files ({ stagedFiles.length }):
                   </p>
                   <div className="max-h-32 overflow-y-auto space-y-1">
                     {stagedFiles.map((file) => (
@@ -437,14 +437,14 @@ export function VersionControlInterface({
 
                 <div className="flex justify-end space-x-3">
                   <button
-                    onClick={() => setShowCommitForm(false)}
+                    onClick={(_) => setShowCommitForm(_false)}
                     className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleCreateCommit}
-                    disabled={!commitMessage.trim() || !canCommit}
+                    disabled={!commitMessage.trim(_) || !canCommit}
                     className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors"
                   >
                     Commit
@@ -464,14 +464,14 @@ export function VersionControlInterface({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setShowNewBranchForm(false)}
+            onClick={(_) => setShowNewBranchForm(_false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-gray-800 p-6 rounded-lg border border-gray-600 w-96"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(_e) => e.stopPropagation(_)}
             >
               <h3 className="text-lg font-semibold text-white mb-4">Create Branch</h3>
               
@@ -483,7 +483,7 @@ export function VersionControlInterface({
                   <input
                     type="text"
                     value={newBranchName}
-                    onChange={(e) => setNewBranchName(e.target.value)}
+                    onChange={(_e) => setNewBranchName(_e.target.value)}
                     placeholder="feature/new-feature"
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                   />
@@ -491,14 +491,14 @@ export function VersionControlInterface({
 
                 <div className="flex justify-end space-x-3">
                   <button
-                    onClick={() => setShowNewBranchForm(false)}
+                    onClick={(_) => setShowNewBranchForm(_false)}
                     className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleCreateBranch}
-                    disabled={!newBranchName.trim()}
+                    disabled={!newBranchName.trim(_)}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors"
                   >
                     Create

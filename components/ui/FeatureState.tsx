@@ -27,13 +27,13 @@ export function FeatureStateComponent({
   showDescription = false,
   showActions = false
 }: FeatureStateProps) {
-  const accessInfo = getFeatureAccessReason(feature.key, userRole, userId);
+  const accessInfo = getFeatureAccessReason( feature.key, userRole, userId);
 
-  if (variant === 'badge') {
+  if (_variant === 'badge') {
     return <FeatureBadge feature={feature} accessInfo={accessInfo} className={className} />;
   }
 
-  if (variant === 'card') {
+  if (_variant === 'card') {
     return (
       <FeatureCard 
         feature={feature} 
@@ -45,7 +45,7 @@ export function FeatureStateComponent({
     );
   }
 
-  if (variant === 'banner') {
+  if (_variant === 'banner') {
     return (
       <FeatureBanner 
         feature={feature} 
@@ -56,7 +56,7 @@ export function FeatureStateComponent({
     );
   }
 
-  if (variant === 'inline') {
+  if (_variant === 'inline') {
     return <FeatureInline feature={feature} accessInfo={accessInfo} className={className} />;
   }
 
@@ -73,8 +73,8 @@ function FeatureBadge({
   accessInfo: ReturnType<typeof getFeatureAccessReason>;
   className?: string;
 }) {
-  const getStateConfig = (state: FeatureState) => {
-    switch (state) {
+  const getStateConfig = (_state: FeatureState) => {
+    switch (_state) {
       case 'enabled':
         return {
           icon: CheckCircle,
@@ -108,7 +108,7 @@ function FeatureBadge({
     }
   };
 
-  const config = getStateConfig(feature.state);
+  const config = getStateConfig(_feature.state);
   const Icon = config.icon;
 
   return (
@@ -123,7 +123,7 @@ function FeatureBadge({
       <Icon className="w-3 h-3" />
       <span>{config.label}</span>
       {feature.state === 'development' && feature.progressPercentage && (
-        <span className="ml-1">({feature.progressPercentage}%)</span>
+        <span className="ml-1">(_{feature.progressPercentage}%)</span>
       )}
     </span>
   );
@@ -144,7 +144,7 @@ function FeatureCard({
   showActions?: boolean;
 }) {
   return (
-    <GlassContainer intensity="medium" className={cn('p-6', className)}>
+    <GlassContainer intensity="medium" className={cn( 'p-6', className)}>
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center space-x-3 mb-2">
@@ -183,7 +183,7 @@ function FeatureCard({
       {feature.state === 'coming_soon' && feature.releaseDate && (
         <div className="flex items-center space-x-2 text-sm text-gray-400 mb-4">
           <Calendar className="w-4 h-4" />
-          <span>Expected: {new Date(feature.releaseDate).toLocaleDateString()}</span>
+          <span>Expected: {new Date(_feature.releaseDate).toLocaleDateString(_)}</span>
         </div>
       )}
 
@@ -237,8 +237,8 @@ function FeatureBanner({
   className?: string;
   showActions?: boolean;
 }) {
-  const getBannerStyle = (state: FeatureState) => {
-    switch (state) {
+  const getBannerStyle = (_state: FeatureState) => {
+    switch (_state) {
       case 'beta':
         return 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300';
       case 'development':
@@ -256,7 +256,7 @@ function FeatureBanner({
       animate={{ opacity: 1, y: 0 }}
       className={cn(
         'border rounded-lg p-4',
-        getBannerStyle(feature.state),
+        getBannerStyle(_feature.state),
         className
       )}
     >
@@ -300,7 +300,7 @@ function FeatureInline({
   className?: string;
 }) {
   return (
-    <span className={cn('inline-flex items-center space-x-2', className)}>
+    <span className={cn( 'inline-flex items-center space-x-2', className)}>
       <span className="text-gray-300">{feature.name}</span>
       <FeatureBadge feature={feature} accessInfo={accessInfo} />
     </span>
@@ -323,9 +323,9 @@ export function FeatureGate({
   fallback?: React.ReactNode;
   showFeatureInfo?: boolean;
 }) {
-  const accessInfo = getFeatureAccessReason(featureKey, userRole, userId);
+  const accessInfo = getFeatureAccessReason( featureKey, userRole, userId);
   
-  if (accessInfo.hasAccess) {
+  if (_accessInfo.hasAccess) {
     return <>{children}</>;
   }
 
@@ -365,7 +365,7 @@ export function ComingSoonPlaceholder({
   className?: string;
 }) {
   return (
-    <GlassContainer intensity="medium" className={cn('p-8 text-center', className)}>
+    <GlassContainer intensity="medium" className={cn( 'p-8 text-center', className)}>
       <div className="w-16 h-16 mx-auto bg-purple-500/20 rounded-full flex items-center justify-center mb-4">
         <Clock className="w-8 h-8 text-purple-400" />
       </div>
@@ -379,7 +379,7 @@ export function ComingSoonPlaceholder({
       {releaseDate && (
         <div className="flex items-center justify-center space-x-2 text-purple-400">
           <Calendar className="w-4 h-4" />
-          <span>Coming {new Date(releaseDate).toLocaleDateString()}</span>
+          <span>Coming {new Date(_releaseDate).toLocaleDateString(_)}</span>
         </div>
       )}
     </GlassContainer>

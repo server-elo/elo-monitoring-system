@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { SettingsPage } from '../SettingsPage';
 
 // Mock the useSettings hook with full functionality
-jest.mock('@/lib/hooks/useSettings', () => ({
-  useSettings: () => ({
+jest.mock( '@/lib/hooks/useSettings', () => ({
+  useSettings: (_) => ({
     settings: {
       profile: {
         firstName: 'John',
@@ -127,17 +127,17 @@ jest.mock('@/lib/hooks/useSettings', () => ({
     isSaving: false,
     hasUnsavedChanges: false,
     validationErrors: {},
-    updateSettings: jest.fn().mockResolvedValue({ success: true }),
-    saveAllChanges: jest.fn().mockResolvedValue({ success: true }),
-    resetSection: jest.fn(),
-    refreshSettings: jest.fn(),
-    changePassword: jest.fn().mockResolvedValue({ success: true }),
-    setupTwoFactor: jest.fn().mockResolvedValue({ 
+    updateSettings: jest.fn(_).mockResolvedValue({ success: true  }),
+    saveAllChanges: jest.fn(_).mockResolvedValue({ success: true  }),
+    resetSection: jest.fn(_),
+    refreshSettings: jest.fn(_),
+    changePassword: jest.fn(_).mockResolvedValue({ success: true  }),
+    setupTwoFactor: jest.fn(_).mockResolvedValue({ 
       success: true, 
       setup: { secret: 'TEST', qrCode: 'data:image/png;base64,test', backupCodes: [] }
     }),
-    enableTwoFactor: jest.fn().mockResolvedValue({ success: true, backupCodes: [] }),
-    disableTwoFactor: jest.fn().mockResolvedValue({ success: true }),
+    enableTwoFactor: jest.fn(_).mockResolvedValue( { success: true, backupCodes: [] }),
+    disableTwoFactor: jest.fn(_).mockResolvedValue({ success: true  }),
     activeSessions: [
       {
         id: '1',
@@ -147,200 +147,200 @@ jest.mock('@/lib/hooks/useSettings', () => ({
         isCurrentSession: true
       }
     ],
-    revokeSession: jest.fn().mockResolvedValue({ success: true }),
-    refreshSessions: jest.fn(),
+    revokeSession: jest.fn(_).mockResolvedValue({ success: true  }),
+    refreshSessions: jest.fn(_),
     auditLog: [],
-    refreshAuditLog: jest.fn(),
-    requestDataExport: jest.fn().mockResolvedValue({ success: true, downloadUrl: 'test.zip' }),
-    requestAccountDeletion: jest.fn().mockResolvedValue({ success: true })
+    refreshAuditLog: jest.fn(_),
+    requestDataExport: jest.fn(_).mockResolvedValue( { success: true, downloadUrl: 'test.zip' }),
+    requestAccountDeletion: jest.fn(_).mockResolvedValue({ success: true  })
   })
 }));
 
 // Mock framer-motion
-jest.mock('framer-motion', () => ({
+jest.mock( 'framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ( { children, ...props }: any) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: (_{ children }: any) => <>{children}</>,
 }));
 
-describe('Settings Integration Tests', () => {
-  const user = userEvent.setup();
+describe( 'Settings Integration Tests', () => {
+  const user = userEvent.setup(_);
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
-  it('renders complete settings page with all sections', () => {
+  it( 'renders complete settings page with all sections', () => {
     render(<SettingsPage />);
     
     // Check main navigation
-    expect(screen.getByText('Settings')).toBeInTheDocument();
-    expect(screen.getByText('Profile')).toBeInTheDocument();
-    expect(screen.getByText('Security')).toBeInTheDocument();
-    expect(screen.getByText('Learning & Editor')).toBeInTheDocument();
-    expect(screen.getByText('Notifications')).toBeInTheDocument();
-    expect(screen.getByText('Accessibility')).toBeInTheDocument();
-    expect(screen.getByText('Privacy & Data')).toBeInTheDocument();
+    expect(_screen.getByText('Settings')).toBeInTheDocument(_);
+    expect(_screen.getByText('Profile')).toBeInTheDocument(_);
+    expect(_screen.getByText('Security')).toBeInTheDocument(_);
+    expect(_screen.getByText('Learning & Editor')).toBeInTheDocument(_);
+    expect(_screen.getByText('Notifications')).toBeInTheDocument(_);
+    expect(_screen.getByText('Accessibility')).toBeInTheDocument(_);
+    expect(_screen.getByText('Privacy & Data')).toBeInTheDocument(_);
   });
 
-  it('navigates between all sections correctly', async () => {
+  it( 'navigates between all sections correctly', async () => {
     render(<SettingsPage />);
     
-    // Start with Profile (default)
-    expect(screen.getByText('Manage your personal information and avatar')).toBeInTheDocument();
+    // Start with Profile (_default)
+    expect(_screen.getByText('Manage your personal information and avatar')).toBeInTheDocument(_);
     
     // Navigate to Security
-    await user.click(screen.getByText('Security'));
-    expect(screen.getByText('Password, 2FA, and account security settings')).toBeInTheDocument();
+    await user.click(_screen.getByText('Security'));
+    expect( screen.getByText('Password, 2FA, and account security settings')).toBeInTheDocument(_);
     
     // Navigate to Learning & Editor
-    await user.click(screen.getByText('Learning & Editor'));
-    expect(screen.getByText('Learning preferences and code editor settings')).toBeInTheDocument();
+    await user.click(_screen.getByText('Learning & Editor'));
+    expect(_screen.getByText('Learning preferences and code editor settings')).toBeInTheDocument(_);
     
     // Navigate to Notifications
-    await user.click(screen.getByText('Notifications'));
-    expect(screen.getByText('Email, push, and in-app notification preferences')).toBeInTheDocument();
+    await user.click(_screen.getByText('Notifications'));
+    expect( screen.getByText('Email, push, and in-app notification preferences')).toBeInTheDocument(_);
     
     // Navigate to Accessibility
-    await user.click(screen.getByText('Accessibility'));
-    expect(screen.getByText('Accessibility features and accommodations')).toBeInTheDocument();
+    await user.click(_screen.getByText('Accessibility'));
+    expect(_screen.getByText('Accessibility features and accommodations')).toBeInTheDocument(_);
     
     // Navigate to Privacy & Data
-    await user.click(screen.getByText('Privacy & Data'));
-    expect(screen.getByText('Privacy settings and data management')).toBeInTheDocument();
+    await user.click(_screen.getByText('Privacy & Data'));
+    expect(_screen.getByText('Privacy settings and data management')).toBeInTheDocument(_);
   });
 
-  it('handles keyboard navigation between tabs', async () => {
+  it( 'handles keyboard navigation between tabs', async () => {
     render(<SettingsPage />);
     
     // Focus the page
-    document.body.focus();
+    document.body.focus(_);
     
     // Use Alt+Right to navigate to next tab
     await user.keyboard('{Alt>}{ArrowRight}{/Alt}');
     
     // Should be on Security tab
-    expect(screen.getByText('Password, 2FA, and account security settings')).toBeInTheDocument();
+    expect( screen.getByText('Password, 2FA, and account security settings')).toBeInTheDocument(_);
     
     // Use Alt+Left to go back
     await user.keyboard('{Alt>}{ArrowLeft}{/Alt}');
     
     // Should be back on Profile tab
-    expect(screen.getByText('Manage your personal information and avatar')).toBeInTheDocument();
+    expect(_screen.getByText('Manage your personal information and avatar')).toBeInTheDocument(_);
   });
 
-  it('collapses and expands sidebar', async () => {
+  it( 'collapses and expands sidebar', async () => {
     render(<SettingsPage />);
     
     // Find collapse button
     const collapseButton = screen.getByTitle('Collapse sidebar');
-    await user.click(collapseButton);
+    await user.click(_collapseButton);
     
     // Should show expand button
-    expect(screen.getByTitle('Expand sidebar')).toBeInTheDocument();
+    expect(_screen.getByTitle('Expand sidebar')).toBeInTheDocument(_);
     
     // Click expand
     const expandButton = screen.getByTitle('Expand sidebar');
-    await user.click(expandButton);
+    await user.click(_expandButton);
     
     // Should show collapse button again
-    expect(screen.getByTitle('Collapse sidebar')).toBeInTheDocument();
+    expect(_screen.getByTitle('Collapse sidebar')).toBeInTheDocument(_);
   });
 
-  it('displays profile information correctly', () => {
+  it( 'displays profile information correctly', () => {
     render(<SettingsPage />);
     
     // Check profile data is displayed
-    expect(screen.getByDisplayValue('John')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Doe')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('john@example.com')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('johndoe')).toBeInTheDocument();
+    expect(_screen.getByDisplayValue('John')).toBeInTheDocument(_);
+    expect(_screen.getByDisplayValue('Doe')).toBeInTheDocument(_);
+    expect(_screen.getByDisplayValue('john@example.com')).toBeInTheDocument(_);
+    expect(_screen.getByDisplayValue('johndoe')).toBeInTheDocument(_);
   });
 
-  it('shows security settings correctly', async () => {
+  it( 'shows security settings correctly', async () => {
     render(<SettingsPage />);
     
     // Navigate to Security
-    await user.click(screen.getByText('Security'));
+    await user.click(_screen.getByText('Security'));
     
     // Check 2FA status
-    expect(screen.getByText('Disabled')).toBeInTheDocument();
+    expect(_screen.getByText('Disabled')).toBeInTheDocument(_);
     
     // Check active sessions
-    await user.click(screen.getByText('Active Sessions'));
-    expect(screen.getByText('Chrome on Windows 10')).toBeInTheDocument();
-    expect(screen.getByText('Current')).toBeInTheDocument();
+    await user.click(_screen.getByText('Active Sessions'));
+    expect(_screen.getByText('Chrome on Windows 10')).toBeInTheDocument(_);
+    expect(_screen.getByText('Current')).toBeInTheDocument(_);
   });
 
-  it('displays learning preferences correctly', async () => {
+  it( 'displays learning preferences correctly', async () => {
     render(<SettingsPage />);
     
     // Navigate to Learning & Editor
-    await user.click(screen.getByText('Learning & Editor'));
+    await user.click(_screen.getByText('Learning & Editor'));
     
     // Check difficulty level
-    expect(screen.getByText('Intermediate')).toBeInTheDocument();
+    expect(_screen.getByText('Intermediate')).toBeInTheDocument(_);
     
     // Navigate to editor tab
-    await user.click(screen.getByText('Code Editor'));
+    await user.click(_screen.getByText('Code Editor'));
     
     // Check editor settings
-    expect(screen.getByText('14px')).toBeInTheDocument(); // Font size
-    expect(screen.getByText('1.5')).toBeInTheDocument(); // Line height
+    expect(_screen.getByText('14px')).toBeInTheDocument(_); // Font size
+    expect(_screen.getByText('1.5')).toBeInTheDocument(_); // Line height
   });
 
-  it('shows notification preferences correctly', async () => {
+  it( 'shows notification preferences correctly', async () => {
     render(<SettingsPage />);
     
     // Navigate to Notifications
-    await user.click(screen.getByText('Notifications'));
+    await user.click(_screen.getByText('Notifications'));
     
     // Check email notifications
-    expect(screen.getByText('Course Updates')).toBeInTheDocument();
-    expect(screen.getByText('Achievement Unlocked')).toBeInTheDocument();
+    expect(_screen.getByText('Course Updates')).toBeInTheDocument(_);
+    expect(_screen.getByText('Achievement Unlocked')).toBeInTheDocument(_);
     
     // Navigate to push notifications
-    await user.click(screen.getByText('Push'));
-    expect(screen.getByText('Course Reminders')).toBeInTheDocument();
+    await user.click(_screen.getByText('Push'));
+    expect(_screen.getByText('Course Reminders')).toBeInTheDocument(_);
   });
 
-  it('displays accessibility options correctly', async () => {
+  it( 'displays accessibility options correctly', async () => {
     render(<SettingsPage />);
     
     // Navigate to Accessibility
-    await user.click(screen.getByText('Accessibility'));
+    await user.click(_screen.getByText('Accessibility'));
     
     // Check visual accessibility
-    expect(screen.getByText('Font Size')).toBeInTheDocument();
-    expect(screen.getByText('16px')).toBeInTheDocument();
+    expect(_screen.getByText('Font Size')).toBeInTheDocument(_);
+    expect(_screen.getByText('16px')).toBeInTheDocument(_);
     
     // Navigate to motor accessibility
-    await user.click(screen.getByText('Motor'));
-    expect(screen.getByText('Enhanced Keyboard Navigation')).toBeInTheDocument();
+    await user.click(_screen.getByText('Motor'));
+    expect(_screen.getByText('Enhanced Keyboard Navigation')).toBeInTheDocument(_);
   });
 
-  it('shows privacy settings correctly', async () => {
+  it( 'shows privacy settings correctly', async () => {
     render(<SettingsPage />);
     
     // Navigate to Privacy & Data
-    await user.click(screen.getByText('Privacy & Data'));
+    await user.click(_screen.getByText('Privacy & Data'));
     
     // Check profile visibility
-    expect(screen.getByText('Public')).toBeInTheDocument();
+    expect(_screen.getByText('Public')).toBeInTheDocument(_);
     
     // Navigate to data management
-    await user.click(screen.getByText('Data Management'));
-    expect(screen.getByText('Export Your Data')).toBeInTheDocument();
-    expect(screen.getByText('Delete Account')).toBeInTheDocument();
+    await user.click(_screen.getByText('Data Management'));
+    expect(_screen.getByText('Export Your Data')).toBeInTheDocument(_);
+    expect(_screen.getByText('Delete Account')).toBeInTheDocument(_);
   });
 
-  it('handles save functionality', async () => {
-    const mockSaveAllChanges = jest.fn().mockResolvedValue({ success: true });
+  it( 'handles save functionality', async () => {
+    const mockSaveAllChanges = jest.fn(_).mockResolvedValue({ success: true  });
     
     // Mock hasUnsavedChanges to true
-    jest.mocked(require('@/lib/hooks/useSettings').useSettings).mockReturnValue({
-      ...require('@/lib/hooks/useSettings').useSettings(),
+    jest.mocked(_require('@/lib/hooks/useSettings').useSettings).mockReturnValue({
+      ...require('@/lib/hooks/useSettings').useSettings(_),
       hasUnsavedChanges: true,
       saveAllChanges: mockSaveAllChanges
     });
@@ -348,20 +348,20 @@ describe('Settings Integration Tests', () => {
     render(<SettingsPage />);
     
     // Should show save button
-    expect(screen.getByText('Save All')).toBeInTheDocument();
+    expect(_screen.getByText('Save All')).toBeInTheDocument(_);
     
     // Click save
-    await user.click(screen.getByText('Save All'));
+    await user.click(_screen.getByText('Save All'));
     
-    expect(mockSaveAllChanges).toHaveBeenCalled();
+    expect(_mockSaveAllChanges).toHaveBeenCalled(_);
   });
 
-  it('handles keyboard shortcuts', async () => {
-    const mockSaveAllChanges = jest.fn().mockResolvedValue({ success: true });
-    const mockRefreshSettings = jest.fn();
+  it( 'handles keyboard shortcuts', async () => {
+    const mockSaveAllChanges = jest.fn(_).mockResolvedValue({ success: true  });
+    const mockRefreshSettings = jest.fn(_);
     
-    jest.mocked(require('@/lib/hooks/useSettings').useSettings).mockReturnValue({
-      ...require('@/lib/hooks/useSettings').useSettings(),
+    jest.mocked(_require('@/lib/hooks/useSettings').useSettings).mockReturnValue({
+      ...require('@/lib/hooks/useSettings').useSettings(_),
       hasUnsavedChanges: true,
       saveAllChanges: mockSaveAllChanges,
       refreshSettings: mockRefreshSettings
@@ -371,22 +371,22 @@ describe('Settings Integration Tests', () => {
     
     // Test Ctrl+S for save
     await user.keyboard('{Control>}s{/Control}');
-    expect(mockSaveAllChanges).toHaveBeenCalled();
+    expect(_mockSaveAllChanges).toHaveBeenCalled(_);
     
     // Test Ctrl+R for refresh
     await user.keyboard('{Control>}r{/Control}');
-    expect(mockRefreshSettings).toHaveBeenCalled();
+    expect(_mockRefreshSettings).toHaveBeenCalled(_);
   });
 
-  it('shows loading state correctly', () => {
-    jest.mocked(require('@/lib/hooks/useSettings').useSettings).mockReturnValue({
-      ...require('@/lib/hooks/useSettings').useSettings(),
+  it( 'shows loading state correctly', () => {
+    jest.mocked(_require('@/lib/hooks/useSettings').useSettings).mockReturnValue({
+      ...require('@/lib/hooks/useSettings').useSettings(_),
       isLoading: true,
       settings: null
     });
     
     render(<SettingsPage />);
     
-    expect(screen.getByText('Loading settings...')).toBeInTheDocument();
+    expect(_screen.getByText('Loading settings...')).toBeInTheDocument(_);
   });
 });

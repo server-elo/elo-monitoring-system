@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
         { level: 100, achievementId: 'level-100' },
       ];
 
-      for (const { level, achievementId } of levelAchievements) {
-        if (newLevel >= level) {
+      for ( const { level, achievementId } of levelAchievements) {
+        if (_newLevel >= level) {
           // Check if achievement exists and user doesn't have it
           const achievement = await prisma.achievement.findFirst({
             where: { id: achievementId },

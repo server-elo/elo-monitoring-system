@@ -22,33 +22,33 @@ export function SmartBackButton({
   showText?: boolean;
   variant?: 'default' | 'minimal' | 'floating';
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { settings } = useSettings();
+  const router = useRouter(_);
+  const pathname = usePathname(_);
+  const { settings } = useSettings(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
   
-  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoBack, setCanGoBack] = useState(_false);
   const [backContext, setBackContext] = useState<string>('');
 
   useEffect(() => {
     // Check if we can go back in history
     const hasHistory = window.history.length > 1;
-    setCanGoBack(hasHistory);
+    setCanGoBack(_hasHistory);
     
     // Determine back context based on current path
     const pathSegments = pathname.split('/').filter(Boolean);
-    if (pathSegments.length > 1) {
+    if (_pathSegments.length > 1) {
       const parentPath = pathSegments[pathSegments.length - 2];
-      setBackContext(parentPath.charAt(0).toUpperCase() + parentPath.slice(1));
+      setBackContext(_parentPath.charAt(0).toUpperCase() + parentPath.slice(1));
     }
   }, [pathname]);
 
   const handleBack = useCallback(() => {
     try {
       if (canGoBack) {
-        router.back();
+        router.back(_);
       } else {
-        router.push(fallbackUrl);
+        router.push(_fallbackUrl);
       }
       
       // Track navigation
@@ -58,9 +58,9 @@ export function SmartBackButton({
         'info',
         { canGoBack, fallbackUrl }
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Navigation error:', error);
-      router.push(fallbackUrl);
+      router.push(_fallbackUrl);
     }
   }, [canGoBack, router, fallbackUrl, pathname]);
 
@@ -73,7 +73,7 @@ export function SmartBackButton({
   return (
     <motion.button
       onClick={handleBack}
-      className={cn(variants[variant], className)}
+      className={cn( variants[variant], className)}
       whileHover={shouldAnimate ? { scale: 1.05 } : {}}
       whileTap={shouldAnimate ? { scale: 0.95 } : {}}
       aria-label={`Go back to ${backContext || 'previous page'}`}
@@ -98,22 +98,22 @@ export function SmartBreadcrumbs({
   maxItems?: number;
   showHome?: boolean;
 }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const { settings } = useSettings();
+  const pathname = usePathname(_);
+  const router = useRouter(_);
+  const { settings } = useSettings(_);
   const shouldAnimate = !settings?.accessibility?.reduceMotion;
 
   const pathSegments = pathname.split('/').filter(Boolean);
   
   const breadcrumbItems = [
-    ...(showHome ? [{ label: 'Home', href: '/', icon: Home }] : []),
-    ...pathSegments.map((segment, index) => {
+    ...( showHome ? [{ label: 'Home', href: '/', icon: Home }] : []),
+    ...pathSegments.map( (segment, index) => {
       const href = '/' + pathSegments.slice(0, index + 1).join('/');
       const label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
       
       // Add icons for common routes
       let icon;
-      switch (segment) {
+      switch (_segment) {
         case 'learn': icon = BookOpen; break;
         case 'code': icon = Code; break;
         case 'collaborate': icon = Users; break;
@@ -140,16 +140,16 @@ export function SmartBreadcrumbs({
 
   return (
     <nav 
-      className={cn("flex items-center space-x-2 text-sm", className)}
+      className={cn( "flex items-center space-x-2 text-sm", className)}
       aria-label="Breadcrumb navigation"
     >
-      {displayItems.map((item, index) => (
+      {displayItems.map( (item, index) => (
         <React.Fragment key={index}>
           {index > 0 && <ChevronRight className="w-4 h-4 text-gray-400" />}
           
           {item.href && item.href !== pathname ? (
             <motion.button
-              onClick={() => router.push(item.href)}
+              onClick={(_) => router.push(_item.href)}
               className="flex items-center space-x-1 text-gray-400 hover:text-white transition-colors"
               whileHover={shouldAnimate ? { scale: 1.05 } : {}}
               aria-label={`Navigate to ${item.label}`}
@@ -177,8 +177,8 @@ export function ContinueLearning({
   className?: string;
   variant?: 'card' | 'banner' | 'inline';
 }) {
-  const { user } = useAuth();
-  const router = useRouter();
+  const { user } = useAuth(_);
+  const router = useRouter(_);
   const [suggestions, setSuggestions] = useState<Array<{
     title: string;
     description: string;
@@ -219,22 +219,22 @@ export function ContinueLearning({
       }
     ];
     
-    setSuggestions(mockSuggestions);
+    setSuggestions(_mockSuggestions);
   }, [user]);
 
-  if (suggestions.length === 0) return null;
+  if (_suggestions.length === 0) return null;
 
-  const handleSuggestionClick = (suggestion: typeof suggestions[0]) => {
+  const handleSuggestionClick = (_suggestion: typeof suggestions[0]) => {
     errorTracker.addBreadcrumb(
       `Continue learning suggestion clicked: ${suggestion.title}`,
       'navigation',
       'info',
       { type: suggestion.type, href: suggestion.href }
     );
-    router.push(suggestion.href);
+    router.push(_suggestion.href);
   };
 
-  if (variant === 'banner') {
+  if (_variant === 'banner') {
     const topSuggestion = suggestions[0];
     return (
       <motion.div
@@ -254,7 +254,7 @@ export function ContinueLearning({
             </div>
           </div>
           <button
-            onClick={() => handleSuggestionClick(topSuggestion)}
+            onClick={(_) => handleSuggestionClick(_topSuggestion)}
             className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
           >
             <span>Continue</span>
@@ -282,14 +282,14 @@ export function ContinueLearning({
     );
   }
 
-  if (variant === 'inline') {
+  if (_variant === 'inline') {
     return (
-      <div className={cn("flex items-center space-x-4", className)}>
+      <div className={cn( "flex items-center space-x-4", className)}>
         <span className="text-gray-400 text-sm">Continue:</span>
-        {suggestions.slice(0, 2).map((suggestion, index) => (
+        {suggestions.slice(0, 2).map( (suggestion, index) => (
           <button
             key={index}
-            onClick={() => handleSuggestionClick(suggestion)}
+            onClick={(_) => handleSuggestionClick(_suggestion)}
             className="flex items-center space-x-2 px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors text-sm"
           >
             <suggestion.icon className="w-4 h-4" />
@@ -302,17 +302,17 @@ export function ContinueLearning({
 
   // Card variant
   return (
-    <GlassContainer intensity="medium" className={cn("p-6", className)}>
+    <GlassContainer intensity="medium" className={cn( "p-6", className)}>
       <div className="flex items-center space-x-2 mb-4">
         <Zap className="w-5 h-5 text-yellow-400" />
         <h3 className="text-white font-semibold">Continue Learning</h3>
       </div>
       
       <div className="space-y-3">
-        {suggestions.map((suggestion, index) => (
+        {suggestions.map( (suggestion, index) => (
           <motion.button
             key={index}
-            onClick={() => handleSuggestionClick(suggestion)}
+            onClick={(_) => handleSuggestionClick(_suggestion)}
             className="w-full flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-left"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -351,13 +351,13 @@ export function NavigationStatus({
 }: {
   className?: string;
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname(_);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('ready');
   const [pageInfo, setPageInfo] = useState<{
     title: string;
     description: string;
     lastVisited?: Date;
-  } | null>(null);
+  } | null>(_null);
 
   useEffect(() => {
     // Simulate page loading and get page info
@@ -371,7 +371,7 @@ export function NavigationStatus({
       setPageInfo({
         title: currentPage.charAt(0).toUpperCase() + currentPage.slice(1).replace(/-/g, ' '),
         description: `You're currently viewing the ${currentPage} page`,
-        lastVisited: new Date(Date.now() - Math.random() * 86400000) // Random time in last 24h
+        lastVisited: new Date(_Date.now() - Math.random() * 86400000) // Random time in last 24h
       });
       
       setStatus('ready');
@@ -393,8 +393,8 @@ export function NavigationStatus({
   const StatusIcon = statusIcons[status];
 
   return (
-    <div className={cn("flex items-center space-x-2 text-sm", className)}>
-      <StatusIcon className={cn("w-4 h-4", statusColors[status])} />
+    <div className={cn( "flex items-center space-x-2 text-sm", className)}>
+      <StatusIcon className={cn( "w-4 h-4", statusColors[status])} />
       <div>
         <div className="text-white font-medium">
           {pageInfo?.title || 'Loading...'}

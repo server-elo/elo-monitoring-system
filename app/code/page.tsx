@@ -7,10 +7,10 @@ import { withCodeEditorErrorBoundary } from '@/lib/components/ErrorBoundaryHOCs'
 
 // Dynamically import MobileOptimizedCodeLab with SSR disabled to prevent build errors
 const MobileOptimizedCodeLab = dynamic(
-  () => import('@/components/code/MobileOptimizedCodeLab').then(mod => ({ default: mod.MobileOptimizedCodeLab })), 
+  (_) => import('@/components/code/MobileOptimizedCodeLab').then(_mod => ({ default: mod.MobileOptimizedCodeLab })), 
   {
     ssr: false,
-    loading: () => <LoadingSpinner />
+    loading: (_) => <LoadingSpinner />
   }
 );
 

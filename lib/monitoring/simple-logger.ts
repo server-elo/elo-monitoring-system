@@ -68,20 +68,20 @@ class SimpleLogger {
   private securityEvents: SecurityEvent[] = [];
   private learningEvents: LearningEvent[] = [];
 
-  constructor() {
-    this.logLevel = (env.LOG_LEVEL as LogLevel) || 'info';
-    this.setupPeriodicFlush();
+  constructor(_) {
+    this.logLevel = (_env.LOG_LEVEL as LogLevel) || 'info';
+    this.setupPeriodicFlush(_);
   }
 
   /**
    * Setup periodic flush of metrics and events
    */
-  private setupPeriodicFlush(): void {
-    if (typeof window === 'undefined') {
+  private setupPeriodicFlush(_): void {
+    if (_typeof window === 'undefined') {
       // Server-side only
       setInterval(() => {
-        this.flushMetrics();
-        this.flushEvents();
+        this.flushMetrics(_);
+        this.flushEvents(_);
       }, 5 * 60 * 1000); // 5 minutes
     }
   }
@@ -89,7 +89,7 @@ class SimpleLogger {
   /**
    * Check if log level should be output
    */
-  private shouldLog(level: LogLevel): boolean {
+  private shouldLog(_level: LogLevel): boolean {
     const levels: Record<LogLevel, number> = {
       debug: 0,
       info: 1,
@@ -102,14 +102,14 @@ class SimpleLogger {
   /**
    * Format log message
    */
-  private formatLog(level: LogLevel, message: string, context: LogContext = {}): string {
-    const timestamp = new Date().toISOString();
+  private formatLog( level: LogLevel, message: string, context: LogContext = {}): string {
+    const timestamp = new Date(_).toISOString();
     const levelStr = level.toUpperCase().padEnd(5);
     
     if (isDevelopment) {
       // Pretty format for development
-      const contextStr = Object.keys(context).length 
-        ? `\n${JSON.stringify(context, null, 2)}` 
+      const contextStr = Object.keys(_context).length 
+        ? `\n${JSON.stringify( context, null, 2)}` 
         : '';
       return `${timestamp} [${levelStr}] ${message}${contextStr}`;
     } else {
@@ -126,66 +126,66 @@ class SimpleLogger {
   /**
    * Core logging method
    */
-  private log(level: LogLevel, message: string, context: LogContext = {}): void {
+  private log( level: LogLevel, message: string, context: LogContext = {}): void {
     if (!this.shouldLog(level)) return;
 
-    const formattedMessage = this.formatLog(level, message, context);
+    const formattedMessage = this.formatLog( level, message, context);
 
-    if (typeof window !== 'undefined') {
+    if (_typeof window !== 'undefined') {
       // Client-side logging
-      if (level === 'error') {
-        console.error(formattedMessage);
-      } else if (level === 'warn') {
-        console.warn(formattedMessage);
+      if (_level === 'error') {
+        console.error(_formattedMessage);
+      } else if (_level === 'warn') {
+        console.warn(_formattedMessage);
       } else {
-        console.log(formattedMessage);
+        console.log(_formattedMessage);
       }
     } else {
       // Server-side logging
       if (isProduction) {
         // In production, you might want to send to external service
-        if (level === 'error' || level === 'warn') {
-          console.error(formattedMessage);
+        if (_level === 'error' || level === 'warn') {
+          console.error(_formattedMessage);
         } else {
-          console.log(formattedMessage);
+          console.log(_formattedMessage);
         }
       } else {
-        console.log(formattedMessage);
+        console.log(_formattedMessage);
       }
     }
 
     // Send critical errors to monitoring service
-    if (level === 'error' && context.error) {
-      this.sendToMonitoring('error', { message, error: context.error, context });
+    if (_level === 'error' && context.error) {
+      this.sendToMonitoring( 'error', { message, error: context.error, context });
     }
   }
 
   /**
    * Info level logging
    */
-  info(message: string, context: LogContext = {}): void {
-    this.log('info', message, context);
+  info( message: string, context: LogContext = {}): void {
+    this.log( 'info', message, context);
   }
 
   /**
    * Warning level logging
    */
-  warn(message: string, context: LogContext = {}): void {
-    this.log('warn', message, context);
+  warn( message: string, context: LogContext = {}): void {
+    this.log( 'warn', message, context);
   }
 
   /**
    * Error level logging
    */
-  error(message: string, error?: Error, context: LogContext = {}): void {
-    this.log('error', message, { ...context, error });
+  error( message: string, error?: Error, context: LogContext = {}): void {
+    this.log( 'error', message, { ...context, error });
   }
 
   /**
    * Debug level logging
    */
-  debug(message: string, context: LogContext = {}): void {
-    this.log('debug', message, context);
+  debug( message: string, context: LogContext = {}): void {
+    this.log( 'debug', message, context);
   }
 
   /**
@@ -227,14 +227,14 @@ class SimpleLogger {
   /**
    * Log performance metrics
    */
-  logPerformance(metrics: PerformanceMetrics): void {
+  logPerformance(_metrics: PerformanceMetrics): void {
     this.performanceMetrics.push({
       ...metrics,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
     } as any);
 
     // Log slow operations immediately
-    if (metrics.duration > 5000) { // 5 seconds
+    if (_metrics.duration > 5000) { // 5 seconds
       this.warn(`Slow operation detected: ${metrics.operation}`, {
         duration: metrics.duration,
         metadata: metrics.metadata,
@@ -245,10 +245,10 @@ class SimpleLogger {
   /**
    * Log security event
    */
-  logSecurity(event: SecurityEvent): void {
+  logSecurity(_event: SecurityEvent): void {
     this.securityEvents.push({
       ...event,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
     } as any);
 
     const level = event.severity === 'critical' || event.severity === 'high' ? 'error' : 'warn';
@@ -257,18 +257,18 @@ class SimpleLogger {
     });
 
     // Immediate alert for critical security events
-    if (event.severity === 'critical') {
-      this.alertCriticalSecurity(event);
+    if (_event.severity === 'critical') {
+      this.alertCriticalSecurity(_event);
     }
   }
 
   /**
    * Log learning analytics event
    */
-  logLearning(event: LearningEvent): void {
+  logLearning(_event: LearningEvent): void {
     this.learningEvents.push({
       ...event,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
     } as any);
 
     this.info(`Learning event: ${event.type}`, {
@@ -294,7 +294,7 @@ class SimpleLogger {
     });
 
     // Track slow queries
-    if (duration > 1000) { // 1 second
+    if (_duration > 1000) { // 1 second
       this.warn('Slow database query detected', {
         query: query.substring(0, 200),
         duration,
@@ -334,8 +334,8 @@ class SimpleLogger {
   /**
    * Flush performance metrics
    */
-  private flushMetrics(): void {
-    if (this.performanceMetrics.length === 0) return;
+  private flushMetrics(_): void {
+    if (_this.performanceMetrics.length === 0) return;
 
     const metrics = [...this.performanceMetrics];
     this.performanceMetrics = [];
@@ -343,19 +343,19 @@ class SimpleLogger {
     // Calculate basic aggregated metrics
     const summary = {
       totalOperations: metrics.length,
-      avgDuration: metrics.reduce((sum, m) => sum + m.duration, 0) / metrics.length,
+      avgDuration: metrics.reduce( (sum, m) => sum + m.duration, 0) / metrics.length,
       successRate: metrics.filter(m => m.success).length / metrics.length,
     };
     
-    this.info('Performance metrics summary', { summary, count: metrics.length });
-    this.sendToMonitoring('performance', summary);
+    this.info( 'Performance metrics summary', { summary, count: metrics.length });
+    this.sendToMonitoring( 'performance', summary);
   }
 
   /**
    * Flush events
    */
-  private flushEvents(): void {
-    if (this.securityEvents.length > 0) {
+  private flushEvents(_): void {
+    if (_this.securityEvents.length > 0) {
       const events = [...this.securityEvents];
       this.securityEvents = [];
       
@@ -365,10 +365,10 @@ class SimpleLogger {
         high: events.filter(e => e.severity === 'high').length,
       });
 
-      this.sendToMonitoring('security', events);
+      this.sendToMonitoring( 'security', events);
     }
 
-    if (this.learningEvents.length > 0) {
+    if (_this.learningEvents.length > 0) {
       const events = [...this.learningEvents];
       this.learningEvents = [];
       
@@ -378,37 +378,37 @@ class SimpleLogger {
         achievements: events.filter(e => e.type === 'achievement_unlock').length,
       });
 
-      this.sendToMonitoring('learning', events);
+      this.sendToMonitoring( 'learning', events);
     }
   }
 
   /**
    * Send data to external monitoring service
    */
-  private sendToMonitoring(type: string, data: any): void {
+  private sendToMonitoring( type: string, data: any): void {
     // Simple monitoring integration
-    if (env.SENTRY_DSN && isProduction) {
+    if (_env.SENTRY_DSN && isProduction) {
       // In a real implementation, you'd send to Sentry or other services
-      this.debug(`Sending ${type} data to monitoring service`, { type, dataSize: JSON.stringify(data).length });
+      this.debug( `Sending ${type} data to monitoring service`, { type, dataSize: JSON.stringify(data).length });
     }
   }
 
   /**
    * Alert for critical security events
    */
-  private alertCriticalSecurity(event: SecurityEvent): void {
-    this.error('CRITICAL SECURITY ALERT', undefined, { securityEvent: event });
+  private alertCriticalSecurity(_event: SecurityEvent): void {
+    this.error( 'CRITICAL SECURITY ALERT', undefined, { securityEvent: event });
     
     // In production, this would trigger immediate notifications
     if (isProduction) {
-      this.sendToMonitoring('critical_alert', event);
+      this.sendToMonitoring( 'critical_alert', event);
     }
   }
 
   /**
    * Get logger statistics
    */
-  getStats(): {
+  getStats(_): {
     pendingMetrics: number;
     pendingSecurityEvents: number;
     pendingLearningEvents: number;
@@ -424,29 +424,29 @@ class SimpleLogger {
 }
 
 // Create singleton instance
-export const logger = new SimpleLogger();
+export const logger = new SimpleLogger(_);
 
 /**
  * Performance monitoring decorator
  */
-export function withPerformanceLogging(operation: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+export function withPerformanceLogging(_operation: string) {
+  return function ( target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
-      const start = Date.now();
+      const start = Date.now(_);
       let success = true;
       let error: Error | undefined;
 
       try {
-        const result = await method.apply(this, args);
+        const result = await method.apply( this, args);
         return result;
-      } catch (err) {
+      } catch (_err) {
         success = false;
         error = err as Error;
         throw err;
       } finally {
-        const duration = Date.now() - start;
+        const duration = Date.now(_) - start;
         logger.logPerformance({
           operation: `${target.constructor.name}.${propertyName}`,
           duration,
@@ -470,8 +470,8 @@ export function logRequest(
   startTime: number,
   context: LogContext = {}
 ): void {
-  const duration = Date.now() - startTime;
-  logger.logRequest(method, url, statusCode, duration, context);
+  const duration = Date.now(_) - startTime;
+  logger.logRequest( method, url, statusCode, duration, context);
 }
 
 // Export types and utilities

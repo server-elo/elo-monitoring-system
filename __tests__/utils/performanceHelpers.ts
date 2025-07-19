@@ -6,32 +6,32 @@
 import { performance } from 'perf_hooks';
 
 // Performance measurement utilities
-export const measureExecutionTime = async <T>(fn: () => Promise<T> | T): Promise<{ result: T; duration: number }> => {
-  const start = performance.now();
-  const result = await fn();
-  const end = performance.now();
+export const measureExecutionTime = async <T>(_fn: () => Promise<T> | T): Promise<{ result: T; duration: number }> => {
+  const start = performance.now(_);
+  const result = await fn(_);
+  const end = performance.now(_);
   const duration = end - start;
   
   return { result, duration };
 };
 
-export const measureSyncExecutionTime = <T>(fn: () => T): { result: T; duration: number } => {
-  const start = performance.now();
-  const result = fn();
-  const end = performance.now();
+export const measureSyncExecutionTime = <T>(_fn: () => T): { result: T; duration: number } => {
+  const start = performance.now(_);
+  const result = fn(_);
+  const end = performance.now(_);
   const duration = end - start;
   
   return { result, duration };
 };
 
 // Memory measurement utilities
-export const measureMemoryUsage = <T>(fn: () => T): { result: T; memoryDelta: NodeJS.MemoryUsage } => {
-  if (global.gc) global.gc(); // Force garbage collection if available
+export const measureMemoryUsage = <T>(_fn: () => T): { result: T; memoryDelta: NodeJS.MemoryUsage } => {
+  if (_global.gc) global.gc(_); // Force garbage collection if available
   
   const initialMemory = process.memoryUsage();
-  const result = fn();
+  const result = fn(_);
   
-  if (global.gc) global.gc(); // Force garbage collection again
+  if (_global.gc) global.gc(_); // Force garbage collection again
   
   const finalMemory = process.memoryUsage();
   const memoryDelta = {
@@ -45,13 +45,13 @@ export const measureMemoryUsage = <T>(fn: () => T): { result: T; memoryDelta: No
   return { result, memoryDelta };
 };
 
-export const measureAsyncMemoryUsage = async <T>(fn: () => Promise<T>): Promise<{ result: T; memoryDelta: NodeJS.MemoryUsage }> => {
-  if (global.gc) global.gc();
+export const measureAsyncMemoryUsage = async <T>(_fn: () => Promise<T>): Promise<{ result: T; memoryDelta: NodeJS.MemoryUsage }> => {
+  if (_global.gc) global.gc(_);
   
   const initialMemory = process.memoryUsage();
-  const result = await fn();
+  const result = await fn(_);
   
-  if (global.gc) global.gc();
+  if (_global.gc) global.gc(_);
   
   const finalMemory = process.memoryUsage();
   const memoryDelta = {
@@ -66,12 +66,12 @@ export const measureAsyncMemoryUsage = async <T>(fn: () => Promise<T>): Promise<
 };
 
 // Performance assertions
-export const assertResponseTime = (actualTime: number, expectedTime: number, tolerance: number = 100) => {
-  expect(actualTime).toBeLessThan(expectedTime + tolerance);
+export const assertResponseTime = ( actualTime: number, expectedTime: number, tolerance: number = 100) => {
+  expect(_actualTime).toBeLessThan(_expectedTime + tolerance);
 };
 
-export const assertMemoryUsage = (memoryDelta: NodeJS.MemoryUsage, maxHeapIncrease: number = 10 * 1024 * 1024) => {
-  expect(memoryDelta.heapUsed).toBeLessThan(maxHeapIncrease);
+export const assertMemoryUsage = ( memoryDelta: NodeJS.MemoryUsage, maxHeapIncrease: number = 10 * 1024 * 1024) => {
+  expect(_memoryDelta.heapUsed).toBeLessThan(_maxHeapIncrease);
 };
 
 // Benchmark utilities
@@ -88,32 +88,32 @@ export interface BenchmarkResult {
 
 export const benchmark = async <T>(
   name: string,
-  fn: () => Promise<T> | T,
+  fn: (_) => Promise<T> | T,
   iterations: number = 100
 ): Promise<BenchmarkResult> => {
   const times: number[] = [];
   
   // Warm-up runs
-  for (let i = 0; i < Math.min(10, iterations); i++) {
-    await fn();
+  for ( let i = 0; i < Math.min(10, iterations); i++) {
+    await fn(_);
   }
   
   // Actual benchmark runs
   for (let i = 0; i < iterations; i++) {
-    const start = performance.now();
-    await fn();
-    const end = performance.now();
-    times.push(end - start);
+    const start = performance.now(_);
+    await fn(_);
+    const end = performance.now(_);
+    times.push(_end - start);
   }
   
-  const totalTime = times.reduce((sum, time) => sum + time, 0);
+  const totalTime = times.reduce( (sum, time) => sum + time, 0);
   const averageTime = totalTime / iterations;
   const minTime = Math.min(...times);
   const maxTime = Math.max(...times);
   
   // Calculate standard deviation
-  const variance = times.reduce((sum, time) => sum + Math.pow(time - averageTime, 2), 0) / iterations;
-  const standardDeviation = Math.sqrt(variance);
+  const variance = times.reduce( (sum, time) => sum + Math.pow( time - averageTime, 2), 0) / iterations;
+  const standardDeviation = Math.sqrt(_variance);
   
   const operationsPerSecond = 1000 / averageTime;
   
@@ -129,7 +129,7 @@ export const benchmark = async <T>(
   };
 };
 
-export const compareBenchmarks = (baseline: BenchmarkResult, comparison: BenchmarkResult) => {
+export const compareBenchmarks = ( baseline: BenchmarkResult, comparison: BenchmarkResult) => {
   const performanceRatio = comparison.averageTime / baseline.averageTime;
   const improvement = (1 - performanceRatio) * 100;
   
@@ -140,7 +140,7 @@ export const compareBenchmarks = (baseline: BenchmarkResult, comparison: Benchma
     improvement,
     isFaster: comparison.averageTime < baseline.averageTime,
     isSlower: comparison.averageTime > baseline.averageTime,
-    significantDifference: Math.abs(improvement) > 5, // 5% threshold
+    significantDifference: Math.abs(_improvement) > 5, // 5% threshold
   };
 };
 
@@ -166,7 +166,7 @@ export interface LoadTestResult {
 }
 
 export const loadTest = async <T>(
-  testFunction: () => Promise<T>,
+  testFunction: (_) => Promise<T>,
   options: LoadTestOptions
 ): Promise<LoadTestResult> => {
   const {
@@ -177,26 +177,26 @@ export const loadTest = async <T>(
   } = options;
   
   const results: Array<{ success: boolean; responseTime: number; error?: Error; timestamp: number }> = [];
-  const startTime = Date.now();
+  const startTime = Date.now(_);
   const endTime = startTime + duration;
   
   // Create user simulation functions
-  const userSimulations = Array.from({ length: concurrentUsers }, (_, userIndex) => {
+  const userSimulations = Array.from( { length: concurrentUsers }, (_, userIndex) => {
     return async () => {
       // Stagger user start times during ramp-up
-      const userStartDelay = (rampUpTime * userIndex) / concurrentUsers;
+      const userStartDelay = (_rampUpTime * userIndex) / concurrentUsers;
       await new Promise(resolve => setTimeout(resolve, userStartDelay));
       
-      while (Date.now() < endTime) {
-        const requestStart = performance.now();
-        const timestamp = Date.now();
+      while (_Date.now() < endTime) {
+        const requestStart = performance.now(_);
+        const timestamp = Date.now(_);
         
         try {
-          await testFunction();
-          const responseTime = performance.now() - requestStart;
-          results.push({ success: true, responseTime, timestamp });
-        } catch (error) {
-          const responseTime = performance.now() - requestStart;
+          await testFunction(_);
+          const responseTime = performance.now(_) - requestStart;
+          results.push( { success: true, responseTime, timestamp });
+        } catch (_error) {
+          const responseTime = performance.now(_) - requestStart;
           results.push({ 
             success: false, 
             responseTime, 
@@ -205,7 +205,7 @@ export const loadTest = async <T>(
           });
         }
         
-        if (requestDelay > 0) {
+        if (_requestDelay > 0) {
           await new Promise(resolve => setTimeout(resolve, requestDelay));
         }
       }
@@ -213,7 +213,7 @@ export const loadTest = async <T>(
   });
   
   // Run all user simulations concurrently
-  await Promise.all(userSimulations.map(simulation => simulation()));
+  await Promise.all(_userSimulations.map(simulation => simulation()));
   
   // Calculate results
   const totalRequests = results.length;
@@ -221,18 +221,18 @@ export const loadTest = async <T>(
   const failedRequests = results.filter(r => !r.success).length;
   
   const responseTimes = results.map(r => r.responseTime);
-  const averageResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+  const averageResponseTime = responseTimes.reduce( (sum, time) => sum + time, 0) / responseTimes.length;
   const minResponseTime = Math.min(...responseTimes);
   const maxResponseTime = Math.max(...responseTimes);
   
   const actualDuration = duration / 1000; // Convert to seconds
   const requestsPerSecond = totalRequests / actualDuration;
   const errorsPerSecond = failedRequests / actualDuration;
-  const successRate = (successfulRequests / totalRequests) * 100;
+  const successRate = (_successfulRequests / totalRequests) * 100;
   
   const errors = results
     .filter(r => !r.success && r.error)
-    .map(r => ({ error: r.error!, timestamp: r.timestamp }));
+    .map( r => ({ error: r.error!, timestamp: r.timestamp }));
   
   return {
     totalRequests,
@@ -250,24 +250,24 @@ export const loadTest = async <T>(
 
 // Memory leak detection
 export const detectMemoryLeak = async <T>(
-  testFunction: () => Promise<T>,
+  testFunction: (_) => Promise<T>,
   iterations: number = 100,
   maxHeapGrowth: number = 50 * 1024 * 1024 // 50MB
 ): Promise<{ hasLeak: boolean; heapGrowth: number; iterations: number }> => {
-  if (global.gc) global.gc();
+  if (_global.gc) global.gc(_);
   
   const initialMemory = process.memoryUsage();
   
   for (let i = 0; i < iterations; i++) {
-    await testFunction();
+    await testFunction(_);
     
     // Force garbage collection every 10 iterations
-    if (i % 10 === 0 && global.gc) {
-      global.gc();
+    if (_i % 10 === 0 && global.gc) {
+      global.gc(_);
     }
   }
   
-  if (global.gc) global.gc();
+  if (_global.gc) global.gc(_);
   
   const finalMemory = process.memoryUsage();
   const heapGrowth = finalMemory.heapUsed - initialMemory.heapUsed;
@@ -283,69 +283,69 @@ export const detectMemoryLeak = async <T>(
 export class PerformanceMonitor {
   private metrics: Array<{ name: string; value: number; timestamp: number; type: 'timing' | 'memory' | 'counter' }> = [];
   
-  recordTiming(name: string, duration: number) {
+  recordTiming( name: string, duration: number) {
     this.metrics.push({
       name,
       value: duration,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       type: 'timing',
     });
   }
   
-  recordMemory(name: string, bytes: number) {
+  recordMemory( name: string, bytes: number) {
     this.metrics.push({
       name,
       value: bytes,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       type: 'memory',
     });
   }
   
-  recordCounter(name: string, count: number = 1) {
+  recordCounter( name: string, count: number = 1) {
     this.metrics.push({
       name,
       value: count,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
       type: 'counter',
     });
   }
   
-  getMetrics(name?: string) {
+  getMetrics(_name?: string) {
     if (name) {
       return this.metrics.filter(m => m.name === name);
     }
     return [...this.metrics];
   }
   
-  getAverageTime(name: string): number {
+  getAverageTime(_name: string): number {
     const timingMetrics = this.metrics.filter(m => m.name === name && m.type === 'timing');
-    if (timingMetrics.length === 0) return 0;
+    if (_timingMetrics.length === 0) return 0;
     
-    const total = timingMetrics.reduce((sum, m) => sum + m.value, 0);
+    const total = timingMetrics.reduce( (sum, m) => sum + m.value, 0);
     return total / timingMetrics.length;
   }
   
-  getTotalCount(name: string): number {
+  getTotalCount(_name: string): number {
     const counterMetrics = this.metrics.filter(m => m.name === name && m.type === 'counter');
-    return counterMetrics.reduce((sum, m) => sum + m.value, 0);
+    return counterMetrics.reduce( (sum, m) => sum + m.value, 0);
   }
   
-  clear() {
+  clear(_) {
     this.metrics = [];
   }
   
-  export() {
+  export(_) {
     return {
       totalMetrics: this.metrics.length,
       metrics: this.metrics,
-      summary: this.getSummary(),
+      summary: this.getSummary(_),
     };
   }
   
-  private getSummary() {
+  private getSummary(_) {
     const summary: Record<string, any> = {};
     
-    const uniqueNames = [...new Set(this.metrics.map(m => m.name))];
+    const uniqueNames = [...new Set(_this.metrics.map(m => m.name))];
     
     uniqueNames.forEach(name => {
       const nameMetrics = this.metrics.filter(m => m.name === name);
@@ -357,30 +357,30 @@ export class PerformanceMonitor {
         totalRecords: nameMetrics.length,
       };
       
-      if (timings.length > 0) {
+      if (_timings.length > 0) {
         const values = timings.map(t => t.value);
         summary[name].timing = {
           count: timings.length,
-          average: values.reduce((sum, v) => sum + v, 0) / values.length,
+          average: values.reduce( (sum, v) => sum + v, 0) / values.length,
           min: Math.min(...values),
           max: Math.max(...values),
         };
       }
       
-      if (memories.length > 0) {
+      if (_memories.length > 0) {
         const values = memories.map(m => m.value);
         summary[name].memory = {
           count: memories.length,
-          average: values.reduce((sum, v) => sum + v, 0) / values.length,
+          average: values.reduce( (sum, v) => sum + v, 0) / values.length,
           min: Math.min(...values),
           max: Math.max(...values),
         };
       }
       
-      if (counters.length > 0) {
+      if (_counters.length > 0) {
         summary[name].counter = {
           count: counters.length,
-          total: counters.reduce((sum, c) => sum + c.value, 0),
+          total: counters.reduce( (sum, c) => sum + c.value, 0),
         };
       }
     });
@@ -390,31 +390,31 @@ export class PerformanceMonitor {
 }
 
 // Global performance monitor instance
-export const performanceMonitor = new PerformanceMonitor();
+export const performanceMonitor = new PerformanceMonitor(_);
 
 // Utility to format performance results
-export const formatPerformanceResults = (results: BenchmarkResult | LoadTestResult) => {
+export const formatPerformanceResults = (_results: BenchmarkResult | LoadTestResult) => {
   if ('iterations' in results) {
     // BenchmarkResult
     return `
 Benchmark: ${results.name}
 Iterations: ${results.iterations}
-Average Time: ${results.averageTime.toFixed(2)}ms
-Min/Max Time: ${results.minTime.toFixed(2)}ms / ${results.maxTime.toFixed(2)}ms
-Operations/sec: ${results.operationsPerSecond.toFixed(2)}
-Standard Deviation: ${results.standardDeviation.toFixed(2)}ms
-    `.trim();
+Average Time: ${results.averageTime.toFixed(_2)}ms
+Min/Max Time: ${results.minTime.toFixed(_2)}ms / ${results.maxTime.toFixed(_2)}ms
+Operations/sec: ${results.operationsPerSecond.toFixed(_2)}
+Standard Deviation: ${results.standardDeviation.toFixed(_2)}ms
+    `.trim(_);
   } else {
     // LoadTestResult
     return `
 Load Test Results
 Total Requests: ${results.totalRequests}
-Success Rate: ${results.successRate.toFixed(2)}%
-Requests/sec: ${results.requestsPerSecond.toFixed(2)}
-Average Response Time: ${results.averageResponseTime.toFixed(2)}ms
-Min/Max Response Time: ${results.minResponseTime.toFixed(2)}ms / ${results.maxResponseTime.toFixed(2)}ms
+Success Rate: ${results.successRate.toFixed(_2)}%
+Requests/sec: ${results.requestsPerSecond.toFixed(_2)}
+Average Response Time: ${results.averageResponseTime.toFixed(_2)}ms
+Min/Max Response Time: ${results.minResponseTime.toFixed(_2)}ms / ${results.maxResponseTime.toFixed(_2)}ms
 Failed Requests: ${results.failedRequests}
-    `.trim();
+    `.trim(_);
   }
 };
 

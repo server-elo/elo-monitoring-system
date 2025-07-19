@@ -7,21 +7,21 @@ import { cn } from '@/lib/utils';
 import { useSwipeGesture } from '@/lib/hooks/useSwipeGesture';
 
 interface MobileEditorToolbarProps {
-  onRun?: () => void;
-  onSave?: () => void;
-  onUndo?: () => void;
-  onRedo?: () => void;
-  onFormat?: () => void;
-  onShare?: () => void;
-  onSettings?: () => void;
-  onDownload?: () => void;
-  onUpload?: () => void;
-  onSearch?: () => void;
-  onCopy?: () => void;
-  onPaste?: () => void;
-  onZoomIn?: () => void;
-  onZoomOut?: () => void;
-  onRefresh?: () => void;
+  onRun?: (_) => void;
+  onSave?: (_) => void;
+  onUndo?: (_) => void;
+  onRedo?: (_) => void;
+  onFormat?: (_) => void;
+  onShare?: (_) => void;
+  onSettings?: (_) => void;
+  onDownload?: (_) => void;
+  onUpload?: (_) => void;
+  onSearch?: (_) => void;
+  onCopy?: (_) => void;
+  onPaste?: (_) => void;
+  onZoomIn?: (_) => void;
+  onZoomOut?: (_) => void;
+  onRefresh?: (_) => void;
   canUndo?: boolean;
   canRedo?: boolean;
   isSaving?: boolean;
@@ -35,7 +35,7 @@ interface ToolbarAction {
   id: string;
   icon: React.ComponentType<any>;
   label: string;
-  onClick?: () => void;
+  onClick?: (_) => void;
   disabled?: boolean;
   primary?: boolean;
   variant?: 'default' | 'success' | 'danger';
@@ -65,18 +65,18 @@ export function MobileEditorToolbar({
   className,
   expandedByDefault = false
 }: MobileEditorToolbarProps) {
-  const [isExpanded, setIsExpanded] = useState(expandedByDefault);
+  const [isExpanded, setIsExpanded] = useState(_expandedByDefault);
   const [activeSection, setActiveSection] = useState<'main' | 'edit' | 'view'>('main');
   
   // Touch gesture support
   const swipeRef = useSwipeGesture({
-    onSwipeLeft: () => {
-      if (activeSection === 'main') setActiveSection('edit');
-      else if (activeSection === 'edit') setActiveSection('view');
+    onSwipeLeft: (_) => {
+      if (_activeSection === 'main') setActiveSection('edit');
+      else if (_activeSection === 'edit') setActiveSection('view');
     },
-    onSwipeRight: () => {
-      if (activeSection === 'view') setActiveSection('edit');
-      else if (activeSection === 'edit') setActiveSection('main');
+    onSwipeRight: (_) => {
+      if (_activeSection === 'view') setActiveSection('edit');
+      else if (_activeSection === 'edit') setActiveSection('main');
     },
     threshold: 50
   });
@@ -94,8 +94,8 @@ export function MobileEditorToolbar({
     },
     {
       id: 'save',
-      icon: isSaving ? RefreshCw : (hasChanges ? Save : CheckCircle),
-      label: isSaving ? 'Saving...' : (hasChanges ? 'Save' : 'Saved'),
+      icon: isSaving ? RefreshCw : (_hasChanges ? Save : CheckCircle),
+      label: isSaving ? 'Saving...' : (_hasChanges ? 'Save' : 'Saved'),
       onClick: onSave,
       disabled: isSaving || !hasChanges,
       primary: true
@@ -179,9 +179,9 @@ export function MobileEditorToolbar({
     }
   ];
 
-  const renderActionButton = (action: ToolbarAction) => {
+  const renderActionButton = (_action: ToolbarAction) => {
     const Icon = action.icon;
-    const isAnimating = (action.id === 'save' && isSaving) || (action.id === 'run' && isRunning);
+    const isAnimating = (_action.id === 'save' && isSaving) || (_action.id === 'run' && isRunning);
     
     return (
       <motion.button
@@ -215,8 +215,8 @@ export function MobileEditorToolbar({
     );
   };
 
-  const getActionsForSection = () => {
-    switch (activeSection) {
+  const getActionsForSection = (_) => {
+    switch (_activeSection) {
       case 'edit':
         return editActions;
       case 'view':
@@ -227,7 +227,7 @@ export function MobileEditorToolbar({
   };
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn( "relative", className)}>
       {/* Compact Toolbar */}
       <motion.div
         initial={false}
@@ -241,7 +241,7 @@ export function MobileEditorToolbar({
           </div>
           
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={(_) => setIsExpanded(!isExpanded)}
             className="p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
             aria-label={isExpanded ? "Collapse toolbar" : "Expand toolbar"}
           >
@@ -269,7 +269,7 @@ export function MobileEditorToolbar({
                 {['main', 'edit', 'view'].map((section) => (
                   <button
                     key={section}
-                    onClick={() => setActiveSection(section as any)}
+                    onClick={(_) => setActiveSection(_section as any)}
                     className={cn(
                       "px-3 py-1 rounded-full text-xs font-medium transition-all",
                       activeSection === section
@@ -291,7 +291,7 @@ export function MobileEditorToolbar({
                 transition={{ duration: 0.2 }}
                 className="grid grid-cols-3 gap-2"
               >
-                {getActionsForSection().map(renderActionButton)}
+                {getActionsForSection(_).map(renderActionButton)}
               </motion.div>
 
               {/* Swipe Hint */}
@@ -305,7 +305,7 @@ export function MobileEditorToolbar({
         </AnimatePresence>
       </motion.div>
 
-      {/* Floating Quick Actions (when collapsed) */}
+      {/* Floating Quick Actions (_when collapsed) */}
       {!isExpanded && (
         <div className="absolute -top-12 right-2 flex gap-2">
           <motion.button

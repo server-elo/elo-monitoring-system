@@ -44,16 +44,16 @@ interface NavigationItem {
   children?: NavigationItem[];
 }
 
-export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+export function AdminLayout( { children, currentPage }: AdminLayoutProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(_true);
+  const [userMenuOpen, setUserMenuOpen] = useState(_false);
   const [, setNotifications] = useState<AdminNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(_null);
 
   useEffect(() => {
-    setCurrentUser(adminAuth.getCurrentUser());
-    loadNotifications();
+    setCurrentUser(_adminAuth.getCurrentUser());
+    loadNotifications(_);
   }, []);
 
   const loadNotifications = async () => {
@@ -76,14 +76,14 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
         severity: 'info',
         title: 'System maintenance scheduled',
         message: 'Scheduled maintenance on Sunday 2AM-4AM UTC',
-        timestamp: new Date(Date.now() - 3600000),
+        timestamp: new Date(_Date.now() - 3600000),
         read: false,
         actionRequired: false
       }
     ];
 
-    setNotifications(mockNotifications);
-    setUnreadCount(mockNotifications.filter(n => !n.read).length);
+    setNotifications(_mockNotifications);
+    setUnreadCount(_mockNotifications.filter(n => !n.read).length);
   };
 
   const navigationItems: NavigationItem[] = [
@@ -164,24 +164,24 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
   ];
 
   const filteredNavigation = navigationItems.filter(item => 
-    !item.permission || adminAuth.hasPermission(item.permission)
+    !item.permission || adminAuth.hasPermission(_item.permission)
   );
 
-  const handleLogout = () => {
-    adminAuth.logout();
+  const handleLogout = (_) => {
+    adminAuth.logout(_);
     window.location.href = '/admin/login';
   };
 
-  const toggleSidebar = () => {
+  const toggleSidebar = (_) => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const renderNavigationItem = (item: NavigationItem, level = 0) => {
+  const renderNavigationItem = ( item: NavigationItem, level = 0) => {
     const isActive = currentPage === item.id;
     const hasChildren = item.children && item.children.length > 0;
 
     return (
-      <div key={item.id} className={cn('mb-1', level > 0 && 'ml-4')}>
+      <div key={item.id} className={cn( 'mb-1', level > 0 && 'ml-4')}>
         <a
           href={item.href}
           className={cn(
@@ -205,7 +205,7 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
         
         {hasChildren && (
           <div className="mt-1 space-y-1">
-            {item.children?.map(child => renderNavigationItem(child, level + 1))}
+            {item.children?.map( child => renderNavigationItem(child, level + 1))}
           </div>
         )}
       </div>
@@ -248,7 +248,7 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className={cn('transition-all duration-300', sidebarOpen ? 'ml-64' : 'ml-0')}>
+      <div className={cn( 'transition-all duration-300', sidebarOpen ? 'ml-64' : 'ml-0')}>
         {/* Header */}
         <Card className="bg-black/20 backdrop-blur-md border-white/10 rounded-none border-b">
           <div className="px-6 py-4">
@@ -294,7 +294,7 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
                 {/* User Menu */}
                 <div className="relative">
                   <Button
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    onClick={(_) => setUserMenuOpen(!userMenuOpen)}
                     variant="ghost"
                     size="sm"
                     className="text-gray-300 hover:text-white flex items-center space-x-2"
@@ -353,7 +353,7 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={(_) => setSidebarOpen(_false)}
         />
       )}
     </div>

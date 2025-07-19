@@ -18,7 +18,7 @@ import { useWeb3, SUPPORTED_NETWORKS } from '@/lib/blockchain/Web3Provider';
 import { useToast } from '@/components/ui/use-toast';
 
 export function WalletConnect() {
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(_false);
   const { 
     account, 
     chainId, 
@@ -28,18 +28,18 @@ export function WalletConnect() {
     disconnectWallet,
     switchNetwork,
     getBalance 
-  } = useWeb3();
+  } = useWeb3(_);
   
-  const { toast } = useToast();
+  const { toast } = useToast(_);
 
   const handleConnect = async () => {
     try {
-      await connectWallet();
+      await connectWallet(_);
       toast({
         title: "Wallet connected!",
         description: "Your MetaMask wallet has been connected successfully.",
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Connection failed",
         description: error instanceof Error ? error.message : "Failed to connect wallet",
@@ -48,17 +48,17 @@ export function WalletConnect() {
     }
   };
 
-  const handleDisconnect = () => {
-    disconnectWallet();
+  const handleDisconnect = (_) => {
+    disconnectWallet(_);
     toast({
       title: "Wallet disconnected",
       description: "Your wallet has been disconnected.",
     });
   };
 
-  const handleCopyAddress = () => {
+  const handleCopyAddress = (_) => {
     if (account) {
-      navigator.clipboard.writeText(account);
+      navigator.clipboard.writeText(_account);
       toast({
         title: "Address copied!",
         description: "Wallet address has been copied to clipboard.",
@@ -66,14 +66,14 @@ export function WalletConnect() {
     }
   };
 
-  const handleSwitchNetwork = async (targetChainId: number) => {
+  const handleSwitchNetwork = async (_targetChainId: number) => {
     try {
-      await switchNetwork(targetChainId);
+      await switchNetwork(_targetChainId);
       toast({
         title: "Network switched!",
         description: `Switched to ${SUPPORTED_NETWORKS[targetChainId as keyof typeof SUPPORTED_NETWORKS]?.name}`,
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Network switch failed",
         description: error instanceof Error ? error.message : "Failed to switch network",
@@ -85,21 +85,21 @@ export function WalletConnect() {
   const handleRefreshBalance = async () => {
     if (!account) return;
     
-    setIsRefreshing(true);
+    setIsRefreshing(_true);
     try {
-      await getBalance(account);
+      await getBalance(_account);
       toast({
         title: "Balance refreshed",
         description: "Your wallet balance has been updated.",
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Refresh failed",
         description: "Failed to refresh balance",
         variant: "destructive",
       });
     } finally {
-      setIsRefreshing(false);
+      setIsRefreshing(_false);
     }
   };
 
@@ -229,17 +229,17 @@ export function WalletConnect() {
           <div className="space-y-2">
             <p className="text-sm font-medium text-white">Switch Network:</p>
             <div className="grid grid-cols-1 gap-2">
-              {Object.entries(SUPPORTED_NETWORKS).map(([id, network]) => (
+              {Object.entries(_SUPPORTED_NETWORKS).map( ([id, network]) => (
                 <Button
                   key={id}
-                  variant={chainId === parseInt(id) ? "default" : "outline"}
+                  variant={chainId === parseInt(_id) ? "default" : "outline"}
                   size="sm"
-                  onClick={() => handleSwitchNetwork(parseInt(id))}
-                  disabled={chainId === parseInt(id)}
+                  onClick={(_) => handleSwitchNetwork(_parseInt(id))}
+                  disabled={chainId === parseInt(_id)}
                   className="justify-start"
                 >
                   {network.name}
-                  {chainId === parseInt(id) && (
+                  {chainId === parseInt(_id) && (
                     <CheckCircle className="w-4 h-4 ml-auto text-green-500" />
                   )}
                 </Button>

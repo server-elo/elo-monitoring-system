@@ -6,13 +6,13 @@ import type { ContractABI } from '../types/abi';
 import { motion } from 'framer-motion';
 import { Editor } from '@monaco-editor/react';
 import {
-  BookOpen,
-  Code,
-  Lightbulb,
-  Play,
-  Save,
-  Download,
-  Upload,
+  BookOpen 
+  Code 
+  Lightbulb 
+  Play 
+  Save 
+  Download 
+  Upload 
   Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,36 +34,36 @@ pragma solidity ^0.8.0;
 contract SimpleStorage {
     uint256 private storedData;
     
-    event ValueChanged(uint256 newValue);
+    event ValueChanged(_uint256 newValue);
     
     /**
      * @dev Store a value
      * @param x The value to store
      */
-    function set(uint256 x) public {
+    function set(_uint256 x) public {
         storedData = x;
-        emit ValueChanged(x);
+        emit ValueChanged(_x);
     }
     
     /**
      * @dev Retrieve the stored value
      * @return The stored value
      */
-    function get() public view returns (uint256) {
+    function get() public view returns (_uint256) {
         return storedData;
     }
 }`;
 
 interface CompilationResult {
-  success: boolean;
+  success: boolean; 
   bytecode?: string;
   abi?: ContractABI;
   errors?: string[];
   warnings?: string[];
   gasEstimate?: number;
   securityIssues?: Array<{
-    severity: 'critical' | 'high' | 'medium' | 'low';
-    message: string;
+    severity: 'critical' | 'high' | 'medium' | 'low'; 
+    message: string; 
     line?: number;
     column?: number;
   }>;
@@ -79,14 +79,14 @@ export function CodeLab() {
   return <DynamicCodeLab />;
 }
 
-// Dynamic component that uses hooks (only loaded in non-static mode)
+// Dynamic component that uses hooks (_only loaded in non-static mode)
 function DynamicCodeLab() {
-  const [code, setCode] = useState(DEFAULT_CODE);
-  const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
-  const [isCompiling, setIsCompiling] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [code, setCode] = useState(_DEFAULT_CODE);
+  const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(_null);
+  const [isCompiling, setIsCompiling] = useState(_false);
+  const [isSaving, setIsSaving] = useState(_false);
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(_null);
+  const fileInputRef = useRef<HTMLInputElement>(_null);
 
   // Use toast hook
   const { toast } = useToast();
@@ -94,24 +94,24 @@ function DynamicCodeLab() {
   const handleCompile = async () => {
     if (!code.trim()) {
       toast({
-        title: "No code to compile",
-        description: "Please write some Solidity code first.",
-        variant: "destructive",
+        title: "No code to compile" 
+        description: "Please write some Solidity code first." 
+        variant: "destructive" 
       });
       return;
     }
 
-    setIsCompiling(true);
+    setIsCompiling(_true);
     try {
       const response = await fetch('/api/compile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        method: 'POST' 
+        headers: { 'Content-Type': 'application/json' } 
+        body: JSON.stringify({  
           code, 
-          contractName: extractContractName(code) || 'Contract',
-          version: '0.8.21',
-          optimize: true 
-        }),
+          contractName: extractContractName(_code) || 'Contract' 
+          version: '0.8.21' 
+          optimize: true  
+        }) 
       });
 
       const result = await response.json();
@@ -119,100 +119,100 @@ function DynamicCodeLab() {
 
       if (result.success) {
         toast({
-          title: "Compilation successful!",
-          description: "Your contract compiled without errors.",
+          title: "Compilation successful!" 
+          description: "Your contract compiled without errors." 
         });
       } else {
         toast({
-          title: "Compilation failed",
-          description: result.errors?.[0] || "Unknown compilation error",
-          variant: "destructive",
+          title: "Compilation failed" 
+          description: result.errors?.[0] || "Unknown compilation error" 
+          variant: "destructive" 
         });
       }
     } catch (error) {
       toast({
-        title: "Compilation error",
-        description: "Failed to compile the contract. Please try again.",
-        variant: "destructive",
+        title: "Compilation error" 
+        description: "Failed to compile the contract. Please try again." 
+        variant: "destructive" 
       });
     } finally {
-      setIsCompiling(false);
+      setIsCompiling(_false);
     }
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
+    setIsSaving(_true);
     try {
       // Save to local storage
-      localStorage.setItem('solidity-code', code);
+      localStorage.setItem("'solidity-code', code);
       
       // Also save to database if user wants to persist
       await fetch('/api/code/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          code,
-          name: extractContractName(code) || 'Untitled',
-          language: 'solidity'
-        }),
+        method: 'POST' 
+        headers: { 'Content-Type': 'application/json' } 
+        body: JSON.stringify({  
+          code 
+          name: extractContractName(_code) || 'Untitled' 
+          language: 'solidity' 
+        }) 
       });
 
       toast({
-        title: "Code saved!",
-        description: "Your code has been saved successfully.",
+        title: "Code saved!" 
+        description: "Your code has been saved successfully." 
       });
     } catch (error) {
       toast({
-        title: "Save failed",
-        description: "Failed to save your code. Please try again.",
-        variant: "destructive",
+        title: "Save failed" 
+        description: "Failed to save your code. Please try again." 
+        variant: "destructive" 
       });
     } finally {
-      setIsSaving(false);
+      setIsSaving(_false);
     }
   };
 
-  const handleDownload = () => {
-    const contractName = extractContractName(code) || 'Contract';
+  const handleDownload = (() => {
+    const contractName = extractContractName(_code) || 'Contract';
     const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `${contractName}.sol`;
-    document.body.appendChild(a);
+    document.body.appendChild(_a);
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    document.body.removeChild(_a);
+    URL.revokeObjectURL(_url);
 
     toast({
-      title: "File downloaded!",
-      description: `${contractName}.sol has been downloaded.`,
+      title: "File downloaded!" 
+      description: `${contractName}.sol has been downloaded.` 
     });
   };
 
-  const handleUpload = () => {
+  const handleUpload = (() => {
     fileInputRef.current?.click();
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (_event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = (_e) => {
         const content = e.target?.result as string;
-        setCode(content);
-        setCompilationResult(null);
+        setCode(_content);
+        setCompilationResult(_null);
         toast({
-          title: "File uploaded!",
-          description: `${file.name} has been loaded into the editor.`,
+          title: "File uploaded!" 
+          description: `${file.name} has been loaded into the editor.` 
         });
       };
-      reader.readAsText(file);
+      reader.readAsText(_file);
     }
   };
 
-  const extractContractName = (code: string): string | null => {
-    const match = code.match(/contract\s+(\w+)/);
+  const extractContractName = (_code: string): string | null => {
+    const match = code.match(_/contract\s+(\w+)/);
     return match ? match[1] : null;
   };
 
@@ -255,12 +255,12 @@ function DynamicCodeLab() {
                         <Zap className="w-4 h-4 mr-2 animate-pulse" />
                         Compiling...
                       </>
-                    ) : (
+                   ) : (
                       <>
                         <Play className="w-4 h-4 mr-2" />
                         Compile
                       </>
-                    )}
+                   )}
                   </Button>
                   
                   <Button 
@@ -273,12 +273,12 @@ function DynamicCodeLab() {
                         <Save className="w-4 h-4 mr-2 animate-pulse" />
                         Saving...
                       </>
-                    ) : (
+                   ) : (
                       <>
                         <Save className="w-4 h-4 mr-2" />
                         Save
                       </>
-                    )}
+                   )}
                   </Button>
                 </div>
                 
@@ -312,29 +312,29 @@ function DynamicCodeLab() {
                 height="100%"
                 language="solidity"
                 value={code}
-                onChange={(value) => setCode(value || '')}
-                onMount={(editor) => {
+                onChange={(_value) => setCode(_value || '')}
+                onMount={(_editor) => {
                   editorRef.current = editor;
                 }}
                 theme="vs-dark"
                 options={{
-                  minimap: { enabled: true },
-                  fontSize: 14,
-                  lineNumbers: 'on',
-                  roundedSelection: false,
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                  tabSize: 4,
-                  wordWrap: 'on',
-                  bracketPairColorization: { enabled: true },
-                  guides: {
-                    bracketPairs: true,
-                    indentation: true,
-                  },
-                  suggest: {
-                    showKeywords: true,
-                    showSnippets: true,
-                  },
+                  minimap: { enabled: true } 
+                  fontSize: 14 
+                  lineNumbers: 'on' 
+                  roundedSelection: false 
+                  scrollBeyondLastLine: false 
+                  automaticLayout: true 
+                  tabSize: 4 
+                  wordWrap: 'on' 
+                  bracketPairColorization: { enabled: true } 
+                  guides: { 
+                    bracketPairs: true 
+                    indentation: true 
+                  } 
+                  suggest: { 
+                    showKeywords: true 
+                    showSnippets: true 
+                  } 
                 }}
               />
             </CardContent>
@@ -367,23 +367,23 @@ function DynamicCodeLab() {
                           <p className="text-gray-300">Contract compiled successfully!</p>
                           {compilationResult.gasEstimate && (
                             <p className="text-gray-400">Estimated gas: {compilationResult.gasEstimate.toLocaleString()}</p>
-                          )}
+                         )}
                           {compilationResult.warnings && compilationResult.warnings.length > 0 && (
                             <div className="mt-2">
                               <p className="text-yellow-400 font-medium">Warnings:</p>
                               {compilationResult.warnings.map((warning, index) => (
                                 <p key={index} className="text-yellow-300 text-xs mt-1">{warning}</p>
-                              ))}
+                             ))}
                             </div>
-                          )}
+                         )}
                         </div>
-                      ) : (
+                     ) : (
                         <div className="space-y-2">
                           {compilationResult.errors?.map((error, index) => (
                             <p key={index} className="text-red-300 text-sm">{error}</p>
-                          ))}
+                         ))}
                         </div>
-                      )}
+                     )}
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -416,13 +416,13 @@ function DynamicCodeLab() {
                               </div>
                               {issue.line && (
                                 <p className="text-sm text-gray-300 mb-2">Line: {issue.line}</p>
-                              )}
+                             )}
                             </div>
-                          ))}
+                         ))}
                         </div>
-                      ) : (
+                     ) : (
                         <p className="text-gray-400">No security issues detected.</p>
-                      )}
+                     )}
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -439,11 +439,11 @@ function DynamicCodeLab() {
                             <div key={index} className="p-2 rounded bg-blue-500/10 border border-blue-500/30">
                               <p className="text-sm text-gray-300">💡 {suggestion}</p>
                             </div>
-                          ))}
+                         ))}
                         </div>
-                      ) : (
+                     ) : (
                         <p className="text-gray-400">No optimization suggestions available.</p>
-                      )}
+                     )}
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -452,12 +452,12 @@ function DynamicCodeLab() {
                   <ContractDeployer
                     bytecode={compilationResult.bytecode}
                     abi={compilationResult.abi}
-                    contractName={extractContractName(code) || 'Contract'}
+                    contractName={extractContractName(_code) || 'Contract'}
                   />
                 </TabsContent>
               </Tabs>
             </motion.div>
-          )}
+         )}
         </div>
 
         {/* Sidebar */}
@@ -477,7 +477,7 @@ function DynamicCodeLab() {
             </CardHeader>
             <CardContent className="space-y-3">
               <button
-                onClick={() => setCode(DEFAULT_CODE)}
+                onClick={(() => setCode(_DEFAULT_CODE)}
                 className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
               >
                 <div className="font-medium text-white text-sm">Simple Storage</div>
@@ -485,7 +485,7 @@ function DynamicCodeLab() {
               </button>
 
               <button
-                onClick={() => setCode(`// SPDX-License-Identifier: MIT
+                onClick={(() => setCode(`// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract ERC20Token {
@@ -494,8 +494,8 @@ contract ERC20Token {
     uint8 public decimals = 18;
     uint256 public totalSupply = 1000000 * 10**decimals;
 
-    mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
+    mapping(_address => uint256) public balanceOf;
+    mapping(_address => mapping(address => uint256)) public allowance;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
@@ -504,7 +504,7 @@ contract ERC20Token {
         balanceOf[msg.sender] = totalSupply;
     }
 
-    function transfer(address to, uint256 value) public returns (bool) {
+    function transfer(address to, uint256 value) public returns (_bool) {
         require(balanceOf[msg.sender] >= value, "Insufficient balance");
         balanceOf[msg.sender] -= value;
         balanceOf[to] += value;
@@ -512,7 +512,7 @@ contract ERC20Token {
         return true;
     }
 
-    function approve(address spender, uint256 value) public returns (bool) {
+    function approve(address spender, uint256 value) public returns (_bool) {
         allowance[msg.sender][spender] = value;
         emit Approval(msg.sender, spender, value);
         return true;
@@ -525,7 +525,7 @@ contract ERC20Token {
               </button>
 
               <button
-                onClick={() => setCode(`// SPDX-License-Identifier: MIT
+                onClick={(() => setCode(`// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract MultiSigWallet {
@@ -541,35 +541,35 @@ contract MultiSigWallet {
     }
 
     Transaction[] public transactions;
-    mapping(uint256 => mapping(address => bool)) public confirmations;
+    mapping(_uint256 => mapping(address => bool)) public confirmations;
 
     modifier onlyOwner() {
-        require(isOwner(msg.sender), "Not an owner");
+        require(_isOwner(msg.sender), "Not an owner");
         _;
     }
 
     constructor(address[] memory _owners, uint256 _required) {
-        require(_owners.length > 0, "Owners required");
-        require(_required > 0 && _required <= _owners.length, "Invalid required number");
+        require()owners.length > 0, "Owners required");
+        require()required > 0 && _required <= _owners.length, "Invalid required number");
 
         owners = _owners;
         required = _required;
     }
 
-    function isOwner(address addr) public view returns (bool) {
-        for (uint256 i = 0; i < owners.length; i++) {
-            if (owners[i] == addr) return true;
+    function isOwner(_address addr) public view returns (_bool) {
+        for (_uint256 i = 0; i < owners.length; i++) {
+            if (_owners[i] == addr) return true;
         }
         return false;
     }
 
     function submitTransaction(address to, uint256 value, bytes memory data) public onlyOwner {
         transactions.push(Transaction({
-            to: to,
-            value: value,
-            data: data,
-            executed: false,
-            confirmations: 0
+            to: to 
+            value: value 
+            data: data 
+            executed: false 
+            confirmations: 0 
         }));
     }
 }`)}
@@ -666,7 +666,7 @@ contract MultiSigWallet {
         </div>
       </div>
     </div>
-  );
+ );
 }
 
 // Simplified static version for static export
@@ -709,22 +709,22 @@ pragma solidity ^0.8.0;
 contract SimpleStorage {
     uint256 private storedData;
 
-    event ValueChanged(uint256 newValue);
+    event ValueChanged(_uint256 newValue);
 
     /**
      * @dev Store a value
      * @param value The value to store
      */
-    function set(uint256 value) public {
+    function set(_uint256 value) public {
         storedData = value;
-        emit ValueChanged(value);
+        emit ValueChanged(_value);
     }
 
     /**
      * @dev Retrieve the stored value
      * @return The stored value
      */
-    function get() public view returns (uint256) {
+    function get() public view returns (_uint256) {
         return storedData;
     }
 }`}
@@ -788,5 +788,5 @@ contract SimpleStorage {
         </div>
       </div>
     </div>
-  );
+ );
 }

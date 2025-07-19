@@ -49,19 +49,19 @@ export interface AnalysisResult {
  */
 export class SoliditySemanticAnalyzer {
   private model: monaco.editor.ITextModel;
-  private symbols: Map<string, SoliditySymbol> = new Map();
-  private imports: Set<string> = new Set();
+  private symbols: Map<string, SoliditySymbol> = new Map(_);
+  private imports: Set<string> = new Set(_);
   private pragmaVersion: string | null = null;
 
-  constructor(model: monaco.editor.ITextModel) {
+  constructor(_model: monaco.editor.ITextModel) {
     this.model = model;
   }
 
   /**
    * Perform comprehensive analysis of Solidity code
    */
-  analyze(): AnalysisResult {
-    const content = this.model.getValue();
+  analyze(_): AnalysisResult {
+    const content = this.model.getValue(_);
     const lines = content.split('\n');
     
     const errors: SolidityError[] = [];
@@ -70,8 +70,8 @@ export class SoliditySemanticAnalyzer {
     const suggestions: string[] = [];
 
     // Clear previous analysis
-    this.symbols.clear();
-    this.imports.clear();
+    this.symbols.clear(_);
+    this.imports.clear(_);
     this.pragmaVersion = null;
 
     // Analyze line by line
@@ -80,35 +80,35 @@ export class SoliditySemanticAnalyzer {
       const lineNumber = i + 1;
 
       // Analyze pragma directives
-      this.analyzePragma(line, lineNumber, errors, warnings);
+      this.analyzePragma( line, lineNumber, errors, warnings);
 
       // Analyze imports
-      this.analyzeImports(line, lineNumber, errors, warnings);
+      this.analyzeImports( line, lineNumber, errors, warnings);
 
       // Analyze contract declarations
-      this.analyzeContractDeclaration(line, lineNumber, errors, warnings, symbols);
+      this.analyzeContractDeclaration( line, lineNumber, errors, warnings, symbols);
 
       // Analyze function declarations
-      this.analyzeFunctionDeclaration(line, lineNumber, errors, warnings, symbols);
+      this.analyzeFunctionDeclaration( line, lineNumber, errors, warnings, symbols);
 
       // Analyze variable declarations
-      this.analyzeVariableDeclaration(line, lineNumber, errors, warnings, symbols);
+      this.analyzeVariableDeclaration( line, lineNumber, errors, warnings, symbols);
 
       // Analyze common syntax errors
-      this.analyzeSyntaxErrors(line, lineNumber, errors, warnings);
+      this.analyzeSyntaxErrors( line, lineNumber, errors, warnings);
 
       // Analyze security patterns
-      this.analyzeSecurityPatterns(line, lineNumber, warnings, suggestions);
+      this.analyzeSecurityPatterns( line, lineNumber, warnings, suggestions);
 
       // Analyze gas optimization opportunities
-      this.analyzeGasOptimization(line, lineNumber, suggestions);
+      this.analyzeGasOptimization( line, lineNumber, suggestions);
     }
 
     // Cross-reference analysis
-    this.analyzeCrossReferences(content, errors, warnings);
+    this.analyzeCrossReferences( content, errors, warnings);
 
     // Generate suggestions
-    this.generateSuggestions(content, suggestions);
+    this.generateSuggestions( content, suggestions);
 
     return {
       errors,
@@ -118,10 +118,10 @@ export class SoliditySemanticAnalyzer {
     };
   }
 
-  private analyzePragma(line: string, lineNumber: number, errors: SolidityError[], warnings: SolidityError[]): void {
-    const pragmaMatch = line.match(/^\s*pragma\s+solidity\s+([^;]+);/);
+  private analyzePragma( line: string, lineNumber: number, errors: SolidityError[], warnings: SolidityError[]): void {
+    const pragmaMatch = line.match(_/^\s*pragma\s+solidity\s+([^;]+);/);
     if (pragmaMatch) {
-      const version = pragmaMatch[1].trim();
+      const version = pragmaMatch[1].trim(_);
       this.pragmaVersion = version;
 
       // Check for version compatibility
@@ -130,9 +130,9 @@ export class SoliditySemanticAnalyzer {
           severity: monaco.MarkerSeverity.Error,
           message: 'Invalid pragma version format',
           startLineNumber: lineNumber,
-          startColumn: line.indexOf(version) + 1,
+          startColumn: line.indexOf(_version) + 1,
           endLineNumber: lineNumber,
-          endColumn: line.indexOf(version) + version.length + 1,
+          endColumn: line.indexOf(_version) + version.length + 1,
           code: 'INVALID_PRAGMA'
         });
       }
@@ -140,7 +140,7 @@ export class SoliditySemanticAnalyzer {
       // Warn about outdated versions
       const versionNumber = version.replace(/[^\d.]/g, '');
       const [major, minor] = versionNumber.split('.').map(Number);
-      if (major === 0 && minor < 8) {
+      if (_major === 0 && minor < 8) {
         warnings.push({
           severity: monaco.MarkerSeverity.Warning,
           message: 'Consider upgrading to Solidity 0.8+ for better security features',
@@ -154,11 +154,11 @@ export class SoliditySemanticAnalyzer {
     }
   }
 
-  private analyzeImports(line: string, lineNumber: number, _errors: SolidityError[], warnings: SolidityError[]): void {
-    const importMatch = line.match(/^\s*import\s+["']([^"']+)["']/);
+  private analyzeImports( line: string, lineNumber: number, errors: SolidityError[], warnings: SolidityError[]): void {
+    const importMatch = line.match(_/^\s*import\s+["']([^"']+)["']/);
     if (importMatch) {
       const importPath = importMatch[1];
-      this.imports.add(importPath);
+      this.imports.add(_importPath);
 
       // Check for common import issues
       if (!importPath.startsWith('./') && !importPath.startsWith('../') && !importPath.startsWith('@')) {
@@ -166,9 +166,9 @@ export class SoliditySemanticAnalyzer {
           severity: monaco.MarkerSeverity.Warning,
           message: 'Consider using relative imports for local files',
           startLineNumber: lineNumber,
-          startColumn: line.indexOf(importPath) + 1,
+          startColumn: line.indexOf(_importPath) + 1,
           endLineNumber: lineNumber,
-          endColumn: line.indexOf(importPath) + importPath.length + 1,
+          endColumn: line.indexOf(_importPath) + importPath.length + 1,
           code: 'IMPORT_STYLE'
         });
       }
@@ -182,7 +182,7 @@ export class SoliditySemanticAnalyzer {
     warnings: SolidityError[], 
     symbols: SoliditySymbol[]
   ): void {
-    const contractMatch = line.match(/^\s*(contract|interface|library)\s+([a-zA-Z_$][\w$]*)/);
+    const contractMatch = line.match(_/^\s*(contract|interface|library)\s+([a-zA-Z_$][\w$]*)/);
     if (contractMatch) {
       const contractType = contractMatch[1];
       const contractName = contractMatch[2];
@@ -193,9 +193,9 @@ export class SoliditySemanticAnalyzer {
           severity: monaco.MarkerSeverity.Warning,
           message: 'Contract names should use PascalCase',
           startLineNumber: lineNumber,
-          startColumn: line.indexOf(contractName) + 1,
+          startColumn: line.indexOf(_contractName) + 1,
           endLineNumber: lineNumber,
-          endColumn: line.indexOf(contractName) + contractName.length + 1,
+          endColumn: line.indexOf(_contractName) + contractName.length + 1,
           code: 'NAMING_CONVENTION'
         });
       }
@@ -205,14 +205,14 @@ export class SoliditySemanticAnalyzer {
         type: 'contract',
         location: {
           startLineNumber: lineNumber,
-          startColumn: line.indexOf(contractName) + 1,
+          startColumn: line.indexOf(_contractName) + 1,
           endLineNumber: lineNumber,
-          endColumn: line.indexOf(contractName) + contractName.length + 1
+          endColumn: line.indexOf(_contractName) + contractName.length + 1
         }
       };
 
-      symbols.push(symbol);
-      this.symbols.set(contractName, symbol);
+      symbols.push(_symbol);
+      this.symbols.set( contractName, symbol);
     }
   }
 
@@ -223,7 +223,7 @@ export class SoliditySemanticAnalyzer {
     warnings: SolidityError[], 
     symbols: SoliditySymbol[]
   ): void {
-    const functionMatch = line.match(/^\s*function\s+([a-zA-Z_$][\w$]*)\s*\(/);
+    const functionMatch = line.match(_/^\s*function\s+([a-zA-Z_$][\w$]*)\s*\(_/);
     if (functionMatch) {
       const functionName = functionMatch[1];
 
@@ -233,9 +233,9 @@ export class SoliditySemanticAnalyzer {
           severity: monaco.MarkerSeverity.Warning,
           message: 'Function names should use camelCase',
           startLineNumber: lineNumber,
-          startColumn: line.indexOf(functionName) + 1,
+          startColumn: line.indexOf(_functionName) + 1,
           endLineNumber: lineNumber,
-          endColumn: line.indexOf(functionName) + functionName.length + 1,
+          endColumn: line.indexOf(_functionName) + functionName.length + 1,
           code: 'NAMING_CONVENTION'
         });
       }
@@ -258,14 +258,14 @@ export class SoliditySemanticAnalyzer {
         type: 'function',
         location: {
           startLineNumber: lineNumber,
-          startColumn: line.indexOf(functionName) + 1,
+          startColumn: line.indexOf(_functionName) + 1,
           endLineNumber: lineNumber,
-          endColumn: line.indexOf(functionName) + functionName.length + 1
+          endColumn: line.indexOf(_functionName) + functionName.length + 1
         }
       };
 
-      symbols.push(symbol);
-      this.symbols.set(functionName, symbol);
+      symbols.push(_symbol);
+      this.symbols.set( functionName, symbol);
     }
   }
 
@@ -277,7 +277,7 @@ export class SoliditySemanticAnalyzer {
     symbols: SoliditySymbol[]
   ): void {
     // State variable declaration
-    const stateVarMatch = line.match(/^\s*(uint256|uint|int256|int|bool|address|string|bytes)\s+([a-zA-Z_$][\w$]*)/);
+    const stateVarMatch = line.match(_/^\s*(uint256|uint|int256|int|bool|address|string|bytes)\s+([a-zA-Z_$][\w$]*)/);
     if (stateVarMatch) {
       const varType = stateVarMatch[1];
       const varName = stateVarMatch[2];
@@ -288,9 +288,9 @@ export class SoliditySemanticAnalyzer {
           severity: monaco.MarkerSeverity.Warning,
           message: 'Variable names should use camelCase',
           startLineNumber: lineNumber,
-          startColumn: line.indexOf(varName) + 1,
+          startColumn: line.indexOf(_varName) + 1,
           endLineNumber: lineNumber,
-          endColumn: line.indexOf(varName) + varName.length + 1,
+          endColumn: line.indexOf(_varName) + varName.length + 1,
           code: 'NAMING_CONVENTION'
         });
       }
@@ -300,20 +300,20 @@ export class SoliditySemanticAnalyzer {
         type: 'variable',
         location: {
           startLineNumber: lineNumber,
-          startColumn: line.indexOf(varName) + 1,
+          startColumn: line.indexOf(_varName) + 1,
           endLineNumber: lineNumber,
-          endColumn: line.indexOf(varName) + varName.length + 1
+          endColumn: line.indexOf(_varName) + varName.length + 1
         }
       };
 
-      symbols.push(symbol);
-      this.symbols.set(varName, symbol);
+      symbols.push(_symbol);
+      this.symbols.set( varName, symbol);
     }
   }
 
-  private analyzeSyntaxErrors(line: string, lineNumber: number, errors: SolidityError[], warnings: SolidityError[]): void {
+  private analyzeSyntaxErrors( line: string, lineNumber: number, errors: SolidityError[], warnings: SolidityError[]): void {
     // Check for missing semicolons
-    if (line.match(/^\s*(uint|int|bool|address|string|bytes|mapping)\s+\w+\s*[^;{]*$/) && 
+    if (_line.match(/^\s*(uint|int|bool|address|string|bytes|mapping)\s+\w+\s*[^;{]*$/) && 
         !line.includes('{') && !line.includes('(')) {
       errors.push({
         severity: monaco.MarkerSeverity.Error,
@@ -327,9 +327,9 @@ export class SoliditySemanticAnalyzer {
     }
 
     // Check for unmatched brackets
-    const openBrackets = (line.match(/\{/g) || []).length;
-    const closeBrackets = (line.match(/\}/g) || []).length;
-    if (openBrackets !== closeBrackets && line.trim() !== '') {
+    const openBrackets = (_line.match(/\{/g) || []).length;
+    const closeBrackets = (_line.match(/\}/g) || []).length;
+    if (_openBrackets !== closeBrackets && line.trim() !== '') {
       // This is a simple check - a more sophisticated analyzer would track across lines
       warnings.push({
         severity: monaco.MarkerSeverity.Warning,
@@ -350,7 +350,7 @@ export class SoliditySemanticAnalyzer {
     suggestions: string[]
   ): void {
     // Check for potential reentrancy
-    if (line.includes('.call(') || line.includes('.send(') || line.includes('.transfer(')) {
+    if (_line.includes('.call(') || line.includes('.send(') || line.includes('.transfer(')) {
       warnings.push({
         severity: monaco.MarkerSeverity.Warning,
         message: 'Potential reentrancy vulnerability - consider using checks-effects-interactions pattern',
@@ -364,7 +364,7 @@ export class SoliditySemanticAnalyzer {
     }
 
     // Check for tx.origin usage
-    if (line.includes('tx.origin')) {
+    if (_line.includes('tx.origin')) {
       warnings.push({
         severity: monaco.MarkerSeverity.Warning,
         message: 'Avoid using tx.origin for authorization - use msg.sender instead',
@@ -377,7 +377,7 @@ export class SoliditySemanticAnalyzer {
     }
 
     // Check for block.timestamp usage
-    if (line.includes('block.timestamp') || line.includes('now')) {
+    if (_line.includes('block.timestamp') || line.includes('now')) {
       warnings.push({
         severity: monaco.MarkerSeverity.Warning,
         message: 'Block timestamp can be manipulated by miners - avoid using for critical logic',
@@ -390,24 +390,24 @@ export class SoliditySemanticAnalyzer {
     }
   }
 
-  private analyzeGasOptimization(line: string, lineNumber: number, suggestions: string[]): void {
+  private analyzeGasOptimization( line: string, lineNumber: number, suggestions: string[]): void {
     // Check for storage vs memory usage
-    if (line.includes('string ') && !line.includes('memory') && !line.includes('storage')) {
+    if (_line.includes('string ') && !line.includes('memory') && !line.includes('storage')) {
       suggestions.push('Specify data location (memory/storage) for string variables to optimize gas usage');
     }
 
     // Check for unnecessary storage reads
-    if (line.match(/\w+\.\w+.*\w+\.\w+/)) {
+    if (_line.match(/\w+\.\w+.*\w+\.\w+/)) {
       suggestions.push('Consider caching storage variables in memory to reduce gas costs');
     }
 
     // Check for loop optimizations
-    if (line.includes('for') && line.includes('.length')) {
+    if (_line.includes('for') && line.includes('.length')) {
       suggestions.push('Cache array length in a variable before the loop to save gas');
     }
   }
 
-  private analyzeCrossReferences(content: string, _errors: SolidityError[], warnings: SolidityError[]): void {
+  private analyzeCrossReferences( content: string, errors: SolidityError[], warnings: SolidityError[]): void {
     // Check for undefined variables/functions
     const lines = content.split('\n');
     for (let i = 0; i < lines.length; i++) {
@@ -415,18 +415,18 @@ export class SoliditySemanticAnalyzer {
       const lineNumber = i + 1;
 
       // Simple check for function calls
-      const functionCallMatch = line.match(/(\w+)\s*\(/g);
+      const functionCallMatch = line.match(_/(\w+)\s*\(_/g);
       if (functionCallMatch) {
         functionCallMatch.forEach(match => {
           const functionName = match.replace(/\s*\(/, '');
-          if (!this.symbols.has(functionName) && !this.isBuiltinFunction(functionName)) {
+          if (!this.symbols.has(functionName) && !this.isBuiltinFunction(_functionName)) {
             warnings.push({
               severity: monaco.MarkerSeverity.Warning,
               message: `Undefined function: ${functionName}`,
               startLineNumber: lineNumber,
-              startColumn: line.indexOf(functionName) + 1,
+              startColumn: line.indexOf(_functionName) + 1,
               endLineNumber: lineNumber,
-              endColumn: line.indexOf(functionName) + functionName.length + 1,
+              endColumn: line.indexOf(_functionName) + functionName.length + 1,
               code: 'UNDEFINED_FUNCTION'
             });
           }
@@ -435,24 +435,24 @@ export class SoliditySemanticAnalyzer {
     }
   }
 
-  private generateSuggestions(content: string, suggestions: string[]): void {
+  private generateSuggestions( content: string, suggestions: string[]): void {
     // Suggest adding SPDX license identifier
     if (!content.includes('SPDX-License-Identifier')) {
       suggestions.push('Add SPDX license identifier at the top of the file');
     }
 
     // Suggest adding NatSpec documentation
-    if (content.includes('function ') && !content.includes('/**')) {
+    if (_content.includes('function ') && !content.includes('/**')) {
       suggestions.push('Consider adding NatSpec documentation for your functions');
     }
 
     // Suggest using events for important state changes
-    if (content.includes('=') && !content.includes('event ')) {
+    if (_content.includes('=') && !content.includes('event ')) {
       suggestions.push('Consider emitting events for important state changes');
     }
   }
 
-  private isBuiltinFunction(name: string): boolean {
+  private isBuiltinFunction(_name: string): boolean {
     const builtins = [
       'require', 'assert', 'revert', 'keccak256', 'sha256', 'ripemd160',
       'ecrecover', 'addmod', 'mulmod', 'selfdestruct', 'suicide'

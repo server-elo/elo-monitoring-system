@@ -8,12 +8,12 @@ type Theme = 'light' | 'dark' | 'auto';
 interface ThemeContextType {
   theme: Theme;
   actualTheme: 'light' | 'dark';
-  setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
+  setTheme: (_theme: Theme) => void;
+  toggleTheme: (_) => void;
   isSystemDark: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType | undefined>(_undefined);
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -26,33 +26,33 @@ export function ThemeProvider({
   defaultTheme = 'auto',
   storageKey = 'solidity-learn-theme',
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme);
-  const [isSystemDark, setIsSystemDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [theme, setThemeState] = useState<Theme>(_defaultTheme);
+  const [isSystemDark, setIsSystemDark] = useState(_false);
+  const [mounted, setMounted] = useState(_false);
 
-  // Get actual theme (resolving 'auto' to 'light' or 'dark')
-  const actualTheme = theme === 'auto' ? (isSystemDark ? 'dark' : 'light') : theme;
+  // Get actual theme (_resolving 'auto' to 'light' or 'dark')
+  const actualTheme = theme === 'auto' ? (_isSystemDark ? 'dark' : 'light') : theme;
 
   useEffect(() => {
-    setMounted(true);
+    setMounted(_true);
     
     // Load theme from localStorage
-    const savedTheme = localStorage.getItem(storageKey) as Theme;
-    if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
-      setThemeState(savedTheme);
+    const savedTheme = localStorage.getItem(_storageKey) as Theme;
+    if ( savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
+      setThemeState(_savedTheme);
     }
 
     // Check system preference
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsSystemDark(mediaQuery.matches);
+    setIsSystemDark(_mediaQuery.matches);
 
     // Listen for system theme changes
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsSystemDark(e.matches);
+    const handleChange = (_e: MediaQueryListEvent) => {
+      setIsSystemDark(_e.matches);
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener( 'change', handleChange);
+    return (_) => mediaQuery.removeEventListener( 'change', handleChange);
   }, [storageKey]);
 
   useEffect(() => {
@@ -61,63 +61,63 @@ export function ThemeProvider({
     const root = window.document.documentElement;
     
     // Remove previous theme classes
-    root.classList.remove('light', 'dark');
+    root.classList.remove( 'light', 'dark');
     
     // Add current theme class
-    root.classList.add(actualTheme);
+    root.classList.add(_actualTheme);
     
     // Update CSS custom properties for smooth transitions
-    if (actualTheme === 'dark') {
-      root.style.setProperty('--background', '0 0% 3.9%');
-      root.style.setProperty('--foreground', '0 0% 98%');
-      root.style.setProperty('--card', '0 0% 3.9%');
-      root.style.setProperty('--card-foreground', '0 0% 98%');
-      root.style.setProperty('--popover', '0 0% 3.9%');
-      root.style.setProperty('--popover-foreground', '0 0% 98%');
-      root.style.setProperty('--primary', '0 0% 98%');
-      root.style.setProperty('--primary-foreground', '0 0% 9%');
-      root.style.setProperty('--secondary', '0 0% 14.9%');
-      root.style.setProperty('--secondary-foreground', '0 0% 98%');
-      root.style.setProperty('--muted', '0 0% 14.9%');
-      root.style.setProperty('--muted-foreground', '0 0% 63.9%');
-      root.style.setProperty('--accent', '0 0% 14.9%');
-      root.style.setProperty('--accent-foreground', '0 0% 98%');
-      root.style.setProperty('--destructive', '0 62.8% 30.6%');
-      root.style.setProperty('--destructive-foreground', '0 0% 98%');
-      root.style.setProperty('--border', '0 0% 14.9%');
-      root.style.setProperty('--input', '0 0% 14.9%');
-      root.style.setProperty('--ring', '0 0% 83.1%');
+    if (_actualTheme === 'dark') {
+      root.style.setProperty( '--background', '0 0% 3.9%');
+      root.style.setProperty( '--foreground', '0 0% 98%');
+      root.style.setProperty( '--card', '0 0% 3.9%');
+      root.style.setProperty( '--card-foreground', '0 0% 98%');
+      root.style.setProperty( '--popover', '0 0% 3.9%');
+      root.style.setProperty( '--popover-foreground', '0 0% 98%');
+      root.style.setProperty( '--primary', '0 0% 98%');
+      root.style.setProperty( '--primary-foreground', '0 0% 9%');
+      root.style.setProperty( '--secondary', '0 0% 14.9%');
+      root.style.setProperty( '--secondary-foreground', '0 0% 98%');
+      root.style.setProperty( '--muted', '0 0% 14.9%');
+      root.style.setProperty( '--muted-foreground', '0 0% 63.9%');
+      root.style.setProperty( '--accent', '0 0% 14.9%');
+      root.style.setProperty( '--accent-foreground', '0 0% 98%');
+      root.style.setProperty( '--destructive', '0 62.8% 30.6%');
+      root.style.setProperty( '--destructive-foreground', '0 0% 98%');
+      root.style.setProperty( '--border', '0 0% 14.9%');
+      root.style.setProperty( '--input', '0 0% 14.9%');
+      root.style.setProperty( '--ring', '0 0% 83.1%');
     } else {
-      root.style.setProperty('--background', '0 0% 100%');
-      root.style.setProperty('--foreground', '0 0% 3.9%');
-      root.style.setProperty('--card', '0 0% 100%');
-      root.style.setProperty('--card-foreground', '0 0% 3.9%');
-      root.style.setProperty('--popover', '0 0% 100%');
-      root.style.setProperty('--popover-foreground', '0 0% 3.9%');
-      root.style.setProperty('--primary', '0 0% 9%');
-      root.style.setProperty('--primary-foreground', '0 0% 98%');
-      root.style.setProperty('--secondary', '0 0% 96.1%');
-      root.style.setProperty('--secondary-foreground', '0 0% 9%');
-      root.style.setProperty('--muted', '0 0% 96.1%');
-      root.style.setProperty('--muted-foreground', '0 0% 45.1%');
-      root.style.setProperty('--accent', '0 0% 96.1%');
-      root.style.setProperty('--accent-foreground', '0 0% 9%');
-      root.style.setProperty('--destructive', '0 84.2% 60.2%');
-      root.style.setProperty('--destructive-foreground', '0 0% 98%');
-      root.style.setProperty('--border', '0 0% 89.8%');
-      root.style.setProperty('--input', '0 0% 89.8%');
-      root.style.setProperty('--ring', '0 0% 3.9%');
+      root.style.setProperty( '--background', '0 0% 100%');
+      root.style.setProperty( '--foreground', '0 0% 3.9%');
+      root.style.setProperty( '--card', '0 0% 100%');
+      root.style.setProperty( '--card-foreground', '0 0% 3.9%');
+      root.style.setProperty( '--popover', '0 0% 100%');
+      root.style.setProperty( '--popover-foreground', '0 0% 3.9%');
+      root.style.setProperty( '--primary', '0 0% 9%');
+      root.style.setProperty( '--primary-foreground', '0 0% 98%');
+      root.style.setProperty( '--secondary', '0 0% 96.1%');
+      root.style.setProperty( '--secondary-foreground', '0 0% 9%');
+      root.style.setProperty( '--muted', '0 0% 96.1%');
+      root.style.setProperty( '--muted-foreground', '0 0% 45.1%');
+      root.style.setProperty( '--accent', '0 0% 96.1%');
+      root.style.setProperty( '--accent-foreground', '0 0% 9%');
+      root.style.setProperty( '--destructive', '0 84.2% 60.2%');
+      root.style.setProperty( '--destructive-foreground', '0 0% 98%');
+      root.style.setProperty( '--border', '0 0% 89.8%');
+      root.style.setProperty( '--input', '0 0% 89.8%');
+      root.style.setProperty( '--ring', '0 0% 3.9%');
     }
   }, [actualTheme, mounted]);
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    localStorage.setItem(storageKey, newTheme);
+  const setTheme = (_newTheme: Theme) => {
+    setThemeState(_newTheme);
+    localStorage.setItem( storageKey, newTheme);
   };
 
-  const toggleTheme = () => {
+  const toggleTheme = (_) => {
     const newTheme = actualTheme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
+    setTheme(_newTheme);
   };
 
   // Prevent hydration mismatch
@@ -143,17 +143,17 @@ export function ThemeProvider({
 }
 
 export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
+  const context = useContext(_ThemeContext);
+  if (_context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
 }
 
 // Theme toggle component with smooth animations
-export function ThemeToggle({ className }: { className?: string }) {
-  const { theme, actualTheme, setTheme } = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
+export function ThemeToggle(_{ className }: { className?: string }) {
+  const { theme, actualTheme, setTheme } = useTheme(_);
+  const [isOpen, setIsOpen] = useState(_false);
 
   const themes: { value: Theme; label: string; icon: string }[] = [
     { value: 'light', label: 'Light', icon: '☀️' },
@@ -166,7 +166,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(_) => setIsOpen(!isOpen)}
         className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-200"
         aria-label="Toggle theme"
       >
@@ -190,7 +190,7 @@ export function ThemeToggle({ className }: { className?: string }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-40"
-              onClick={() => setIsOpen(false)}
+              onClick={(_) => setIsOpen(_false)}
             />
             
             {/* Dropdown */}
@@ -204,10 +204,10 @@ export function ThemeToggle({ className }: { className?: string }) {
               {themes.map((themeOption) => (
                 <motion.button
                   key={themeOption.value}
-                  whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-                  onClick={() => {
-                    setTheme(themeOption.value);
-                    setIsOpen(false);
+                  whileHover={{ backgroundColor: 'rgba( 255, 255, 255, 0.1)' }}
+                  onClick={(_) => {
+                    setTheme(_themeOption.value);
+                    setIsOpen(_false);
                   }}
                   className={`w-full flex items-center space-x-3 px-4 py-3 text-left transition-colors ${
                     theme === themeOption.value
@@ -235,7 +235,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 
 // Eye comfort settings component
 export function EyeComfortSettings() {
-  const { actualTheme } = useTheme();
+  const { actualTheme } = useTheme(_);
 
   // Use actualTheme for theme-aware rendering
   const themeClass = actualTheme === 'dark' ? 'dark' : 'light';
@@ -251,14 +251,14 @@ export function EyeComfortSettings() {
     // Load settings from localStorage
     const saved = localStorage.getItem('eye-comfort-settings');
     if (saved) {
-      setSettings(JSON.parse(saved));
+      setSettings(_JSON.parse(saved));
     }
 
     // Check for system preferences
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
 
-    if (prefersReducedMotion || prefersHighContrast) {
+    if (_prefersReducedMotion || prefersHighContrast) {
       setSettings(prev => ({
         ...prev,
         reducedMotion: prefersReducedMotion,
@@ -271,15 +271,15 @@ export function EyeComfortSettings() {
     // Apply settings to document
     const root = document.documentElement;
     
-    if (settings.reducedMotion) {
-      root.style.setProperty('--animation-duration', '0.01ms');
-      root.style.setProperty('--transition-duration', '0.01ms');
+    if (_settings.reducedMotion) {
+      root.style.setProperty( '--animation-duration', '0.01ms');
+      root.style.setProperty( '--transition-duration', '0.01ms');
     } else {
       root.style.removeProperty('--animation-duration');
       root.style.removeProperty('--transition-duration');
     }
 
-    if (settings.highContrast) {
+    if (_settings.highContrast) {
       root.classList.add('high-contrast');
     } else {
       root.classList.remove('high-contrast');
@@ -292,7 +292,7 @@ export function EyeComfortSettings() {
       large: '18px',
       'extra-large': '20px',
     };
-    root.style.setProperty('--base-font-size', fontSizes[settings.fontSize as keyof typeof fontSizes]);
+    root.style.setProperty( '--base-font-size', fontSizes[settings.fontSize as keyof typeof fontSizes]);
 
     // Line height
     const lineHeights = {
@@ -301,7 +301,7 @@ export function EyeComfortSettings() {
       relaxed: '1.75',
       loose: '2',
     };
-    root.style.setProperty('--base-line-height', lineHeights[settings.lineHeight as keyof typeof lineHeights]);
+    root.style.setProperty( '--base-line-height', lineHeights[settings.lineHeight as keyof typeof lineHeights]);
 
     // Letter spacing
     const letterSpacings = {
@@ -310,10 +310,10 @@ export function EyeComfortSettings() {
       wide: '0.025em',
       wider: '0.05em',
     };
-    root.style.setProperty('--base-letter-spacing', letterSpacings[settings.letterSpacing as keyof typeof letterSpacings]);
+    root.style.setProperty( '--base-letter-spacing', letterSpacings[settings.letterSpacing as keyof typeof letterSpacings]);
 
     // Save to localStorage
-    localStorage.setItem('eye-comfort-settings', JSON.stringify(settings));
+    localStorage.setItem( 'eye-comfort-settings', JSON.stringify(settings));
   }, [settings]);
 
   return (
@@ -326,7 +326,7 @@ export function EyeComfortSettings() {
           <input
             type="checkbox"
             checked={settings.reducedMotion}
-            onChange={(e) => setSettings(prev => ({ ...prev, reducedMotion: e.target.checked }))}
+            onChange={(_e) => setSettings( prev => ({ ...prev, reducedMotion: e.target.checked }))}
             className="rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
           />
         </label>
@@ -336,7 +336,7 @@ export function EyeComfortSettings() {
           <input
             type="checkbox"
             checked={settings.highContrast}
-            onChange={(e) => setSettings(prev => ({ ...prev, highContrast: e.target.checked }))}
+            onChange={(_e) => setSettings( prev => ({ ...prev, highContrast: e.target.checked }))}
             className="rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
           />
         </label>
@@ -345,7 +345,7 @@ export function EyeComfortSettings() {
           <label className="block text-sm text-gray-300 mb-2">Font size</label>
           <select
             value={settings.fontSize}
-            onChange={(e) => setSettings(prev => ({ ...prev, fontSize: e.target.value }))}
+            onChange={(_e) => setSettings( prev => ({ ...prev, fontSize: e.target.value }))}
             className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
           >
             <option value="small">Small</option>
@@ -359,7 +359,7 @@ export function EyeComfortSettings() {
           <label className="block text-sm text-gray-300 mb-2">Line height</label>
           <select
             value={settings.lineHeight}
-            onChange={(e) => setSettings(prev => ({ ...prev, lineHeight: e.target.value }))}
+            onChange={(_e) => setSettings( prev => ({ ...prev, lineHeight: e.target.value }))}
             className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
           >
             <option value="tight">Tight</option>
@@ -373,7 +373,7 @@ export function EyeComfortSettings() {
           <label className="block text-sm text-gray-300 mb-2">Letter spacing</label>
           <select
             value={settings.letterSpacing}
-            onChange={(e) => setSettings(prev => ({ ...prev, letterSpacing: e.target.value }))}
+            onChange={(_e) => setSettings( prev => ({ ...prev, letterSpacing: e.target.value }))}
             className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
           >
             <option value="tight">Tight</option>

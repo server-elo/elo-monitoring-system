@@ -10,18 +10,18 @@ interface Web3ContextType {
   chainId: number | null;
   isConnected: boolean;
   isConnecting: boolean;
-  connectWallet: () => Promise<void>;
-  disconnectWallet: () => void;
-  switchNetwork: (chainId: number) => Promise<void>;
-  deployContract: (bytecode: string, abi: any[], constructorArgs?: any[]) => Promise<string>;
-  getBalance: (address?: string) => Promise<string>;
-  sendTransaction: (to: string, value: string, data?: string) => Promise<string>;
+  connectWallet: (_) => Promise<void>;
+  disconnectWallet: (_) => void;
+  switchNetwork: (_chainId: number) => Promise<void>;
+  deployContract: ( bytecode: string, abi: any[], constructorArgs?: any[]) => Promise<string>;
+  getBalance: (_address?: string) => Promise<string>;
+  sendTransaction: ( to: string, value: string, data?: string) => Promise<string>;
 }
 
-const Web3Context = createContext<Web3ContextType | undefined>(undefined);
+const Web3Context = createContext<Web3ContextType | undefined>(_undefined);
 
-export const useWeb3 = () => {
-  const context = useContext(Web3Context);
+export const useWeb3 = (_) => {
+  const context = useContext(_Web3Context);
   if (!context) {
     throw new Error('useWeb3 must be used within a Web3Provider');
   }
@@ -57,109 +57,109 @@ interface Web3ProviderProps {
   children: ReactNode;
 }
 
-export function Web3Provider({ children }: Web3ProviderProps) {
-  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
-  const [signer, setSigner] = useState<ethers.JsonRpcSigner | null>(null);
-  const [account, setAccount] = useState<string | null>(null);
-  const [chainId, setChainId] = useState<number | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
+export function Web3Provider(_{ children }: Web3ProviderProps) {
+  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(_null);
+  const [signer, setSigner] = useState<ethers.JsonRpcSigner | null>(_null);
+  const [account, setAccount] = useState<string | null>(_null);
+  const [chainId, setChainId] = useState<number | null>(_null);
+  const [isConnected, setIsConnected] = useState(_false);
+  const [isConnecting, setIsConnecting] = useState(_false);
 
   useEffect(() => {
     // Only run in browser environment
-    if (typeof window === 'undefined') return;
+    if (_typeof window === 'undefined') return;
 
     // Check if already connected
-    checkConnection();
+    checkConnection(_);
 
     // Listen for account changes
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleChainChanged);
+    if (_window.ethereum) {
+      window.ethereum.on( 'accountsChanged', handleAccountsChanged);
+      window.ethereum.on( 'chainChanged', handleChainChanged);
     }
 
-    return () => {
-      if (window.ethereum) {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
+    return (_) => {
+      if (_window.ethereum) {
+        window.ethereum.removeListener( 'accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener( 'chainChanged', handleChainChanged);
       }
     };
   }, []);
 
   const checkConnection = async () => {
     // Only run in browser environment
-    if (typeof window === 'undefined' || !window.ethereum) return;
+    if (_typeof window === 'undefined' || !window.ethereum) return;
 
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const accounts = await provider.listAccounts();
+      const provider = new ethers.BrowserProvider(_window.ethereum);
+      const accounts = await provider.listAccounts(_);
 
-      if (accounts.length > 0) {
-        const signer = await provider.getSigner();
-        const network = await provider.getNetwork();
+      if (_accounts.length > 0) {
+        const signer = await provider.getSigner(_);
+        const network = await provider.getNetwork(_);
 
-        setProvider(provider);
-        setSigner(signer);
-        setAccount(accounts[0].address);
-        setChainId(Number(network.chainId));
-        setIsConnected(true);
+        setProvider(_provider);
+        setSigner(_signer);
+        setAccount(_accounts[0].address);
+        setChainId(_Number(network.chainId));
+        setIsConnected(_true);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error checking connection:', error);
     }
   };
 
-  const handleAccountsChanged = (accounts: string[]) => {
-    if (accounts.length === 0) {
-      disconnectWallet();
+  const handleAccountsChanged = (_accounts: string[]) => {
+    if (_accounts.length === 0) {
+      disconnectWallet(_);
     } else {
-      setAccount(accounts[0]);
+      setAccount(_accounts[0]);
     }
   };
 
-  const handleChainChanged = (chainId: string) => {
-    setChainId(parseInt(chainId, 16));
+  const handleChainChanged = (_chainId: string) => {
+    setChainId( parseInt(chainId, 16));
     // Reload the page to reset the dapp state
-    window.location.reload();
+    window.location.reload(_);
   };
 
   const connectWallet = async () => {
-    if (typeof window === 'undefined' || !window.ethereum) {
+    if (_typeof window === 'undefined' || !window.ethereum) {
       throw new Error('MetaMask is not installed');
     }
 
-    setIsConnecting(true);
+    setIsConnecting(_true);
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
+      const provider = new ethers.BrowserProvider(_window.ethereum);
+      await provider.send( 'eth_requestAccounts', []);
 
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
-      const network = await provider.getNetwork();
+      const signer = await provider.getSigner(_);
+      const address = await signer.getAddress(_);
+      const network = await provider.getNetwork(_);
 
-      setProvider(provider);
-      setSigner(signer);
-      setAccount(address);
-      setChainId(Number(network.chainId));
-      setIsConnected(true);
-    } catch (error) {
+      setProvider(_provider);
+      setSigner(_signer);
+      setAccount(_address);
+      setChainId(_Number(network.chainId));
+      setIsConnected(_true);
+    } catch (_error) {
       console.error('Error connecting wallet:', error);
       throw error;
     } finally {
-      setIsConnecting(false);
+      setIsConnecting(_false);
     }
   };
 
-  const disconnectWallet = () => {
-    setProvider(null);
-    setSigner(null);
-    setAccount(null);
-    setChainId(null);
-    setIsConnected(false);
+  const disconnectWallet = (_) => {
+    setProvider(_null);
+    setSigner(_null);
+    setAccount(_null);
+    setChainId(_null);
+    setIsConnected(_false);
   };
 
-  const switchNetwork = async (targetChainId: number) => {
-    if (typeof window === 'undefined' || !window.ethereum) {
+  const switchNetwork = async (_targetChainId: number) => {
+    if (_typeof window === 'undefined' || !window.ethereum) {
       throw new Error('MetaMask is not installed');
     }
 
@@ -173,9 +173,9 @@ export function Web3Provider({ children }: Web3ProviderProps) {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: `0x${targetChainId.toString(16)}` }],
       });
-    } catch (switchError: any) {
+    } catch (_switchError: any) {
       // This error code indicates that the chain has not been added to MetaMask
-      if (switchError.code === 4902) {
+      if (_switchError.code === 4902) {
         try {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
@@ -189,7 +189,7 @@ export function Web3Provider({ children }: Web3ProviderProps) {
               },
             ],
           });
-        } catch (addError) {
+        } catch (_addError) {
           throw new Error('Failed to add network to MetaMask');
         }
       } else {
@@ -204,19 +204,19 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     }
 
     try {
-      const factory = new ethers.ContractFactory(abi, bytecode, signer);
+      const factory = new ethers.ContractFactory( abi, bytecode, signer);
       const contract = await factory.deploy(...constructorArgs);
-      await contract.waitForDeployment();
+      await contract.waitForDeployment(_);
       
-      const address = await contract.getAddress();
+      const address = await contract.getAddress(_);
       return address;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deploying contract:', error);
       throw error;
     }
   };
 
-  const getBalance = async (address?: string): Promise<string> => {
+  const getBalance = async (_address?: string): Promise<string> => {
     if (!provider) {
       throw new Error('Provider not available');
     }
@@ -227,9 +227,9 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     }
 
     try {
-      const balance = await provider.getBalance(targetAddress);
-      return ethers.formatEther(balance);
-    } catch (error) {
+      const balance = await provider.getBalance(_targetAddress);
+      return ethers.formatEther(_balance);
+    } catch (_error) {
       console.error('Error getting balance:', error);
       throw error;
     }
@@ -243,13 +243,13 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     try {
       const tx = await signer.sendTransaction({
         to,
-        value: ethers.parseEther(value),
+        value: ethers.parseEther(_value),
         data,
       });
       
-      await tx.wait();
+      await tx.wait(_);
       return tx.hash;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error sending transaction:', error);
       throw error;
     }

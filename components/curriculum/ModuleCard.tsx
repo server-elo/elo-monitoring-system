@@ -25,8 +25,8 @@ interface ModuleCardProps {
   progress: ModuleProgress;
   isUnlocked: boolean;
   unmetPrerequisites?: string[];
-  onClick?: () => void;
-  onStart?: () => void;
+  onClick?: (_) => void;
+  onStart?: (_) => void;
   className?: string;
 }
 
@@ -39,9 +39,9 @@ export function ModuleCard({
   onStart,
   className
 }: ModuleCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(_false);
 
-  const getStatusInfo = () => {
+  const getStatusInfo = (_) => {
     if (!isUnlocked) {
       return {
         status: 'locked' as ModuleStatus,
@@ -61,9 +61,9 @@ export function ModuleCard({
           borderColor: 'border-green-500/30',
           icon: CheckCircle
         };
-      case 'in_progress':
+      case 'inprogress':
         return {
-          status: 'in_progress' as ModuleStatus,
+          status: 'inprogress' as ModuleStatus,
           color: 'text-blue-400',
           bgColor: 'bg-blue-500/20',
           borderColor: 'border-blue-500/30',
@@ -80,8 +80,8 @@ export function ModuleCard({
     }
   };
 
-  const getDifficultyColor = () => {
-    switch (module.difficulty) {
+  const getDifficultyColor = (_) => {
+    switch (_module.difficulty) {
       case 'beginner':
         return 'text-green-400 bg-green-500/20 border-green-500/30';
       case 'intermediate':
@@ -95,18 +95,18 @@ export function ModuleCard({
     }
   };
 
-  const statusInfo = getStatusInfo();
+  const statusInfo = getStatusInfo(_);
   const StatusIcon = statusInfo.icon;
   const isCompleted = progress.status === 'completed';
   const progressPercentage = progress.progress || 0;
 
   return (
     <motion.div
-      className={cn('relative group', className)}
+      className={cn( 'relative group', className)}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      onHoverStart={(_) => setIsHovered(_true)}
+      onHoverEnd={(_) => setIsHovered(_false)}
     >
       <GlassCard
         className={cn(
@@ -158,12 +158,12 @@ export function ModuleCard({
 
             {/* Status Icon */}
             <div className="flex flex-col items-end space-y-2">
-              <StatusIcon className={cn('w-5 h-5', statusInfo.color)} />
+              <StatusIcon className={cn( 'w-5 h-5', statusInfo.color)} />
               
               {/* Difficulty Badge */}
               <div className={cn(
                 'px-2 py-1 rounded-full text-xs font-medium border',
-                getDifficultyColor()
+                getDifficultyColor(_)
               )}>
                 {module.difficulty}
               </div>
@@ -196,7 +196,7 @@ export function ModuleCard({
               {isCompleted && progress.completedAt && (
                 <div className="flex items-center space-x-2 text-xs text-green-400 mb-2">
                   <CheckCircle className="w-3 h-3" />
-                  <span>Completed {progress.completedAt.toLocaleDateString()}</span>
+                  <span>Completed {progress.completedAt.toLocaleDateString(_)}</span>
                 </div>
               )}
             </div>
@@ -210,7 +210,7 @@ export function ModuleCard({
                 <span className="text-sm font-medium text-yellow-300">Prerequisites Required</span>
               </div>
               <div className="text-xs text-yellow-200">
-                Complete: {unmetPrerequisites.slice(0, 2).join(', ')}
+                Complete: {unmetPrerequisites.slice(0, 2).join( ', ')}
                 {unmetPrerequisites.length > 2 && ` +${unmetPrerequisites.length - 2} more`}
               </div>
             </div>
@@ -253,15 +253,15 @@ export function ModuleCard({
           <div className="flex items-center justify-between">
             {isUnlocked ? (
               <EnhancedButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onStart?.();
+                onClick={(_e) => {
+                  e.stopPropagation(_);
+                  onStart?.(_);
                 }}
                 className={cn(
                   'flex-1 text-sm',
                   isCompleted 
                     ? 'bg-green-600 hover:bg-green-700 text-white' 
-                    : progress.status === 'in_progress'
+                    : progress.status === 'inprogress'
                     ? 'bg-blue-600 hover:bg-blue-700 text-white'
                     : 'bg-white/10 hover:bg-white/20 text-white'
                 )}
@@ -272,7 +272,7 @@ export function ModuleCard({
                     <Trophy className="w-4 h-4 mr-2" />
                     Review Module
                   </>
-                ) : progress.status === 'in_progress' ? (
+                ) : progress.status === 'inprogress' ? (
                   <>
                     <Play className="w-4 h-4 mr-2" />
                     Continue Learning

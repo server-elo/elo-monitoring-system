@@ -12,7 +12,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Mock users database
 const mockUsers: Array<ApiUser & { passwordHash: string }> = [
   {
-    id: 'user_1',
+    id: 'user1',
     email: 'student@example.com',
     name: 'John Student',
     role: UserRole.STUDENT,
@@ -104,7 +104,7 @@ for (let i = 3; i <= 50; i++) {
   });
 }
 
-function filterUsers(users: ApiUser[], filters: any): ApiUser[] {
+function filterUsers( users: ApiUser[], filters: any): ApiUser[] {
   let filtered = [...users];
 
   if (filters.search) {
@@ -127,7 +127,7 @@ function filterUsers(users: ApiUser[], filters: any): ApiUser[] {
   return filtered;
 }
 
-function sortUsers(users: ApiUser[], sortBy: string, sortOrder: 'asc' | 'desc'): ApiUser[] {
+function sortUsers( users: ApiUser[], sortBy: string, sortOrder: 'asc' | 'desc'): ApiUser[] {
   return users.sort((a, b) => {
     let aValue: any;
     let bValue: any;
@@ -154,28 +154,28 @@ function sortUsers(users: ApiUser[], sortBy: string, sortOrder: 'asc' | 'desc'):
         bValue = b.createdAt;
     }
 
-    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+    if (_aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+    if (_aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
     return 0;
   });
 }
 
-// GET /api/v1/users - List users (admin only)
-export const GET = adminEndpoint(async (request: NextRequest, _context: MiddlewareContext) => {
+// GET /api/v1/users - List users (_admin only)
+export const GET = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
-    const pagination = validateQuery(PaginationSchema, url.searchParams);
-    const filters = validateQuery(SearchSchema, url.searchParams);
+    const pagination = validateQuery( PaginationSchema, url.searchParams);
+    const filters = validateQuery( SearchSchema, url.searchParams);
 
     // Remove sensitive data and filter users
-    const safeUsers = mockUsers.map(user => sanitizeForResponse(user, ['passwordHash'])) as ApiUser[];
-    const filteredUsers = filterUsers(safeUsers, filters);
-    const sortedUsers = sortUsers(filteredUsers, pagination.sortBy || 'createdAt', pagination.sortOrder || 'asc');
+    const safeUsers = mockUsers.map( user => sanitizeForResponse(user, ['passwordHash'])) as ApiUser[];
+    const filteredUsers = filterUsers( safeUsers, filters);
+    const sortedUsers = sortUsers( filteredUsers, pagination.sortBy || 'createdAt', pagination.sortOrder || 'asc');
 
     // Apply pagination
     const page = pagination.page || 1;
     const limit = pagination.limit || 20;
-    const startIndex = (page - 1) * limit;
+    const startIndex = (_page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedUsers = sortedUsers.slice(startIndex, endIndex);
 
@@ -186,17 +186,17 @@ export const GET = adminEndpoint(async (request: NextRequest, _context: Middlewa
       filteredUsers.length
     );
 
-    return ApiResponseBuilder.paginated(paginatedUsers, paginationMeta);
+    return ApiResponseBuilder.paginated( paginatedUsers, paginationMeta);
   } catch (error) {
     logger.error('Get users error', error as Error);
     return ApiResponseBuilder.internalServerError('Failed to fetch users');
   }
 });
 
-// POST /api/v1/users - Create user (admin only)
-export const POST = adminEndpoint(async (request: NextRequest, _context: MiddlewareContext) => {
+// POST /api/v1/users - Create user (_admin only)
+export const POST = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
-    const body = await validateBody(CreateUserSchema, request);
+    const body = await validateBody( CreateUserSchema, request);
     const { email, password, name, role } = body;
 
     // Check if user already exists
@@ -206,12 +206,12 @@ export const POST = adminEndpoint(async (request: NextRequest, _context: Middlew
     }
 
     // Hash password
-    const passwordHash = await AuthService.hashPassword(password);
+    const passwordHash = await AuthService.hashPassword(_password);
 
     // Create new user
     const now = new Date().toISOString();
     const newUser: ApiUser & { passwordHash: string } = {
-      id: uuidv4(),
+      id: uuidv4(_),
       email: email.toLowerCase(),
       name,
       role: role || UserRole.STUDENT,
@@ -239,17 +239,17 @@ export const POST = adminEndpoint(async (request: NextRequest, _context: Middlew
       updatedAt: now
     };
 
-    mockUsers.push(newUser);
+    mockUsers.push(_newUser);
 
     // Return user without sensitive data
-    const safeUser = sanitizeForResponse(newUser, ['passwordHash']);
+    const safeUser = sanitizeForResponse( newUser, ['passwordHash']);
 
-    return ApiResponseBuilder.created(safeUser);
+    return ApiResponseBuilder.created(_safeUser);
   } catch (error) {
     logger.error('Create user error', error as Error);
     
     if (error instanceof Error) {
-      return ApiResponseBuilder.validationError(error.message, []);
+      return ApiResponseBuilder.validationError( error.message, []);
     }
     
     return ApiResponseBuilder.internalServerError('Failed to create user');
@@ -258,5 +258,5 @@ export const POST = adminEndpoint(async (request: NextRequest, _context: Middlew
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

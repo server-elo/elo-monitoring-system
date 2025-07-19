@@ -15,12 +15,12 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Validation schema for metrics query
 const metricsQuerySchema = z.object({
   timeRange: z.string().optional().default('24h'), // 1h, 24h, 7d, 30d
-  granularity: z.enum(['hour', 'day', 'week']).optional().default('hour'),
+  granularity: z.enum( ['hour', 'day', 'week']).optional().default('hour'),
   metrics: z.array(z.enum(['errors', 'requests', 'response_time', 'status_codes'])).optional()
 });
 
 // Convert time range string to milliseconds
-function parseTimeRange(timeRange: string): number {
+function parseTimeRange(_timeRange: string): number {
   const ranges: Record<string, number> = {
     '1h': 60 * 60 * 1000,
     '24h': 24 * 60 * 60 * 1000,
@@ -31,8 +31,8 @@ function parseTimeRange(timeRange: string): number {
   return ranges[timeRange] || ranges['24h'];
 }
 
-// Generate mock request metrics (in a real app, this would come from your monitoring system)
-function generateRequestMetrics(timeRangeMs: number, granularity: string) {
+// Generate mock request metrics ( in a real app, this would come from your monitoring system)
+function generateRequestMetrics( timeRangeMs: number, granularity: string) {
   const now = Date.now();
   const intervals: number[] = [];
   
@@ -53,14 +53,14 @@ function generateRequestMetrics(timeRangeMs: number, granularity: string) {
   }
   
   // Generate intervals
-  const numIntervals = Math.ceil(timeRangeMs / intervalMs);
+  const numIntervals = Math.ceil(_timeRangeMs / intervalMs);
   for (let i = numIntervals - 1; i >= 0; i--) {
     intervals.push(now - (i * intervalMs));
   }
   
   // Generate mock data for each interval
   return intervals.map(timestamp => ({
-    timestamp: new Date(timestamp).toISOString(),
+    timestamp: new Date(_timestamp).toISOString(),
     requests: Math.floor(Math.random() * 1000) + 100,
     errors: Math.floor(Math.random() * 50) + 5,
     responseTime: Math.floor(Math.random() * 500) + 100
@@ -75,7 +75,7 @@ async function getMetricsHandler(request: NextRequest) {
     // TODO: Check if user has admin permissions
     // const user = await getUserFromToken(request);
     // if (user.role !== 'ADMIN') {
-    //   return forbiddenResponse('Admin access required', requestId);
+    //   return forbiddenResponse( 'Admin access required', requestId);
     // }
 
     const url = new URL(request.url);
@@ -93,10 +93,10 @@ async function getMetricsHandler(request: NextRequest) {
     }
     
     const { timeRange, granularity, metrics } = validation.data;
-    const timeRangeMs = parseTimeRange(timeRange);
+    const timeRangeMs = parseTimeRange(_timeRange);
     
     // Get error metrics from error tracker
-    const errorMetrics = errorTracker.getMetrics(timeRangeMs);
+    const errorMetrics = errorTracker.getMetrics(_timeRangeMs);
     
     // Get recent logs for additional metrics
     const recentLogs = apiLogger.getRecentLogs(1000);
@@ -123,7 +123,7 @@ async function getMetricsHandler(request: NextRequest) {
       .filter(log => log.context.response?.statusCode)
       .reduce((acc, log) => {
         const status = log.context.response!.statusCode.toString();
-        acc[status] = (acc[status] || 0) + 1;
+        acc[status] = (_acc[status] || 0) + 1;
         return acc;
       }, {} as Record<string, number>);
     
@@ -140,7 +140,7 @@ async function getMetricsHandler(request: NextRequest) {
         return acc;
       }, {} as Record<string, { times: number[], count: number }>);
     
-    const slowestEndpoints = Object.entries(endpointTimes)
+    const slowestEndpoints = Object.entries(_endpointTimes)
       .map(([endpoint, data]) => ({
         endpoint,
         averageTime: data.times.reduce((sum, time) => sum + time, 0) / data.times.length,
@@ -152,7 +152,7 @@ async function getMetricsHandler(request: NextRequest) {
       .slice(0, 10);
     
     // Generate time series data
-    const timeSeriesData = generateRequestMetrics(timeRangeMs, granularity);
+    const timeSeriesData = generateRequestMetrics( timeRangeMs, granularity);
     
     // Compile response data
     const responseData: MetricsResponseData = {
@@ -163,7 +163,7 @@ async function getMetricsHandler(request: NextRequest) {
         totalErrors: errorCount,
         totalWarnings: warningCount,
         errorRate: requestCount > 0 ? (errorCount / requestCount) * 100 : 0,
-        averageResponseTime: Math.round(averageResponseTime),
+        averageResponseTime: Math.round(_averageResponseTime),
         uptime: 99.9, // Mock uptime percentage
         lastUpdated: new Date().toISOString()
       },
@@ -181,13 +181,13 @@ async function getMetricsHandler(request: NextRequest) {
       },
       
       performance: {
-        averageResponseTime: Math.round(averageResponseTime),
+        averageResponseTime: Math.round(_averageResponseTime),
         slowestEndpoints,
         responseTimePercentiles: {
-          p50: Math.round(averageResponseTime * 0.8),
-          p90: Math.round(averageResponseTime * 1.5),
-          p95: Math.round(averageResponseTime * 2),
-          p99: Math.round(averageResponseTime * 3)
+          p50: Math.round(_averageResponseTime * 0.8),
+          p90: Math.round(_averageResponseTime * 1.5),
+          p95: Math.round(_averageResponseTime * 2),
+          p99: Math.round(_averageResponseTime * 3)
         }
       },
       
@@ -198,7 +198,7 @@ async function getMetricsHandler(request: NextRequest) {
         topPages: Object.entries(errorMetrics.errorsByPage)
           .sort(([,a], [,b]) => b - a)
           .slice(0, 10)
-          .map(([page, count]) => ({ page, requests: count }))
+          .map(([page, count]) => ( { page, requests: count }))
       },
       
       timeSeries: timeSeriesData,
@@ -247,4 +247,4 @@ async function getMetricsHandler(request: NextRequest) {
 }
 
 // Route handlers
-export const GET = withErrorHandling(getMetricsHandler);
+export const GET = withErrorHandling(_getMetricsHandler);

@@ -30,8 +30,8 @@ interface AIMessage {
 }
 
 interface EnhancedAIAssistantProps {
-  onCodeAnalysis?: (code: string) => void;
-  onConceptExplanation?: (concept: string) => void;
+  onCodeAnalysis?: (_code: string) => void;
+  onConceptExplanation?: (_concept: string) => void;
   currentCode?: string;
   userLevel?: 'beginner' | 'intermediate' | 'advanced';
   className?: string;
@@ -55,21 +55,21 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
 }) => {
   const [messages, setMessages] = useState<AIMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const [isLoading, setIsLoading] = useState(_false);
+  const [isListening, setIsListening] = useState(_false);
+  const [isSpeaking, setIsSpeaking] = useState(_false);
+  const [isExpanded, setIsExpanded] = useState(_false);
+  const [showSettings, setShowSettings] = useState(_false);
+  const [showToast, setShowToast] = useState(_false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning'>('success');
   
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const synthRef = useRef<SpeechSynthesis | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(_null);
+  const recognitionRef = useRef<SpeechRecognition | null>(_null);
+  const synthRef = useRef<SpeechSynthesis | null>(_null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth'  });
   }, [messages]);
 
   useEffect(() => {
@@ -80,51 +80,51 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
 
     // Initialize speech recognition
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as Window & { webkitSpeechRecognition?: any; SpeechRecognition?: any }).webkitSpeechRecognition || (window as Window & { webkitSpeechRecognition?: any; SpeechRecognition?: any }).SpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      if (recognitionRef.current) {
+      const SpeechRecognition = (_window as Window & { webkitSpeechRecognition?: any; SpeechRecognition?: any }).webkitSpeechRecognition || (_window as Window & { webkitSpeechRecognition?: any; SpeechRecognition?: any }).SpeechRecognition;
+      recognitionRef.current = new SpeechRecognition(_);
+      if (_recognitionRef.current) {
         recognitionRef.current.continuous = false;
         recognitionRef.current.interimResults = false;
         recognitionRef.current.lang = 'en-US';
 
-        recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+        recognitionRef.current.onresult = (_event: SpeechRecognitionEvent) => {
         const transcript = event.results[0][0].transcript;
-        setInputMessage(transcript);
-        setIsListening(false);
+        setInputMessage(_transcript);
+        setIsListening(_false);
       };
 
-        recognitionRef.current.onerror = () => {
-          setIsListening(false);
-          showToastMessage('Speech recognition error. Please try again.', 'error');
+        recognitionRef.current.onerror = (_) => {
+          setIsListening(_false);
+          showToastMessage( 'Speech recognition error. Please try again.', 'error');
         };
 
-        recognitionRef.current.onend = () => {
-          setIsListening(false);
+        recognitionRef.current.onend = (_) => {
+          setIsListening(_false);
         };
       }
     }
   }, []);
 
-  const showToastMessage = useCallback((message: string, type: 'success' | 'error' | 'warning') => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const showToastMessage = useCallback( (message: string, type: 'success' | 'error' | 'warning') => {
+    setToastMessage(_message);
+    setToastType(_type);
+    setShowToast(_true);
+    setTimeout(() => setShowToast(_false), 3000);
   }, []);
 
   const sendMessage = async (message: string, type: string = 'question') => {
     if (!message.trim() || isLoading) return;
 
     const userMessage: AIMessage = {
-      id: Date.now().toString(),
+      id: Date.now(_).toString(),
       type: 'user',
       content: message,
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages( prev => [...prev, userMessage]);
     setInputMessage('');
-    setIsLoading(true);
+    setIsLoading(_true);
 
     try {
       const response = await fetch('/api/ai/assistant', {
@@ -139,11 +139,11 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json(_);
 
-      if (data.success) {
+      if (_data.success) {
         const assistantMessage: AIMessage = {
-          id: (Date.now() + 1).toString(),
+          id: (_Date.now() + 1).toString(),
           type: 'assistant',
           content: data.response.message,
           timestamp: new Date(),
@@ -155,34 +155,34 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
           },
         };
 
-        setMessages(prev => [...prev, assistantMessage]);
+        setMessages( prev => [...prev, assistantMessage]);
 
         // Auto-speak response if enabled
         if (isSpeaking && synthRef.current) {
-          const utterance = new SpeechSynthesisUtterance(data.response.message);
+          const utterance = new SpeechSynthesisUtterance(_data.response.message);
           utterance.rate = 0.8;
           utterance.pitch = 1;
-          synthRef.current.speak(utterance);
+          synthRef.current.speak(_utterance);
         }
       } else {
-        throw new Error(data.error || 'Failed to get AI response');
+        throw new Error(_data.error || 'Failed to get AI response');
       }
-    } catch (error) {
+    } catch (_error) {
       const errorMessage: AIMessage = {
-        id: (Date.now() + 1).toString(),
+        id: (_Date.now() + 1).toString(),
         type: 'assistant',
         content: 'I apologize, but I encountered an error. Please try again.',
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
-      showToastMessage('Failed to get AI response', 'error');
+      setMessages( prev => [...prev, errorMessage]);
+      showToastMessage( 'Failed to get AI response', 'error');
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
   // Helper function to extract concepts from messages
-  const extractConceptFromMessage = (message: string): string | null => {
+  const extractConceptFromMessage = (_message: string): string | null => {
     const conceptKeywords = [
       'smart contract', 'solidity', 'ethereum', 'blockchain', 'gas', 'wei', 'ether',
       'function', 'modifier', 'event', 'struct', 'mapping', 'array', 'inheritance',
@@ -200,24 +200,24 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
 
   // Enhanced sendMessage with callback usage
   const sendMessageWithCallbacks = async (message: string, type: string = 'question') => {
-    await sendMessage(message, type);
+    await sendMessage( message, type);
 
     // Use the callback props based on message type
-    if (type === 'analyze-code' && onCodeAnalysis && currentCode) {
-      onCodeAnalysis(currentCode);
+    if (_type === 'analyze-code' && onCodeAnalysis && currentCode) {
+      onCodeAnalysis(_currentCode);
     }
 
-    if (type === 'explain-concept' && onConceptExplanation) {
-      const concept = extractConceptFromMessage(message);
+    if (_type === 'explain-concept' && onConceptExplanation) {
+      const concept = extractConceptFromMessage(_message);
       if (concept) {
-        onConceptExplanation(concept);
+        onConceptExplanation(_concept);
       }
     }
   };
 
-  const handleQuickAction = (action: typeof quickActions[0]) => {
+  const handleQuickAction = (_action: typeof quickActions[0]) => {
     let message = '';
-    switch (action.type) {
+    switch (_action.type) {
       case 'code-review':
         message = currentCode ? `Please review this Solidity code: ${currentCode}` : 'Please explain how to write good Solidity code';
         break;
@@ -239,55 +239,55 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
       default:
         message = action.label;
     }
-    sendMessage(message, action.type);
+    sendMessage( message, action.type);
   };
 
-  const startListening = () => {
-    if (recognitionRef.current && !isListening) {
-      setIsListening(true);
-      recognitionRef.current.start();
+  const startListening = (_) => {
+    if (_recognitionRef.current && !isListening) {
+      setIsListening(_true);
+      recognitionRef.current.start(_);
     }
   };
 
-  const stopListening = () => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
+  const stopListening = (_) => {
+    if (_recognitionRef.current && isListening) {
+      recognitionRef.current.stop(_);
+      setIsListening(_false);
     }
   };
 
-  const toggleSpeaking = () => {
+  const toggleSpeaking = (_) => {
     setIsSpeaking(!isSpeaking);
     if (isSpeaking && synthRef.current) {
-      synthRef.current.cancel();
+      synthRef.current.cancel(_);
     }
   };
 
-  const copyMessage = (content: string) => {
-    navigator.clipboard.writeText(content);
-    showToastMessage('Message copied to clipboard', 'success');
+  const copyMessage = (_content: string) => {
+    navigator.clipboard.writeText(_content);
+    showToastMessage( 'Message copied to clipboard', 'success');
   };
 
-  const exportChat = () => {
+  const exportChat = (_) => {
     const chatData = messages.map(msg => ({
       type: msg.type,
       content: msg.content,
       timestamp: msg.timestamp.toISOString(),
     }));
     
-    const blob = new Blob([JSON.stringify(chatData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob( [JSON.stringify(chatData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'ai-chat-history.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    showToastMessage('Chat history exported', 'success');
+    a.click(_);
+    URL.revokeObjectURL(_url);
+    showToastMessage( 'Chat history exported', 'success');
   };
 
-  const clearChat = () => {
+  const clearChat = (_) => {
     setMessages([]);
-    showToastMessage('Chat history cleared', 'success');
+    showToastMessage( 'Chat history cleared', 'success');
   };
 
   return (
@@ -300,7 +300,7 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
           <div className="flex items-center space-x-2">
             <Brain className="w-5 h-5 text-blue-400" />
             <h3 className="font-semibold text-white">AI Learning Assistant</h3>
-            <span className="text-xs text-gray-400">({userLevel})</span>
+            <span className="text-xs text-gray-400">({ userLevel })</span>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -314,7 +314,7 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
             </Button>
             
             <Button
-              onClick={() => setShowSettings(!showSettings)}
+              onClick={(_) => setShowSettings(!showSettings)}
               variant="outline"
               size="sm"
               className="border-white/30"
@@ -323,7 +323,7 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
             </Button>
             
             <Button
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={(_) => setIsExpanded(!isExpanded)}
               variant="outline"
               size="sm"
               className="border-white/30"
@@ -339,7 +339,7 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
             {quickActions.map((action) => (
               <Button
                 key={action.id}
-                onClick={() => handleQuickAction(action)}
+                onClick={(_) => handleQuickAction(_action)}
                 variant="outline"
                 size="sm"
                 className="border-white/30 text-xs"
@@ -378,7 +378,7 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
                 
                 {message.metadata?.codeExamples && (
                   <div className="mt-2 space-y-2">
-                    {message.metadata.codeExamples.map((example, index) => (
+                    {message.metadata.codeExamples.map( (example, index) => (
                       <div key={index} className="bg-black/20 p-2 rounded text-xs">
                         <p className="font-semibold mb-1">{example.title}</p>
                         <pre className="bg-black/30 p-2 rounded overflow-x-auto">
@@ -394,7 +394,7 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
                   <div className="mt-2">
                     <p className="text-xs font-semibold mb-1">Suggestions:</p>
                     <ul className="text-xs space-y-1">
-                      {message.metadata.suggestions.map((suggestion, index) => (
+                      {message.metadata.suggestions.map( (suggestion, index) => (
                         <li key={index} className="flex items-start">
                           <Lightbulb className="w-3 h-3 mr-1 mt-0.5 flex-shrink-0" />
                           {suggestion}
@@ -406,13 +406,13 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
                 
                 <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/20">
                   <span className="text-xs opacity-70">
-                    {message.timestamp.toLocaleTimeString()}
+                    {message.timestamp.toLocaleTimeString(_)}
                   </span>
                   
                   {message.type === 'assistant' && (
                     <div className="flex items-center space-x-1">
                       <Button
-                        onClick={() => copyMessage(message.content)}
+                        onClick={(_) => copyMessage(_message.content)}
                         variant="ghost"
                         size="sm"
                         className="h-6 w-6 p-0"
@@ -464,8 +464,8 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
             <input
               type="text"
               value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && sendMessageWithCallbacks(inputMessage)}
+              onChange={(_e) => setInputMessage(_e.target.value)}
+              onKeyPress={(_e) => e.key === 'Enter' && sendMessageWithCallbacks(_inputMessage)}
               placeholder={isListening ? 'Listening...' : 'Ask me anything about Solidity...'}
               className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isLoading || isListening}
@@ -482,8 +482,8 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
             </Button>
             
             <Button
-              onClick={() => sendMessageWithCallbacks(inputMessage)}
-              disabled={!inputMessage.trim() || isLoading}
+              onClick={(_) => sendMessageWithCallbacks(_inputMessage)}
+              disabled={!inputMessage.trim(_) || isLoading}
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Send className="w-4 h-4" />
@@ -534,7 +534,7 @@ const EnhancedAIAssistantComponent: React.FC<EnhancedAIAssistantProps> = ({
           <CustomToast
             message={toastMessage}
             type={toastType}
-            onClose={() => setShowToast(false)}
+            onClose={(_) => setShowToast(_false)}
           />
         )}
       </AnimatePresence>

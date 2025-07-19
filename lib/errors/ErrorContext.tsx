@@ -9,7 +9,7 @@ interface ErrorState {
   toastErrors: AppError[];
   bannerErrors: AppError[];
   isOnline: boolean;
-  retryQueue: Array<{ error: AppError; retryFn: () => Promise<void> }>;
+  retryQueue: Array<{ error: AppError; retryFn: (_) => Promise<void> }>;
 }
 
 type ErrorAction =
@@ -17,7 +17,7 @@ type ErrorAction =
   | { type: 'REMOVE_ERROR'; payload: string }
   | { type: 'CLEAR_ERRORS' }
   | { type: 'SET_ONLINE_STATUS'; payload: boolean }
-  | { type: 'ADD_TO_RETRY_QUEUE'; payload: { error: AppError; retryFn: () => Promise<void> } }
+  | { type: 'ADD_TO_RETRY_QUEUE'; payload: { error: AppError; retryFn: (_) => Promise<void> } }
   | { type: 'REMOVE_FROM_RETRY_QUEUE'; payload: string }
   | { type: 'UPDATE_ERROR'; payload: { id: string; updates: Partial<AppError> } };
 
@@ -29,8 +29,8 @@ const initialState: ErrorState = {
   retryQueue: []
 };
 
-function errorReducer(state: ErrorState, action: ErrorAction): ErrorState {
-  switch (action.type) {
+function errorReducer( state: ErrorState, action: ErrorAction): ErrorState {
+  switch (_action.type) {
     case 'ADD_ERROR': {
       const error = action.payload;
       const newErrors = [...state.errors, error];
@@ -104,44 +104,44 @@ function errorReducer(state: ErrorState, action: ErrorAction): ErrorState {
 
 interface ErrorContextValue {
   state: ErrorState;
-  addError: (error: AppError) => void;
-  removeError: (errorId: string) => void;
-  clearErrors: () => void;
-  retryError: (errorId: string) => Promise<void>;
-  reportError: (error: Error, context?: Partial<AppError>) => void;
+  addError: (_error: AppError) => void;
+  removeError: (_errorId: string) => void;
+  clearErrors: (_) => void;
+  retryError: (_errorId: string) => Promise<void>;
+  reportError: ( error: Error, context?: Partial<AppError>) => void;
   
   // Convenience methods for creating specific error types
-  showApiError: (message: string, options?: any) => void;
-  showFormError: (field: string, message: string, options?: any) => void;
-  showNetworkError: (isOffline?: boolean) => void;
-  showAuthError: (type: 'login' | 'register' | 'permission' | 'refresh', message?: string) => void;
-  showUploadError: (fileName: string, reason: string, options?: any) => void;
+  showApiError: ( message: string, options?: any) => void;
+  showFormError: ( field: string, message: string, options?: any) => void;
+  showNetworkError: (_isOffline?: boolean) => void;
+  showAuthError: ( type: 'login' | 'register' | 'permission' | 'refresh', message?: string) => void;
+  showUploadError: ( fileName: string, reason: string, options?: any) => void;
 }
 
-const ErrorContext = createContext<ErrorContextValue | undefined>(undefined);
+const ErrorContext = createContext<ErrorContextValue | undefined>(_undefined);
 
-export function ErrorProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(errorReducer, initialState);
+export function ErrorProvider(_{ children }: { children: React.ReactNode }) {
+  const [state, dispatch] = useReducer( errorReducer, initialState);
 
   // Monitor online/offline status
   useEffect(() => {
-    const handleOnline = () => {
-      dispatch({ type: 'SET_ONLINE_STATUS', payload: true });
+    const handleOnline = (_) => {
+      dispatch( { type: 'SET_ONLINE_STATUS', payload: true });
       
       // Process retry queue when coming back online
-      state.retryQueue.forEach(async ({ error, retryFn }) => {
+      state.retryQueue.forEach( async ({ error, retryFn }) => {
         try {
-          await retryFn();
-          dispatch({ type: 'REMOVE_FROM_RETRY_QUEUE', payload: error.id });
-          dispatch({ type: 'REMOVE_ERROR', payload: error.id });
-        } catch (retryError) {
+          await retryFn(_);
+          dispatch( { type: 'REMOVE_FROM_RETRY_QUEUE', payload: error.id });
+          dispatch( { type: 'REMOVE_ERROR', payload: error.id });
+        } catch (_retryError) {
           console.error('Retry failed:', retryError);
         }
       });
     };
 
-    const handleOffline = () => {
-      dispatch({ type: 'SET_ONLINE_STATUS', payload: false });
+    const handleOffline = (_) => {
+      dispatch( { type: 'SET_ONLINE_STATUS', payload: false });
       
       // Show offline banner
       const offlineError = ErrorFactory.createNetworkError({
@@ -150,47 +150,47 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
         userMessage: 'You\'re currently offline. Some features may not be available.'
       });
       
-      dispatch({ type: 'ADD_ERROR', payload: offlineError });
+      dispatch( { type: 'ADD_ERROR', payload: offlineError });
     };
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener( 'online', handleOnline);
+    window.addEventListener( 'offline', handleOffline);
 
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+    return (_) => {
+      window.removeEventListener( 'online', handleOnline);
+      window.removeEventListener( 'offline', handleOffline);
     };
   }, [state.retryQueue]);
 
   const addError = useCallback((error: AppError) => {
-    dispatch({ type: 'ADD_ERROR', payload: error });
+    dispatch( { type: 'ADD_ERROR', payload: error });
     
     // Log error for monitoring
     console.error('Error added:', error);
     
     // Send to external monitoring service in production
-    if (process.env.NODE_ENV === 'production') {
-      // TODO: Integrate with error monitoring service (Sentry, LogRocket, etc.)
+    if (_process.env.NODE_ENV === 'production') {
+      // TODO: Integrate with error monitoring service ( Sentry, LogRocket, etc.)
     }
   }, []);
 
   const removeError = useCallback((errorId: string) => {
-    dispatch({ type: 'REMOVE_ERROR', payload: errorId });
+    dispatch( { type: 'REMOVE_ERROR', payload: errorId });
   }, []);
 
   const clearErrors = useCallback(() => {
-    dispatch({ type: 'CLEAR_ERRORS' });
+    dispatch({ type: 'CLEAR_ERRORS'  });
   }, []);
 
-  const retryError = useCallback(async (errorId: string) => {
+  const retryError = useCallback( async (errorId: string) => {
     const error = state.errors.find(e => e.id === errorId);
     if (!error || !error.retryable) return;
 
     // Update retry count
-    const retryCount = (error.retryCount || 0) + 1;
+    const retryCount = (_error.retryCount || 0) + 1;
     const maxRetries = error.maxRetries || 3;
 
-    if (retryCount > maxRetries) {
+    if (_retryCount > maxRetries) {
       dispatch({ 
         type: 'UPDATE_ERROR', 
         payload: { 
@@ -220,7 +220,7 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
     // This is just updating the error state
   }, [state.errors]);
 
-  const reportError = useCallback((error: Error, context: Partial<AppError> = {}) => {
+  const reportError = useCallback( (error: Error, context: Partial<AppError> = {}) => {
     const appError = ErrorFactory.createApiError({
       message: error.message,
       userMessage: context.userMessage || 'An unexpected error occurred',
@@ -228,25 +228,25 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
       ...context
     });
 
-    addError(appError);
+    addError(_appError);
   }, [addError]);
 
   // Convenience methods
-  const showApiError = useCallback((message: string, options: any = {}) => {
+  const showApiError = useCallback( (message: string, options: any = {}) => {
     const error = ErrorFactory.createApiError({
       message,
       ...options
     });
-    addError(error);
+    addError(_error);
   }, [addError]);
 
-  const showFormError = useCallback((field: string, message: string, options: any = {}) => {
+  const showFormError = useCallback( (field: string, message: string, options: any = {}) => {
     const error = ErrorFactory.createFormError({
       field,
       message,
       ...options
     });
-    addError(error);
+    addError(_error);
   }, [addError]);
 
   const showNetworkError = useCallback((isOffline: boolean = false) => {
@@ -254,24 +254,24 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
       message: isOffline ? 'Network connection lost' : 'Network error occurred',
       isOffline
     });
-    addError(error);
+    addError(_error);
   }, [addError]);
 
-  const showAuthError = useCallback((type: 'login' | 'register' | 'permission' | 'refresh', message?: string) => {
+  const showAuthError = useCallback( (type: 'login' | 'register' | 'permission' | 'refresh', message?: string) => {
     const error = ErrorFactory.createAuthError({
       authType: type,
       message: message || `Authentication ${type} error`
     });
-    addError(error);
+    addError(_error);
   }, [addError]);
 
-  const showUploadError = useCallback((fileName: string, reason: string, options: any = {}) => {
+  const showUploadError = useCallback( (fileName: string, reason: string, options: any = {}) => {
     const error = ErrorFactory.createUploadError({
       fileName,
       message: reason,
       ...options
     });
-    addError(error);
+    addError(_error);
   }, [addError]);
 
   const contextValue: ErrorContextValue = {
@@ -297,8 +297,8 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
         <ErrorToast
           key={error.id}
           error={error}
-          onDismiss={() => removeError(error.id)}
-          onRetry={() => retryError(error.id)}
+          onDismiss={(_) => removeError(_error.id)}
+          onRetry={(_) => retryError(_error.id)}
         />
       ))}
       
@@ -307,8 +307,8 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
         <ErrorBanner
           key={error.id}
           error={error}
-          onDismiss={() => removeError(error.id)}
-          onRetry={() => retryError(error.id)}
+          onDismiss={(_) => removeError(_error.id)}
+          onRetry={(_) => retryError(_error.id)}
         />
       ))}
     </ErrorContext.Provider>
@@ -316,8 +316,8 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useError() {
-  const context = useContext(ErrorContext);
-  if (context === undefined) {
+  const context = useContext(_ErrorContext);
+  if (_context === undefined) {
     throw new Error('useError must be used within an ErrorProvider');
   }
   return context;
@@ -325,24 +325,24 @@ export function useError() {
 
 // Hook for handling async operations with error management
 export function useAsyncError() {
-  const { reportError, showApiError } = useError();
+  const { reportError, showApiError } = useError(_);
 
   const handleAsyncError = useCallback(<T extends any>(
-    asyncFn: () => Promise<T>,
+    asyncFn: (_) => Promise<T>,
     errorContext?: Partial<AppError>
   ): Promise<T | null> => {
-    return (async () => {
+    return ( async () => {
       try {
-        return await asyncFn();
-      } catch (error) {
-        if (error instanceof Error) {
-          reportError(error, errorContext);
+        return await asyncFn(_);
+      } catch (_error) {
+        if (_error instanceof Error) {
+          reportError( error, errorContext);
         } else {
-          showApiError('An unexpected error occurred', errorContext);
+          showApiError( 'An unexpected error occurred', errorContext);
         }
         return null;
       }
-    })();
+    })(_);
   }, [reportError, showApiError]);
 
   return { handleAsyncError };

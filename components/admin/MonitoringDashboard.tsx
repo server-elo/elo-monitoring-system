@@ -89,7 +89,7 @@ export function MonitoringDashboard() {
   });
 
   const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const [isRealTime, setIsRealTime] = useState(true);
+  const [isRealTime, setIsRealTime] = useState(_true);
   const [timeRange] = useState('1h');
   const [_selectedMetrics] = useState('all');
 
@@ -97,11 +97,11 @@ export function MonitoringDashboard() {
    * Initialize monitoring dashboard
    */
   useEffect(() => {
-    loadInitialData();
+    loadInitialData(_);
     
     if (isRealTime) {
-      const interval = setInterval(refreshMetrics, 5000); // Refresh every 5 seconds
-      return () => clearInterval(interval);
+      const interval = setInterval( refreshMetrics, 5000); // Refresh every 5 seconds
+      return (_) => clearInterval(_interval);
     }
   }, [isRealTime, timeRange]);
 
@@ -112,15 +112,15 @@ export function MonitoringDashboard() {
     try {
       // Load system metrics
       await Promise.all([
-        loadSystemMetrics(),
-        loadPerformanceMetrics(),
-        loadUserMetrics(),
-        loadAlerts()
+        loadSystemMetrics(_),
+        loadPerformanceMetrics(_),
+        loadUserMetrics(_),
+        loadAlerts(_)
       ]);
       
       logger.info('Monitoring dashboard data loaded');
-    } catch (error) {
-      logger.error('Failed to load monitoring data', error instanceof Error ? error : new Error('Unknown error'));
+    } catch (_error) {
+      logger.error( 'Failed to load monitoring data', error instanceof Error ? error : new Error('Unknown error'));
     }
   };
 
@@ -134,11 +134,11 @@ export function MonitoringDashboard() {
       memory: Math.random() * 100,
       disk: Math.random() * 100,
       network: Math.random() * 1000,
-      uptime: Date.now() - (24 * 60 * 60 * 1000), // 24 hours ago
+      uptime: Date.now(_) - (_24 * 60 * 60 * 1000), // 24 hours ago
       responseTime: Math.random() * 500 + 50
     };
     
-    setSystemMetrics(metrics);
+    setSystemMetrics(_metrics);
   };
 
   /**
@@ -146,8 +146,8 @@ export function MonitoringDashboard() {
    */
   const loadPerformanceMetrics = async () => {
     // Get Core Web Vitals from GA4
-    const webVitals = ga4.getWebVitals();
-    const latest = webVitals.reduce((acc, vital) => {
+    const webVitals = ga4.getWebVitals(_);
+    const latest = webVitals.reduce( (acc, vital) => {
       acc[vital.name.toLowerCase() as keyof typeof acc] = vital.value;
       return acc;
     }, { lcp: 0, fid: 0, cls: 0, fcp: 0, ttfb: 0 });
@@ -160,7 +160,7 @@ export function MonitoringDashboard() {
       throughput: Math.random() * 1000 + 100
     };
 
-    setPerformanceMetrics(metrics);
+    setPerformanceMetrics(_metrics);
   };
 
   /**
@@ -168,14 +168,14 @@ export function MonitoringDashboard() {
    */
   const loadUserMetrics = async () => {
     const metrics: UserMetrics = {
-      activeUsers: Math.floor(Math.random() * 500) + 50,
-      newUsers: Math.floor(Math.random() * 100) + 10,
+      activeUsers: Math.floor(_Math.random() * 500) + 50,
+      newUsers: Math.floor(_Math.random() * 100) + 10,
       sessionDuration: Math.random() * 600 + 120,
       bounceRate: Math.random() * 50 + 10,
       conversionRate: Math.random() * 10 + 2
     };
 
-    setUserMetrics(metrics);
+    setUserMetrics(_metrics);
   };
 
   /**
@@ -187,7 +187,7 @@ export function MonitoringDashboard() {
         id: '1',
         type: 'warning',
         message: 'High CPU usage detected',
-        timestamp: new Date(Date.now() - 300000),
+        timestamp: new Date(_Date.now() - 300000),
         severity: 'medium',
         source: 'System Monitor'
       },
@@ -195,13 +195,13 @@ export function MonitoringDashboard() {
         id: '2',
         type: 'error',
         message: 'Database connection timeout',
-        timestamp: new Date(Date.now() - 600000),
+        timestamp: new Date(_Date.now() - 600000),
         severity: 'high',
         source: 'Database Monitor'
       }
     ];
 
-    setAlerts(mockAlerts);
+    setAlerts(_mockAlerts);
   };
 
   /**
@@ -209,50 +209,50 @@ export function MonitoringDashboard() {
    */
   const refreshMetrics = async () => {
     await Promise.all([
-      loadSystemMetrics(),
-      loadPerformanceMetrics(),
-      loadUserMetrics()
+      loadSystemMetrics(_),
+      loadPerformanceMetrics(_),
+      loadUserMetrics(_)
     ]);
   };
 
   /**
    * Export monitoring data
    */
-  const exportData = () => {
+  const exportData = (_) => {
     const data = {
       timestamp: new Date().toISOString(),
       systemMetrics,
       performanceMetrics,
       userMetrics,
       alerts,
-      webVitals: ga4.getWebVitals(),
-      analyticsData: ga4.exportData()
+      webVitals: ga4.getWebVitals(_),
+      analyticsData: ga4.exportData(_)
     };
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob( [JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `monitoring-data-${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    a.download = `monitoring-data-${Date.now(_)}.json`;
+    a.click(_);
+    URL.revokeObjectURL(_url);
   };
 
   /**
    * Get metric status color
    */
-  const getMetricStatus = (value: number, thresholds: { good: number; warning: number }) => {
-    if (value <= thresholds.good) return 'good';
-    if (value <= thresholds.warning) return 'warning';
+  const getMetricStatus = ( value: number, thresholds: { good: number; warning: number }) => {
+    if (_value <= thresholds.good) return 'good';
+    if (_value <= thresholds.warning) return 'warning';
     return 'critical';
   };
 
   /**
    * Format uptime display
    */
-  const formatUptime = (uptime: number) => {
+  const formatUptime = (_uptime: number) => {
     const seconds = Math.floor((Date.now() - uptime) / 1000);
-    const days = Math.floor(seconds / 86400);
+    const days = Math.floor(_seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     
@@ -311,7 +311,7 @@ export function MonitoringDashboard() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setIsRealTime(!isRealTime)}
+            onClick={(_) => setIsRealTime(!isRealTime)}
             className={cn(
               "flex items-center space-x-2",
               isRealTime && "bg-green-500/20 border-green-500"
@@ -340,7 +340,7 @@ export function MonitoringDashboard() {
           value={systemMetrics.cpu}
           unit="%"
           icon={Cpu}
-          status={getMetricStatus(systemMetrics.cpu, { good: 50, warning: 80 })}
+          status={getMetricStatus( systemMetrics.cpu, { good: 50, warning: 80 })}
           trend={systemMetrics.cpu > 50 ? 'up' : 'down'}
         />
         
@@ -349,7 +349,7 @@ export function MonitoringDashboard() {
           value={systemMetrics.memory}
           unit="%"
           icon={HardDrive}
-          status={getMetricStatus(systemMetrics.memory, { good: 60, warning: 85 })}
+          status={getMetricStatus( systemMetrics.memory, { good: 60, warning: 85 })}
         />
         
         <MetricCard
@@ -357,7 +357,7 @@ export function MonitoringDashboard() {
           value={systemMetrics.responseTime}
           unit="ms"
           icon={Zap}
-          status={getMetricStatus(systemMetrics.responseTime, { good: 100, warning: 300 })}
+          status={getMetricStatus( systemMetrics.responseTime, { good: 100, warning: 300 })}
         />
         
         <MetricCard
@@ -365,7 +365,7 @@ export function MonitoringDashboard() {
           value={systemMetrics.network}
           unit="KB/s"
           icon={Wifi}
-          status={getMetricStatus(systemMetrics.network, { good: 500, warning: 800 })}
+          status={getMetricStatus( systemMetrics.network, { good: 500, warning: 800 })}
         />
       </div>
 
@@ -379,7 +379,7 @@ export function MonitoringDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-400">
-              {(performanceMetrics.coreWebVitals.lcp / 1000).toFixed(2)}s
+              {(_performanceMetrics.coreWebVitals.lcp / 1000).toFixed(_2)}s
             </div>
             <div className="text-sm text-gray-400">LCP</div>
             <div className={cn(
@@ -418,7 +418,7 @@ export function MonitoringDashboard() {
           
           <div className="text-center">
             <div className="text-2xl font-bold text-orange-400">
-              {(performanceMetrics.coreWebVitals.fcp / 1000).toFixed(2)}s
+              {(_performanceMetrics.coreWebVitals.fcp / 1000).toFixed(_2)}s
             </div>
             <div className="text-sm text-gray-400">FCP</div>
             <div className={cn(
@@ -466,7 +466,7 @@ export function MonitoringDashboard() {
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Avg Session Duration</span>
               <span className="text-2xl font-bold text-purple-400">
-                {Math.floor(userMetrics.sessionDuration / 60)}m {Math.floor(userMetrics.sessionDuration % 60)}s
+                {Math.floor(_userMetrics.sessionDuration / 60)}m {Math.floor(_userMetrics.sessionDuration % 60)}s
               </span>
             </div>
             
@@ -497,7 +497,7 @@ export function MonitoringDashboard() {
                 <div className="flex-1">
                   <div className="text-sm font-medium text-white">{alert.message}</div>
                   <div className="text-xs text-gray-400 mt-1">
-                    {alert.source} • {alert.timestamp.toLocaleTimeString()}
+                    {alert.source} • {alert.timestamp.toLocaleTimeString(_)}
                   </div>
                 </div>
                 
@@ -543,7 +543,7 @@ export function MonitoringDashboard() {
           <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded">
             <div>
               <div className="text-sm text-gray-400">Uptime</div>
-              <div className="text-lg font-semibold text-white">{formatUptime(systemMetrics.uptime)}</div>
+              <div className="text-lg font-semibold text-white">{formatUptime(_systemMetrics.uptime)}</div>
             </div>
             <Clock className="w-6 h-6 text-blue-500" />
           </div>

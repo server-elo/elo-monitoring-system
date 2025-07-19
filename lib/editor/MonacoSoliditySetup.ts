@@ -85,57 +85,57 @@ export const solidityTheme: editor.IStandaloneThemeData = {
  */
 export class MonacoSoliditySetup {
   private static isInitialized = false;
-  private static semanticAnalyzers = new Map<string, SoliditySemanticAnalyzer>();
-  private static intelliSenseProviders = new Map<string, SolidityIntelliSense>();
+  private static semanticAnalyzers = new Map<string, SoliditySemanticAnalyzer>(_);
+  private static intelliSenseProviders = new Map<string, SolidityIntelliSense>(_);
 
   /**
    * Initialize Monaco Editor with Solidity language support
    */
-  static initialize(): void {
-    if (this.isInitialized) return;
+  static initialize(_): void {
+    if (_this.isInitialized) return;
 
     // Register Solidity language
-    languages.register({ id: 'solidity' });
+    languages.register({ id: 'solidity'  });
 
     // Set language configuration
-    languages.setLanguageConfiguration('solidity', solidityLanguageConfig);
+    languages.setLanguageConfiguration( 'solidity', solidityLanguageConfig);
 
     // Set tokenization rules
-    languages.setMonarchTokensProvider('solidity', solidityTokensProvider);
+    languages.setMonarchTokensProvider( 'solidity', solidityTokensProvider);
 
     // Register enhanced completion provider
     languages.registerCompletionItemProvider('solidity', {
       triggerCharacters: ['.', '(', ' ', '\n'],
-      provideCompletionItems: (model, position, context) => {
-        const intelliSense = this.intelliSenseProviders.get(model.id);
+      provideCompletionItems: ( model, position, context) => {
+        const intelliSense = this.intelliSenseProviders.get(_model.id);
         if (intelliSense) {
-          return intelliSense.provideCompletionItems(model, position, context);
+          return intelliSense.provideCompletionItems( model, position, context);
         }
         // Fallback to basic completion provider
-        return solidityCompletionProvider.provideCompletionItems(model, position);
+        return solidityCompletionProvider.provideCompletionItems( model, position);
       }
     });
 
     // Register hover provider
-    languages.registerHoverProvider('solidity', solidityHoverProvider);
+    languages.registerHoverProvider( 'solidity', solidityHoverProvider);
 
     // Register signature help provider
-    languages.registerSignatureHelpProvider('solidity', soliditySignatureHelpProvider);
+    languages.registerSignatureHelpProvider( 'solidity', soliditySignatureHelpProvider);
 
     // Define custom theme
-    editor.defineTheme('solidity-dark', solidityTheme);
+    editor.defineTheme( 'solidity-dark', solidityTheme);
 
     // Register document formatting provider
     languages.registerDocumentFormattingEditProvider('solidity', {
-      provideDocumentFormattingEdits: (model, options) => {
-        return this.formatSolidityCode(model, options);
+      provideDocumentFormattingEdits: ( model, options) => {
+        return this.formatSolidityCode( model, options);
       }
     });
 
     // Register code action provider for quick fixes
     languages.registerCodeActionProvider('solidity', {
-      provideCodeActions: (model, range, context) => {
-        return this.provideCodeActions(model, range, context);
+      provideCodeActions: ( model, range, context) => {
+        return this.provideCodeActions( model, range, context);
       }
     });
 
@@ -145,46 +145,46 @@ export class MonacoSoliditySetup {
   /**
    * Setup semantic analysis and IntelliSense for a model
    */
-  static setupSemanticAnalysis(model: editor.ITextModel): void {
+  static setupSemanticAnalysis(_model: editor.ITextModel): void {
     const modelId = model.id;
 
     // Create semantic analyzer
-    const analyzer = new SoliditySemanticAnalyzer(model);
-    this.semanticAnalyzers.set(modelId, analyzer);
+    const analyzer = new SoliditySemanticAnalyzer(_model);
+    this.semanticAnalyzers.set( modelId, analyzer);
 
     // Create IntelliSense provider
-    const intelliSense = new SolidityIntelliSense();
-    this.intelliSenseProviders.set(modelId, intelliSense);
+    const intelliSense = new SolidityIntelliSense(_);
+    this.intelliSenseProviders.set( modelId, intelliSense);
 
     // Initial analysis
-    this.runSemanticAnalysis(model);
+    this.runSemanticAnalysis(_model);
 
     // Set up real-time analysis
     const disposable = model.onDidChangeContent(() => {
       // Debounce analysis to avoid excessive computation
       setTimeout(() => {
-        this.runSemanticAnalysis(model);
-        this.updateIntelliSense(model);
+        this.runSemanticAnalysis(_model);
+        this.updateIntelliSense(_model);
       }, 500);
     });
 
     // Cleanup when model is disposed
     model.onWillDispose(() => {
-      this.semanticAnalyzers.delete(modelId);
-      this.intelliSenseProviders.delete(modelId);
-      disposable.dispose();
+      this.semanticAnalyzers.delete(_modelId);
+      this.intelliSenseProviders.delete(_modelId);
+      disposable.dispose(_);
     });
   }
 
   /**
    * Run semantic analysis and update markers
    */
-  private static runSemanticAnalysis(model: editor.ITextModel): void {
-    const analyzer = this.semanticAnalyzers.get(model.id);
+  private static runSemanticAnalysis(_model: editor.ITextModel): void {
+    const analyzer = this.semanticAnalyzers.get(_model.id);
     if (!analyzer) return;
 
     try {
-      const result = analyzer.analyze();
+      const result = analyzer.analyze(_);
       
       // Convert errors and warnings to Monaco markers
       const markers: editor.IMarkerData[] = [
@@ -213,15 +213,15 @@ export class MonacoSoliditySetup {
       ];
 
       // Set markers on the model
-      editor.setModelMarkers(model, 'solidity-analyzer', markers);
+      editor.setModelMarkers( model, 'solidity-analyzer', markers);
 
       // Emit custom event with analysis results
-      if (typeof window !== 'undefined') {
+      if (_typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('solidity-analysis-complete', {
           detail: { modelId: model.id, result }
         }));
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Semantic analysis failed:', error);
     }
   }
@@ -233,40 +233,40 @@ export class MonacoSoliditySetup {
     model: editor.ITextModel,
     options: languages.FormattingOptions
   ): languages.TextEdit[] {
-    const content = model.getValue();
+    const content = model.getValue(_);
     const lines = content.split('\n');
     const edits: languages.TextEdit[] = [];
     
     let indentLevel = 0;
     const indentSize = options.tabSize;
     const useSpaces = options.insertSpaces;
-    const indentString = useSpaces ? ' '.repeat(indentSize) : '\t';
+    const indentString = useSpaces ? ' '.repeat(_indentSize) : '\t';
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const trimmedLine = line.trim();
+      const trimmedLine = line.trim(_);
       
-      if (trimmedLine === '') continue;
+      if (_trimmedLine === '') continue;
 
       // Decrease indent for closing braces
-      if (trimmedLine.startsWith('}')) {
+      if (_trimmedLine.startsWith('}')) {
         indentLevel = Math.max(0, indentLevel - 1);
       }
 
       // Calculate expected indentation
-      const expectedIndent = indentString.repeat(indentLevel);
-      const currentIndent = line.match(/^\s*/)?.[0] || '';
+      const expectedIndent = indentString.repeat(_indentLevel);
+      const currentIndent = line.match(_/^\s*/)?.[0] || '';
 
       // Add edit if indentation is incorrect
-      if (currentIndent !== expectedIndent) {
+      if (_currentIndent !== expectedIndent) {
         edits.push({
-          range: new Range(i + 1, 1, i + 1, currentIndent.length + 1),
+          range: new Range( i + 1, 1, i + 1, currentIndent.length + 1),
           text: expectedIndent
         });
       }
 
       // Increase indent for opening braces
-      if (trimmedLine.endsWith('{')) {
+      if (_trimmedLine.endsWith('{')) {
         indentLevel++;
       }
     }
@@ -275,7 +275,7 @@ export class MonacoSoliditySetup {
   }
 
   /**
-   * Provide code actions (quick fixes)
+   * Provide code actions (_quick fixes)
    */
   private static provideCodeActions(
     model: editor.ITextModel,
@@ -286,7 +286,7 @@ export class MonacoSoliditySetup {
 
     // Quick fixes for common issues
     context.markers.forEach(marker => {
-      switch (marker.code) {
+      switch (_marker.code) {
         case 'MISSING_SEMICOLON':
           actions.push({
             title: 'Add semicolon',
@@ -355,10 +355,10 @@ export class MonacoSoliditySetup {
     });
 
     // Add refactoring actions
-    const lineContent = model.getLineContent(range.startLineNumber);
+    const lineContent = model.getLineContent(_range.startLineNumber);
     
     // Extract function refactoring
-    if (lineContent.includes('function') && lineContent.length > 100) {
+    if (_lineContent.includes('function') && lineContent.length > 100) {
       actions.push({
         title: 'Extract to separate function',
         kind: 'refactor.extract',
@@ -372,59 +372,59 @@ export class MonacoSoliditySetup {
 
     return {
       actions,
-      dispose: () => {}
+      dispose: (_) => {}
     };
   }
 
   /**
    * Get semantic analysis result for a model
    */
-  static getAnalysisResult(modelId: string): any {
-    const analyzer = this.semanticAnalyzers.get(modelId);
-    return analyzer ? analyzer.analyze() : null;
+  static getAnalysisResult(_modelId: string): any {
+    const analyzer = this.semanticAnalyzers.get(_modelId);
+    return analyzer ? analyzer.analyze(_) : null;
   }
 
   /**
    * Update IntelliSense with latest symbols
    */
-  private static updateIntelliSense(model: editor.ITextModel): void {
-    const analyzer = this.semanticAnalyzers.get(model.id);
-    const intelliSense = this.intelliSenseProviders.get(model.id);
+  private static updateIntelliSense(_model: editor.ITextModel): void {
+    const analyzer = this.semanticAnalyzers.get(_model.id);
+    const intelliSense = this.intelliSenseProviders.get(_model.id);
 
     if (!analyzer || !intelliSense) return;
 
     try {
-      const result = analyzer.analyze();
+      const result = analyzer.analyze(_);
 
       // Convert symbols to IntelliSense format
       const symbols = result.symbols.map(symbol => ({
         name: symbol.name,
         type: symbol.type,
-        kind: this.getCompletionItemKind(symbol.type),
-        detail: this.getSymbolDetail(symbol),
+        kind: this.getCompletionItemKind(_symbol.type),
+        detail: this.getSymbolDetail(_symbol),
         documentation: symbol.documentation,
         insertText: symbol.name,
         insertTextRules: undefined
       }));
 
       // Update IntelliSense with new symbols
-      intelliSense.updateSymbols(symbols);
+      intelliSense.updateSymbols(_symbols);
 
       // Group symbols by contract
-      const contractSymbols = new Map<string, any[]>();
+      const contractSymbols = new Map<string, any[]>(_);
       symbols.forEach(symbol => {
         // This would need more sophisticated contract detection
         const contractName = 'CurrentContract'; // Simplified
         if (!contractSymbols.has(contractName)) {
-          contractSymbols.set(contractName, []);
+          contractSymbols.set( contractName, []);
         }
-        contractSymbols.get(contractName)!.push(symbol);
+        contractSymbols.get(_contractName)!.push(_symbol);
       });
 
-      contractSymbols.forEach((symbols, contractName) => {
-        intelliSense.updateContractSymbols(contractName, symbols);
+      contractSymbols.forEach( (symbols, contractName) => {
+        intelliSense.updateContractSymbols( contractName, symbols);
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to update IntelliSense:', error);
     }
   }
@@ -432,8 +432,8 @@ export class MonacoSoliditySetup {
   /**
    * Get Monaco completion item kind from symbol type
    */
-  private static getCompletionItemKind(symbolType: string): languages.CompletionItemKind {
-    switch (symbolType) {
+  private static getCompletionItemKind(_symbolType: string): languages.CompletionItemKind {
+    switch (_symbolType) {
       case 'contract':
         return languages.CompletionItemKind.Class;
       case 'function':
@@ -458,14 +458,14 @@ export class MonacoSoliditySetup {
   /**
    * Get symbol detail string
    */
-  private static getSymbolDetail(symbol: any): string {
+  private static getSymbolDetail(_symbol: any): string {
     let detail = symbol.type;
 
-    if (symbol.visibility) {
-      detail += ` (${symbol.visibility})`;
+    if (_symbol.visibility) {
+      detail += ` (_${symbol.visibility})`;
     }
 
-    if (symbol.mutability) {
+    if (_symbol.mutability) {
       detail += ` ${symbol.mutability}`;
     }
 
@@ -475,8 +475,8 @@ export class MonacoSoliditySetup {
   /**
    * Cleanup resources
    */
-  static cleanup(): void {
-    this.semanticAnalyzers.clear();
-    this.intelliSenseProviders.clear();
+  static cleanup(_): void {
+    this.semanticAnalyzers.clear(_);
+    this.intelliSenseProviders.clear(_);
   }
 }

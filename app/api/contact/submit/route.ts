@@ -18,11 +18,11 @@ const contactFormSchema = z.object({
   source: z.string().optional(),
 });
 
-export async function POST(_request: NextRequest) {
+export async function POST( request: NextRequest) {
   
   try {
     // Parse request body
-    const body = await _request.json();
+    const body = await request.json();
     
     // Validate input
     const validationResult = contactFormSchema.safeParse(body);
@@ -43,10 +43,10 @@ export async function POST(_request: NextRequest) {
 
     // Sanitize input data
     const sanitizedData = {
-      name: sanitize.text(name),
-      email: sanitize.text(email),
-      subject: sanitize.text(subject),
-      message: sanitize.text(message),
+      name: sanitize.text(_name),
+      email: sanitize.text(_email),
+      subject: sanitize.text(_subject),
+      message: sanitize.text(_message),
       timestamp,
       source: source || 'contact_form',
     };
@@ -61,7 +61,7 @@ export async function POST(_request: NextRequest) {
     // 4. Queue for follow-up
     
     // For now, we'll simulate these operations
-    await simulateContactProcessing(sanitizedData, submissionId);
+    await simulateContactProcessing( sanitizedData, submissionId);
 
     // Log successful submission
     logger.info('Contact form submitted successfully');
@@ -70,8 +70,8 @@ export async function POST(_request: NextRequest) {
     analytics.trackEvent('contact_form_submitted', {
       submissionId,
       source: sanitizedData.source,
-      subject_category: categorizeSubject(sanitizedData.subject),
-      timestamp: new Date(timestamp),
+      subjectcategory: categorizeSubject(sanitizedData.subject),
+      timestamp: new Date(_timestamp),
     });
 
     return NextResponse.json({
@@ -84,7 +84,7 @@ export async function POST(_request: NextRequest) {
   } catch (error) {
     logger.error(
       'Contact form submission failed',
-      error instanceof Error ? error : new Error(String(error))
+      error instanceof Error ? error : new Error(_String(error))
     );
 
     return NextResponse.json(
@@ -101,21 +101,21 @@ export async function POST(_request: NextRequest) {
  * Simulate contact form processing
  * In production, this would handle real database operations and email sending
  */
-async function simulateContactProcessing(data: any, submissionId: string) {
+async function simulateContactProcessing( data: any, submissionId: string) {
   // Simulate database save
   await new Promise(resolve => setTimeout(resolve, 100));
   
   // Simulate email notification
-  await simulateEmailNotification(data, submissionId);
+  await simulateEmailNotification( data, submissionId);
   
   // Simulate CRM integration
-  await simulateCRMIntegration(data, submissionId);
+  await simulateCRMIntegration( data, submissionId);
 }
 
 /**
  * Simulate email notification to support team
  */
-async function simulateEmailNotification(_data: any, _submissionId: string) {
+async function simulateEmailNotification( data: any, submissionId: string) {
   // In production, this would use a service like SendGrid, AWS SES, or similar
   logger.info('Email notification sent');
 }
@@ -123,7 +123,7 @@ async function simulateEmailNotification(_data: any, _submissionId: string) {
 /**
  * Simulate CRM integration
  */
-async function simulateCRMIntegration(_data: any, _submissionId: string) {
+async function simulateCRMIntegration( data: any, submissionId: string) {
   // In production, this would integrate with CRM systems like HubSpot, Salesforce, etc.
   logger.info('CRM record created');
 }
@@ -131,14 +131,14 @@ async function simulateCRMIntegration(_data: any, _submissionId: string) {
 /**
  * Categorize subject for analytics
  */
-function categorizeSubject(subject: string): string {
+function categorizeSubject(_subject: string): string {
   const lowerSubject = subject.toLowerCase();
   
   if (lowerSubject.includes('bug') || lowerSubject.includes('error') || lowerSubject.includes('problem')) {
     return 'bug_report';
   }
   if (lowerSubject.includes('feature') || lowerSubject.includes('request') || lowerSubject.includes('suggestion')) {
-    return 'feature_request';
+    return 'featurerequest';
   }
   if (lowerSubject.includes('help') || lowerSubject.includes('support') || lowerSubject.includes('question')) {
     return 'support';
@@ -168,7 +168,7 @@ export async function GET() {
       supportedCategories: [
         'general',
         'bug_report',
-        'feature_request',
+        'featurerequest',
         'support',
         'billing',
         'business',

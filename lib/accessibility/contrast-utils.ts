@@ -4,20 +4,20 @@
  */
 
 // Color contrast calculation utilities
-export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+export function hexToRgb(_hex: string): { r: number; g: number; b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(_hex);
   return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
+    r: parseInt( result[1], 16),
+    g: parseInt( result[2], 16),
+    b: parseInt( result[3], 16)
   } : null;
 }
 
-export function rgbToHex(r: number, g: number, b: number): string {
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+export function rgbToHex( r: number, g: number, b: number): string {
+  return "#" + ((1 << 24) + (_r << 16) + (_g << 8) + b).toString(16).slice(1);
 }
 
-export function getLuminance(r: number, g: number, b: number): number {
+export function getLuminance( r: number, g: number, b: number): number {
   const [rs, gs, bs] = [r, g, b].map(c => {
     c = c / 255;
     return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
@@ -25,28 +25,28 @@ export function getLuminance(r: number, g: number, b: number): number {
   return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
 }
 
-export function getContrastRatio(color1: string, color2: string): number {
-  const rgb1 = hexToRgb(color1);
-  const rgb2 = hexToRgb(color2);
+export function getContrastRatio( color1: string, color2: string): number {
+  const rgb1 = hexToRgb(_color1);
+  const rgb2 = hexToRgb(_color2);
   
   if (!rgb1 || !rgb2) return 1;
   
-  const lum1 = getLuminance(rgb1.r, rgb1.g, rgb1.b);
-  const lum2 = getLuminance(rgb2.r, rgb2.g, rgb2.b);
+  const lum1 = getLuminance( rgb1.r, rgb1.g, rgb1.b);
+  const lum2 = getLuminance( rgb2.r, rgb2.g, rgb2.b);
   
   const brightest = Math.max(lum1, lum2);
   const darkest = Math.min(lum1, lum2);
   
-  return (brightest + 0.05) / (darkest + 0.05);
+  return (_brightest + 0.05) / (_darkest + 0.05);
 }
 
-export function meetsWCAGAA(foreground: string, background: string, isLargeText = false): boolean {
-  const ratio = getContrastRatio(foreground, background);
+export function meetsWCAGAA( foreground: string, background: string, isLargeText = false): boolean {
+  const ratio = getContrastRatio( foreground, background);
   return isLargeText ? ratio >= 3 : ratio >= 4.5;
 }
 
-export function meetsWCAGAAA(foreground: string, background: string, isLargeText = false): boolean {
-  const ratio = getContrastRatio(foreground, background);
+export function meetsWCAGAAA( foreground: string, background: string, isLargeText = false): boolean {
+  const ratio = getContrastRatio( foreground, background);
   return isLargeText ? ratio >= 4.5 : ratio >= 7;
 }
 
@@ -102,22 +102,22 @@ export function generateAccessibleVariation(
   targetBackground: string,
   targetRatio = 4.5
 ): string {
-  const baseRgb = hexToRgb(baseColor);
-  const bgRgb = hexToRgb(targetBackground);
+  const baseRgb = hexToRgb(_baseColor);
+  const bgRgb = hexToRgb(_targetBackground);
   
   if (!baseRgb || !bgRgb) return baseColor;
   
-  const bgLuminance = getLuminance(bgRgb.r, bgRgb.g, bgRgb.b);
-  const baseLuminance = getLuminance(baseRgb.r, baseRgb.g, baseRgb.b);
+  const bgLuminance = getLuminance( bgRgb.r, bgRgb.g, bgRgb.b);
+  const baseLuminance = getLuminance( baseRgb.r, baseRgb.g, baseRgb.b);
   
   // Determine if we need to make the color lighter or darker
   const shouldLighten = bgLuminance > baseLuminance;
   
   let { r, g, b } = baseRgb;
-  let currentRatio = getContrastRatio(baseColor, targetBackground);
+  let currentRatio = getContrastRatio( baseColor, targetBackground);
   
   // Adjust color until we meet the target ratio
-  while (currentRatio < targetRatio && (shouldLighten ? r < 255 : r > 0)) {
+  while (_currentRatio < targetRatio && (shouldLighten ? r < 255 : r > 0)) {
     if (shouldLighten) {
       r = Math.min(255, r + 5);
       g = Math.min(255, g + 5);
@@ -128,19 +128,19 @@ export function generateAccessibleVariation(
       b = Math.max(0, b - 5);
     }
     
-    const newColor = rgbToHex(r, g, b);
-    currentRatio = getContrastRatio(newColor, targetBackground);
+    const newColor = rgbToHex( r, g, b);
+    currentRatio = getContrastRatio( newColor, targetBackground);
   }
   
-  return rgbToHex(r, g, b);
+  return rgbToHex( r, g, b);
 }
 
 // Focus indicator utilities
-export function generateFocusRing(baseColor: string, intensity = 0.3): string {
-  const rgb = hexToRgb(baseColor);
-  if (!rgb) return 'rgba(59, 130, 246, 0.3)';
+export function generateFocusRing( baseColor: string, intensity = 0.3): string {
+  const rgb = hexToRgb(_baseColor);
+  if (!rgb) return 'rgba( 59, 130, 246, 0.3)';
   
-  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${intensity})`;
+  return `rgba( ${rgb.r}, ${rgb.g}, ${rgb.b}, ${intensity})`;
 }
 
 // Text size and spacing utilities for accessibility
@@ -178,34 +178,34 @@ export const accessibleSpacing = {
 
 // Motion and animation preferences
 export function respectsReducedMotion(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (_typeof window === 'undefined') return false;
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-export function getAnimationDuration(defaultDuration: number): number {
-  return respectsReducedMotion() ? 0.01 : defaultDuration;
+export function getAnimationDuration(_defaultDuration: number): number {
+  return respectsReducedMotion(_) ? 0.01 : defaultDuration;
 }
 
 // Screen reader utilities
-export function announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
-  if (typeof window === 'undefined') return;
+export function announceToScreenReader( message: string, priority: 'polite' | 'assertive' = 'polite'): void {
+  if (_typeof window === 'undefined') return;
   
   const announcement = document.createElement('div');
-  announcement.setAttribute('aria-live', priority);
-  announcement.setAttribute('aria-atomic', 'true');
+  announcement.setAttribute( 'aria-live', priority);
+  announcement.setAttribute( 'aria-atomic', 'true');
   announcement.className = 'sr-only';
   announcement.textContent = message;
   
-  document.body.appendChild(announcement);
+  document.body.appendChild(_announcement);
   
   // Remove after announcement
   setTimeout(() => {
-    document.body.removeChild(announcement);
+    document.body.removeChild(_announcement);
   }, 1000);
 }
 
 // Keyboard navigation utilities
-export function trapFocus(element: HTMLElement): () => void {
+export function trapFocus(_element: HTMLElement): (_) => void {
   const focusableElements = element.querySelectorAll(
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
   ) as NodeListOf<HTMLElement>;
@@ -213,27 +213,27 @@ export function trapFocus(element: HTMLElement): () => void {
   const firstElement = focusableElements[0];
   const lastElement = focusableElements[focusableElements.length - 1];
   
-  function handleTabKey(e: KeyboardEvent) {
-    if (e.key !== 'Tab') return;
+  function handleTabKey(_e: KeyboardEvent) {
+    if (_e.key !== 'Tab') return;
     
-    if (e.shiftKey) {
-      if (document.activeElement === firstElement) {
-        lastElement.focus();
-        e.preventDefault();
+    if (_e.shiftKey) {
+      if (_document.activeElement === firstElement) {
+        lastElement.focus(_);
+        e.preventDefault(_);
       }
     } else {
-      if (document.activeElement === lastElement) {
-        firstElement.focus();
-        e.preventDefault();
+      if (_document.activeElement === lastElement) {
+        firstElement.focus(_);
+        e.preventDefault(_);
       }
     }
   }
   
-  element.addEventListener('keydown', handleTabKey);
+  element.addEventListener( 'keydown', handleTabKey);
   
   // Return cleanup function
-  return () => {
-    element.removeEventListener('keydown', handleTabKey);
+  return (_) => {
+    element.removeEventListener( 'keydown', handleTabKey);
   };
 }
 
@@ -242,13 +242,13 @@ export function simulateColorBlindness(
   color: string,
   type: 'protanopia' | 'deuteranopia' | 'tritanopia'
 ): string {
-  const rgb = hexToRgb(color);
+  const rgb = hexToRgb(_color);
   if (!rgb) return color;
   
   let { r, g, b } = rgb;
   
   // Simplified color blindness simulation matrices
-  switch (type) {
+  switch (_type) {
     case 'protanopia': // Red-blind
       r = 0.567 * r + 0.433 * g;
       g = 0.558 * r + 0.442 * g;
@@ -267,39 +267,39 @@ export function simulateColorBlindness(
   }
   
   return rgbToHex(
-    Math.round(Math.max(0, Math.min(255, r))),
-    Math.round(Math.max(0, Math.min(255, g))),
-    Math.round(Math.max(0, Math.min(255, b)))
+    Math.round( Math.max(0, Math.min(255, r))),
+    Math.round( Math.max(0, Math.min(255, g))),
+    Math.round( Math.max(0, Math.min(255, b)))
   );
 }
 
 // Accessibility testing utilities
-export function testColorAccessibility(foreground: string, background: string) {
-  const ratio = getContrastRatio(foreground, background);
+export function testColorAccessibility( foreground: string, background: string) {
+  const ratio = getContrastRatio( foreground, background);
   
   return {
-    ratio: Math.round(ratio * 100) / 100,
+    ratio: Math.round(_ratio * 100) / 100,
     wcagAA: {
-      normal: meetsWCAGAA(foreground, background, false),
-      large: meetsWCAGAA(foreground, background, true)
+      normal: meetsWCAGAA( foreground, background, false),
+      large: meetsWCAGAA( foreground, background, true)
     },
     wcagAAA: {
-      normal: meetsWCAGAAA(foreground, background, false),
-      large: meetsWCAGAAA(foreground, background, true)
+      normal: meetsWCAGAAA( foreground, background, false),
+      large: meetsWCAGAAA( foreground, background, true)
     },
     grade: ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : ratio >= 3 ? 'AA Large' : 'Fail'
   };
 }
 
 // Generate accessible color scheme
-export function generateAccessibleScheme(primaryColor: string, isDark = false) {
+export function generateAccessibleScheme( primaryColor: string, isDark = false) {
   const background = isDark ? '#0f1419' : '#ffffff';
   const surface = isDark ? '#1a1f2e' : '#f8f9fa';
 
   return {
-    primary: generateAccessibleVariation(primaryColor, background, 4.5),
-    secondary: generateAccessibleVariation(primaryColor, background, 3),
-    accent: generateAccessibleVariation(primaryColor, surface, 4.5),
+    primary: generateAccessibleVariation( primaryColor, background, 4.5),
+    secondary: generateAccessibleVariation( primaryColor, background, 3),
+    accent: generateAccessibleVariation( primaryColor, surface, 4.5),
     background,
     surface,
     text: {
@@ -329,7 +329,7 @@ export function auditPageAccessibility(): {
 
   // Check for missing alt text
   const images = document.querySelectorAll('img');
-  images.forEach((img, index) => {
+  images.forEach( (img, index) => {
     if (!img.alt && !img.getAttribute('aria-label')) {
       issues.push({
         type: 'missing-alt',
@@ -341,11 +341,11 @@ export function auditPageAccessibility(): {
   });
 
   // Check for proper heading hierarchy
-  const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+  const headings = document.querySelectorAll( 'h1, h2, h3, h4, h5, h6');
   let lastLevel = 0;
-  headings.forEach((heading, index) => {
-    const level = parseInt(heading.tagName.charAt(1));
-    if (level > lastLevel + 1) {
+  headings.forEach( (heading, index) => {
+    const level = parseInt(_heading.tagName.charAt(1));
+    if (_level > lastLevel + 1) {
       issues.push({
         type: 'heading-hierarchy',
         element: `${heading.tagName.toLowerCase()}[${index}]`,
@@ -357,12 +357,12 @@ export function auditPageAccessibility(): {
   });
 
   // Check for interactive elements without proper labels
-  const interactiveElements = document.querySelectorAll('button, input, select, textarea, a');
-  interactiveElements.forEach((element, index) => {
+  const interactiveElements = document.querySelectorAll( 'button, input, select, textarea, a');
+  interactiveElements.forEach( (element, index) => {
     const hasLabel = element.getAttribute('aria-label') ||
                     element.getAttribute('aria-labelledby') ||
                     ((element as HTMLInputElement).labels?.length ?? 0) > 0 ||
-                    element.textContent?.trim();
+                    element.textContent?.trim(_);
 
     if (!hasLabel) {
       issues.push({
@@ -378,11 +378,11 @@ export function auditPageAccessibility(): {
   const totalElements = images.length + headings.length + interactiveElements.length;
 
   // Log total elements for debugging
-  console.debug(`Accessibility audit found ${totalElements} elements to check`);
+  console.debug(_`Accessibility audit found ${totalElements} elements to check`);
   const errorCount = issues.filter(issue => issue.severity === 'error').length;
   const warningCount = issues.filter(issue => issue.severity === 'warning').length;
 
-  const score = Math.max(0, 100 - (errorCount * 10) - (warningCount * 5));
+  const score = Math.max(0, 100 - (errorCount * 10) - (_warningCount * 5));
 
   return { issues, score };
 }

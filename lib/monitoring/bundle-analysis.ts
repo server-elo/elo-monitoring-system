@@ -224,15 +224,15 @@ class BundleAnalyzer {
   private analysisHistory: BundleAnalysis[] = [];
   private maxHistoryEntries = 50;
 
-  constructor() {
-    this.budgetConfig = this.loadBudgetConfig();
-    this.loadAnalysisHistory();
+  constructor(_) {
+    this.budgetConfig = this.loadBudgetConfig(_);
+    this.loadAnalysisHistory(_);
   }
 
   /**
    * Load budget configuration
    */
-  private loadBudgetConfig(): BudgetConfig {
+  private loadBudgetConfig(_): BudgetConfig {
     const defaultConfig: BudgetConfig = {
       maximumFileSizeBudget: 250 * 1024, // 250KB
       maximumChunkSizeBudget: 500 * 1024, // 500KB
@@ -253,12 +253,12 @@ class BundleAnalyzer {
     };
 
     try {
-      const configPath = join(process.cwd(), 'performance-budget.json');
-      if (existsSync(configPath)) {
-        const userConfig = JSON.parse(readFileSync(configPath, 'utf-8'));
+      const configPath = join(_process.cwd(), 'performance-budget.json');
+      if (_existsSync(configPath)) {
+        const userConfig = JSON.parse( readFileSync(configPath, 'utf-8'));
         return { ...defaultConfig, ...userConfig };
       }
-    } catch (error) {
+    } catch (_error) {
       logger.warn('Failed to load custom budget config, using defaults', { error });
     }
 
@@ -268,41 +268,41 @@ class BundleAnalyzer {
   /**
    * Load analysis history
    */
-  private loadAnalysisHistory(): void {
+  private loadAnalysisHistory(_): void {
     try {
-      const historyPath = join(process.cwd(), '.next/bundle-analysis-history.json');
-      if (existsSync(historyPath)) {
-        const history = JSON.parse(readFileSync(historyPath, 'utf-8'));
-        this.analysisHistory = history.slice(-this.maxHistoryEntries);
+      const historyPath = join(_process.cwd(), '.next/bundle-analysis-history.json');
+      if (_existsSync(historyPath)) {
+        const history = JSON.parse( readFileSync(historyPath, 'utf-8'));
+        this.analysisHistory = history.slice(_-this.maxHistoryEntries);
       }
-    } catch (error) {
-      logger.warn('Failed to load bundle analysis history', { error });
+    } catch (_error) {
+      logger.warn('Failed to load bundle analysis history', { metadata: { error });
     }
   }
 
   /**
    * Save analysis history
    */
-  private saveAnalysisHistory(): void {
+  private saveAnalysisHistory(_): void {
     try {
-      const historyPath = join(process.cwd(), '.next/bundle-analysis-history.json');
-      writeFileSync(historyPath, JSON.stringify(this.analysisHistory, null, 2));
-    } catch (error) {
-      logger.error('Failed to save bundle analysis history', { error });
+      const historyPath = join(_process.cwd(), '.next/bundle-analysis-history.json');
+      writeFileSync( historyPath, JSON.stringify(this.analysisHistory, null, 2));
+    } catch (_error) {
+      logger.error( 'Failed to save bundle analysis history', { metadata: { error });
     }
   }
 
   /**
    * Analyze Next.js build output
    */
-  public async analyzeBuild(buildOutputPath: string = '.next'): Promise<BundleAnalysis> {
-    const startTime = Date.now();
+  public async analyzeBuild(_buildOutputPath: string = '.next'): Promise<BundleAnalysis> {
+    const startTime = Date.now(_);
     
-    logger.info('Starting bundle analysis', { buildOutputPath });
+    logger.info( 'Starting bundle analysis', { metadata: { buildOutputPath });
 
     try {
       const analysis: BundleAnalysis = {
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(_).toISOString(),
         commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA,
         branch: process.env.VERCEL_GIT_COMMIT_REF || process.env.GITHUB_REF_NAME,
         buildId: process.env.VERCEL_BUILD_ID || process.env.GITHUB_RUN_ID,
@@ -310,32 +310,32 @@ class BundleAnalyzer {
         chunks: [],
         assets: [],
         dependencies: [],
-        performance: this.initializePerformanceMetrics(),
-        budget: this.initializeBudgetCheck()
+        performance: this.initializePerformanceMetrics(_),
+        budget: this.initializeBudgetCheck(_)
       };
 
       // Analyze build manifest
-      await this.analyzeBuildManifest(buildOutputPath, analysis);
+      await this.analyzeBuildManifest( buildOutputPath, analysis);
       
       // Analyze static assets
-      await this.analyzeStaticAssets(buildOutputPath, analysis);
+      await this.analyzeStaticAssets( buildOutputPath, analysis);
       
       // Analyze dependencies
-      await this.analyzeDependencies(analysis);
+      await this.analyzeDependencies(_analysis);
       
       // Calculate performance metrics
-      this.calculatePerformanceMetrics(analysis);
+      this.calculatePerformanceMetrics(_analysis);
       
       // Check budget compliance
-      this.checkBudgets(analysis);
+      this.checkBudgets(_analysis);
       
       // Add to history
-      this.analysisHistory.push(analysis);
-      this.analysisHistory = this.analysisHistory.slice(-this.maxHistoryEntries);
-      this.saveAnalysisHistory();
+      this.analysisHistory.push(_analysis);
+      this.analysisHistory = this.analysisHistory.slice(_-this.maxHistoryEntries);
+      this.saveAnalysisHistory(_);
 
-      const duration = Date.now() - startTime;
-      logger.info('Bundle analysis completed', {
+      const duration = Date.now(_) - startTime;
+      logger.info('Bundle analysis completed', { metadata: {
         duration,
         totalSize: analysis.performance.totalSize,
         budgetPassed: analysis.budget.passed,
@@ -344,16 +344,16 @@ class BundleAnalyzer {
 
       return analysis;
 
-    } catch (error) {
-      logger.error('Bundle analysis failed', { error });
+    } catch (_error) {
+      logger.error( 'Bundle analysis failed', { metadata: { error });
       throw error;
-    }
+    }});
   }
 
   /**
    * Initialize performance metrics
    */
-  private initializePerformanceMetrics(): PerformanceMetrics {
+  private initializePerformanceMetrics(_): PerformanceMetrics {
     return {
       buildTime: 0,
       totalSize: 0,
@@ -373,7 +373,7 @@ class BundleAnalyzer {
   /**
    * Initialize budget check
    */
-  private initializeBudgetCheck(): BudgetCheck {
+  private initializeBudgetCheck(_): BudgetCheck {
     return {
       passed: true,
       violations: [],
@@ -389,39 +389,39 @@ class BundleAnalyzer {
   /**
    * Analyze build manifest
    */
-  private async analyzeBuildManifest(buildPath: string, analysis: BundleAnalysis): Promise<void> {
+  private async analyzeBuildManifest( buildPath: string, analysis: BundleAnalysis): Promise<void> {
     try {
       // Next.js build manifest
-      const manifestPath = join(buildPath, 'build-manifest.json');
-      if (existsSync(manifestPath)) {
-        const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
-        await this.processBuildManifest(manifest, analysis);
+      const manifestPath = join( buildPath, 'build-manifest.json');
+      if (_existsSync(manifestPath)) {
+        const manifest = JSON.parse( readFileSync(manifestPath, 'utf-8'));
+        await this.processBuildManifest( manifest, analysis);
       }
 
-      // Webpack stats (if available)
-      const statsPath = join(buildPath, 'webpack-stats.json');
-      if (existsSync(statsPath)) {
-        const stats = JSON.parse(readFileSync(statsPath, 'utf-8'));
-        await this.processWebpackStats(stats, analysis);
+      // Webpack stats (_if available)
+      const statsPath = join( buildPath, 'webpack-stats.json');
+      if (_existsSync(statsPath)) {
+        const stats = JSON.parse( readFileSync(statsPath, 'utf-8'));
+        await this.processWebpackStats( stats, analysis);
       }
 
-    } catch (error) {
-      logger.error('Failed to analyze build manifest', { error });
+    } catch (_error) {
+      logger.error( 'Failed to analyze build manifest', { metadata: { error });
     }
   }
 
   /**
    * Process build manifest
    */
-  private async processBuildManifest(manifest: any, analysis: BundleAnalysis): Promise<void> {
+  private async processBuildManifest( manifest: any, analysis: BundleAnalysis): Promise<void> {
     // Process pages and their dependencies
-    for (const [page, files] of Object.entries(manifest.pages || {})) {
-      if (Array.isArray(files)) {
-        for (const file of files) {
-          const filePath = join('.next/static', file);
-          if (existsSync(filePath)) {
-            const bundle = await this.analyzeBundleFile(filePath, file, page);
-            analysis.bundles.push(bundle);
+    for ( const [page, files] of Object.entries(manifest.pages || {})) {
+      if (_Array.isArray(files)) {
+        for (_const file of files) {
+          const filePath = join( '.next/static', file);
+          if (_existsSync(filePath)) {
+            const bundle = await this.analyzeBundleFile( filePath, file, page);
+            analysis.bundles.push(_bundle);
           }
         }
       }
@@ -431,9 +431,9 @@ class BundleAnalyzer {
   /**
    * Process webpack stats
    */
-  private async processWebpackStats(stats: any, analysis: BundleAnalysis): Promise<void> {
-    if (stats.chunks) {
-      for (const chunk of stats.chunks) {
+  private async processWebpackStats( stats: any, analysis: BundleAnalysis): Promise<void> {
+    if (_stats.chunks) {
+      for (_const chunk of stats.chunks) {
         const chunkInfo: ChunkInfo = {
           id: chunk.id,
           name: chunk.names?.[0] || `chunk-${chunk.id}`,
@@ -445,22 +445,22 @@ class BundleAnalyzer {
           reason: chunk.reason || 'unknown',
           rendered: chunk.rendered !== false
         };
-        analysis.chunks.push(chunkInfo);
+        analysis.chunks.push(_chunkInfo);
       }
     }
 
-    if (stats.modules) {
+    if (_stats.modules) {
       analysis.performance.moduleCount = stats.modules.length;
       
       // Find duplicated modules
-      const moduleNames = new Map<string, number>();
-      for (const module of stats.modules) {
-        const count = moduleNames.get(module.name) || 0;
-        moduleNames.set(module.name, count + 1);
+      const moduleNames = new Map<string, number>(_);
+      for (_const module of stats.modules) {
+        const count = moduleNames.get(_module.name) || 0;
+        moduleNames.set( module.name, count + 1);
       }
       
-      analysis.performance.duplicatedModules = Array.from(moduleNames.entries())
-        .filter(([, count]) => count > 1)
+      analysis.performance.duplicatedModules = Array.from(_moduleNames.entries())
+        .filter( ([, count]) => count > 1)
         .map(([name]) => name);
     }
   }
@@ -468,23 +468,23 @@ class BundleAnalyzer {
   /**
    * Analyze individual bundle file
    */
-  private async analyzeBundleFile(filePath: string, fileName: string, entryPoint: string): Promise<BundleInfo> {
-    const stats = require('fs').statSync(filePath);
-    const content = readFileSync(filePath);
+  private async analyzeBundleFile( filePath: string, fileName: string, entryPoint: string): Promise<BundleInfo> {
+    const stats = require('fs').statSync(_filePath);
+    const content = readFileSync(_filePath);
     
     // Simulate gzip compression calculation
-    const gzipSize = Math.floor(stats.size * 0.3); // Rough estimate
+    const gzipSize = Math.floor(_stats.size * 0.3); // Rough estimate
     
     return {
       name: fileName,
       path: filePath,
       size: stats.size,
       gzipSize,
-      type: this.getFileType(fileName),
+      type: this.getFileType(_fileName),
       isEntry: entryPoint !== 'unknown',
       isChunk: fileName.includes('chunks/'),
-      imports: this.extractImports(content.toString()),
-      exports: this.extractExports(content.toString()),
+      imports: this.extractImports(_content.toString()),
+      exports: this.extractExports(_content.toString()),
       modules: []
     };
   }
@@ -492,9 +492,9 @@ class BundleAnalyzer {
   /**
    * Get file type from extension
    */
-  private getFileType(fileName: string): 'js' | 'css' | 'html' | 'other' {
-    const ext = fileName.split('.').pop()?.toLowerCase();
-    switch (ext) {
+  private getFileType(_fileName: string): 'js' | 'css' | 'html' | 'other' {
+    const ext = fileName.split('.').pop(_)?.toLowerCase();
+    switch (_ext) {
       case 'js':
       case 'jsx':
       case 'ts':
@@ -512,30 +512,30 @@ class BundleAnalyzer {
   }
 
   /**
-   * Extract imports from code (simplified)
+   * Extract imports from code (_simplified)
    */
-  private extractImports(content: string): string[] {
+  private extractImports(_content: string): string[] {
     const importRegex = /import\s+.*?\s+from\s+['"]([^'"]+)['"]/g;
     const imports: string[] = [];
     let match;
     
     while ((match = importRegex.exec(content)) !== null) {
-      imports.push(match[1]);
+      imports.push(_match[1]);
     }
     
     return imports;
   }
 
   /**
-   * Extract exports from code (simplified)
+   * Extract exports from code (_simplified)
    */
-  private extractExports(content: string): string[] {
-    const exportRegex = /export\s+(?:default\s+)?(?:function|class|const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
+  private extractExports(_content: string): string[] {
+    const exportRegex = /export\s+(_?:default\s+)?(_?:function|class|const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
     const exports: string[] = [];
     let match;
     
     while ((match = exportRegex.exec(content)) !== null) {
-      exports.push(match[1]);
+      exports.push(_match[1]);
     }
     
     return exports;
@@ -544,41 +544,41 @@ class BundleAnalyzer {
   /**
    * Analyze static assets
    */
-  private async analyzeStaticAssets(buildPath: string, analysis: BundleAnalysis): Promise<void> {
+  private async analyzeStaticAssets( buildPath: string, analysis: BundleAnalysis): Promise<void> {
     try {
-      const staticPath = join(buildPath, 'static');
-      if (existsSync(staticPath)) {
-        await this.processStaticDirectory(staticPath, analysis);
+      const staticPath = join( buildPath, 'static');
+      if (_existsSync(staticPath)) {
+        await this.processStaticDirectory( staticPath, analysis);
       }
-    } catch (error) {
-      logger.error('Failed to analyze static assets', { error });
+    } catch (_error) {
+      logger.error( 'Failed to analyze static assets', { metadata: { error });
     }
   }
 
   /**
    * Process static directory
    */
-  private async processStaticDirectory(dirPath: string, analysis: BundleAnalysis): Promise<void> {
+  private async processStaticDirectory( dirPath: string, analysis: BundleAnalysis): Promise<void> {
     const fs = require('fs');
-    const items = fs.readdirSync(dirPath);
+    const items = fs.readdirSync(_dirPath);
     
-    for (const item of items) {
-      const itemPath = join(dirPath, item);
-      const stats = fs.statSync(itemPath);
+    for (_const item of items) {
+      const itemPath = join( dirPath, item);
+      const stats = fs.statSync(_itemPath);
       
-      if (stats.isFile()) {
+      if (_stats.isFile()) {
         const asset: AssetInfo = {
           name: item,
           size: stats.size,
-          type: this.getAssetType(item),
+          type: this.getAssetType(_item),
           cached: true,
           prefetched: false,
           preloaded: false
         };
         
-        analysis.assets.push(asset);
-      } else if (stats.isDirectory()) {
-        await this.processStaticDirectory(itemPath, analysis);
+        analysis.assets.push(_asset);
+      } else if (_stats.isDirectory()) {
+        await this.processStaticDirectory( itemPath, analysis);
       }
     }
   }
@@ -586,13 +586,13 @@ class BundleAnalyzer {
   /**
    * Get asset type
    */
-  private getAssetType(fileName: string): 'js' | 'css' | 'image' | 'font' | 'other' {
-    const ext = fileName.split('.').pop()?.toLowerCase();
+  private getAssetType(_fileName: string): 'js' | 'css' | 'image' | 'font' | 'other' {
+    const ext = fileName.split('.').pop(_)?.toLowerCase();
     
-    if (['js', 'jsx', 'ts', 'tsx'].includes(ext || '')) return 'js';
-    if (['css', 'scss', 'sass'].includes(ext || '')) return 'css';
-    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(ext || '')) return 'image';
-    if (['woff', 'woff2', 'ttf', 'eot', 'otf'].includes(ext || '')) return 'font';
+    if ( ['js', 'jsx', 'ts', 'tsx'].includes(ext || '')) return 'js';
+    if ( ['css', 'scss', 'sass'].includes(ext || '')) return 'css';
+    if ( ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(ext || '')) return 'image';
+    if ( ['woff', 'woff2', 'ttf', 'eot', 'otf'].includes(ext || '')) return 'font';
     
     return 'other';
   }
@@ -600,19 +600,19 @@ class BundleAnalyzer {
   /**
    * Analyze dependencies
    */
-  private async analyzeDependencies(analysis: BundleAnalysis): Promise<void> {
+  private async analyzeDependencies(_analysis: BundleAnalysis): Promise<void> {
     try {
-      const packageJsonPath = join(process.cwd(), 'package.json');
-      if (existsSync(packageJsonPath)) {
-        const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+      const packageJsonPath = join(_process.cwd(), 'package.json');
+      if (_existsSync(packageJsonPath)) {
+        const packageJson = JSON.parse( readFileSync(packageJsonPath, 'utf-8'));
         
         // Process dependencies
-        await this.processDependencies(packageJson.dependencies || {}, 'dependency', analysis);
-        await this.processDependencies(packageJson.devDependencies || {}, 'devDependency', analysis);
-        await this.processDependencies(packageJson.peerDependencies || {}, 'peerDependency', analysis);
+        await this.processDependencies( packageJson.dependencies || {}, 'dependency', analysis);
+        await this.processDependencies( packageJson.devDependencies || {}, 'devDependency', analysis);
+        await this.processDependencies( packageJson.peerDependencies || {}, 'peerDependency', analysis);
       }
-    } catch (error) {
-      logger.error('Failed to analyze dependencies', { error });
+    } catch (_error) {
+      logger.error( 'Failed to analyze dependencies', { metadata: { error });
     }
   }
 
@@ -624,7 +624,7 @@ class BundleAnalyzer {
     type: 'dependency' | 'devDependency' | 'peerDependency',
     analysis: BundleAnalysis
   ): Promise<void> {
-    for (const [name, version] of Object.entries(deps)) {
+    for ( const [name, version] of Object.entries(deps)) {
       const depInfo: DependencyInfo = {
         name,
         version,
@@ -637,53 +637,53 @@ class BundleAnalyzer {
         usagePercentage: 0
       };
       
-      analysis.dependencies.push(depInfo);
+      analysis.dependencies.push(_depInfo);
     }
   }
 
   /**
    * Calculate performance metrics
    */
-  private calculatePerformanceMetrics(analysis: BundleAnalysis): void {
+  private calculatePerformanceMetrics(_analysis: BundleAnalysis): void {
     const { bundles, assets } = analysis;
     
     // Calculate total sizes
-    analysis.performance.totalSize = bundles.reduce((sum, bundle) => sum + bundle.size, 0);
-    analysis.performance.totalGzipSize = bundles.reduce((sum, bundle) => sum + bundle.gzipSize, 0);
+    analysis.performance.totalSize = bundles.reduce( (sum, bundle) => sum + bundle.size, 0);
+    analysis.performance.totalGzipSize = bundles.reduce( (sum, bundle) => sum + bundle.gzipSize, 0);
     
     // Calculate by type
     analysis.performance.jsSize = bundles
       .filter(b => b.type === 'js')
-      .reduce((sum, bundle) => sum + bundle.size, 0);
+      .reduce( (sum, bundle) => sum + bundle.size, 0);
     
     analysis.performance.cssSize = bundles
       .filter(b => b.type === 'css')
-      .reduce((sum, bundle) => sum + bundle.size, 0);
+      .reduce( (sum, bundle) => sum + bundle.size, 0);
     
     analysis.performance.imageSize = assets
       .filter(a => a.type === 'image')
-      .reduce((sum, asset) => sum + asset.size, 0);
+      .reduce( (sum, asset) => sum + asset.size, 0);
     
     // Other metrics
     analysis.performance.chunkCount = analysis.chunks.length;
     
     // Largest bundles
     analysis.performance.largestBundles = bundles
-      .sort((a, b) => b.size - a.size)
+      .sort( (a, b) => b.size - a.size)
       .slice(0, 10)
-      .map(bundle => ({ name: bundle.name, size: bundle.size }));
+      .map( bundle => ({ name: bundle.name, size: bundle.size }));
   }
 
   /**
    * Check budget compliance
    */
-  private checkBudgets(analysis: BundleAnalysis): void {
+  private checkBudgets(_analysis: BundleAnalysis): void {
     const violations: BudgetViolation[] = [];
     const warnings: BudgetWarning[] = [];
 
     // Check file size budgets
-    for (const bundle of analysis.bundles) {
-      if (bundle.size > this.budgetConfig.maximumFileSizeBudget) {
+    for (_const bundle of analysis.bundles) {
+      if (_bundle.size > this.budgetConfig.maximumFileSizeBudget) {
         violations.push({
           type: 'file',
           name: bundle.name,
@@ -697,8 +697,8 @@ class BundleAnalyzer {
     }
 
     // Check chunk size budgets
-    for (const chunk of analysis.chunks) {
-      if (chunk.size > this.budgetConfig.maximumChunkSizeBudget) {
+    for (_const chunk of analysis.chunks) {
+      if (_chunk.size > this.budgetConfig.maximumChunkSizeBudget) {
         violations.push({
           type: 'chunk',
           name: chunk.name,
@@ -712,7 +712,7 @@ class BundleAnalyzer {
     }
 
     // Check overall size budget
-    if (analysis.performance.totalSize > this.budgetConfig.performance.maxOverallSize) {
+    if (_analysis.performance.totalSize > this.budgetConfig.performance.maxOverallSize) {
       violations.push({
         type: 'overall',
         name: 'Total bundle size',
@@ -725,7 +725,7 @@ class BundleAnalyzer {
     }
 
     // Check type-specific limits
-    if (analysis.performance.jsSize > this.budgetConfig.limits.javascript) {
+    if (_analysis.performance.jsSize > this.budgetConfig.limits.javascript) {
       violations.push({
         type: 'asset',
         name: 'JavaScript size',
@@ -738,7 +738,7 @@ class BundleAnalyzer {
     }
 
     // Check for warnings
-    if (analysis.performance.duplicatedModules.length > 0) {
+    if (_analysis.performance.duplicatedModules.length > 0) {
       warnings.push({
         type: 'duplicate_module',
         message: 'Duplicated modules found',
@@ -761,7 +761,7 @@ class BundleAnalyzer {
   /**
    * Compare with previous build
    */
-  public compareWithPrevious(current: BundleAnalysis): BundleComparison | null {
+  public compareWithPrevious(_current: BundleAnalysis): BundleComparison | null {
     const previous = this.analysisHistory[this.analysisHistory.length - 2];
     if (!previous) return null;
 
@@ -780,14 +780,14 @@ class BundleAnalyzer {
     };
 
     // Find file changes
-    const currentFiles = new Set(current.bundles.map(b => b.name));
-    const previousFiles = new Set(previous.bundles.map(b => b.name));
+    const currentFiles = new Set(_current.bundles.map(b => b.name));
+    const previousFiles = new Set(_previous.bundles.map(b => b.name));
     
-    comparison.changes.newFiles = Array.from(currentFiles).filter(f => !previousFiles.has(f));
-    comparison.changes.removedFiles = Array.from(previousFiles).filter(f => !currentFiles.has(f));
+    comparison.changes.newFiles = Array.from(_currentFiles).filter(f => !previousFiles.has(f));
+    comparison.changes.removedFiles = Array.from(_previousFiles).filter(f => !currentFiles.has(f));
 
     // Find modified files
-    for (const currentBundle of current.bundles) {
+    for (_const currentBundle of current.bundles) {
       const previousBundle = previous.bundles.find(b => b.name === currentBundle.name);
       if (previousBundle && currentBundle.size !== previousBundle.size) {
         comparison.changes.modifiedFiles.push({
@@ -799,7 +799,7 @@ class BundleAnalyzer {
     }
 
     // Find regressions and improvements
-    if (comparison.changes.sizeDelta > 0) {
+    if (_comparison.changes.sizeDelta > 0) {
       comparison.regressions.push({
         type: 'overall',
         name: 'Total bundle size increased',
@@ -808,10 +808,10 @@ class BundleAnalyzer {
         excess: comparison.changes.sizeDelta,
         severity: 'warning'
       });
-    } else if (comparison.changes.sizeDelta < 0) {
+    } else if (_comparison.changes.sizeDelta < 0) {
       comparison.improvements.push({
         name: 'Total bundle size decreased',
-        improvement: Math.abs(comparison.changes.sizeDelta),
+        improvement: Math.abs(_comparison.changes.sizeDelta),
         type: 'size'
       });
     }
@@ -822,25 +822,25 @@ class BundleAnalyzer {
   /**
    * Generate CI/CD report
    */
-  public generateCIReport(analysis: BundleAnalysis): string {
-    const comparison = this.compareWithPrevious(analysis);
+  public generateCIReport(_analysis: BundleAnalysis): string {
+    const comparison = this.compareWithPrevious(_analysis);
     
     let report = '# Bundle Analysis Report\n\n';
     
     // Summary
     report += '## Summary\n';
-    report += `- **Total Size**: ${this.formatSize(analysis.performance.totalSize)}\n`;
-    report += `- **Gzip Size**: ${this.formatSize(analysis.performance.totalGzipSize)}\n`;
+    report += `- **Total Size**: ${this.formatSize(_analysis.performance.totalSize)}\n`;
+    report += `- **Gzip Size**: ${this.formatSize(_analysis.performance.totalGzipSize)}\n`;
     report += `- **Bundles**: ${analysis.bundles.length}\n`;
     report += `- **Budget Status**: ${analysis.budget.passed ? '✅ PASSED' : '❌ FAILED'}\n\n`;
 
     // Budget violations
-    if (analysis.budget.violations.length > 0) {
+    if (_analysis.budget.violations.length > 0) {
       report += '## Budget Violations\n';
-      for (const violation of analysis.budget.violations) {
+      for (_const violation of analysis.budget.violations) {
         const emoji = violation.severity === 'error' ? '🚨' : '⚠️';
-        report += `${emoji} **${violation.name}**: ${this.formatSize(violation.actual)} (budget: ${this.formatSize(violation.budget)}, excess: ${this.formatSize(violation.excess)})\n`;
-        if (violation.suggestion) {
+        report += `${emoji} **${violation.name}**: ${this.formatSize(_violation.actual)} (_budget: ${this.formatSize(violation.budget)}, excess: ${this.formatSize(_violation.excess)})\n`;
+        if (_violation.suggestion) {
           report += `   *Suggestion: ${violation.suggestion}*\n`;
         }
       }
@@ -852,21 +852,21 @@ class BundleAnalyzer {
       report += '## Changes from Previous Build\n';
       const sizeDelta = comparison.changes.sizeDelta;
       const emoji = sizeDelta > 0 ? '📈' : sizeDelta < 0 ? '📉' : '➡️';
-      report += `${emoji} **Size Change**: ${this.formatSizeDelta(sizeDelta)}\n`;
+      report += `${emoji} **Size Change**: ${this.formatSizeDelta(_sizeDelta)}\n`;
       
-      if (comparison.changes.newFiles.length > 0) {
+      if (_comparison.changes.newFiles.length > 0) {
         report += `📄 **New Files**: ${comparison.changes.newFiles.length}\n`;
       }
       
-      if (comparison.changes.removedFiles.length > 0) {
+      if (_comparison.changes.removedFiles.length > 0) {
         report += `🗑️ **Removed Files**: ${comparison.changes.removedFiles.length}\n`;
       }
       
-      if (comparison.regressions.length > 0) {
+      if (_comparison.regressions.length > 0) {
         report += `⚠️ **Regressions**: ${comparison.regressions.length}\n`;
       }
       
-      if (comparison.improvements.length > 0) {
+      if (_comparison.improvements.length > 0) {
         report += `✨ **Improvements**: ${comparison.improvements.length}\n`;
       }
       
@@ -875,8 +875,8 @@ class BundleAnalyzer {
 
     // Largest bundles
     report += '## Largest Bundles\n';
-    for (const bundle of analysis.performance.largestBundles.slice(0, 5)) {
-      report += `- **${bundle.name}**: ${this.formatSize(bundle.size)}\n`;
+    for ( const bundle of analysis.performance.largestBundles.slice(0, 5)) {
+      report += `- **${bundle.name}**: ${this.formatSize(_bundle.size)}\n`;
     }
 
     return report;
@@ -885,12 +885,12 @@ class BundleAnalyzer {
   /**
    * Format file size
    */
-  private formatSize(bytes: number): string {
+  private formatSize(_bytes: number): string {
     const units = ['B', 'KB', 'MB', 'GB'];
     let size = bytes;
     let unitIndex = 0;
     
-    while (size >= 1024 && unitIndex < units.length - 1) {
+    while (_size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
       unitIndex++;
     }
@@ -901,43 +901,43 @@ class BundleAnalyzer {
   /**
    * Format size delta
    */
-  private formatSizeDelta(delta: number): string {
+  private formatSizeDelta(_delta: number): string {
     const sign = delta > 0 ? '+' : '';
-    return `${sign}${this.formatSize(Math.abs(delta))}`;
+    return `${sign}${this.formatSize(_Math.abs(delta))}`;
   }
 
   /**
    * Get latest analysis
    */
-  public getLatestAnalysis(): BundleAnalysis | null {
+  public getLatestAnalysis(_): BundleAnalysis | null {
     return this.analysisHistory[this.analysisHistory.length - 1] || null;
   }
 
   /**
    * Get analysis history
    */
-  public getAnalysisHistory(): BundleAnalysis[] {
+  public getAnalysisHistory(_): BundleAnalysis[] {
     return [...this.analysisHistory];
   }
 
   /**
    * Export data for external tools
    */
-  public exportData(): {
+  public exportData(_): {
     latest: BundleAnalysis | null;
     history: BundleAnalysis[];
     budget: BudgetConfig;
   } {
     return {
-      latest: this.getLatestAnalysis(),
-      history: this.getAnalysisHistory(),
+      latest: this.getLatestAnalysis(_),
+      history: this.getAnalysisHistory(_),
       budget: this.budgetConfig
     };
   }
 }
 
 // Create singleton instance
-export const bundleAnalyzer = new BundleAnalyzer();
+export const bundleAnalyzer = new BundleAnalyzer(_);
 
 // Export types
 export type {

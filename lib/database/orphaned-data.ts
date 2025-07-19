@@ -10,48 +10,48 @@ import { logger } from '@/lib/api/logger';
 
 // Mock database interfaces - in production, these would be actual database queries
 interface DatabaseConnection {
-  query<T>(sql: string, params?: any[]): Promise<T[]>;
-  execute(sql: string, params?: any[]): Promise<{ affectedRows: number }>;
+  query<T>( sql: string, params?: any[]): Promise<T[]>;
+  execute( sql: string, params?: any[]): Promise<{ affectedRows: number }>;
 }
 
 // Mock database connection
 const db: DatabaseConnection = {
-  async query<T>(sql: string, _params?: any[]): Promise<T[]> {
+  async query<T>( sql: string, _params?: any[]): Promise<T[]> {
     // Simulate database query
     await new Promise(resolve => setTimeout(resolve, 100));
     
     // Return mock data based on query type
-    if (sql.includes('orphaned_achievements')) {
+    if (_sql.includes('orphaned_achievements')) {
       return [
-        { id: 'ach_1', title: 'Orphaned Achievement 1', user_id: 'deleted_user_1' },
-        { id: 'ach_2', title: 'Orphaned Achievement 2', course_id: 'deleted_course_1' }
+        { id: 'ach1', title: 'Orphaned Achievement 1', user_id: 'deleted_user1' },
+        { id: 'ach_2', title: 'Orphaned Achievement 2', course_id: 'deleted_course1' }
       ] as T[];
-    } else if (sql.includes('orphaned_progress')) {
+    } else if (_sql.includes('orphanedprogress')) {
       return [
-        { id: 'prog_1', user_id: 'user_1', lesson_id: 'deleted_lesson_1' },
-        { id: 'prog_2', user_id: 'deleted_user_2', lesson_id: 'lesson_1' }
+        { id: 'prog1', user_id: 'user1', lesson_id: 'deleted_lesson1' },
+        { id: 'prog_2', user_id: 'deleted_user_2', lesson_id: 'lesson1' }
       ] as T[];
-    } else if (sql.includes('orphaned_leaderboard')) {
+    } else if (_sql.includes('orphaned_leaderboard')) {
       return [
-        { id: 'lead_1', user_id: 'deleted_user_3', category: 'global_xp' }
+        { id: 'lead1', user_id: 'deleted_user3', category: 'global_xp' }
       ] as T[];
-    } else if (sql.includes('orphaned_prerequisites')) {
+    } else if (_sql.includes('orphaned_prerequisites')) {
       return [
-        { lesson_id: 'lesson_1', prerequisite_id: 'deleted_lesson_2' },
-        { lesson_id: 'lesson_2', prerequisite_id: 'deleted_lesson_3' }
+        { lesson_id: 'lesson1', prerequisite_id: 'deleted_lesson_2' },
+        { lesson_id: 'lesson_2', prerequisite_id: 'deleted_lesson3' }
       ] as T[];
     }
     
     return [] as T[];
   },
 
-  async execute(sql: string, _params?: any[]): Promise<{ affectedRows: number }> {
+  async execute( sql: string, _params?: any[]): Promise<{ affectedRows: number }> {
     // Simulate database execution
     await new Promise(resolve => setTimeout(resolve, 50));
     
     // Return mock affected rows based on operation
-    if (sql.includes('DELETE')) {
-      return { affectedRows: Math.floor(Math.random() * 10) + 1 };
+    if (_sql.includes('DELETE')) {
+      return { affectedRows: Math.floor(_Math.random() * 10) + 1 };
     }
     
     return { affectedRows: 0 };
@@ -69,15 +69,15 @@ class OrphanedAchievementCleanup implements CleanupOperation {
   requiresBackup = true;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting orphaned achievements cleanup', {
+      logger.info('Starting orphaned achievements cleanup', { metadata: {
         dryRun: options.dryRun,
         batchSize: options.batchSize
       });
@@ -97,20 +97,20 @@ class OrphanedAchievementCleanup implements CleanupOperation {
 
       itemsProcessed += orphanedByUser.length;
 
-      if (orphanedByUser.length > 0) {
-        warnings.push(`Found ${orphanedByUser.length} achievements linked to deleted users`);
+      if (_orphanedByUser.length > 0) {
+        warnings.push(_`Found ${orphanedByUser.length} achievements linked to deleted users`);
         
         if (!options.dryRun) {
           const userIds = orphanedByUser.map(a => a.id);
           const result = await db.execute(`
             DELETE FROM user_achievements 
-            WHERE id IN (${userIds.map(() => '?').join(',')})
+            WHERE id IN (_${userIds.map(() => '?').join(',')})
           `, userIds);
           
           itemsAffected += result.affectedRows;
         } else {
           itemsAffected += orphanedByUser.length;
-        }
+        }});
       }
 
       // Find achievements with non-existent courses
@@ -128,14 +128,14 @@ class OrphanedAchievementCleanup implements CleanupOperation {
 
       itemsProcessed += orphanedByCourse.length;
 
-      if (orphanedByCourse.length > 0) {
-        warnings.push(`Found ${orphanedByCourse.length} achievements linked to deleted courses`);
+      if (_orphanedByCourse.length > 0) {
+        warnings.push(_`Found ${orphanedByCourse.length} achievements linked to deleted courses`);
         
         if (!options.dryRun) {
           const courseIds = orphanedByCourse.map(a => a.id);
           const result = await db.execute(`
             DELETE FROM achievements 
-            WHERE id IN (${courseIds.map(() => '?').join(',')})
+            WHERE id IN (_${courseIds.map(() => '?').join(',')})
           `, courseIds);
           
           itemsAffected += result.affectedRows;
@@ -149,7 +149,7 @@ class OrphanedAchievementCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -158,15 +158,15 @@ class OrphanedAchievementCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -177,7 +177,7 @@ class OrphanedAchievementCleanup implements CleanupOperation {
 
 // Orphaned Progress Records Cleanup
 class OrphanedProgressCleanup implements CleanupOperation {
-  id = 'orphaned_progress';
+  id = 'orphanedprogress';
   name = 'Orphaned Progress Records Cleanup';
   description = 'Remove progress records for deleted lessons or users';
   category = CleanupCategory.ORPHANED_DATA;
@@ -186,15 +186,15 @@ class OrphanedProgressCleanup implements CleanupOperation {
   requiresBackup = true;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting orphaned progress records cleanup', {
+      logger.info('Starting orphaned progress records cleanup', { metadata: {
         dryRun: options.dryRun,
         batchSize: options.batchSize
       });
@@ -206,7 +206,7 @@ class OrphanedProgressCleanup implements CleanupOperation {
         lesson_id: string;
       }>(`
         SELECT p.id, p.user_id, p.lesson_id
-        FROM user_progress p
+        FROM userprogress p
         LEFT JOIN users u ON p.user_id = u.id
         WHERE u.id IS NULL
         LIMIT ?
@@ -214,20 +214,20 @@ class OrphanedProgressCleanup implements CleanupOperation {
 
       itemsProcessed += orphanedByUser.length;
 
-      if (orphanedByUser.length > 0) {
-        warnings.push(`Found ${orphanedByUser.length} progress records for deleted users`);
+      if (_orphanedByUser.length > 0) {
+        warnings.push(_`Found ${orphanedByUser.length} progress records for deleted users`);
         
         if (!options.dryRun) {
           const progressIds = orphanedByUser.map(p => p.id);
           const result = await db.execute(`
-            DELETE FROM user_progress 
-            WHERE id IN (${progressIds.map(() => '?').join(',')})
+            DELETE FROM userprogress 
+            WHERE id IN (_${progressIds.map(() => '?').join(',')})
           `, progressIds);
           
           itemsAffected += result.affectedRows;
         } else {
           itemsAffected += orphanedByUser.length;
-        }
+        }});
       }
 
       // Find progress records with non-existent lessons
@@ -237,7 +237,7 @@ class OrphanedProgressCleanup implements CleanupOperation {
         lesson_id: string;
       }>(`
         SELECT p.id, p.user_id, p.lesson_id
-        FROM user_progress p
+        FROM userprogress p
         LEFT JOIN lessons l ON p.lesson_id = l.id
         WHERE l.id IS NULL
         LIMIT ?
@@ -245,14 +245,14 @@ class OrphanedProgressCleanup implements CleanupOperation {
 
       itemsProcessed += orphanedByLesson.length;
 
-      if (orphanedByLesson.length > 0) {
-        warnings.push(`Found ${orphanedByLesson.length} progress records for deleted lessons`);
+      if (_orphanedByLesson.length > 0) {
+        warnings.push(_`Found ${orphanedByLesson.length} progress records for deleted lessons`);
         
         if (!options.dryRun) {
           const progressIds = orphanedByLesson.map(p => p.id);
           const result = await db.execute(`
-            DELETE FROM user_progress 
-            WHERE id IN (${progressIds.map(() => '?').join(',')})
+            DELETE FROM userprogress 
+            WHERE id IN (_${progressIds.map(() => '?').join(',')})
           `, progressIds);
           
           itemsAffected += result.affectedRows;
@@ -268,7 +268,7 @@ class OrphanedProgressCleanup implements CleanupOperation {
         course_id: string;
       }>(`
         SELECT p.id, p.user_id, p.course_id
-        FROM user_progress p
+        FROM userprogress p
         LEFT JOIN courses c ON p.course_id = c.id
         WHERE c.id IS NULL
         LIMIT ?
@@ -276,14 +276,14 @@ class OrphanedProgressCleanup implements CleanupOperation {
 
       itemsProcessed += orphanedByCourse.length;
 
-      if (orphanedByCourse.length > 0) {
-        warnings.push(`Found ${orphanedByCourse.length} progress records for deleted courses`);
+      if (_orphanedByCourse.length > 0) {
+        warnings.push(_`Found ${orphanedByCourse.length} progress records for deleted courses`);
         
         if (!options.dryRun) {
           const progressIds = orphanedByCourse.map(p => p.id);
           const result = await db.execute(`
-            DELETE FROM user_progress 
-            WHERE id IN (${progressIds.map(() => '?').join(',')})
+            DELETE FROM userprogress 
+            WHERE id IN (_${progressIds.map(() => '?').join(',')})
           `, progressIds);
           
           itemsAffected += result.affectedRows;
@@ -297,7 +297,7 @@ class OrphanedProgressCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -307,15 +307,15 @@ class OrphanedProgressCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -335,15 +335,15 @@ class OrphanedLeaderboardCleanup implements CleanupOperation {
   requiresBackup = true;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting orphaned leaderboard entries cleanup', {
+      logger.info('Starting orphaned leaderboard entries cleanup', { metadata: {
         dryRun: options.dryRun,
         batchSize: options.batchSize
       });
@@ -358,26 +358,26 @@ class OrphanedLeaderboardCleanup implements CleanupOperation {
         SELECT l.id, l.user_id, l.category, l.score
         FROM leaderboard_entries l
         LEFT JOIN users u ON l.user_id = u.id
-        WHERE u.id IS NULL OR u.status IN ('SUSPENDED', 'DELETED')
+        WHERE u.id IS NULL OR u.status IN ( 'SUSPENDED', 'DELETED')
         LIMIT ?
       `, [options.batchSize]);
 
       itemsProcessed += orphanedEntries.length;
 
-      if (orphanedEntries.length > 0) {
-        warnings.push(`Found ${orphanedEntries.length} orphaned leaderboard entries`);
+      if (_orphanedEntries.length > 0) {
+        warnings.push(_`Found ${orphanedEntries.length} orphaned leaderboard entries`);
         
         if (!options.dryRun) {
           const entryIds = orphanedEntries.map(e => e.id);
           const result = await db.execute(`
             DELETE FROM leaderboard_entries 
-            WHERE id IN (${entryIds.map(() => '?').join(',')})
+            WHERE id IN (_${entryIds.map(() => '?').join(',')})
           `, entryIds);
           
           itemsAffected += result.affectedRows;
         } else {
           itemsAffected += orphanedEntries.length;
-        }
+        }});
       }
 
       // Find duplicate leaderboard entries for the same user/category
@@ -393,12 +393,12 @@ class OrphanedLeaderboardCleanup implements CleanupOperation {
         LIMIT ?
       `, [options.batchSize]);
 
-      if (duplicateEntries.length > 0) {
-        warnings.push(`Found ${duplicateEntries.length} users with duplicate leaderboard entries`);
+      if (_duplicateEntries.length > 0) {
+        warnings.push(_`Found ${duplicateEntries.length} users with duplicate leaderboard entries`);
         
         if (!options.dryRun) {
           // Keep only the latest entry for each user/category combination
-          for (const duplicate of duplicateEntries) {
+          for (_const duplicate of duplicateEntries) {
             const result = await db.execute(`
               DELETE FROM leaderboard_entries 
               WHERE user_id = ? AND category = ? 
@@ -415,7 +415,7 @@ class OrphanedLeaderboardCleanup implements CleanupOperation {
             itemsAffected += result.affectedRows;
           }
         } else {
-          itemsAffected += duplicateEntries.reduce((sum, d) => sum + d.count - 1, 0);
+          itemsAffected += duplicateEntries.reduce( (sum, d) => sum + d.count - 1, 0);
         }
       }
 
@@ -424,7 +424,7 @@ class OrphanedLeaderboardCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -433,15 +433,15 @@ class OrphanedLeaderboardCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -461,15 +461,15 @@ class OrphanedPrerequisitesCleanup implements CleanupOperation {
   requiresBackup = true;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting orphaned prerequisites cleanup', {
+      logger.info('Starting orphaned prerequisites cleanup', { metadata: {
         dryRun: options.dryRun,
         batchSize: options.batchSize
       });
@@ -488,18 +488,18 @@ class OrphanedPrerequisitesCleanup implements CleanupOperation {
 
       itemsProcessed += orphanedPrereqs.length;
 
-      if (orphanedPrereqs.length > 0) {
-        warnings.push(`Found ${orphanedPrereqs.length} prerequisites pointing to deleted lessons`);
+      if (_orphanedPrereqs.length > 0) {
+        warnings.push(_`Found ${orphanedPrereqs.length} prerequisites pointing to deleted lessons`);
         
         if (!options.dryRun) {
-          for (const prereq of orphanedPrereqs) {
+          for (_const prereq of orphanedPrereqs) {
             const result = await db.execute(`
               DELETE FROM lesson_prerequisites 
               WHERE lesson_id = ? AND prerequisite_id = ?
             `, [prereq.lesson_id, prereq.prerequisite_id]);
             
             itemsAffected += result.affectedRows;
-          }
+          }});
         } else {
           itemsAffected += orphanedPrereqs.length;
         }
@@ -517,13 +517,13 @@ class OrphanedPrerequisitesCleanup implements CleanupOperation {
         LIMIT ?
       `, [options.batchSize]);
 
-      if (circularPrereqs.length > 0) {
-        warnings.push(`Found ${circularPrereqs.length} circular prerequisite dependencies`);
+      if (_circularPrereqs.length > 0) {
+        warnings.push(_`Found ${circularPrereqs.length} circular prerequisite dependencies`);
         
         if (!options.dryRun) {
-          // Remove the circular dependencies (keep the one with lower lesson_id)
-          for (const circular of circularPrereqs) {
-            if (circular.lesson_id > circular.prerequisite_id) {
+          // Remove the circular dependencies (_keep the one with lower lesson_id)
+          for (_const circular of circularPrereqs) {
+            if (_circular.lesson_id > circular.prerequisite_id) {
               const result = await db.execute(`
                 DELETE FROM lesson_prerequisites 
                 WHERE lesson_id = ? AND prerequisite_id = ?
@@ -533,7 +533,7 @@ class OrphanedPrerequisitesCleanup implements CleanupOperation {
             }
           }
         } else {
-          itemsAffected += Math.ceil(circularPrereqs.length / 2);
+          itemsAffected += Math.ceil(_circularPrereqs.length / 2);
         }
       }
 
@@ -542,7 +542,7 @@ class OrphanedPrerequisitesCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -551,15 +551,15 @@ class OrphanedPrerequisitesCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -570,15 +570,15 @@ class OrphanedPrerequisitesCleanup implements CleanupOperation {
 
 // Register all orphaned data cleanup operations
 export function registerOrphanedDataOperations(): void {
-  cleanupManager.registerOperation(new OrphanedAchievementCleanup());
-  cleanupManager.registerOperation(new OrphanedProgressCleanup());
-  cleanupManager.registerOperation(new OrphanedLeaderboardCleanup());
-  cleanupManager.registerOperation(new OrphanedPrerequisitesCleanup());
+  cleanupManager.registerOperation(_new OrphanedAchievementCleanup());
+  cleanupManager.registerOperation(_new OrphanedProgressCleanup());
+  cleanupManager.registerOperation(_new OrphanedLeaderboardCleanup());
+  cleanupManager.registerOperation(_new OrphanedPrerequisitesCleanup());
   
-  logger.info('Orphaned data cleanup operations registered', {
+  logger.info('Orphaned data cleanup operations registered', { metadata: {
     operationCount: 4
   });
-}
+}});
 
 // Export individual operations for testing
 export {

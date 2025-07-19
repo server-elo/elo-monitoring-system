@@ -16,7 +16,7 @@ interface OnboardingStep {
   description: string;
   content: React.ReactNode;
   href?: string;
-  action?: () => void | Promise<void>;
+  action?: (_) => void | Promise<void>;
   canSkip?: boolean;
   isCompleted?: boolean;
   estimatedTime?: number;
@@ -40,18 +40,18 @@ export function GuidedOnboarding({
 }: {
   className?: string;
   flowId?: string;
-  onComplete?: () => void;
-  onSkip?: () => void;
+  onComplete?: (_) => void;
+  onSkip?: (_) => void;
 }) {
-  const { user } = useAuth();
-  const { settings } = useSettings();
-  const router = useRouter();
+  const { user } = useAuth(_);
+  const { settings } = useSettings(_);
+  const router = useRouter(_);
   const shouldAnimate = !settings?.accessibility?.reducedMotion;
 
-  const [currentFlow, setCurrentFlow] = useState<OnboardingFlow | null>(null);
+  const [currentFlow, setCurrentFlow] = useState<OnboardingFlow | null>(_null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+  const [isVisible, setIsVisible] = useState(_false);
+  const [completedSteps, setCompletedSteps] = useState<Set<string>>(_new Set());
 
   const onboardingFlows: OnboardingFlow[] = [
     {
@@ -238,13 +238,13 @@ export function GuidedOnboarding({
     
     if (flowId) {
       targetFlow = onboardingFlows.find(flow => flow.id === flowId) || null;
-    } else if (user?.role) {
+    } else if (_user?.role) {
       targetFlow = onboardingFlows.find(flow => flow.userRole === user.role) || null;
     }
     
     if (targetFlow) {
-      setCurrentFlow(targetFlow);
-      setIsVisible(true);
+      setCurrentFlow(_targetFlow);
+      setIsVisible(_true);
       
       // Track onboarding start
       errorTracker.addBreadcrumb(
@@ -256,39 +256,39 @@ export function GuidedOnboarding({
     }
   }, [flowId, user?.role]);
 
-  const handleNext = useCallback(async () => {
+  const handleNext = useCallback( async () => {
     if (!currentFlow) return;
     
     const currentStep = currentFlow.steps[currentStepIndex];
     
     // Mark current step as completed
-    setCompletedSteps(prev => new Set([...prev, currentStep.id]));
+    setCompletedSteps( prev => new Set([...prev, currentStep.id]));
     
     // Execute step action if any
-    if (currentStep.action) {
+    if (_currentStep.action) {
       try {
-        await currentStep.action();
-      } catch (error) {
+        await currentStep.action(_);
+      } catch (_error) {
         console.error('Onboarding step action failed:', error);
       }
     }
     
     // Navigate to step href if provided
-    if (currentStep.href) {
-      router.push(currentStep.href);
+    if (_currentStep.href) {
+      router.push(_currentStep.href);
     }
     
     // Move to next step or complete
-    if (currentStepIndex < currentFlow.steps.length - 1) {
-      setCurrentStepIndex(prev => prev + 1);
+    if (_currentStepIndex < currentFlow.steps.length - 1) {
+      setCurrentStepIndex(_prev => prev + 1);
     } else {
-      handleComplete();
+      handleComplete(_);
     }
   }, [currentFlow, currentStepIndex, router]);
 
   const handlePrevious = useCallback(() => {
-    if (currentStepIndex > 0) {
-      setCurrentStepIndex(prev => prev - 1);
+    if (_currentStepIndex > 0) {
+      setCurrentStepIndex(_prev => prev - 1);
     }
   }, [currentStepIndex]);
 
@@ -303,8 +303,8 @@ export function GuidedOnboarding({
       { completedSteps: completedSteps.size, totalSteps: currentFlow.steps.length }
     );
     
-    setIsVisible(false);
-    onComplete?.();
+    setIsVisible(_false);
+    onComplete?.(_);
   }, [currentFlow, completedSteps.size, onComplete]);
 
   const handleSkip = useCallback(() => {
@@ -318,8 +318,8 @@ export function GuidedOnboarding({
       { currentStep: currentStepIndex, totalSteps: currentFlow.steps.length }
     );
     
-    setIsVisible(false);
-    onSkip?.();
+    setIsVisible(_false);
+    onSkip?.(_);
   }, [currentFlow, currentStepIndex, onSkip]);
 
   if (!isVisible || !currentFlow) return null;
@@ -340,7 +340,7 @@ export function GuidedOnboarding({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ duration: shouldAnimate ? 0.3 : 0 }}
-          className={cn("relative max-w-2xl w-full", className)}
+          className={cn( "relative max-w-2xl w-full", className)}
         >
           <GlassContainer intensity="heavy" className="p-8">
             {/* Header */}
@@ -410,7 +410,7 @@ export function GuidedOnboarding({
               <div className="flex items-center space-x-2">
                 {currentStep.canSkip && (
                   <button
-                    onClick={() => setCurrentStepIndex(prev => prev + 1)}
+                    onClick={(_) => setCurrentStepIndex(_prev => prev + 1)}
                     className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                   >
                     Skip

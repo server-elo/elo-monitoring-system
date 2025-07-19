@@ -9,7 +9,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Mock user database - same as login
 const mockUsers: Array<ApiUser & { passwordHash: string; tokenVersion: number }> = [
   {
-    id: 'user_1',
+    id: 'user1',
     email: 'student@example.com',
     name: 'John Student',
     role: UserRole.STUDENT,
@@ -40,12 +40,12 @@ const mockUsers: Array<ApiUser & { passwordHash: string; tokenVersion: number }>
   }
 ];
 
-async function findUserById(userId: string): Promise<(ApiUser & { tokenVersion: number }) | null> {
+async function findUserById(_userId: string): Promise<(_ApiUser & { tokenVersion: number }) | null> {
   const user = mockUsers.find(u => u.id === userId);
   return user ? { ...user } : null;
 }
 
-// async function incrementTokenVersion(userId: string): Promise<number> {
+// async function incrementTokenVersion(_userId: string): Promise<number> {
 //   const user = mockUsers.find(u => u.id === userId);
 //   if (user) {
 //     user.tokenVersion = (user.tokenVersion || 0) + 1;
@@ -54,14 +54,14 @@ async function findUserById(userId: string): Promise<(ApiUser & { tokenVersion: 
 //   return 0;
 // }
 
-export const POST = authEndpoint(async (request: NextRequest) => {
+export const POST = authEndpoint( async (request: NextRequest) => {
   try {
     // Validate request body
-    const body = await validateBody(RefreshTokenSchema, request);
+    const body = await validateBody( RefreshTokenSchema, request);
     const { refreshToken } = body;
 
     // Verify refresh token
-    const payload = AuthService.verifyRefreshToken(refreshToken);
+    const payload = AuthService.verifyRefreshToken(_refreshToken);
 
     // Find user
     const user = await findUserById(payload.userId);
@@ -74,7 +74,7 @@ export const POST = authEndpoint(async (request: NextRequest) => {
       throw new UnauthorizedException('Account is not active');
     }
 
-    // Check token version (for token revocation)
+    // Check token version (_for token revocation)
     if (payload.tokenVersion !== user.tokenVersion) {
       throw new UnauthorizedException('Refresh token has been revoked');
     }
@@ -83,8 +83,8 @@ export const POST = authEndpoint(async (request: NextRequest) => {
     const { passwordHash, tokenVersion, ...safeUser } = user;
 
     // Generate new tokens
-    const newAccessToken = AuthService.generateAccessToken(safeUser);
-    const newRefreshToken = AuthService.generateRefreshToken(user.id, user.tokenVersion);
+    const newAccessToken = AuthService.generateAccessToken(_safeUser);
+    const newRefreshToken = AuthService.generateRefreshToken( user.id, user.tokenVersion);
 
     // Prepare response data
     const responseData = {
@@ -115,5 +115,5 @@ export const POST = authEndpoint(async (request: NextRequest) => {
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

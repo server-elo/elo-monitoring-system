@@ -18,9 +18,9 @@ import { MockAuthProvider, useMockAuth, useMockPermissions, useMockAuthStatus } 
 import { GlassCard } from '@/components/ui/Glassmorphism';
 
 function AuthTestContent() {
-  const { user, isAuthenticated, isLoading, error, login, register, logout, clearError } = useMockAuth();
-  const { hasPermission, hasMinimumRole } = useMockPermissions();
-  const { isLoading: statusLoading } = useMockAuthStatus();
+  const { user, isAuthenticated, isLoading, error, login, register, logout, clearError } = useMockAuth(_);
+  const { hasPermission, hasMinimumRole } = useMockPermissions(_);
+  const { isLoading: statusLoading } = useMockAuthStatus(_);
 
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [registerForm, setRegisterForm] = useState({ name: '', email: '', password: '' });
@@ -37,16 +37,16 @@ function AuthTestContent() {
 
   const testRoles = ['STUDENT', 'MENTOR', 'INSTRUCTOR', 'ADMIN'];
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    clearError();
-    await login(loginForm.email, loginForm.password);
+  const handleLogin = async (_e: React.FormEvent) => {
+    e.preventDefault(_);
+    clearError(_);
+    await login( loginForm.email, loginForm.password);
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    clearError();
-    await register(registerForm.name, registerForm.email, registerForm.password);
+  const handleRegister = async (_e: React.FormEvent) => {
+    e.preventDefault(_);
+    clearError(_);
+    await register( registerForm.name, registerForm.email, registerForm.password);
   };
 
   const quickLoginUsers = [
@@ -195,7 +195,7 @@ function AuthTestContent() {
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-3">Session Info</h3>
                   <div className="space-y-2">
-                    <p className="text-gray-300"><span className="font-medium">Created:</span> {user.createdAt.toLocaleString()}</p>
+                    <p className="text-gray-300"><span className="font-medium">Created:</span> {user.createdAt.toLocaleString(_)}</p>
                     <p className="text-gray-300"><span className="font-medium">Status:</span> Active</p>
                     <p className="text-gray-300"><span className="font-medium">Storage:</span> LocalStorage</p>
                   </div>
@@ -221,12 +221,12 @@ function AuthTestContent() {
 
               {/* Quick Login Buttons */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-white mb-3">Quick Login (Test Users)</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">Quick Login (_Test Users)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                   {quickLoginUsers.map((testUser) => (
                     <button
                       key={testUser.email}
-                      onClick={() => login(testUser.email, testUser.password)}
+                      onClick={(_) => login( testUser.email, testUser.password)}
                       disabled={isLoading}
                       className="p-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white rounded-lg transition-colors text-sm"
                     >
@@ -239,7 +239,7 @@ function AuthTestContent() {
               {/* Tab Navigation */}
               <div className="flex bg-white/10 rounded-lg p-1 mb-6">
                 <button
-                  onClick={() => setActiveTab('login')}
+                  onClick={(_) => setActiveTab('login')}
                   className={`flex-1 py-2 px-4 rounded-md transition-colors flex items-center justify-center space-x-2 ${
                     activeTab === 'login' 
                       ? 'bg-blue-600 text-white' 
@@ -250,7 +250,7 @@ function AuthTestContent() {
                   <span>Login</span>
                 </button>
                 <button
-                  onClick={() => setActiveTab('register')}
+                  onClick={(_) => setActiveTab('register')}
                   className={`flex-1 py-2 px-4 rounded-md transition-colors flex items-center justify-center space-x-2 ${
                     activeTab === 'register' 
                       ? 'bg-blue-600 text-white' 
@@ -271,7 +271,7 @@ function AuthTestContent() {
                       <input
                         type="email"
                         value={loginForm.email}
-                        onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+                        onChange={(_e) => setLoginForm( {...loginForm, email: e.target.value})}
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter email"
                         required
@@ -282,7 +282,7 @@ function AuthTestContent() {
                       <input
                         type="password"
                         value={loginForm.password}
-                        onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+                        onChange={(_e) => setLoginForm( {...loginForm, password: e.target.value})}
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter password"
                         required
@@ -303,7 +303,7 @@ function AuthTestContent() {
                       <input
                         type="text"
                         value={registerForm.name}
-                        onChange={(e) => setRegisterForm({...registerForm, name: e.target.value})}
+                        onChange={(_e) => setRegisterForm( {...registerForm, name: e.target.value})}
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter your name"
                         required
@@ -314,7 +314,7 @@ function AuthTestContent() {
                       <input
                         type="email"
                         value={registerForm.email}
-                        onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
+                        onChange={(_e) => setRegisterForm( {...registerForm, email: e.target.value})}
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter email"
                         required
@@ -325,7 +325,7 @@ function AuthTestContent() {
                       <input
                         type="password"
                         value={registerForm.password}
-                        onChange={(e) => setRegisterForm({...registerForm, password: e.target.value})}
+                        onChange={(_e) => setRegisterForm( {...registerForm, password: e.target.value})}
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter password"
                         required
@@ -364,7 +364,7 @@ function AuthTestContent() {
                 <h3 className="text-lg font-semibold text-white mb-3">Permissions</h3>
                 <div className="space-y-2">
                   {testPermissions.map((permission) => {
-                    const hasAccess = hasPermission(permission);
+                    const hasAccess = hasPermission(_permission);
                     return (
                       <div key={permission} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
                         <span className="text-gray-300">{permission}</span>
@@ -380,7 +380,7 @@ function AuthTestContent() {
                 <h3 className="text-lg font-semibold text-white mb-3">Role Access</h3>
                 <div className="space-y-2">
                   {testRoles.map((role) => {
-                    const hasAccess = hasMinimumRole(role);
+                    const hasAccess = hasMinimumRole(_role);
                     return (
                       <div key={role} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
                         <span className="text-gray-300">{role}</span>

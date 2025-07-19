@@ -7,7 +7,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -26,20 +26,20 @@ export async function GET(_request: NextRequest) {
 
     // Count contributions (completed lessons, projects, collaborations)
     const completedLessons = await prisma.userProgress.count({
-      where: {
-        userId: session.user.id,
-        status: 'COMPLETED',
-      },
+      where: { 
+        userId: session.user.id 
+        status: 'COMPLETED' 
+      } 
     });
 
     const collaborationParticipations = await prisma.collaboration.count({
-      where: {
-        participants: {
-          some: {
-            id: session.user.id,
-          },
-        },
-      },
+      where: { 
+        participants: { 
+          some: { 
+            id: session.user.id 
+          } 
+        } 
+      } 
     });
 
     const contributions = completedLessons + collaborationParticipations;
@@ -50,14 +50,14 @@ export async function GET(_request: NextRequest) {
     const mentoringSessions = 0; // TODO: Implement mentoring system
 
     const stats = {
-      followers,
-      following,
-      contributions,
-      helpfulVotes,
-      questionsAnswered,
-      mentoringSessions,
-      communityRank: Math.max(1, Math.floor(contributions / 10) + 1),
-      reputationScore: contributions * 10 + helpfulVotes * 5,
+      followers 
+      following 
+      contributions 
+      helpfulVotes 
+      questionsAnswered 
+      mentoringSessions 
+      communityRank: Math.max(1, Math.floor(contributions / 10) + 1) 
+      reputationScore: contributions * 10 + helpfulVotes * 5 
     };
 
     return NextResponse.json({ stats });
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     const { action, data } = await request.json();
 
     switch (action) {
-      case 'follow_user':
+      case 'followuser':
         const { targetUserId } = data;
         
         if (!targetUserId) {
@@ -90,10 +90,10 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ 
           success: true, 
-          message: 'User followed successfully' 
+          message: 'User followed successfully'  
         });
 
-      case 'unfollow_user':
+      case 'unfollowuser':
         const { unfollowUserId } = data;
         
         if (!unfollowUserId) {
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ 
           success: true, 
-          message: 'User unfollowed successfully' 
+          message: 'User unfollowed successfully'  
         });
 
       case 'vote_helpful':
@@ -116,24 +116,24 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ 
           success: true, 
-          message: 'Vote recorded successfully' 
+          message: 'Vote recorded successfully'  
         });
 
       case 'answer_question':
         const { questionId, answer } = data;
 
         // TODO: Implement Q&A system
-        logger.info(`User ${session.user.id} answered question ${questionId}`, { 
-          userId: session.user.id,
+        logger.info(`User ${session.user.id} answered question ${questionId}`, { metadata: { 
+          userId: session.user.id 
           metadata: { answer, questionId }
         });
 
         return NextResponse.json({ 
           success: true, 
-          message: 'Answer submitted successfully' 
+          message: 'Answer submitted successfully'  
         });
 
-      default:
+      default: 
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {

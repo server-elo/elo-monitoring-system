@@ -43,9 +43,9 @@ const UserManagement = lazy(() =>
 // Generic error fallback
 const ComponentErrorFallback: React.FC<{ 
   error: Error; 
-  resetErrorBoundary: () => void;
+  resetErrorBoundary: (_) => void;
   componentName: string;
-}> = ({ error: _error, resetErrorBoundary, componentName }) => (
+}> = ( { error: _error, resetErrorBoundary, componentName }) => (
   <div className="glass border border-red-400/20 rounded-lg p-6 text-center">
     <div className="text-red-400 mb-4">
       <svg className="w-8 h-8 mx-auto" fill="currentColor" viewBox="0 0 20 20">
@@ -88,13 +88,13 @@ export const LazyGamificationDashboard: React.FC<LazyGamificationDashboardProps>
     <div ref={ref}>
       {isInView ? (
         <ErrorBoundary
-          FallbackComponent={(errorProps) => (
+          FallbackComponent={(_errorProps) => (
             <ComponentErrorFallback {...errorProps} componentName="Gamification Dashboard" />
           )}
         >
           <Suspense fallback={
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }, (_, i) => (
+              {Array.from( { length: 6 }, (_, i) => (
                 <AchievementCardSkeleton key={i} />
               ))}
             </div>
@@ -104,7 +104,7 @@ export const LazyGamificationDashboard: React.FC<LazyGamificationDashboardProps>
         </ErrorBoundary>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }, (_, i) => (
+          {Array.from( { length: 6 }, (_, i) => (
             <AchievementCardSkeleton key={i} />
           ))}
         </div>
@@ -136,13 +136,13 @@ export const LazyAITutoringInterface: React.FC<LazyAITutoringInterfaceProps> = (
     <div ref={ref}>
       {isInView ? (
         <ErrorBoundary
-          FallbackComponent={(errorProps) => (
+          FallbackComponent={(_errorProps) => (
             <ComponentErrorFallback {...errorProps} componentName="AI Tutoring Interface" />
           )}
         >
           <Suspense fallback={
             <div className="space-y-4">
-              {Array.from({ length: 3 }, (_, i) => (
+              {Array.from( { length: 3 }, (_, i) => (
                 <ChatMessageSkeleton key={i} isUser={i % 2 === 0} />
               ))}
             </div>
@@ -152,7 +152,7 @@ export const LazyAITutoringInterface: React.FC<LazyAITutoringInterfaceProps> = (
         </ErrorBoundary>
       ) : (
         <div className="space-y-4">
-          {Array.from({ length: 3 }, (_, i) => (
+          {Array.from( { length: 3 }, (_, i) => (
             <ChatMessageSkeleton key={i} isUser={i % 2 === 0} />
           ))}
         </div>
@@ -184,7 +184,7 @@ export const LazyRealTimeCollaboration: React.FC<LazyRealTimeCollaborationProps>
     <div ref={ref}>
       {isInView ? (
         <ErrorBoundary
-          FallbackComponent={(errorProps) => (
+          FallbackComponent={(_errorProps) => (
             <ComponentErrorFallback {...errorProps} componentName="Real-Time Collaboration" />
           )}
         >
@@ -238,14 +238,14 @@ export const LazyAdvancedAnalytics: React.FC<LazyAdvancedAnalyticsProps> = ({
     <div ref={ref}>
       {isInView ? (
         <ErrorBoundary
-          FallbackComponent={(errorProps) => (
+          FallbackComponent={(_errorProps) => (
             <ComponentErrorFallback {...errorProps} componentName="Advanced Analytics" />
           )}
         >
           <Suspense fallback={
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {Array.from({ length: 4 }, (_, i) => (
+                {Array.from( { length: 4 }, (_, i) => (
                   <DashboardCardSkeleton key={i} />
                 ))}
               </div>
@@ -259,7 +259,7 @@ export const LazyAdvancedAnalytics: React.FC<LazyAdvancedAnalyticsProps> = ({
       ) : (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 4 }, (_, i) => (
+            {Array.from( { length: 4 }, (_, i) => (
               <DashboardCardSkeleton key={i} />
             ))}
           </div>
@@ -293,7 +293,7 @@ export const LazyUserManagement: React.FC<LazyUserManagementProps> = ({
     <div ref={ref}>
       {isInView ? (
         <ErrorBoundary
-          FallbackComponent={(errorProps) => (
+          FallbackComponent={(_errorProps) => (
             <ComponentErrorFallback {...errorProps} componentName="User Management" />
           )}
         >
@@ -309,36 +309,36 @@ export const LazyUserManagement: React.FC<LazyUserManagementProps> = ({
 };
 
 // Preload functions for critical components
-export const preloadGamificationDashboard = () => {
-  if (typeof window !== 'undefined') {
+export const preloadGamificationDashboard = (_) => {
+  if (_typeof window !== 'undefined') {
     import('@/components/learning/GamificationSystem');
   }
 };
 
-export const preloadAITutoringInterface = () => {
-  if (typeof window !== 'undefined') {
+export const preloadAITutoringInterface = (_) => {
+  if (_typeof window !== 'undefined') {
     import('@/components/ai/EnhancedAITutor');
   }
 };
 
-export const preloadRealTimeCollaboration = () => {
-  if (typeof window !== 'undefined') {
+export const preloadRealTimeCollaboration = (_) => {
+  if (_typeof window !== 'undefined') {
     import('@/components/collaboration/ComprehensiveCollaborationDashboard');
   }
 };
 
-export const preloadAdvancedAnalytics = () => {
-  if (typeof window !== 'undefined') {
+export const preloadAdvancedAnalytics = (_) => {
+  if (_typeof window !== 'undefined') {
     import('@/components/curriculum/LearningAnalytics');
   }
 };
 
 // Utility to preload all heavy components
-export const preloadAllHeavyComponents = () => {
-  preloadGamificationDashboard();
-  preloadAITutoringInterface();
-  preloadRealTimeCollaboration();
-  preloadAdvancedAnalytics();
+export const preloadAllHeavyComponents = (_) => {
+  preloadGamificationDashboard(_);
+  preloadAITutoringInterface(_);
+  preloadRealTimeCollaboration(_);
+  preloadAdvancedAnalytics(_);
 };
 
 export default {

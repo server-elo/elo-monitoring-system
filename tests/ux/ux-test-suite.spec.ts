@@ -13,11 +13,11 @@ import {
 } from '@/lib/testing/ux-testing';
 
 // Test configuration
-test.describe('UX Polish Test Suite', () => {
+test.describe( 'UX Polish Test Suite', () => {
   let page: Page;
   let context: BrowserContext;
 
-  test.beforeEach(async ({ browser }) => {
+  test.beforeEach( async ({ browser }) => {
     context = await browser.newContext({
       // Enable accessibility testing
       reducedMotion: 'no-preference',
@@ -27,22 +27,22 @@ test.describe('UX Polish Test Suite', () => {
       permissions: ['notifications']
     });
     
-    page = await context.newPage();
+    page = await context.newPage(_);
     
     // Set up test data and authentication
     await page.goto('/auth/test-login');
-    await page.fill('[data-testid="email"]', 'test@example.com');
-    await page.fill('[data-testid="password"]', 'password123');
+    await page.fill( '[data-testid="email"]', 'test@example.com');
+    await page.fill( '[data-testid="password"]', 'password123');
     await page.click('[data-testid="login-button"]');
     await page.waitForURL('/dashboard');
   });
 
-  test.afterEach(async () => {
-    await context.close();
+  test.afterEach( async () => {
+    await context.close(_);
   });
 
-  test.describe('Loading States & Async Operations', () => {
-    test('should display skeleton loaders with glassmorphism design', async () => {
+  test.describe( 'Loading States & Async Operations', () => {
+    test( 'should display skeleton loaders with glassmorphism design', async () => {
       await page.goto('/courses');
       
       // Test skeleton loaders
@@ -53,83 +53,83 @@ test.describe('UX Polish Test Suite', () => {
       ]);
     });
 
-    test('should show progress indicators for form submissions', async () => {
+    test( 'should show progress indicators for form submissions', async () => {
       await page.goto('/profile/edit');
-      await LoadingStateTestUtils.testProgressIndicators(page);
+      await LoadingStateTestUtils.testProgressIndicators(_page);
     });
 
-    test('should handle file upload with progress tracking', async () => {
+    test( 'should handle file upload with progress tracking', async () => {
       await page.goto('/upload');
-      await LoadingStateTestUtils.testFileUploadProgress(page, 'test-files/sample.pdf');
+      await LoadingStateTestUtils.testFileUploadProgress( page, 'test-files/sample.pdf');
     });
 
-    test('should implement debounced loading for search', async () => {
+    test( 'should implement debounced loading for search', async () => {
       await page.goto('/search');
-      await LoadingStateTestUtils.testDebouncedLoading(page);
+      await LoadingStateTestUtils.testDebouncedLoading(_page);
     });
 
-    test('should respect reduced motion preferences', async () => {
+    test( 'should respect reduced motion preferences', async () => {
       // Set reduced motion preference
-      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.emulateMedia({ reducedMotion: 'reduce'  });
       
       await page.goto('/dashboard');
       await page.click('[data-testid="animation-trigger"]');
       
       // Verify animations are disabled
       const animatedElement = page.locator('[data-testid="animated-element"]');
-      const styles = await animatedElement.evaluate(el => getComputedStyle(el));
-      expect(styles.animationDuration).toBe('0s');
+      const styles = await animatedElement.evaluate(_el => getComputedStyle(el));
+      expect(_styles.animationDuration).toBe('0s');
     });
   });
 
-  test.describe('Error Boundaries & Graceful Error Handling', () => {
-    test('should handle component errors with retry mechanisms', async () => {
+  test.describe( 'Error Boundaries & Graceful Error Handling', () => {
+    test( 'should handle component errors with retry mechanisms', async () => {
       await page.goto('/dashboard');
-      await ErrorBoundaryTestUtils.testComponentErrorBoundary(page);
+      await ErrorBoundaryTestUtils.testComponentErrorBoundary(_page);
     });
 
-    test('should handle async operation errors', async () => {
+    test( 'should handle async operation errors', async () => {
       await page.goto('/api-test');
-      await ErrorBoundaryTestUtils.testAsyncErrorBoundary(page);
+      await ErrorBoundaryTestUtils.testAsyncErrorBoundary(_page);
     });
 
-    test('should show role-specific error messages for students', async () => {
+    test( 'should show role-specific error messages for students', async () => {
       await page.goto('/error-test');
-      await ErrorBoundaryTestUtils.testRoleSpecificErrorMessages(page, 'STUDENT');
+      await ErrorBoundaryTestUtils.testRoleSpecificErrorMessages( page, 'STUDENT');
     });
 
-    test('should show role-specific error messages for instructors', async () => {
+    test( 'should show role-specific error messages for instructors', async () => {
       // Switch to instructor role
       await page.goto('/auth/switch-role?role=INSTRUCTOR');
       await page.goto('/error-test');
-      await ErrorBoundaryTestUtils.testRoleSpecificErrorMessages(page, 'INSTRUCTOR');
+      await ErrorBoundaryTestUtils.testRoleSpecificErrorMessages( page, 'INSTRUCTOR');
     });
 
-    test('should show role-specific error messages for admins', async () => {
+    test( 'should show role-specific error messages for admins', async () => {
       // Switch to admin role
       await page.goto('/auth/switch-role?role=ADMIN');
       await page.goto('/error-test');
-      await ErrorBoundaryTestUtils.testRoleSpecificErrorMessages(page, 'ADMIN');
+      await ErrorBoundaryTestUtils.testRoleSpecificErrorMessages( page, 'ADMIN');
     });
   });
 
-  test.describe('Success Feedback & Toast Notifications', () => {
-    test('should display success toasts with glassmorphism design', async () => {
+  test.describe( 'Success Feedback & Toast Notifications', () => {
+    test( 'should display success toasts with glassmorphism design', async () => {
       await page.goto('/dashboard');
-      await ToastTestUtils.testSuccessToast(page);
+      await ToastTestUtils.testSuccessToast(_page);
     });
 
-    test('should show celebration modals for achievements', async () => {
+    test( 'should show celebration modals for achievements', async () => {
       await page.goto('/achievements');
-      await ToastTestUtils.testCelebrationModal(page);
+      await ToastTestUtils.testCelebrationModal(_page);
     });
 
-    test('should handle notification queuing and grouping', async () => {
+    test( 'should handle notification queuing and grouping', async () => {
       await page.goto('/notifications-test');
-      await ToastTestUtils.testNotificationQueuing(page);
+      await ToastTestUtils.testNotificationQueuing(_page);
     });
 
-    test('should support keyboard navigation for notifications', async () => {
+    test( 'should support keyboard navigation for notifications', async () => {
       await page.goto('/dashboard');
       
       // Trigger notification
@@ -138,72 +138,72 @@ test.describe('UX Polish Test Suite', () => {
       // Test keyboard navigation
       await page.keyboard.press('Tab');
       const focusedElement = page.locator(':focus');
-      await expect(focusedElement).toHaveAttribute('data-testid', 'notification-close');
+      await expect(_focusedElement).toHaveAttribute( 'data-testid', 'notification-close');
       
       // Test escape key
       await page.keyboard.press('Escape');
-      await expect(page.locator('[data-testid="notification"]')).not.toBeVisible();
+      await expect(_page.locator('[data-testid="notification"]')).not.toBeVisible(_);
     });
   });
 
-  test.describe('Navigation Flow Optimization', () => {
-    test('should provide smart back button functionality', async () => {
-      await NavigationTestUtils.testSmartBackButton(page);
+  test.describe( 'Navigation Flow Optimization', () => {
+    test( 'should provide smart back button functionality', async () => {
+      await NavigationTestUtils.testSmartBackButton(_page);
     });
 
-    test('should display contextual breadcrumbs', async () => {
-      await NavigationTestUtils.testBreadcrumbs(page);
+    test( 'should display contextual breadcrumbs', async () => {
+      await NavigationTestUtils.testBreadcrumbs(_page);
     });
 
-    test('should show continue learning suggestions', async () => {
-      await NavigationTestUtils.testContinueLearning(page);
+    test( 'should show continue learning suggestions', async () => {
+      await NavigationTestUtils.testContinueLearning(_page);
     });
 
-    test('should prevent dead-end navigation', async () => {
-      await NavigationTestUtils.testDeadEndPrevention(page);
+    test( 'should prevent dead-end navigation', async () => {
+      await NavigationTestUtils.testDeadEndPrevention(_page);
     });
 
-    test('should support deep linking', async () => {
+    test( 'should support deep linking', async () => {
       // Test deep link to specific lesson
       await page.goto('/learn/solidity-basics/lesson-3?section=variables');
       
       // Verify correct content is loaded
-      await expect(page.locator('[data-testid="lesson-title"]')).toContainText('Variables');
-      await expect(page.locator('[data-testid="section-variables"]')).toBeVisible();
+      await expect(_page.locator('[data-testid="lesson-title"]')).toContainText('Variables');
+      await expect(_page.locator('[data-testid="section-variables"]')).toBeVisible(_);
       
       // Test sharing functionality
       await page.click('[data-testid="share-button"]');
-      const shareUrl = await page.locator('[data-testid="share-url"]').inputValue();
-      expect(shareUrl).toContain('/learn/solidity-basics/lesson-3?section=variables');
+      const shareUrl = await page.locator('[data-testid="share-url"]').inputValue(_);
+      expect(_shareUrl).toContain('/learn/solidity-basics/lesson-3?section=variables');
     });
   });
 
-  test.describe('Accessibility Compliance', () => {
-    test('should support keyboard navigation', async () => {
+  test.describe( 'Accessibility Compliance', () => {
+    test( 'should support keyboard navigation', async () => {
       await page.goto('/dashboard');
-      await AccessibilityTestUtils.testKeyboardNavigation(page);
+      await AccessibilityTestUtils.testKeyboardNavigation(_page);
     });
 
-    test('should provide screen reader support', async () => {
+    test( 'should provide screen reader support', async () => {
       await page.goto('/learn');
-      await AccessibilityTestUtils.testScreenReaderSupport(page);
+      await AccessibilityTestUtils.testScreenReaderSupport(_page);
     });
 
-    test('should respect reduced motion preferences', async () => {
-      await AccessibilityTestUtils.testReducedMotionSupport(page);
+    test( 'should respect reduced motion preferences', async () => {
+      await AccessibilityTestUtils.testReducedMotionSupport(_page);
     });
 
-    test('should meet WCAG 2.1 AA color contrast requirements', async () => {
+    test( 'should meet WCAG 2.1 AA color contrast requirements', async () => {
       await page.goto('/dashboard');
       
       // Test color contrast for text elements
-      const textElements = page.locator('p, h1, h2, h3, h4, h5, h6, span, button, a');
-      const count = await textElements.count();
+      const textElements = page.locator( 'p, h1, h2, h3, h4, h5, h6, span, button, a');
+      const count = await textElements.count(_);
       
-      for (let i = 0; i < Math.min(count, 20); i++) { // Test first 20 elements
-        const element = textElements.nth(i);
+      for ( let i = 0; i < Math.min(count, 20); i++) { // Test first 20 elements
+        const element = textElements.nth(_i);
         const styles = await element.evaluate(el => {
-          const computed = getComputedStyle(el);
+          const computed = getComputedStyle(_el);
           return {
             color: computed.color,
             backgroundColor: computed.backgroundColor,
@@ -211,82 +211,82 @@ test.describe('UX Polish Test Suite', () => {
           };
         });
         
-        // Basic contrast check (simplified)
-        expect(styles.color).not.toBe(styles.backgroundColor);
+        // Basic contrast check (_simplified)
+        expect(_styles.color).not.toBe(_styles.backgroundColor);
       }
     });
 
-    test('should provide proper focus indicators', async () => {
+    test( 'should provide proper focus indicators', async () => {
       await page.goto('/dashboard');
       
       // Tab through interactive elements
-      const interactiveElements = page.locator('button, a, input, select, textarea');
-      const count = await interactiveElements.count();
+      const interactiveElements = page.locator( 'button, a, input, select, textarea');
+      const count = await interactiveElements.count(_);
       
-      for (let i = 0; i < Math.min(count, 10); i++) {
+      for ( let i = 0; i < Math.min(count, 10); i++) {
         await page.keyboard.press('Tab');
         const focusedElement = page.locator(':focus');
         
         // Check for visible focus indicator
-        const styles = await focusedElement.evaluate(el => getComputedStyle(el));
+        const styles = await focusedElement.evaluate(_el => getComputedStyle(el));
         const hasOutline = styles.outline !== 'none' || 
                           styles.boxShadow.includes('0 0') ||
                           styles.border.includes('2px');
-        expect(hasOutline).toBeTruthy();
+        expect(_hasOutline).toBeTruthy(_);
       }
     });
   });
 
-  test.describe('Performance Standards', () => {
-    test('should load pages within 3 seconds', async () => {
-      await PerformanceTestUtils.testLoadingPerformance(page);
+  test.describe( 'Performance Standards', () => {
+    test( 'should load pages within 3 seconds', async () => {
+      await PerformanceTestUtils.testLoadingPerformance(_page);
     });
 
-    test('should maintain 60fps during animations', async () => {
+    test( 'should maintain 60fps during animations', async () => {
       await page.goto('/animations-test');
-      await PerformanceTestUtils.testAnimationPerformance(page);
+      await PerformanceTestUtils.testAnimationPerformance(_page);
     });
 
-    test('should manage memory usage efficiently', async () => {
+    test( 'should manage memory usage efficiently', async () => {
       await page.goto('/memory-test');
-      await PerformanceTestUtils.testMemoryUsage(page);
+      await PerformanceTestUtils.testMemoryUsage(_page);
     });
 
-    test('should optimize Core Web Vitals', async () => {
+    test( 'should optimize Core Web Vitals', async () => {
       await page.goto('/dashboard');
       
       // Measure Core Web Vitals
       const vitals = await page.evaluate(() => {
         return new Promise((resolve) => {
           const observer = new PerformanceObserver((list) => {
-            const entries = list.getEntries();
+            const entries = list.getEntries(_);
             const vitals: any = {};
             
             entries.forEach((entry) => {
-              if (entry.entryType === 'largest-contentful-paint') {
+              if (_entry.entryType === 'largest-contentful-paint') {
                 vitals.lcp = entry.startTime;
               }
-              if (entry.entryType === 'first-input') {
+              if (_entry.entryType === 'first-input') {
                 vitals.fid = entry.processingStart - entry.startTime;
               }
-              if (entry.entryType === 'layout-shift') {
-                vitals.cls = (vitals.cls || 0) + entry.value;
+              if (_entry.entryType === 'layout-shift') {
+                vitals.cls = (_vitals.cls || 0) + entry.value;
               }
             });
             
-            resolve(vitals);
+            resolve(_vitals);
           });
           
-          observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
+          observer.observe( { entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
           
           // Timeout after 5 seconds
-          setTimeout(() => resolve({}), 5000);
+          setTimeout(() => resolve({  }), 5000);
         });
       });
       
       // Check Core Web Vitals thresholds
       if ((vitals as any).lcp) {
-        expect((vitals as any).lcp).toBeLessThan(2500); // LCP < 2.5s
+        expect((vitals as any).lcp).toBeLessThan(_2500); // LCP < 2.5s
       }
       if ((vitals as any).fid) {
         expect((vitals as any).fid).toBeLessThan(100); // FID < 100ms
@@ -297,66 +297,66 @@ test.describe('UX Polish Test Suite', () => {
     });
   });
 
-  test.describe('Integration & System Tests', () => {
-    test('should integrate with error tracking system', async () => {
-      await IntegrationTestUtils.testErrorTrackingIntegration(page);
+  test.describe( 'Integration & System Tests', () => {
+    test( 'should integrate with error tracking system', async () => {
+      await IntegrationTestUtils.testErrorTrackingIntegration(_page);
     });
 
-    test('should integrate with user settings', async () => {
-      await IntegrationTestUtils.testSettingsIntegration(page);
+    test( 'should integrate with user settings', async () => {
+      await IntegrationTestUtils.testSettingsIntegration(_page);
     });
 
-    test('should integrate with notification system', async () => {
-      await IntegrationTestUtils.testNotificationSystemIntegration(page);
+    test( 'should integrate with notification system', async () => {
+      await IntegrationTestUtils.testNotificationSystemIntegration(_page);
     });
 
-    test('should work under slow network conditions', async () => {
-      await NetworkSimulator.simulateSlowNetwork(page);
+    test( 'should work under slow network conditions', async () => {
+      await NetworkSimulator.simulateSlowNetwork(_page);
       
       await page.goto('/dashboard');
       
       // Verify skeleton loaders appear
-      await expect(page.locator('[data-testid="skeleton-loader"]')).toBeVisible();
+      await expect(_page.locator('[data-testid="skeleton-loader"]')).toBeVisible(_);
       
       // Wait for content to load
-      await page.waitForSelector('[data-testid="dashboard-content"]', { timeout: 10000 });
+      await page.waitForSelector( '[data-testid="dashboard-content"]', { timeout: 10000 });
       
-      await NetworkSimulator.resetNetworkConditions(page);
+      await NetworkSimulator.resetNetworkConditions(_page);
     });
 
-    test('should handle offline scenarios gracefully', async () => {
+    test( 'should handle offline scenarios gracefully', async () => {
       await page.goto('/dashboard');
       
       // Go offline
-      await NetworkSimulator.simulateOfflineMode(page);
+      await NetworkSimulator.simulateOfflineMode(_page);
       
       // Try to navigate
       await page.click('[data-testid="navigation-link"]');
       
       // Should show offline message
-      await expect(page.locator('[data-testid="offline-message"]')).toBeVisible();
+      await expect(_page.locator('[data-testid="offline-message"]')).toBeVisible(_);
       
       // Go back online
-      await NetworkSimulator.resetNetworkConditions(page);
+      await NetworkSimulator.resetNetworkConditions(_page);
       
       // Should automatically retry
-      await expect(page.locator('[data-testid="offline-message"]')).not.toBeVisible();
+      await expect(_page.locator('[data-testid="offline-message"]')).not.toBeVisible(_);
     });
   });
 
-  test.describe('Comprehensive UX Scenarios', () => {
-    test('should run all predefined UX test scenarios', async () => {
-      const results = await UXTestRunner.runAllScenarios(page, UX_TEST_SCENARIOS);
+  test.describe( 'Comprehensive UX Scenarios', () => {
+    test( 'should run all predefined UX test scenarios', async () => {
+      const results = await UXTestRunner.runAllScenarios( page, UX_TEST_SCENARIOS);
       
       console.log(`UX Test Results: ${results.passed} passed, ${results.failed} failed`);
       
       // Ensure at least 80% of scenarios pass
-      const passRate = results.passed / (results.passed + results.failed);
-      expect(passRate).toBeGreaterThan(0.8);
+      const passRate = results.passed / (_results.passed + results.failed);
+      expect(_passRate).toBeGreaterThan(0.8);
       
       // Log detailed results
       results.results.forEach(result => {
-        console.log(`${result.passed ? '✅' : '❌'} ${result.scenario}`);
+        console.log(_`${result.passed ? '✅' : '❌'} ${result.scenario}`);
       });
     });
   });

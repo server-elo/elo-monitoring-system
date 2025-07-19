@@ -10,76 +10,77 @@ import { SessionProvider } from 'next-auth/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { LearningProvider } from '@/lib/context/LearningContext';
+import { ErrorProvider } from '@/lib/errors/ErrorContext';
 
 // Combined context for app-wide state
 interface AppContextType {
   // Help system
   isHelpOpen: boolean;
   isShortcutsOpen: boolean;
-  openHelp: (query?: string) => void;
-  closeHelp: () => void;
-  toggleShortcuts: () => void;
+  openHelp: (_query?: string) => void;
+  closeHelp: (_) => void;
+  toggleShortcuts: (_) => void;
 
   // Discovery/onboarding
   showFeatureSpotlight: boolean;
-  dismissFeature: (featureId: string) => void;
+  dismissFeature: (_featureId: string) => void;
   userLevel: 'beginner' | 'intermediate' | 'advanced';
-  setUserLevel: (level: 'beginner' | 'intermediate' | 'advanced') => void;
+  setUserLevel: (_level: 'beginner' | 'intermediate' | 'advanced') => void;
 
   // Error handling
   errors: Array<{ id: string; message: string; timestamp: number }>;
-  addError: (message: string) => void;
-  removeError: (id: string) => void;
-  clearErrors: () => void;
+  addError: (_message: string) => void;
+  removeError: (_id: string) => void;
+  clearErrors: (_) => void;
 
   // UI state
   sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
+  setSidebarOpen: (_open: boolean) => void;
   theme: 'light' | 'dark' | 'system';
-  setTheme: (theme: 'light' | 'dark' | 'system') => void;
+  setTheme: (_theme: 'light' | 'dark' | 'system') => void;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<AppContextType | undefined>(_undefined);
 
 interface AppProviderProps {
   children: React.ReactNode;
 }
 
-const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
+const AppProvider: React.FC<AppProviderProps> = ({ children  }) => {
   // Help state
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(_false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(_false);
   const [helpQuery, setHelpQuery] = useState('');
 
   // Discovery state
-  const [showFeatureSpotlight, setShowFeatureSpotlight] = useState(true);
+  const [showFeatureSpotlight, setShowFeatureSpotlight] = useState(_true);
   const [userLevel, setUserLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
 
   // Error state
   const [errors, setErrors] = useState<Array<{ id: string; message: string; timestamp: number }>>([]);
 
   // UI state
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(_false);
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
 
   // Load saved preferences
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (_typeof window !== 'undefined') {
       try {
         const savedLevel = localStorage.getItem('userLevel') as 'beginner' | 'intermediate' | 'advanced';
-        if (savedLevel) setUserLevel(savedLevel);
+        if (savedLevel) setUserLevel(_savedLevel);
 
         const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system';
-        if (savedTheme) setTheme(savedTheme);
+        if (savedTheme) setTheme(_savedTheme);
 
         const dismissedFeatures = localStorage.getItem('dismissedFeatures');
         if (dismissedFeatures) {
-          const dismissed = JSON.parse(dismissedFeatures);
-          if (dismissed.includes('feature-spotlight')) {
-            setShowFeatureSpotlight(false);
+          const dismissed = JSON.parse(_dismissedFeatures);
+          if (_dismissed.includes('feature-spotlight')) {
+            setShowFeatureSpotlight(_false);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn('Failed to load saved preferences:', error);
       }
     }
@@ -87,41 +88,41 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   // Help functions
   const openHelp = useCallback((query?: string) => {
-    setHelpQuery(query || '');
-    setIsHelpOpen(true);
-    setIsShortcutsOpen(false);
+    setHelpQuery(_query || '');
+    setIsHelpOpen(_true);
+    setIsShortcutsOpen(_false);
   }, []);
 
   const closeHelp = useCallback(() => {
-    setIsHelpOpen(false);
+    setIsHelpOpen(_false);
     setHelpQuery('');
   }, []);
 
   const toggleShortcuts = useCallback(() => {
     setIsShortcutsOpen(!isShortcutsOpen);
-    setIsHelpOpen(false);
+    setIsHelpOpen(_false);
   }, [isShortcutsOpen]);
 
   // Discovery functions
   const dismissFeature = useCallback((featureId: string) => {
-    if (featureId === 'feature-spotlight') {
-      setShowFeatureSpotlight(false);
+    if (_featureId === 'feature-spotlight') {
+      setShowFeatureSpotlight(_false);
     }
     
     try {
-      const dismissed = JSON.parse(localStorage.getItem('dismissedFeatures') || '[]');
-      dismissed.push(featureId);
-      localStorage.setItem('dismissedFeatures', JSON.stringify(dismissed));
-    } catch (error) {
+      const dismissed = JSON.parse(_localStorage.getItem('dismissedFeatures') || '[]');
+      dismissed.push(_featureId);
+      localStorage.setItem( 'dismissedFeatures', JSON.stringify(dismissed));
+    } catch (_error) {
       console.warn('Failed to save dismissed feature:', error);
     }
   }, []);
 
   const handleSetUserLevel = useCallback((level: 'beginner' | 'intermediate' | 'advanced') => {
-    setUserLevel(level);
+    setUserLevel(_level);
     try {
-      localStorage.setItem('userLevel', level);
-    } catch (error) {
+      localStorage.setItem( 'userLevel', level);
+    } catch (_error) {
       console.warn('Failed to save user level:', error);
     }
   }, []);
@@ -129,20 +130,20 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   // Error functions
   const addError = useCallback((message: string) => {
     const error = {
-      id: `error-${Date.now()}-${Math.random()}`,
+      id: `error-${Date.now(_)}-${Math.random()}`,
       message,
-      timestamp: Date.now(),
+      timestamp: Date.now(_),
     };
-    setErrors(prev => [...prev, error]);
+    setErrors( prev => [...prev, error]);
 
     // Auto-remove error after 10 seconds
     setTimeout(() => {
-      setErrors(prev => prev.filter(e => e.id !== error.id));
+      setErrors(_prev => prev.filter(e => e.id !== error.id));
     }, 10000);
   }, []);
 
   const removeError = useCallback((id: string) => {
-    setErrors(prev => prev.filter(e => e.id !== id));
+    setErrors(_prev => prev.filter(e => e.id !== id));
   }, []);
 
   const clearErrors = useCallback(() => {
@@ -151,10 +152,10 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   // Theme handling
   const handleSetTheme = useCallback((newTheme: 'light' | 'dark' | 'system') => {
-    setTheme(newTheme);
+    setTheme(_newTheme);
     try {
-      localStorage.setItem('theme', newTheme);
-    } catch (error) {
+      localStorage.setItem( 'theme', newTheme);
+    } catch (_error) {
       console.warn('Failed to save theme preference:', error);
     }
   }, []);
@@ -195,8 +196,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 };
 
 // Hook to use the app context
-export const useApp = () => {
-  const context = useContext(AppContext);
+export const useApp = (_) => {
+  const context = useContext(_AppContext);
   if (!context) {
     throw new Error('useApp must be used within an AppProvider');
   }
@@ -208,7 +209,7 @@ interface MainProvidersProps {
   children: React.ReactNode;
 }
 
-export const MainProviders: React.FC<MainProvidersProps> = ({ children }) => {
+export const MainProviders: React.FC<MainProvidersProps> = ({ children  }) => {
   // Create QueryClient with optimized settings
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
@@ -223,14 +224,16 @@ export const MainProviders: React.FC<MainProvidersProps> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
-        <LearningProvider>
-          <AppProvider>
-            {children}
-            {process.env.NODE_ENV === 'development' && (
-              <ReactQueryDevtools initialIsOpen={false} />
-            )}
-          </AppProvider>
-        </LearningProvider>
+        <ErrorProvider>
+          <LearningProvider>
+            <AppProvider>
+              {children}
+              {process.env.NODE_ENV === 'development' && (
+                <ReactQueryDevtools initialIsOpen={false} />
+              )}
+            </AppProvider>
+          </LearningProvider>
+        </ErrorProvider>
       </SessionProvider>
     </QueryClientProvider>
   );

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 interface SliderProps {
   value: number[];
-  onValueChange: (value: number[]) => void;
+  onValueChange: (_value: number[]) => void;
   min?: number;
   max?: number;
   step?: number;
@@ -21,10 +21,10 @@ export const Slider: React.FC<SliderProps> = ({
   className = ''
 }) => {
   const currentValue = value[0] || 0;
-  const percentage = ((currentValue - min) / (max - min)) * 100;
+  const percentage = ((currentValue - min) / (_max - min)) * 100;
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseFloat(event.target.value);
+  const handleChange = (_event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseFloat(_event.target.value);
     onValueChange([newValue]);
   };
 

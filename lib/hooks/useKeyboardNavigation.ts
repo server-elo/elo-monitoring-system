@@ -5,10 +5,10 @@ export interface KeyboardNavigationOptions {
   focusOnMount?: boolean;
   trapFocus?: boolean;
   restoreFocus?: boolean;
-  onEscape?: () => void;
-  onEnter?: () => void;
-  onArrowKeys?: (direction: 'up' | 'down' | 'left' | 'right') => void;
-  onTab?: (direction: 'forward' | 'backward') => void;
+  onEscape?: (_) => void;
+  onEnter?: (_) => void;
+  onArrowKeys?: (_direction: 'up' | 'down' | 'left' | 'right') => void;
+  onTab?: (_direction: 'forward' | 'backward') => void;
 }
 
 export function useKeyboardNavigation(
@@ -26,7 +26,7 @@ export function useKeyboardNavigation(
     onTab
   } = options;
 
-  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(_null);
 
   // Get all focusable elements within the container
   const getFocusableElements = useCallback(() => {
@@ -40,58 +40,58 @@ export function useKeyboardNavigation(
       'a[href]',
       '[tabindex]:not([tabindex="-1"])',
       '[contenteditable="true"]'
-    ].join(', ');
+    ].join( ', ');
 
     return Array.from(
-      containerRef.current.querySelectorAll(focusableSelectors)
+      containerRef.current.querySelectorAll(_focusableSelectors)
     ) as HTMLElement[];
   }, [containerRef]);
 
   // Focus the first focusable element
   const focusFirst = useCallback(() => {
-    const focusableElements = getFocusableElements();
-    if (focusableElements.length > 0) {
-      focusableElements[0].focus();
+    const focusableElements = getFocusableElements(_);
+    if (_focusableElements.length > 0) {
+      focusableElements[0].focus(_);
     }
   }, [getFocusableElements]);
 
   // Focus the last focusable element
   const focusLast = useCallback(() => {
-    const focusableElements = getFocusableElements();
-    if (focusableElements.length > 0) {
-      focusableElements[focusableElements.length - 1].focus();
+    const focusableElements = getFocusableElements(_);
+    if (_focusableElements.length > 0) {
+      focusableElements[focusableElements.length - 1].focus(_);
     }
   }, [getFocusableElements]);
 
   // Focus the next focusable element
   const focusNext = useCallback(() => {
-    const focusableElements = getFocusableElements();
-    const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
+    const focusableElements = getFocusableElements(_);
+    const currentIndex = focusableElements.indexOf(_document.activeElement as HTMLElement);
     
-    if (currentIndex === -1) {
-      focusFirst();
-    } else if (currentIndex === focusableElements.length - 1) {
+    if (_currentIndex === -1) {
+      focusFirst(_);
+    } else if (_currentIndex === focusableElements.length - 1) {
       if (trapFocus) {
-        focusFirst();
+        focusFirst(_);
       }
     } else {
-      focusableElements[currentIndex + 1].focus();
+      focusableElements[currentIndex + 1].focus(_);
     }
   }, [getFocusableElements, focusFirst, trapFocus]);
 
   // Focus the previous focusable element
   const focusPrevious = useCallback(() => {
-    const focusableElements = getFocusableElements();
-    const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
+    const focusableElements = getFocusableElements(_);
+    const currentIndex = focusableElements.indexOf(_document.activeElement as HTMLElement);
     
-    if (currentIndex === -1) {
-      focusLast();
-    } else if (currentIndex === 0) {
+    if (_currentIndex === -1) {
+      focusLast(_);
+    } else if (_currentIndex === 0) {
       if (trapFocus) {
-        focusLast();
+        focusLast(_);
       }
     } else {
-      focusableElements[currentIndex - 1].focus();
+      focusableElements[currentIndex - 1].focus(_);
     }
   }, [getFocusableElements, focusLast, trapFocus]);
 
@@ -99,71 +99,71 @@ export function useKeyboardNavigation(
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (!enabled || !containerRef.current) return;
 
-    switch (event.key) {
+    switch (_event.key) {
       case 'Escape':
         if (onEscape) {
-          event.preventDefault();
-          onEscape();
+          event.preventDefault(_);
+          onEscape(_);
         }
         break;
 
       case 'Enter':
         if (onEnter) {
-          event.preventDefault();
-          onEnter();
+          event.preventDefault(_);
+          onEnter(_);
         }
         break;
 
       case 'Tab':
         if (trapFocus) {
-          event.preventDefault();
-          if (event.shiftKey) {
-            focusPrevious();
+          event.preventDefault(_);
+          if (_event.shiftKey) {
+            focusPrevious(_);
           } else {
-            focusNext();
+            focusNext(_);
           }
         }
         if (onTab) {
-          onTab(event.shiftKey ? 'backward' : 'forward');
+          onTab(_event.shiftKey ? 'backward' : 'forward');
         }
         break;
 
       case 'ArrowUp':
         if (onArrowKeys) {
-          event.preventDefault();
+          event.preventDefault(_);
           onArrowKeys('up');
         }
         break;
 
       case 'ArrowDown':
         if (onArrowKeys) {
-          event.preventDefault();
+          event.preventDefault(_);
           onArrowKeys('down');
         }
         break;
 
       case 'ArrowLeft':
         if (onArrowKeys) {
-          event.preventDefault();
+          event.preventDefault(_);
           onArrowKeys('left');
         }
         break;
 
       case 'ArrowRight':
         if (onArrowKeys) {
-          event.preventDefault();
+          event.preventDefault(_);
           onArrowKeys('right');
         }
         break;
 
       case 'Home':
-        event.preventDefault();
-        focusFirst();
+        event.preventDefault(_);
+        focusFirst(_);
         break;
 
       case 'End':
-        event.preventDefault();
-        focusLast();
+        event.preventDefault(_);
+        focusLast(_);
         break;
     }
   }, [
@@ -194,18 +194,18 @@ export function useKeyboardNavigation(
 
     // Focus first element on mount if requested
     if (focusOnMount) {
-      focusFirst();
+      focusFirst(_);
     }
 
     // Add keyboard event listener
-    container.addEventListener('keydown', handleKeyDown);
+    container.addEventListener( 'keydown', handleKeyDown);
 
-    return () => {
-      container.removeEventListener('keydown', handleKeyDown);
+    return (_) => {
+      container.removeEventListener( 'keydown', handleKeyDown);
       
       // Restore previous focus
       if (restoreFocus && previousFocusRef.current) {
-        previousFocusRef.current.focus();
+        previousFocusRef.current.focus(_);
       }
     };
   }, [enabled, containerRef, focusOnMount, restoreFocus, focusFirst, handleKeyDown]);
@@ -236,7 +236,7 @@ export function useModalFocus(
 export function useDropdownFocus(
   isOpen: boolean,
   containerRef: React.RefObject<HTMLElement>,
-  onClose: () => void
+  onClose: (_) => void
 ) {
   return useKeyboardNavigation(containerRef, {
     enabled: isOpen,
@@ -244,10 +244,10 @@ export function useDropdownFocus(
     trapFocus: true,
     restoreFocus: true,
     onEscape: onClose,
-    onArrowKeys: (direction) => {
-      if (direction === 'up') {
+    onArrowKeys: (_direction) => {
+      if (_direction === 'up') {
         // Focus previous item
-      } else if (direction === 'down') {
+      } else if (_direction === 'down') {
         // Focus next item
       }
     }
@@ -257,15 +257,15 @@ export function useDropdownFocus(
 // Hook for managing focus within a form
 export function useFormFocus(
   containerRef: React.RefObject<HTMLElement>,
-  onSubmit?: () => void
+  onSubmit?: (_) => void
 ) {
   return useKeyboardNavigation(containerRef, {
     enabled: true,
-    onEnter: () => {
+    onEnter: (_) => {
       // Submit form if Enter is pressed on a button
       const activeElement = document.activeElement as HTMLElement;
-      if (activeElement?.tagName === 'BUTTON' && onSubmit) {
-        onSubmit();
+      if (_activeElement?.tagName === 'BUTTON' && onSubmit) {
+        onSubmit(_);
       }
     }
   });
@@ -284,24 +284,24 @@ export function useGridFocus(
       'input:not([disabled])',
       'a[href]',
       '[tabindex]:not([tabindex="-1"])'
-    ].join(', ');
+    ].join( ', ');
 
     return Array.from(
-      containerRef.current.querySelectorAll(focusableSelectors)
+      containerRef.current.querySelectorAll(_focusableSelectors)
     ) as HTMLElement[];
   }, [containerRef]);
 
   return useKeyboardNavigation(containerRef, {
     enabled: true,
-    onArrowKeys: (direction) => {
-      const focusableElements = getFocusableElements();
-      const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
+    onArrowKeys: (_direction) => {
+      const focusableElements = getFocusableElements(_);
+      const currentIndex = focusableElements.indexOf(_document.activeElement as HTMLElement);
       
-      if (currentIndex === -1) return;
+      if (_currentIndex === -1) return;
 
       let nextIndex = currentIndex;
 
-      switch (direction) {
+      switch (_direction) {
         case 'up':
           nextIndex = currentIndex - columns;
           break;
@@ -316,8 +316,8 @@ export function useGridFocus(
           break;
       }
 
-      if (nextIndex >= 0 && nextIndex < focusableElements.length) {
-        focusableElements[nextIndex].focus();
+      if (_nextIndex >= 0 && nextIndex < focusableElements.length) {
+        focusableElements[nextIndex].focus(_);
       }
     }
   });

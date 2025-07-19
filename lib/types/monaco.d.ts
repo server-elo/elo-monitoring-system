@@ -11,27 +11,27 @@ declare global {
     
     namespace editor {
       interface IStandaloneCodeEditor {
-        getValue(): string;
-        setValue(value: string): void;
-        getModel(): editor.ITextModel | null;
-        getPosition(): Position | null;
-        getSelection(): Range | null;
-        setPosition(position: Position): void;
-        setSelection(selection: Range): void;
-        updateOptions(newOptions: editor.IStandaloneEditorConstructionOptions): void;
-        onDidChangeModelContent(listener: (e: editor.IModelContentChangedEvent) => void): IDisposable;
-        onDidChangeCursorPosition(listener: (e: editor.ICursorPositionChangedEvent) => void): IDisposable;
-        dispose(): void;
+        getValue(_): string;
+        setValue(_value: string): void;
+        getModel(_): editor.ITextModel | null;
+        getPosition(_): Position | null;
+        getSelection(_): Range | null;
+        setPosition(_position: Position): void;
+        setSelection(_selection: Range): void;
+        updateOptions(_newOptions: editor.IStandaloneEditorConstructionOptions): void;
+        onDidChangeModelContent(_listener: (e: editor.IModelContentChangedEvent) => void): IDisposable;
+        onDidChangeCursorPosition(_listener: (e: editor.ICursorPositionChangedEvent) => void): IDisposable;
+        dispose(_): void;
       }
 
       interface ITextModel {
         id: string;
         uri: any;
-        getValue(): string;
-        setValue(value: string): void;
-        getLineCount(): number;
-        getLineContent(lineNumber: number): string;
-        dispose(): void;
+        getValue(_): string;
+        setValue(_value: string): void;
+        getLineCount(_): number;
+        getLineContent(_lineNumber: number): string;
+        dispose(_): void;
       }
 
       interface IStandaloneThemeData {
@@ -59,7 +59,7 @@ declare global {
       }
 
       interface ProviderResult<T> {
-        then?(onfulfilled?: (value: T) => any, onrejected?: (reason: any) => any): any;
+        then?(_onfulfilled?: (value: T) => any, onrejected?: (_reason: any) => any): any;
       }
 
       enum CompletionItemKind {

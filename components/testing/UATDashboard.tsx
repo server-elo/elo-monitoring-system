@@ -70,8 +70,8 @@ interface UATAnalytics {
   }>;
 }
 
-export const UATDashboard: React.FC = () => {
-  // const { toast } = useToast(); // Temporarily disabled for build
+export const UATDashboard: React.FC = (_) => {
+  // const { toast } = useToast(_); // Temporarily disabled for build
   const [metrics, setMetrics] = useState<UATMetrics>({
     totalTesters: 0,
     activeSessions: 0,
@@ -93,50 +93,50 @@ export const UATDashboard: React.FC = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(_true);
 
   // Enhanced loading state management with analytics
   useEffect(() => {
     const loadingTimer = setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(_false);
 
       // Track loading completion for analytics
       const loadingData = {
         component: 'UATDashboard',
-        loadTime: Date.now(),
+        loadTime: Date.now(_),
         sessionsCount: sessions.length,
         analyticsCount: analytics.taskPerformance.length,
         metricsLoaded: !!metrics,
-        timestamp: Date.now()
+        timestamp: Date.now(_)
       };
 
       // Store loading analytics
-      localStorage.setItem('uat-dashboard-loading', JSON.stringify(loadingData));
+      localStorage.setItem( 'uat-dashboard-loading', JSON.stringify(loadingData));
       console.log('UAT Dashboard loaded:', loadingData);
     }, 1500); // Simulate loading time
 
-    return () => clearTimeout(loadingTimer);
+    return (_) => clearTimeout(_loadingTimer);
   }, [sessions.length, analytics.taskPerformance.length, metrics]);
-  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(_false);
 
   useEffect(() => {
-    loadUATData();
+    loadUATData(_);
   }, [selectedTimeRange, filterCategory]);
 
   const loadUATData = async () => {
-    setIsLoading(true);
+    setIsLoading(_true);
     try {
       // Simulate API calls to load UAT data
-      const response = await fetch(`/api/uat/dashboard?timeRange=${selectedTimeRange}&category=${filterCategory}`);
-      const data = await response.json();
+      const response = await fetch(_`/api/uat/dashboard?timeRange=${selectedTimeRange}&category=${filterCategory}`);
+      const data = await response.json(_);
       
-      setMetrics(data.metrics);
-      setAnalytics(data.analytics);
-      setSessions(data.sessions);
-    } catch (error) {
+      setMetrics(_data.metrics);
+      setAnalytics(_data.analytics);
+      setSessions(_data.sessions);
+    } catch (_error) {
       console.error('Failed to load UAT data:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
@@ -152,20 +152,20 @@ export const UATDashboard: React.FC = () => {
         })
       });
       
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
+      const blob = await response.blob(_);
+      const url = URL.createObjectURL(_blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `uat-report-${new Date().toISOString().split('T')[0]}.xlsx`;
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
+      link.click(_);
+      URL.revokeObjectURL(_url);
+    } catch (_error) {
       console.error('Failed to export report:', error);
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const getStatusColor = (_status: string) => {
+    switch (_status) {
       case 'excellent': return 'bg-green-100 text-green-800';
       case 'good': return 'bg-blue-100 text-blue-800';
       case 'needs_improvement': return 'bg-yellow-100 text-yellow-800';
@@ -174,8 +174,8 @@ export const UATDashboard: React.FC = () => {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
+  const getPriorityColor = (_priority: string) => {
+    switch (_priority) {
       case 'critical': return 'bg-red-500';
       case 'high': return 'bg-orange-500';
       case 'medium': return 'bg-yellow-500';
@@ -184,7 +184,7 @@ export const UATDashboard: React.FC = () => {
     }
   };
 
-  const renderMetricsOverview = () => (
+  const renderMetricsOverview = (_) => (
     <motion.div
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
       initial={{ opacity: 0, y: 20 }}
@@ -274,7 +274,7 @@ export const UATDashboard: React.FC = () => {
     </motion.div>
   );
 
-  const renderTaskPerformance = () => (
+  const renderTaskPerformance = (_) => (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
@@ -288,8 +288,8 @@ export const UATDashboard: React.FC = () => {
             <div key={task.taskId} className="border rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-medium">{task.taskTitle}</h4>
-                <Badge className={getStatusColor(task.status)}>
-                  {task.status.replace('_', ' ')}
+                <Badge className={getStatusColor(_task.status)}>
+                  {task.status.replace('', ' ')}
                 </Badge>
               </div>
               
@@ -328,7 +328,7 @@ export const UATDashboard: React.FC = () => {
     </Card>
   );
 
-  const renderFeedbackAnalysis = () => (
+  const renderFeedbackAnalysis = (_) => (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
@@ -341,15 +341,15 @@ export const UATDashboard: React.FC = () => {
           {analytics.testerFeedback
             .filter(feedback => 
               searchTerm === '' || 
-              feedback.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              feedback.category.toLowerCase().includes(searchTerm.toLowerCase())
+              feedback.comment.toLowerCase().includes(_searchTerm.toLowerCase()) ||
+              feedback.category.toLowerCase().includes(_searchTerm.toLowerCase())
             )
             .slice(0, 10)
             .map((feedback) => (
               <div key={feedback.id} className="border rounded-lg p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center space-x-2">
-                    <div className={`w-3 h-3 rounded-full ${getPriorityColor(feedback.priority)}`} />
+                    <div className={`w-3 h-3 rounded-full ${getPriorityColor(_feedback.priority)}`} />
                     <Badge variant="outline">{feedback.category}</Badge>
                     <div className="flex space-x-1">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -365,7 +365,7 @@ export const UATDashboard: React.FC = () => {
                     </div>
                   </div>
                   <span className="text-xs text-gray-500">
-                    {new Date(feedback.timestamp).toLocaleDateString()}
+                    {new Date(_feedback.timestamp).toLocaleDateString(_)}
                   </span>
                 </div>
                 
@@ -382,7 +382,7 @@ export const UATDashboard: React.FC = () => {
     </Card>
   );
 
-  const renderActiveSessions = () => (
+  const renderActiveSessions = (_) => (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
@@ -393,7 +393,7 @@ export const UATDashboard: React.FC = () => {
       <CardContent>
         <div className="space-y-3">
           {sessions
-            .filter(session => session.status === 'in_progress')
+            .filter(session => session.status === 'inprogress')
             .map((session) => (
               <div key={session.id} className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
@@ -402,7 +402,7 @@ export const UATDashboard: React.FC = () => {
                     {session.testerInfo?.experience || 'N/A'} • {session.testerInfo?.device || 'N/A'} • {session.testerInfo?.browser || 'N/A'}
                   </p>
                   <p className="text-xs text-gray-500">
-                    Started: {session.startTime ? new Date(session.startTime).toLocaleTimeString() : 'Not started'}
+                    Started: {session.startTime ? new Date(_session.startTime).toLocaleTimeString(_) : 'Not started'}
                   </p>
                 </div>
                 
@@ -448,7 +448,7 @@ export const UATDashboard: React.FC = () => {
         <div className="flex items-center space-x-4">
           <Button
             variant="outline"
-            onClick={() => setShowAnalytics(!showAnalytics)}
+            onClick={(_) => setShowAnalytics(!showAnalytics)}
             className="flex items-center space-x-2"
           >
             <BarChart3 className="w-4 h-4" />
@@ -475,7 +475,7 @@ export const UATDashboard: React.FC = () => {
       </div>
 
       {/* Metrics Overview */}
-      {renderMetricsOverview()}
+      {renderMetricsOverview(_)}
 
       {/* Main Content */}
       <Tabs defaultValue="performance" className="space-y-6">
@@ -492,7 +492,7 @@ export const UATDashboard: React.FC = () => {
             <Input
               placeholder="Search feedback, tasks, or testers..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(_e) => setSearchTerm(_e.target.value)}
               className="pl-10"
             />
           </div>
@@ -514,7 +514,7 @@ export const UATDashboard: React.FC = () => {
 
           <Button
             variant="outline"
-            onClick={() => {
+            onClick={(_) => {
               // Calendar date picker functionality
               console.log('Date Range Picker clicked - Advanced date filtering coming soon!');
               // toast({
@@ -530,15 +530,15 @@ export const UATDashboard: React.FC = () => {
         </div>
 
         <TabsContent value="performance">
-          {renderTaskPerformance()}
+          {renderTaskPerformance(_)}
         </TabsContent>
 
         <TabsContent value="feedback">
-          {renderFeedbackAnalysis()}
+          {renderFeedbackAnalysis(_)}
         </TabsContent>
 
         <TabsContent value="sessions">
-          {renderActiveSessions()}
+          {renderActiveSessions(_)}
         </TabsContent>
 
         <TabsContent value="trends">

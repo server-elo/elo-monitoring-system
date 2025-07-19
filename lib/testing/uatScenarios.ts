@@ -49,7 +49,7 @@ export interface UATSession {
   assignedTasks: string[];
   startTime: Date;
   endTime?: Date;
-  status: 'not_started' | 'in_progress' | 'completed' | 'abandoned';
+  status: 'not_started' | 'inprogress' | 'completed' | 'abandoned';
   feedback: UATFeedback[];
   metrics: {
     tasksCompleted: number;
@@ -200,7 +200,7 @@ export const uatScenarios: UATTask[] = [
       },
       {
         id: 'collab-4',
-        instruction: 'Share the session link with another tester (or open in another browser)',
+        instruction: 'Share the session link with another tester (_or open in another browser)',
         expectedResult: 'Second participant should be able to join the session',
         helpText: 'You can copy the session URL from the address bar or use the share button'
       },
@@ -224,7 +224,7 @@ export const uatScenarios: UATTask[] = [
       },
       {
         id: 'collab-7',
-        instruction: 'Test the voice chat feature (if available)',
+        instruction: 'Test the voice chat feature (_if available)',
         expectedResult: 'Voice communication should work clearly',
         helpText: 'Make sure to allow microphone permissions'
       },
@@ -392,7 +392,7 @@ export const uatScenarios: UATTask[] = [
       },
       {
         id: 'path-4',
-        instruction: 'Complete a hands-on project (build a simple contract)',
+        instruction: 'Complete a hands-on project (_build a simple contract)',
         expectedResult: 'Project should be submitted and reviewed',
         validation: {
           type: 'element',

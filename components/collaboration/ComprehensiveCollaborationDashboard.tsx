@@ -31,8 +31,8 @@ interface ComprehensiveCollaborationDashboardProps {
   sessionId: string;
   initialCode?: string;
   language?: string;
-  onCodeChange?: (code: string) => void;
-  onSave?: (code: string) => void;
+  onCodeChange?: (_code: string) => void;
+  onSave?: (_code: string) => void;
 }
 
 type LayoutMode = 'split' | 'editor-focus' | 'chat-focus' | 'grid';
@@ -44,66 +44,66 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
   onCodeChange,
   onSave
 }) => {
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth(_);
+  const { toast } = useToast(_);
   const { 
     isConnected, 
     session, 
     participants,
     leaveSession 
-  } = useSocket();
+  } = useSocket(_);
 
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('split');
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(_false);
+  const [showSettings, setShowSettings] = useState(_false);
   const [activeTab, setActiveTab] = useState('editor');
-  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(false);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(_false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(_false);
+  const [isScreenSharing, setIsScreenSharing] = useState(_false);
+  const [selectedUser, setSelectedUser] = useState<string | null>(_null);
 
   // Handle keyboard shortcuts
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        switch (e.key) {
+    const handleKeyDown = (_e: KeyboardEvent) => {
+      if (_e.ctrlKey || e.metaKey) {
+        switch (_e.key) {
           case 's':
-            e.preventDefault();
+            e.preventDefault(_);
             // Trigger save
             break;
           case 'Enter':
-            if (e.shiftKey) {
-              e.preventDefault();
+            if (_e.shiftKey) {
+              e.preventDefault(_);
               // Toggle fullscreen
               setIsFullscreen(!isFullscreen);
             }
             break;
           case '1':
-            e.preventDefault();
+            e.preventDefault(_);
             setLayoutMode('editor-focus');
             break;
           case '2':
-            e.preventDefault();
+            e.preventDefault(_);
             setLayoutMode('chat-focus');
             break;
           case '3':
-            e.preventDefault();
+            e.preventDefault(_);
             setLayoutMode('split');
             break;
           case '4':
-            e.preventDefault();
+            e.preventDefault(_);
             setLayoutMode('grid');
             break;
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener( 'keydown', handleKeyDown);
+    return (_) => window.removeEventListener( 'keydown', handleKeyDown);
   }, [isFullscreen]);
 
-  const handleUserClick = (userId: string) => {
-    setSelectedUser(userId);
+  const handleUserClick = (_userId: string) => {
+    setSelectedUser(_userId);
     // Could open user profile or start direct message
     toast({
       title: 'User Selected',
@@ -115,35 +115,35 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
     try {
       if (isAudioEnabled) {
         // Disable audio
-        setIsAudioEnabled(false);
+        setIsAudioEnabled(_false);
         toast({
           title: 'Audio Disabled',
           description: 'Your microphone has been muted.',
         });
       } else {
         // Enable audio with stream processing
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true  });
 
         // Process audio stream for collaboration features
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaStreamSource(stream);
-        const analyser = audioContext.createAnalyser();
-        source.connect(analyser);
+        const audioContext = new AudioContext(_);
+        const source = audioContext.createMediaStreamSource(_stream);
+        const analyser = audioContext.createAnalyser(_);
+        source.connect(_analyser);
 
         // Store stream for real-time audio analysis
         localStorage.setItem(`audio_stream_${sessionId}`, JSON.stringify({
           enabled: true,
-          timestamp: Date.now(),
+          timestamp: Date.now(_),
           sampleRate: audioContext.sampleRate
         }));
 
-        setIsAudioEnabled(true);
+        setIsAudioEnabled(_true);
         toast({
           title: 'Audio Enabled',
           description: 'Your microphone is now active with real-time processing.',
         });
       }
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Audio Error',
         description: 'Failed to access microphone.',
@@ -156,34 +156,34 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
     try {
       if (isVideoEnabled) {
         // Disable video
-        setIsVideoEnabled(false);
+        setIsVideoEnabled(_false);
         toast({
           title: 'Video Disabled',
           description: 'Your camera has been turned off.',
         });
       } else {
         // Enable video with stream processing
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true  });
 
         // Process video stream for collaboration features
-        const videoTrack = stream.getVideoTracks()[0];
-        const videoSettings = videoTrack.getSettings();
+        const videoTrack = stream.getVideoTracks(_)[0];
+        const videoSettings = videoTrack.getSettings(_);
 
         // Store video stream metadata for collaboration
         localStorage.setItem(`video_stream_${sessionId}`, JSON.stringify({
           enabled: true,
-          timestamp: Date.now(),
+          timestamp: Date.now(_),
           resolution: `${videoSettings.width}x${videoSettings.height}`,
           frameRate: videoSettings.frameRate
         }));
 
-        setIsVideoEnabled(true);
+        setIsVideoEnabled(_true);
         toast({
           title: 'Video Enabled',
           description: 'Your camera is now active with stream processing.',
         });
       }
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Video Error',
         description: 'Failed to access camera.',
@@ -196,40 +196,40 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
     try {
       if (isScreenSharing) {
         // Stop screen sharing
-        setIsScreenSharing(false);
+        setIsScreenSharing(_false);
         toast({
           title: 'Screen Share Stopped',
           description: 'You stopped sharing your screen.',
         });
       } else {
         // Start screen sharing with stream processing
-        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true  });
 
         // Process screen share stream for collaboration features
-        const videoTrack = stream.getVideoTracks()[0];
-        const screenSettings = videoTrack.getSettings();
+        const videoTrack = stream.getVideoTracks(_)[0];
+        const screenSettings = videoTrack.getSettings(_);
 
         // Store screen share metadata for collaboration
         localStorage.setItem(`screen_stream_${sessionId}`, JSON.stringify({
           enabled: true,
-          timestamp: Date.now(),
+          timestamp: Date.now(_),
           displaySurface: screenSettings.displaySurface,
           resolution: `${screenSettings.width}x${screenSettings.height}`
         }));
 
         // Handle stream end event
-        videoTrack.onended = () => {
-          setIsScreenSharing(false);
-          localStorage.removeItem(`screen_stream_${sessionId}`);
+        videoTrack.onended = (_) => {
+          setIsScreenSharing(_false);
+          localStorage.removeItem(_`screen_stream_${sessionId}`);
         };
 
-        setIsScreenSharing(true);
+        setIsScreenSharing(_true);
         toast({
           title: 'Screen Share Started',
           description: 'You are now sharing your screen with stream processing.',
         });
       }
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Screen Share Error',
         description: 'Failed to start screen sharing.',
@@ -238,21 +238,21 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
     }
   };
 
-  const exportSession = () => {
+  const exportSession = (_) => {
     const sessionData = {
       sessionId,
-      participants: participants.map(p => ({ id: p.id, name: p.name })),
+      participants: participants.map( p => ({ id: p.id, name: p.name })),
       code: initialCode,
       timestamp: new Date().toISOString(),
     };
 
-    const blob = new Blob([JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob( [JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `collaboration-session-${sessionId}-${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    a.download = `collaboration-session-${sessionId}-${Date.now(_)}.json`;
+    a.click(_);
+    URL.revokeObjectURL(_url);
 
     toast({
       title: 'Session Exported',
@@ -260,7 +260,7 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
     });
   };
 
-  const renderLayout = () => {
+  const renderLayout = (_) => {
     const editorComponent = (
       <MonacoCollaborativeEditor
         sessionId={sessionId}
@@ -287,7 +287,7 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
       />
     );
 
-    switch (layoutMode) {
+    switch (_layoutMode) {
       case 'editor-focus':
         return (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-full">
@@ -373,32 +373,32 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
             <Button
               size="sm"
               variant={layoutMode === 'editor-focus' ? 'default' : 'ghost'}
-              onClick={() => setLayoutMode('editor-focus')}
-              title="Editor Focus (Ctrl+1)"
+              onClick={(_) => setLayoutMode('editor-focus')}
+              title="Editor Focus (_Ctrl+1)"
             >
               <Code className="w-4 h-4" />
             </Button>
             <Button
               size="sm"
               variant={layoutMode === 'chat-focus' ? 'default' : 'ghost'}
-              onClick={() => setLayoutMode('chat-focus')}
-              title="Chat Focus (Ctrl+2)"
+              onClick={(_) => setLayoutMode('chat-focus')}
+              title="Chat Focus (_Ctrl+2)"
             >
               <MessageCircle className="w-4 h-4" />
             </Button>
             <Button
               size="sm"
               variant={layoutMode === 'split' ? 'default' : 'ghost'}
-              onClick={() => setLayoutMode('split')}
-              title="Split View (Ctrl+3)"
+              onClick={(_) => setLayoutMode('split')}
+              title="Split View (_Ctrl+3)"
             >
               <Sidebar className="w-4 h-4" />
             </Button>
             <Button
               size="sm"
               variant={layoutMode === 'grid' ? 'default' : 'ghost'}
-              onClick={() => setLayoutMode('grid')}
-              title="Grid View (Ctrl+4)"
+              onClick={(_) => setLayoutMode('grid')}
+              title="Grid View (_Ctrl+4)"
             >
               <Grid className="w-4 h-4" />
             </Button>
@@ -433,7 +433,7 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
           <Button
             size="sm"
             variant="outline"
-            onClick={() => setSelectedUser(selectedUser ? null : participants[0]?.id || null)}
+            onClick={(_) => setSelectedUser(_selectedUser ? null : participants[0]?.id || null)}
             title="Manage participants"
           >
             <Users className="w-4 h-4" />
@@ -441,13 +441,13 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
           <Button
             size="sm"
             variant="outline"
-            onClick={() => {
+            onClick={(_) => {
               // File upload functionality
               const input = document.createElement('input');
               input.type = 'file';
               input.accept = '.sol,.js,.ts,.json';
-              input.onchange = (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
+              input.onchange = (_e) => {
+                const file = (_e.target as HTMLInputElement).files?.[0];
                 if (file) {
                   toast({
                     title: 'File Upload',
@@ -456,7 +456,7 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
                   // In real app, would upload file and share with participants
                 }
               };
-              input.click();
+              input.click(_);
             }}
             title="Upload file"
           >
@@ -465,14 +465,14 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
           <Button size="sm" variant="outline" onClick={exportSession}>
             <Download className="w-4 h-4" />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => setShowSettings(!showSettings)}>
+          <Button size="sm" variant="outline" onClick={(_) => setShowSettings(!showSettings)}>
             <Settings className="w-4 h-4" />
           </Button>
           <Button 
             size="sm" 
             variant="outline" 
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            title="Toggle Fullscreen (Ctrl+Shift+Enter)"
+            onClick={(_) => setIsFullscreen(!isFullscreen)}
+            title="Toggle Fullscreen (_Ctrl+Shift+Enter)"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </Button>
@@ -481,7 +481,7 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
 
       {/* Main content */}
       <div className="flex-1 p-4 overflow-hidden">
-        {renderLayout()}
+        {renderLayout(_)}
       </div>
 
       {/* Settings panel */}
@@ -495,7 +495,7 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-white">Session Settings</h3>
-              <Button size="sm" variant="ghost" onClick={() => setShowSettings(false)}>
+              <Button size="sm" variant="ghost" onClick={(_) => setShowSettings(_false)}>
                 ×
               </Button>
             </div>
@@ -524,7 +524,7 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
                 <Card>
                   <CardContent className="p-4">
                     <div>
-                      <label className="text-sm text-gray-400">Participants ({participants.length})</label>
+                      <label className="text-sm text-gray-400">Participants ({ participants.length })</label>
                       <div className="space-y-2 mt-2">
                         {participants.map(participant => (
                           <div key={participant.id} className="flex items-center space-x-2 text-sm text-white">
@@ -532,7 +532,7 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
                               {participant.name?.charAt(0) || 'A'}
                             </div>
                             <span>{participant.name}</span>
-                            {participant.id === user?.id && <span className="text-gray-400">(You)</span>}
+                            {participant.id === user?.id && <span className="text-gray-400">(_You)</span>}
                           </div>
                         ))}
                       </div>
@@ -548,8 +548,8 @@ export const ComprehensiveCollaborationDashboard: React.FC<ComprehensiveCollabor
                       <Button
                         variant="destructive"
                         className="w-full"
-                        onClick={() => {
-                          leaveSession();
+                        onClick={(_) => {
+                          leaveSession(_);
                           toast({
                             title: 'Left Session',
                             description: 'You have left the collaboration session.',

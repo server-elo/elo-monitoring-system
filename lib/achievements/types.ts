@@ -1,6 +1,6 @@
 // Achievement system types and interfaces
 
-export type AchievementStatus = 'locked' | 'in_progress' | 'unlocked' | 'featured';
+export type AchievementStatus = 'locked' | 'inprogress' | 'unlocked' | 'featured';
 export type AchievementCategory = 'learning' | 'social' | 'milestone' | 'special' | 'streak';
 export type AchievementRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
@@ -93,7 +93,7 @@ export interface AchievementFilter {
   category?: AchievementCategory[];
   rarity?: AchievementRarity[];
   search?: string;
-  sortBy?: 'title' | 'rarity' | 'progress' | 'unlocked_date' | 'category';
+  sortBy?: 'title' | 'rarity' | 'progress' | 'unlockeddate' | 'category';
   sortOrder?: 'asc' | 'desc';
 }
 
@@ -159,38 +159,38 @@ export interface Leaderboard {
 
 // Achievement validation and checking
 export interface AchievementChecker {
-  checkAchievement(achievement: Achievement, userProgress: AchievementProgress, event?: AchievementEvent): boolean;
-  calculateProgress(achievement: Achievement, userProgress: AchievementProgress): number;
-  getNextMilestone(achievement: Achievement, userProgress: AchievementProgress): AchievementRequirement | null;
+  checkAchievement( achievement: Achievement, userProgress: AchievementProgress, event?: AchievementEvent): boolean;
+  calculateProgress( achievement: Achievement, userProgress: AchievementProgress): number;
+  getNextMilestone( achievement: Achievement, userProgress: AchievementProgress): AchievementRequirement | null;
 }
 
 // Achievement manager interface
 export interface AchievementManager {
   // Core functionality
-  loadUserProgress(userId: string): Promise<AchievementProgress>;
+  loadUserProgress(_userId: string): Promise<AchievementProgress>;
   saveUserProgress(progress: AchievementProgress): Promise<void>;
-  processEvent(event: AchievementEvent): Promise<AchievementNotification[]>;
+  processEvent(_event: AchievementEvent): Promise<AchievementNotification[]>;
   
   // Achievement queries
-  getAllAchievements(): Achievement[];
-  getAchievement(id: string): Achievement | null;
-  getUserAchievements(userId: string, filter?: AchievementFilter): Promise<UserAchievement[]>;
-  getAchievementStats(userId: string): Promise<AchievementStats>;
+  getAllAchievements(_): Achievement[];
+  getAchievement(_id: string): Achievement | null;
+  getUserAchievements( userId: string, filter?: AchievementFilter): Promise<UserAchievement[]>;
+  getAchievementStats(_userId: string): Promise<AchievementStats>;
   
   // Progress tracking
-  updateProgress(userId: string, achievementId: string, progress: Partial<UserAchievement>): Promise<void>;
-  unlockAchievement(userId: string, achievementId: string): Promise<AchievementNotification>;
+  updateProgress( userId: string, achievementId: string, progress: Partial<UserAchievement>): Promise<void>;
+  unlockAchievement( userId: string, achievementId: string): Promise<AchievementNotification>;
   
   // Notifications
-  getNotifications(userId: string, unreadOnly?: boolean): Promise<AchievementNotification[]>;
-  markNotificationRead(userId: string, notificationId: string): Promise<void>;
+  getNotifications( userId: string, unreadOnly?: boolean): Promise<AchievementNotification[]>;
+  markNotificationRead( userId: string, notificationId: string): Promise<void>;
   
   // Leaderboards
-  getLeaderboard(type: Leaderboard['type'], limit?: number): Promise<Leaderboard>;
-  getUserRank(userId: string, type: Leaderboard['type']): Promise<number>;
+  getLeaderboard( type: Leaderboard['type'], limit?: number): Promise<Leaderboard>;
+  getUserRank( userId: string, type: Leaderboard['type']): Promise<number>;
 }
 
 // Utility types
-export type AchievementEventHandler = (event: AchievementEvent) => Promise<void>;
-export type AchievementUnlockHandler = (achievement: Achievement, notification: AchievementNotification) => Promise<void>;
-export type ProgressUpdateHandler = (userId: string, achievementId: string, oldProgress: number, newProgress: number) => void;
+export type AchievementEventHandler = (_event: AchievementEvent) => Promise<void>;
+export type AchievementUnlockHandler = ( achievement: Achievement, notification: AchievementNotification) => Promise<void>;
+export type ProgressUpdateHandler = ( userId: string, achievementId: string, oldProgress: number, newProgress: number) => void;

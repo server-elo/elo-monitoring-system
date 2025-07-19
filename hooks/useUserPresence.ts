@@ -12,26 +12,26 @@ interface PresenceState {
 }
 
 interface PresenceHookReturn extends PresenceState {
-  updateUserStatus: (userId: string, status: 'online' | 'idle' | 'offline') => void;
-  addUser: (user: CollaborationUser) => void;
-  removeUser: (userId: string) => void;
-  updateUserCursor: (userId: string, cursor: { line: number; column: number; selection?: { start: { line: number; column: number }; end: { line: number; column: number } } }) => void;
-  setTyping: (userId: string, isTyping: boolean) => void;
-  updateUserRole: (userId: string, role: 'instructor' | 'student' | 'observer') => void;
-  getUserById: (userId: string) => CollaborationUser | undefined;
-  getInstructors: () => CollaborationUser[];
-  getStudents: () => CollaborationUser[];
-  resetSession: () => void;
+  updateUserStatus: ( userId: string, status: 'online' | 'idle' | 'offline') => void;
+  addUser: (_user: CollaborationUser) => void;
+  removeUser: (_userId: string) => void;
+  updateUserCursor: ( userId: string, cursor: { line: number; column: number; selection?: { start: { line: number; column: number }; end: { line: number; column: number } } }) => void;
+  setTyping: ( userId: string, isTyping: boolean) => void;
+  updateUserRole: ( userId: string, role: 'instructor' | 'student' | 'observer') => void;
+  getUserById: (_userId: string) => CollaborationUser | undefined;
+  getInstructors: (_) => CollaborationUser[];
+  getStudents: (_) => CollaborationUser[];
+  resetSession: (_) => void;
 }
 
 interface PresenceOptions {
   currentUserId: string;
   idleTimeout?: number; // milliseconds
   offlineTimeout?: number; // milliseconds
-  onUserJoined?: (user: CollaborationUser) => void;
-  onUserLeft?: (userId: string) => void;
-  onUserStatusChanged?: (userId: string, status: string) => void;
-  onTypingChanged?: (userId: string, isTyping: boolean) => void;
+  onUserJoined?: (_user: CollaborationUser) => void;
+  onUserLeft?: (_userId: string) => void;
+  onUserStatusChanged?: ( userId: string, status: string) => void;
+  onTypingChanged?: ( userId: string, isTyping: boolean) => void;
 }
 
 export function useUserPresence({
@@ -48,37 +48,37 @@ export function useUserPresence({
   const [sessionStartTime] = useState<Date>(new Date());
   const [sessionDuration, setSessionDuration] = useState(0);
 
-  const activityTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
-  const typingTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const activityTimers = useRef<Map<string, NodeJS.Timeout>>(_new Map());
+  const typingTimers = useRef<Map<string, NodeJS.Timeout>>(_new Map());
 
   // Update session duration every second
   useEffect(() => {
     const interval = setInterval(() => {
-      setSessionDuration(Math.floor((Date.now() - sessionStartTime.getTime()) / 1000));
+      setSessionDuration(_Math.floor((Date.now() - sessionStartTime.getTime(_)) / 1000));
     }, 1000);
 
-    return () => clearInterval(interval);
+    return (_) => clearInterval(_interval);
   }, [sessionStartTime]);
 
   // Cleanup timers on unmount
   useEffect(() => {
-    return () => {
-      activityTimers.current.forEach(timer => clearTimeout(timer));
-      typingTimers.current.forEach(timer => clearTimeout(timer));
+    return (_) => {
+      activityTimers.current.forEach(_timer => clearTimeout(timer));
+      typingTimers.current.forEach(_timer => clearTimeout(timer));
     };
   }, []);
 
   const updateUserActivity = useCallback((userId: string) => {
     // Clear existing timer
-    const existingTimer = activityTimers.current.get(userId);
+    const existingTimer = activityTimers.current.get(_userId);
     if (existingTimer) {
-      clearTimeout(existingTimer);
+      clearTimeout(_existingTimer);
     }
 
     // Update last activity
     setUsers(prev => prev.map(user => 
       user.id === userId 
-        ? { ...user, lastActivity: new Date(), status: 'online' }
+        ? { ...user, lastActivity: new Date(_), status: 'online' }
         : user
     ));
 
@@ -89,7 +89,7 @@ export function useUserPresence({
           ? { ...user, status: 'idle' }
           : user
       ));
-      onUserStatusChanged?.(userId, 'idle');
+      onUserStatusChanged?.( userId, 'idle');
 
       // Set offline timer
       const offlineTimer = setTimeout(() => {
@@ -98,140 +98,140 @@ export function useUserPresence({
             ? { ...user, status: 'offline' }
             : user
         ));
-        onUserStatusChanged?.(userId, 'offline');
+        onUserStatusChanged?.( userId, 'offline');
       }, offlineTimeout - idleTimeout);
 
-      activityTimers.current.set(userId, offlineTimer);
+      activityTimers.current.set( userId, offlineTimer);
     }, idleTimeout);
 
-    activityTimers.current.set(userId, idleTimer);
+    activityTimers.current.set( userId, idleTimer);
   }, [idleTimeout, offlineTimeout, onUserStatusChanged]);
 
-  const updateUserStatus = useCallback((userId: string, status: 'online' | 'idle' | 'offline') => {
+  const updateUserStatus = useCallback( (userId: string, status: 'online' | 'idle' | 'offline') => {
     setUsers(prev => prev.map(user => 
       user.id === userId 
-        ? { ...user, status, lastActivity: new Date() }
+        ? { ...user, status, lastActivity: new Date(_) }
         : user
     ));
 
-    onUserStatusChanged?.(userId, status);
+    onUserStatusChanged?.( userId, status);
 
     // Reset activity timer if coming back online
     if (status === 'online') {
-      updateUserActivity(userId);
+      updateUserActivity(_userId);
     }
   }, [updateUserActivity, onUserStatusChanged]);
 
   const addUser = useCallback((user: CollaborationUser) => {
     setUsers(prev => {
       // Check if user already exists
-      const existingIndex = prev.findIndex(u => u.id === user.id);
-      if (existingIndex >= 0) {
+      const existingIndex = prev.findIndex(_u => u.id === user.id);
+      if (_existingIndex >= 0) {
         // Update existing user
         const updated = [...prev];
-        updated[existingIndex] = { ...user, lastActivity: new Date() };
+        updated[existingIndex] = { ...user, lastActivity: new Date(_) };
         return updated;
       } else {
         // Add new user
-        onUserJoined?.(user);
-        return [...prev, { ...user, lastActivity: new Date() }];
+        onUserJoined?.(_user);
+        return [...prev, { ...user, lastActivity: new Date(_) }];
       }
     });
 
     // Start activity tracking for new user
-    if (user.status === 'online') {
-      updateUserActivity(user.id);
+    if (_user.status === 'online') {
+      updateUserActivity(_user.id);
     }
   }, [onUserJoined, updateUserActivity]);
 
   const removeUser = useCallback((userId: string) => {
     setUsers(prev => {
       const filtered = prev.filter(user => user.id !== userId);
-      if (filtered.length !== prev.length) {
-        onUserLeft?.(userId);
+      if (_filtered.length !== prev.length) {
+        onUserLeft?.(_userId);
       }
       return filtered;
     });
 
     // Clear timers for removed user
-    const timer = activityTimers.current.get(userId);
+    const timer = activityTimers.current.get(_userId);
     if (timer) {
-      clearTimeout(timer);
-      activityTimers.current.delete(userId);
+      clearTimeout(_timer);
+      activityTimers.current.delete(_userId);
     }
 
-    const typingTimer = typingTimers.current.get(userId);
+    const typingTimer = typingTimers.current.get(_userId);
     if (typingTimer) {
-      clearTimeout(typingTimer);
-      typingTimers.current.delete(userId);
+      clearTimeout(_typingTimer);
+      typingTimers.current.delete(_userId);
     }
 
     // Remove from typing users
-    setTypingUsers(prev => prev.filter(id => id !== userId));
+    setTypingUsers(_prev => prev.filter(id => id !== userId));
   }, [onUserLeft]);
 
-  const updateUserCursor = useCallback((userId: string, cursor: { line: number; column: number; selection?: { start: { line: number; column: number }; end: { line: number; column: number } } }) => {
+  const updateUserCursor = useCallback( (userId: string, cursor: { line: number; column: number; selection?: { start: { line: number; column: number }; end: { line: number; column: number } } }) => {
     setUsers(prev => prev.map(user => 
       user.id === userId 
-        ? { ...user, cursor, lastActivity: new Date() }
+        ? { ...user, cursor, lastActivity: new Date(_) }
         : user
     ));
 
     // Update activity
-    updateUserActivity(userId);
+    updateUserActivity(_userId);
   }, [updateUserActivity]);
 
-  const setTyping = useCallback((userId: string, isTyping: boolean) => {
+  const setTyping = useCallback( (userId: string, isTyping: boolean) => {
     if (isTyping) {
       setTypingUsers(prev => {
         if (!prev.includes(userId)) {
-          onTypingChanged?.(userId, true);
+          onTypingChanged?.( userId, true);
           return [...prev, userId];
         }
         return prev;
       });
 
       // Clear existing typing timer
-      const existingTimer = typingTimers.current.get(userId);
+      const existingTimer = typingTimers.current.get(_userId);
       if (existingTimer) {
-        clearTimeout(existingTimer);
+        clearTimeout(_existingTimer);
       }
 
       // Set timer to auto-remove typing indicator
       const timer = setTimeout(() => {
         setTypingUsers(prev => {
           const filtered = prev.filter(id => id !== userId);
-          if (filtered.length !== prev.length) {
-            onTypingChanged?.(userId, false);
+          if (_filtered.length !== prev.length) {
+            onTypingChanged?.( userId, false);
           }
           return filtered;
         });
-        typingTimers.current.delete(userId);
+        typingTimers.current.delete(_userId);
       }, 3000); // Remove after 3 seconds of inactivity
 
-      typingTimers.current.set(userId, timer);
+      typingTimers.current.set( userId, timer);
     } else {
       setTypingUsers(prev => {
         const filtered = prev.filter(id => id !== userId);
-        if (filtered.length !== prev.length) {
-          onTypingChanged?.(userId, false);
+        if (_filtered.length !== prev.length) {
+          onTypingChanged?.( userId, false);
         }
         return filtered;
       });
 
       // Clear typing timer
-      const timer = typingTimers.current.get(userId);
+      const timer = typingTimers.current.get(_userId);
       if (timer) {
-        clearTimeout(timer);
-        typingTimers.current.delete(userId);
+        clearTimeout(_timer);
+        typingTimers.current.delete(_userId);
       }
     }
 
     // Update activity
-    updateUserActivity(userId);
+    updateUserActivity(_userId);
   }, [updateUserActivity, onTypingChanged]);
 
-  const updateUserRole = useCallback((userId: string, role: 'instructor' | 'student' | 'observer') => {
+  const updateUserRole = useCallback( (userId: string, role: 'instructor' | 'student' | 'observer') => {
     setUsers(prev => prev.map(user => 
       user.id === userId 
         ? { ...user, role }
@@ -257,10 +257,10 @@ export function useUserPresence({
     setSessionDuration(0);
     
     // Clear all timers
-    activityTimers.current.forEach(timer => clearTimeout(timer));
-    typingTimers.current.forEach(timer => clearTimeout(timer));
-    activityTimers.current.clear();
-    typingTimers.current.clear();
+    activityTimers.current.forEach(_timer => clearTimeout(timer));
+    typingTimers.current.forEach(_timer => clearTimeout(timer));
+    activityTimers.current.clear(_);
+    typingTimers.current.clear(_);
   }, []);
 
   // Computed values
@@ -288,7 +288,7 @@ export function useUserPresence({
 
 // Hook for managing user colors
 export function useUserColors() {
-  const [assignedColors, setAssignedColors] = useState<Map<string, string>>(new Map());
+  const [assignedColors, setAssignedColors] = useState<Map<string, string>>(_new Map());
   
   const colors = [
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
@@ -297,38 +297,38 @@ export function useUserColors() {
   ];
 
   const assignColor = useCallback((userId: string): string => {
-    if (assignedColors.has(userId)) {
-      return assignedColors.get(userId)!;
+    if (_assignedColors.has(userId)) {
+      return assignedColors.get(_userId)!;
     }
 
     // Find an unused color
-    const usedColors = new Set(assignedColors.values());
+    const usedColors = new Set(_assignedColors.values());
     const availableColors = colors.filter(color => !usedColors.has(color));
     
     const color = availableColors.length > 0 
       ? availableColors[0] 
       : colors[assignedColors.size % colors.length];
 
-    setAssignedColors(prev => new Map(prev).set(userId, color));
+    setAssignedColors(_prev => new Map(prev).set( userId, color));
     return color;
   }, [assignedColors]);
 
   const removeColor = useCallback((userId: string) => {
     setAssignedColors(prev => {
-      const newMap = new Map(prev);
-      newMap.delete(userId);
+      const newMap = new Map(_prev);
+      newMap.delete(_userId);
       return newMap;
     });
   }, []);
 
   const resetColors = useCallback(() => {
-    setAssignedColors(new Map());
+    setAssignedColors(_new Map());
   }, []);
 
   return {
     assignColor,
     removeColor,
     resetColors,
-    assignedColors: Object.fromEntries(assignedColors)
+    assignedColors: Object.fromEntries(_assignedColors)
   };
 }

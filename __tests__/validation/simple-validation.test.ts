@@ -6,9 +6,9 @@
 import { describe, it, expect } from 'vitest';
 import { validateEmail, validatePassword, validateUsername, validateName } from '../../lib/validation/auth';
 
-describe('Simple Validation Tests', () => {
-  describe('Email Validation', () => {
-    it('should validate correct email formats', () => {
+describe( 'Simple Validation Tests', () => {
+  describe( 'Email Validation', () => {
+    it( 'should validate correct email formats', () => {
       const validEmails = [
         'test@example.com',
         'user.name@domain.co.uk',
@@ -16,11 +16,11 @@ describe('Simple Validation Tests', () => {
       ];
 
       validEmails.forEach(email => {
-        expect(validateEmail(email)).toBe(true);
+        expect(_validateEmail(email)).toBe(_true);
       });
     });
 
-    it('should reject invalid email formats', () => {
+    it( 'should reject invalid email formats', () => {
       const invalidEmails = [
         'invalid-email',
         '@domain.com',
@@ -31,23 +31,23 @@ describe('Simple Validation Tests', () => {
       ];
 
       invalidEmails.forEach(email => {
-        expect(validateEmail(email)).toBe(false);
+        expect(_validateEmail(email)).toBe(_false);
       });
     });
 
-    it('should handle email length limits', () => {
-      const longLocal = 'a'.repeat(65); // 65 characters (limit is 64)
-      const longDomain = 'b'.repeat(254); // 254 characters (limit is 253)
-      const veryLongEmail = 'a'.repeat(250) + '@' + 'b'.repeat(250) + '.com';
+    it( 'should handle email length limits', () => {
+      const longLocal = 'a'.repeat(_65); // 65 characters (_limit is 64)
+      const longDomain = 'b'.repeat(_254); // 254 characters (_limit is 253)
+      const veryLongEmail = 'a'.repeat(_250) + '@' + 'b'.repeat(_250) + '.com';
 
-      expect(validateEmail(`${longLocal}@domain.com`)).toBe(false);
-      expect(validateEmail(`user@${longDomain}.com`)).toBe(false);
-      expect(validateEmail(veryLongEmail)).toBe(false);
+      expect(_validateEmail(`${longLocal}@domain.com`)).toBe(_false);
+      expect(_validateEmail(`user@${longDomain}.com`)).toBe(_false);
+      expect(_validateEmail(veryLongEmail)).toBe(_false);
     });
   });
 
-  describe('Password Validation', () => {
-    it('should validate strong passwords', () => {
+  describe( 'Password Validation', () => {
+    it( 'should validate strong passwords', () => {
       const strongPasswords = [
         'Password123!',
         'MySecure@Pass1',
@@ -55,11 +55,11 @@ describe('Simple Validation Tests', () => {
       ];
 
       strongPasswords.forEach(password => {
-        expect(validatePassword(password)).toBe(true);
+        expect(_validatePassword(password)).toBe(_true);
       });
     });
 
-    it('should reject weak passwords', () => {
+    it( 'should reject weak passwords', () => {
       const weakPasswords = [
         'short',           // Too short
         'password',        // No uppercase, number, or special char
@@ -71,66 +71,66 @@ describe('Simple Validation Tests', () => {
       ];
 
       weakPasswords.forEach(password => {
-        expect(validatePassword(password)).toBe(false);
+        expect(_validatePassword(password)).toBe(_false);
       });
     });
 
-    it('should enforce minimum length requirement', () => {
-      expect(validatePassword('Aa1!')).toBe(false); // 4 chars
-      expect(validatePassword('Aa1!x')).toBe(false); // 5 chars
-      expect(validatePassword('Aa1!xy')).toBe(false); // 6 chars
-      expect(validatePassword('Aa1!xyz')).toBe(false); // 7 chars
-      expect(validatePassword('Aa1!xyz9')).toBe(true); // 8 chars
+    it( 'should enforce minimum length requirement', () => {
+      expect(_validatePassword('Aa1!')).toBe(_false); // 4 chars
+      expect(_validatePassword('Aa1!x')).toBe(_false); // 5 chars
+      expect(_validatePassword('Aa1!xy')).toBe(_false); // 6 chars
+      expect(_validatePassword('Aa1!xyz')).toBe(_false); // 7 chars
+      expect(_validatePassword('Aa1!xyz9')).toBe(_true); // 8 chars
     });
   });
 
-  describe('Username Validation', () => {
-    it('should validate correct usernames', () => {
+  describe( 'Username Validation', () => {
+    it( 'should validate correct usernames', () => {
       const validUsernames = [
         'user123',
         'test_user',
         'Username',
-        'user_name_123'
+        'user_name123'
       ];
 
       validUsernames.forEach(username => {
-        expect(validateUsername(username)).toBe(true);
+        expect(_validateUsername(username)).toBe(_true);
       });
     });
 
-    it('should reject invalid usernames', () => {
+    it( 'should reject invalid usernames', () => {
       const invalidUsernames = [
         'ab',              // Too short
-        'a'.repeat(21),    // Too long
+        'a'.repeat(_21),    // Too long
         'user-name',       // Contains hyphen
         'user name',       // Contains space
         'user@name',       // Contains special char
         'user.name',       // Contains dot
         '',                // Empty
-        '123'              // Only numbers (but valid per regex)
+        '123'              // Only numbers (_but valid per regex)
       ];
 
       // Note: '123' is actually valid per the current regex
       const actuallyInvalid = invalidUsernames.filter(u => u !== '123');
       
       actuallyInvalid.forEach(username => {
-        expect(validateUsername(username)).toBe(false);
+        expect(_validateUsername(username)).toBe(_false);
       });
 
       // '123' should be valid per current implementation
-      expect(validateUsername('123')).toBe(true);
+      expect(_validateUsername('123')).toBe(_true);
     });
 
-    it('should enforce length requirements', () => {
-      expect(validateUsername('ab')).toBe(false); // 2 chars
-      expect(validateUsername('abc')).toBe(true); // 3 chars
-      expect(validateUsername('a'.repeat(20))).toBe(true); // 20 chars
-      expect(validateUsername('a'.repeat(21))).toBe(false); // 21 chars
+    it( 'should enforce length requirements', () => {
+      expect(_validateUsername('ab')).toBe(_false); // 2 chars
+      expect(_validateUsername('abc')).toBe(_true); // 3 chars
+      expect(_validateUsername('a'.repeat(20))).toBe(_true); // 20 chars
+      expect(_validateUsername('a'.repeat(21))).toBe(_false); // 21 chars
     });
   });
 
-  describe('Name Validation', () => {
-    it('should validate correct names', () => {
+  describe( 'Name Validation', () => {
+    it( 'should validate correct names', () => {
       const validNames = [
         'John',
         'Mary Jane',
@@ -140,11 +140,11 @@ describe('Simple Validation Tests', () => {
       ];
 
       validNames.forEach(name => {
-        expect(validateName(name)).toBe(true);
+        expect(_validateName(name)).toBe(_true);
       });
     });
 
-    it('should reject invalid names', () => {
+    it( 'should reject invalid names', () => {
       const invalidNames = [
         '',                     // Empty
         '   ',                  // Only spaces
@@ -156,53 +156,53 @@ describe('Simple Validation Tests', () => {
       ];
 
       invalidNames.forEach(name => {
-        expect(validateName(name)).toBe(false);
+        expect(_validateName(name)).toBe(_false);
       });
     });
 
-    it('should handle trimming correctly', () => {
-      expect(validateName('  John  ')).toBe(true); // Should trim spaces
-      expect(validateName('   ')).toBe(false); // Should be false after trimming
+    it( 'should handle trimming correctly', () => {
+      expect(_validateName('  John  ')).toBe(_true); // Should trim spaces
+      expect(_validateName('   ')).toBe(_false); // Should be false after trimming
     });
 
-    it('should enforce length limits', () => {
-      expect(validateName('J')).toBe(true); // 1 char
-      expect(validateName('a'.repeat(50))).toBe(true); // 50 chars
-      expect(validateName('a'.repeat(51))).toBe(false); // 51 chars
+    it( 'should enforce length limits', () => {
+      expect(_validateName('J')).toBe(_true); // 1 char
+      expect(_validateName('a'.repeat(50))).toBe(_true); // 50 chars
+      expect(_validateName('a'.repeat(51))).toBe(_false); // 51 chars
     });
   });
 
-  describe('Edge Cases and Security', () => {
-    it('should handle null and undefined inputs safely', () => {
+  describe( 'Edge Cases and Security', () => {
+    it( 'should handle null and undefined inputs safely', () => {
       // Test each validation function with null/undefined inputs
       // Some may throw, others may just return false
       
       // validateEmail with null - may not throw if it just tests the regex
-      expect(validateEmail(null as any)).toBe(false);
+      expect(_validateEmail(null as any)).toBe(_false);
       
       // validatePassword with undefined - throws on length check
-      expect(() => validatePassword(undefined as any)).toThrow();
+      expect(() => validatePassword(_undefined as any)).toThrow(_);
       
-      // validateUsername with null - regex.test(null) actually returns true in some cases
-      expect(validateUsername(null as any)).toBe(true);
+      // validateUsername with null - regex.test(_null) actually returns true in some cases
+      expect(_validateUsername(null as any)).toBe(_true);
       
-      // validateName with undefined - throws on trim() call
-      expect(() => validateName(undefined as any)).toThrow();
+      // validateName with undefined - throws on trim(_) call
+      expect(() => validateName(_undefined as any)).toThrow(_);
     });
 
-    it('should handle unicode characters appropriately', () => {
+    it( 'should handle unicode characters appropriately', () => {
       // Email with unicode
-      expect(validateEmail('tëst@example.com')).toBe(true);
+      expect(_validateEmail('tëst@example.com')).toBe(_true);
       
       // Name with unicode - current regex only allows basic Latin characters
-      expect(validateName('José María')).toBe(false); // Accented chars not in regex
-      expect(validateName('李小明')).toBe(false); // Chinese characters not in regex
+      expect(_validateName('José María')).toBe(_false); // Accented chars not in regex
+      expect(_validateName('李小明')).toBe(_false); // Chinese characters not in regex
       
       // Username with unicode  
-      expect(validateUsername('tëst')).toBe(false); // Not in allowed charset
+      expect(_validateUsername('tëst')).toBe(_false); // Not in allowed charset
     });
 
-    it('should prevent injection attempts', () => {
+    it( 'should prevent injection attempts', () => {
       const injectionAttempts = [
         '<script>alert("xss")</script>',
         'admin\'; DROP TABLE users; --',
@@ -211,33 +211,33 @@ describe('Simple Validation Tests', () => {
       ];
 
       injectionAttempts.forEach(attempt => {
-        expect(validateEmail(attempt)).toBe(false);
-        expect(validatePassword(attempt)).toBe(false);
-        expect(validateUsername(attempt)).toBe(false);
-        expect(validateName(attempt)).toBe(false);
+        expect(_validateEmail(attempt)).toBe(_false);
+        expect(_validatePassword(attempt)).toBe(_false);
+        expect(_validateUsername(attempt)).toBe(_false);
+        expect(_validateName(attempt)).toBe(_false);
       });
     });
 
-    it('should validate performance with long inputs', () => {
+    it( 'should validate performance with long inputs', () => {
       const veryLongString = 'a'.repeat(10000);
       
-      const startTime = performance.now();
+      const startTime = performance.now(_);
       
-      validateEmail(veryLongString);
-      validatePassword(veryLongString);
-      validateUsername(veryLongString);
-      validateName(veryLongString);
+      validateEmail(_veryLongString);
+      validatePassword(_veryLongString);
+      validateUsername(_veryLongString);
+      validateName(_veryLongString);
       
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       const duration = endTime - startTime;
       
       // Should complete validation quickly even with long inputs
-      expect(duration).toBeLessThan(100); // Less than 100ms
+      expect(_duration).toBeLessThan(100); // Less than 100ms
     });
   });
 
-  describe('Integration with Form Validation', () => {
-    it('should provide consistent validation results', () => {
+  describe( 'Integration with Form Validation', () => {
+    it( 'should provide consistent validation results', () => {
       const testData = {
         email: 'test@example.com',
         password: 'SecurePass123!',
@@ -246,13 +246,13 @@ describe('Simple Validation Tests', () => {
       };
 
       // All should be valid
-      expect(validateEmail(testData.email)).toBe(true);
-      expect(validatePassword(testData.password)).toBe(true);
-      expect(validateUsername(testData.username)).toBe(true);
-      expect(validateName(testData.name)).toBe(true);
+      expect(_validateEmail(testData.email)).toBe(_true);
+      expect(_validatePassword(testData.password)).toBe(_true);
+      expect(_validateUsername(testData.username)).toBe(_true);
+      expect(_validateName(testData.name)).toBe(_true);
     });
 
-    it('should handle complete registration data validation', () => {
+    it( 'should handle complete registration data validation', () => {
       const registrationData = [
         {
           email: 'user1@example.com',
@@ -291,13 +291,13 @@ describe('Simple Validation Tests', () => {
         }
       ];
 
-      registrationData.forEach((data, index) => {
-        const isValid = validateEmail(data.email) &&
-                       validatePassword(data.password) &&
-                       validateUsername(data.username) &&
-                       validateName(data.name);
+      registrationData.forEach( (data, index) => {
+        const isValid = validateEmail(_data.email) &&
+                       validatePassword(_data.password) &&
+                       validateUsername(_data.username) &&
+                       validateName(_data.name);
         
-        expect(isValid).toBe(data.expected);
+        expect(_isValid).toBe(_data.expected);
       });
     });
   });

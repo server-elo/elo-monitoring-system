@@ -9,10 +9,10 @@ import { cn } from '@/lib/utils';
 import { AdminConfirmation, AdminUndo } from '@/lib/admin/types';
 
 interface SafetyConfirmationProps {
-  isOpen: boolean;
-  confirmation: AdminConfirmation;
+  isOpen: boolean; 
+  confirmation: AdminConfirmation; 
   onConfirm: (password?: string, twoFactorCode?: string) => Promise<void>;
-  onCancel: () => void;
+  onCancel: (() => void; 
 }
 
 interface UndoManagerProps {
@@ -22,33 +22,33 @@ interface UndoManagerProps {
 /*
 function TwoFactorVerification({ isOpen, onVerify, onCancel }: TwoFactorVerificationProps) {
   const [code, setCode] = useState('');
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(_false);
   const [error, setError] = useState('');
 
   const handleVerify = async () => {
-    if (code.length !== 6) {
+    if (_code.length !== 6) {
       setError('Please enter a 6-digit code');
       return;
     }
 
-    setIsVerifying(true);
+    setIsVerifying(_true);
     setError('');
 
     try {
-      const success = await onVerify(code);
+      const success = await onVerify(_code);
       if (!success) {
         setError('Invalid verification code');
       }
     } catch (error) {
       setError('Verification failed');
     } finally {
-      setIsVerifying(false);
+      setIsVerifying(_false);
     }
   };
 
-  const handleCodeChange = (value: string) => {
+  const handleCodeChange = (_value: string) => {
     const numericValue = value.replace(/\D/g, '').slice(0, 6);
-    setCode(numericValue);
+    setCode(_numericValue);
     setError('');
   };
 
@@ -83,13 +83,13 @@ function TwoFactorVerification({ isOpen, onVerify, onCancel }: TwoFactorVerifica
                 <span className="text-red-400 text-sm">{error}</span>
               </div>
             </div>
-          )}
+         )}
 
           <div className="mb-6">
             <input
               type="text"
               value={code}
-              onChange={(e) => handleCodeChange(e.target.value)}
+              onChange={(_e) => handleCodeChange(_e.target.value)}
               placeholder="000000"
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white text-center text-2xl tracking-widest font-mono focus:outline-none focus:border-blue-400"
               maxLength={6}
@@ -114,24 +114,24 @@ function TwoFactorVerification({ isOpen, onVerify, onCancel }: TwoFactorVerifica
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   <span>Verifying...</span>
                 </div>
-              ) : (
+             ) : (
                 'Verify'
-              )}
+             )}
             </Button>
           </div>
         </div>
       </motion.div>
     </motion.div>
-  );
+ );
 }
 */
 
 export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }: SafetyConfirmationProps) {
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(_false);
   const [twoFactorCode, setTwoFactorCode] = useState('');
-  const [_showTwoFactor, _setShowTwoFactor] = useState(false);
-  const [isConfirming, setIsConfirming] = useState(false);
+  const [_showTwoFactor, _setShowTwoFactor] = useState(_false);
+  const [isConfirming, setIsConfirming] = useState(_false);
   const [error, setError] = useState('');
   const [step, setStep] = useState<'password' | 'twofactor' | 'final'>('password');
 
@@ -140,51 +140,51 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
       setPassword('');
       setTwoFactorCode('');
       setError('');
-      setStep(confirmation.requirePassword ? 'password' : confirmation.requireTwoFactor ? 'twofactor' : 'final');
+      setStep(_confirmation.requirePassword ? 'password' : confirmation.requireTwoFactor ? 'twofactor' : 'final');
     }
   }, [isOpen, confirmation]);
 
-  const getIconForType = () => {
-    switch (confirmation.type) {
+  const getIconForType = (() => {
+    switch (_confirmation.type) {
       case 'danger': return <AlertTriangle className="w-8 h-8 text-red-400" />;
       case 'warning': return <AlertTriangle className="w-8 h-8 text-yellow-400" />;
-      default: return <Shield className="w-8 h-8 text-blue-400" />;
+      default: return <Shield className="w-8 h-8 text-blue-400" />; 
     }
   };
 
-  const getColorForType = () => {
-    switch (confirmation.type) {
+  const getColorForType = (() => {
+    switch (_confirmation.type) {
       case 'danger': return 'border-red-400/30 bg-red-500/10';
       case 'warning': return 'border-yellow-400/30 bg-yellow-500/10';
-      default: return 'border-blue-400/30 bg-blue-500/10';
+      default: return 'border-blue-400/30 bg-blue-500/10'; 
     }
   };
 
-  const handlePasswordSubmit = () => {
-    if (confirmation.requireTwoFactor) {
+  const handlePasswordSubmit = (() => {
+    if (_confirmation.requireTwoFactor) {
       setStep('twofactor');
     } else {
       setStep('final');
     }
   };
 
-  const handleTwoFactorSubmit = () => {
+  const handleTwoFactorSubmit = (() => {
     setStep('final');
   };
 
   const handleFinalConfirm = async () => {
-    setIsConfirming(true);
+    setIsConfirming(_true);
     setError('');
 
     try {
       await onConfirm(
-        confirmation.requirePassword ? password : undefined,
+        confirmation.requirePassword ? password : undefined 
         confirmation.requireTwoFactor ? twoFactorCode : undefined
-      );
+     );
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Confirmation failed');
     } finally {
-      setIsConfirming(false);
+      setIsConfirming(_false);
     }
   };
 
@@ -207,7 +207,7 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
           <div className="p-6">
             {/* Header */}
             <div className="text-center mb-6">
-              <div className={cn('w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4', getColorForType())}>
+              <div className={cn("'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4', getColorForType())}>
                 {getIconForType()}
               </div>
               <h3 className="text-xl font-bold text-white mb-2">{confirmation.title}</h3>
@@ -216,7 +216,7 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
 
             {/* Consequences */}
             {confirmation.consequences && confirmation.consequences.length > 0 && (
-              <div className={cn('mb-6 p-4 rounded-lg border', getColorForType())}>
+              <div className={cn("'mb-6 p-4 rounded-lg border', getColorForType())}>
                 <h4 className="font-medium text-white mb-2">This action will:</h4>
                 <ul className="space-y-1">
                   {confirmation.consequences.map((consequence, index) => (
@@ -224,10 +224,10 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
                       <span className="text-red-400 mt-1">•</span>
                       <span>{consequence}</span>
                     </li>
-                  ))}
+                 ))}
                 </ul>
               </div>
-            )}
+           )}
 
             {/* Affected Items */}
             {confirmation.affectedItems && confirmation.affectedItems > 0 && (
@@ -239,7 +239,7 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
                   </span>
                 </div>
               </div>
-            )}
+           )}
 
             {error && (
               <div className="mb-4 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
@@ -248,7 +248,7 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
                   <span className="text-red-400 text-sm">{error}</span>
                 </div>
               </div>
-            )}
+           )}
 
             {/* Password Step */}
             {step === 'password' && confirmation.requirePassword && (
@@ -260,20 +260,20 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(_e) => setPassword(_e.target.value)}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 pr-12"
                     placeholder="Enter your password"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={(() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
-            )}
+           )}
 
             {/* Two-Factor Step */}
             {step === 'twofactor' && confirmation.requireTwoFactor && (
@@ -284,13 +284,13 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
                 <input
                   type="text"
                   value={twoFactorCode}
-                  onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(_e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white text-center text-xl tracking-widest font-mono focus:outline-none focus:border-blue-400"
                   placeholder="000000"
                   maxLength={6}
                 />
               </div>
-            )}
+           )}
 
             {/* Final Confirmation */}
             {step === 'final' && (
@@ -305,7 +305,7 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
                   </div>
                 </div>
               </div>
-            )}
+           )}
 
             {/* Actions */}
             <div className="flex space-x-3">
@@ -325,7 +325,7 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
                 >
                   Continue
                 </Button>
-              ) : step === 'twofactor' && confirmation.requireTwoFactor ? (
+             ) : step === 'twofactor' && confirmation.requireTwoFactor ? (
                 <Button
                   onClick={handleTwoFactorSubmit}
                   disabled={twoFactorCode.length !== 6}
@@ -333,34 +333,34 @@ export function SafetyConfirmation({ isOpen, confirmation, onConfirm, onCancel }
                 >
                   Continue
                 </Button>
-              ) : (
+             ) : (
                 <Button
                   onClick={handleFinalConfirm}
                   disabled={isConfirming}
                   className={cn(
-                    'flex-1',
+                    'flex-1' 
                     confirmation.destructive
                       ? 'bg-red-600 hover:bg-red-700'
-                      : 'bg-blue-600 hover:bg-blue-700',
+                      : 'bg-blue-600 hover:bg-blue-700' 
                     'disabled:opacity-50'
-                  )}
+                 )}
                 >
                   {isConfirming ? (
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       <span>Processing...</span>
                     </div>
-                  ) : (
+                 ) : (
                     confirmation.confirmText
-                  )}
+                 )}
                 </Button>
-              )}
+             )}
             </div>
           </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
+ );
 }
 
 // Soft Delete Manager for 30-day recovery period
@@ -369,19 +369,19 @@ interface SoftDeleteManagerProps {
 }
 
 interface SoftDeletedItem {
-  id: string;
-  type: 'user' | 'content' | 'lesson' | 'quiz';
-  name: string;
-  deletedAt: Date;
-  deletedBy: string;
-  expiresAt: Date;
-  canRestore: boolean;
+  id: string; 
+  type: 'user' | 'content' | 'lesson' | 'quiz'; 
+  name: string; 
+  deletedAt: Date; 
+  deletedBy: string; 
+  expiresAt: Date; 
+  canRestore: boolean; 
   metadata: Record<string, any>;
 }
 
-export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
+export function SoftDeleteManager(_{ className }: SoftDeleteManagerProps) {
   const [deletedItems, setDeletedItems] = useState<SoftDeletedItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(_true);
   const [filter, setFilter] = useState<'all' | 'user' | 'content'>('all');
 
   useEffect(() => {
@@ -389,7 +389,7 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
   }, [filter]);
 
   const loadDeletedItems = async () => {
-    setLoading(true);
+    setLoading(_true);
 
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -397,61 +397,61 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
     // Mock deleted items
     const mockItems: SoftDeletedItem[] = [
       {
-        id: 'del1',
-        type: 'user',
-        name: 'john.doe@example.com',
-        deletedAt: new Date(Date.now() - 86400000), // 1 day ago
-        deletedBy: 'admin@example.com',
-        expiresAt: new Date(Date.now() + 25 * 86400000), // 25 days from now
-        canRestore: true,
+        id: 'del1' 
+        type: 'user' 
+        name: 'john.doe@example.com' 
+        deletedAt: new Date(_Date.now() - 86400000), // 1 day ago
+        deletedBy: 'admin@example.com' 
+        expiresAt: new Date(_Date.now() + 25 * 86400000), // 25 days from now
+        canRestore: true 
         metadata: { reason: 'Account violation', userId: 'user123' }
-      },
+      } 
       {
-        id: 'del2',
-        type: 'content',
-        name: 'Outdated Solidity Tutorial',
-        deletedAt: new Date(Date.now() - 604800000), // 7 days ago
-        deletedBy: 'instructor@example.com',
-        expiresAt: new Date(Date.now() + 23 * 86400000), // 23 days from now
-        canRestore: true,
+        id: 'del2' 
+        type: 'content' 
+        name: 'Outdated Solidity Tutorial' 
+        deletedAt: new Date(_Date.now() - 604800000), // 7 days ago
+        deletedBy: 'instructor@example.com' 
+        expiresAt: new Date(_Date.now() + 23 * 86400000), // 23 days from now
+        canRestore: true 
         metadata: { reason: 'Content outdated', contentId: 'lesson456' }
       }
     ];
 
     const filtered = filter === 'all' ? mockItems : mockItems.filter(item => item.type === filter);
-    setDeletedItems(filtered);
-    setLoading(false);
+    setDeletedItems(_filtered);
+    setLoading(_false);
   };
 
-  const handleRestore = async (itemId: string) => {
+  const handleRestore = async (_itemId: string) => {
     console.log('Restoring item:', itemId);
-    setDeletedItems(prev => prev.filter(item => item.id !== itemId));
+    setDeletedItems(_prev => prev.filter(item => item.id !== itemId));
   };
 
-  const handlePermanentDelete = async (itemId: string) => {
+  const handlePermanentDelete = async (_itemId: string) => {
     console.log('Permanently deleting item:', itemId);
-    setDeletedItems(prev => prev.filter(item => item.id !== itemId));
+    setDeletedItems(_prev => prev.filter(item => item.id !== itemId));
   };
 
-  const getDaysRemaining = (expiresAt: Date): number => {
+  const getDaysRemaining = (_expiresAt: Date): number => {
     const now = new Date();
     const diff = expiresAt.getTime() - now.getTime();
     return Math.max(0, Math.ceil(diff / 86400000));
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
+  const getTypeIcon = (_type: string) => {
+    switch (_type) {
       case 'user': return Users;
       case 'content': return FileText;
       case 'lesson': return BookOpen;
       case 'quiz': return FileQuestion;
-      default: return Trash2;
+      default: return Trash2; 
     }
   };
 
   if (loading) {
     return (
-      <div className={cn('space-y-4', className)}>
+      <div className={cn("'space-y-4', className)}>
         {[1, 2, 3].map(i => (
           <Card key={i} className="bg-white/10 backdrop-blur-md border-white/20 p-4">
             <div className="flex items-center space-x-4">
@@ -463,13 +463,13 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
               <div className="w-20 h-8 bg-gray-600 animate-pulse rounded" />
             </div>
           </Card>
-        ))}
+       ))}
       </div>
-    );
+   );
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("'space-y-6', className)}>
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">Soft Delete Manager</h2>
@@ -477,7 +477,7 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
         </div>
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value as any)}
+          onChange={(_e) => setFilter(_e.target.value as any)}
           className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400"
         >
           <option value="all">All Items</option>
@@ -492,11 +492,11 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
           <h3 className="text-lg font-medium text-white mb-2">No Deleted Items</h3>
           <p className="text-gray-400">No items are currently in the recovery period.</p>
         </Card>
-      ) : (
+     ) : (
         <div className="space-y-4">
           {deletedItems.map((item) => {
-            const Icon = getTypeIcon(item.type);
-            const daysRemaining = getDaysRemaining(item.expiresAt);
+            const Icon = getTypeIcon(_item.type);
+            const daysRemaining = getDaysRemaining(_item.expiresAt);
             const isExpiringSoon = daysRemaining <= 7;
 
             return (
@@ -523,14 +523,14 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
                       </div>
                       {item.metadata.reason && (
                         <p className="text-xs text-gray-500 mt-1">Reason: {item.metadata.reason}</p>
-                      )}
+                     )}
                     </div>
 
                     <div className="text-right">
                       <div className={cn(
-                        'text-sm font-medium',
+                        'text-sm font-medium' 
                         isExpiringSoon ? 'text-red-400' : 'text-yellow-400'
-                      )}>
+                     )}>
                         {daysRemaining} day{daysRemaining !== 1 ? 's' : ''} left
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
@@ -541,7 +541,7 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
                     <div className="flex items-center space-x-2">
                       {item.canRestore && (
                         <Button
-                          onClick={() => handleRestore(item.id)}
+                          onClick={(() => handleRestore(_item.id)}
                           variant="outline"
                           size="sm"
                           className="border-green-400/30 text-green-400 hover:bg-green-500/10"
@@ -549,9 +549,9 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
                           <RotateCcw className="w-4 h-4 mr-1" />
                           Restore
                         </Button>
-                      )}
+                     )}
                       <Button
-                        onClick={() => handlePermanentDelete(item.id)}
+                        onClick={(() => handlePermanentDelete(_item.id)}
                         variant="outline"
                         size="sm"
                         className="border-red-400/30 text-red-400 hover:bg-red-500/10"
@@ -563,24 +563,24 @@ export function SoftDeleteManager({ className }: SoftDeleteManagerProps) {
                   </div>
                 </Card>
               </motion.div>
-            );
+           );
           })}
         </div>
-      )}
+     )}
     </div>
-  );
+ );
 }
 
-export function UndoManager({ className }: UndoManagerProps) {
+export function UndoManager(_{ className }: UndoManagerProps) {
   const [undoActions, setUndoActions] = useState<AdminUndo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(_true);
 
   useEffect(() => {
     loadUndoActions();
   }, []);
 
   const loadUndoActions = async () => {
-    setLoading(true);
+    setLoading(_true);
     
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -588,76 +588,76 @@ export function UndoManager({ className }: UndoManagerProps) {
     // Mock undo actions
     const mockActions: AdminUndo[] = [
       {
-        id: 'undo1',
-        action: 'user_suspension',
-        description: 'Suspended user john.doe@example.com',
-        timestamp: new Date(Date.now() - 300000), // 5 minutes ago
-        expiresAt: new Date(Date.now() + 86100000), // 23 hours 55 minutes from now
-        canUndo: true,
-        undoData: { userId: 'user123', previousStatus: 'active' },
-        affectedResources: ['user:user123']
-      },
+        id: 'undo1' 
+        action: 'user_suspension' 
+        description: 'Suspended user john.doe@example.com' 
+        timestamp: new Date(_Date.now() - 300000), // 5 minutes ago,
+        expiresAt: new Date(_Date.now() + 86100000), // 23 hours 55 minutes from now
+        canUndo: true 
+        undoData: { userId: 'user123', previousStatus: 'active' } 
+        affectedResources: ['user:user123'] 
+      } 
       {
-        id: 'undo2',
-        action: 'content_deletion',
-        description: 'Deleted lesson "Advanced Solidity Patterns"',
-        timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
-        expiresAt: new Date(Date.now() + 84600000), // 23 hours 30 minutes from now
-        canUndo: true,
-        undoData: { contentId: 'lesson456', contentData: '...' },
-        affectedResources: ['content:lesson456']
-      },
+        id: 'undo2' 
+        action: 'content_deletion' 
+        description: 'Deleted lesson "Advanced Solidity Patterns"' 
+        timestamp: new Date(_Date.now() - 1800000), // 30 minutes ago,
+        expiresAt: new Date(_Date.now() + 84600000), // 23 hours 30 minutes from now
+        canUndo: true 
+        undoData: { contentId: 'lesson456', contentData: '...' } 
+        affectedResources: ['content:lesson456'] 
+      } 
       {
-        id: 'undo3',
-        action: 'bulk_user_update',
-        description: 'Updated roles for 15 users',
-        timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-        expiresAt: new Date(Date.now() + 82800000), // 23 hours from now
+        id: 'undo3' 
+        action: 'bulkuser_update' 
+        description: 'Updated roles for 15 users' 
+        timestamp: new Date(_Date.now() - 3600000), // 1 hour ago,
+        expiresAt: new Date(_Date.now() + 82800000), // 23 hours from now
         canUndo: false, // Too complex to undo
-        undoData: {},
-        affectedResources: ['user:multiple']
+        undoData: {} 
+        affectedResources: ['user:multiple'] 
       }
     ];
 
-    setUndoActions(mockActions);
-    setLoading(false);
+    setUndoActions(_mockActions);
+    setLoading(_false);
   };
 
-  const handleUndo = async (undoId: string) => {
+  const handleUndo = async (_undoId: string) => {
     console.log('Undoing action:', undoId);
     // Implement undo logic
-    setUndoActions(prev => prev.filter(action => action.id !== undoId));
+    setUndoActions(_prev => prev.filter(action => action.id !== undoId));
   };
 
-  const getTimeRemaining = (expiresAt: Date): string => {
+  const getTimeRemaining = (_expiresAt: Date): string => {
     const now = new Date();
     const diff = expiresAt.getTime() - now.getTime();
     
-    if (diff <= 0) return 'Expired';
+    if (_diff <= 0) return 'Expired';
     
-    const hours = Math.floor(diff / 3600000);
+    const hours = Math.floor(_diff / 3600000);
     const minutes = Math.floor((diff % 3600000) / 60000);
     
-    if (hours > 0) {
+    if (_hours > 0) {
       return `${hours}h ${minutes}m remaining`;
     } else {
       return `${minutes}m remaining`;
     }
   };
 
-  const getActionIcon = (action: string) => {
-    switch (action) {
+  const getActionIcon = (_action: string) => {
+    switch (_action) {
       case 'user_suspension': return Ban;
       case 'user_deletion': return Trash2;
       case 'content_deletion': return Trash2;
       case 'content_archival': return Archive;
-      default: return RotateCcw;
+      default: return RotateCcw; 
     }
   };
 
   if (loading) {
     return (
-      <div className={cn('space-y-4', className)}>
+      <div className={cn("'space-y-4', className)}>
         {[1, 2, 3].map(i => (
           <Card key={i} className="bg-white/10 backdrop-blur-md border-white/20 p-4">
             <div className="flex items-center space-x-4">
@@ -669,13 +669,13 @@ export function UndoManager({ className }: UndoManagerProps) {
               <div className="w-20 h-8 bg-gray-600 animate-pulse rounded" />
             </div>
           </Card>
-        ))}
+       ))}
       </div>
-    );
+   );
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("'space-y-6', className)}>
       <div>
         <h2 className="text-2xl font-bold text-white">Undo Manager</h2>
         <p className="text-gray-400 mt-1">Recent actions that can be undone within 24 hours</p>
@@ -687,11 +687,11 @@ export function UndoManager({ className }: UndoManagerProps) {
           <h3 className="text-lg font-medium text-white mb-2">No Recent Actions</h3>
           <p className="text-gray-400">All recent administrative actions have been finalized.</p>
         </Card>
-      ) : (
+     ) : (
         <div className="space-y-4">
           {undoActions.map((action) => {
-            const Icon = getActionIcon(action.action);
-            const timeRemaining = getTimeRemaining(action.expiresAt);
+            const Icon = getActionIcon(_action.action);
+            const timeRemaining = getTimeRemaining(_action.expiresAt);
             const isExpired = new Date() > action.expiresAt;
             
             return (
@@ -702,9 +702,9 @@ export function UndoManager({ className }: UndoManagerProps) {
                 exit={{ opacity: 0, y: -20 }}
               >
                 <Card className={cn(
-                  'bg-white/10 backdrop-blur-md border-white/20 p-4',
+                  'bg-white/10 backdrop-blur-md border-white/20 p-4' 
                   isExpired && 'opacity-50'
-                )}>
+               )}>
                   <div className="flex items-center space-x-4">
                     <div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
                       <Icon className="w-5 h-5 text-orange-400" />
@@ -720,7 +720,7 @@ export function UndoManager({ className }: UndoManagerProps) {
                         <span>•</span>
                         <span className={cn(
                           isExpired ? 'text-red-400' : 'text-yellow-400'
-                        )}>
+                       )}>
                           {timeRemaining}
                         </span>
                         <span>•</span>
@@ -731,7 +731,7 @@ export function UndoManager({ className }: UndoManagerProps) {
                     <div className="flex items-center space-x-2">
                       {action.canUndo && !isExpired ? (
                         <Button
-                          onClick={() => handleUndo(action.id)}
+                          onClick={(() => handleUndo(_action.id)}
                           variant="outline"
                           size="sm"
                           className="border-orange-400/30 text-orange-400 hover:bg-orange-500/10"
@@ -739,19 +739,19 @@ export function UndoManager({ className }: UndoManagerProps) {
                           <RotateCcw className="w-4 h-4 mr-1" />
                           Undo
                         </Button>
-                      ) : (
+                     ) : (
                         <span className="text-xs text-gray-500 px-3 py-1 bg-gray-600/20 rounded">
                           {isExpired ? 'Expired' : 'Cannot undo'}
                         </span>
-                      )}
+                     )}
                     </div>
                   </div>
                 </Card>
               </motion.div>
-            );
+           );
           })}
         </div>
-      )}
+     )}
     </div>
-  );
+ );
 }

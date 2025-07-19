@@ -15,32 +15,32 @@ class MockWebSocket {
   onmessage: ((event: MessageEvent) => void) | null = null;
   onerror: ((event: Event) => void) | null = null;
 
-  constructor(public url: string) {}
+  constructor(_public url: string) {}
 
-  send(data: string) {
+  send(_data: string) {
     // Simulate network latency
     setTimeout(() => {
-      if (this.onmessage) {
-        this.onmessage(new MessageEvent('message', { data }));
+      if (_this.onmessage) {
+        this.onmessage( new MessageEvent('message', { data }));
       }
     }, Math.random() * 10); // 0-10ms latency
   }
 
-  close() {
+  close(_) {
     this.readyState = MockWebSocket.CLOSED;
-    this.onclose?.(new CloseEvent('close'));
+    this.onclose?.(_new CloseEvent('close'));
   }
 }
 
 global.WebSocket = MockWebSocket as any;
 
-describe('Collaboration Performance Tests', () => {
+describe( 'Collaboration Performance Tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
-  describe('OperationalTransform Performance', () => {
-    test('should handle large text operations efficiently', () => {
+  describe( 'OperationalTransform Performance', () => {
+    test( 'should handle large text operations efficiently', () => {
       const largeText = 'A'.repeat(10000); // 10KB text
       const operation: TextOperation = {
         ops: [
@@ -52,15 +52,15 @@ describe('Collaboration Performance Tests', () => {
         targetLength: 11000
       };
 
-      const startTime = performance.now();
-      const result = OperationalTransform.apply(largeText, operation);
-      const endTime = performance.now();
+      const startTime = performance.now(_);
+      const result = OperationalTransform.apply( largeText, operation);
+      const endTime = performance.now(_);
 
-      expect(result.length).toBe(11000);
-      expect(endTime - startTime).toBeLessThan(50); // Should complete in under 50ms
+      expect(_result.length).toBe(11000);
+      expect(_endTime - startTime).toBeLessThan(50); // Should complete in under 50ms
     });
 
-    test('should transform many concurrent operations efficiently', () => {
+    test( 'should transform many concurrent operations efficiently', () => {
       const operations: TextOperation[] = [];
       
       // Generate 100 concurrent insert operations
@@ -72,12 +72,12 @@ describe('Collaboration Performance Tests', () => {
         });
       }
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
       
       // Transform all operations against each other
       let transformedOps = operations;
       for (let i = 0; i < operations.length - 1; i++) {
-        for (let j = i + 1; j < operations.length; j++) {
+        for (_let j = i + 1; j < operations.length; j++) {
           const [op1, op2] = OperationalTransform.transform(
             transformedOps[i], 
             transformedOps[j], 
@@ -88,20 +88,20 @@ describe('Collaboration Performance Tests', () => {
         }
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       
-      expect(transformedOps).toHaveLength(100);
-      expect(endTime - startTime).toBeLessThan(1000); // Should complete in under 1 second
+      expect(_transformedOps).toHaveLength(100);
+      expect(_endTime - startTime).toBeLessThan(1000); // Should complete in under 1 second
     });
 
-    test('should compose many sequential operations efficiently', () => {
+    test( 'should compose many sequential operations efficiently', () => {
       let composedOp: TextOperation = {
         ops: [],
         baseLength: 0,
         targetLength: 0
       };
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Compose 1000 sequential operations
       for (let i = 0; i < 1000; i++) {
@@ -114,20 +114,20 @@ describe('Collaboration Performance Tests', () => {
           targetLength: composedOp.targetLength + 1
         };
 
-        if (composedOp.ops.length === 0) {
+        if (_composedOp.ops.length === 0) {
           composedOp = newOp;
         } else {
-          composedOp = OperationalTransform.compose(composedOp, newOp);
+          composedOp = OperationalTransform.compose( composedOp, newOp);
         }
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
 
-      expect(composedOp.targetLength).toBe(1000);
-      expect(endTime - startTime).toBeLessThan(500); // Should complete in under 500ms
+      expect(_composedOp.targetLength).toBe(1000);
+      expect(_endTime - startTime).toBeLessThan(500); // Should complete in under 500ms
     });
 
-    test('should handle rapid text changes efficiently', () => {
+    test( 'should handle rapid text changes efficiently', () => {
       let text = 'Initial text';
       const operations: TextOperation[] = [];
 
@@ -137,27 +137,27 @@ describe('Collaboration Performance Tests', () => {
           text,
           text + ` change${i}`
         );
-        operations.push(operation);
+        operations.push(_operation);
         text = text + ` change${i}`;
       }
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Apply all operations
       let currentText = 'Initial text';
-      for (const op of operations) {
-        currentText = OperationalTransform.apply(currentText, op);
+      for (_const op of operations) {
+        currentText = OperationalTransform.apply( currentText, op);
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
 
-      expect(currentText).toContain('change499');
-      expect(endTime - startTime).toBeLessThan(200); // Should complete in under 200ms
+      expect(_currentText).toContain('change499');
+      expect(_endTime - startTime).toBeLessThan(200); // Should complete in under 200ms
     });
   });
 
-  describe('CollaborationClient Performance', () => {
-    test('should handle high-frequency operations', async () => {
+  describe( 'CollaborationClient Performance', () => {
+    test( 'should handle high-frequency operations', async () => {
       const client = new CollaborationClient(
         'ws://localhost:8080',
         'user1',
@@ -165,7 +165,7 @@ describe('Collaboration Performance Tests', () => {
       );
 
       const operations: TextOperation[] = [];
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Send 100 operations rapidly
       for (let i = 0; i < 100; i++) {
@@ -175,26 +175,26 @@ describe('Collaboration Performance Tests', () => {
           targetLength: i + 1,
           meta: {
             userId: 'user1',
-            timestamp: Date.now()
+            timestamp: Date.now(_)
           }
         };
 
-        client.sendOperation(operation);
-        operations.push(operation);
+        client.sendOperation(_operation);
+        operations.push(_operation);
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
 
-      expect(operations).toHaveLength(100);
-      expect(endTime - startTime).toBeLessThan(100); // Should queue operations quickly
-      expect(client.getPendingOperationsCount()).toBe(100);
+      expect(_operations).toHaveLength(100);
+      expect(_endTime - startTime).toBeLessThan(100); // Should queue operations quickly
+      expect(_client.getPendingOperationsCount()).toBe(100);
     });
 
-    test('should handle many concurrent users', () => {
+    test( 'should handle many concurrent users', () => {
       const clients: CollaborationClient[] = [];
       const userCount = 50;
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Create 50 concurrent clients
       for (let i = 0; i < userCount; i++) {
@@ -203,25 +203,25 @@ describe('Collaboration Performance Tests', () => {
           `user${i}`,
           'session1'
         );
-        clients.push(client);
+        clients.push(_client);
       }
 
       // Each client sends a cursor update
-      clients.forEach((client, index) => {
+      clients.forEach( (client, index) => {
         client.sendCursorUpdate({
           position: { line: index, column: index },
           userName: `User ${index}`,
-          color: `#${index.toString(16).padStart(6, '0')}`
+          color: `#${index.toString(16).padStart( 6, '0')}`
         });
       });
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
 
-      expect(clients).toHaveLength(userCount);
-      expect(endTime - startTime).toBeLessThan(200); // Should handle many users efficiently
+      expect(_clients).toHaveLength(_userCount);
+      expect(_endTime - startTime).toBeLessThan(200); // Should handle many users efficiently
     });
 
-    test('should maintain performance under message load', () => {
+    test( 'should maintain performance under message load', () => {
       const client = new CollaborationClient(
         'ws://localhost:8080',
         'user1',
@@ -229,31 +229,31 @@ describe('Collaboration Performance Tests', () => {
       );
 
       const messageCount = 1000;
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Send many chat messages
       for (let i = 0; i < messageCount; i++) {
-        client.sendChatMessage(`Message ${i}`, 'text');
+        client.sendChatMessage( `Message ${i}`, 'text');
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
 
-      expect(endTime - startTime).toBeLessThan(300); // Should handle message load efficiently
+      expect(_endTime - startTime).toBeLessThan(300); // Should handle message load efficiently
     });
   });
 
-  describe('ConnectionManager Performance', () => {
-    test('should handle offline queue efficiently', async () => {
+  describe( 'ConnectionManager Performance', () => {
+    test( 'should handle offline queue efficiently', async () => {
       const mockClient = new CollaborationClient(
         'ws://localhost:8080',
         'user1',
         'session1'
       );
 
-      const connectionManager = new ConnectionManager(mockClient);
+      const connectionManager = new ConnectionManager(_mockClient);
       const operationCount = 500;
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Queue many operations while offline
       for (let i = 0; i < operationCount; i++) {
@@ -263,37 +263,37 @@ describe('Collaboration Performance Tests', () => {
           targetLength: i + 1
         };
 
-        connectionManager.queueOperation(operation);
+        connectionManager.queueOperation(_operation);
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
 
-      expect(endTime - startTime).toBeLessThan(200); // Should queue operations efficiently
+      expect(_endTime - startTime).toBeLessThan(200); // Should queue operations efficiently
     });
 
-    test('should recover from connection loss quickly', async () => {
+    test( 'should recover from connection loss quickly', async () => {
       const mockClient = new CollaborationClient(
         'ws://localhost:8080',
         'user1',
         'session1'
       );
 
-      const connectionManager = new ConnectionManager(mockClient);
+      const connectionManager = new ConnectionManager(_mockClient);
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Simulate connection recovery
-      await connectionManager.reconnect();
+      await connectionManager.reconnect(_);
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
 
-      expect(endTime - startTime).toBeLessThan(1000); // Should reconnect quickly
+      expect(_endTime - startTime).toBeLessThan(1000); // Should reconnect quickly
     });
   });
 
-  describe('Memory Usage Tests', () => {
-    test('should not leak memory with many operations', () => {
-      const initialMemory = (performance as any).memory?.usedJSHeapSize || 0;
+  describe( 'Memory Usage Tests', () => {
+    test( 'should not leak memory with many operations', () => {
+      const initialMemory = (_performance as any).memory?.usedJSHeapSize || 0;
       
       // Perform many operations
       for (let i = 0; i < 1000; i++) {
@@ -303,22 +303,22 @@ describe('Collaboration Performance Tests', () => {
           targetLength: `Operation ${i}`.length
         };
 
-        OperationalTransform.apply('', operation);
+        OperationalTransform.apply( '', operation);
       }
 
       // Force garbage collection if available
-      if (global.gc) {
-        global.gc();
+      if (_global.gc) {
+        global.gc(_);
       }
 
-      const finalMemory = (performance as any).memory?.usedJSHeapSize || 0;
+      const finalMemory = (_performance as any).memory?.usedJSHeapSize || 0;
       const memoryIncrease = finalMemory - initialMemory;
 
-      // Memory increase should be reasonable (less than 10MB)
-      expect(memoryIncrease).toBeLessThan(10 * 1024 * 1024);
+      // Memory increase should be reasonable (_less than 10MB)
+      expect(_memoryIncrease).toBeLessThan(10 * 1024 * 1024);
     });
 
-    test('should clean up client resources properly', () => {
+    test( 'should clean up client resources properly', () => {
       const clients: CollaborationClient[] = [];
 
       // Create many clients
@@ -328,25 +328,25 @@ describe('Collaboration Performance Tests', () => {
           `user${i}`,
           'session1'
         );
-        clients.push(client);
+        clients.push(_client);
       }
 
       // Disconnect all clients
-      clients.forEach(client => client.disconnect());
+      clients.forEach(_client => client.disconnect());
 
       // All clients should be properly cleaned up
-      expect(clients.every(client => !client.isConnected())).toBe(true);
+      expect(_clients.every(client => !client.isConnected())).toBe(_true);
     });
   });
 
-  describe('Latency Simulation Tests', () => {
-    test('should handle high latency gracefully', async () => {
+  describe( 'Latency Simulation Tests', () => {
+    test( 'should handle high latency gracefully', async () => {
       // Mock high latency WebSocket
       class HighLatencyWebSocket extends MockWebSocket {
-        send(data: string) {
+        send(_data: string) {
           setTimeout(() => {
-            if (this.onmessage) {
-              this.onmessage(new MessageEvent('message', { data }));
+            if (_this.onmessage) {
+              this.onmessage( new MessageEvent('message', { data }));
             }
           }, 500); // 500ms latency
         }
@@ -360,7 +360,7 @@ describe('Collaboration Performance Tests', () => {
         'session1'
       );
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Send operation with high latency
       const operation: TextOperation = {
@@ -369,14 +369,14 @@ describe('Collaboration Performance Tests', () => {
         targetLength: 4
       };
 
-      client.sendOperation(operation);
+      client.sendOperation(_operation);
 
       // Should not block the main thread
-      const endTime = performance.now();
-      expect(endTime - startTime).toBeLessThan(50); // Should return immediately
+      const endTime = performance.now(_);
+      expect(_endTime - startTime).toBeLessThan(50); // Should return immediately
     });
 
-    test('should batch operations under high load', () => {
+    test( 'should batch operations under high load', () => {
       const client = new CollaborationClient(
         'ws://localhost:8080',
         'user1',
@@ -384,7 +384,7 @@ describe('Collaboration Performance Tests', () => {
       );
 
       const operationCount = 100;
-      const startTime = performance.now();
+      const startTime = performance.now(_);
 
       // Send many operations rapidly
       for (let i = 0; i < operationCount; i++) {
@@ -394,14 +394,14 @@ describe('Collaboration Performance Tests', () => {
           targetLength: i + 1
         };
 
-        client.sendOperation(operation);
+        client.sendOperation(_operation);
       }
 
-      const endTime = performance.now();
+      const endTime = performance.now(_);
 
       // Should handle batching efficiently
-      expect(endTime - startTime).toBeLessThan(100);
-      expect(client.getPendingOperationsCount()).toBe(operationCount);
+      expect(_endTime - startTime).toBeLessThan(100);
+      expect(_client.getPendingOperationsCount()).toBe(_operationCount);
     });
   });
 });

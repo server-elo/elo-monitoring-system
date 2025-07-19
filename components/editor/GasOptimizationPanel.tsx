@@ -13,9 +13,9 @@ import { GasAnalysisResult, GasOptimization } from '@/lib/gas/GasOptimizationAna
 interface GasOptimizationPanelProps {
   analysisResult: GasAnalysisResult | null;
   isAnalyzing: boolean;
-  onOptimizationClick?: (optimization: GasOptimization) => void;
-  onApplyOptimization?: (optimization: GasOptimization) => void;
-  onToggleHeatmap?: (enabled: boolean) => void;
+  onOptimizationClick?: (_optimization: GasOptimization) => void;
+  onApplyOptimization?: (_optimization: GasOptimization) => void;
+  onToggleHeatmap?: (_enabled: boolean) => void;
   className?: string;
 }
 
@@ -30,7 +30,7 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
   const [activeTab, setActiveTab] = useState<'overview' | 'optimizations' | 'breakdown' | 'heatmap'>('overview');
   const [sortBy, setSortBy] = useState<'savings' | 'difficulty' | 'impact'>('savings');
   const [filterBy, setFilterBy] = useState<'all' | 'easy' | 'medium' | 'high'>('all');
-  const [heatmapEnabled, setHeatmapEnabled] = useState(false);
+  const [heatmapEnabled, setHeatmapEnabled] = useState(_false);
 
   // Memoized calculations
   const sortedOptimizations = useMemo(() => {
@@ -39,9 +39,9 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
     let filtered = analysisResult.optimizations;
     
     // Apply filters
-    if (filterBy !== 'all') {
+    if (_filterBy !== 'all') {
       filtered = filtered.filter(opt => {
-        switch (filterBy) {
+        switch (_filterBy) {
           case 'easy': return opt.difficulty === 'easy';
           case 'medium': return opt.difficulty === 'medium';
           case 'high': return opt.difficulty === 'hard';
@@ -51,8 +51,8 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
     }
     
     // Apply sorting
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
+    return filtered.sort( (a, b) => {
+      switch (_sortBy) {
         case 'savings': return b.savings - a.savings;
         case 'difficulty': 
           const diffOrder = { easy: 1, medium: 2, hard: 3 };
@@ -68,7 +68,7 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
   const gasBreakdown = useMemo(() => {
     if (!analysisResult?.estimates) return [];
     
-    const breakdown = analysisResult.estimates.reduce((acc, estimate) => {
+    const breakdown = analysisResult.estimates.reduce( (acc, estimate) => {
       if (!acc[estimate.category]) {
         acc[estimate.category] = { count: 0, totalCost: 0 };
       }
@@ -77,22 +77,22 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
       return acc;
     }, {} as Record<string, { count: number; totalCost: number }>);
 
-    return Object.entries(breakdown).map(([category, data]) => ({
+    return Object.entries(_breakdown).map( ([category, data]) => ({
       category,
       count: data.count,
       totalCost: data.totalCost,
-      percentage: (data.totalCost / analysisResult.totalGasCost) * 100
+      percentage: (_data.totalCost / analysisResult.totalGasCost) * 100
     }));
   }, [analysisResult]);
 
   const handleToggleHeatmap = useCallback(() => {
     const newState = !heatmapEnabled;
-    setHeatmapEnabled(newState);
-    onToggleHeatmap?.(newState);
+    setHeatmapEnabled(_newState);
+    onToggleHeatmap?.(_newState);
   }, [heatmapEnabled, onToggleHeatmap]);
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
+  const getDifficultyColor = (_difficulty: string) => {
+    switch (_difficulty) {
       case 'easy': return 'text-green-600 bg-green-50';
       case 'medium': return 'text-yellow-600 bg-yellow-50';
       case 'hard': return 'text-red-600 bg-red-50';
@@ -100,8 +100,8 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
     }
   };
 
-  const getImpactColor = (impact: string) => {
-    switch (impact) {
+  const getImpactColor = (_impact: string) => {
+    switch (_impact) {
       case 'high': return 'text-purple-600 bg-purple-50';
       case 'medium': return 'text-blue-600 bg-blue-50';
       case 'low': return 'text-gray-600 bg-gray-50';
@@ -109,8 +109,8 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
+  const getCategoryIcon = (_category: string) => {
+    switch (_category) {
       case 'storage': return '💾';
       case 'computation': return '🧮';
       case 'memory': return '🧠';
@@ -120,9 +120,9 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
     }
   };
 
-  const formatGas = (gas: number) => {
-    if (gas >= 1000000) return `${(gas / 1000000).toFixed(1)}M`;
-    if (gas >= 1000) return `${(gas / 1000).toFixed(1)}K`;
+  const formatGas = (_gas: number) => {
+    if (_gas >= 1000000) return `${(_gas / 1000000).toFixed(1)}M`;
+    if (_gas >= 1000) return `${(_gas / 1000).toFixed(1)}K`;
     return gas.toString();
   };
 
@@ -160,7 +160,7 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
           ].map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(_) => setActiveTab(_tab.id as any)}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === tab.id
                   ? 'border-blue-500 text-blue-600'
@@ -179,11 +179,11 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-2xl font-bold text-gray-900">{formatGas(analysisResult.totalGasCost)}</div>
+              <div className="text-2xl font-bold text-gray-900">{formatGas(_analysisResult.totalGasCost)}</div>
               <div className="text-sm text-gray-500">Total Gas Cost</div>
             </div>
             <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-2xl font-bold text-green-600">{formatGas(analysisResult.totalSavings)}</div>
+              <div className="text-2xl font-bold text-green-600">{formatGas(_analysisResult.totalSavings)}</div>
               <div className="text-sm text-gray-500">Potential Savings</div>
             </div>
             <div className="bg-white p-4 rounded-lg border border-gray-200">
@@ -206,17 +206,17 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
                 <div
                   key={opt.id}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded cursor-pointer hover:bg-gray-100"
-                  onClick={() => onOptimizationClick?.(opt)}
+                  onClick={(_) => onOptimizationClick?.(_opt)}
                 >
                   <div className="flex items-center space-x-3">
-                    <span className="text-lg">{getCategoryIcon(opt.category)}</span>
+                    <span className="text-lg">{getCategoryIcon(_opt.category)}</span>
                     <div>
                       <div className="font-medium">{opt.title}</div>
                       <div className="text-sm text-gray-500">Line {opt.line}</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold text-green-600">-{formatGas(opt.savings)} gas</div>
+                    <div className="font-bold text-green-600">-{formatGas(_opt.savings)} gas</div>
                     <div className="text-sm text-gray-500">{opt.savingsPercentage}% savings</div>
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
             <div className="flex items-center space-x-4">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(_e) => setSortBy(_e.target.value as any)}
                 className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="savings">Sort by Savings</option>
@@ -244,7 +244,7 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
               
               <select
                 value={filterBy}
-                onChange={(e) => setFilterBy(e.target.value as any)}
+                onChange={(_e) => setFilterBy(_e.target.value as any)}
                 className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Difficulties</option>
@@ -265,18 +265,18 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
               <div key={opt.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                 <div
                   className="p-4 cursor-pointer hover:bg-gray-50"
-                  onClick={() => onOptimizationClick?.(opt)}
+                  onClick={(_) => onOptimizationClick?.(_opt)}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
-                        <span className="text-lg">{getCategoryIcon(opt.category)}</span>
+                        <span className="text-lg">{getCategoryIcon(_opt.category)}</span>
                         <span className="font-semibold">{opt.title}</span>
                         <span className="text-xs px-2 py-1 bg-gray-100 rounded">Line {opt.line}</span>
-                        <span className={`text-xs px-2 py-1 rounded ${getDifficultyColor(opt.difficulty)}`}>
+                        <span className={`text-xs px-2 py-1 rounded ${getDifficultyColor(_opt.difficulty)}`}>
                           {opt.difficulty}
                         </span>
-                        <span className={`text-xs px-2 py-1 rounded ${getImpactColor(opt.impact)}`}>
+                        <span className={`text-xs px-2 py-1 rounded ${getImpactColor(_opt.impact)}`}>
                           {opt.impact} impact
                         </span>
                       </div>
@@ -285,13 +285,13 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
                     </div>
                     
                     <div className="text-right ml-4">
-                      <div className="text-lg font-bold text-green-600">-{formatGas(opt.savings)}</div>
+                      <div className="text-lg font-bold text-green-600">-{formatGas(_opt.savings)}</div>
                       <div className="text-sm text-gray-500">{opt.savingsPercentage}% savings</div>
                       {opt.autoFixAvailable && (
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onApplyOptimization?.(opt);
+                          onClick={(_e) => {
+                            e.stopPropagation(_);
+                            onApplyOptimization?.(_opt);
                           }}
                           className="mt-2 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
                         >
@@ -316,12 +316,12 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
               {gasBreakdown.map(item => (
                 <div key={item.category} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <span className="text-lg">{getCategoryIcon(item.category)}</span>
+                    <span className="text-lg">{getCategoryIcon(_item.category)}</span>
                     <span className="font-medium capitalize">{item.category}</span>
-                    <span className="text-sm text-gray-500">({item.count} operations)</span>
+                    <span className="text-sm text-gray-500">(_{item.count} operations)</span>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold">{formatGas(item.totalCost)}</div>
+                    <div className="font-bold">{formatGas(_item.totalCost)}</div>
                     <div className="text-sm text-gray-500">{item.percentage.toFixed(1)}%</div>
                   </div>
                 </div>
@@ -330,14 +330,14 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
           </div>
 
           {/* Function Breakdown */}
-          {Object.keys(analysisResult.functionBreakdown).length > 0 && (
+          {Object.keys(_analysisResult.functionBreakdown).length > 0 && (
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <h3 className="text-lg font-semibold mb-4">Gas Usage by Function</h3>
               <div className="space-y-2">
-                {Object.entries(analysisResult.functionBreakdown).map(([func, cost]) => (
+                {Object.entries(_analysisResult.functionBreakdown).map( ([func, cost]) => (
                   <div key={func} className="flex items-center justify-between">
-                    <span className="font-mono text-sm">{func}()</span>
-                    <span className="font-bold">{formatGas(cost)}</span>
+                    <span className="font-mono text-sm">{func}(_)</span>
+                    <span className="font-bold">{formatGas(_cost)}</span>
                   </div>
                 ))}
               </div>
@@ -402,13 +402,13 @@ export const GasOptimizationPanel: React.FC<GasOptimizationPanelProps> = ({
               <div>
                 <span className="text-gray-500">Highest Cost:</span>
                 <span className="ml-2 font-medium">
-                  {formatGas(Math.max(...analysisResult.heatmapData.map(h => h.gasCost)))}
+                  {formatGas(_Math.max(...analysisResult.heatmapData.map(h => h.gasCost)))}
                 </span>
               </div>
               <div>
                 <span className="text-gray-500">Average Cost:</span>
                 <span className="ml-2 font-medium">
-                  {formatGas(Math.round(analysisResult.heatmapData.reduce((sum, h) => sum + h.gasCost, 0) / analysisResult.heatmapData.length))}
+                  {formatGas( Math.round(analysisResult.heatmapData.reduce((sum, h) => sum + h.gasCost, 0) / analysisResult.heatmapData.length))}
                 </span>
               </div>
               <div>

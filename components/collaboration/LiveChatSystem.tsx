@@ -244,7 +244,7 @@ export const LiveChatSystem: React.FC<LiveChatSystemProps> = ({
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth'  });
   }, [messages]);
 
   // Handle typing indicators
@@ -407,7 +407,7 @@ export const LiveChatSystem: React.FC<LiveChatSystemProps> = ({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setMessageFilter(messageFilter === 'all' ? 'pinned' : 'all')}
+                onClick={() => => setMessageFilter(messageFilter === 'all' ? 'pinned' : 'all')}
               >
                 <Filter className="w-4 h-4" />
               </Button>
@@ -474,7 +474,7 @@ export const LiveChatSystem: React.FC<LiveChatSystemProps> = ({
                     <div className="flex items-center space-x-2 mb-1">
                       <span
                         className="font-semibold text-white text-sm cursor-pointer hover:text-blue-400"
-                        onClick={() => handleUserMention(message.userId)}
+                        onClick={() => => handleUserMention(message.userId)}
                         title="Mention this user"
                       >
                         {message.userName}
@@ -505,7 +505,7 @@ export const LiveChatSystem: React.FC<LiveChatSystemProps> = ({
                         ).map(([emoji, count]) => (
                           <button
                             key={emoji}
-                            onClick={() => handleReaction(message.id, emoji)}
+                            onClick={() => => handleReaction(message.id, emoji)}
                             className="flex items-center space-x-1 px-2 py-1 bg-slate-700 rounded-full text-xs hover:bg-slate-600 transition-colors"
                           >
                             <span>{emoji}</span>
@@ -522,14 +522,14 @@ export const LiveChatSystem: React.FC<LiveChatSystemProps> = ({
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setShowEmojiPicker(showEmojiPicker === message.id ? null : message.id)}
+                        onClick={() => => setShowEmojiPicker(showEmojiPicker === message.id ? null : message.id)}
                       >
                         <Smile className="w-4 h-4" />
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setReplyingTo(message.id)}
+                        onClick={() => => setReplyingTo(message.id)}
                       >
                         <Reply className="w-4 h-4" />
                       </Button>
@@ -550,7 +550,7 @@ export const LiveChatSystem: React.FC<LiveChatSystemProps> = ({
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => handleDeleteMessage(message.id)}
+                            onClick={() => => handleDeleteMessage(message.id)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -559,14 +559,14 @@ export const LiveChatSystem: React.FC<LiveChatSystemProps> = ({
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => handlePinMessage(message.id)}
+                        onClick={() => => handlePinMessage(message.id)}
                       >
                         <Pin className="w-4 h-4" />
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => handleMessageOptions(message.id)}
+                        onClick={() => => handleMessageOptions(message.id)}
                         title="More options"
                       >
                         <MoreVertical className="w-4 h-4" />
@@ -665,7 +665,7 @@ export const LiveChatSystem: React.FC<LiveChatSystemProps> = ({
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() => setReplyingTo(null)}
+                  onClick={() => => setReplyingTo(null)}
                 >
                   ×
                 </Button>

@@ -6,7 +6,7 @@ const ACCESSIBILITY_CONFIG = {
   wcagLevel: 'AA',
   tags: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'],
   rules: {
-    // Disable color-contrast for development (can be flaky in CI)
+    // Disable color-contrast for development (_can be flaky in CI)
     'color-contrast': { enabled: process.env.CI !== 'true' },
     // Enable all other important rules
     'keyboard': { enabled: true },
@@ -63,17 +63,17 @@ const TEST_PAGES = [
 ];
 
 // Helper function to run accessibility tests
-async function runAccessibilityTest(page: any, config = ACCESSIBILITY_CONFIG) {
-  const accessibilityScanResults = await new AxeBuilder({ page })
-    .withTags(config.tags)
-    .withRules(config.rules)
-    .analyze();
+async function runAccessibilityTest( page: any, config = ACCESSIBILITY_CONFIG) {
+  const accessibilityScanResults = await new AxeBuilder({ page  })
+    .withTags(_config.tags)
+    .withRules(_config.rules)
+    .analyze(_);
 
   return accessibilityScanResults;
 }
 
 // Helper function to check specific accessibility requirements
-async function checkAccessibilityRequirements(page: any, requirements: any) {
+async function checkAccessibilityRequirements( page: any, requirements: any) {
   const results = {
     hasSkipLinks: false,
     hasMainLandmark: false,
@@ -85,45 +85,45 @@ async function checkAccessibilityRequirements(page: any, requirements: any) {
   };
 
   // Check for skip links
-  if (requirements.hasSkipLinks) {
-    const skipLinks = await page.locator('a[href="#main-content"], .skip-link').count();
+  if (_requirements.hasSkipLinks) {
+    const skipLinks = await page.locator( 'a[href="#main-content"], .skip-link').count(_);
     results.hasSkipLinks = skipLinks > 0;
   }
 
   // Check for main landmark
-  if (requirements.hasMainLandmark) {
-    const mainLandmark = await page.locator('main, [role="main"]').count();
+  if (_requirements.hasMainLandmark) {
+    const mainLandmark = await page.locator( 'main, [role="main"]').count(_);
     results.hasMainLandmark = mainLandmark > 0;
   }
 
   // Check heading hierarchy
-  if (requirements.hasHeadingHierarchy) {
-    const h1Count = await page.locator('h1').count();
+  if (_requirements.hasHeadingHierarchy) {
+    const h1Count = await page.locator('h1').count(_);
     results.hasHeadingHierarchy = h1Count === 1;
   }
 
   // Check alt text for images
-  if (requirements.hasAltText) {
-    const imagesWithoutAlt = await page.locator('img:not([alt])').count();
+  if (_requirements.hasAltText) {
+    const imagesWithoutAlt = await page.locator('img:not([alt])').count(_);
     results.hasAltText = imagesWithoutAlt === 0;
   }
 
   // Check form labels
-  if (requirements.hasFormLabels) {
-    const inputsWithoutLabels = await page.locator('input:not([aria-label]):not([aria-labelledby])').count();
-    const inputsWithLabels = await page.locator('input[aria-label], input[aria-labelledby], label input').count();
+  if (_requirements.hasFormLabels) {
+    const inputsWithoutLabels = await page.locator('input:not([aria-label]):not([aria-labelledby])').count(_);
+    const inputsWithLabels = await page.locator( 'input[aria-label], input[aria-labelledby], label input').count(_);
     results.hasFormLabels = inputsWithoutLabels === 0 || inputsWithLabels > 0;
   }
 
   // Check keyboard accessibility
-  if (requirements.hasKeyboardAccess) {
-    const focusableElements = await page.locator('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])').count();
+  if (_requirements.hasKeyboardAccess) {
+    const focusableElements = await page.locator( 'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])').count(_);
     results.hasKeyboardAccess = focusableElements > 0;
   }
 
   // Check ARIA labels
-  if (requirements.hasAriaLabels) {
-    const elementsWithAria = await page.locator('[aria-label], [aria-labelledby], [aria-describedby]').count();
+  if (_requirements.hasAriaLabels) {
+    const elementsWithAria = await page.locator( '[aria-label], [aria-labelledby], [aria-describedby]').count(_);
     results.hasAriaLabels = elementsWithAria > 0;
   }
 
@@ -131,29 +131,29 @@ async function checkAccessibilityRequirements(page: any, requirements: any) {
 }
 
 // Main accessibility test suite
-test.describe('Accessibility Tests', () => {
-  test.beforeEach(async ({ page }) => {
+test.describe( 'Accessibility Tests', () => {
+  test.beforeEach( async ({ page }) => {
     // Set up accessibility testing environment
-    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.setViewportSize( { width: 1280, height: 720 });
   });
 
   // Test each page for accessibility compliance
-  for (const testPage of TEST_PAGES) {
-    test(`${testPage.name} - WCAG ${ACCESSIBILITY_CONFIG.wcagLevel} Compliance`, async ({ page }) => {
+  for (_const testPage of TEST_PAGES) {
+    test( `${testPage.name} - WCAG ${ACCESSIBILITY_CONFIG.wcagLevel} Compliance`, async ({ page }) => {
       // Navigate to the page
-      await page.goto(testPage.path);
+      await page.goto(_testPage.path);
       
       // Wait for page to load completely
       await page.waitForLoadState('networkidle');
       
       // Run accessibility scan
-      const accessibilityScanResults = await runAccessibilityTest(page);
+      const accessibilityScanResults = await runAccessibilityTest(_page);
       
       // Check for violations
-      expect(accessibilityScanResults.violations).toEqual([]);
+      expect(_accessibilityScanResults.violations).toEqual([]);
       
       // Log results for debugging
-      if (accessibilityScanResults.violations.length > 0) {
+      if (_accessibilityScanResults.violations.length > 0) {
         console.log(`Accessibility violations found on ${testPage.name}:`, 
           accessibilityScanResults.violations.map(v => ({
             id: v.id,
@@ -165,48 +165,48 @@ test.describe('Accessibility Tests', () => {
       }
     });
 
-    test(`${testPage.name} - Specific Requirements`, async ({ page }) => {
+    test( `${testPage.name} - Specific Requirements`, async ({ page }) => {
       // Navigate to the page
-      await page.goto(testPage.path);
+      await page.goto(_testPage.path);
       await page.waitForLoadState('networkidle');
       
       // Check specific requirements
-      const results = await checkAccessibilityRequirements(page, testPage.requirements);
+      const results = await checkAccessibilityRequirements( page, testPage.requirements);
       
       // Assert each requirement
-      if (testPage.requirements.hasSkipLinks) {
-        expect(results.hasSkipLinks).toBe(true);
+      if (_testPage.requirements.hasSkipLinks) {
+        expect(_results.hasSkipLinks).toBe(_true);
       }
-      if (testPage.requirements.hasMainLandmark) {
-        expect(results.hasMainLandmark).toBe(true);
+      if (_testPage.requirements.hasMainLandmark) {
+        expect(_results.hasMainLandmark).toBe(_true);
       }
-      if (testPage.requirements.hasHeadingHierarchy) {
-        expect(results.hasHeadingHierarchy).toBe(true);
+      if (_testPage.requirements.hasHeadingHierarchy) {
+        expect(_results.hasHeadingHierarchy).toBe(_true);
       }
-      if (testPage.requirements.hasAltText) {
-        expect(results.hasAltText).toBe(true);
+      if (_testPage.requirements.hasAltText) {
+        expect(_results.hasAltText).toBe(_true);
       }
-      if (testPage.requirements.hasFormLabels) {
-        expect(results.hasFormLabels).toBe(true);
+      if (_testPage.requirements.hasFormLabels) {
+        expect(_results.hasFormLabels).toBe(_true);
       }
-      if (testPage.requirements.hasKeyboardAccess) {
-        expect(results.hasKeyboardAccess).toBe(true);
+      if (_testPage.requirements.hasKeyboardAccess) {
+        expect(_results.hasKeyboardAccess).toBe(_true);
       }
-      if (testPage.requirements.hasAriaLabels) {
-        expect(results.hasAriaLabels).toBe(true);
+      if (_testPage.requirements.hasAriaLabels) {
+        expect(_results.hasAriaLabels).toBe(_true);
       }
     });
   }
 
   // Keyboard navigation tests
-  test('Keyboard Navigation - Tab Order', async ({ page }) => {
+  test( 'Keyboard Navigation - Tab Order', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
     // Test tab navigation
     await page.keyboard.press('Tab');
     const firstFocused = await page.evaluate(() => document.activeElement?.tagName);
-    expect(firstFocused).toBeTruthy();
+    expect(_firstFocused).toBeTruthy(_);
     
     // Test skip link functionality
     await page.keyboard.press('Tab');
@@ -219,98 +219,98 @@ test.describe('Accessibility Tests', () => {
       const mainContentFocused = await page.evaluate(() => 
         document.activeElement?.id === 'main-content'
       );
-      expect(mainContentFocused).toBe(true);
+      expect(_mainContentFocused).toBe(_true);
     }
   });
 
   // Screen reader simulation tests
-  test('Screen Reader - ARIA Announcements', async ({ page }) => {
+  test( 'Screen Reader - ARIA Announcements', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
     // Check for live regions
-    const liveRegions = await page.locator('[aria-live]').count();
-    expect(liveRegions).toBeGreaterThan(0);
+    const liveRegions = await page.locator('[aria-live]').count(_);
+    expect(_liveRegions).toBeGreaterThan(0);
     
     // Check for proper heading structure
-    const headings = await page.locator('h1, h2, h3, h4, h5, h6').all();
-    expect(headings.length).toBeGreaterThan(0);
+    const headings = await page.locator( 'h1, h2, h3, h4, h5, h6').all(_);
+    expect(_headings.length).toBeGreaterThan(0);
     
     // Verify heading hierarchy
-    const h1Count = await page.locator('h1').count();
-    expect(h1Count).toBe(1);
+    const h1Count = await page.locator('h1').count(_);
+    expect(_h1Count).toBe(1);
   });
 
-  // Color contrast tests (when not in CI)
-  if (process.env.CI !== 'true') {
-    test('Color Contrast - WCAG AA Standards', async ({ page }) => {
+  // Color contrast tests (_when not in CI)
+  if (_process.env.CI !== 'true') {
+    test( 'Color Contrast - WCAG AA Standards', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
       
-      const accessibilityScanResults = await new AxeBuilder({ page })
+      const accessibilityScanResults = await new AxeBuilder({ page  })
         .withTags(['wcag2aa'])
-        .withRules({ 'color-contrast': { enabled: true } })
-        .analyze();
+        .withRules(_{ 'color-contrast': { enabled: true } })
+        .analyze(_);
       
       const contrastViolations = accessibilityScanResults.violations.filter(
         v => v.id === 'color-contrast'
       );
       
-      expect(contrastViolations).toEqual([]);
+      expect(_contrastViolations).toEqual([]);
     });
   }
 
   // Mobile accessibility tests
-  test('Mobile Accessibility', async ({ page }) => {
+  test( 'Mobile Accessibility', async ({ page }) => {
     // Set mobile viewport
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize( { width: 375, height: 667 });
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
-    // Check touch target sizes (minimum 44px)
-    const touchTargets = await page.locator('button, a, input[type="button"], input[type="submit"]').all();
+    // Check touch target sizes (_minimum 44px)
+    const touchTargets = await page.locator( 'button, a, input[type="button"], input[type="submit"]').all(_);
     
-    for (const target of touchTargets) {
-      const box = await target.boundingBox();
+    for (_const target of touchTargets) {
+      const box = await target.boundingBox(_);
       if (box) {
-        expect(box.width).toBeGreaterThanOrEqual(44);
-        expect(box.height).toBeGreaterThanOrEqual(44);
+        expect(_box.width).toBeGreaterThanOrEqual(_44);
+        expect(_box.height).toBeGreaterThanOrEqual(_44);
       }
     }
     
     // Run mobile-specific accessibility scan
-    const mobileResults = await runAccessibilityTest(page);
-    expect(mobileResults.violations).toEqual([]);
+    const mobileResults = await runAccessibilityTest(_page);
+    expect(_mobileResults.violations).toEqual([]);
   });
 
   // Form accessibility tests
-  test('Form Accessibility', async ({ page }) => {
+  test( 'Form Accessibility', async ({ page }) => {
     await page.goto('/auth');
     await page.waitForLoadState('networkidle');
     
     // Check form labels
-    const inputs = await page.locator('input').all();
-    for (const input of inputs) {
+    const inputs = await page.locator('input').all(_);
+    for (_const input of inputs) {
       const hasLabel = await input.evaluate(el => {
         const id = el.id;
         const ariaLabel = el.getAttribute('aria-label');
         const ariaLabelledBy = el.getAttribute('aria-labelledby');
-        const label = id ? document.querySelector(`label[for="${id}"]`) : null;
+        const label = id ? document.querySelector(_`label[for="${id}"]`) : null;
         
-        return !!(ariaLabel || ariaLabelledBy || label);
+        return !!(_ariaLabel || ariaLabelledBy || label);
       });
       
-      expect(hasLabel).toBe(true);
+      expect(_hasLabel).toBe(_true);
     }
     
     // Test form error handling
-    const submitButton = page.locator('button[type="submit"]').first();
-    if (await submitButton.isVisible()) {
-      await submitButton.click();
+    const submitButton = page.locator('button[type="submit"]').first(_);
+    if (_await submitButton.isVisible()) {
+      await submitButton.click(_);
       
       // Check for error announcements
-      const errorMessages = await page.locator('[role="alert"], [aria-live="assertive"]').count();
-      expect(errorMessages).toBeGreaterThan(0);
+      const errorMessages = await page.locator( '[role="alert"], [aria-live="assertive"]').count(_);
+      expect(_errorMessages).toBeGreaterThan(0);
     }
   });
 });

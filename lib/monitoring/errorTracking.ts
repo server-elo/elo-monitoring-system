@@ -39,16 +39,16 @@ class ErrorTracker {
   private performanceEntries: PerformanceEntry[] = [];
   private webVitals: WebVital[] = [];
 
-  constructor() {
-    this.initializeSentry();
-    this.setupGlobalErrorHandlers();
-    this.setupPerformanceMonitoring();
+  constructor(_) {
+    this.initializeSentry(_);
+    this.setupGlobalErrorHandlers(_);
+    this.setupPerformanceMonitoring(_);
   }
 
   /**
    * Initialize Sentry error tracking
    */
-  private initializeSentry(): void {
+  private initializeSentry(_): void {
     if (!monitoringConfig.sentry.dsn) {
       console.warn('Sentry DSN not configured, error tracking disabled');
       return;
@@ -61,17 +61,17 @@ class ErrorTracker {
         tracesSampleRate: isProduction ? 0.1 : 1.0,
         profilesSampleRate: isProduction ? 0.1 : 1.0,
         
-        beforeSend: (event: any, hint: any) => {
+        beforeSend: ( event: any, hint: any) => {
           // Filter out known non-critical errors
-          if (this.shouldIgnoreError(hint?.originalException)) {
+          if (_this.shouldIgnoreError(hint?.originalException)) {
             return null;
           }
 
           // Add custom context
-          if (event.exception?.values?.[0]) {
+          if (_event.exception?.values?.[0]) {
             event.exception.values[0].stacktrace?.frames?.forEach((frame: any) => {
               // Remove sensitive information from stack traces
-              if (frame.filename?.includes('node_modules')) {
+              if (_frame.filename?.includes('node_modules')) {
                 frame.in_app = false;
               }
             });
@@ -80,7 +80,7 @@ class ErrorTracker {
           return event;
         },
 
-        beforeSendTransaction: (event: any) => {
+        beforeSendTransaction: (_event: any) => {
           // Sample transactions based on environment
           if (!isProduction && Math.random() > 0.1) {
             return null;
@@ -90,7 +90,7 @@ class ErrorTracker {
 
         integrations: [
           // Use default integrations but filter out problematic ones
-          ...Sentry.getDefaultIntegrations({}).filter(integration => {
+          ...Sentry.getDefaultIntegrations({  }).filter(integration => {
             // Filter out integrations that cause OpenTelemetry warnings
             const name = integration.name;
             return !name.includes('OpenTelemetry') &&
@@ -113,8 +113,8 @@ class ErrorTracker {
       console.log('✅ Sentry error tracking initialized');
 
       // Flush any queued errors
-      this.flushErrorQueue();
-    } catch (error) {
+      this.flushErrorQueue(_);
+    } catch (_error) {
       console.error('❌ Failed to initialize Sentry:', error);
     }
   }
@@ -122,10 +122,10 @@ class ErrorTracker {
   /**
    * Setup global error handlers
    */
-  private setupGlobalErrorHandlers(): void {
+  private setupGlobalErrorHandlers(_): void {
     // Unhandled promise rejections
-    process.on('unhandledRejection', (reason, promise) => {
-      const error = reason instanceof Error ? reason : new Error(String(reason));
+    process.on( 'unhandledRejection', (reason, promise) => {
+      const error = reason instanceof Error ? reason : new Error(_String(reason));
       this.captureError(error, {
         component: 'global',
         action: 'unhandledRejection',
@@ -135,7 +135,7 @@ class ErrorTracker {
     });
 
     // Uncaught exceptions
-    process.on('uncaughtException', (error) => {
+    process.on( 'uncaughtException', (error) => {
       this.captureError(error, {
         component: 'global',
         action: 'uncaughtException',
@@ -148,10 +148,10 @@ class ErrorTracker {
       }, 1000);
     });
 
-    // Browser error handling (client-side)
-    if (typeof window !== 'undefined') {
-      window.addEventListener('error', (event) => {
-        this.captureError(event.error || new Error(event.message), {
+    // Browser error handling (_client-side)
+    if (_typeof window !== 'undefined') {
+      window.addEventListener( 'error', (event) => {
+        this.captureError(_event.error || new Error(event.message), {
           component: 'browser',
           action: 'globalError',
           metadata: {
@@ -162,8 +162,8 @@ class ErrorTracker {
         });
       });
 
-      window.addEventListener('unhandledrejection', (event) => {
-        const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
+      window.addEventListener( 'unhandledrejection', (event) => {
+        const error = event.reason instanceof Error ? event.reason : new Error(_String(event.reason));
         this.captureError(error, {
           component: 'browser',
           action: 'unhandledRejection',
@@ -175,11 +175,11 @@ class ErrorTracker {
   /**
    * Setup performance monitoring
    */
-  private setupPerformanceMonitoring(): void {
-    if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
+  private setupPerformanceMonitoring(_): void {
+    if (_typeof window !== 'undefined' && 'PerformanceObserver' in window) {
       // Monitor navigation timing
       const navObserver = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
+        list.getEntries(_).forEach((entry) => {
           this.recordPerformanceEntry({
             name: entry.name,
             duration: entry.duration,
@@ -188,13 +188,13 @@ class ErrorTracker {
           });
         });
       });
-      navObserver.observe({ entryTypes: ['navigation'] });
+      navObserver.observe({ entryTypes: ['navigation']  });
 
       // Monitor resource timing
       const resourceObserver = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
+        list.getEntries(_).forEach((entry) => {
           // Only track slow resources
-          if (entry.duration > 1000) {
+          if (_entry.duration > 1000) {
             this.recordPerformanceEntry({
               name: entry.name,
               duration: entry.duration,
@@ -204,12 +204,12 @@ class ErrorTracker {
           }
         });
       });
-      resourceObserver.observe({ entryTypes: ['resource'] });
+      resourceObserver.observe({ entryTypes: ['resource']  });
 
       // Monitor long tasks
       const longTaskObserver = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          this.captureError(new Error('Long task detected'), {
+        list.getEntries(_).forEach((entry) => {
+          this.captureError(_new Error('Long task detected'), {
             component: 'performance',
             action: 'longTask',
             metadata: {
@@ -220,14 +220,14 @@ class ErrorTracker {
           });
         });
       });
-      longTaskObserver.observe({ entryTypes: ['longtask'] });
+      longTaskObserver.observe({ entryTypes: ['longtask']  });
     }
   }
 
   /**
    * Check if error should be ignored
    */
-  private shouldIgnoreError(error: Error | unknown): boolean {
+  private shouldIgnoreError(_error: Error | unknown): boolean {
     if (!error) return true;
 
     const ignoredErrors = [
@@ -239,14 +239,14 @@ class ErrorTracker {
       'ChunkLoadError',
     ];
 
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    return ignoredErrors.some(ignored => errorMessage.includes(ignored));
+    const errorMessage = error instanceof Error ? error.message : String(_error);
+    return ignoredErrors.some(_ignored => errorMessage.includes(ignored));
   }
 
   /**
    * Capture error with context
    */
-  captureError(error: Error, context: ErrorContext = {}): void {
+  captureError( error: Error, context: ErrorContext = {}): void {
     // Log to our internal logger
     logger.error(error.message, error, {
       userId: context.userId,
@@ -257,48 +257,48 @@ class ErrorTracker {
 
     // Queue error if Sentry not initialized
     if (!this.initialized) {
-      this.errorQueue.push({ error, context });
+      this.errorQueue.push( { error, context });
       return;
     }
 
     // Set Sentry context
     Sentry.withScope((scope: any) => {
-      if (context.userId) {
-        scope.setUser({ id: context.userId });
+      if (_context.userId) {
+        scope.setUser({ id: context.userId  });
       }
 
-      if (context.tags) {
-        Object.entries(context.tags).forEach(([key, value]) => {
-          scope.setTag(key, value);
+      if (_context.tags) {
+        Object.entries(_context.tags).forEach( ([key, value]) => {
+          scope.setTag( key, value);
         });
       }
 
-      if (context.component) {
-        scope.setTag('component', context.component);
+      if (_context.component) {
+        scope.setTag( 'component', context.component);
       }
 
-      if (context.action) {
-        scope.setTag('action', context.action);
+      if (_context.action) {
+        scope.setTag( 'action', context.action);
       }
 
-      if (context.metadata) {
-        scope.setContext('metadata', context.metadata);
+      if (_context.metadata) {
+        scope.setContext( 'metadata', context.metadata);
       }
 
-      if (context.level) {
-        scope.setLevel(context.level);
+      if (_context.level) {
+        scope.setLevel(_context.level);
       }
 
       // Capture the error
-      Sentry.captureException(error);
+      Sentry.captureException(_error);
     });
   }
 
   /**
    * Capture message with context
    */
-  captureMessage(message: string, context: ErrorContext = {}): void {
-    logger.info(message, {
+  captureMessage( message: string, context: ErrorContext = {}): void {
+    logger.info(message, { metadata: {
       userId: context.userId,
       sessionId: context.sessionId,
       requestId: context.requestId,
@@ -308,33 +308,33 @@ class ErrorTracker {
     if (!this.initialized) return;
 
     Sentry.withScope((scope: any) => {
-      if (context.userId) {
-        scope.setUser({ id: context.userId });
-      }
+      if (_context.userId) {
+        scope.setUser({ id: context.userId  });
+      }});
 
-      if (context.tags) {
-        Object.entries(context.tags).forEach(([key, value]) => {
-          scope.setTag(key, value);
+      if (_context.tags) {
+        Object.entries(_context.tags).forEach( ([key, value]) => {
+          scope.setTag( key, value);
         });
       }
 
-      if (context.metadata) {
-        scope.setContext('metadata', context.metadata);
+      if (_context.metadata) {
+        scope.setContext( 'metadata', context.metadata);
       }
 
-      scope.setLevel(context.level || 'info');
-      Sentry.captureMessage(message);
+      scope.setLevel(_context.level || 'info');
+      Sentry.captureMessage(_message);
     });
   }
 
   /**
    * Record performance entry
    */
-  recordPerformanceEntry(entry: PerformanceEntry): void {
-    this.performanceEntries.push(entry);
+  recordPerformanceEntry(_entry: PerformanceEntry): void {
+    this.performanceEntries.push(_entry);
 
     // Log slow operations
-    if (entry.duration > 5000) {
+    if (_entry.duration > 5000) {
       this.captureMessage(`Slow ${entry.entryType}: ${entry.name}`, {
         component: 'performance',
         action: 'slowOperation',
@@ -344,7 +344,7 @@ class ErrorTracker {
     }
 
     // Send to Sentry as breadcrumb
-    if (this.initialized) {
+    if (_this.initialized) {
       Sentry.addBreadcrumb({
         category: 'performance',
         message: `${entry.entryType}: ${entry.name}`,
@@ -357,11 +357,11 @@ class ErrorTracker {
   /**
    * Record Web Vital
    */
-  recordWebVital(vital: WebVital): void {
-    this.webVitals.push(vital);
+  recordWebVital(_vital: WebVital): void {
+    this.webVitals.push(_vital);
 
     // Log poor web vitals
-    if (vital.rating === 'poor') {
+    if (_vital.rating === 'poor') {
       this.captureMessage(`Poor ${vital.name}: ${vital.value}`, {
         component: 'webVitals',
         action: 'poorPerformance',
@@ -371,31 +371,31 @@ class ErrorTracker {
     }
 
     // Send to Sentry
-    if (this.initialized) {
-      Sentry.setMeasurement(vital.name, vital.value, 'millisecond');
+    if (_this.initialized) {
+      Sentry.setMeasurement( vital.name, vital.value, 'millisecond');
     }
   }
 
   /**
    * Start performance transaction
    */
-  startTransaction(name: string, operation: string): any {
+  startTransaction( name: string, operation: string): any {
     if (!this.initialized) return null;
 
     // Sentry v8 uses startSpan for performance monitoring
     return Sentry.startSpan({
       name,
       op: operation,
-    }, (span) => span);
+    }, (_span) => span);
   }
 
   /**
    * Set user context
    */
-  setUser(user: { id: string; email?: string; username?: string }): void {
+  setUser(_user: { id: string; email?: string; username?: string }): void {
     if (!this.initialized) return;
 
-    Sentry.setUser(user);
+    Sentry.setUser(_user);
   }
 
   /**
@@ -414,28 +414,28 @@ class ErrorTracker {
       category,
       level,
       data,
-      timestamp: Date.now() / 1000,
+      timestamp: Date.now(_) / 1000,
     });
   }
 
   /**
    * Flush queued errors
    */
-  private flushErrorQueue(): void {
+  private flushErrorQueue(_): void {
     if (!this.initialized || this.errorQueue.length === 0) return;
 
     const errors = [...this.errorQueue];
     this.errorQueue = [];
 
-    errors.forEach(({ error, context }) => {
-      this.captureError(error, context);
+    errors.forEach( ({ error, context }) => {
+      this.captureError( error, context);
     });
   }
 
   /**
    * Get error tracking statistics
    */
-  getStats(): {
+  getStats(_): {
     initialized: boolean;
     queuedErrors: number;
     performanceEntries: number;
@@ -452,15 +452,15 @@ class ErrorTracker {
   /**
    * Close error tracking
    */
-  async close(): Promise<void> {
-    if (this.initialized) {
+  async close(_): Promise<void> {
+    if (_this.initialized) {
       await Sentry.close(2000);
     }
   }
 }
 
 // Create singleton instance
-export const errorTracker = new ErrorTracker();
+export const errorTracker = new ErrorTracker(_);
 
 /**
  * Error boundary for React components
@@ -468,29 +468,29 @@ export const errorTracker = new ErrorTracker();
  */
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  fallback?: React.ComponentType<{ error: Error; resetError: () => void }>
+  fallback?: React.ComponentType<{ error: Error; resetError: (_) => void }>
 ) {
-  if (typeof window === 'undefined') {
+  if (_typeof window === 'undefined') {
     // Server-side: return component as-is
     return Component;
   }
 
   return Sentry.withErrorBoundary(Component, {
-    fallback: fallback ? ({ error, resetError }: any) =>
+    fallback: fallback ? ( { error, resetError }: any) =>
       React.createElement('div', {
         className: 'error-boundary p-4 bg-red-50 border border-red-200 rounded-md'
       }, [
-        React.createElement('h2', { key: 'title', className: 'text-red-800 font-semibold' }, 'Something went wrong'),
-        React.createElement('p', { key: 'message', className: 'text-red-600 mt-2' }, error?.message || 'An unexpected error occurred'),
+        React.createElement( 'h2', { key: 'title', className: 'text-red-800 font-semibold' }, 'Something went wrong'),
+        React.createElement( 'p', { key: 'message', className: 'text-red-600 mt-2' }, error?.message || 'An unexpected error occurred'),
         React.createElement('button', {
           key: 'retry',
           onClick: resetError,
           className: 'mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700'
         }, 'Try again')
       ]) : undefined,
-    beforeCapture: (scope: any, _error: any, errorInfo: any) => {
-      scope.setTag('errorBoundary', true);
-      scope.setContext('errorInfo', errorInfo);
+    beforeCapture: ( scope: any, error: any, errorInfo: any) => {
+      scope.setTag( 'errorBoundary', true);
+      scope.setContext( 'errorInfo', errorInfo);
     },
   });
 }
@@ -499,12 +499,12 @@ export function withErrorBoundary<P extends object>(
  * HOC for API route error handling
  */
 export function withErrorHandling(
-  handler: (req: any, res: any) => Promise<any>
+  handler: ( req: any, res: any) => Promise<any>
 ) {
   return async (req: any, res: any) => {
     try {
-      return await handler(req, res);
-    } catch (error) {
+      return await handler( req, res);
+    } catch (_error) {
       const err = error as Error;
       
       errorTracker.captureError(err, {

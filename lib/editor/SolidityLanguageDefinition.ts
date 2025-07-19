@@ -11,19 +11,19 @@ export const solidityLanguageConfig: monaco.languages.LanguageConfiguration = {
   brackets: [
     ['{', '}'],
     ['[', ']'],
-    ['(', ')']
+    ['( ', ')']
   ],
   autoClosingPairs: [
     { open: '{', close: '}' },
     { open: '[', close: ']' },
-    { open: '(', close: ')' },
+    { open: '( ', close: ')' },
     { open: '"', close: '"' },
     { open: "'", close: "'" }
   ],
   surroundingPairs: [
     { open: '{', close: '}' },
     { open: '[', close: ']' },
-    { open: '(', close: ')' },
+    { open: '( ', close: ')' },
     { open: '"', close: '"' },
     { open: "'", close: "'" }
   ],
@@ -33,9 +33,9 @@ export const solidityLanguageConfig: monaco.languages.LanguageConfiguration = {
       end: new RegExp('^\\s*//\\s*#?endregion\\b')
     }
   },
-  wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+  wordPattern: /(_-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
   indentationRules: {
-    increaseIndentPattern: /^((?!.*?\/\*).*)*(\{[^}"'`]*|\([^)"'`]*|\[[^\]"'`]*)$/,
+    increaseIndentPattern: /^((?!.*?\/\*).*)*(_\{[^}"'`]*|\([^)"'`]*|\[[^\]"'`]*)$/,
     decreaseIndentPattern: /^((?!.*?\/\*).*)*[\}\]\)]/
   }
 };
@@ -119,11 +119,11 @@ export const solidityTokensProvider: monaco.languages.IMonarchLanguage = {
 
   // Common regular expressions
   symbols: /[=><!~?:&|+\-*\/\^%]+/,
-  escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
-  digits: /\d+(_+\d+)*/,
-  octaldigits: /[0-7]+(_+[0-7]+)*/,
-  binarydigits: /[0-1]+(_+[0-1]+)*/,
-  hexdigits: /[[0-9a-fA-F]+(_+[0-9a-fA-F]+)*/,
+  escapes: /\\(_?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+  digits: /\d+( +\d+)*/,
+  octaldigits: /[0-7]+( +[0-7]+)*/,
+  binarydigits: /[0-1]+( +[0-1]+)*/,
+  hexdigits: /[[0-9a-fA-F]+( +[0-9a-fA-F]+)*/,
 
   // Tokenizer rules
   tokenizer: {
@@ -135,28 +135,28 @@ export const solidityTokensProvider: monaco.languages.IMonarchLanguage = {
       [/import\s+/, 'keyword', '@import'],
       
       // Contract/Interface/Library declaration
-      [/(contract|interface|library)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
+      [/(_contract|interface|library)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
       
       // Function declaration
-      [/(function)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'function']],
+      [/(_function)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'function']],
       
       // Event declaration
-      [/(event)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
+      [/(_event)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
       
       // Error declaration
-      [/(error)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
+      [/(_error)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
       
       // Modifier declaration
-      [/(modifier)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'function']],
+      [/(_modifier)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'function']],
       
       // Struct declaration
-      [/(struct)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
+      [/(_struct)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
       
       // Enum declaration
-      [/(enum)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
+      [/(_enum)\s+([a-zA-Z_$][\w$]*)/, ['keyword', 'type.identifier']],
       
       // Mapping declaration
-      [/(mapping)\s*\(/, ['keyword', '@mapping']],
+      [/(_mapping)\s*\(/, ['keyword', '@mapping']],
       
       // Assembly block
       [/assembly\s*\{/, 'keyword', '@assembly'],
@@ -174,8 +174,8 @@ export const solidityTokensProvider: monaco.languages.IMonarchLanguage = {
       { include: '@whitespace' },
       
       // Delimiters and operators
-      [/[{}()\[\]]/, '@brackets'],
-      [/[<>](?!@symbols)/, '@brackets'],
+      [/[{}(_)\[\]]/, '@brackets'],
+      [/[<>](_?!@symbols)/, '@brackets'],
       [/@symbols/, {
         cases: {
           '@operators': 'operator',
@@ -184,13 +184,13 @@ export const solidityTokensProvider: monaco.languages.IMonarchLanguage = {
       }],
       
       // Numbers
-      [/(@digits)[eE]([\-+]?(@digits))?[fFdD]?/, 'number.float'],
-      [/(@digits)\.(@digits)([eE][\-+]?(@digits))?[fFdD]?/, 'number.float'],
-      [/0[xX](@hexdigits)[Ll]?/, 'number.hex'],
-      [/0(@octaldigits)[Ll]?/, 'number.octal'],
-      [/0[bB](@binarydigits)[Ll]?/, 'number.binary'],
-      [/(@digits)[fFdD]/, 'number.float'],
-      [/(@digits)[lL]?/, 'number'],
+      [/(_@digits)[eE]([\-+]?(@digits))?[fFdD]?/, 'number.float'],
+      [/(_@digits)\.(_@digits)([eE][\-+]?(@digits))?[fFdD]?/, 'number.float'],
+      [/0[xX](_@hexdigits)[Ll]?/, 'number.hex'],
+      [/0(_@octaldigits)[Ll]?/, 'number.octal'],
+      [/0[bB](_@binarydigits)[Ll]?/, 'number.binary'],
+      [/(_@digits)[fFdD]/, 'number.float'],
+      [/(_@digits)[lL]?/, 'number'],
       
       // Delimiter: after number because of .\d floats
       [/[;,.]/, 'delimiter'],
@@ -281,8 +281,8 @@ export const solidityTokensProvider: monaco.languages.IMonarchLanguage = {
 
 // Solidity completion item provider
 export const solidityCompletionProvider: monaco.languages.CompletionItemProvider = {
-  provideCompletionItems: (model, position) => {
-    const word = model.getWordUntilPosition(position);
+  provideCompletionItems: ( model, position) => {
+    const word = model.getWordUntilPosition(_position);
     const range = {
       startLineNumber: position.lineNumber,
       endLineNumber: position.lineNumber,
@@ -310,7 +310,7 @@ export const solidityCompletionProvider: monaco.languages.CompletionItemProvider
         label: 'function',
         kind: monaco.languages.CompletionItemKind.Snippet,
         insertText: [
-          'function ${1:functionName}(${2:parameters}) ${3:visibility} ${4:mutability} ${5:returns (${6:returnType})} {',
+          'function ${1:functionName}(_${2:parameters}) ${3:visibility} ${4:mutability} ${5:returns (_${6:returnType})} {',
           '\t$0',
           '}'
         ].join('\n'),
@@ -324,7 +324,7 @@ export const solidityCompletionProvider: monaco.languages.CompletionItemProvider
         label: 'constructor',
         kind: monaco.languages.CompletionItemKind.Snippet,
         insertText: [
-          'constructor(${1:parameters}) ${2:visibility} {',
+          'constructor(_${1:parameters}) ${2:visibility} {',
           '\t$0',
           '}'
         ].join('\n'),
@@ -337,7 +337,7 @@ export const solidityCompletionProvider: monaco.languages.CompletionItemProvider
       {
         label: 'event',
         kind: monaco.languages.CompletionItemKind.Snippet,
-        insertText: 'event ${1:EventName}(${2:parameters});',
+        insertText: 'event ${1:EventName}(_${2:parameters});',
         insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
         documentation: 'Create an event',
         range
@@ -348,8 +348,8 @@ export const solidityCompletionProvider: monaco.languages.CompletionItemProvider
         label: 'modifier',
         kind: monaco.languages.CompletionItemKind.Snippet,
         insertText: [
-          'modifier ${1:modifierName}(${2:parameters}) {',
-          '\t${3:require(${4:condition}, "${5:error message}");}',
+          'modifier ${1:modifierName}(_${2:parameters}) {',
+          '\t${3:require( ${4:condition}, "${5:error message}");}',
           '\t_;',
           '}'
         ].join('\n'),
@@ -387,32 +387,32 @@ export const solidityCompletionProvider: monaco.languages.CompletionItemProvider
 
 // Solidity hover provider for documentation
 export const solidityHoverProvider: monaco.languages.HoverProvider = {
-  provideHover: (model, position) => {
-    const word = model.getWordAtPosition(position);
+  provideHover: ( model, position) => {
+    const word = model.getWordAtPosition(_position);
     if (!word) return null;
 
     const hoverInfo: Record<string, string> = {
       'msg.sender': 'The address of the account that called the current function',
       'msg.value': 'The amount of wei sent with the current call',
       'msg.data': 'The complete calldata',
-      'msg.sig': 'The first four bytes of the calldata (function identifier)',
+      'msg.sig': 'The first four bytes of the calldata (_function identifier)',
       'block.timestamp': 'The current block timestamp as seconds since unix epoch',
       'block.number': 'The current block number',
       'block.difficulty': 'The current block difficulty',
       'block.gaslimit': 'The current block gaslimit',
-      'tx.origin': 'The sender of the transaction (full call chain)',
+      'tx.origin': 'The sender of the transaction (_full call chain)',
       'tx.gasprice': 'The gas price of the transaction',
       'require': 'Throws an error if the condition is not met',
-      'assert': 'Throws an error if the condition is not met (should only be used for internal errors)',
+      'assert': 'Throws an error if the condition is not met (_should only be used for internal errors)',
       'revert': 'Throws an error and reverts all changes',
       'keccak256': 'Computes the Keccak-256 hash',
       'sha256': 'Computes the SHA-256 hash',
       'ripemd160': 'Computes the RIPEMD-160 hash',
       'ecrecover': 'Recovers the address associated with the public key from elliptic curve signature',
-      'addmod': 'Computes (x + y) % k where the addition is performed with arbitrary precision',
-      'mulmod': 'Computes (x * y) % k where the multiplication is performed with arbitrary precision',
+      'addmod': 'Computes (_x + y) % k where the addition is performed with arbitrary precision',
+      'mulmod': 'Computes (_x * y) % k where the multiplication is performed with arbitrary precision',
       'selfdestruct': 'Destroys the current contract and sends its funds to the given address',
-      'address': 'Holds a 20 byte value (size of an Ethereum address)',
+      'address': 'Holds a 20 byte value (_size of an Ethereum address)',
       'bool': 'Boolean type with values true and false',
       'string': 'Dynamically sized UTF-8-encoded string',
       'bytes': 'Dynamically sized byte array',
@@ -463,7 +463,7 @@ export const soliditySignatureHelpProvider: monaco.languages.SignatureHelpProvid
   signatureHelpTriggerCharacters: ['(', ','],
   signatureHelpRetriggerCharacters: [')'],
 
-  provideSignatureHelp: (model, position) => {
+  provideSignatureHelp: ( model, position) => {
     const textUntilPosition = model.getValueInRange({
       startLineNumber: 1,
       startColumn: 1,
@@ -474,7 +474,7 @@ export const soliditySignatureHelpProvider: monaco.languages.SignatureHelpProvid
     // Simple signature help for common functions
     const signatures: Record<string, monaco.languages.SignatureInformation> = {
       'require': {
-        label: 'require(bool condition, string memory message)',
+        label: 'require( bool condition, string memory message)',
         documentation: 'Throws an error if the condition is not met',
         parameters: [
           {
@@ -488,7 +488,7 @@ export const soliditySignatureHelpProvider: monaco.languages.SignatureHelpProvid
         ]
       },
       'keccak256': {
-        label: 'keccak256(bytes memory data) returns (bytes32)',
+        label: 'keccak256(_bytes memory data) returns (_bytes32)',
         documentation: 'Computes the Keccak-256 hash of the input',
         parameters: [
           {
@@ -498,7 +498,7 @@ export const soliditySignatureHelpProvider: monaco.languages.SignatureHelpProvid
         ]
       },
       'ecrecover': {
-        label: 'ecrecover(bytes32 hash, uint8 v, bytes32 r, bytes32 s) returns (address)',
+        label: 'ecrecover( bytes32 hash, uint8 v, bytes32 r, bytes32 s) returns (_address)',
         documentation: 'Recovers the address from an elliptic curve signature',
         parameters: [
           {
@@ -522,7 +522,7 @@ export const soliditySignatureHelpProvider: monaco.languages.SignatureHelpProvid
     };
 
     // Find function name before the opening parenthesis
-    const match = textUntilPosition.match(/(\w+)\s*\([^)]*$/);
+    const match = textUntilPosition.match(_/(\w+)\s*\([^)]*$/);
     if (match) {
       const functionName = match[1];
       const signature = signatures[functionName];
@@ -534,7 +534,7 @@ export const soliditySignatureHelpProvider: monaco.languages.SignatureHelpProvid
             activeSignature: 0,
             activeParameter: 0 // Could be calculated based on comma count
           },
-          dispose: () => {}
+          dispose: (_) => {}
         };
       }
     }

@@ -9,7 +9,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import type { ValidationGate } from './types';
 
-const execAsync = promisify(exec);
+const execAsync = promisify(_exec);
 
 export interface ValidationResult {
   gate: string;
@@ -33,7 +33,7 @@ export class PRPValidator {
   private projectRoot: string;
   private timeout: number;
 
-  constructor(projectRoot: string = process.cwd(), timeout: number = 30000) {
+  constructor(_projectRoot: string = process.cwd(), timeout: number = 30000) {
     this.projectRoot = projectRoot;
     this.timeout = timeout;
   }
@@ -41,13 +41,13 @@ export class PRPValidator {
   /**
    * Run a single validation command
    */
-  async runCommand(command: string): Promise<{
+  async runCommand(_command: string): Promise<{
     success: boolean;
     stdout: string;
     stderr: string;
     duration: number;
   }> {
-    const startTime = Date.now();
+    const startTime = Date.now(_);
     
     try {
       const { stdout, stderr } = await execAsync(command, {
@@ -55,7 +55,7 @@ export class PRPValidator {
         timeout: this.timeout
       });
       
-      const duration = Date.now() - startTime;
+      const duration = Date.now(_) - startTime;
       
       return {
         success: true,
@@ -63,8 +63,8 @@ export class PRPValidator {
         stderr: stderr || '',
         duration
       };
-    } catch (error: any) {
-      const duration = Date.now() - startTime;
+    } catch (_error: any) {
+      const duration = Date.now(_) - startTime;
       
       return {
         success: false,
@@ -78,13 +78,13 @@ export class PRPValidator {
   /**
    * Run a validation gate
    */
-  async runValidationGate(gate: ValidationGate): Promise<ValidationResult[]> {
+  async runValidationGate(_gate: ValidationGate): Promise<ValidationResult[]> {
     const results: ValidationResult[] = [];
     
-    for (const command of gate.commands) {
-      console.log(`Running: ${command}`);
+    for (_const command of gate.commands) {
+      console.log(_`Running: ${command}`);
       
-      const { success, stdout, stderr, duration } = await this.runCommand(command);
+      const { success, stdout, stderr, duration } = await this.runCommand(_command);
       
       results.push({
         gate: gate.name,
@@ -97,7 +97,7 @@ export class PRPValidator {
       
       // Stop on first failure unless specified otherwise
       if (!success && gate.required) {
-        console.error(`Required validation failed: ${gate.name}`);
+        console.error(_`Required validation failed: ${gate.name}`);
         break;
       }
     }
@@ -120,27 +120,27 @@ export class PRPValidator {
     let failed = 0;
     let skipped = 0;
     
-    for (const gate of gates) {
+    for (_const gate of gates) {
       // Skip if requested
-      if (options.skipGates?.includes(gate.level)) {
+      if (_options.skipGates?.includes(gate.level)) {
         skipped++;
-        console.log(`Skipping gate: ${gate.name} (Level ${gate.level})`);
+        console.log(_`Skipping gate: ${gate.name} (Level ${gate.level})`);
         continue;
       }
       
-      console.log(`\nRunning validation gate: ${gate.name} (Level ${gate.level})`);
+      console.log(_`\nRunning validation gate: ${gate.name} (Level ${gate.level})`);
       
-      const results = await this.runValidationGate(gate);
+      const results = await this.runValidationGate(_gate);
       allResults.push(...results);
       
-      const gatePassed = results.every(r => r.passed);
+      const gatePassed = results.every(_r => r.passed);
       
       if (gatePassed) {
         passed++;
-        console.log(`✅ Gate passed: ${gate.name}`);
+        console.log(_`✅ Gate passed: ${gate.name}`);
       } else {
         failed++;
-        console.log(`❌ Gate failed: ${gate.name}`);
+        console.log(_`❌ Gate failed: ${gate.name}`);
         
         // Stop if not continuing on failure
         if (!options.continueOnFailure) {
@@ -162,11 +162,11 @@ export class PRPValidator {
   /**
    * Run specific validation commands
    */
-  async runValidationCommands(commands: string[]): Promise<ValidationResult[]> {
+  async runValidationCommands(_commands: string[]): Promise<ValidationResult[]> {
     const results: ValidationResult[] = [];
     
-    for (const command of commands) {
-      const { success, stdout, stderr, duration } = await this.runCommand(command);
+    for (_const command of commands) {
+      const { success, stdout, stderr, duration } = await this.runCommand(_command);
       
       results.push({
         gate: 'Manual',
@@ -195,40 +195,40 @@ export class PRPValidator {
   /**
    * Run common validations
    */
-  async runCommonValidations(types: Array<keyof typeof PRPValidator.commonValidations>): Promise<ValidationSummary> {
-    const gates: ValidationGate[] = types.map((type, index) => ({
+  async runCommonValidations(_types: Array<keyof typeof PRPValidator.commonValidations>): Promise<ValidationSummary> {
+    const gates: ValidationGate[] = types.map( (type, index) => ({
       level: index + 1,
       name: type.charAt(0).toUpperCase() + type.slice(1),
       commands: PRPValidator.commonValidations[type],
       required: true
     }));
     
-    return this.runAllValidationGates(gates);
+    return this.runAllValidationGates(_gates);
   }
 
   /**
    * Format validation results for display
    */
-  formatResults(summary: ValidationSummary): string {
+  formatResults(_summary: ValidationSummary): string {
     const lines: string[] = [];
     
     lines.push('=== Validation Summary ===');
-    lines.push(`Total Gates: ${summary.totalGates}`);
-    lines.push(`Passed: ${summary.passed} ✅`);
-    lines.push(`Failed: ${summary.failed} ❌`);
-    lines.push(`Skipped: ${summary.skipped} ⏭️`);
-    lines.push(`Overall: ${summary.overallSuccess ? 'SUCCESS ✅' : 'FAILED ❌'}`);
+    lines.push(_`Total Gates: ${summary.totalGates}`);
+    lines.push(_`Passed: ${summary.passed} ✅`);
+    lines.push(_`Failed: ${summary.failed} ❌`);
+    lines.push(_`Skipped: ${summary.skipped} ⏭️`);
+    lines.push(_`Overall: ${summary.overallSuccess ? 'SUCCESS ✅' : 'FAILED ❌'}`);
     lines.push('');
     
-    if (summary.results.length > 0) {
+    if (_summary.results.length > 0) {
       lines.push('=== Detailed Results ===');
       
-      for (const result of summary.results) {
-        lines.push(`\n${result.passed ? '✅' : '❌'} ${result.gate}: ${result.command}`);
-        lines.push(`   Duration: ${result.duration}ms`);
+      for (_const result of summary.results) {
+        lines.push(_`\n${result.passed ? '✅' : '❌'} ${result.gate}: ${result.command}`);
+        lines.push(_`   Duration: ${result.duration}ms`);
         
         if (!result.passed && result.error) {
-          lines.push(`   Error: ${result.error.split('\n')[0]}`);
+          lines.push(_`   Error: ${result.error.split('\n')[0]}`);
         }
       }
     }
@@ -247,7 +247,7 @@ export class PRPValidator {
  *   { level: 2, name: 'Tests', commands: ['npm test'], required: true }
  * ]);
  * 
- * if (summary.overallSuccess) {
+ * if (_summary.overallSuccess) {
  *   console.log('All validations passed!');
  * }
  */
@@ -255,23 +255,23 @@ export async function runValidation(
   gates: ValidationGate[],
   options?: { continueOnFailure?: boolean; skipGates?: number[] }
 ): Promise<ValidationSummary> {
-  const validator = new PRPValidator();
-  return validator.runAllValidationGates(gates, options);
+  const validator = new PRPValidator(_);
+  return validator.runAllValidationGates( gates, options);
 }
 
 /**
  * Run common project validations
  */
 export async function runProjectValidation(): Promise<ValidationSummary> {
-  const validator = new PRPValidator();
-  return validator.runCommonValidations(['typescript', 'lint', 'test']);
+  const validator = new PRPValidator(_);
+  return validator.runCommonValidations( ['typescript', 'lint', 'test']);
 }
 
 /**
  * Check if a specific command passes
  */
-export async function checkCommand(command: string): Promise<boolean> {
-  const validator = new PRPValidator();
-  const result = await validator.runCommand(command);
+export async function checkCommand(_command: string): Promise<boolean> {
+  const validator = new PRPValidator(_);
+  const result = await validator.runCommand(_command);
   return result.success;
 }

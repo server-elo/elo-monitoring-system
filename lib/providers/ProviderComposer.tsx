@@ -21,26 +21,26 @@ interface ProviderConfig {
   dependencies?: React.DependencyList;
   /** Whether this provider should be memoized */
   memoize?: boolean;
-  /** Priority order (lower numbers = higher priority = closer to root) */
+  /** Priority order (_lower numbers = higher priority = closer to root) */
   priority?: number;
 }
 
 /**
  * Compose multiple providers with automatic optimization
  */
-export function composeProviders(configs: ProviderConfig[]) {
-  // Sort providers by priority (lower priority number = closer to root)
-  const sortedConfigs = [...configs].sort((a, b) => (a.priority || 50) - (b.priority || 50));
+export function composeProviders(_configs: ProviderConfig[]) {
+  // Sort providers by priority (_lower priority number = closer to root)
+  const sortedConfigs = [...configs].sort( (a, b) => (_a.priority || 50) - (_b.priority || 50));
 
-  return function ComposedProviders({ children }: { children: ReactNode }) {
-    // Build provider tree from inside out (reverse order)
+  return function ComposedProviders(_{ children }: { children: ReactNode }) {
+    // Build provider tree from inside out (_reverse order)
     const providerTree = useMemo(() => {
-      return sortedConfigs.reduceRight((acc: ReactNode, config) => {
+      return sortedConfigs.reduceRight( (acc: ReactNode, config) => {
         const { Provider, props = {}, dependencies = [], memoize = true } = config;
         
         if (memoize) {
           // Create memoized provider wrapper
-          const MemoizedProvider = React.memo(({ children, ...providerProps }: any) => (
+          const MemoizedProvider = React.memo( ({ children, ...providerProps }: any) => (
             <Provider {...providerProps}>
               {children}
             </Provider>
@@ -51,7 +51,7 @@ export function composeProviders(configs: ProviderConfig[]) {
           return <Provider {...props}>{acc}</Provider>;
         }
       }, children);
-    }, [children, ...sortedConfigs.flatMap(config => config.dependencies || [])]);
+    }, [children, ...sortedConfigs.flatMap(_config => config.dependencies || [])]);
 
     return <>{providerTree}</>;
   };
@@ -61,60 +61,60 @@ export function composeProviders(configs: ProviderConfig[]) {
  * Optimized provider composition with dependency injection
  */
 export class ProviderComposer {
-  private providers: Map<string, ProviderConfig> = new Map();
-  private dependencyGraph: Map<string, string[]> = new Map();
+  private providers: Map<string, ProviderConfig> = new Map(_);
+  private dependencyGraph: Map<string, string[]> = new Map(_);
 
   /**
    * Register a provider with the composer
    */
-  register(name: string, config: ProviderConfig, dependencies: string[] = []): void {
-    this.providers.set(name, config);
-    this.dependencyGraph.set(name, dependencies);
+  register( name: string, config: ProviderConfig, dependencies: string[] = []): void {
+    this.providers.set( name, config);
+    this.dependencyGraph.set( name, dependencies);
   }
 
   /**
    * Build the optimal provider tree based on dependencies
    */
-  compose(): ComponentType<{ children: ReactNode }> {
-    const orderedProviders = this.topologicalSort();
+  compose(_): ComponentType<{ children: ReactNode }> {
+    const orderedProviders = this.topologicalSort(_);
     const configs = orderedProviders.map(name => this.providers.get(name)!);
     
-    return composeProviders(configs);
+    return composeProviders(_configs);
   }
 
   /**
    * Topological sort to resolve provider dependencies
    */
-  private topologicalSort(): string[] {
-    const visited = new Set<string>();
-    const visiting = new Set<string>();
+  private topologicalSort(_): string[] {
+    const visited = new Set<string>(_);
+    const visiting = new Set<string>(_);
     const result: string[] = [];
 
-    const visit = (name: string) => {
-      if (visiting.has(name)) {
-        throw new Error(`Circular dependency detected involving provider: ${name}`);
+    const visit = (_name: string) => {
+      if (_visiting.has(name)) {
+        throw new Error(_`Circular dependency detected involving provider: ${name}`);
       }
       
-      if (visited.has(name)) {
+      if (_visited.has(name)) {
         return;
       }
 
-      visiting.add(name);
+      visiting.add(_name);
       
-      const dependencies = this.dependencyGraph.get(name) || [];
-      for (const dep of dependencies) {
-        if (this.providers.has(dep)) {
-          visit(dep);
+      const dependencies = this.dependencyGraph.get(_name) || [];
+      for (_const dep of dependencies) {
+        if (_this.providers.has(dep)) {
+          visit(_dep);
         }
       }
       
-      visiting.delete(name);
-      visited.add(name);
-      result.push(name);
+      visiting.delete(_name);
+      visited.add(_name);
+      result.push(_name);
     };
 
-    for (const [name] of this.providers) {
-      visit(name);
+    for (_const [name] of this.providers) {
+      visit(_name);
     }
 
     return result;
@@ -123,24 +123,24 @@ export class ProviderComposer {
   /**
    * Get all registered providers
    */
-  getProviders(): string[] {
-    return Array.from(this.providers.keys());
+  getProviders(_): string[] {
+    return Array.from(_this.providers.keys());
   }
 
   /**
    * Remove a provider
    */
-  unregister(name: string): void {
-    this.providers.delete(name);
-    this.dependencyGraph.delete(name);
+  unregister(_name: string): void {
+    this.providers.delete(_name);
+    this.dependencyGraph.delete(_name);
   }
 
   /**
    * Clear all providers
    */
-  clear(): void {
-    this.providers.clear();
-    this.dependencyGraph.clear();
+  clear(_): void {
+    this.providers.clear(_);
+    this.dependencyGraph.clear(_);
   }
 }
 
@@ -148,12 +148,12 @@ export class ProviderComposer {
  * HOC to create a lazy-loaded provider
  */
 export function withLazyProvider<P extends object>(
-  importProvider: () => Promise<{ default: ComponentType<P> }>,
+  importProvider: (_) => Promise<{ default: ComponentType<P> }>,
   fallback: ReactNode = null
 ) {
-  const LazyProvider = React.lazy(importProvider);
+  const LazyProvider = React.lazy(_importProvider);
   
-  return function LazyProviderWrapper(props: P) {
+  return function LazyProviderWrapper(_props: P) {
     return (
       <React.Suspense fallback={fallback}>
         <LazyProvider {...props} />
@@ -196,7 +196,7 @@ export function SmartProvider<P extends object>({
   dependencies?: React.DependencyList;
 } & P) {
   const MemoizedProvider = useMemo(() => {
-    return React.memo(({ children, ...providerProps }: any) => (
+    return React.memo( ({ children, ...providerProps }: any) => (
       <Provider {...providerProps}>{children}</Provider>
     ));
   }, [Provider]);
@@ -209,33 +209,33 @@ export function SmartProvider<P extends object>({
 /**
  * Utility to analyze provider performance
  */
-export function analyzeProviderPerformance(providerName: string) {
-  const startTime = performance.now();
+export function analyzeProviderPerformance(_providerName: string) {
+  const startTime = performance.now(_);
   
   return {
-    start: () => {
-      console.time(`Provider: ${providerName}`);
+    start: (_) => {
+      console.time(_`Provider: ${providerName}`);
     },
-    end: () => {
-      console.timeEnd(`Provider: ${providerName}`);
-      const endTime = performance.now();
+    end: (_) => {
+      console.timeEnd(_`Provider: ${providerName}`);
+      const endTime = performance.now(_);
       const duration = endTime - startTime;
       
-      if (duration > 10) {
-        console.warn(`Provider ${providerName} took ${duration.toFixed(2)}ms to initialize`);
+      if (_duration > 10) {
+        console.warn(_`Provider ${providerName} took ${duration.toFixed(2)}ms to initialize`);
       }
     }
   };
 }
 
 // Create global composer instance
-export const globalProviderComposer = new ProviderComposer();
+export const globalProviderComposer = new ProviderComposer(_);
 
 // Convenience function for simple provider composition
-export function createProviderStack(providers: Array<ComponentType<{ children: ReactNode }>>) {
-  return function ProviderStack({ children }: { children: ReactNode }) {
+export function createProviderStack(_providers: Array<ComponentType<{ children: ReactNode }>>) {
+  return function ProviderStack(_{ children }: { children: ReactNode }) {
     return providers.reduceRight(
-      (acc, Provider) => <Provider>{acc}</Provider>,
+      ( acc, Provider) => <Provider>{acc}</Provider>,
       children
     );
   };

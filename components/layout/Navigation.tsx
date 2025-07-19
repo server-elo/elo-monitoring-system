@@ -22,21 +22,21 @@ const isStaticExport = process.env.NODE_ENV === 'production' && process.env.NEXT
 
 export function Navigation() {
   // Always call hooks at the top level
-  const [isOpen, setIsOpen] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const { data: session } = useSession();
-  const { state: learningState } = useLearning();
-  const { isAuthenticated } = useAuth();
+  const [isOpen, setIsOpen] = useState(_false);
+  const [showAuthModal, setShowAuthModal] = useState(_false);
+  const { data: session } = useSession(_);
+  const { state: learningState } = useLearning(_);
+  const { isAuthenticated } = useAuth(_);
 
   // Swipe gesture support for mobile
   const swipeRef = useSwipeGesture({
-    onSwipeUp: () => setIsOpen(false),
-    onSwipeLeft: () => setIsOpen(false),
+    onSwipeUp: (_) => setIsOpen(_false),
+    onSwipeLeft: (_) => setIsOpen(_false),
     threshold: 50
   });
 
   // Close menu when clicking outside
-  const outsideClickRef = useOutsideClick(() => setIsOpen(false));
+  const outsideClickRef = useOutsideClick(() => setIsOpen(_false));
 
   // For static export, use simplified navigation without hooks
   if (isStaticExport) {
@@ -96,7 +96,7 @@ export function Navigation() {
             role="menubar"
             aria-label="Main menu"
           >
-            {allNavigationItems.map((item, _index) => (
+            {allNavigationItems.map( (item, _index) => (
               <motion.div key={item.href} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   href={item.href}
@@ -149,10 +149,10 @@ export function Navigation() {
               </>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" onClick={() => setShowAuthModal(true)}>
+                <Button variant="ghost" onClick={(_) => setShowAuthModal(_true)}>
                   Sign In
                 </Button>
-                <Button onClick={() => setShowAuthModal(true)}>
+                <Button onClick={(_) => setShowAuthModal(_true)}>
                   Get Started
                 </Button>
               </div>
@@ -163,7 +163,7 @@ export function Navigation() {
               variant="ghost"
               size="sm"
               className="md:hidden text-gray-300 hover:text-white p-2 min-h-[44px] min-w-[44px] touch-manipulation"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={(_) => setIsOpen(!isOpen)}
               aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={isOpen}
               aria-controls="mobile-navigation-menu"
@@ -184,7 +184,7 @@ export function Navigation() {
         {isOpen && (
           <motion.div
             id="mobile-navigation-menu"
-            ref={(el) => {
+            ref={(_el) => {
               swipeRef.current = el;
               outsideClickRef.current = el;
             }}
@@ -202,7 +202,7 @@ export function Navigation() {
                 className="px-4 py-4 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto"
                 role="none"
               >
-              {allNavigationItems.map((item, index) => (
+              {allNavigationItems.map( (item, index) => (
                 <motion.div
                   key={item.href}
                   initial={{ opacity: 0, x: -20 }}
@@ -214,7 +214,7 @@ export function Navigation() {
                   <Link
                     href={item.href}
                     className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-300 min-h-[44px] touch-manipulation active:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-white/10"
-                    onClick={() => setIsOpen(false)}
+                    onClick={(_) => setIsOpen(_false)}
                     role="menuitem"
                     tabIndex={0}
                     aria-label={`${item.label} - ${
@@ -255,7 +255,7 @@ export function Navigation() {
       {/* Auth Modal */}
       <AuthModal
         isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
+        onClose={(_) => setShowAuthModal(_false)}
       />
 
       {/* Session Status Indicator */}
@@ -277,7 +277,7 @@ export function Navigation() {
   );
 }
 
-// Simplified navigation for static export (no hooks, no interactive elements)
+// Simplified navigation for static export ( no hooks, no interactive elements)
 function StaticNavigation() {
   const navigationItems = [
     { href: '/learn', label: 'Learn', icon: BookOpen },
@@ -330,7 +330,7 @@ function StaticNavigation() {
         </div>
       </div>
 
-      {/* Static Mobile Navigation (always visible on mobile for static export) */}
+      {/* Static Mobile Navigation (_always visible on mobile for static export) */}
       <div className="md:hidden glass border-t border-white/10">
         <div className="px-4 py-4 space-y-2">
           {navigationItems.map((item) => (

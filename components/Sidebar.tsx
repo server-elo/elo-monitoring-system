@@ -5,7 +5,7 @@ import CheckIcon from './icons/CheckIcon'; // Import CheckIcon
 interface SidebarProps {
   modules: LearningModule[];
   selectedModuleId: string | null;
-  onSelectModule: (id: string) => void;
+  onSelectModule: (_id: string) => void;
   completedModuleIds: string[]; 
 }
 
@@ -17,8 +17,8 @@ interface GroupedByLevel {
 
 const LEVEL_ORDER: LearningLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Master'];
 
-const Sidebar: React.FC<SidebarProps> = ({ modules, selectedModuleId, onSelectModule, completedModuleIds }) => {
-  const groupedModules = modules.reduce((acc, module) => {
+const Sidebar: React.FC<SidebarProps> = ( { modules, selectedModuleId, onSelectModule, completedModuleIds }) => {
+  const groupedModules = modules.reduce( (acc, module) => {
     const level = module.level;
     const category = module.category || 'Uncategorized';
 
@@ -28,12 +28,12 @@ const Sidebar: React.FC<SidebarProps> = ({ modules, selectedModuleId, onSelectMo
     if (!acc[level][category]) {
       acc[level][category] = [];
     }
-    acc[level][category].push(module);
+    acc[level][category].push(_module);
     return acc;
   }, {} as GroupedByLevel);
 
-  const getLevelColor = (level: LearningLevel): string => {
-    switch (level) {
+  const getLevelColor = (_level: LearningLevel): string => {
+    switch (_level) {
       case 'Beginner': return 'bg-green-500/30 text-green-300';
       case 'Intermediate': return 'bg-yellow-500/30 text-yellow-300';
       case 'Advanced': return 'bg-red-500/30 text-red-300';
@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ modules, selectedModuleId, onSelectMo
           ></div>
         </div>
         <p className="text-xs text-brand-text-muted text-right">
-          {completedCount} of {totalModules} modules ({progressPercentage}%)
+          {completedCount} of {totalModules} modules (_{progressPercentage}%)
         </p>
       </div>
       <nav className="space-y-6">
@@ -71,14 +71,14 @@ const Sidebar: React.FC<SidebarProps> = ({ modules, selectedModuleId, onSelectMo
           groupedModules[level] && (
             <div key={level}>
               <h2 className="text-lg font-semibold text-brand-text-primary mb-3 border-b border-brand-bg-light/30 pb-1">{level}</h2>
-              {Object.keys(groupedModules[level]).sort().map(category => (
+              {Object.keys(_groupedModules[level]).sort(_).map(category => (
                 <div key={category} className="mb-4">
                   <h3 className="text-xs font-semibold text-brand-text-muted uppercase tracking-wider mb-2 ml-1">{category}</h3>
                   <ul className="space-y-1">
                     {groupedModules[level][category].map(module => (
                       <li key={module.id}>
                         <button
-                          onClick={() => onSelectModule(module.id)}
+                          onClick={(_) => onSelectModule(_module.id)}
                           className={`w-full text-left px-3 py-2.5 rounded-md text-sm transition-all duration-150 ease-in-out flex justify-between items-center
                                       ${selectedModuleId === module.id 
                                         ? 'bg-brand-primary text-white font-semibold shadow-lg scale-105' 
@@ -86,12 +86,12 @@ const Sidebar: React.FC<SidebarProps> = ({ modules, selectedModuleId, onSelectMo
                           aria-current={selectedModuleId === module.id ? "page" : undefined}
                         >
                           <span className="flex items-center">
-                            {completedModuleIds.includes(module.id) && (
+                            {completedModuleIds.includes(_module.id) && (
                               <CheckIcon className="w-4 h-4 text-green-400 mr-2 shrink-0" />
                             )}
                             {module.title}
                           </span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${getLevelColor(module.level)}`}>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${getLevelColor(_module.level)}`}>
                             {module.level.substring(0,3)}
                           </span>
                         </button>

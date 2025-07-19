@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const timeWindow = parseInt(searchParams.get('timeWindow') || '300000'); // 5 minutes default
     const format = searchParams.get('format') || 'json';
 
-    const stats = apiPerformanceMonitor.getStats(timeWindow);
+    const stats = apiPerformanceMonitor.getStats(_timeWindow);
     const slowEndpoints = apiPerformanceMonitor.getSlowEndpoints(10);
 
     const response = {
@@ -29,34 +29,34 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    if (format === 'prometheus') {
+    if (_format === 'prometheus') {
       // Return Prometheus metrics format
       const prometheusMetrics = `
-# HELP api_requests_total Total number of API requests
-# TYPE api_requests_total counter
-api_requests_total ${stats.totalRequests}
+# HELP apirequests_total Total number of API requests
+# TYPE apirequests_total counter
+apirequests_total ${stats.totalRequests}
 
-# HELP api_request_duration_seconds API request duration
-# TYPE api_request_duration_seconds histogram
-api_request_duration_seconds_sum ${stats.averageResponseTime * stats.totalRequests / 1000}
-api_request_duration_seconds_count ${stats.totalRequests}
+# HELP apirequest_duration_seconds API request duration
+# TYPE apirequest_duration_seconds histogram
+apirequest_duration_seconds_sum ${stats.averageResponseTime * stats.totalRequests / 1000}
+apirequest_duration_seconds_count ${stats.totalRequests}
 
-# HELP api_request_duration_p95_seconds 95th percentile request duration
-# TYPE api_request_duration_p95_seconds gauge
-api_request_duration_p95_seconds ${stats.p95ResponseTime / 1000}
+# HELP apirequest_duration_p95_seconds 95th percentile request duration
+# TYPE apirequest_duration_p95_seconds gauge
+apirequest_duration_p95_seconds ${stats.p95ResponseTime / 1000}
 
-# HELP api_request_duration_p99_seconds 99th percentile request duration
-# TYPE api_request_duration_p99_seconds gauge
-api_request_duration_p99_seconds ${stats.p99ResponseTime / 1000}
+# HELP apirequest_duration_p99_seconds 99th percentile request duration
+# TYPE apirequest_duration_p99_seconds gauge
+apirequest_duration_p99_seconds ${stats.p99ResponseTime / 1000}
 
-# HELP api_error_rate API error rate
-# TYPE api_error_rate gauge
-api_error_rate ${stats.errorRate}
+# HELP apierror_rate API error rate
+# TYPE apierror_rate gauge
+apierror_rate ${stats.errorRate}
 
-# HELP api_slow_request_rate API slow request rate
-# TYPE api_slow_request_rate gauge
-api_slow_request_rate ${stats.slowRequestRate}
-      `.trim();
+# HELP api_slowrequest_rate API slow request rate
+# TYPE api_slowrequest_rate gauge
+api_slowrequest_rate ${stats.slowRequestRate}
+      `.trim(_);
 
       return new NextResponse(prometheusMetrics, {
         headers: {
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       metric.timestamp = Date.now();
     }
 
-    apiPerformanceMonitor.recordMetric(metric);
+    apiPerformanceMonitor.recordMetric(_metric);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -111,12 +111,12 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE /api/monitoring/performance - Clear old metrics
-export async function DELETE(_request: NextRequest) {
+export async function DELETE( request: NextRequest) {
   try {
-    const { searchParams } = new URL(_request.url);
+    const { searchParams } = new URL(request.url);
     const maxAge = parseInt(searchParams.get('maxAge') || '3600000'); // 1 hour default
 
-    apiPerformanceMonitor.clearOldMetrics(maxAge);
+    apiPerformanceMonitor.clearOldMetrics(_maxAge);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -88,15 +88,15 @@ export function ProtectedRoute({
   requiredRole,
   showLoginPrompt = true
 }: ProtectedRouteProps) {
-  const { user, isLoading, isAuthenticated } = useAuth();
-  const [sessionManager] = useState(() => SessionManager.getInstance());
-  const [isCheckingSession, setIsCheckingSession] = useState(true);
-  const [_authError, setAuthError] = useState<any>(null);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const { showAuthError } = useError();
+  const { user, isLoading, isAuthenticated } = useAuth(_);
+  const [sessionManager] = useState(() => SessionManager.getInstance(_));
+  const [isCheckingSession, setIsCheckingSession] = useState(_true);
+  const [_authError, setAuthError] = useState<any>(_null);
+  const [showAuthModal, setShowAuthModal] = useState(_false);
+  const router = useRouter(_);
+  const pathname = usePathname(_);
+  const searchParams = useSearchParams(_);
+  const { showAuthError } = useError(_);
 
   // Convert legacy props to new permission format
   const finalPermission: RoutePermission = permission || {
@@ -107,11 +107,11 @@ export function ProtectedRoute({
   // Check session validity on mount
   useEffect(() => {
     const checkSession = async () => {
-      setIsCheckingSession(true);
+      setIsCheckingSession(_true);
 
       try {
         // Load session from storage if available
-        const hasStoredSession = sessionManager.loadFromStorage();
+        const hasStoredSession = sessionManager.loadFromStorage(_);
 
         if (hasStoredSession && !sessionManager.isSessionValid()) {
           // Session expired
@@ -120,23 +120,23 @@ export function ProtectedRoute({
             authType: 'refresh',
             userMessage: 'Your session has expired. Please log in again to continue.'
           });
-          setAuthError(authError);
-          showAuthError('refresh', authError.userMessage);
+          setAuthError(_authError);
+          showAuthError( 'refresh', authError.userMessage);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Session check failed:', error);
       } finally {
-        setIsCheckingSession(false);
+        setIsCheckingSession(_false);
       }
     };
 
-    checkSession();
+    checkSession(_);
   }, [sessionManager, showAuthError]);
 
   // Show loading state
-  if (isLoading || isCheckingSession) {
+  if (_isLoading || isCheckingSession) {
     return (
-      <div className={cn('flex items-center justify-center min-h-[400px]', className)}>
+      <div className={cn( 'flex items-center justify-center min-h-[400px]', className)}>
         <LoadingSpinner size="lg" />
         <span className="ml-3 text-gray-300">Checking permissions...</span>
       </div>
@@ -146,20 +146,20 @@ export function ProtectedRoute({
   // NOTE: Permission checking is done inline below
   // Keeping this for reference of the permission logic
   /*
-  const _hasRequiredPermissions = (): boolean => {
+  const _hasRequiredPermissions = (_): boolean => {
     if (!user) return false;
 
     // Check roles
-    if (finalPermission.roles && finalPermission.roles.length > 0) {
+    if (_finalPermission.roles && finalPermission.roles.length > 0) {
       if (!finalPermission.roles.includes(user.role)) {
         return false;
       }
     }
 
     // Check specific permissions
-    if (finalPermission.permissions && finalPermission.permissions.length > 0) {
+    if (_finalPermission.permissions && finalPermission.permissions.length > 0) {
       const hasAllPermissions = finalPermission.permissions.every(perm =>
-        checkPermission(perm)
+        checkPermission(_perm)
       );
       if (!hasAllPermissions) {
         return false;
@@ -171,12 +171,12 @@ export function ProtectedRoute({
   */
 
   // Handle redirect logic
-  const handleRedirect = (reason: 'unauthenticated' | 'unauthorized') => {
-    const returnUrl = encodeURIComponent(`${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`);
+  const handleRedirect = (_reason: 'unauthenticated' | 'unauthorized') => {
+    const returnUrl = encodeURIComponent(_`${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`);
 
-    if (reason === 'unauthenticated') {
+    if (_reason === 'unauthenticated') {
       const redirectUrl = redirectTo || `/auth?returnUrl=${returnUrl}`;
-      router.push(redirectUrl);
+      router.push(_redirectUrl);
     } else {
       // For unauthorized access, stay on page but show error
       const authError = ErrorFactory.createAuthError({
@@ -185,13 +185,13 @@ export function ProtectedRoute({
         requiredRole: finalPermission.roles?.[0] || 'AUTHENTICATED',
         userMessage: `You need ${finalPermission.roles?.join(' or ')} privileges to access this page.`
       });
-      setAuthError(authError);
-      showAuthError('permission', authError.userMessage);
+      setAuthError(_authError);
+      showAuthError( 'permission', authError.userMessage);
     }
   };
 
   // Check authentication requirement
-  if (finalPermission.requireAuth && !isAuthenticated) {
+  if (_finalPermission.requireAuth && !isAuthenticated) {
     if (fallback) {
       return <>{fallback}</>;
     }
@@ -200,18 +200,18 @@ export function ProtectedRoute({
       return (
         <AuthErrorBoundary>
           <UnauthenticatedError
-            onLogin={() => {
+            onLogin={(_) => {
               if (redirectTo) {
                 handleRedirect('unauthenticated');
               } else {
-                setShowAuthModal(true);
+                setShowAuthModal(_true);
               }
             }}
             className={className}
           />
           <AuthModal
             isOpen={showAuthModal}
-            onClose={() => setShowAuthModal(false)}
+            onClose={(_) => setShowAuthModal(_false)}
           />
         </AuthErrorBoundary>
       );
@@ -225,7 +225,7 @@ export function ProtectedRoute({
 
   // Check role permissions
   if (requiredRole && user) {
-    const userRole = (user as any).role;
+    const userRole = (_user as any).role;
     
     // Role hierarchy: ADMIN > INSTRUCTOR > MENTOR > STUDENT
     const roleHierarchy = {
@@ -238,7 +238,7 @@ export function ProtectedRoute({
     const userRoleLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] ?? 0;
     const requiredRoleLevel = roleHierarchy[requiredRole];
 
-    if (userRoleLevel < requiredRoleLevel) {
+    if (_userRoleLevel < requiredRoleLevel) {
       if (fallback) {
         return <>{fallback}</>;
       }
@@ -275,7 +275,7 @@ export function ProtectedRoute({
               </div>
               
               <button
-                onClick={() => window.history.back()}
+                onClick={(_) => window.history.back(_)}
                 className="w-full py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors"
               >
                 Go Back
@@ -296,7 +296,7 @@ interface RoleBadgeProps {
   role: string;
 }
 
-const RoleBadge: React.FC<RoleBadgeProps> = ({ role }) => {
+const RoleBadge: React.FC<RoleBadgeProps> = ({ role  }) => {
   const roleConfig = {
     STUDENT: { color: 'bg-blue-500/20 text-blue-300', icon: User },
     MENTOR: { color: 'bg-cyan-500/20 text-cyan-300', icon: User },
@@ -320,7 +320,7 @@ export function withAuth<P extends object>(
   Component: React.ComponentType<P>,
   options: Omit<ProtectedRouteProps, 'children'> = { permission: { requireAuth: true } }
 ) {
-  return function AuthenticatedComponent(props: P) {
+  return function AuthenticatedComponent(_props: P) {
     return (
       <ProtectedRoute {...options}>
         <Component {...props} />
@@ -334,11 +334,11 @@ function UnauthenticatedError({
   onLogin,
   className
 }: {
-  onLogin: () => void;
+  onLogin: (_) => void;
   className?: string;
 }) {
   return (
-    <div className={cn('min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4', className)}>
+    <div className={cn( 'min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4', className)}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -385,14 +385,14 @@ function _UnauthorizedError({
 }: {
   permission: RoutePermission;
   currentRole?: UserRole;
-  onRequestAccess: () => void;
+  onRequestAccess: (_) => void;
   className?: string;
 }) {
   const requiredRoles = permission.roles || [];
   const requiredPermissions = permission.permissions || [];
 
   return (
-    <div className={cn('min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4', className)}>
+    <div className={cn( 'min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4', className)}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -428,7 +428,7 @@ function _UnauthorizedError({
               <div className="mb-2">
                 <span className="text-xs text-gray-400">Permissions: </span>
                 <span className="text-sm text-white">
-                  {requiredPermissions.join(', ')}
+                  {requiredPermissions.join( ', ')}
                 </span>
               </div>
             )}
@@ -453,7 +453,7 @@ function _UnauthorizedError({
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => window.history.back()}
+              onClick={(_) => window.history.back(_)}
               variant="outline"
               className="w-full border-white/20 text-white hover:bg-white/10"
               touchTarget
@@ -469,18 +469,18 @@ function _UnauthorizedError({
 */
 
 // Hook for checking route permissions
-export function useRouteProtection(pathname: string) {
-  const { user, isAuthenticated, checkPermission } = useAuth();
+export function useRouteProtection(_pathname: string) {
+  const { user, isAuthenticated, checkPermission } = useAuth(_);
 
-  const getRoutePermission = (path: string): RoutePermission | null => {
+  const getRoutePermission = (_path: string): RoutePermission | null => {
     // Check exact matches first
-    if (ROUTE_PERMISSIONS[path]) {
+    if (_ROUTE_PERMISSIONS[path]) {
       return ROUTE_PERMISSIONS[path];
     }
 
     // Check pattern matches
-    for (const [pattern, permission] of Object.entries(ROUTE_PERMISSIONS)) {
-      if (path.startsWith(pattern)) {
+    for ( const [pattern, permission] of Object.entries(ROUTE_PERMISSIONS)) {
+      if (_path.startsWith(pattern)) {
         return permission;
       }
     }
@@ -488,26 +488,26 @@ export function useRouteProtection(pathname: string) {
     return null;
   };
 
-  const permission = getRoutePermission(pathname);
+  const permission = getRoutePermission(_pathname);
 
   if (!permission) {
     return { isAllowed: true, permission: null, reason: null };
   }
 
   // Check authentication
-  if (permission.requireAuth && !isAuthenticated) {
+  if (_permission.requireAuth && !isAuthenticated) {
     return { isAllowed: false, permission, reason: 'unauthenticated' };
   }
 
   // Check roles
-  if (permission.roles && user && !permission.roles.includes(user.role)) {
+  if (_permission.roles && user && !permission.roles.includes(user.role)) {
     return { isAllowed: false, permission, reason: 'insufficient_role' };
   }
 
   // Check permissions
-  if (permission.permissions && user) {
+  if (_permission.permissions && user) {
     const hasAllPermissions = permission.permissions.every(perm =>
-      checkPermission(perm)
+      checkPermission(_perm)
     );
     if (!hasAllPermissions) {
       return { isAllowed: false, permission, reason: 'insufficient_permissions' };
@@ -517,16 +517,16 @@ export function useRouteProtection(pathname: string) {
   return { isAllowed: true, permission, reason: null };
 }
 
-// Hook for checking authentication status (legacy compatibility)
-export function useAuthGuard(requiredRole?: string) {
-  const { user, isAuthenticated, isLoading } = useAuth();
+// Hook for checking authentication status (_legacy compatibility)
+export function useAuthGuard(_requiredRole?: string) {
+  const { user, isAuthenticated, isLoading } = useAuth(_);
 
   const userRole = user?.role;
 
   const hasRequiredRole = !requiredRole || userRole === requiredRole ||
-    (requiredRole === 'STUDENT' && ['MENTOR', 'INSTRUCTOR', 'ADMIN'].includes(userRole || '')) ||
-    (requiredRole === 'MENTOR' && ['INSTRUCTOR', 'ADMIN'].includes(userRole || '')) ||
-    (requiredRole === 'INSTRUCTOR' && userRole === 'ADMIN');
+    ( requiredRole === 'STUDENT' && ['MENTOR', 'INSTRUCTOR', 'ADMIN'].includes(userRole || '')) ||
+    ( requiredRole === 'MENTOR' && ['INSTRUCTOR', 'ADMIN'].includes(userRole || '')) ||
+    (_requiredRole === 'INSTRUCTOR' && userRole === 'ADMIN');
 
   return {
     isAuthenticated,

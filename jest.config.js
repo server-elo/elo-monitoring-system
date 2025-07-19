@@ -13,6 +13,15 @@ const customJestConfig = {
   // Setup files
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   
+  // Global variables
+  globals: {
+    'ts-jest': {
+      tsconfig: {
+        jsx: 'react',
+      },
+    },
+  },
+  
   // Module name mapping for absolute imports
   moduleNameMapping: {
     '^@/(.*)$': '<rootDir>/$1',

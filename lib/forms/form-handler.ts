@@ -21,14 +21,14 @@ export interface FormState {
 export interface FormConfig<T> {
   initialValues: T;
   validationSchema?: z.ZodSchema<T>;
-  onSubmit: (values: T) => Promise<void>;
-  onSuccess?: (result?: any) => void;
-  onError?: (error: Error) => void;
+  onSubmit: (_values: T) => Promise<void>;
+  onSuccess?: (_result?: any) => void;
+  onError?: (_error: Error) => void;
 }
 
-export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
+export function useForm<T extends Record<string, any>>(_config: FormConfig<T>) {
   const [formState, setFormState] = useState<FormState>({
-    fields: Object.keys(config.initialValues).reduce((acc, key) => {
+    fields: Object.keys(_config.initialValues).reduce( (acc, key) => {
       acc[key] = {
         name: key,
         value: config.initialValues[key],
@@ -41,17 +41,17 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
     errors: {},
   });
 
-  const validateField = useCallback((name: string, value: any) => {
+  const validateField = useCallback( (name: string, value: any) => {
     if (!config.validationSchema) return null;
 
     try {
-      const fieldSchema = (config.validationSchema as any).shape?.[name];
+      const fieldSchema = (_config.validationSchema as any).shape?.[name];
       if (fieldSchema) {
-        fieldSchema.parse(value);
+        fieldSchema.parse(_value);
       }
       return null;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
+    } catch (_error) {
+      if (_error instanceof z.ZodError) {
         return error.errors[0]?.message || 'Invalid value';
       }
       return 'Validation error';
@@ -62,11 +62,11 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
     if (!config.validationSchema) return { isValid: true, errors: {} };
 
     try {
-      config.validationSchema.parse(values);
+      config.validationSchema.parse(_values);
       return { isValid: true, errors: {} };
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const errors = error.errors.reduce((acc, err) => {
+    } catch (_error) {
+      if (_error instanceof z.ZodError) {
+        const errors = error.errors.reduce( (acc, err) => {
           const path = err.path.join('.');
           acc[path] = err.message;
           return acc;
@@ -77,9 +77,9 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
     }
   }, [config.validationSchema]);
 
-  const setValue = useCallback((name: string, value: any) => {
+  const setValue = useCallback( (name: string, value: any) => {
     setFormState(prev => {
-      const error = validateField(name, value);
+      const error = validateField( name, value);
       const newFields = {
         ...prev.fields,
         [name]: {
@@ -90,12 +90,12 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
         },
       };
 
-      const values = Object.keys(newFields).reduce((acc, key) => {
-        (acc as any)[key] = newFields[key].value;
+      const values = Object.keys(_newFields).reduce( (acc, key) => {
+        (_acc as any)[key] = newFields[key].value;
         return acc;
       }, {} as T);
 
-      const validation = validateForm(values);
+      const validation = validateForm(_values);
 
       return {
         ...prev,
@@ -106,7 +106,7 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
     });
   }, [validateField, validateForm]);
 
-  const setFieldTouched = useCallback((name: string, touched = true) => {
+  const setFieldTouched = useCallback( (name: string, touched = true) => {
     setFormState(prev => ({
       ...prev,
       fields: {
@@ -121,7 +121,7 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
 
   const resetForm = useCallback(() => {
     setFormState({
-      fields: Object.keys(config.initialValues).reduce((acc, key) => {
+      fields: Object.keys(_config.initialValues).reduce( (acc, key) => {
         acc[key] = {
           name: key,
           value: config.initialValues[key],
@@ -135,26 +135,26 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
     });
   }, [config.initialValues]);
 
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+  const handleSubmit = useCallback( async (e?: React.FormEvent) => {
     if (e) {
-      e.preventDefault();
+      e.preventDefault(_);
     }
 
     // Mark all fields as touched
     setFormState(prev => ({
       ...prev,
-      fields: Object.keys(prev.fields).reduce((acc, key) => {
+      fields: Object.keys(_prev.fields).reduce( (acc, key) => {
         acc[key] = { ...prev.fields[key], touched: true };
         return acc;
       }, {} as Record<string, FormField>),
     }));
 
-    const values = Object.keys(formState.fields).reduce((acc, key) => {
-      (acc as any)[key] = formState.fields[key].value;
+    const values = Object.keys(_formState.fields).reduce( (acc, key) => {
+      (_acc as any)[key] = formState.fields[key].value;
       return acc;
     }, {} as T);
 
-    const validation = validateForm(values);
+    const validation = validateForm(_values);
 
     if (!validation.isValid) {
       setFormState(prev => ({
@@ -171,20 +171,20 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
       return;
     }
 
-    setFormState(prev => ({ ...prev, isSubmitting: true }));
+    setFormState( prev => ({ ...prev, isSubmitting: true }));
 
     try {
-      await config.onSubmit(values);
+      await config.onSubmit(_values);
       
       toast({
         title: 'Success',
         description: 'Form submitted successfully!',
       });
 
-      if (config.onSuccess) {
-        config.onSuccess();
+      if (_config.onSuccess) {
+        config.onSuccess(_);
       }
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred';
       
       toast({
@@ -193,11 +193,11 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
         variant: 'destructive',
       });
 
-      if (config.onError) {
-        config.onError(error instanceof Error ? error : new Error(errorMessage));
+      if (_config.onError) {
+        config.onError(_error instanceof Error ? error : new Error(errorMessage));
       }
     } finally {
-      setFormState(prev => ({ ...prev, isSubmitting: false }));
+      setFormState( prev => ({ ...prev, isSubmitting: false }));
     }
   }, [formState.fields, validateForm, config]);
 
@@ -206,10 +206,10 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
     return {
       name,
       value: field?.value || '',
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setValue(name, e.target.value);
+      onChange: (_e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        setValue( name, e.target.value);
       },
-      onBlur: () => setFieldTouched(name, true),
+      onBlur: (_) => setFieldTouched( name, true),
       error: field?.touched ? field?.error : undefined,
       'aria-invalid': field?.touched && field?.error ? true : false,
       'aria-describedby': field?.error ? `${name}-error` : undefined,
@@ -221,7 +221,7 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
     return {
       name,
       value: field?.value || '',
-      onValueChange: (value: string) => setValue(name, value),
+      onValueChange: (_value: string) => setValue( name, value),
       error: field?.touched ? field?.error : undefined,
     };
   }, [formState.fields, setValue]);
@@ -230,14 +230,14 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
     const field = formState.fields[name];
     return {
       name,
-      checked: Boolean(field?.value),
-      onCheckedChange: (checked: boolean) => setValue(name, checked),
+      checked: Boolean(_field?.value),
+      onCheckedChange: (_checked: boolean) => setValue( name, checked),
       error: field?.touched ? field?.error : undefined,
     };
   }, [formState.fields, setValue]);
 
-  const values = Object.keys(formState.fields).reduce((acc, key) => {
-    (acc as any)[key] = formState.fields[key].value;
+  const values = Object.keys(_formState.fields).reduce( (acc, key) => {
+    (_acc as any)[key] = formState.fields[key].value;
     return acc;
   }, {} as T);
 
@@ -260,38 +260,38 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>) {
 // Form validation schemas
 export const formSchemas = {
   contact: z.object({
-    name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
-    email: z.string().email('Invalid email address'),
-    subject: z.string().min(1, 'Subject is required').max(200, 'Subject is too long'),
-    message: z.string().min(10, 'Message must be at least 10 characters').max(1000, 'Message is too long'),
+    name: z.string(_).min(1, 'Name is required').max(100, 'Name is too long'),
+    email: z.string(_).email('Invalid email address'),
+    subject: z.string(_).min(1, 'Subject is required').max(200, 'Subject is too long'),
+    message: z.string(_).min(10, 'Message must be at least 10 characters').max(1000, 'Message is too long'),
   }),
 
   profile: z.object({
-    name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
-    bio: z.string().max(500, 'Bio is too long').optional(),
-    location: z.string().max(100, 'Location is too long').optional(),
-    github: z.string().max(50, 'GitHub username is too long').optional(),
-    twitter: z.string().max(50, 'Twitter username is too long').optional(),
-    linkedin: z.string().max(50, 'LinkedIn username is too long').optional(),
+    name: z.string(_).min(1, 'Name is required').max(100, 'Name is too long'),
+    bio: z.string(_).max(500, 'Bio is too long').optional(_),
+    location: z.string(_).max(100, 'Location is too long').optional(_),
+    github: z.string(_).max(50, 'GitHub username is too long').optional(_),
+    twitter: z.string(_).max(50, 'Twitter username is too long').optional(_),
+    linkedin: z.string(_).max(50, 'LinkedIn username is too long').optional(_),
   }),
 
   settings: z.object({
-    theme: z.enum(['light', 'dark', 'system']),
-    language: z.string(),
-    emailNotifications: z.boolean(),
-    pushNotifications: z.boolean(),
-    achievementNotifications: z.boolean(),
+    theme: z.enum( ['light', 'dark', 'system']),
+    language: z.string(_),
+    emailNotifications: z.boolean(_),
+    pushNotifications: z.boolean(_),
+    achievementNotifications: z.boolean(_),
   }),
 
   feedback: z.object({
-    type: z.enum(['rating', 'survey', 'bug_report', 'feature_request', 'usability']),
-    category: z.string().min(1, 'Category is required'),
-    title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
-    description: z.string().min(10, 'Description must be at least 10 characters').max(1000, 'Description is too long'),
-    rating: z.number().min(1).max(5).optional(),
-    severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
-    email: z.string().email('Invalid email address').optional(),
-    allowFollowUp: z.boolean().optional(),
+    type: z.enum( ['rating', 'survey', 'bug_report', 'feature_request', 'usability']),
+    category: z.string(_).min(1, 'Category is required'),
+    title: z.string(_).min(1, 'Title is required').max(200, 'Title is too long'),
+    description: z.string(_).min(10, 'Description must be at least 10 characters').max(1000, 'Description is too long'),
+    rating: z.number(_).min(1).max(5).optional(_),
+    severity: z.enum( ['low', 'medium', 'high', 'critical']).optional(_),
+    email: z.string(_).email('Invalid email address').optional(_),
+    allowFollowUp: z.boolean(_).optional(_),
   }),
 };
 
@@ -302,15 +302,15 @@ export const submitForm = async (endpoint: string, data: any) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(_data),
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Network error' }));
-    throw new Error(error.message || `HTTP ${response.status}`);
+    const error = await response.json(_).catch(() => ({ message: 'Network error'  }));
+    throw new Error(_error.message || `HTTP ${response.status}`);
   }
 
-  return response.json();
+  return response.json(_);
 };
 
 export const updateForm = async (endpoint: string, data: any) => {
@@ -319,13 +319,13 @@ export const updateForm = async (endpoint: string, data: any) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(_data),
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Network error' }));
-    throw new Error(error.message || `HTTP ${response.status}`);
+    const error = await response.json(_).catch(() => ({ message: 'Network error'  }));
+    throw new Error(_error.message || `HTTP ${response.status}`);
   }
 
-  return response.json();
+  return response.json(_);
 };

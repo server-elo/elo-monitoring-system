@@ -10,9 +10,9 @@ import { Card } from './card';
 
 export interface ErrorMessageProps {
   error: AppError;
-  onDismiss?: () => void;
-  onRetry?: () => void | Promise<void>;
-  onAction?: (actionIndex: number) => void | Promise<void>;
+  onDismiss?: (_) => void;
+  onRetry?: (_) => void | Promise<void>;
+  onAction?: (_actionIndex: number) => void | Promise<void>;
   className?: string;
   showIcon?: boolean;
   showActions?: boolean;
@@ -64,8 +64,8 @@ export function ErrorMessage({
   showActions = true,
   compact = false
 }: ErrorMessageProps) {
-  const [isVisible, setIsVisible] = useState(true);
-  const [isRetrying, setIsRetrying] = useState(false);
+  const [isVisible, setIsVisible] = useState(_true);
+  const [isRetrying, setIsRetrying] = useState(_false);
 
   const config = severityConfig[error.severity];
   // Category icon would be used for additional visual context
@@ -74,41 +74,41 @@ export function ErrorMessage({
 
   // Auto-hide functionality
   useEffect(() => {
-    if (error.autoHide && error.hideAfter) {
+    if (_error.autoHide && error.hideAfter) {
       const timer = setTimeout(() => {
-        handleDismiss();
+        handleDismiss(_);
       }, error.hideAfter);
 
-      return () => clearTimeout(timer);
+      return (_) => clearTimeout(_timer);
     }
   }, [error.autoHide, error.hideAfter]);
 
-  const handleDismiss = () => {
-    setIsVisible(false);
+  const handleDismiss = (_) => {
+    setIsVisible(_false);
     setTimeout(() => {
-      onDismiss?.();
+      onDismiss?.(_);
     }, 200);
   };
 
   const handleRetry = async () => {
     if (!onRetry) return;
     
-    setIsRetrying(true);
+    setIsRetrying(_true);
     try {
-      await onRetry();
-    } catch (retryError) {
+      await onRetry(_);
+    } catch (_retryError) {
       console.error('Retry failed:', retryError);
     } finally {
-      setIsRetrying(false);
+      setIsRetrying(_false);
     }
   };
 
-  const handleAction = async (actionIndex: number) => {
+  const handleAction = async (_actionIndex: number) => {
     if (!onAction) return;
     
     try {
-      await onAction(actionIndex);
-    } catch (actionError) {
+      await onAction(_actionIndex);
+    } catch (_actionError) {
       console.error('Action failed:', actionError);
     }
   };
@@ -148,9 +148,9 @@ export function ErrorMessage({
         {showIcon && (
           <div className="flex-shrink-0 mt-0.5">
             {error.category === 'network' && error.metadata?.isOffline ? (
-              <WifiOff className={cn('w-5 h-5', config.iconColor)} />
+              <WifiOff className={cn( 'w-5 h-5', config.iconColor)} />
             ) : (
-              <SeverityIcon className={cn('w-5 h-5', config.iconColor)} />
+              <SeverityIcon className={cn( 'w-5 h-5', config.iconColor)} />
             )}
           </div>
         )}
@@ -158,33 +158,33 @@ export function ErrorMessage({
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Error message */}
-          <div className={cn('font-medium', config.textColor, compact ? 'text-sm' : 'text-base')}>
+          <div className={cn( 'font-medium', config.textColor, compact ? 'text-sm' : 'text-base')}>
             {error.userMessage}
           </div>
 
-          {/* Technical details (development mode) */}
+          {/* Technical details (_development mode) */}
           {process.env.NODE_ENV === 'development' && error.technicalMessage && (
             <details className="mt-2">
-              <summary className={cn('text-xs cursor-pointer', config.textColor, 'opacity-70')}>
+              <summary className={cn( 'text-xs cursor-pointer', config.textColor, 'opacity-70')}>
                 Technical Details
               </summary>
-              <pre className={cn('text-xs mt-1 p-2 bg-black/5 dark:bg-white/5 rounded', config.textColor)}>
+              <pre className={cn( 'text-xs mt-1 p-2 bg-black/5 dark:bg-white/5 rounded', config.textColor)}>
                 {error.technicalMessage}
               </pre>
             </details>
           )}
 
           {/* Error metadata */}
-          {!compact && error.metadata && Object.keys(error.metadata).length > 0 && (
+          {!compact && error.metadata && Object.keys(_error.metadata).length > 0 && (
             <div className="mt-2 text-xs opacity-70">
               <div className={config.textColor}>
-                Error ID: {error.id} • {error.timestamp.toLocaleTimeString()}
+                Error ID: {error.id} • {error.timestamp.toLocaleTimeString(_)}
               </div>
             </div>
           )}
 
           {/* Actions */}
-          {showActions && (error.actions?.length || error.retryable) && (
+          {showActions && (_error.actions?.length || error.retryable) && (
             <div className="mt-3 flex flex-wrap gap-2">
               {/* Retry button */}
               {error.retryable && onRetry && (
@@ -207,10 +207,10 @@ export function ErrorMessage({
               )}
 
               {/* Custom actions */}
-              {error.actions?.map((action, index) => (
+              {error.actions?.map( (action, index) => (
                 <EnhancedButton
                   key={index}
-                  onClick={() => handleAction(index)}
+                  onClick={(_) => handleAction(_index)}
                   size="sm"
                   variant={action.variant === 'primary' ? 'default' : 'outline'}
                   className={cn(
@@ -269,7 +269,7 @@ export function ErrorToast({
   };
 
   return (
-    <div className={cn(positionClasses[position], 'max-w-md')}>
+    <div className={cn( positionClasses[position], 'max-w-md')}>
       <Card className="bg-white/10 backdrop-blur-md border-white/20 shadow-lg">
         <ErrorMessage
           error={error}
@@ -291,7 +291,7 @@ export function InlineFormError({
   error: AppError;
   className?: string;
 }) {
-  if (error.category !== 'form') return null;
+  if (_error.category !== 'form') return null;
 
   return (
     <motion.div
@@ -299,7 +299,7 @@ export function InlineFormError({
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
       transition={{ duration: 0.2 }}
-      className={cn('overflow-hidden', className)}
+      className={cn( 'overflow-hidden', className)}
     >
       <ErrorMessage
         error={error}
@@ -372,7 +372,7 @@ export function ErrorPage({
           {showBackButton && (
             <div className="mt-6">
               <EnhancedButton
-                onClick={() => window.history.back()}
+                onClick={(_) => window.history.back(_)}
                 variant="outline"
                 className="border-white/20 text-white hover:bg-white/10"
                 touchTarget

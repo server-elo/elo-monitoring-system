@@ -9,9 +9,9 @@ import {
   X, 
   Mail, 
   ArrowLeft, 
-  CheckCircle,
-  Key,
-  Eye,
+  CheckCircle 
+  Key 
+  Eye 
   EyeOff
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/Glassmorphism';
@@ -24,42 +24,42 @@ import { useFormErrorHandler } from '@/lib/hooks/useErrorRecovery';
 
 // Validation schemas
 const emailSchema = z.object({
-  email: z.string().email('Please enter a valid email address')
+  email: z.string().email('Please enter a valid email address') 
 });
 
 const resetSchema = z.object({
-  token: z.string().min(1, 'Reset token is required'),
-  password: z.string()
+  token: z.string().min(1, 'Reset token is required') 
+  password: z.string() 
     .min(8, 'Password must be at least 8 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 
-      'Password must contain uppercase, lowercase, number, and special character'),
-  confirmPassword: z.string()
+    .regex(^(?=.*[a-z])(_?=.*[A-Z])(_?=.*\d)(_?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 
+      'Password must contain uppercase, lowercase, number, and special character') 
+  confirmPassword: z.string() 
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
+  message: "Passwords don't match" 
+  path: ["confirmPassword"] 
 });
 
 type EmailFormData = z.infer<typeof emailSchema>;
 type ResetFormData = z.infer<typeof resetSchema>;
 
 interface PasswordResetModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean; 
+  onClose: (() => void; 
   resetToken?: string;
 }
 
 export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
-  isOpen,
-  onClose,
+  isOpen 
+  onClose 
   resetToken
 }) => {
   const [step, setStep] = useState<'email' | 'sent' | 'reset' | 'success'>(
     resetToken ? 'reset' : 'email'
-  );
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+ );
+  const [showPassword, setShowPassword] = useState(_false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(_false);
   const [email, setEmail] = useState('');
-  const [currentError, setCurrentError] = useState<AppError | null>(null);
+  const [currentError, setCurrentError] = useState<AppError | null>(_null);
 
   // Enhanced error handling
   const { showAuthError } = useError();
@@ -68,28 +68,28 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
 
   // Form setup
   const emailForm = useForm<EmailFormData>({
-    resolver: zodResolver(emailSchema),
-    mode: 'onChange'
+    resolver: zodResolver(_emailSchema) 
+    mode: 'onChange' 
   });
 
   const resetForm = useForm<ResetFormData>({
-    resolver: zodResolver(resetSchema),
-    mode: 'onChange',
-    defaultValues: {
-      token: resetToken || ''
+    resolver: zodResolver(_resetSchema) 
+    mode: 'onChange' 
+    defaultValues: { 
+      token: resetToken || '' 
     }
   });
 
   // Handle email submission for password reset request
   const handleEmailSubmit = async (data: EmailFormData) => {
-    setCurrentError(null);
+    setCurrentError(_null);
     setEmail(data.email);
 
     try {
       const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: data.email }),
+        method: 'POST' 
+        headers: { 'Content-Type': 'application/json' } 
+        body: JSON.stringify({ email: data.email  }) 
       });
 
       const result = await response.json();
@@ -97,23 +97,23 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
       if (!response.ok) {
         if (response.status === 404) {
           const authError = ErrorFactory.createAuthError({
-            message: 'Email not found',
-            authType: 'login',
-            userMessage: 'No account found with this email address. Please check your email or create a new account.'
+            message: 'Email not found' 
+            authType: 'login' 
+            userMessage: 'No account found with this email address. Please check your email or create a new account.' 
           });
-          setCurrentError(authError);
-          showAuthError('login', authError.userMessage);
+          setCurrentError(_authError);
+          showAuthError("'login', authError.userMessage);
           return;
         }
 
         if (response.status === 429) {
           const authError = ErrorFactory.createAuthError({
-            message: 'Too many requests',
-            authType: 'login',
-            userMessage: 'Too many password reset requests. Please wait 15 minutes before trying again.'
+            message: 'Too many requests' 
+            authType: 'login' 
+            userMessage: 'Too many password reset requests. Please wait 15 minutes before trying again.' 
           });
-          setCurrentError(authError);
-          showAuthError('login', authError.userMessage);
+          setCurrentError(_authError);
+          showAuthError("'login', authError.userMessage);
           return;
         }
 
@@ -129,16 +129,16 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
 
   // Handle password reset with token
   const handlePasswordReset = async (data: ResetFormData) => {
-    setCurrentError(null);
+    setCurrentError(_null);
 
     try {
       const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token: data.token,
-          password: data.password
-        }),
+        method: 'POST' 
+        headers: { 'Content-Type': 'application/json' } 
+        body: JSON.stringify({ 
+          token: data.token 
+          password: data.password 
+        }) 
       });
 
       const result = await response.json();
@@ -146,12 +146,12 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
       if (!response.ok) {
         if (response.status === 400) {
           const authError = ErrorFactory.createAuthError({
-            message: 'Invalid or expired token',
-            authType: 'login',
-            userMessage: 'This password reset link is invalid or has expired. Please request a new one.'
+            message: 'Invalid or expired token' 
+            authType: 'login' 
+            userMessage: 'This password reset link is invalid or has expired. Please request a new one.' 
           });
-          setCurrentError(authError);
-          showAuthError('login', authError.userMessage);
+          setCurrentError(_authError);
+          showAuthError("'login', authError.userMessage);
           return;
         }
 
@@ -173,9 +173,9 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
     }
   };
 
-  const handleClose = () => {
-    setStep(resetToken ? 'reset' : 'email');
-    setCurrentError(null);
+  const handleClose = (() => {
+    setStep(_resetToken ? 'reset' : 'email');
+    setCurrentError(_null);
     emailForm.reset();
     resetForm.reset();
     onClose();
@@ -191,7 +191,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-          onClick={(e) => e.target === e.currentTarget && handleClose()}
+          onClick={(_e) => e.target === e.currentTarget && handleClose()}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -199,7 +199,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
             className="w-full max-w-md"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(_e) => e.stopPropagation()}
           >
             <GlassCard className="p-6">
               {/* Header */}
@@ -207,13 +207,13 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                 <div className="flex items-center space-x-3">
                   {step !== 'email' && step !== 'success' && (
                     <button
-                      onClick={() => setStep('email')}
+                      onClick={(() => setStep('email')}
                       className="p-1 text-gray-400 hover:text-white transition-colors"
                       aria-label="Go back"
                     >
                       <ArrowLeft className="w-5 h-5" />
                     </button>
-                  )}
+                 )}
                   <h2 className="text-xl font-semibold text-white">
                     {step === 'email' && 'Reset Password'}
                     {step === 'sent' && 'Check Your Email'}
@@ -235,16 +235,16 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                 <div className="mb-4">
                   <ErrorMessage
                     error={currentError}
-                    onDismiss={() => setCurrentError(null)}
+                    onDismiss={(() => setCurrentError(_null)}
                     compact
                     showActions={false}
                   />
                 </div>
-              )}
+             )}
 
               {/* Step 1: Email Input */}
               {step === 'email' && (
-                <form onSubmit={emailForm.handleSubmit(handleEmailSubmit)} className="space-y-4">
+                <form onSubmit={emailForm.handleSubmit(_handleEmailSubmit)} className="space-y-4">
                   <p className="text-gray-300 text-sm mb-4">
                     Enter your email address and we'll send you a link to reset your password.
                   </p>
@@ -267,15 +267,15 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                     {emailForm.formState.errors.email && (
                       <InlineFormError
                         error={ErrorFactory.createFormError({
-                          message: emailForm.formState.errors.email.message || 'Invalid email',
-                          field: 'email',
-                          validationRule: 'email',
-                          expectedFormat: 'user@example.com',
-                          userMessage: emailForm.formState.errors.email.message || 'Please enter a valid email address'
+                          message: emailForm.formState.errors.email.message || 'Invalid email' 
+                          field: 'email' 
+                          validationRule: 'email' 
+                          expectedFormat: 'user@example.com' 
+                          userMessage: emailForm.formState.errors.email.message || 'Please enter a valid email address' 
                         })}
                         className="mt-1"
                       />
-                    )}
+                   )}
                   </div>
 
                   <AsyncSubmitButton
@@ -287,13 +287,13 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                     touchTarget
                     asyncOptions={{
-                      debounceMs: 500,
-                      successDuration: 2000,
-                      errorDuration: 4000
+                      debounceMs: 500 
+                      successDuration: 2000 
+                      errorDuration: 4000 
                     }}
                   />
                 </form>
-              )}
+             )}
 
               {/* Step 2: Email Sent Confirmation */}
               {step === 'sent' && (
@@ -311,17 +311,17 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                     </p>
                   </div>
                   <button
-                    onClick={() => setStep('email')}
+                    onClick={(() => setStep('email')}
                     className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
                   >
                     Try a different email
                   </button>
                 </div>
-              )}
+             )}
 
               {/* Step 3: Password Reset Form */}
               {step === 'reset' && (
-                <form onSubmit={resetForm.handleSubmit(handlePasswordReset)} className="space-y-4">
+                <form onSubmit={resetForm.handleSubmit(_handlePasswordReset)} className="space-y-4">
                   <p className="text-gray-300 text-sm mb-4">
                     Enter your new password below.
                   </p>
@@ -343,7 +343,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={(() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                       >
@@ -353,15 +353,15 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                     {resetForm.formState.errors.password && (
                       <InlineFormError
                         error={ErrorFactory.createFormError({
-                          message: resetForm.formState.errors.password.message || 'Invalid password',
-                          field: 'password',
-                          validationRule: 'minLength',
-                          expectedFormat: 'At least 8 characters with uppercase, lowercase, number, and special character',
-                          userMessage: resetForm.formState.errors.password.message || 'Password must meet security requirements'
+                          message: resetForm.formState.errors.password.message || 'Invalid password' 
+                          field: 'password' 
+                          validationRule: 'minLength' 
+                          expectedFormat: 'At least 8 characters with uppercase, lowercase, number, and special character' 
+                          userMessage: resetForm.formState.errors.password.message || 'Password must meet security requirements' 
                         })}
                         className="mt-1"
                       />
-                    )}
+                   )}
                   </div>
 
                   {/* Confirm Password */}
@@ -381,7 +381,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={(() => setShowConfirmPassword(!showConfirmPassword)}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                         aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                       >
@@ -391,14 +391,14 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                     {resetForm.formState.errors.confirmPassword && (
                       <InlineFormError
                         error={ErrorFactory.createFormError({
-                          message: resetForm.formState.errors.confirmPassword.message || 'Passwords do not match',
-                          field: 'confirmPassword',
-                          validationRule: 'match',
-                          userMessage: resetForm.formState.errors.confirmPassword.message || 'Please ensure both passwords match'
+                          message: resetForm.formState.errors.confirmPassword.message || 'Passwords do not match' 
+                          field: 'confirmPassword' 
+                          validationRule: 'match' 
+                          userMessage: resetForm.formState.errors.confirmPassword.message || 'Please ensure both passwords match' 
                         })}
                         className="mt-1"
                       />
-                    )}
+                   )}
                   </div>
 
                   <AsyncSubmitButton
@@ -410,13 +410,13 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                     className="w-full bg-green-600 hover:bg-green-700 text-white"
                     touchTarget
                     asyncOptions={{
-                      debounceMs: 500,
-                      successDuration: 2000,
-                      errorDuration: 4000
+                      debounceMs: 500 
+                      successDuration: 2000 
+                      errorDuration: 4000 
                     }}
                   />
                 </form>
-              )}
+             )}
 
               {/* Step 4: Success */}
               {step === 'success' && (
@@ -437,11 +437,11 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                     Continue to Sign In
                   </button>
                 </div>
-              )}
+             )}
             </GlassCard>
           </motion.div>
         </motion.div>
       </AnimatePresence>
     </AuthErrorBoundary>
-  );
+ );
 };

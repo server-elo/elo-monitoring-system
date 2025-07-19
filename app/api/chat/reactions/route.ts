@@ -7,7 +7,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -15,7 +15,7 @@ export async function POST(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { messageId, emoji, sessionId } = await _request.json();
+    const { messageId, emoji, sessionId } = await request.json();
 
     if (!messageId || !emoji || !sessionId) {
       return NextResponse.json({ error: 'Message ID, emoji, and session ID are required' }, { status: 400 });
@@ -76,7 +76,7 @@ export async function POST(_request: NextRequest) {
   }
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -84,7 +84,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(_request.url);
+    const { searchParams } = new URL(request.url);
     const messageId = searchParams.get('messageId');
     const sessionId = searchParams.get('sessionId');
 
@@ -123,7 +123,17 @@ export async function GET(_request: NextRequest) {
     // });
 
     // For now, return empty reactions
-    const reactions: any[] = [];
+    const reactions: Array<{
+      id: string;
+      messageId: string;
+      userId: string;
+      emoji: string;
+      user: {
+        id: string;
+        name: string | null;
+        image: string | null;
+      };
+    }> = [];
 
     return NextResponse.json({ reactions });
   } catch (error) {

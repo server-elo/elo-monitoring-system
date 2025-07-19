@@ -38,7 +38,7 @@ interface AILearningPathProps {
   interests?: string[];
   timeCommitment?: string;
   goals?: string[];
-  onPathSelect?: (path: LearningPath) => void;
+  onPathSelect?: (_path: LearningPath) => void;
   className?: string;
 }
 
@@ -59,17 +59,17 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
   onPathSelect,
   className = ''
 }) => {
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(_false);
   const [learningPaths, setLearningPaths] = useState<LearningPath[]>([]);
-  const [selectedPath, setSelectedPath] = useState<LearningPath | null>(null);
-  const [showCustomization, setShowCustomization] = useState(false);
+  const [selectedPath, setSelectedPath] = useState<LearningPath | null>(_null);
+  const [showCustomization, setShowCustomization] = useState(_false);
 
   useEffect(() => {
-    generateLearningPaths();
+    generateLearningPaths(_);
   }, [userLevel, interests, timeCommitment, goals]);
 
   const generateLearningPaths = async () => {
-    setIsGenerating(true);
+    setIsGenerating(_true);
     
     try {
       // Simulate AI generation
@@ -243,16 +243,16 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
         }
       ];
 
-      setLearningPaths(mockPaths);
-    } catch (error) {
+      setLearningPaths(_mockPaths);
+    } catch (_error) {
       console.error('Failed to generate learning paths:', error);
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(_false);
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
+  const getDifficultyColor = (_difficulty: string) => {
+    switch (_difficulty) {
       case 'beginner': return 'text-green-400 bg-green-400/10';
       case 'intermediate': return 'text-yellow-400 bg-yellow-400/10';
       case 'advanced': return 'text-red-400 bg-red-400/10';
@@ -260,16 +260,16 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
     }
   };
 
-  const getSkillIcon = (skill: string) => {
-    const category = Object.entries(skillCategories).find(([key]) => 
+  const getSkillIcon = (_skill: string) => {
+    const category = Object.entries(_skillCategories).find(([key]) => 
       skill.toLowerCase().includes(key)
     );
     return category ? category[1].icon : Code2;
   };
 
-  const selectPath = (path: LearningPath) => {
-    setSelectedPath(path);
-    onPathSelect?.(path);
+  const selectPath = (_path: LearningPath) => {
+    setSelectedPath(_path);
+    onPathSelect?.(_path);
   };
 
   return (
@@ -286,7 +286,7 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
           </div>
           
           <Button
-            onClick={() => setShowCustomization(!showCustomization)}
+            onClick={(_) => setShowCustomization(!showCustomization)}
             variant="outline"
             className="border-white/30"
           >
@@ -298,7 +298,7 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
         {/* User Profile Summary */}
         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <div className={`text-lg font-semibold ${getDifficultyColor(userLevel).split(' ')[0]}`}>
+            <div className={`text-lg font-semibold ${getDifficultyColor(_userLevel).split(' ')[0]}`}>
               {userLevel.charAt(0).toUpperCase() + userLevel.slice(1)}
             </div>
             <div className="text-xs text-gray-400">Current Level</div>
@@ -349,14 +349,14 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
               className={`cursor-pointer transition-all duration-300 ${
                 selectedPath?.id === path.id ? 'ring-2 ring-purple-400' : ''
               }`}
-              onClick={() => selectPath(path)}
+              onClick={(_) => selectPath(_path)}
             >
               <Card className="p-6 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="text-xl font-bold text-white">{path.title}</h3>
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${getDifficultyColor(path.difficulty)}`}>
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${getDifficultyColor(_path.difficulty)}`}>
                         {path.difficulty}
                       </span>
                     </div>
@@ -375,9 +375,9 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
                   </div>
                   
                   <Button
-                    onClick={(e: React.MouseEvent) => {
-                      e.stopPropagation();
-                      selectPath(path);
+                    onClick={(_e: React.MouseEvent) => {
+                      e.stopPropagation(_);
+                      selectPath(_path);
                     }}
                     className="bg-purple-600 hover:bg-purple-700"
                   >
@@ -390,8 +390,8 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
                 <div className="mb-4">
                   <h4 className="text-sm font-medium text-white mb-2">Skills You'll Learn</h4>
                   <div className="flex flex-wrap gap-2">
-                    {path.skills.slice(0, 6).map((skill, index) => {
-                      const Icon = getSkillIcon(skill);
+                    {path.skills.slice(0, 6).map( (skill, index) => {
+                      const Icon = getSkillIcon(_skill);
                       return (
                         <span
                           key={index}
@@ -414,7 +414,7 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
                 <div className="mb-4">
                   <h4 className="text-sm font-medium text-white mb-2">Career Opportunities</h4>
                   <div className="flex flex-wrap gap-2">
-                    {path.careerPaths.map((career, index) => (
+                    {path.careerPaths.map( (career, index) => (
                       <span
                         key={index}
                         className="flex items-center space-x-1 px-2 py-1 bg-blue-500/20 rounded text-xs text-blue-300"
@@ -430,7 +430,7 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
                 <div>
                   <h4 className="text-sm font-medium text-white mb-2">Learning Modules</h4>
                   <div className="space-y-2">
-                    {path.modules.slice(0, 3).map((module, index) => (
+                    {path.modules.slice(0, 3).map( (module, index) => (
                       <div key={module.id} className="flex items-center space-x-3 text-sm">
                         <div className="flex items-center space-x-2">
                           <div className="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center text-xs text-white">
@@ -467,7 +467,7 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-white">Selected Learning Path</h3>
                 <Button
-                  onClick={() => onPathSelect?.(selectedPath)}
+                  onClick={(_) => onPathSelect?.(_selectedPath)}
                   className="bg-purple-600 hover:bg-purple-700"
                 >
                   <Calendar className="w-4 h-4 mr-2" />
@@ -491,7 +491,7 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Difficulty:</span>
-                      <span className={getDifficultyColor(selectedPath.difficulty).split(' ')[0]}>
+                      <span className={getDifficultyColor(_selectedPath.difficulty).split(' ')[0]}>
                         {selectedPath.difficulty}
                       </span>
                     </div>
@@ -501,7 +501,7 @@ const AILearningPathComponent: React.FC<AILearningPathProps> = ({
                 <div>
                   <h4 className="font-medium text-white mb-2">Module Breakdown</h4>
                   <div className="space-y-2">
-                    {selectedPath.modules.map((module, index) => (
+                    {selectedPath.modules.map( (module, index) => (
                       <div key={module.id} className="flex items-center justify-between text-sm">
                         <div className="flex items-center space-x-2">
                           <div className="w-5 h-5 rounded-full bg-purple-600 flex items-center justify-center text-xs text-white">

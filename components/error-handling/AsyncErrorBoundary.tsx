@@ -11,8 +11,8 @@ import { errorTracker } from '@/lib/monitoring/error-tracking';
 interface AsyncErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
-  onRetry?: () => Promise<void>;
+  onError?: ( error: Error, errorInfo: ErrorInfo) => void;
+  onRetry?: (_) => Promise<void>;
   maxRetries?: number;
   retryDelay?: number;
   showNetworkStatus?: boolean;
@@ -33,8 +33,8 @@ interface AsyncErrorBoundaryState {
 export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, AsyncErrorBoundaryState> {
   private retryTimer: NodeJS.Timeout | null = null;
 
-  constructor(props: AsyncErrorBoundaryProps) {
-    super(props);
+  constructor(_props: AsyncErrorBoundaryProps) {
+    super(_props);
     this.state = {
       hasError: false,
       error: null,
@@ -47,45 +47,45 @@ export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, Async
     };
   }
 
-  componentDidMount() {
+  componentDidMount(_) {
     // Listen for online/offline events
-    if (typeof window !== 'undefined') {
-      window.addEventListener('online', this.handleOnline);
-      window.addEventListener('offline', this.handleOffline);
+    if (_typeof window !== 'undefined') {
+      window.addEventListener( 'online', this.handleOnline);
+      window.addEventListener( 'offline', this.handleOffline);
     }
   }
 
-  componentWillUnmount() {
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('online', this.handleOnline);
-      window.removeEventListener('offline', this.handleOffline);
+  componentWillUnmount(_) {
+    if (_typeof window !== 'undefined') {
+      window.removeEventListener( 'online', this.handleOnline);
+      window.removeEventListener( 'offline', this.handleOffline);
     }
-    if (this.retryTimer) {
-      clearTimeout(this.retryTimer);
+    if (_this.retryTimer) {
+      clearTimeout(_this.retryTimer);
     }
   }
 
-  private handleOnline = () => {
-    this.setState({ isOnline: true });
+  private handleOnline = (_) => {
+    this.setState({ isOnline: true  });
     // Auto-retry if we were offline and have an error
-    if (this.state.hasError && !this.state.isRetrying) {
-      this.handleRetry();
+    if (_this.state.hasError && !this.state.isRetrying) {
+      this.handleRetry(_);
     }
   };
 
-  private handleOffline = () => {
-    this.setState({ isOnline: false });
+  private handleOffline = (_) => {
+    this.setState({ isOnline: false  });
   };
 
-  static getDerivedStateFromError(error: Error): Partial<AsyncErrorBoundaryState> {
+  static getDerivedStateFromError(_error: Error): Partial<AsyncErrorBoundaryState> {
     return {
       hasError: true,
       error,
-      errorId: `async_error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      errorId: `async_error_${Date.now(_)}_${Math.random().toString(36).substr(2, 9)}`
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch( error: Error, errorInfo: ErrorInfo) {
     this.setState({
       error,
       errorInfo
@@ -106,31 +106,31 @@ export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, Async
     });
 
     // Call custom error handler
-    this.props.onError?.(error, errorInfo);
+    this.props.onError?.( error, errorInfo);
   }
 
   private handleRetry = async () => {
     const { maxRetries = 3, retryDelay = 1000, onRetry } = this.props;
     const { retryCount } = this.state;
     
-    if (retryCount >= maxRetries || this.state.isRetrying) {
+    if (_retryCount >= maxRetries || this.state.isRetrying) {
       return;
     }
 
     this.setState({ 
       isRetrying: true,
       retryCount: retryCount + 1,
-      lastRetryTime: Date.now()
+      lastRetryTime: Date.now(_)
     });
 
     // Exponential backoff with jitter
-    const delay = retryDelay * Math.pow(2, retryCount) + Math.random() * 1000;
+    const delay = retryDelay * Math.pow( 2, retryCount) + Math.random() * 1000;
     
     try {
       await new Promise(resolve => setTimeout(resolve, delay));
       
       if (onRetry) {
-        await onRetry();
+        await onRetry(_);
       }
       
       // Reset error state to retry rendering
@@ -140,9 +140,9 @@ export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, Async
         errorInfo: null,
         isRetrying: false
       });
-    } catch (retryError) {
+    } catch (_retryError) {
       console.error('Retry failed:', retryError);
-      this.setState({ isRetrying: false });
+      this.setState({ isRetrying: false  });
       
       // Track retry failure
       errorTracker.captureError(retryError as Error, {
@@ -157,7 +157,7 @@ export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, Async
     }
   };
 
-  private handleReset = () => {
+  private handleReset = (_) => {
     this.setState({
       hasError: false,
       error: null,
@@ -169,7 +169,7 @@ export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, Async
     });
   };
 
-  private getErrorMessage = () => {
+  private getErrorMessage = (_) => {
     const { operationType } = this.props;
     const { error, isOnline } = this.state;
     
@@ -182,7 +182,7 @@ export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, Async
       };
     }
     
-    switch (operationType) {
+    switch (_operationType) {
       case 'api':
         return {
           title: 'API Request Failed',
@@ -228,15 +228,15 @@ export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, Async
     }
   };
 
-  render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
+  render(_) {
+    if (_this.state.hasError) {
+      if (_this.props.fallback) {
         return this.props.fallback;
       }
 
       const { maxRetries = 3 } = this.props;
       const { retryCount, isRetrying, isOnline } = this.state;
-      const errorMessage = this.getErrorMessage();
+      const errorMessage = this.getErrorMessage(_);
       const Icon = errorMessage.icon;
 
       return (
@@ -313,7 +313,7 @@ export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, Async
 }
 
 // Convenience wrapper components for specific use cases
-export function ApiErrorBoundary({ children, onRetry }: { children: ReactNode; onRetry?: () => Promise<void> }) {
+export function ApiErrorBoundary( { children, onRetry }: { children: ReactNode; onRetry?: () => Promise<void> }) {
   return (
     <AsyncErrorBoundary operationType="api" onRetry={onRetry} maxRetries={3}>
       {children}
@@ -321,7 +321,7 @@ export function ApiErrorBoundary({ children, onRetry }: { children: ReactNode; o
   );
 }
 
-export function UploadErrorBoundary({ children, onRetry }: { children: ReactNode; onRetry?: () => Promise<void> }) {
+export function UploadErrorBoundary( { children, onRetry }: { children: ReactNode; onRetry?: () => Promise<void> }) {
   return (
     <AsyncErrorBoundary operationType="upload" onRetry={onRetry} maxRetries={2}>
       {children}
@@ -329,7 +329,7 @@ export function UploadErrorBoundary({ children, onRetry }: { children: ReactNode
   );
 }
 
-export function AuthErrorBoundary({ children, onRetry }: { children: ReactNode; onRetry?: () => Promise<void> }) {
+export function AuthErrorBoundary( { children, onRetry }: { children: ReactNode; onRetry?: () => Promise<void> }) {
   return (
     <AsyncErrorBoundary operationType="authentication" onRetry={onRetry} maxRetries={1}>
       {children}

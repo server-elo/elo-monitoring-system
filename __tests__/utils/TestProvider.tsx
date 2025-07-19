@@ -16,11 +16,11 @@ const mockSession = {
     email: 'test@example.com',
     image: null
   },
-  expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
+  expires: new Date(_Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
 };
 
 // Create a test query client with disabled retries and cache
-const createTestQueryClient = () => new QueryClient({
+const createTestQueryClient = (_) => new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
@@ -41,7 +41,7 @@ interface TestProviderProps {
 export function TestProvider({ 
   children, 
   session = mockSession, 
-  queryClient = createTestQueryClient() 
+  queryClient = createTestQueryClient(_) 
 }: TestProviderProps) {
   return (
     <SessionProvider session={session}>
@@ -53,8 +53,8 @@ export function TestProvider({
 }
 
 // Helper to create a test provider with custom options
-export function createTestProvider(options: Partial<TestProviderProps> = {}) {
-  return function TestProviderWrapper({ children }: { children: React.ReactNode }) {
+export function createTestProvider(_options: Partial<TestProviderProps> = {}) {
+  return function TestProviderWrapper(_{ children }: { children: React.ReactNode }) {
     return (
       <TestProvider {...options}>
         {children}
@@ -64,7 +64,7 @@ export function createTestProvider(options: Partial<TestProviderProps> = {}) {
 }
 
 // Mock authenticated session provider
-export function AuthenticatedProvider({ children }: { children: React.ReactNode }) {
+export function AuthenticatedProvider(_{ children }: { children: React.ReactNode }) {
   return (
     <TestProvider session={mockSession}>
       {children}
@@ -73,7 +73,7 @@ export function AuthenticatedProvider({ children }: { children: React.ReactNode 
 }
 
 // Mock unauthenticated session provider
-export function UnauthenticatedProvider({ children }: { children: React.ReactNode }) {
+export function UnauthenticatedProvider(_{ children }: { children: React.ReactNode }) {
   return (
     <TestProvider session={null}>
       {children}
@@ -82,7 +82,7 @@ export function UnauthenticatedProvider({ children }: { children: React.ReactNod
 }
 
 // Mock admin session provider
-export function AdminProvider({ children }: { children: React.ReactNode }) {
+export function AdminProvider(_{ children }: { children: React.ReactNode }) {
   const adminSession = {
     ...mockSession,
     user: {
@@ -102,17 +102,17 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 export const testUtils = {
   mockSession,
   
-  createMockSession: (overrides = {}) => ({
+  createMockSession: (_overrides = {}) => ({
     ...mockSession,
     ...overrides
   }),
   
-  createExpiredSession: () => ({
+  createExpiredSession: (_) => ({
     ...mockSession,
-    expires: new Date(Date.now() - 1000).toISOString() // Expired 1 second ago
+    expires: new Date(_Date.now() - 1000).toISOString() // Expired 1 second ago
   }),
   
-  createAdminSession: () => ({
+  createAdminSession: (_) => ({
     ...mockSession,
     user: {
       ...mockSession.user,

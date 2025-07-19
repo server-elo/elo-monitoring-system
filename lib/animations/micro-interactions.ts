@@ -11,12 +11,12 @@ import { Variants } from 'framer-motion';
 export const buttonVariants: Variants = {
   idle: {
     scale: 1,
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    boxShadow: '0 4px 6px -1px rgba( 0, 0, 0, 0.1), 0 2px 4px -1px rgba( 0, 0, 0, 0.06)',
     transition: { duration: 0.2, ease: 'easeOut' }
   },
   hover: {
     scale: 1.02,
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    boxShadow: '0 10px 15px -3px rgba( 0, 0, 0, 0.1), 0 4px 6px -2px rgba( 0, 0, 0, 0.05)',
     transition: { duration: 0.2, ease: 'easeOut' }
   },
   tap: {
@@ -34,14 +34,14 @@ export const cardVariants: Variants = {
   idle: {
     scale: 1,
     rotateY: 0,
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 6px -1px rgba( 0, 0, 0, 0.1)',
     backdropFilter: 'blur(10px)',
     transition: { duration: 0.3, ease: 'easeOut' }
   },
   hover: {
     scale: 1.03,
     rotateY: 2,
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    boxShadow: '0 20px 25px -5px rgba( 0, 0, 0, 0.1), 0 10px 10px -5px rgba( 0, 0, 0, 0.04)',
     backdropFilter: 'blur(15px)',
     transition: { duration: 0.3, ease: 'easeOut' }
   },
@@ -134,23 +134,23 @@ export const notificationVariants: Variants = {
 // Form field focus animations
 export const inputVariants: Variants = {
   idle: {
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    boxShadow: '0 0 0 0 rgba(59, 130, 246, 0)',
+    borderColor: 'rgba( 255, 255, 255, 0.2)',
+    boxShadow: '0 0 0 0 rgba( 59, 130, 246, 0)',
     transition: { duration: 0.2 }
   },
   focus: {
-    borderColor: 'rgba(59, 130, 246, 0.5)',
-    boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+    borderColor: 'rgba( 59, 130, 246, 0.5)',
+    boxShadow: '0 0 0 3px rgba( 59, 130, 246, 0.1)',
     transition: { duration: 0.2 }
   },
   error: {
-    borderColor: 'rgba(239, 68, 68, 0.5)',
-    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
+    borderColor: 'rgba( 239, 68, 68, 0.5)',
+    boxShadow: '0 0 0 3px rgba( 239, 68, 68, 0.1)',
     transition: { duration: 0.2 }
   },
   success: {
-    borderColor: 'rgba(34, 197, 94, 0.5)',
-    boxShadow: '0 0 0 3px rgba(34, 197, 94, 0.1)',
+    borderColor: 'rgba( 34, 197, 94, 0.5)',
+    boxShadow: '0 0 0 3px rgba( 34, 197, 94, 0.1)',
     transition: { duration: 0.2 }
   }
 };
@@ -212,12 +212,12 @@ export const fabVariants: Variants = {
   idle: {
     scale: 1,
     rotate: 0,
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+    boxShadow: '0 4px 12px rgba( 0, 0, 0, 0.15)'
   },
   hover: {
     scale: 1.1,
     rotate: 5,
-    boxShadow: '0 8px 25px rgba(0, 0, 0, 0.2)',
+    boxShadow: '0 8px 25px rgba( 0, 0, 0, 0.2)',
     transition: { duration: 0.2 }
   },
   tap: {
@@ -285,22 +285,22 @@ export const backdropVariants: Variants = {
 // Code editor animations
 export const codeEditorVariants: Variants = {
   idle: {
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    boxShadow: '0 0 0 0 rgba(59, 130, 246, 0)'
+    borderColor: 'rgba( 255, 255, 255, 0.1)',
+    boxShadow: '0 0 0 0 rgba( 59, 130, 246, 0)'
   },
   focus: {
-    borderColor: 'rgba(59, 130, 246, 0.3)',
-    boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.1)',
+    borderColor: 'rgba( 59, 130, 246, 0.3)',
+    boxShadow: '0 0 0 2px rgba( 59, 130, 246, 0.1)',
     transition: { duration: 0.3 }
   },
   success: {
-    borderColor: 'rgba(34, 197, 94, 0.3)',
-    boxShadow: '0 0 0 2px rgba(34, 197, 94, 0.1)',
+    borderColor: 'rgba( 34, 197, 94, 0.3)',
+    boxShadow: '0 0 0 2px rgba( 34, 197, 94, 0.1)',
     transition: { duration: 0.3 }
   },
   error: {
-    borderColor: 'rgba(239, 68, 68, 0.3)',
-    boxShadow: '0 0 0 2px rgba(239, 68, 68, 0.1)',
+    borderColor: 'rgba( 239, 68, 68, 0.3)',
+    boxShadow: '0 0 0 2px rgba( 239, 68, 68, 0.1)',
     transition: { duration: 0.3 }
   }
 };
@@ -358,9 +358,9 @@ export const attentionVariants: Variants = {
   },
   glow: {
     boxShadow: [
-      '0 0 5px rgba(59, 130, 246, 0.3)',
-      '0 0 20px rgba(59, 130, 246, 0.6)',
-      '0 0 5px rgba(59, 130, 246, 0.3)'
+      '0 0 5px rgba( 59, 130, 246, 0.3)',
+      '0 0 20px rgba( 59, 130, 246, 0.6)',
+      '0 0 5px rgba( 59, 130, 246, 0.3)'
     ],
     transition: {
       duration: 2,
@@ -371,7 +371,7 @@ export const attentionVariants: Variants = {
 };
 
 // Utility function to create custom spring transitions
-export const createSpringTransition = (stiffness = 300, damping = 30, mass = 1) => ({
+export const createSpringTransition = ( stiffness = 300, damping = 30, mass = 1) => ({
   type: 'spring' as const,
   stiffness,
   damping,
@@ -379,7 +379,7 @@ export const createSpringTransition = (stiffness = 300, damping = 30, mass = 1) 
 });
 
 // Utility function for eased transitions
-export const createEaseTransition = (duration = 0.3, ease = 'easeOut') => ({
+export const createEaseTransition = ( duration = 0.3, ease = 'easeOut') => ({
   duration,
   ease
 });

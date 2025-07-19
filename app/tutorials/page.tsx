@@ -101,8 +101,8 @@ export default function TutorialsPage() {
     }
   ];
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
+  const getDifficultyColor = (_difficulty: string) => {
+    switch (_difficulty) {
       case 'Beginner': return 'text-green-400 bg-green-400/10';
       case 'Intermediate': return 'text-yellow-400 bg-yellow-400/10';
       case 'Advanced': return 'text-red-400 bg-red-400/10';
@@ -153,7 +153,7 @@ export default function TutorialsPage() {
             className="mb-12"
           >
             <div className="flex flex-wrap gap-2 justify-center">
-              {tutorialCategories.map((category, index) => (
+              {tutorialCategories.map( (category, index) => (
                 <motion.button
                   key={category.name}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
@@ -167,7 +167,7 @@ export default function TutorialsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 + index * 0.05 }}
                 >
-                  {category.name} ({category.count})
+                  {category.name} ({ category.count })
                 </motion.button>
               ))}
             </div>
@@ -182,7 +182,7 @@ export default function TutorialsPage() {
           >
             <h2 className="text-2xl font-bold text-white mb-6">Quick Start</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {quickStartTutorials.map((tutorial, index) => (
+              {quickStartTutorials.map( (tutorial, index) => (
                 <motion.a
                   key={tutorial.title}
                   href={tutorial.href}
@@ -216,7 +216,7 @@ export default function TutorialsPage() {
           >
             <h2 className="text-2xl font-bold text-white mb-8">Featured Tutorials</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {featuredTutorials.map((tutorial, index) => (
+              {featuredTutorials.map( (tutorial, index) => (
                 <motion.a
                   key={tutorial.id}
                   href={tutorial.href}
@@ -235,7 +235,7 @@ export default function TutorialsPage() {
                   {/* Content */}
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-3">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(tutorial.difficulty)}`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(_tutorial.difficulty)}`}>
                         {tutorial.difficulty}
                       </span>
                       <div className="flex items-center space-x-4 text-sm text-gray-400">

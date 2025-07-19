@@ -17,7 +17,7 @@ interface HelpArticle {
 
 interface HelpSystemProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   initialQuery?: string;
   context?: string;
 }
@@ -28,10 +28,10 @@ export const HelpSystem: React.FC<HelpSystemProps> = ({
   initialQuery = '',
   context: _context,
 }) => {
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [searchQuery, setSearchQuery] = useState(_initialQuery);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [filteredArticles, setFilteredArticles] = useState<HelpArticle[]>([]);
-  const [selectedArticle, setSelectedArticle] = useState<HelpArticle | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<HelpArticle | null>(_null);
 
   const categories = [
     { id: 'all', name: 'All Topics', icon: '📚' },
@@ -184,17 +184,17 @@ Learn how to get the best performance from the platform.
   ];
 
   useEffect(() => {
-    filterArticles();
+    filterArticles(_);
   }, [searchQuery, selectedCategory]);
 
-  const filterArticles = () => {
+  const filterArticles = (_) => {
     let filtered = helpArticles;
 
-    if (selectedCategory !== 'all') {
+    if (_selectedCategory !== 'all') {
       filtered = filtered.filter(article => article.category === selectedCategory);
     }
 
-    if (searchQuery.trim()) {
+    if (_searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(article =>
         article.title.toLowerCase().includes(query) ||
@@ -203,15 +203,15 @@ Learn how to get the best performance from the platform.
       );
     }
 
-    setFilteredArticles(filtered);
+    setFilteredArticles(_filtered);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Escape') {
+  const handleKeyDown = (_event: React.KeyboardEvent) => {
+    if (_event.key === 'Escape') {
       if (selectedArticle) {
-        setSelectedArticle(null);
+        setSelectedArticle(_null);
       } else {
-        onClose();
+        onClose(_);
       }
     }
   };
@@ -263,7 +263,7 @@ Learn how to get the best performance from the platform.
                   type="text"
                   placeholder="Search help articles..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(_e) => setSearchQuery(_e.target.value)}
                   className="w-full pl-10 pr-4 py-3 glass border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Search help articles"
                 />
@@ -277,7 +277,7 @@ Learn how to get the best performance from the platform.
                 {categories.map((category) => (
                   <button
                     key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
+                    onClick={(_) => setSelectedCategory(_category.id)}
                     className={cn(
                       'w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors',
                       selectedCategory === category.id
@@ -294,13 +294,13 @@ Learn how to get the best performance from the platform.
               {/* Articles List */}
               <div className="mt-8">
                 <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">
-                  Articles ({filteredArticles.length})
+                  Articles ({ filteredArticles.length })
                 </h3>
                 <div className="space-y-2">
                   {filteredArticles.map((article) => (
                     <button
                       key={article.id}
-                      onClick={() => setSelectedArticle(article)}
+                      onClick={(_) => setSelectedArticle(_article)}
                       className={cn(
                         'w-full text-left p-3 rounded-lg transition-colors',
                         selectedArticle?.id === article.id
@@ -351,7 +351,7 @@ Learn how to get the best performance from the platform.
                   <div 
                     className="text-gray-300 leading-relaxed whitespace-pre-line"
                     dangerouslySetInnerHTML={{ 
-                      __html: selectedArticle.content.replace(/\n/g, '<br />') 
+                       html: selectedArticle.content.replace(/\n/g, '<br />') 
                     }}
                   />
                 </div>

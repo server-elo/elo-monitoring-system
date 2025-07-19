@@ -36,7 +36,7 @@ interface AnalysisResult {
 
 interface AICodeAnalyzerProps {
   code: string;
-  onAnalysisComplete?: (result: AnalysisResult) => void;
+  onAnalysisComplete?: (_result: AnalysisResult) => void;
   autoAnalyze?: boolean;
   className?: string;
 }
@@ -47,20 +47,20 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
   autoAnalyze = false,
   className = ''
 }) => {
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(_false);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(_null);
   const [activeTab, setActiveTab] = useState<'security' | 'gas' | 'quality' | 'complexity'>('security');
 
   useEffect(() => {
     if (autoAnalyze && code.trim()) {
-      analyzeCode();
+      analyzeCode(_);
     }
   }, [code, autoAnalyze]);
 
   const analyzeCode = async () => {
     if (!code.trim()) return;
 
-    setIsAnalyzing(true);
+    setIsAnalyzing(_true);
     
     try {
       // Simulate AI analysis with realistic results
@@ -93,7 +93,7 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
             message: 'Function visibility should be explicitly declared',
             description: 'Function visibility not explicitly declared',
             line: 12,
-            suggestion: 'Explicitly declare function visibility (public, private, internal, external)'
+            suggestion: 'Explicitly declare function visibility ( public, private, internal, external)'
           }
         ],
         gasOptimizations: [
@@ -150,17 +150,17 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
         estimatedGasCost: 245678
       };
 
-      setAnalysisResult(mockResult);
-      onAnalysisComplete?.(mockResult);
-    } catch (error) {
+      setAnalysisResult(_mockResult);
+      onAnalysisComplete?.(_mockResult);
+    } catch (_error) {
       console.error('Analysis failed:', error);
     } finally {
-      setIsAnalyzing(false);
+      setIsAnalyzing(_false);
     }
   };
 
-  const getSeverityColor = (severity: SecurityIssue['severity']) => {
-    switch (severity) {
+  const getSeverityColor = (_severity: SecurityIssue['severity']) => {
+    switch (_severity) {
       case 'critical': return 'text-red-500 bg-red-500/10';
       case 'high': return 'text-orange-500 bg-orange-500/10';
       case 'medium': return 'text-yellow-500 bg-yellow-500/10';
@@ -169,9 +169,9 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
     }
   };
 
-  const getQualityColor = (score: number) => {
-    if (score >= 80) return 'text-green-500';
-    if (score >= 60) return 'text-yellow-500';
+  const getQualityColor = (_score: number) => {
+    if (_score >= 80) return 'text-green-500';
+    if (_score >= 60) return 'text-yellow-500';
     return 'text-red-500';
   };
 
@@ -194,7 +194,7 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
           
           <Button
             onClick={analyzeCode}
-            disabled={isAnalyzing || !code.trim()}
+            disabled={isAnalyzing || !code.trim(_)}
             className="bg-purple-600 hover:bg-purple-700"
           >
             {isAnalyzing ? (
@@ -227,13 +227,13 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
               
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-400">
-                  {analysisResult.gasOptimizations.reduce((sum, opt) => sum + (opt.savings || 0), 0)}
+                  {analysisResult.gasOptimizations.reduce( (sum, opt) => sum + (_opt.savings || 0), 0)}
                 </div>
                 <div className="text-sm text-gray-400">Gas Savings</div>
               </div>
               
               <div className="text-center">
-                <div className={`text-2xl font-bold ${getQualityColor(analysisResult.codeQuality.score)}`}>
+                <div className={`text-2xl font-bold ${getQualityColor(_analysisResult.codeQuality.score)}`}>
                   {analysisResult.codeQuality.score}%
                 </div>
                 <div className="text-sm text-gray-400">Quality Score</div>
@@ -253,7 +253,7 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={(_) => setActiveTab(_tab.id)}
                 className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 transition-colors ${
                   activeTab === tab.id
                     ? 'bg-white/10 text-white border-b-2 border-purple-400'
@@ -277,14 +277,14 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
                   exit={{ opacity: 0, y: -20 }}
                   className="space-y-3"
                 >
-                  {analysisResult.securityIssues.map((issue, index) => (
+                  {analysisResult.securityIssues.map( (issue, index) => (
                     <div
                       key={index}
                       className="p-3 rounded-lg bg-white/5 border border-white/10"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${getSeverityColor(issue.severity)}`}>
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${getSeverityColor(_issue.severity)}`}>
                             {issue.severity.toUpperCase()}
                           </span>
                           <span className="font-medium text-white">{issue.type}</span>
@@ -314,11 +314,11 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
                       <span className="font-medium text-green-400">Total Potential Savings</span>
                     </div>
                     <div className="text-2xl font-bold text-green-400">
-                      {analysisResult.gasOptimizations.reduce((sum, opt) => sum + (opt.savings || 0), 0)} gas
+                      {analysisResult.gasOptimizations.reduce( (sum, opt) => sum + (_opt.savings || 0), 0)} gas
                     </div>
                   </div>
 
-                  {analysisResult.gasOptimizations.map((optimization, index) => (
+                  {analysisResult.gasOptimizations.map( (optimization, index) => (
                     <div
                       key={index}
                       className="p-3 rounded-lg bg-white/5 border border-white/10"
@@ -354,15 +354,15 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
                   className="space-y-4"
                 >
                   <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(analysisResult.codeQuality).map(([key, value]) => {
-                      if (key === 'score') return null;
+                    {Object.entries(_analysisResult.codeQuality).map( ([key, value]) => {
+                      if (_key === 'score') return null;
                       return (
                         <div key={key} className="p-3 rounded-lg bg-white/5 border border-white/10">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-sm font-medium text-white capitalize">
                               {key}
                             </span>
-                            <span className={`text-lg font-bold ${getQualityColor(value)}`}>
+                            <span className={`text-lg font-bold ${getQualityColor(_value)}`}>
                               {value}%
                             </span>
                           </div>
@@ -382,7 +382,7 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
 
                   <div className="space-y-2">
                     <h4 className="font-medium text-white">Suggestions for Improvement</h4>
-                    {analysisResult.suggestions.map((suggestion, index) => (
+                    {analysisResult.suggestions.map( (suggestion, index) => (
                       <div key={index} className="flex items-start space-x-2 text-sm text-gray-300">
                         <CheckCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
                         <span>{suggestion}</span>
@@ -449,7 +449,7 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
                         <span className="font-medium text-white">Halstead Effort</span>
                       </div>
                       <div className="text-2xl font-bold text-orange-400">
-                        {analysisResult.complexity.halstead.effort.toLocaleString()}
+                        {analysisResult.complexity.halstead.effort.toLocaleString(_)}
                       </div>
                       <p className="text-xs text-gray-400 mt-1">Mental effort required</p>
                     </div>
@@ -483,7 +483,7 @@ export const AICodeAnalyzer: React.FC<AICodeAnalyzerProps> = ({
             </p>
             <Button
               onClick={analyzeCode}
-              disabled={!code.trim()}
+              disabled={!code.trim(_)}
               className="bg-purple-600 hover:bg-purple-700"
             >
               <Target className="w-4 h-4 mr-2" />

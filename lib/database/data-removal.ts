@@ -11,34 +11,34 @@ import { cache } from '@/lib/api/cache';
 
 // Mock database and file system interfaces
 interface DatabaseConnection {
-  query<T>(sql: string, params?: any[]): Promise<T[]>;
-  execute(sql: string, params?: any[]): Promise<{ affectedRows: number }>;
+  query<T>( sql: string, params?: any[]): Promise<T[]>;
+  execute( sql: string, params?: any[]): Promise<{ affectedRows: number }>;
 }
 
 interface FileSystem {
-  listFiles(directory: string): Promise<string[]>;
-  deleteFile(path: string): Promise<boolean>;
-  getFileStats(path: string): Promise<{ size: number; created: Date; modified: Date }>;
+  listFiles(_directory: string): Promise<string[]>;
+  deleteFile(_path: string): Promise<boolean>;
+  getFileStats(_path: string): Promise<{ size: number; created: Date; modified: Date }>;
 }
 
 // Mock implementations
 const db: DatabaseConnection = {
-  async query<T>(sql: string, _params?: any[]): Promise<T[]> {
+  async query<T>( sql: string, _params?: any[]): Promise<T[]> {
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    if (sql.includes('refresh_tokens')) {
+    if (_sql.includes('refresh_tokens')) {
       return [
-        { id: 'token_1', user_id: 'user_1', expires_at: '2023-12-01T00:00:00Z' },
+        { id: 'token1', user_id: 'user1', expires_at: '2023-12-01T00:00:00Z' },
         { id: 'token_2', user_id: 'user_2', expires_at: '2023-11-15T00:00:00Z' }
       ] as T[];
-    } else if (sql.includes('api_logs')) {
+    } else if (_sql.includes('api_logs')) {
       return [
-        { id: 'log_1', created_at: '2023-01-01T00:00:00Z', level: 'INFO' },
+        { id: 'log1', created_at: '2023-01-01T00:00:00Z', level: 'INFO' },
         { id: 'log_2', created_at: '2023-02-01T00:00:00Z', level: 'ERROR' }
       ] as T[];
-    } else if (sql.includes('users') && sql.includes('SUSPENDED')) {
+    } else if (_sql.includes('users') && sql.includes('SUSPENDED')) {
       return [
-        { id: 'user_1', email: 'inactive1@example.com', status: 'SUSPENDED', last_login_at: '2023-06-01T00:00:00Z' },
+        { id: 'user1', email: 'inactive1@example.com', status: 'SUSPENDED', last_login_at: '2023-06-01T00:00:00Z' },
         { id: 'user_2', email: 'inactive2@example.com', status: 'SUSPENDED', last_login_at: '2023-05-01T00:00:00Z' }
       ] as T[];
     }
@@ -46,36 +46,36 @@ const db: DatabaseConnection = {
     return [] as T[];
   },
 
-  async execute(sql: string, _params?: any[]): Promise<{ affectedRows: number }> {
+  async execute( sql: string, _params?: any[]): Promise<{ affectedRows: number }> {
     await new Promise(resolve => setTimeout(resolve, 50));
-    return { affectedRows: Math.floor(Math.random() * 10) + 1 };
+    return { affectedRows: Math.floor(_Math.random() * 10) + 1 };
   }
 };
 
 const fs: FileSystem = {
-  async listFiles(directory: string): Promise<string[]> {
+  async listFiles(_directory: string): Promise<string[]> {
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    if (directory.includes('temp')) {
-      return ['temp_file_1.tmp', 'temp_file_2.tmp', 'old_upload.jpg'];
-    } else if (directory.includes('uploads')) {
-      return ['orphaned_upload_1.pdf', 'orphaned_upload_2.png'];
+    if (_directory.includes('temp')) {
+      return ['temp_file1.tmp', 'temp_file_2.tmp', 'old_upload.jpg'];
+    } else if (_directory.includes('uploads')) {
+      return ['orphaned_upload1.pdf', 'orphaned_upload_2.png'];
     }
     
     return [];
   },
 
-  async deleteFile(path: string): Promise<boolean> {
+  async deleteFile(_path: string): Promise<boolean> {
     await new Promise(resolve => setTimeout(resolve, 50));
     return true;
   },
 
-  async getFileStats(path: string): Promise<{ size: number; created: Date; modified: Date }> {
+  async getFileStats(_path: string): Promise<{ size: number; created: Date; modified: Date }> {
     await new Promise(resolve => setTimeout(resolve, 30));
     return {
-      size: Math.floor(Math.random() * 1000000) + 1000,
-      created: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
-      modified: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
+      size: Math.floor(_Math.random() * 1000000) + 1000,
+      created: new Date(_Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
+      modified: new Date(_Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
     };
   }
 };
@@ -91,15 +91,15 @@ class ExpiredTokensCleanup implements CleanupOperation {
   requiresBackup = false;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting expired tokens cleanup', {
+      logger.info('Starting expired tokens cleanup', { metadata: {
         dryRun: options.dryRun,
         batchSize: options.batchSize
       });
@@ -112,24 +112,24 @@ class ExpiredTokensCleanup implements CleanupOperation {
       }>(`
         SELECT id, user_id, expires_at
         FROM refresh_tokens
-        WHERE expires_at < NOW()
+        WHERE expires_at < NOW(_)
         LIMIT ?
       `, [options.batchSize]);
 
       itemsProcessed += expiredTokens.length;
 
-      if (expiredTokens.length > 0) {
+      if (_expiredTokens.length > 0) {
         if (!options.dryRun) {
           const tokenIds = expiredTokens.map(t => t.id);
           const result = await db.execute(`
             DELETE FROM refresh_tokens 
-            WHERE id IN (${tokenIds.map(() => '?').join(',')})
+            WHERE id IN (_${tokenIds.map(() => '?').join(',')})
           `, tokenIds);
           
           itemsAffected += result.affectedRows;
         } else {
           itemsAffected += expiredTokens.length;
-        }
+        }});
       }
 
       // Clean up expired user sessions
@@ -140,18 +140,18 @@ class ExpiredTokensCleanup implements CleanupOperation {
       }>(`
         SELECT id, user_id, expires_at
         FROM user_sessions
-        WHERE expires_at < NOW()
+        WHERE expires_at < NOW(_)
         LIMIT ?
       `, [options.batchSize]);
 
       itemsProcessed += expiredSessions.length;
 
-      if (expiredSessions.length > 0) {
+      if (_expiredSessions.length > 0) {
         if (!options.dryRun) {
           const sessionIds = expiredSessions.map(s => s.id);
           const result = await db.execute(`
             DELETE FROM user_sessions 
-            WHERE id IN (${sessionIds.map(() => '?').join(',')})
+            WHERE id IN (_${sessionIds.map(() => '?').join(',')})
           `, sessionIds);
           
           itemsAffected += result.affectedRows;
@@ -168,18 +168,18 @@ class ExpiredTokensCleanup implements CleanupOperation {
       }>(`
         SELECT id, email, expires_at
         FROM password_reset_tokens
-        WHERE expires_at < NOW()
+        WHERE expires_at < NOW(_)
         LIMIT ?
       `, [options.batchSize]);
 
       itemsProcessed += expiredResetTokens.length;
 
-      if (expiredResetTokens.length > 0) {
+      if (_expiredResetTokens.length > 0) {
         if (!options.dryRun) {
           const resetIds = expiredResetTokens.map(r => r.id);
           const result = await db.execute(`
             DELETE FROM password_reset_tokens 
-            WHERE id IN (${resetIds.map(() => '?').join(',')})
+            WHERE id IN (_${resetIds.map(() => '?').join(',')})
           `, resetIds);
           
           itemsAffected += result.affectedRows;
@@ -193,7 +193,7 @@ class ExpiredTokensCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -203,15 +203,15 @@ class ExpiredTokensCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -231,21 +231,21 @@ class OldLogsCleanup implements CleanupOperation {
   requiresBackup = true;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting old logs cleanup', {
+      logger.info('Starting old logs cleanup', { metadata: {
         dryRun: options.dryRun,
         batchSize: options.batchSize
       });
 
-      const retentionDate = new Date();
-      retentionDate.setFullYear(retentionDate.getFullYear() - 1);
+      const retentionDate = new Date(_);
+      retentionDate.setFullYear(_retentionDate.getFullYear() - 1);
 
       // Clean up old API logs
       const oldApiLogs = await db.query<{
@@ -262,25 +262,25 @@ class OldLogsCleanup implements CleanupOperation {
 
       itemsProcessed += oldApiLogs.length;
 
-      if (oldApiLogs.length > 0) {
-        warnings.push(`Found ${oldApiLogs.length} API logs older than retention period`);
+      if (_oldApiLogs.length > 0) {
+        warnings.push(_`Found ${oldApiLogs.length} API logs older than retention period`);
         
         if (!options.dryRun) {
           const logIds = oldApiLogs.map(l => l.id);
           const result = await db.execute(`
             DELETE FROM api_logs 
-            WHERE id IN (${logIds.map(() => '?').join(',')})
+            WHERE id IN (_${logIds.map(() => '?').join(',')})
           `, logIds);
           
           itemsAffected += result.affectedRows;
         } else {
           itemsAffected += oldApiLogs.length;
-        }
+        }});
       }
 
-      // Clean up old audit logs (keep for longer - 2 years)
-      const auditRetentionDate = new Date();
-      auditRetentionDate.setFullYear(auditRetentionDate.getFullYear() - 2);
+      // Clean up old audit logs (_keep for longer - 2 years)
+      const auditRetentionDate = new Date(_);
+      auditRetentionDate.setFullYear(_auditRetentionDate.getFullYear() - 2);
 
       const oldAuditLogs = await db.query<{
         id: string;
@@ -296,14 +296,14 @@ class OldLogsCleanup implements CleanupOperation {
 
       itemsProcessed += oldAuditLogs.length;
 
-      if (oldAuditLogs.length > 0) {
-        warnings.push(`Found ${oldAuditLogs.length} audit logs older than retention period`);
+      if (_oldAuditLogs.length > 0) {
+        warnings.push(_`Found ${oldAuditLogs.length} audit logs older than retention period`);
         
         if (!options.dryRun) {
           const auditIds = oldAuditLogs.map(l => l.id);
           const result = await db.execute(`
             DELETE FROM audit_logs 
-            WHERE id IN (${auditIds.map(() => '?').join(',')})
+            WHERE id IN (_${auditIds.map(() => '?').join(',')})
           `, auditIds);
           
           itemsAffected += result.affectedRows;
@@ -327,12 +327,12 @@ class OldLogsCleanup implements CleanupOperation {
 
       itemsProcessed += oldErrorLogs.length;
 
-      if (oldErrorLogs.length > 0) {
+      if (_oldErrorLogs.length > 0) {
         if (!options.dryRun) {
           const errorIds = oldErrorLogs.map(l => l.id);
           const result = await db.execute(`
             DELETE FROM error_logs 
-            WHERE id IN (${errorIds.map(() => '?').join(',')})
+            WHERE id IN (_${errorIds.map(() => '?').join(',')})
           `, errorIds);
           
           itemsAffected += result.affectedRows;
@@ -346,7 +346,7 @@ class OldLogsCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -357,15 +357,15 @@ class OldLogsCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -385,23 +385,23 @@ class CachedDataCleanup implements CleanupOperation {
   requiresBackup = false;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting cached data cleanup', {
+      logger.info('Starting cached data cleanup', { metadata: {
         dryRun: options.dryRun
       });
 
       if (!options.dryRun) {
         // Clear all expired cache entries
-        await cache.clear();
+        await cache.clear(_);
         itemsAffected = 1; // Represent as one operation
-      }
+      }});
 
       // Clean up database cache entries if using database caching
       const expiredCacheEntries = await db.query<{
@@ -410,18 +410,18 @@ class CachedDataCleanup implements CleanupOperation {
       }>(`
         SELECT cache_key, expires_at
         FROM cache_entries
-        WHERE expires_at < NOW()
+        WHERE expires_at < NOW(_)
         LIMIT ?
       `, [options.batchSize]);
 
       itemsProcessed += expiredCacheEntries.length;
 
-      if (expiredCacheEntries.length > 0) {
+      if (_expiredCacheEntries.length > 0) {
         if (!options.dryRun) {
           const cacheKeys = expiredCacheEntries.map(c => c.cache_key);
           const result = await db.execute(`
             DELETE FROM cache_entries 
-            WHERE cache_key IN (${cacheKeys.map(() => '?').join(',')})
+            WHERE cache_key IN (_${cacheKeys.map(() => '?').join(',')})
           `, cacheKeys);
           
           itemsAffected += result.affectedRows;
@@ -430,7 +430,7 @@ class CachedDataCleanup implements CleanupOperation {
         }
       }
 
-      // Clean up orphaned cache entries (keys that reference deleted data)
+      // Clean up orphaned cache entries (_keys that reference deleted data)
       const orphanedCacheEntries = await db.query<{
         cache_key: string;
       }>(`
@@ -439,21 +439,21 @@ class CachedDataCleanup implements CleanupOperation {
         WHERE c.cache_key LIKE 'user:%' 
         AND NOT EXISTS (
           SELECT 1 FROM users u 
-          WHERE c.cache_key = CONCAT('user:', u.id)
+          WHERE c.cache_key = CONCAT( 'user:', u.id)
         )
         LIMIT ?
       `, [options.batchSize]);
 
       itemsProcessed += orphanedCacheEntries.length;
 
-      if (orphanedCacheEntries.length > 0) {
-        warnings.push(`Found ${orphanedCacheEntries.length} orphaned cache entries`);
+      if (_orphanedCacheEntries.length > 0) {
+        warnings.push(_`Found ${orphanedCacheEntries.length} orphaned cache entries`);
         
         if (!options.dryRun) {
           const orphanedKeys = orphanedCacheEntries.map(c => c.cache_key);
           const result = await db.execute(`
             DELETE FROM cache_entries 
-            WHERE cache_key IN (${orphanedKeys.map(() => '?').join(',')})
+            WHERE cache_key IN (_${orphanedKeys.map(() => '?').join(',')})
           `, orphanedKeys);
           
           itemsAffected += result.affectedRows;
@@ -467,7 +467,7 @@ class CachedDataCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -476,15 +476,15 @@ class CachedDataCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -497,28 +497,28 @@ class CachedDataCleanup implements CleanupOperation {
 class InactiveAccountsCleanup implements CleanupOperation {
   id = 'inactive_accounts';
   name = 'Inactive Accounts Cleanup';
-  description = 'Archive or delete inactive user accounts (suspended >6 months)';
+  description = 'Archive or delete inactive user accounts (_suspended >6 months)';
   category = CleanupCategory.INACTIVE_ACCOUNTS;
   severity = CleanupSeverity.CRITICAL;
   estimatedDuration = 1800; // 30 minutes
   requiresBackup = true;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting inactive accounts cleanup', {
+      logger.info('Starting inactive accounts cleanup', { metadata: {
         dryRun: options.dryRun,
         batchSize: options.batchSize
       });
 
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      const sixMonthsAgo = new Date(_);
+      sixMonthsAgo.setMonth(_sixMonthsAgo.getMonth() - 6);
 
       // Find accounts suspended for more than 6 months
       const inactiveAccounts = await db.query<{
@@ -531,33 +531,33 @@ class InactiveAccountsCleanup implements CleanupOperation {
         SELECT id, email, status, last_login_at, suspended_at
         FROM users
         WHERE status = 'SUSPENDED' 
-        AND (suspended_at < ? OR last_login_at < ?)
+        AND (_suspended_at < ? OR last_login_at < ?)
         LIMIT ?
       `, [sixMonthsAgo.toISOString(), sixMonthsAgo.toISOString(), options.batchSize]);
 
       itemsProcessed += inactiveAccounts.length;
 
-      if (inactiveAccounts.length > 0) {
-        warnings.push(`Found ${inactiveAccounts.length} inactive accounts eligible for cleanup`);
+      if (_inactiveAccounts.length > 0) {
+        warnings.push(_`Found ${inactiveAccounts.length} inactive accounts eligible for cleanup`);
         
         if (!options.dryRun) {
-          for (const account of inactiveAccounts) {
+          for (_const account of inactiveAccounts) {
             // Archive user data before deletion
-            await this.archiveUserData(account.id);
+            await this.archiveUserData(_account.id);
             
             // Delete user and related data
-            await this.deleteUserData(account.id);
+            await this.deleteUserData(_account.id);
             
             itemsAffected++;
-          }
+          }});
         } else {
           itemsAffected += inactiveAccounts.length;
         }
       }
 
       // Find accounts that haven't logged in for over a year
-      const oneYearAgo = new Date();
-      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      const oneYearAgo = new Date(_);
+      oneYearAgo.setFullYear(_oneYearAgo.getFullYear() - 1);
 
       const dormantAccounts = await db.query<{
         id: string;
@@ -567,23 +567,23 @@ class InactiveAccountsCleanup implements CleanupOperation {
         SELECT id, email, last_login_at
         FROM users
         WHERE status = 'ACTIVE' 
-        AND (last_login_at < ? OR last_login_at IS NULL)
+        AND (_last_login_at < ? OR last_login_at IS NULL)
         AND created_at < ?
         LIMIT ?
-      `, [oneYearAgo.toISOString(), oneYearAgo.toISOString(), Math.floor(options.batchSize / 2)]);
+      `, [oneYearAgo.toISOString(), oneYearAgo.toISOString(), Math.floor(_options.batchSize / 2)]);
 
       itemsProcessed += dormantAccounts.length;
 
-      if (dormantAccounts.length > 0) {
-        warnings.push(`Found ${dormantAccounts.length} dormant accounts (no login >1 year)`);
+      if (_dormantAccounts.length > 0) {
+        warnings.push(_`Found ${dormantAccounts.length} dormant accounts (no login >1 year)`);
         
         if (!options.dryRun) {
           // Mark as inactive rather than delete
           const accountIds = dormantAccounts.map(a => a.id);
           const result = await db.execute(`
             UPDATE users 
-            SET status = 'INACTIVE', updated_at = NOW()
-            WHERE id IN (${accountIds.map(() => '?').join(',')})
+            SET status = 'INACTIVE', updated_at = NOW(_)
+            WHERE id IN (_${accountIds.map(() => '?').join(',')})
           `, accountIds);
           
           itemsAffected += result.affectedRows;
@@ -597,7 +597,7 @@ class InactiveAccountsCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -607,15 +607,15 @@ class InactiveAccountsCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -623,20 +623,20 @@ class InactiveAccountsCleanup implements CleanupOperation {
     }
   }
 
-  private async archiveUserData(userId: string): Promise<void> {
+  private async archiveUserData(_userId: string): Promise<void> {
     // Archive user data to a separate table or export to file
     await db.execute(`
       INSERT INTO archived_users 
-      SELECT *, NOW() as archived_at 
+      SELECT *, NOW(_) as archived_at 
       FROM users 
       WHERE id = ?
     `, [userId]);
   }
 
-  private async deleteUserData(userId: string): Promise<void> {
+  private async deleteUserData(_userId: string): Promise<void> {
     // Delete user and all related data
     const tables = [
-      'user_progress',
+      'userprogress',
       'user_achievements', 
       'user_sessions',
       'refresh_tokens',
@@ -644,8 +644,8 @@ class InactiveAccountsCleanup implements CleanupOperation {
       'users'
     ];
 
-    for (const table of tables) {
-      await db.execute(`DELETE FROM ${table} WHERE user_id = ?`, [userId]);
+    for (_const table of tables) {
+      await db.execute( `DELETE FROM ${table} WHERE user_id = ?`, [userId]);
     }
   }
 }
@@ -661,34 +661,34 @@ class TemporaryFilesCleanup implements CleanupOperation {
   requiresBackup = false;
   dryRunSupported = true;
 
-  async execute(options: CleanupOptions): Promise<CleanupResult> {
-    const startTime = Date.now();
+  async execute(_options: CleanupOptions): Promise<CleanupResult> {
+    const startTime = Date.now(_);
     const errors: string[] = [];
     const warnings: string[] = [];
     let itemsProcessed = 0;
     let itemsAffected = 0;
 
     try {
-      logger.info('Starting temporary files cleanup', {
+      logger.info('Starting temporary files cleanup', { metadata: {
         dryRun: options.dryRun
       });
 
       // Clean up temporary files older than 24 hours
       const tempFiles = await fs.listFiles('/tmp/uploads');
-      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const oneDayAgo = new Date(_Date.now() - 24 * 60 * 60 * 1000);
 
-      for (const file of tempFiles) {
+      for (_const file of tempFiles) {
         const filePath = `/tmp/uploads/${file}`;
-        const stats = await fs.getFileStats(filePath);
+        const stats = await fs.getFileStats(_filePath);
         
         itemsProcessed++;
 
-        if (stats.created < oneDayAgo) {
+        if (_stats.created < oneDayAgo) {
           if (!options.dryRun) {
-            const deleted = await fs.deleteFile(filePath);
+            const deleted = await fs.deleteFile(_filePath);
             if (deleted) {
               itemsAffected++;
-            }
+            }});
           } else {
             itemsAffected++;
           }
@@ -698,7 +698,7 @@ class TemporaryFilesCleanup implements CleanupOperation {
       // Clean up orphaned upload files
       const uploadFiles = await fs.listFiles('/uploads');
       
-      for (const file of uploadFiles) {
+      for (_const file of uploadFiles) {
         const filePath = `/uploads/${file}`;
         
         // Check if file is referenced in database
@@ -715,11 +715,11 @@ class TemporaryFilesCleanup implements CleanupOperation {
 
         itemsProcessed++;
 
-        if (references[0]?.count === 0) {
-          warnings.push(`Found orphaned upload file: ${file}`);
+        if (_references[0]?.count === 0) {
+          warnings.push(_`Found orphaned upload file: ${file}`);
           
           if (!options.dryRun) {
-            const deleted = await fs.deleteFile(filePath);
+            const deleted = await fs.deleteFile(_filePath);
             if (deleted) {
               itemsAffected++;
             }
@@ -734,7 +734,7 @@ class TemporaryFilesCleanup implements CleanupOperation {
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {
@@ -744,15 +744,15 @@ class TemporaryFilesCleanup implements CleanupOperation {
         }
       };
 
-    } catch (error) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+    } catch (_error) {
+      errors.push(_error instanceof Error ? error.message : 'Unknown error');
       
       return {
         success: false,
         operation: this.name,
         itemsProcessed,
         itemsAffected,
-        duration: Date.now() - startTime,
+        duration: Date.now(_) - startTime,
         errors,
         warnings,
         details: {}
@@ -763,16 +763,16 @@ class TemporaryFilesCleanup implements CleanupOperation {
 
 // Register all data removal operations
 export function registerDataRemovalOperations(): void {
-  cleanupManager.registerOperation(new ExpiredTokensCleanup());
-  cleanupManager.registerOperation(new OldLogsCleanup());
-  cleanupManager.registerOperation(new CachedDataCleanup());
-  cleanupManager.registerOperation(new InactiveAccountsCleanup());
-  cleanupManager.registerOperation(new TemporaryFilesCleanup());
+  cleanupManager.registerOperation(_new ExpiredTokensCleanup());
+  cleanupManager.registerOperation(_new OldLogsCleanup());
+  cleanupManager.registerOperation(_new CachedDataCleanup());
+  cleanupManager.registerOperation(_new InactiveAccountsCleanup());
+  cleanupManager.registerOperation(_new TemporaryFilesCleanup());
   
-  logger.info('Data removal cleanup operations registered', {
+  logger.info('Data removal cleanup operations registered', { metadata: {
     operationCount: 5
   });
-}
+}});
 
 // Export individual operations for testing
 export {

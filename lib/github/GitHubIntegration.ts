@@ -221,15 +221,15 @@ export class GitHubIntegration {
   private octokit: Octokit;
   private _securityScanner: SecurityScanner;
   private gasAnalyzer: GasOptimizationAnalyzer;
-  private portfolioCache: Map<string, ProfessionalPortfolio> = new Map();
+  private portfolioCache: Map<string, ProfessionalPortfolio> = new Map(_);
 
   constructor(
     githubToken: string,
     securityScanner: SecurityScanner,
     gasAnalyzer: GasOptimizationAnalyzer
   ) {
-    this.octokit = new Octokit({ auth: githubToken });
-    this._securityScanner = securityScanner;
+    this.octokit = new Octokit({ auth: githubToken  });
+    this.securityScanner = securityScanner;
     this.gasAnalyzer = gasAnalyzer;
   }
 
@@ -239,7 +239,7 @@ export class GitHubIntegration {
     githubToken: string,
     githubUsername: string
   ): Promise<void> {
-    console.log(`🔗 Connecting GitHub account for user ${userId}: ${githubUsername}`);
+    console.log(_`🔗 Connecting GitHub account for user ${userId}: ${githubUsername}`);
     
     try {
       // Verify GitHub token and get user info
@@ -248,13 +248,13 @@ export class GitHubIntegration {
       });
       
       // Store GitHub connection in database
-      await this.storeGitHubConnection(userId, githubToken, githubUser);
+      await this.storeGitHubConnection( userId, githubToken, githubUser);
       
       // Initialize portfolio generation
-      await this.initializePortfolio(userId, githubUsername);
+      await this.initializePortfolio( userId, githubUsername);
       
-      console.log(`✅ GitHub account connected successfully`);
-    } catch (error) {
+      console.log(_`✅ GitHub account connected successfully`);
+    } catch (_error) {
       console.error('GitHub connection failed:', error);
       throw error;
     }
@@ -265,26 +265,26 @@ export class GitHubIntegration {
     userId: string,
     repositoryUrl: string
   ): Promise<CodeQualityMetrics> {
-    console.log(`🔍 Analyzing repository: ${repositoryUrl}`);
+    console.log(_`🔍 Analyzing repository: ${repositoryUrl}`);
     
     try {
       // Extract owner and repo from URL
-      const { owner, repo } = this.parseRepositoryUrl(repositoryUrl);
+      const { owner, repo } = this.parseRepositoryUrl(_repositoryUrl);
       
       // Get repository contents
-      const contents = await this.getRepositoryContents(owner, repo);
+      const contents = await this.getRepositoryContents( owner, repo);
       
       // Analyze Solidity files
       const solidityFiles = contents.filter(file => file.name.endsWith('.sol'));
       const analysisResults = [];
       
-      for (const file of solidityFiles) {
-        const fileContent = await this.getFileContent(owner, repo, file.path);
+      for (_const file of solidityFiles) {
+        const fileContent = await this.getFileContent( owner, repo, file.path);
         
         // Run security and gas analysis
         const [securityResult, gasResult] = await Promise.all([
-          this.analyzeFileSecurity(fileContent, userId),
-          this.analyzeFileGas(fileContent, userId)
+          this.analyzeFileSecurity( fileContent, userId),
+          this.analyzeFileGas( fileContent, userId)
         ]);
         
         analysisResults.push({
@@ -295,12 +295,12 @@ export class GitHubIntegration {
       }
       
       // Calculate overall metrics
-      const metrics = this.calculateOverallMetrics(analysisResults);
+      const metrics = this.calculateOverallMetrics(_analysisResults);
       
-      console.log(`✅ Repository analysis completed`);
+      console.log(_`✅ Repository analysis completed`);
       return metrics;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Repository analysis failed:', error);
       throw error;
     }
@@ -312,15 +312,15 @@ export class GitHubIntegration {
     githubUsername: string,
     customizations?: Partial<PortfolioCustomization>
   ): Promise<ProfessionalPortfolio> {
-    console.log(`📊 Generating portfolio for ${githubUsername}`);
+    console.log(_`📊 Generating portfolio for ${githubUsername}`);
     
     try {
       // Get user's learning profile
-      const learningProfile = await adaptiveLearningEngine.analyzeUserPerformance(userId);
+      const learningProfile = await adaptiveLearningEngine.analyzeUserPerformance(_userId);
       
       // Get GitHub data
-      const repositories = await this.getUserRepositories(githubUsername);
-      const contributionMetrics = await this.getContributionMetrics(githubUsername);
+      const repositories = await this.getUserRepositories(_githubUsername);
+      const contributionMetrics = await this.getContributionMetrics(_githubUsername);
       
       // Analyze featured projects
       const featuredProjects = await this.selectAndAnalyzeFeaturedProjects(
@@ -336,10 +336,10 @@ export class GitHubIntegration {
       );
       
       // Get performance history
-      const performanceHistory = await this.getPerformanceHistory(userId);
+      const performanceHistory = await this.getPerformanceHistory(_userId);
       
       // Get certifications
-      const certifications = await this.getUserCertifications(userId);
+      const certifications = await this.getUserCertifications(_userId);
       
       // Generate recommendations
       const recommendations = await this.generateRecommendations(
@@ -362,13 +362,13 @@ export class GitHubIntegration {
         certifications,
         performanceMetrics: performanceHistory,
         recommendations,
-        lastUpdated: new Date(),
+        lastUpdated: new Date(_),
         visibility: 'public',
         customizations: {
           theme: 'professional',
           primaryColor: '#3B82F6',
           layout: 'grid',
-          sections: this.getDefaultSections(),
+          sections: this.getDefaultSections(_),
           socialLinks: [],
           contactPreferences: [],
           ...customizations
@@ -376,13 +376,13 @@ export class GitHubIntegration {
       };
       
       // Cache and save portfolio
-      this.portfolioCache.set(userId, portfolio);
-      await this.savePortfolio(portfolio);
+      this.portfolioCache.set( userId, portfolio);
+      await this.savePortfolio(_portfolio);
       
-      console.log(`✅ Portfolio generated successfully`);
+      console.log(_`✅ Portfolio generated successfully`);
       return portfolio;
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Portfolio generation failed:', error);
       throw error;
     }
@@ -394,14 +394,14 @@ export class GitHubIntegration {
     repositoryUrl: string,
     commitSha?: string
   ): Promise<void> {
-    const metrics = await this.analyzeRepository(userId, repositoryUrl);
+    const metrics = await this.analyzeRepository( userId, repositoryUrl);
     
     // Store metrics with timestamp
-    await this.storeQualityMetrics(userId, repositoryUrl, metrics, commitSha);
+    await this.storeQualityMetrics( userId, repositoryUrl, metrics, commitSha);
     
     // Update portfolio if significant improvement
-    if (this.isSignificantImprovement(userId, metrics)) {
-      await this.updatePortfolio(userId);
+    if ( this.isSignificantImprovement(userId, metrics)) {
+      await this.updatePortfolio(_userId);
     }
   }
 
@@ -411,7 +411,7 @@ export class GitHubIntegration {
     repositoryUrl: string,
     category: ProjectShowcase['category']
   ): Promise<ProjectShowcase> {
-    const { owner, repo } = this.parseRepositoryUrl(repositoryUrl);
+    const { owner, repo } = this.parseRepositoryUrl(_repositoryUrl);
     
     // Get repository info
     const { data: repoData } = await this.octokit.rest.repos.get({
@@ -420,11 +420,11 @@ export class GitHubIntegration {
     });
     
     // Analyze code quality
-    const codeQuality = await this.analyzeRepository(userId, repositoryUrl);
+    const codeQuality = await this.analyzeRepository( userId, repositoryUrl);
     
     // Extract gas optimizations and security features
-    const gasOptimizations = await this.extractGasOptimizations(userId, repositoryUrl);
-    const securityFeatures = await this.extractSecurityFeatures(userId, repositoryUrl);
+    const gasOptimizations = await this.extractGasOptimizations( userId, repositoryUrl);
+    const securityFeatures = await this.extractSecurityFeatures( userId, repositoryUrl);
     
     // Generate learning outcomes
     const learningOutcomes = await this.generateLearningOutcomes(
@@ -438,22 +438,22 @@ export class GitHubIntegration {
       name: repoData.name,
       description: repoData.description || 'No description provided',
       repositoryUrl,
-      technologies: this.extractTechnologies(repoData),
+      technologies: this.extractTechnologies(_repoData),
       category,
-      complexity: this.determineComplexity(codeQuality),
-      highlights: await this.generateProjectHighlights(repositoryUrl, codeQuality),
+      complexity: this.determineComplexity(_codeQuality),
+      highlights: await this.generateProjectHighlights( repositoryUrl, codeQuality),
       codeQuality,
       gasOptimizations,
       securityFeatures,
       learningOutcomes,
-      timeInvested: this.estimateTimeInvestment(repoData),
-      collaborators: await this.getCollaborators(owner, repo)
+      timeInvested: this.estimateTimeInvestment(_repoData),
+      collaborators: await this.getCollaborators( owner, repo)
     };
   }
 
   // Private helper methods
-  private parseRepositoryUrl(url: string): { owner: string; repo: string } {
-    const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+  private parseRepositoryUrl(_url: string): { owner: string; repo: string } {
+    const match = url.match(_/github\.com\/([^\/]+)\/([^\/]+)/);
     if (!match) throw new Error('Invalid GitHub repository URL');
     
     return {
@@ -462,7 +462,7 @@ export class GitHubIntegration {
     };
   }
 
-  private async getUserRepositories(username: string): Promise<GitHubRepository[]> {
+  private async getUserRepositories(_username: string): Promise<GitHubRepository[]> {
     const { data: repos } = await this.octokit.rest.repos.listForUser({
       username,
       type: 'all',
@@ -478,8 +478,8 @@ export class GitHubIntegration {
       url: repo.html_url,
       isPrivate: repo.private,
       language: repo.language || 'Unknown',
-      createdAt: new Date(repo.created_at),
-      updatedAt: new Date(repo.updated_at),
+      createdAt: new Date(_repo.created_at),
+      updatedAt: new Date(_repo.updated_at),
       stars: repo.stargazers_count,
       forks: repo.forks_count,
       size: repo.size,
@@ -503,20 +503,20 @@ export class GitHubIntegration {
     );
     
     const topRepos = solidityRepos
-      .sort((a, b) => (b.stars + b.forks) - (a.stars + a.forks))
+      .sort( (a, b) => (_b.stars + b.forks) - (_a.stars + a.forks))
       .slice(0, 6);
     
     const showcases: ProjectShowcase[] = [];
     
-    for (const repo of topRepos) {
+    for (_const repo of topRepos) {
       try {
         const showcase = await this.generateProjectShowcase(
           userId,
           repo.url,
-          this.categorizeRepository(repo)
+          this.categorizeRepository(_repo)
         );
-        showcases.push(showcase);
-      } catch (error) {
+        showcases.push(_showcase);
+      } catch (_error) {
         console.warn(`Failed to analyze repository ${repo.name}:`, error);
       }
     }
@@ -524,24 +524,24 @@ export class GitHubIntegration {
     return showcases;
   }
 
-  private categorizeRepository(repo: GitHubRepository): ProjectShowcase['category'] {
+  private categorizeRepository(_repo: GitHubRepository): ProjectShowcase['category'] {
     const name = repo.name.toLowerCase();
-    const description = (repo.description || '').toLowerCase();
+    const description = (_repo.description || '').toLowerCase();
     const topics = repo.topics.join(' ').toLowerCase();
     
-    if (name.includes('defi') || description.includes('defi') || topics.includes('defi')) {
+    if (_name.includes('defi') || description.includes('defi') || topics.includes('defi')) {
       return 'defi';
     }
-    if (name.includes('nft') || description.includes('nft') || topics.includes('nft')) {
+    if (_name.includes('nft') || description.includes('nft') || topics.includes('nft')) {
       return 'nft';
     }
-    if (name.includes('dao') || description.includes('dao') || topics.includes('dao')) {
+    if (_name.includes('dao') || description.includes('dao') || topics.includes('dao')) {
       return 'dao';
     }
-    if (name.includes('tool') || description.includes('tool') || topics.includes('tools')) {
+    if (_name.includes('tool') || description.includes('tool') || topics.includes('tools')) {
       return 'tools';
     }
-    if (name.includes('learn') || description.includes('tutorial') || topics.includes('education')) {
+    if (_name.includes('learn') || description.includes('tutorial') || topics.includes('education')) {
       return 'educational';
     }
     
@@ -554,13 +554,13 @@ export class GitHubIntegration {
     contributions: ContributionMetrics
   ): SkillsAssessment {
     // Calculate skills based on learning profile and project analysis
-    const avgSecurityScore = projects.reduce((sum, p) => sum + p.codeQuality.securityScore, 0) / projects.length || 0;
-    const avgGasScore = projects.reduce((sum, p) => sum + p.codeQuality.gasOptimizationScore, 0) / projects.length || 0;
+    const avgSecurityScore = projects.reduce( (sum, p) => sum + p.codeQuality.securityScore, 0) / projects.length || 0;
+    const avgGasScore = projects.reduce( (sum, p) => sum + p.codeQuality.gasOptimizationScore, 0) / projects.length || 0;
     
     const skills = {
-      solidityProficiency: Math.round(Object.values(learningProfile.skillLevels).reduce((sum: number, level: number) => sum + level, 0) / Object.values(learningProfile.skillLevels).length || 0),
-      securityAwareness: Math.round(avgSecurityScore),
-      gasOptimization: Math.round(avgGasScore),
+      solidityProficiency: Math.round(_Object.values(learningProfile.skillLevels).reduce( (sum: number, level: number) => sum + level, 0) / Object.values(_learningProfile.skillLevels).length || 0),
+      securityAwareness: Math.round(_avgSecurityScore),
+      gasOptimization: Math.round(_avgGasScore),
       testingSkills: 70, // Would be calculated from test coverage
       architectureDesign: 65, // Would be calculated from project complexity
       defiKnowledge: projects.filter(p => p.category === 'defi').length * 20,
@@ -574,32 +574,32 @@ export class GitHubIntegration {
     };
     
     // Calculate overall rating
-    const skillValues = Object.values(skills).filter(v => typeof v === 'number' && v !== 0);
-    skills.overallRating = Math.round(skillValues.reduce((sum, val) => sum + val, 0) / skillValues.length);
+    const skillValues = Object.values(_skills).filter(v => typeof v === 'number' && v !== 0);
+    skills.overallRating = Math.round( skillValues.reduce((sum, val) => sum + val, 0) / skillValues.length);
     
     return skills;
   }
 
   // Missing method implementations
-  private async storeGitHubConnection(userId: string, githubToken: string, githubUser: any): Promise<void> {
+  private async storeGitHubConnection( userId: string, githubToken: string, githubUser: any): Promise<void> {
     // Implementation would store GitHub connection in database
   }
 
-  private async initializePortfolio(userId: string, githubUsername: string): Promise<void> {
+  private async initializePortfolio( userId: string, githubUsername: string): Promise<void> {
     // Implementation would initialize portfolio generation
   }
 
-  private async getRepositoryContents(owner: string, repo: string): Promise<any[]> {
+  private async getRepositoryContents( owner: string, repo: string): Promise<any[]> {
     const { data } = await this.octokit.rest.repos.getContent({
       owner,
       repo,
       path: ''
     });
     
-    return Array.isArray(data) ? data : [data];
+    return Array.isArray(_data) ? data : [data];
   }
 
-  private async getFileContent(owner: string, repo: string, path: string): Promise<string> {
+  private async getFileContent( owner: string, repo: string, path: string): Promise<string> {
     const { data } = await this.octokit.rest.repos.getContent({
       owner,
       repo,
@@ -607,13 +607,13 @@ export class GitHubIntegration {
     });
     
     if ('content' in data) {
-      return Buffer.from(data.content, 'base64').toString('utf8');
+      return Buffer.from( data.content, 'base64').toString('utf8');
     }
     
     return '';
   }
 
-  private async analyzeFileSecurity(fileContent: string, userId: string): Promise<any> {
+  private async analyzeFileSecurity( fileContent: string, userId: string): Promise<any> {
     // Mock implementation - would use actual security scanner
     return {
       issues: [],
@@ -621,7 +621,7 @@ export class GitHubIntegration {
     };
   }
 
-  private async analyzeFileGas(fileContent: string, userId: string): Promise<any> {
+  private async analyzeFileGas( fileContent: string, userId: string): Promise<any> {
     // Mock implementation - would use actual gas analyzer
     return {
       optimizations: [],
@@ -629,9 +629,9 @@ export class GitHubIntegration {
     };
   }
 
-  private calculateOverallMetrics(analysisResults: any[]): CodeQualityMetrics {
-    const avgSecurity = analysisResults.reduce((sum, r) => sum + r.security.score, 0) / analysisResults.length || 0;
-    const avgGas = analysisResults.reduce((sum, r) => sum + r.gas.score, 0) / analysisResults.length || 0;
+  private calculateOverallMetrics(_analysisResults: any[]): CodeQualityMetrics {
+    const avgSecurity = analysisResults.reduce( (sum, r) => sum + r.security.score, 0) / analysisResults.length || 0;
+    const avgGas = analysisResults.reduce( (sum, r) => sum + r.gas.score, 0) / analysisResults.length || 0;
     
     return {
       securityScore: avgSecurity,
@@ -642,12 +642,12 @@ export class GitHubIntegration {
       complexity: 70,
       maintainability: 80,
       overall: Math.round((avgSecurity + avgGas + 75 + 65 + 60 + 70 + 80) / 7),
-      timestamp: new Date(),
+      timestamp: new Date(_),
       commitSha: 'latest'
     };
   }
 
-  private async getContributionMetrics(githubUsername: string): Promise<ContributionMetrics> {
+  private async getContributionMetrics(_githubUsername: string): Promise<ContributionMetrics> {
     // Mock implementation - would fetch actual GitHub contribution data
     return {
       totalCommits: 150,
@@ -666,39 +666,39 @@ export class GitHubIntegration {
     };
   }
 
-  private async getPerformanceHistory(userId: string): Promise<PerformanceHistory> {
+  private async getPerformanceHistory(_userId: string): Promise<PerformanceHistory> {
     // Mock implementation - would fetch actual performance data
     return {
       securityScores: [
-        { timestamp: new Date(), value: 85 },
-        { timestamp: new Date(), value: 88 },
-        { timestamp: new Date(), value: 92 }
+        { timestamp: new Date(_), value: 85 },
+        { timestamp: new Date(_), value: 88 },
+        { timestamp: new Date(_), value: 92 }
       ],
       gasOptimizationScores: [
-        { timestamp: new Date(), value: 78 },
-        { timestamp: new Date(), value: 82 },
-        { timestamp: new Date(), value: 85 }
+        { timestamp: new Date(_), value: 78 },
+        { timestamp: new Date(_), value: 82 },
+        { timestamp: new Date(_), value: 85 }
       ],
       codeQualityTrends: [
-        { timestamp: new Date(), value: 80 },
-        { timestamp: new Date(), value: 83 },
-        { timestamp: new Date(), value: 87 }
+        { timestamp: new Date(_), value: 80 },
+        { timestamp: new Date(_), value: 83 },
+        { timestamp: new Date(_), value: 87 }
       ],
       learningVelocity: [
-        { timestamp: new Date(), value: 1.0 },
-        { timestamp: new Date(), value: 1.2 },
-        { timestamp: new Date(), value: 1.5 }
+        { timestamp: new Date(_), value: 1.0 },
+        { timestamp: new Date(_), value: 1.2 },
+        { timestamp: new Date(_), value: 1.5 }
       ],
       conceptMastery: [
-        { concept: 'ERC20', masteryLevel: 85, dateAchieved: new Date(), projectsApplied: ['token-project'] },
-        { concept: 'Security', masteryLevel: 78, dateAchieved: new Date(), projectsApplied: ['secure-vault'] }
+        { concept: 'ERC20', masteryLevel: 85, dateAchieved: new Date(_), projectsApplied: ['token-project'] },
+        { concept: 'Security', masteryLevel: 78, dateAchieved: new Date(_), projectsApplied: ['secure-vault'] }
       ],
       milestones: [
         {
           id: 'milestone-1',
           name: 'First Smart Contract',
           description: 'Deployed first smart contract',
-          dateAchieved: new Date(),
+          dateAchieved: new Date(_),
           category: 'learning',
           evidence: ['contract-address']
         }
@@ -710,43 +710,43 @@ export class GitHubIntegration {
           description: 'Achieved high security scores consistently',
           icon: '🛡️',
           rarity: 'rare',
-          dateEarned: new Date(),
+          dateEarned: new Date(_),
           criteria: 'Security score > 90 for 5 consecutive projects'
         }
       ]
     };
   }
 
-  private async getUserCertifications(userId: string): Promise<Certification[]> {
+  private async getUserCertifications(_userId: string): Promise<Certification[]> {
     // Mock implementation - would fetch actual certifications
     return [];
   }
 
-  private async generateRecommendations(skillsAssessment: SkillsAssessment, featuredProjects: ProjectShowcase[]): Promise<string[]> {
+  private async generateRecommendations( skillsAssessment: SkillsAssessment, featuredProjects: ProjectShowcase[]): Promise<string[]> {
     const recommendations: string[] = [];
     
-    if (skillsAssessment.securityAwareness < 80) {
+    if (_skillsAssessment.securityAwareness < 80) {
       recommendations.push('Focus on improving security practices in smart contract development');
     }
     
-    if (skillsAssessment.gasOptimization < 75) {
+    if (_skillsAssessment.gasOptimization < 75) {
       recommendations.push('Learn more about gas optimization techniques');
     }
     
-    if (featuredProjects.length < 3) {
+    if (_featuredProjects.length < 3) {
       recommendations.push('Build more projects to showcase your skills');
     }
     
     return recommendations;
   }
 
-  private async generateProfileSummary(learningProfile: any, skillsAssessment: SkillsAssessment, featuredProjects: ProjectShowcase[]): Promise<string> {
+  private async generateProfileSummary( learningProfile: any, skillsAssessment: SkillsAssessment, featuredProjects: ProjectShowcase[]): Promise<string> {
     return `Skilled Solidity developer with ${skillsAssessment.overallRating}% overall proficiency. 
     Strong in ${skillsAssessment.securityAwareness > 80 ? 'security' : 'development'} with ${featuredProjects.length} featured projects. 
     Continuously improving through adaptive learning and hands-on development.`;
   }
 
-  private getDefaultSections(): PortfolioSection[] {
+  private getDefaultSections(_): PortfolioSection[] {
     return [
       { id: 'projects', name: 'Featured Projects', type: 'projects', visible: true, order: 1 },
       { id: 'skills', name: 'Technical Skills', type: 'skills', visible: true, order: 2 },
@@ -755,62 +755,62 @@ export class GitHubIntegration {
     ];
   }
 
-  private async savePortfolio(portfolio: ProfessionalPortfolio): Promise<void> {
+  private async savePortfolio(_portfolio: ProfessionalPortfolio): Promise<void> {
     // Implementation would save portfolio to database
   }
 
-  private async storeQualityMetrics(userId: string, repositoryUrl: string, metrics: CodeQualityMetrics, commitSha?: string): Promise<void> {
+  private async storeQualityMetrics( userId: string, repositoryUrl: string, metrics: CodeQualityMetrics, commitSha?: string): Promise<void> {
     // Implementation would store quality metrics to database
   }
 
-  private isSignificantImprovement(userId: string, metrics: CodeQualityMetrics): boolean {
+  private isSignificantImprovement( userId: string, metrics: CodeQualityMetrics): boolean {
     // Implementation would check if improvement is significant
     return metrics.overall > 85;
   }
 
-  private async updatePortfolio(userId: string): Promise<void> {
+  private async updatePortfolio(_userId: string): Promise<void> {
     // Implementation would update portfolio with new metrics
   }
 
-  private async extractGasOptimizations(userId: string, repositoryUrl: string): Promise<GasOptimizationHighlight[]> {
+  private async extractGasOptimizations( userId: string, repositoryUrl: string): Promise<GasOptimizationHighlight[]> {
     // Mock implementation
     return [];
   }
 
-  private async extractSecurityFeatures(userId: string, repositoryUrl: string): Promise<SecurityFeature[]> {
+  private async extractSecurityFeatures( userId: string, repositoryUrl: string): Promise<SecurityFeature[]> {
     // Mock implementation
     return [];
   }
 
-  private async generateLearningOutcomes(userId: string, repositoryUrl: string, category: string): Promise<string[]> {
+  private async generateLearningOutcomes( userId: string, repositoryUrl: string, category: string): Promise<string[]> {
     const outcomes: string[] = [];
     
-    switch (category) {
+    switch (_category) {
       case 'defi':
-        outcomes.push('Understanding of DeFi protocols', 'Token economics implementation');
+        outcomes.push( 'Understanding of DeFi protocols', 'Token economics implementation');
         break;
       case 'nft':
-        outcomes.push('NFT standard implementation', 'Metadata management');
+        outcomes.push( 'NFT standard implementation', 'Metadata management');
         break;
       default:
-        outcomes.push('Smart contract development', 'Blockchain fundamentals');
+        outcomes.push( 'Smart contract development', 'Blockchain fundamentals');
     }
     
     return outcomes;
   }
 
-  private extractTechnologies(repoData: any): string[] {
+  private extractTechnologies(_repoData: any): string[] {
     const technologies: string[] = [];
     
-    if (repoData.language) {
-      technologies.push(repoData.language);
+    if (_repoData.language) {
+      technologies.push(_repoData.language);
     }
     
     // Add common technologies based on topics
-    if (repoData.topics) {
+    if (_repoData.topics) {
       repoData.topics.forEach((topic: string) => {
-        if (['hardhat', 'truffle', 'foundry', 'openzeppelin'].includes(topic)) {
-          technologies.push(topic);
+        if ( ['hardhat', 'truffle', 'foundry', 'openzeppelin'].includes(topic)) {
+          technologies.push(_topic);
         }
       });
     }
@@ -818,39 +818,39 @@ export class GitHubIntegration {
     return technologies;
   }
 
-  private determineComplexity(codeQuality: CodeQualityMetrics): 'beginner' | 'intermediate' | 'advanced' {
-    if (codeQuality.complexity < 40) return 'beginner';
-    if (codeQuality.complexity < 70) return 'intermediate';
+  private determineComplexity(_codeQuality: CodeQualityMetrics): 'beginner' | 'intermediate' | 'advanced' {
+    if (_codeQuality.complexity < 40) return 'beginner';
+    if (_codeQuality.complexity < 70) return 'intermediate';
     return 'advanced';
   }
 
-  private async generateProjectHighlights(repositoryUrl: string, codeQuality: CodeQualityMetrics): Promise<string[]> {
+  private async generateProjectHighlights( repositoryUrl: string, codeQuality: CodeQualityMetrics): Promise<string[]> {
     const highlights: string[] = [];
     
-    if (codeQuality.securityScore > 90) {
+    if (_codeQuality.securityScore > 90) {
       highlights.push('High security standards with comprehensive vulnerability protection');
     }
     
-    if (codeQuality.gasOptimizationScore > 85) {
+    if (_codeQuality.gasOptimizationScore > 85) {
       highlights.push('Optimized for gas efficiency and cost-effective deployment');
     }
     
-    if (codeQuality.testCoverage > 80) {
+    if (_codeQuality.testCoverage > 80) {
       highlights.push('Comprehensive test coverage ensuring reliability');
     }
     
     return highlights;
   }
 
-  private estimateTimeInvestment(repoData: any): number {
+  private estimateTimeInvestment(_repoData: any): number {
     // Estimate based on repository size and complexity
     const sizeMultiplier = repoData.size / 1000; // KB to approximate hours
     const baseTime = 20; // Base hours for any project
     
-    return Math.round(baseTime + sizeMultiplier * 5);
+    return Math.round(_baseTime + sizeMultiplier * 5);
   }
 
-  private async getCollaborators(owner: string, repo: string): Promise<string[]> {
+  private async getCollaborators( owner: string, repo: string): Promise<string[]> {
     try {
       const { data } = await this.octokit.rest.repos.listCollaborators({
         owner,
@@ -858,7 +858,7 @@ export class GitHubIntegration {
       });
       
       return data.map(collaborator => collaborator.login);
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -954,5 +954,5 @@ export function createGitHubIntegration(
   securityScanner: SecurityScanner,
   gasAnalyzer: GasOptimizationAnalyzer
 ): GitHubIntegration {
-  return new GitHubIntegration(githubToken, securityScanner, gasAnalyzer);
+  return new GitHubIntegration( githubToken, securityScanner, gasAnalyzer);
 }

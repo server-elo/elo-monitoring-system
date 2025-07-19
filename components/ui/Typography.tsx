@@ -13,7 +13,7 @@ interface TypographyProps {
 }
 
 // Heading components with optimal typography
-export function H1({ children, className, animate = false, gradient = false, eyeFriendly = false }: TypographyProps) {
+export function H1( { children, className, animate = false, gradient = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.h1 : 'h1';
   const animationProps = animate ? {
     initial: { opacity: 0, y: 20 },
@@ -37,7 +37,7 @@ export function H1({ children, className, animate = false, gradient = false, eye
   );
 }
 
-export function H2({ children, className, animate = false, gradient = false, eyeFriendly = false }: TypographyProps) {
+export function H2( { children, className, animate = false, gradient = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.h2 : 'h2';
   const animationProps = animate ? {
     initial: { opacity: 0, y: 15 },
@@ -61,7 +61,7 @@ export function H2({ children, className, animate = false, gradient = false, eye
   );
 }
 
-export function H3({ children, className, animate = false, gradient = false, eyeFriendly = false }: TypographyProps) {
+export function H3( { children, className, animate = false, gradient = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.h3 : 'h3';
   const animationProps = animate ? {
     initial: { opacity: 0, y: 10 },
@@ -85,7 +85,7 @@ export function H3({ children, className, animate = false, gradient = false, eye
   );
 }
 
-export function H4({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function H4( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.h4 : 'h4';
   const animationProps = animate ? {
     initial: { opacity: 0, y: 8 },
@@ -109,7 +109,7 @@ export function H4({ children, className, animate = false, eyeFriendly = false }
 }
 
 // Body text components
-export function Paragraph({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function Paragraph( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.p : 'p';
   const animationProps = animate ? {
     initial: { opacity: 0, y: 5 },
@@ -120,7 +120,7 @@ export function Paragraph({ children, className, animate = false, eyeFriendly = 
   return (
     <Component
       className={cn(
-        'leading-7 [&:not(:first-child)]:mt-6',
+        'leading-7 [&:not(_:first-child)]:mt-6',
         'text-base',
         eyeFriendly && 'text-comfortable leading-8',
         className
@@ -132,7 +132,7 @@ export function Paragraph({ children, className, animate = false, eyeFriendly = 
   );
 }
 
-export function Lead({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function Lead( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.p : 'p';
   const animationProps = animate ? {
     initial: { opacity: 0, y: 10 },
@@ -155,7 +155,7 @@ export function Lead({ children, className, animate = false, eyeFriendly = false
   );
 }
 
-export function Large({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function Large( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.div : 'div';
   const animationProps = animate ? {
     initial: { opacity: 0, scale: 0.95 },
@@ -178,7 +178,7 @@ export function Large({ children, className, animate = false, eyeFriendly = fals
   );
 }
 
-export function Small({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function Small( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.small : 'small';
   const animationProps = animate ? {
     initial: { opacity: 0 },
@@ -200,7 +200,7 @@ export function Small({ children, className, animate = false, eyeFriendly = fals
   );
 }
 
-export function Muted({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function Muted( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.p : 'p';
   const animationProps = animate ? {
     initial: { opacity: 0 },
@@ -224,7 +224,7 @@ export function Muted({ children, className, animate = false, eyeFriendly = fals
 }
 
 // Code and technical text
-export function Code({ children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
+export function Code( { children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
   return (
     <code
       className={cn(
@@ -239,7 +239,7 @@ export function Code({ children, className, eyeFriendly = false }: Omit<Typograp
   );
 }
 
-export function Pre({ children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
+export function Pre( { children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
   return (
     <pre
       className={cn(
@@ -255,7 +255,7 @@ export function Pre({ children, className, eyeFriendly = false }: Omit<Typograph
 }
 
 // List components
-export function List({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function List( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.ul : 'ul';
   const animationProps = animate ? {
     initial: { opacity: 0, y: 10 },
@@ -278,7 +278,7 @@ export function List({ children, className, animate = false, eyeFriendly = false
   );
 }
 
-export function ListItem({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function ListItem( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.li : 'li';
   const animationProps = animate ? {
     initial: { opacity: 0, x: -10 },
@@ -301,7 +301,7 @@ export function ListItem({ children, className, animate = false, eyeFriendly = f
 }
 
 // Blockquote
-export function Blockquote({ children, className, animate = false, eyeFriendly = false }: TypographyProps) {
+export function Blockquote( { children, className, animate = false, eyeFriendly = false }: TypographyProps) {
   const Component = animate ? motion.blockquote : 'blockquote';
   const animationProps = animate ? {
     initial: { opacity: 0, x: -20 },
@@ -325,7 +325,7 @@ export function Blockquote({ children, className, animate = false, eyeFriendly =
 }
 
 // Table components with improved readability
-export function Table({ children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
+export function Table( { children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
   return (
     <div className="my-6 w-full overflow-y-auto">
       <table
@@ -341,31 +341,31 @@ export function Table({ children, className, eyeFriendly = false }: Omit<Typogra
   );
 }
 
-export function TableHeader({ children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
+export function TableHeader( { children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
   return (
-    <thead className={cn('[&_tr]:border-b', eyeFriendly && '[&_tr]:border-b-2', className)}>
+    <thead className={cn( '[&_tr]:border-b', eyeFriendly && '[&_tr]:border-b-2', className)}>
       {children}
     </thead>
   );
 }
 
-export function TableBody({ children, className }: Omit<TypographyProps, 'animate' | 'eyeFriendly'>) {
+export function TableBody( { children, className }: Omit<TypographyProps, 'animate' | 'eyeFriendly'>) {
   return (
-    <tbody className={cn('[&_tr:last-child]:border-0', className)}>
+    <tbody className={cn( '[&_tr:last-child]:border-0', className)}>
       {children}
     </tbody>
   );
 }
 
-export function TableRow({ children, className }: Omit<TypographyProps, 'animate' | 'eyeFriendly'>) {
+export function TableRow( { children, className }: Omit<TypographyProps, 'animate' | 'eyeFriendly'>) {
   return (
-    <tr className={cn('border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted', className)}>
+    <tr className={cn( 'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted', className)}>
       {children}
     </tr>
   );
 }
 
-export function TableHead({ children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
+export function TableHead( { children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
   return (
     <th
       className={cn(
@@ -379,7 +379,7 @@ export function TableHead({ children, className, eyeFriendly = false }: Omit<Typ
   );
 }
 
-export function TableCell({ children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
+export function TableCell( { children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
   return (
     <td
       className={cn(
@@ -395,7 +395,7 @@ export function TableCell({ children, className, eyeFriendly = false }: Omit<Typ
 }
 
 // Utility component for readable content
-export function ReadableContent({ children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
+export function ReadableContent( { children, className, eyeFriendly = false }: Omit<TypographyProps, 'animate'>) {
   return (
     <div
       className={cn(
@@ -405,7 +405,7 @@ export function ReadableContent({ children, className, eyeFriendly = false }: Om
         'prose-h2:text-3xl prose-h2:font-semibold prose-h2:border-b prose-h2:pb-2',
         'prose-h3:text-2xl prose-h3:font-semibold',
         'prose-h4:text-xl prose-h4:font-semibold',
-        'prose-p:leading-7 prose-p:[&:not(:first-child)]:mt-6',
+        'prose-p:leading-7 prose-p:[&:not(_:first-child)]:mt-6',
         'prose-blockquote:mt-6 prose-blockquote:border-l-2 prose-blockquote:pl-6 prose-blockquote:italic',
         'prose-ul:my-6 prose-ul:ml-6 prose-ul:list-disc prose-ul:[&>li]:mt-2',
         'prose-code:relative prose-code:rounded prose-code:bg-muted prose-code:px-[0.3rem] prose-code:py-[0.2rem] prose-code:font-mono prose-code:text-sm prose-code:font-semibold',

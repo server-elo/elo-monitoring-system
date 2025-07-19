@@ -12,7 +12,7 @@ import { withLearningModuleErrorBoundary } from '@/lib/components/ErrorBoundaryH
 interface ModuleContentProps {
   module: LearningModule | null;
   isApiKeyMissing?: boolean;
-  onQuizComplete: (moduleId: string) => void;
+  onQuizComplete: (_moduleId: string) => void;
 }
 
 interface ContentSegment {
@@ -27,33 +27,33 @@ interface DiagramState {
   error: string | null;
 }
 
-const parseModuleContent = (content: string): ContentSegment[] => {
+const parseModuleContent = (_content: string): ContentSegment[] => {
   const segments: ContentSegment[] = [];
   // Adjusted regex to be non-greedy for language and ensure newline after language
-  const codeBlockRegex = /```(\w*)\n([\s\S]*?)\n```/g;
+  const codeBlockRegex = /```(_\w*)\n([\s\S]*?)\n```/g;
   let lastIndex = 0;
   let match;
 
   while ((match = codeBlockRegex.exec(content)) !== null) {
-    if (match.index > lastIndex) {
-      segments.push({ type: 'text', content: content.substring(lastIndex, match.index) });
+    if (_match.index > lastIndex) {
+      segments.push( { type: 'text', content: content.substring(lastIndex, match.index) });
     }
     segments.push({
       type: 'code',
       language: match[1] || 'plaintext',
-      content: match[2].trim(), // Keep content as is, trimming handled by pre/code
+      content: match[2].trim(_), // Keep content as is, trimming handled by pre/code
     });
     lastIndex = codeBlockRegex.lastIndex;
   }
 
-  if (lastIndex < content.length) {
-    segments.push({ type: 'text', content: content.substring(lastIndex) });
+  if (_lastIndex < content.length) {
+    segments.push( { type: 'text', content: content.substring(lastIndex) });
   }
 
   return segments;
 };
 
-const ModuleContentComponent: React.FC<ModuleContentProps> = ({ module, isApiKeyMissing, onQuizComplete }) => {
+const ModuleContentComponent: React.FC<ModuleContentProps> = ( { module, isApiKeyMissing, onQuizComplete }) => {
   const [diagramState, setDiagramState] = useState<DiagramState>({
     image: null,
     isLoading: false,
@@ -70,25 +70,25 @@ const ModuleContentComponent: React.FC<ModuleContentProps> = ({ module, isApiKey
       return;
     }
 
-    setDiagramState({ image: null, isLoading: true, error: null });
+    setDiagramState( { image: null, isLoading: true, error: null });
 
     const prompt = `Create a clear and visually informative diagram to explain the core concepts of: "${module.title}". 
     The diagram should be suitable for a technical learning platform about Solidity and blockchain. 
     Key aspects to illustrate include: "${module.summary}". 
-    Relevant keywords for context: ${module.keywords.join(', ')}. 
-    Style: Use a clean, modern, flat design. Prefer interconnected nodes, flowcharts, or conceptual maps. Avoid overly cartoonish or overly complex imagery. Ensure text within the diagram (if any) is legible. Output as a PNG.`;
+    Relevant keywords for context: ${module.keywords.join( ', ')}. 
+    Style: Use a clean, modern, flat design. Prefer interconnected nodes, flowcharts, or conceptual maps. Avoid overly cartoonish or overly complex imagery. Ensure text within the diagram (_if any) is legible. Output as a PNG.`;
 
-    const result = await generateDiagramForConcept(prompt);
+    const result = await generateDiagramForConcept(_prompt);
 
-    if (result.base64Image) {
-      setDiagramState({ image: result.base64Image, isLoading: false, error: null });
+    if (_result.base64Image) {
+      setDiagramState( { image: result.base64Image, isLoading: false, error: null });
     } else {
-      setDiagramState({ image: null, isLoading: false, error: result.error || "Failed to generate diagram." });
+      setDiagramState( { image: null, isLoading: false, error: result.error || "Failed to generate diagram." });
     }
   };
   
   useEffect(() => {
-    setDiagramState({ image: null, isLoading: false, error: null });
+    setDiagramState( { image: null, isLoading: false, error: null });
   }, [module]);
 
 
@@ -114,7 +114,7 @@ const ModuleContentComponent: React.FC<ModuleContentProps> = ({ module, isApiKey
     );
   }
 
-  const contentSegments = parseModuleContent(module.content);
+  const contentSegments = parseModuleContent(_module.content);
 
   return (
     <article className="p-6 md:p-8 bg-brand-surface-2 rounded-lg shadow-md text-brand-text-secondary space-y-8">
@@ -155,7 +155,7 @@ const ModuleContentComponent: React.FC<ModuleContentProps> = ({ module, isApiKey
                     {diagramState.isLoading ? (
                         <SpinnerIcon className="w-5 h-5 mr-2 inline" /> 
                     ): null}
-                    {diagramState.isLoading ? 'Generating...' : (diagramState.image ? 'Re-generate Diagram' : 'Generate Diagram')}
+                    {diagramState.isLoading ? 'Generating...' : (_diagramState.image ? 'Re-generate Diagram' : 'Generate Diagram')}
                 </button>
             </div>
             {diagramState.isLoading && (
@@ -188,8 +188,8 @@ const ModuleContentComponent: React.FC<ModuleContentProps> = ({ module, isApiKey
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold text-brand-text-primary mb-3">Details</h2>
-        {contentSegments.map((segment, index) => {
-          if (segment.type === 'code') {
+        {contentSegments.map( (segment, index) => {
+          if (_segment.type === 'code') {
             return (
               <div key={index} className="relative group bg-brand-bg-dark p-4 rounded-md shadow-lg my-4">
                 <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity duration-200">
@@ -209,7 +209,7 @@ const ModuleContentComponent: React.FC<ModuleContentProps> = ({ module, isApiKey
             <div 
               key={index} 
               className="prose prose-sm md:prose-base max-w-none"
-              dangerouslySetInnerHTML={{ __html: marked.parse(segment.content) as string }}
+              dangerouslySetInnerHTML={{  html: marked.parse(_segment.content) as string }}
             />
           );
         })}

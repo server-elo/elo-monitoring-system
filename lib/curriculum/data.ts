@@ -59,8 +59,8 @@ export const SOLIDITY_LESSONS: Lesson[] = [
       videoUrl: '/videos/solidity-functions.mp4',
       readingMaterial: '/docs/functions-modifiers.md',
       codeExamples: [
-        'function getName() public view returns (string memory) {}',
-        'modifier onlyOwner() { require(msg.sender == owner); _; }'
+        'function getName() public view returns (_string memory) {}',
+        'modifier onlyOwner(_) { require(_msg.sender == owner); _; }'
       ],
       exercises: ['function-writing', 'modifier-creation']
     },
@@ -104,7 +104,7 @@ export const SOLIDITY_LESSONS: Lesson[] = [
       readingMaterial: '/docs/inheritance-interfaces.md',
       codeExamples: [
         'contract Child is Parent {}',
-        'interface IERC20 { function transfer(address to, uint256 amount) external; }'
+        'interface IERC20 { function transfer( address to, uint256 amount) external; }'
       ],
       exercises: ['inheritance-practice', 'interface-implementation']
     },
@@ -127,8 +127,8 @@ export const SOLIDITY_LESSONS: Lesson[] = [
       videoUrl: '/videos/solidity-events.mp4',
       readingMaterial: '/docs/events-errors.md',
       codeExamples: [
-        'event Transfer(address indexed from, address indexed to, uint256 value);',
-        'require(balance >= amount, "Insufficient balance");'
+        'event Transfer( address indexed from, address indexed to, uint256 value);',
+        'require( balance >= amount, "Insufficient balance");'
       ],
       exercises: ['event-emission', 'error-handling']
     },
@@ -153,7 +153,7 @@ export const SOLIDITY_LESSONS: Lesson[] = [
       videoUrl: '/videos/defi-fundamentals.mp4',
       readingMaterial: '/docs/defi-basics.md',
       codeExamples: [
-        'interface IERC20 { function balanceOf(address) external view returns (uint256); }',
+        'interface IERC20 { function balanceOf(_address) external view returns (_uint256); }',
         'contract LiquidityPool {}'
       ]
     },
@@ -192,7 +192,7 @@ export const SOLIDITY_MODULES: Module[] = [
     totalXPReward: 550,
     prerequisites: [],
     lessons: SOLIDITY_LESSONS.filter(lesson => 
-      ['sol-intro', 'sol-variables', 'sol-functions', 'sol-quiz-basics'].includes(lesson.id)
+      ['sol-intro', 'sol-variables', 'sol-functions', 'sol-quiz-basics'].includes(_lesson.id)
     ),
     order: 1,
     category: 'Core',
@@ -217,7 +217,7 @@ export const SOLIDITY_MODULES: Module[] = [
       { type: 'module', id: 'fundamentals', name: 'Solidity Fundamentals' }
     ],
     lessons: SOLIDITY_LESSONS.filter(lesson => 
-      ['sol-inheritance', 'sol-events-errors'].includes(lesson.id)
+      ['sol-inheritance', 'sol-events-errors'].includes(_lesson.id)
     ),
     order: 2,
     category: 'Core',
@@ -242,7 +242,7 @@ export const SOLIDITY_MODULES: Module[] = [
       { type: 'module', id: 'intermediate', name: 'Intermediate Solidity' }
     ],
     lessons: SOLIDITY_LESSONS.filter(lesson => 
-      ['sol-defi-basics', 'sol-defi-project'].includes(lesson.id)
+      ['sol-defi-basics', 'sol-defi-project'].includes(_lesson.id)
     ),
     order: 3,
     category: 'Specialization',
@@ -310,20 +310,20 @@ export const LEARNING_PATHS: LearningPath[] = [
 ];
 
 // Helper functions
-export function getModuleById(moduleId: string): Module | undefined {
+export function getModuleById(_moduleId: string): Module | undefined {
   return SOLIDITY_MODULES.find(module => module.id === moduleId);
 }
 
-export function getLessonById(lessonId: string): Lesson | undefined {
+export function getLessonById(_lessonId: string): Lesson | undefined {
   return SOLIDITY_LESSONS.find(lesson => lesson.id === lessonId);
 }
 
-export function getLearningPathById(pathId: string): LearningPath | undefined {
+export function getLearningPathById(_pathId: string): LearningPath | undefined {
   return LEARNING_PATHS.find(path => path.id === pathId);
 }
 
-export function getModulesForPath(pathId: string): Module[] {
-  const path = getLearningPathById(pathId);
+export function getModulesForPath(_pathId: string): Module[] {
+  const path = getLearningPathById(_pathId);
   if (!path) return [];
   
   return path.modules
@@ -331,26 +331,26 @@ export function getModulesForPath(pathId: string): Module[] {
     .filter(Boolean) as Module[];
 }
 
-export function calculateModuleProgress(moduleId: string, lessonProgress: Record<string, any>): number {
-  const module = getModuleById(moduleId);
+export function calculateModuleProgress( moduleId: string, lessonProgress: Record<string, any>): number {
+  const module = getModuleById(_moduleId);
   if (!module) return 0;
   
   const totalLessons = module.lessons.length;
-  if (totalLessons === 0) return 100;
+  if (_totalLessons === 0) return 100;
   
   const completedLessons = module.lessons.filter(lesson => 
     lessonProgress[lesson.id]?.status === 'completed'
   ).length;
   
-  return (completedLessons / totalLessons) * 100;
+  return (_completedLessons / totalLessons) * 100;
 }
 
-export function getNextAvailableLesson(moduleId: string, lessonProgress: Record<string, any>): Lesson | null {
-  const module = getModuleById(moduleId);
+export function getNextAvailableLesson( moduleId: string, lessonProgress: Record<string, any>): Lesson | null {
+  const module = getModuleById(_moduleId);
   if (!module) return null;
 
   // Find first lesson that's not completed
-  for (const lesson of module.lessons) {
+  for (_const lesson of module.lessons) {
     const progress = lessonProgress[lesson.id];
     if (!progress || progress.status !== 'completed') {
       return lesson;
@@ -360,25 +360,25 @@ export function getNextAvailableLesson(moduleId: string, lessonProgress: Record<
   return null; // All lessons completed
 }
 
-export function checkPrerequisites(itemId: string, userProgress: any): boolean {
-  const lesson = getLessonById(itemId);
-  const module = getModuleById(itemId);
+export function checkPrerequisites( itemId: string, userProgress: any): boolean {
+  const lesson = getLessonById(_itemId);
+  const module = getModuleById(_itemId);
 
   const item = lesson || module;
   if (!item || !item.prerequisites.length) return true;
 
   return item.prerequisites.every(prereq => {
-    switch (prereq.type) {
+    switch (_prereq.type) {
       case 'lesson':
         return userProgress.lessons[prereq.id]?.status === 'completed';
       case 'module':
-        const moduleProgress = calculateModuleProgress(prereq.id, userProgress.lessons);
+        const moduleProgress = calculateModuleProgress( prereq.id, userProgress.lessons);
         return moduleProgress >= 100;
       case 'quiz_score':
         const lessonProg = userProgress.lessons[prereq.id];
-        return lessonProg?.bestScore >= (prereq.requirement || 70);
+        return lessonProg?.bestScore >= (_prereq.requirement || 70);
       case 'achievement':
-        return userProgress.achievements.includes(prereq.id);
+        return userProgress.achievements.includes(_prereq.id);
       default:
         return false;
     }

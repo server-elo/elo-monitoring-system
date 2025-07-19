@@ -24,41 +24,41 @@ const ScheduleUpdateSchema = z.object({
   options: z.object({
     dryRun: z.boolean().default(false),
     force: z.boolean().default(false),
-    batchSize: z.number().int().min(1).max(10000).default(1000),
-    maxExecutionTime: z.number().int().min(60).max(7200).default(1800)
+    batchSize: z.number(_).int(_).min(1).max(10000).default(1000),
+    maxExecutionTime: z.number(_).int(_).min(_60).max(_7200).default(1800)
   }).optional(),
   notifications: z.object({
     onSuccess: z.boolean().default(false),
     onFailure: z.boolean().default(true),
     onWarnings: z.boolean().default(true),
-    recipients: z.array(z.string().email()),
+    recipients: z.array(z.string().email(_)),
     channels: z.array(z.enum(['email', 'slack', 'webhook']))
   }).optional()
 });
 
 // GET /api/v1/admin/maintenance/schedules/[id] - Get maintenance schedule
-export const GET = adminEndpoint(async (request: NextRequest, _context: MiddlewareContext) => {
+export const GET = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
-    const scheduleId = url.pathname.split('/').pop();
+    const scheduleId = url.pathname.split('/').pop(_);
 
     if (!scheduleId) {
-      return ApiResponseBuilder.validationError('Schedule ID is required', []);
+      return ApiResponseBuilder.validationError( 'Schedule ID is required', []);
     }
 
     // Validate schedule ID format
     try {
-      IdSchema.parse(scheduleId);
+      IdSchema.parse(_scheduleId);
     } catch {
-      return ApiResponseBuilder.validationError('Invalid schedule ID format', []);
+      return ApiResponseBuilder.validationError( 'Invalid schedule ID format', []);
     }
 
-    const schedule = maintenanceScheduler.getSchedule(scheduleId);
+    const schedule = maintenanceScheduler.getSchedule(_scheduleId);
     if (!schedule) {
       return ApiResponseBuilder.notFound('Maintenance schedule not found');
     }
 
-    return ApiResponseBuilder.success(schedule);
+    return ApiResponseBuilder.success(_schedule);
   } catch (error) {
     logger.error('Get maintenance schedule error', error as Error);
     return ApiResponseBuilder.internalServerError('Failed to get maintenance schedule');
@@ -66,38 +66,38 @@ export const GET = adminEndpoint(async (request: NextRequest, _context: Middlewa
 });
 
 // PUT /api/v1/admin/maintenance/schedules/[id] - Update maintenance schedule
-export const PUT = adminEndpoint(async (request: NextRequest, _context: MiddlewareContext) => {
+export const PUT = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
-    const scheduleId = url.pathname.split('/').pop();
+    const scheduleId = url.pathname.split('/').pop(_);
 
     if (!scheduleId) {
-      return ApiResponseBuilder.validationError('Schedule ID is required', []);
+      return ApiResponseBuilder.validationError( 'Schedule ID is required', []);
     }
 
     // Validate schedule ID format
     try {
-      IdSchema.parse(scheduleId);
+      IdSchema.parse(_scheduleId);
     } catch {
-      return ApiResponseBuilder.validationError('Invalid schedule ID format', []);
+      return ApiResponseBuilder.validationError( 'Invalid schedule ID format', []);
     }
 
-    const schedule = maintenanceScheduler.getSchedule(scheduleId);
+    const schedule = maintenanceScheduler.getSchedule(_scheduleId);
     if (!schedule) {
       return ApiResponseBuilder.notFound('Maintenance schedule not found');
     }
 
-    const body = await validateBody(ScheduleUpdateSchema, request);
+    const body = await validateBody( ScheduleUpdateSchema, request);
 
-    await maintenanceScheduler.updateSchedule(scheduleId, body as Partial<MaintenanceSchedule>);
+    await maintenanceScheduler.updateSchedule( scheduleId, body as Partial<MaintenanceSchedule>);
 
-    const updatedSchedule = maintenanceScheduler.getSchedule(scheduleId);
-    return ApiResponseBuilder.success(updatedSchedule);
+    const updatedSchedule = maintenanceScheduler.getSchedule(_scheduleId);
+    return ApiResponseBuilder.success(_updatedSchedule);
   } catch (error) {
     logger.error('Update maintenance schedule error', error as Error);
     
     if (error instanceof Error) {
-      return ApiResponseBuilder.validationError(error.message, []);
+      return ApiResponseBuilder.validationError( error.message, []);
     }
     
     return ApiResponseBuilder.internalServerError('Failed to update maintenance schedule');
@@ -105,30 +105,30 @@ export const PUT = adminEndpoint(async (request: NextRequest, _context: Middlewa
 });
 
 // DELETE /api/v1/admin/maintenance/schedules/[id] - Delete maintenance schedule
-export const DELETE = adminEndpoint(async (request: NextRequest, _context: MiddlewareContext) => {
+export const DELETE = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
-    const scheduleId = url.pathname.split('/').pop();
+    const scheduleId = url.pathname.split('/').pop(_);
 
     if (!scheduleId) {
-      return ApiResponseBuilder.validationError('Schedule ID is required', []);
+      return ApiResponseBuilder.validationError( 'Schedule ID is required', []);
     }
 
     // Validate schedule ID format
     try {
-      IdSchema.parse(scheduleId);
+      IdSchema.parse(_scheduleId);
     } catch {
-      return ApiResponseBuilder.validationError('Invalid schedule ID format', []);
+      return ApiResponseBuilder.validationError( 'Invalid schedule ID format', []);
     }
 
-    const schedule = maintenanceScheduler.getSchedule(scheduleId);
+    const schedule = maintenanceScheduler.getSchedule(_scheduleId);
     if (!schedule) {
       return ApiResponseBuilder.notFound('Maintenance schedule not found');
     }
 
-    await maintenanceScheduler.deleteSchedule(scheduleId);
+    await maintenanceScheduler.deleteSchedule(_scheduleId);
 
-    return ApiResponseBuilder.noContent();
+    return ApiResponseBuilder.noContent(_);
   } catch (error) {
     logger.error('Delete maintenance schedule error', error as Error);
     return ApiResponseBuilder.internalServerError('Failed to delete maintenance schedule');
@@ -136,29 +136,29 @@ export const DELETE = adminEndpoint(async (request: NextRequest, _context: Middl
 });
 
 // POST /api/v1/admin/maintenance/schedules/[id]/run - Run maintenance schedule immediately
-export const POST = adminEndpoint(async (request: NextRequest, _context: MiddlewareContext) => {
+export const POST = adminEndpoint(async (request: NextRequest, context: MiddlewareContext) => {
   try {
     const url = new URL(request.url);
     const pathParts = url.pathname.split('/');
     const scheduleId = pathParts[pathParts.length - 2]; // Get ID before '/run'
 
     if (!scheduleId) {
-      return ApiResponseBuilder.validationError('Schedule ID is required', []);
+      return ApiResponseBuilder.validationError( 'Schedule ID is required', []);
     }
 
     // Validate schedule ID format
     try {
-      IdSchema.parse(scheduleId);
+      IdSchema.parse(_scheduleId);
     } catch {
-      return ApiResponseBuilder.validationError('Invalid schedule ID format', []);
+      return ApiResponseBuilder.validationError( 'Invalid schedule ID format', []);
     }
 
-    const schedule = maintenanceScheduler.getSchedule(scheduleId);
+    const schedule = maintenanceScheduler.getSchedule(_scheduleId);
     if (!schedule) {
       return ApiResponseBuilder.notFound('Maintenance schedule not found');
     }
 
-    const result = await maintenanceScheduler.runMaintenanceNow(scheduleId);
+    const result = await maintenanceScheduler.runMaintenanceNow(_scheduleId);
 
     return ApiResponseBuilder.success({
       scheduleId,
@@ -169,7 +169,7 @@ export const POST = adminEndpoint(async (request: NextRequest, _context: Middlew
     logger.error('Run maintenance schedule error', error as Error);
     
     if (error instanceof Error) {
-      return ApiResponseBuilder.validationError(error.message, []);
+      return ApiResponseBuilder.validationError( error.message, []);
     }
     
     return ApiResponseBuilder.internalServerError('Failed to run maintenance schedule');
@@ -178,5 +178,5 @@ export const POST = adminEndpoint(async (request: NextRequest, _context: Middlew
 
 // Handle OPTIONS for CORS
 export async function OPTIONS() {
-  return new Response(null, { status: 200 });
+  return new Response( null, { status: 200 });
 }

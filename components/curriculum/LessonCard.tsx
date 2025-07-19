@@ -27,8 +27,8 @@ interface LessonCardProps {
   progress: LessonProgress;
   isUnlocked: boolean;
   unmetPrerequisites?: string[];
-  onClick?: () => void;
-  onStart?: () => void;
+  onClick?: (_) => void;
+  onStart?: (_) => void;
   className?: string;
   compact?: boolean;
 }
@@ -43,9 +43,9 @@ export function LessonCard({
   className,
   compact = false
 }: LessonCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(_false);
 
-  const getStatusInfo = () => {
+  const getStatusInfo = (_) => {
     if (!isUnlocked) {
       return {
         status: 'locked' as LessonStatus,
@@ -65,9 +65,9 @@ export function LessonCard({
           borderColor: 'border-green-500/30',
           icon: CheckCircle
         };
-      case 'in_progress':
+      case 'inprogress':
         return {
-          status: 'in_progress' as LessonStatus,
+          status: 'inprogress' as LessonStatus,
           color: 'text-blue-400',
           bgColor: 'bg-blue-500/20',
           borderColor: 'border-blue-500/30',
@@ -84,8 +84,8 @@ export function LessonCard({
     }
   };
 
-  const getTypeIcon = () => {
-    switch (lesson.type) {
+  const getTypeIcon = (_) => {
+    switch (_lesson.type) {
       case 'theory':
         return BookOpen;
       case 'practical':
@@ -101,8 +101,8 @@ export function LessonCard({
     }
   };
 
-  const getTypeColor = () => {
-    switch (lesson.type) {
+  const getTypeColor = (_) => {
+    switch (_lesson.type) {
       case 'theory':
         return 'text-blue-400 bg-blue-500/20 border-blue-500/30';
       case 'practical':
@@ -118,8 +118,8 @@ export function LessonCard({
     }
   };
 
-  const getDifficultyColor = () => {
-    switch (lesson.difficulty) {
+  const getDifficultyColor = (_) => {
+    switch (_lesson.difficulty) {
       case 'beginner':
         return 'text-green-400';
       case 'intermediate':
@@ -133,20 +133,20 @@ export function LessonCard({
     }
   };
 
-  const statusInfo = getStatusInfo();
+  const statusInfo = getStatusInfo(_);
   const StatusIcon = statusInfo.icon;
-  const TypeIcon = getTypeIcon();
+  const TypeIcon = getTypeIcon(_);
   const isCompleted = progress.status === 'completed';
   const progressPercentage = progress.progress || 0;
 
   if (compact) {
     return (
       <motion.div
-        className={cn('relative group', className)}
+        className={cn( 'relative group', className)}
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
-        onHoverStart={() => setIsHovered(true)}
-        onHoverEnd={() => setIsHovered(false)}
+        onHoverStart={(_) => setIsHovered(_true)}
+        onHoverEnd={(_) => setIsHovered(_false)}
       >
         <GlassCard
           className={cn(
@@ -160,7 +160,7 @@ export function LessonCard({
             {/* Type Icon */}
             <div className={cn(
               'w-8 h-8 rounded-lg flex items-center justify-center',
-              getTypeColor(),
+              getTypeColor(_),
               'border',
               !isUnlocked && 'grayscale'
             )}>
@@ -195,7 +195,7 @@ export function LessonCard({
                   />
                 </div>
               )}
-              <StatusIcon className={cn('w-4 h-4', statusInfo.color)} />
+              <StatusIcon className={cn( 'w-4 h-4', statusInfo.color)} />
             </div>
           </div>
         </GlassCard>
@@ -205,11 +205,11 @@ export function LessonCard({
 
   return (
     <motion.div
-      className={cn('relative group', className)}
+      className={cn( 'relative group', className)}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      onHoverStart={(_) => setIsHovered(_true)}
+      onHoverEnd={(_) => setIsHovered(_false)}
     >
       <GlassCard
         className={cn(
@@ -234,7 +234,7 @@ export function LessonCard({
             <div className="flex items-start space-x-3 flex-1">
               <div className={cn(
                 'w-10 h-10 rounded-lg flex items-center justify-center',
-                getTypeColor(),
+                getTypeColor(_),
                 'border',
                 !isUnlocked && 'grayscale'
               )}>
@@ -260,12 +260,12 @@ export function LessonCard({
 
             {/* Status and Badges */}
             <div className="flex flex-col items-end space-y-2">
-              <StatusIcon className={cn('w-5 h-5', statusInfo.color)} />
+              <StatusIcon className={cn( 'w-5 h-5', statusInfo.color)} />
               
               {/* Type Badge */}
               <div className={cn(
                 'px-2 py-1 rounded-full text-xs font-medium border',
-                getTypeColor()
+                getTypeColor(_)
               )}>
                 {lesson.type}
               </div>
@@ -307,7 +307,7 @@ export function LessonCard({
                 <span className="text-sm font-medium text-yellow-300">Prerequisites Required</span>
               </div>
               <div className="text-xs text-yellow-200">
-                {unmetPrerequisites.slice(0, 1).join(', ')}
+                {unmetPrerequisites.slice(0, 1).join( ', ')}
               </div>
             </div>
           )}
@@ -326,10 +326,10 @@ export function LessonCard({
             
             <div className="text-center">
               <div className="flex items-center justify-center space-x-1 mb-1">
-                <Star className={cn('w-3 h-3', getDifficultyColor())} />
+                <Star className={cn( 'w-3 h-3', getDifficultyColor())} />
                 <span className="text-xs text-gray-400">Difficulty</span>
               </div>
-              <span className={cn('text-sm font-medium', getDifficultyColor())}>
+              <span className={cn( 'text-sm font-medium', getDifficultyColor())}>
                 {lesson.difficulty}
               </span>
             </div>
@@ -349,15 +349,15 @@ export function LessonCard({
           <div className="flex items-center justify-between">
             {isUnlocked ? (
               <EnhancedButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onStart?.();
+                onClick={(_e) => {
+                  e.stopPropagation(_);
+                  onStart?.(_);
                 }}
                 className={cn(
                   'flex-1 text-sm',
                   isCompleted 
                     ? 'bg-green-600 hover:bg-green-700 text-white' 
-                    : progress.status === 'in_progress'
+                    : progress.status === 'inprogress'
                     ? 'bg-blue-600 hover:bg-blue-700 text-white'
                     : 'bg-white/10 hover:bg-white/20 text-white'
                 )}
@@ -368,7 +368,7 @@ export function LessonCard({
                     <CheckCircle className="w-4 h-4 mr-2" />
                     Review Lesson
                   </>
-                ) : progress.status === 'in_progress' ? (
+                ) : progress.status === 'inprogress' ? (
                   <>
                     <Play className="w-4 h-4 mr-2" />
                     Continue

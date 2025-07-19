@@ -8,199 +8,199 @@ import { vi } from 'vitest';
 export const mockPrisma = {
   // User model mocks
   user: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
   // Course model mocks
   course: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
   // Lesson model mocks
   lesson: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
   // Progress tracking mocks
   userCourseProgress: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
   userLessonProgress: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
   // Achievement mocks
   userAchievement: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
   // Exercise mocks
   exercise: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
   // Session mocks
   session: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
-  // Account mocks (for OAuth)
+  // Account mocks (_for OAuth)
   account: {
-    create: vi.fn(),
-    findUnique: vi.fn(),
-    findFirst: vi.fn(),
-    findMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    upsert: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    createMany: vi.fn(),
-    count: vi.fn(),
-    aggregate: vi.fn(),
-    groupBy: vi.fn()
+    create: vi.fn(_),
+    findUnique: vi.fn(_),
+    findFirst: vi.fn(_),
+    findMany: vi.fn(_),
+    update: vi.fn(_),
+    updateMany: vi.fn(_),
+    upsert: vi.fn(_),
+    delete: vi.fn(_),
+    deleteMany: vi.fn(_),
+    createMany: vi.fn(_),
+    count: vi.fn(_),
+    aggregate: vi.fn(_),
+    groupBy: vi.fn(_)
   },
 
   // Transaction mock
-  $transaction: vi.fn(),
+  $transaction: vi.fn(_),
 
   // Connection management
-  $connect: vi.fn(),
-  $disconnect: vi.fn(),
+  $connect: vi.fn(_),
+  $disconnect: vi.fn(_),
 
   // Raw queries
-  $executeRaw: vi.fn(),
-  $executeRawUnsafe: vi.fn(),
-  $queryRaw: vi.fn(),
-  $queryRawUnsafe: vi.fn(),
+  $executeRaw: vi.fn(_),
+  $executeRawUnsafe: vi.fn(_),
+  $queryRaw: vi.fn(_),
+  $queryRawUnsafe: vi.fn(_),
 
   // Extensions and middleware
-  $use: vi.fn(),
-  $on: vi.fn(),
-  $extends: vi.fn()
+  $use: vi.fn(_),
+  $on: vi.fn(_),
+  $extends: vi.fn(_)
 };
 
 // Helper function to reset all mocks
-export const resetMockPrisma = () => {
-  Object.values(mockPrisma).forEach(model => {
-    if (typeof model === 'object' && model !== null) {
-      Object.values(model).forEach(method => {
-        if (typeof method === 'function' && method.mockReset) {
-          method.mockReset();
+export const resetMockPrisma = (_) => {
+  Object.values(_mockPrisma).forEach(model => {
+    if (_typeof model === 'object' && model !== null) {
+      Object.values(_model).forEach(method => {
+        if (_typeof method === 'function' && method.mockReset) {
+          method.mockReset(_);
         }
       });
-    } else if (typeof model === 'function' && model.mockReset) {
-      model.mockReset();
+    } else if (_typeof model === 'function' && model.mockReset) {
+      model.mockReset(_);
     }
   });
 };
 
 // Helper function to create common mock data
-export const createMockUser = (overrides = {}) => ({
+export const createMockUser = (_overrides = {}) => ({
   id: 'mock-user-id',
   email: 'test@example.com',
   name: 'Test User',
   password: 'hashedpassword',
-  emailVerified: new Date(),
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  emailVerified: new Date(_),
+  createdAt: new Date(_),
+  updatedAt: new Date(_),
   experience: 1000,
   level: 5,
   streak: 7,
@@ -208,39 +208,39 @@ export const createMockUser = (overrides = {}) => ({
   ...overrides
 });
 
-export const createMockCourse = (overrides = {}) => ({
+export const createMockCourse = (_overrides = {}) => ({
   id: 'mock-course-id',
   title: 'Test Course',
   description: 'Test course description',
   difficulty: 'BEGINNER',
   category: 'SMART_CONTRACTS',
   published: true,
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: new Date(_),
+  updatedAt: new Date(_),
   authorId: 'mock-author-id',
   ...overrides
 });
 
-export const createMockLesson = (overrides = {}) => ({
+export const createMockLesson = (_overrides = {}) => ({
   id: 'mock-lesson-id',
   title: 'Test Lesson',
   content: 'Test lesson content',
   order: 1,
   courseId: 'mock-course-id',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: new Date(_),
+  updatedAt: new Date(_),
   ...overrides
 });
 
-export const createMockProgress = (overrides = {}) => ({
+export const createMockProgress = (_overrides = {}) => ({
   id: 'mock-progress-id',
   userId: 'mock-user-id',
   courseId: 'mock-course-id',
   progressPercentage: 50,
   completedLessons: 5,
   totalLessons: 10,
-  lastAccessedAt: new Date(),
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  lastAccessedAt: new Date(_),
+  createdAt: new Date(_),
+  updatedAt: new Date(_),
   ...overrides
 });

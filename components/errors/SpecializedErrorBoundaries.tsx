@@ -12,7 +12,7 @@ export function CodeEditorErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <FeatureErrorBoundary
       name="Code Editor"
-      onError={(error, errorInfo) => {
+      onError={( error, errorInfo) => {
         console.error('Code Editor Error:', error, errorInfo);
         // Could save user's code to localStorage before crash
         const currentCode = localStorage.getItem('solidity-code-backup');
@@ -35,7 +35,7 @@ export function CodeEditorErrorBoundary({ children }: { children: ReactNode }) {
               </p>
               <div className="space-y-2">
                 <EnhancedButton
-                  onClick={() => window.location.reload()}
+                  onClick={(_) => window.location.reload(_)}
                   className="bg-yellow-600 hover:bg-yellow-700 text-white"
                   touchTarget
                 >
@@ -47,10 +47,10 @@ export function CodeEditorErrorBoundary({ children }: { children: ReactNode }) {
                   </summary>
                   <div className="mt-2 space-y-2">
                     <EnhancedButton
-                      onClick={() => {
+                      onClick={(_) => {
                         const backup = localStorage.getItem('solidity-code-backup');
                         if (backup) {
-                          navigator.clipboard.writeText(backup);
+                          navigator.clipboard.writeText(_backup);
                           alert('Code backup copied to clipboard');
                         } else {
                           alert('No code backup found');
@@ -86,7 +86,7 @@ export function LearningModuleErrorBoundary({
   return (
     <FeatureErrorBoundary
       name={`Learning Module${moduleName ? `: ${moduleName}` : ''}`}
-      onError={(error, errorInfo) => {
+      onError={( error, errorInfo) => {
         console.error('Learning Module Error:', error, errorInfo);
         // Track learning progress before crash
         const progress = localStorage.getItem('learning-progress');
@@ -108,14 +108,14 @@ export function LearningModuleErrorBoundary({
               </p>
               <div className="flex flex-wrap gap-2">
                 <EnhancedButton
-                  onClick={() => window.location.reload()}
+                  onClick={(_) => window.location.reload(_)}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                   touchTarget
                 >
                   Retry Module
                 </EnhancedButton>
                 <EnhancedButton
-                  onClick={() => window.location.href = '/learn'}
+                  onClick={(_) => window.location.href = '/learn'}
                   variant="outline"
                   className="border-blue-300 text-blue-700 hover:bg-blue-100"
                   touchTarget
@@ -138,11 +138,11 @@ export function AuthErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <FeatureErrorBoundary
       name="Authentication"
-      onError={(error, errorInfo) => {
+      onError={( error, errorInfo) => {
         console.error('Auth Error:', error, errorInfo);
         // Clear potentially corrupted auth state
         localStorage.removeItem('auth-token');
-        sessionStorage.clear();
+        sessionStorage.clear(_);
       }}
       fallback={
         <Card className="p-6 bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800/30">
@@ -159,9 +159,9 @@ export function AuthErrorBoundary({ children }: { children: ReactNode }) {
               </p>
               <div className="flex flex-wrap gap-2">
                 <EnhancedButton
-                  onClick={() => {
-                    localStorage.clear();
-                    sessionStorage.clear();
+                  onClick={(_) => {
+                    localStorage.clear(_);
+                    sessionStorage.clear(_);
                     window.location.href = '/login';
                   }}
                   className="bg-red-600 hover:bg-red-700 text-white"
@@ -170,7 +170,7 @@ export function AuthErrorBoundary({ children }: { children: ReactNode }) {
                   Go to Login
                 </EnhancedButton>
                 <EnhancedButton
-                  onClick={() => window.location.href = '/'}
+                  onClick={(_) => window.location.href = '/'}
                   variant="outline"
                   className="border-red-300 text-red-700 hover:bg-red-100"
                   touchTarget
@@ -193,7 +193,7 @@ export function FileUploadErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <ComponentErrorBoundary
       name="File Upload"
-      onError={(error, errorInfo) => {
+      onError={( error, errorInfo) => {
         console.error('File Upload Error:', error, errorInfo);
       }}
       fallback={
@@ -208,7 +208,7 @@ export function FileUploadErrorBoundary({ children }: { children: ReactNode }) {
                 The file upload component encountered an error. Please try refreshing the page.
               </p>
               <EnhancedButton
-                onClick={() => window.location.reload()}
+                onClick={(_) => window.location.reload(_)}
                 size="sm"
                 className="bg-orange-600 hover:bg-orange-700 text-white"
                 touchTarget
@@ -230,10 +230,10 @@ export function NetworkErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <ComponentErrorBoundary
       name="Network Component"
-      onError={(error, errorInfo) => {
+      onError={( error, errorInfo) => {
         console.error('Network Component Error:', error, errorInfo);
         // Check if it's a network-related error
-        if (error.message.includes('fetch') || error.message.includes('network')) {
+        if (_error.message.includes('fetch') || error.message.includes('network')) {
           console.log('Network error detected, checking connection...');
         }
       }}
@@ -250,7 +250,7 @@ export function NetworkErrorBoundary({ children }: { children: ReactNode }) {
               </p>
               <div className="flex gap-2">
                 <EnhancedButton
-                  onClick={() => window.location.reload()}
+                  onClick={(_) => window.location.reload(_)}
                   size="sm"
                   className="bg-gray-600 hover:bg-gray-700 text-white"
                   touchTarget
@@ -258,8 +258,8 @@ export function NetworkErrorBoundary({ children }: { children: ReactNode }) {
                   Retry
                 </EnhancedButton>
                 <EnhancedButton
-                  onClick={() => {
-                    if (navigator.onLine) {
+                  onClick={(_) => {
+                    if (_navigator.onLine) {
                       alert('You appear to be online. The issue may be with our servers.');
                     } else {
                       alert('You appear to be offline. Please check your internet connection.');
@@ -288,7 +288,7 @@ export function SettingsErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <FeatureErrorBoundary
       name="Settings"
-      onError={(error, errorInfo) => {
+      onError={( error, errorInfo) => {
         console.error('Settings Error:', error, errorInfo);
         // Reset settings to defaults if corrupted
         const defaultSettings = {
@@ -296,7 +296,7 @@ export function SettingsErrorBoundary({ children }: { children: ReactNode }) {
           language: 'en',
           notifications: true
         };
-        localStorage.setItem('app-settings', JSON.stringify(defaultSettings));
+        localStorage.setItem( 'app-settings', JSON.stringify(defaultSettings));
       }}
       fallback={
         <Card className="p-6 bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800/30">
@@ -313,16 +313,16 @@ export function SettingsErrorBoundary({ children }: { children: ReactNode }) {
               </p>
               <div className="flex flex-wrap gap-2">
                 <EnhancedButton
-                  onClick={() => window.location.reload()}
+                  onClick={(_) => window.location.reload(_)}
                   className="bg-purple-600 hover:bg-purple-700 text-white"
                   touchTarget
                 >
                   Reload Settings
                 </EnhancedButton>
                 <EnhancedButton
-                  onClick={() => {
+                  onClick={(_) => {
                     localStorage.removeItem('app-settings');
-                    window.location.reload();
+                    window.location.reload(_);
                   }}
                   variant="outline"
                   className="border-purple-300 text-purple-700 hover:bg-purple-100"
@@ -366,7 +366,7 @@ export function AsyncComponentErrorBoundary({
               {componentName} failed to load
             </span>
             <EnhancedButton
-              onClick={() => window.location.reload()}
+              onClick={(_) => window.location.reload(_)}
               size="sm"
               variant="ghost"
               className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"

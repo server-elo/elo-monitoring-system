@@ -40,11 +40,11 @@ export default function ExamplesPage() {
 contract SimpleStorage {
     uint256 private storedData;
     
-    function set(uint256 x) public {
+    function set(_uint256 x) public {
         storedData = x;
     }
     
-    function get() public view returns (uint256) {
+    function get() public view returns (_uint256) {
         return storedData;
     }
 }`,
@@ -65,12 +65,12 @@ contract SimpleStorage {
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MyToken is ERC20 {
-    constructor() ERC20("MyToken", "MTK") {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+    constructor(_) ERC20( "MyToken", "MTK") {
+        _mint( msg.sender, 1000000 * 10 ** decimals());
     }
     
-    function mint(address to, uint256 amount) public {
-        _mint(to, amount);
+    function mint( address to, uint256 amount) public {
+        _mint( to, amount);
     }
 }`,
       githubUrl: 'https://github.com/ezekaj/learning_sol/examples/erc20-token',
@@ -94,11 +94,11 @@ contract MyNFT is ERC721, Ownable {
     uint256 private _tokenIdCounter;
     uint256 public constant MAX_SUPPLY = 10000;
     
-    constructor() ERC721("MyNFT", "MNFT") {}
+    constructor(_) ERC721( "MyNFT", "MNFT") {}
     
-    function safeMint(address to) public onlyOwner {
-        require(_tokenIdCounter < MAX_SUPPLY, "Max supply reached");
-        _safeMint(to, _tokenIdCounter);
+    function safeMint(_address to) public onlyOwner {
+        require( _tokenIdCounter < MAX_SUPPLY, "Max supply reached");
+        _safeMint( to, _tokenIdCounter);
         _tokenIdCounter++;
     }
 }`,
@@ -122,13 +122,13 @@ contract VotingDAO {
         uint256 voteCount;
         uint256 deadline;
         bool executed;
-        mapping(address => bool) hasVoted;
+        mapping(_address => bool) hasVoted;
     }
     
-    mapping(uint256 => Proposal) public proposals;
+    mapping(_uint256 => Proposal) public proposals;
     uint256 public proposalCount;
     
-    function createProposal(string memory _description) public {
+    function createProposal(_string memory _description) public {
         // Implementation here
     }
 }`,
@@ -164,8 +164,8 @@ contract VotingDAO {
     }
   ];
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
+  const getDifficultyColor = (_difficulty: string) => {
+    switch (_difficulty) {
       case 'Beginner': return 'text-green-400 bg-green-400/10';
       case 'Intermediate': return 'text-yellow-400 bg-yellow-400/10';
       case 'Advanced': return 'text-red-400 bg-red-400/10';
@@ -216,7 +216,7 @@ contract VotingDAO {
             className="mb-12"
           >
             <div className="flex flex-wrap gap-2 justify-center">
-              {exampleCategories.map((category, index) => (
+              {exampleCategories.map( (category, index) => (
                 <motion.button
                   key={category.name}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
@@ -230,7 +230,7 @@ contract VotingDAO {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 + index * 0.05 }}
                 >
-                  {category.name} ({category.count})
+                  {category.name} ({ category.count })
                 </motion.button>
               ))}
             </div>
@@ -245,7 +245,7 @@ contract VotingDAO {
           >
             <h2 className="text-2xl font-bold text-white mb-6">Quick Start Examples</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {quickExamples.map((example, index) => (
+              {quickExamples.map( (example, index) => (
                 <motion.a
                   key={example.title}
                   href={example.href}
@@ -263,7 +263,7 @@ contract VotingDAO {
                     </span>
                   </div>
                   <p className="text-sm text-gray-400 mb-2">{example.description}</p>
-                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(example.difficulty)}`}>
+                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(_example.difficulty)}`}>
                     {example.difficulty}
                   </span>
                 </motion.a>
@@ -279,7 +279,7 @@ contract VotingDAO {
           >
             <h2 className="text-2xl font-bold text-white mb-8">Featured Examples</h2>
             <div className="space-y-8">
-              {featuredExamples.map((example, index) => (
+              {featuredExamples.map( (example, index) => (
                 <motion.div
                   key={example.id}
                   className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden"
@@ -292,7 +292,7 @@ contract VotingDAO {
                       {/* Info Section */}
                       <div className="lg:w-1/3">
                         <div className="flex items-center justify-between mb-3">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(example.difficulty)}`}>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(_example.difficulty)}`}>
                             {example.difficulty}
                           </span>
                           <span className="text-sm text-gray-400">{example.category}</span>

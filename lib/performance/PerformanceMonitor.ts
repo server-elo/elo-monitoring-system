@@ -22,67 +22,67 @@ export class PerformanceMonitor {
   private static instance: PerformanceMonitor;
   private metrics: PerformanceMetric[] = [];
   private alerts: PerformanceAlert[] = [];
-  private observers: Map<string, PerformanceObserver> = new Map();
+  private observers: Map<string, PerformanceObserver> = new Map(_);
   private frameCount = 0;
   private lastFrameTime = 0;
   private fpsHistory: number[] = [];
   private isMonitoring = false;
 
-  static getInstance(): PerformanceMonitor {
+  static getInstance(_): PerformanceMonitor {
     if (!PerformanceMonitor.instance) {
-      PerformanceMonitor.instance = new PerformanceMonitor();
+      PerformanceMonitor.instance = new PerformanceMonitor(_);
     }
     return PerformanceMonitor.instance;
   }
 
-  private constructor() {
-    this.initializeMonitoring();
+  private constructor(_) {
+    this.initializeMonitoring(_);
   }
 
-  private initializeMonitoring(): void {
-    if (typeof window === 'undefined') return;
+  private initializeMonitoring(_): void {
+    if (_typeof window === 'undefined') return;
 
     // Monitor FPS
-    this.startFPSMonitoring();
+    this.startFPSMonitoring(_);
     
     // Monitor memory usage
-    this.startMemoryMonitoring();
+    this.startMemoryMonitoring(_);
     
     // Monitor user interactions
-    this.startInteractionMonitoring();
+    this.startInteractionMonitoring(_);
     
     // Monitor network performance
-    this.startNetworkMonitoring();
+    this.startNetworkMonitoring(_);
   }
 
-  private startFPSMonitoring(): void {
-    const measureFPS = (timestamp: number) => {
-      if (this.lastFrameTime === 0) {
+  private startFPSMonitoring(_): void {
+    const measureFPS = (_timestamp: number) => {
+      if (_this.lastFrameTime === 0) {
         this.lastFrameTime = timestamp;
       }
 
       const delta = timestamp - this.lastFrameTime;
       const fps = 1000 / delta;
       
-      this.fpsHistory.push(fps);
-      if (this.fpsHistory.length > 60) { // Keep last 60 frames
-        this.fpsHistory.shift();
+      this.fpsHistory.push(_fps);
+      if (_this.fpsHistory.length > 60) { // Keep last 60 frames
+        this.fpsHistory.shift(_);
       }
 
       // Calculate average FPS
-      const avgFPS = this.fpsHistory.reduce((sum, f) => sum + f, 0) / this.fpsHistory.length;
+      const avgFPS = this.fpsHistory.reduce( (sum, f) => sum + f, 0) / this.fpsHistory.length;
       
       this.recordMetric({
         name: 'fps',
-        value: Math.round(avgFPS),
-        timestamp: new Date(),
+        value: Math.round(_avgFPS),
+        timestamp: new Date(_),
         category: 'render',
         threshold: 30,
         unit: 'fps'
       });
 
       // Check for performance issues
-      if (avgFPS < 30) {
+      if (_avgFPS < 30) {
         this.createAlert('fps', avgFPS, 30, 'warning', [
           'Consider reducing animation complexity',
           'Check for memory leaks',
@@ -93,20 +93,20 @@ export class PerformanceMonitor {
       this.lastFrameTime = timestamp;
       this.frameCount++;
 
-      if (this.isMonitoring) {
-        requestAnimationFrame(measureFPS);
+      if (_this.isMonitoring) {
+        requestAnimationFrame(_measureFPS);
       }
     };
 
     this.isMonitoring = true;
-    requestAnimationFrame(measureFPS);
+    requestAnimationFrame(_measureFPS);
   }
 
-  private startMemoryMonitoring(): void {
+  private startMemoryMonitoring(_): void {
     if (!('memory' in performance)) return;
 
-    const checkMemory = () => {
-      const memory = (performance as any).memory;
+    const checkMemory = (_) => {
+      const memory = (_performance as any).memory;
       if (memory) {
         const usedMB = memory.usedJSHeapSize / 1024 / 1024;
         const totalMB = memory.totalJSHeapSize / 1024 / 1024;
@@ -114,8 +114,8 @@ export class PerformanceMonitor {
 
         this.recordMetric({
           name: 'memory_used',
-          value: Math.round(usedMB),
-          timestamp: new Date(),
+          value: Math.round(_usedMB),
+          timestamp: new Date(_),
           category: 'memory',
           threshold: 100,
           unit: 'mb'
@@ -124,15 +124,15 @@ export class PerformanceMonitor {
         this.recordMetric({
           name: 'memory_usage_percent',
           value: Math.round((usedMB / limitMB) * 100),
-          timestamp: new Date(),
+          timestamp: new Date(_),
           category: 'memory',
           threshold: 80,
           unit: '%'
         });
 
         // Alert on high memory usage
-        const usagePercent = (usedMB / limitMB) * 100;
-        if (usagePercent > 80) {
+        const usagePercent = (_usedMB / limitMB) * 100;
+        if (_usagePercent > 80) {
           this.createAlert('memory_usage_percent', usagePercent, 80, 'critical', [
             'Check for memory leaks',
             'Clear unused variables and references',
@@ -143,27 +143,27 @@ export class PerformanceMonitor {
     };
 
     // Check memory every 5 seconds
-    setInterval(checkMemory, 5000);
-    checkMemory(); // Initial check
+    setInterval( checkMemory, 5000);
+    checkMemory(_); // Initial check
   }
 
-  private startInteractionMonitoring(): void {
+  private startInteractionMonitoring(_): void {
     // Monitor input delay
-    const measureInputDelay = (event: Event) => {
-      const now = performance.now();
+    const measureInputDelay = (_event: Event) => {
+      const now = performance.now(_);
       const eventTime = event.timeStamp || now;
       const delay = now - eventTime;
 
       this.recordMetric({
         name: 'input_delay',
-        value: Math.round(delay),
-        timestamp: new Date(),
+        value: Math.round(_delay),
+        timestamp: new Date(_),
         category: 'interaction',
         threshold: 100,
         unit: 'ms'
       });
 
-      if (delay > 100) {
+      if (_delay > 100) {
         this.createAlert('input_delay', delay, 100, 'warning', [
           'Optimize event handlers',
           'Use debouncing for frequent events',
@@ -174,24 +174,24 @@ export class PerformanceMonitor {
 
     // Monitor various interaction events
     ['click', 'keydown', 'scroll'].forEach(eventType => {
-      document.addEventListener(eventType, measureInputDelay, { passive: true });
+      document.addEventListener( eventType, measureInputDelay, { passive: true });
     });
 
     // Monitor Long Tasks
     if ('PerformanceObserver' in window) {
       try {
         const longTaskObserver = new PerformanceObserver((list) => {
-          list.getEntries().forEach((entry) => {
+          list.getEntries(_).forEach((entry) => {
             this.recordMetric({
               name: 'long_task',
-              value: Math.round(entry.duration),
-              timestamp: new Date(),
+              value: Math.round(_entry.duration),
+              timestamp: new Date(_),
               category: 'interaction',
               threshold: 50,
               unit: 'ms'
             });
 
-            if (entry.duration > 50) {
+            if (_entry.duration > 50) {
               this.createAlert('long_task', entry.duration, 50, 'warning', [
                 'Break up long-running tasks',
                 'Use setTimeout or requestIdleCallback',
@@ -201,38 +201,38 @@ export class PerformanceMonitor {
           });
         });
 
-        longTaskObserver.observe({ entryTypes: ['longtask'] });
-        this.observers.set('longtask', longTaskObserver);
-      } catch (error) {
+        longTaskObserver.observe({ entryTypes: ['longtask']  });
+        this.observers.set( 'longtask', longTaskObserver);
+      } catch (_error) {
         console.warn('Long Task API not supported');
       }
     }
   }
 
-  private startNetworkMonitoring(): void {
+  private startNetworkMonitoring(_): void {
     if ('PerformanceObserver' in window) {
       try {
         const navigationObserver = new PerformanceObserver((list) => {
-          list.getEntries().forEach((entry) => {
+          list.getEntries(_).forEach((entry) => {
             const navEntry = entry as PerformanceNavigationTiming;
             
             // Page load time
             const loadTime = navEntry.loadEventEnd - navEntry.navigationStart;
             this.recordMetric({
               name: 'page_load_time',
-              value: Math.round(loadTime),
-              timestamp: new Date(),
+              value: Math.round(_loadTime),
+              timestamp: new Date(_),
               category: 'network',
               threshold: 3000,
               unit: 'ms'
             });
 
             // First Contentful Paint
-            if (navEntry.loadEventEnd > 0) {
+            if (_navEntry.loadEventEnd > 0) {
               this.recordMetric({
                 name: 'dom_content_loaded',
-                value: Math.round(navEntry.domContentLoadedEventEnd - navEntry.navigationStart),
-                timestamp: new Date(),
+                value: Math.round(_navEntry.domContentLoadedEventEnd - navEntry.navigationStart),
+                timestamp: new Date(_),
                 category: 'network',
                 threshold: 1500,
                 unit: 'ms'
@@ -241,25 +241,25 @@ export class PerformanceMonitor {
           });
         });
 
-        navigationObserver.observe({ entryTypes: ['navigation'] });
-        this.observers.set('navigation', navigationObserver);
-      } catch (error) {
+        navigationObserver.observe({ entryTypes: ['navigation']  });
+        this.observers.set( 'navigation', navigationObserver);
+      } catch (_error) {
         console.warn('Navigation Timing API not supported');
       }
     }
   }
 
   // Record a custom metric
-  recordMetric(metric: PerformanceMetric): void {
-    this.metrics.push(metric);
+  recordMetric(_metric: PerformanceMetric): void {
+    this.metrics.push(_metric);
     
     // Keep only last 1000 metrics
-    if (this.metrics.length > 1000) {
+    if (_this.metrics.length > 1000) {
       this.metrics = this.metrics.slice(-1000);
     }
 
     // Check threshold if specified
-    if (metric.threshold && metric.value > metric.threshold) {
+    if (_metric.threshold && metric.value > metric.threshold) {
       this.createAlert(
         metric.name,
         metric.value,
@@ -281,7 +281,7 @@ export class PerformanceMonitor {
     // Avoid duplicate alerts for the same metric within 30 seconds
     const recentAlert = this.alerts.find(alert => 
       alert.metric === metric && 
-      Date.now() - alert.timestamp.getTime() < 30000
+      Date.now(_) - alert.timestamp.getTime() < 30000
     );
 
     if (recentAlert) return;
@@ -291,24 +291,24 @@ export class PerformanceMonitor {
       value,
       threshold,
       severity,
-      timestamp: new Date(),
+      timestamp: new Date(_),
       suggestions
     };
 
-    this.alerts.push(alert);
+    this.alerts.push(_alert);
     
     // Keep only last 50 alerts
-    if (this.alerts.length > 50) {
+    if (_this.alerts.length > 50) {
       this.alerts = this.alerts.slice(-50);
     }
 
     // Log alert
-    console.warn(`Performance Alert [${severity.toUpperCase()}]: ${metric} = ${value} (threshold: ${threshold})`);
-    suggestions.forEach(suggestion => console.warn(`  💡 ${suggestion}`));
+    console.warn(_`Performance Alert [${severity.toUpperCase()}]: ${metric} = ${value} (_threshold: ${threshold})`);
+    suggestions.forEach(_suggestion => console.warn(`  💡 ${suggestion}`));
   }
 
   // Get performance summary
-  getPerformanceSummary(): {
+  getPerformanceSummary(_): {
     currentFPS: number;
     averageFPS: number;
     memoryUsage: number;
@@ -322,7 +322,7 @@ export class PerformanceMonitor {
     
     const currentFPS = fpsMetrics.length > 0 ? fpsMetrics[fpsMetrics.length - 1].value : 0;
     const averageFPS = fpsMetrics.length > 0 
-      ? Math.round(fpsMetrics.reduce((sum, m) => sum + m.value, 0) / fpsMetrics.length)
+      ? Math.round( fpsMetrics.reduce((sum, m) => sum + m.value, 0) / fpsMetrics.length)
       : 0;
     
     const memoryUsage = memoryMetrics.length > 0 ? memoryMetrics[0].value : 0;
@@ -339,43 +339,43 @@ export class PerformanceMonitor {
   }
 
   // Get recent alerts
-  getRecentAlerts(limit: number = 10): PerformanceAlert[] {
+  getRecentAlerts(_limit: number = 10): PerformanceAlert[] {
     return this.alerts
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      .sort( (a, b) => b.timestamp.getTime() - a.timestamp.getTime())
       .slice(0, limit);
   }
 
   // Clear old metrics and alerts
-  cleanup(): void {
-    const oneHourAgo = Date.now() - 3600000;
+  cleanup(_): void {
+    const oneHourAgo = Date.now(_) - 3600000;
     
     this.metrics = this.metrics.filter(m => m.timestamp.getTime() > oneHourAgo);
     this.alerts = this.alerts.filter(a => a.timestamp.getTime() > oneHourAgo);
   }
 
   // Start/stop monitoring
-  startMonitoring(): void {
+  startMonitoring(_): void {
     this.isMonitoring = true;
   }
 
-  stopMonitoring(): void {
+  stopMonitoring(_): void {
     this.isMonitoring = false;
     
     // Disconnect observers
-    this.observers.forEach(observer => observer.disconnect());
-    this.observers.clear();
+    this.observers.forEach(_observer => observer.disconnect());
+    this.observers.clear(_);
   }
 
   // Custom timing utilities
-  startTiming(name: string): () => void {
-    const startTime = performance.now();
+  startTiming(_name: string): (_) => void {
+    const startTime = performance.now(_);
     
-    return () => {
-      const duration = performance.now() - startTime;
+    return (_) => {
+      const duration = performance.now(_) - startTime;
       this.recordMetric({
         name,
-        value: Math.round(duration),
-        timestamp: new Date(),
+        value: Math.round(_duration),
+        timestamp: new Date(_),
         category: 'custom',
         unit: 'ms'
       });
@@ -383,27 +383,27 @@ export class PerformanceMonitor {
   }
 
   // Measure function execution time
-  measureFunction<T>(name: string, fn: () => T): T {
-    const endTiming = this.startTiming(name);
+  measureFunction<T>( name: string, fn: () => T): T {
+    const endTiming = this.startTiming(_name);
     try {
-      const result = fn();
+      const result = fn(_);
       return result;
     } finally {
-      endTiming();
+      endTiming(_);
     }
   }
 
   // Measure async function execution time
-  async measureAsyncFunction<T>(name: string, fn: () => Promise<T>): Promise<T> {
-    const endTiming = this.startTiming(name);
+  async measureAsyncFunction<T>( name: string, fn: () => Promise<T>): Promise<T> {
+    const endTiming = this.startTiming(_name);
     try {
-      const result = await fn();
+      const result = await fn(_);
       return result;
     } finally {
-      endTiming();
+      endTiming(_);
     }
   }
 }
 
 // Export singleton instance
-export const performanceMonitor = PerformanceMonitor.getInstance();
+export const performanceMonitor = PerformanceMonitor.getInstance(_);

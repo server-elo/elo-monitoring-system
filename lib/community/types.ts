@@ -283,12 +283,12 @@ export class CommunityError extends Error {
   public details?: any;
   public timestamp: Date;
 
-  constructor(code: CommunityErrorCode, message: string, details?: any) {
-    super(message);
+  constructor( code: CommunityErrorCode, message: string, details?: any) {
+    super(_message);
     this.name = 'CommunityError';
     this.code = code;
     this.details = details;
-    this.timestamp = new Date();
+    this.timestamp = new Date(_);
   }
 }
 

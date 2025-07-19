@@ -26,73 +26,73 @@ export function PWAStatus() {
     canInstall: false,
     status: 'not-supported'
   });
-  const [isOnline, setIsOnline] = useState(true);
-  const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [cacheStatus, setCacheStatus] = useState<any>(null);
+  const [isOnline, setIsOnline] = useState(_true);
+  const [updateAvailable, setUpdateAvailable] = useState(_false);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(_false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(_false);
+  const [isUpdating, setIsUpdating] = useState(_false);
+  const [showDetails, setShowDetails] = useState(_false);
+  const [cacheStatus, setCacheStatus] = useState<any>(_null);
 
   /**
    * Initialize PWA status monitoring
    */
   useEffect(() => {
     // Check initial status
-    setStatus(serviceWorkerManager.getStatus());
-    setIsOnline(serviceWorkerManager.isNetworkOnline());
-    setUpdateAvailable(serviceWorkerManager.isUpdateAvailable());
-    setNotificationsEnabled(Notification.permission === 'granted');
+    setStatus(_serviceWorkerManager.getStatus());
+    setIsOnline(_serviceWorkerManager.isNetworkOnline());
+    setUpdateAvailable(_serviceWorkerManager.isUpdateAvailable());
+    setNotificationsEnabled(_Notification.permission === 'granted');
 
     // Set up event listeners
-    const handleStatusChange = (newStatus: ServiceWorkerStatus) => {
-      setStatus(newStatus);
+    const handleStatusChange = (_newStatus: ServiceWorkerStatus) => {
+      setStatus(_newStatus);
     };
 
-    const handleUpdateAvailable = () => {
-      setUpdateAvailable(true);
+    const handleUpdateAvailable = (_) => {
+      setUpdateAvailable(_true);
     };
 
-    const handleNetworkOnline = () => {
-      setIsOnline(true);
+    const handleNetworkOnline = (_) => {
+      setIsOnline(_true);
     };
 
-    const handleNetworkOffline = () => {
-      setIsOnline(false);
+    const handleNetworkOffline = (_) => {
+      setIsOnline(_false);
     };
 
-    const handleInstallPrompt = (event: any) => {
-      event.preventDefault();
-      (window as any).deferredPrompt = event;
-      setShowInstallPrompt(true);
+    const handleInstallPrompt = (_event: any) => {
+      event.preventDefault(_);
+      (_window as any).deferredPrompt = event;
+      setShowInstallPrompt(_true);
     };
 
-    const handleAppInstalled = () => {
-      setShowInstallPrompt(false);
+    const handleAppInstalled = (_) => {
+      setShowInstallPrompt(_false);
     };
 
     // Register event listeners
-    serviceWorkerManager.on('status-change', handleStatusChange);
-    serviceWorkerManager.on('update-available', handleUpdateAvailable);
-    serviceWorkerManager.on('network-online', handleNetworkOnline);
-    serviceWorkerManager.on('network-offline', handleNetworkOffline);
-    serviceWorkerManager.on('app-installed', handleAppInstalled);
+    serviceWorkerManager.on( 'status-change', handleStatusChange);
+    serviceWorkerManager.on( 'update-available', handleUpdateAvailable);
+    serviceWorkerManager.on( 'network-online', handleNetworkOnline);
+    serviceWorkerManager.on( 'network-offline', handleNetworkOffline);
+    serviceWorkerManager.on( 'app-installed', handleAppInstalled);
     
-    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+    window.addEventListener( 'beforeinstallprompt', handleInstallPrompt);
+    window.addEventListener( 'appinstalled', handleAppInstalled);
 
     // Load cache status
-    loadCacheStatus();
+    loadCacheStatus(_);
 
-    return () => {
-      serviceWorkerManager.off('status-change', handleStatusChange);
-      serviceWorkerManager.off('update-available', handleUpdateAvailable);
-      serviceWorkerManager.off('network-online', handleNetworkOnline);
-      serviceWorkerManager.off('network-offline', handleNetworkOffline);
-      serviceWorkerManager.off('app-installed', handleAppInstalled);
+    return (_) => {
+      serviceWorkerManager.off( 'status-change', handleStatusChange);
+      serviceWorkerManager.off( 'update-available', handleUpdateAvailable);
+      serviceWorkerManager.off( 'network-online', handleNetworkOnline);
+      serviceWorkerManager.off( 'network-offline', handleNetworkOffline);
+      serviceWorkerManager.off( 'app-installed', handleAppInstalled);
       
-      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener( 'beforeinstallprompt', handleInstallPrompt);
+      window.removeEventListener( 'appinstalled', handleAppInstalled);
     };
   }, []);
 
@@ -100,21 +100,21 @@ export function PWAStatus() {
    * Load cache status
    */
   const loadCacheStatus = async () => {
-    const status = await serviceWorkerManager.getCacheStatus();
-    setCacheStatus(status);
+    const status = await serviceWorkerManager.getCacheStatus(_);
+    setCacheStatus(_status);
   };
 
   /**
    * Handle update installation
    */
   const handleUpdate = async () => {
-    setIsUpdating(true);
+    setIsUpdating(_true);
     try {
-      await serviceWorkerManager.applyUpdate();
-    } catch (error) {
+      await serviceWorkerManager.applyUpdate(_);
+    } catch (_error) {
       console.error('Failed to apply update:', error);
     } finally {
-      setIsUpdating(false);
+      setIsUpdating(_false);
     }
   };
 
@@ -122,9 +122,9 @@ export function PWAStatus() {
    * Handle PWA installation
    */
   const handleInstall = async () => {
-    const installed = await serviceWorkerManager.showInstallPrompt();
+    const installed = await serviceWorkerManager.showInstallPrompt(_);
     if (installed) {
-      setShowInstallPrompt(false);
+      setShowInstallPrompt(_false);
     }
   };
 
@@ -134,10 +134,10 @@ export function PWAStatus() {
   const handleNotificationToggle = async () => {
     if (notificationsEnabled) {
       // Can't revoke permission, just inform user
-      alert('To disable notifications, please use your browser settings.');
+      alert( 'To disable notifications, please use your browser settings.');
     } else {
-      const granted = await serviceWorkerManager.requestNotificationPermission();
-      setNotificationsEnabled(granted);
+      const granted = await serviceWorkerManager.requestNotificationPermission(_);
+      setNotificationsEnabled(_granted);
     }
   };
 
@@ -145,18 +145,18 @@ export function PWAStatus() {
    * Clear cache
    */
   const handleClearCache = async () => {
-    const success = await serviceWorkerManager.clearCache();
+    const success = await serviceWorkerManager.clearCache(_);
     if (success) {
-      await loadCacheStatus();
-      window.location.reload();
+      await loadCacheStatus(_);
+      window.location.reload(_);
     }
   };
 
   /**
    * Get status color
    */
-  const getStatusColor = (statusType: ServiceWorkerStatusType) => {
-    switch (statusType) {
+  const getStatusColor = (_statusType: ServiceWorkerStatusType) => {
+    switch (_statusType) {
       case 'registered':
       case 'updated':
         return 'text-green-500';
@@ -174,8 +174,8 @@ export function PWAStatus() {
   /**
    * Get status message
    */
-  const getStatusMessage = (statusType: ServiceWorkerStatusType) => {
-    switch (statusType) {
+  const getStatusMessage = (_statusType: ServiceWorkerStatusType) => {
+    switch (_statusType) {
       case 'not-supported':
         return 'PWA features not supported';
       case 'not-registered':
@@ -198,11 +198,11 @@ export function PWAStatus() {
   /**
    * Format cache size
    */
-  const formatCacheSize = (cacheStatus: any) => {
+  const formatCacheSize = (_cacheStatus: any) => {
     if (!cacheStatus) return 'Unknown';
     
-    const totalItems = Object.values(cacheStatus.caches)
-      .reduce((sum: number, cache: any) => sum + cache.size, 0);
+    const totalItems = Object.values(_cacheStatus.caches)
+      .reduce( (sum: number, cache: any) => sum + cache.size, 0);
     
     return `${totalItems} items cached`;
   };
@@ -261,7 +261,7 @@ export function PWAStatus() {
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => setShowInstallPrompt(false)}
+                    onClick={(_) => setShowInstallPrompt(_false)}
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -288,7 +288,7 @@ export function PWAStatus() {
         <Card className="p-3 shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
           <div 
             className="flex items-center space-x-2"
-            onClick={() => setShowDetails(!showDetails)}
+            onClick={(_) => setShowDetails(!showDetails)}
           >
             {/* Network status */}
             {isOnline ? (
@@ -298,7 +298,7 @@ export function PWAStatus() {
             )}
 
             {/* PWA status */}
-            <div className={cn("w-2 h-2 rounded-full", getStatusColor(status.status))} />
+            <div className={cn( "w-2 h-2 rounded-full", getStatusColor(status.status))} />
             
             {/* Device indicator */}
             {window.matchMedia('(max-width: 768px)').matches ? (
@@ -326,7 +326,7 @@ export function PWAStatus() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => setShowDetails(false)}
+                      onClick={(_) => setShowDetails(_false)}
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -337,8 +337,8 @@ export function PWAStatus() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Status</span>
                       <div className="flex items-center space-x-2">
-                        <div className={cn("w-2 h-2 rounded-full", getStatusColor(status.status))} />
-                        <span className="text-sm font-medium">{getStatusMessage(status.status)}</span>
+                        <div className={cn( "w-2 h-2 rounded-full", getStatusColor(status.status))} />
+                        <span className="text-sm font-medium">{getStatusMessage(_status.status)}</span>
                       </div>
                     </div>
 
@@ -375,7 +375,7 @@ export function PWAStatus() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Cache</span>
                       <span className="text-sm font-medium">
-                        {formatCacheSize(cacheStatus)}
+                        {formatCacheSize(_cacheStatus)}
                       </span>
                     </div>
                   </div>

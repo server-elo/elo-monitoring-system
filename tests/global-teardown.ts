@@ -11,13 +11,13 @@ async function globalTeardown() {
   console.log('🧹 Starting global test teardown...');
 
   // Clean up test database
-  await cleanupTestDatabase();
+  await cleanupTestDatabase(_);
 
   // Clean up test files
-  await cleanupTestFiles();
+  await cleanupTestFiles(_);
 
   // Generate test summary
-  await generateTestSummary();
+  await generateTestSummary(_);
 
   console.log('✅ Global test teardown completed');
 }
@@ -40,17 +40,17 @@ async function cleanupTestDatabase() {
     // Clean up test collaboration sessions
     try {
       // await prisma.$executeRaw`DELETE FROM "CollaborationSession" WHERE title LIKE '%test-%'`; // Temporarily disabled
-    } catch (error) {
+    } catch (_error) {
       console.log('CollaborationSession table not found during cleanup');
     }
 
-    // Clean up test users (keep them for next run)
+    // Clean up test users (_keep them for next run)
     // await prisma.user.deleteMany({
     //   where: { email: { contains: 'test@' } },
     // });
 
     console.log('✅ Test database cleaned');
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Database cleanup failed:', error);
   } finally {
     await prisma.$disconnect();
@@ -65,34 +65,34 @@ async function cleanupTestFiles() {
   
   try {
     // Clean up screenshots and videos older than 7 days
-    const testResultsDir = path.join(process.cwd(), 'test-results');
-    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const testResultsDir = path.join(_process.cwd(), 'test-results');
+    const sevenDaysAgo = Date.now(_) - 7 * 24 * 60 * 60 * 1000;
 
-    const cleanupDirectory = async (dir: string) => {
+    const cleanupDirectory = async (_dir: string) => {
       try {
-        const files = await fs.readdir(dir, { withFileTypes: true });
+        const files = await fs.readdir( dir, { withFileTypes: true });
         
-        for (const file of files) {
-          const filePath = path.join(dir, file.name);
+        for (_const file of files) {
+          const filePath = path.join( dir, file.name);
           
-          if (file.isDirectory()) {
-            await cleanupDirectory(filePath);
+          if (_file.isDirectory()) {
+            await cleanupDirectory(_filePath);
           } else {
-            const stats = await fs.stat(filePath);
-            if (stats.mtime.getTime() < sevenDaysAgo) {
-              await fs.unlink(filePath);
-              console.log(`   Deleted old file: ${file.name}`);
+            const stats = await fs.stat(_filePath);
+            if (_stats.mtime.getTime() < sevenDaysAgo) {
+              await fs.unlink(_filePath);
+              console.log(_`   Deleted old file: ${file.name}`);
             }
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // Directory might not exist, ignore
       }
     };
 
-    await cleanupDirectory(testResultsDir);
+    await cleanupDirectory(_testResultsDir);
     console.log('✅ Test files cleaned');
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ File cleanup failed:', error);
   }
 }
@@ -104,14 +104,14 @@ async function generateTestSummary() {
   console.log('📊 Generating test summary...');
   
   try {
-    const resultsPath = path.join(process.cwd(), 'test-results', 'results.json');
+    const resultsPath = path.join(_process.cwd(), 'test-results', 'results.json');
     
     try {
-      const resultsData = await fs.readFile(resultsPath, 'utf-8');
-      const results = JSON.parse(resultsData);
+      const resultsData = await fs.readFile( resultsPath, 'utf-8');
+      const results = JSON.parse(_resultsData);
       
       const summary = {
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(_).toISOString(),
         totalTests: results.stats?.total || 0,
         passed: results.stats?.passed || 0,
         failed: results.stats?.failed || 0,
@@ -126,29 +126,29 @@ async function generateTestSummary() {
       };
 
       // Write summary to file
-      const summaryPath = path.join(process.cwd(), 'test-results', 'summary.json');
-      await fs.writeFile(summaryPath, JSON.stringify(summary, null, 2));
+      const summaryPath = path.join(_process.cwd(), 'test-results', 'summary.json');
+      await fs.writeFile( summaryPath, JSON.stringify(summary, null, 2));
 
       // Log summary to console
       console.log('📈 Test Summary:');
-      console.log(`   Total Tests: ${summary.totalTests}`);
-      console.log(`   Passed: ${summary.passed}`);
-      console.log(`   Failed: ${summary.failed}`);
-      console.log(`   Skipped: ${summary.skipped}`);
-      console.log(`   Duration: ${(summary.duration / 1000).toFixed(2)}s`);
+      console.log(_`   Total Tests: ${summary.totalTests}`);
+      console.log(_`   Passed: ${summary.passed}`);
+      console.log(_`   Failed: ${summary.failed}`);
+      console.log(_`   Skipped: ${summary.skipped}`);
+      console.log(_`   Duration: ${(summary.duration / 1000).toFixed(_2)}s`);
       
-      if (summary.projects.length > 0) {
+      if (_summary.projects.length > 0) {
         console.log('   Projects:');
         summary.projects.forEach((project: any) => {
-          console.log(`     ${project.name}: ${project.passed}/${project.tests} passed`);
+          console.log(_`     ${project.name}: ${project.passed}/${project.tests} passed`);
         });
       }
 
       console.log('✅ Test summary generated');
-    } catch (error) {
+    } catch (_error) {
       console.log('ℹ️ No test results found to summarize');
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Test summary generation failed:', error);
   }
 }

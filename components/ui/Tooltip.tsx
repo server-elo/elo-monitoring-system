@@ -12,7 +12,7 @@ interface TooltipProps {
   className?: string;
 }
 
-const TooltipProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+const TooltipProvider: React.FC<{ children: React.ReactNode }> = ({ children  }) => (
   <TooltipPrimitive.Provider delayDuration={300} skipDelayDuration={100}>
     {children}
   </TooltipPrimitive.Provider>

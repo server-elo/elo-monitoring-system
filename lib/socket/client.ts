@@ -50,15 +50,15 @@ interface CollaborationSession {
 interface UseSocketReturn {
   socket: Socket | null;
   isConnected: boolean;
-  joinSession: (sessionId: string) => void;
-  leaveSession: () => void;
-  sendMessage: (content: string, type?: string) => void;
-  updateCode: (code: string, changes?: any) => void;
-  updateCursor: (line: number, column: number) => void;
-  updateSelection: (startLine: number, startColumn: number, endLine: number, endColumn: number) => void;
-  startTyping: (location: 'chat' | 'code') => void;
-  stopTyping: (location: 'chat' | 'code') => void;
-  updateUserStatus: (status: 'online' | 'away' | 'offline') => void;
+  joinSession: (_sessionId: string) => void;
+  leaveSession: (_) => void;
+  sendMessage: ( content: string, type?: string) => void;
+  updateCode: ( code: string, changes?: any) => void;
+  updateCursor: ( line: number, column: number) => void;
+  updateSelection: ( startLine: number, startColumn: number, endLine: number, endColumn: number) => void;
+  startTyping: (_location: 'chat' | 'code') => void;
+  stopTyping: (_location: 'chat' | 'code') => void;
+  updateUserStatus: (_status: 'online' | 'away' | 'offline') => void;
   session: CollaborationSession | null;
   messages: ChatMessage[];
   presence: UserPresence[];
@@ -66,17 +66,17 @@ interface UseSocketReturn {
   typingUsers: UserPresence[];
 }
 
-export const useSocket = (): UseSocketReturn => {
-  const { data: sessionData } = useSession();
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [session, setSession] = useState<CollaborationSession | null>(null);
+export const useSocket = (_): UseSocketReturn => {
+  const { data: sessionData } = useSession(_);
+  const [socket, setSocket] = useState<Socket | null>(_null);
+  const [isConnected, setIsConnected] = useState(_false);
+  const [session, setSession] = useState<CollaborationSession | null>(_null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [presence, setPresence] = useState<UserPresence[]>([]);
   const [participants, setParticipants] = useState<User[]>([]);
   const [typingUsers, setTypingUsers] = useState<UserPresence[]>([]);
-  const currentSessionId = useRef<string | null>(null);
-  const typingTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const currentSessionId = useRef<string | null>(_null);
+  const typingTimeouts = useRef<Map<string, NodeJS.Timeout>>(_new Map());
 
   useEffect(() => {
     if (!sessionData?.user) return;
@@ -92,9 +92,9 @@ export const useSocket = (): UseSocketReturn => {
     });
 
     // Connection event handlers
-    newSocket.on('connect', () => {
+    newSocket.on( 'connect', () => {
       console.log('Connected to Socket.io server');
-      setIsConnected(true);
+      setIsConnected(_true);
       
       // Authenticate with the server
       newSocket.emit('authenticate', {
@@ -103,16 +103,16 @@ export const useSocket = (): UseSocketReturn => {
       });
     });
 
-    newSocket.on('disconnect', () => {
+    newSocket.on( 'disconnect', () => {
       console.log('Disconnected from Socket.io server');
-      setIsConnected(false);
+      setIsConnected(_false);
     });
 
-    newSocket.on('authenticated', (data: { user: User }) => {
+    newSocket.on( 'authenticated', (data: { user: User }) => {
       console.log('Authenticated successfully:', data.user);
     });
 
-    newSocket.on('authentication_failed', () => {
+    newSocket.on( 'authentication_failed', () => {
       console.error('Authentication failed');
     });
 
@@ -123,22 +123,22 @@ export const useSocket = (): UseSocketReturn => {
       presence: UserPresence[];
     }) => {
       console.log('Joined session:', data.session);
-      setSession(data.session);
-      setMessages(data.messages);
-      setPresence(data.presence);
-      setParticipants(data.session.participants);
+      setSession(_data.session);
+      setMessages(_data.messages);
+      setPresence(_data.presence);
+      setParticipants(_data.session.participants);
     });
 
-    newSocket.on('user_joined', (data: { user: User; presence: UserPresence[] }) => {
+    newSocket.on( 'user_joined', (data: { user: User; presence: UserPresence[] }) => {
       console.log('User joined:', data.user);
-      setParticipants(prev => [...prev.filter(p => p.id !== data.user.id), data.user]);
-      setPresence(data.presence);
+      setParticipants(_prev => [...prev.filter(p => p.id !== data.user.id), data.user]);
+      setPresence(_data.presence);
     });
 
-    newSocket.on('user_left', (data: { userId: string; presence: UserPresence[] }) => {
+    newSocket.on( 'user_left', (data: { userId: string; presence: UserPresence[] }) => {
       console.log('User left:', data.userId);
-      setParticipants(prev => prev.filter(p => p.id !== data.userId));
-      setPresence(data.presence);
+      setParticipants(_prev => prev.filter(p => p.id !== data.userId));
+      setPresence(_data.presence);
     });
 
     // Code collaboration event handlers
@@ -149,14 +149,14 @@ export const useSocket = (): UseSocketReturn => {
       timestamp: Date;
     }) => {
       if (session) {
-        setSession(prev => prev ? { ...prev, code: data.code } : null);
+        setSession( prev => prev ? { ...prev, code: data.code } : null);
       }
     });
 
-    newSocket.on('cursor_updated', (data: { userId: string; cursor: { line: number; column: number } }) => {
+    newSocket.on( 'cursor_updated', (data: { userId: string; cursor: { line: number; column: number } }) => {
       setPresence(prev => prev.map(p => 
         p.userId === data.userId 
-          ? { ...p, cursor: data.cursor, lastSeen: new Date() }
+          ? { ...p, cursor: data.cursor, lastSeen: new Date(_) }
           : p
       ));
     });
@@ -167,28 +167,28 @@ export const useSocket = (): UseSocketReturn => {
     }) => {
       setPresence(prev => prev.map(p => 
         p.userId === data.userId 
-          ? { ...p, selection: data.selection, lastSeen: new Date() }
+          ? { ...p, selection: data.selection, lastSeen: new Date(_) }
           : p
       ));
     });
 
     // Chat event handlers
-    newSocket.on('message_received', (message: ChatMessage) => {
-      setMessages(prev => [...prev, message]);
+    newSocket.on( 'message_received', (message: ChatMessage) => {
+      setMessages( prev => [...prev, message]);
     });
 
     // Typing indicator event handlers
-    newSocket.on('user_typing', (data: { userId: string; location: 'chat' | 'code'; isTyping: boolean }) => {
+    newSocket.on( 'user_typing', (data: { userId: string; location: 'chat' | 'code'; isTyping: boolean }) => {
       setTypingUsers(prev => {
         const filtered = prev.filter(u => u.userId !== data.userId || u.typingLocation !== data.location);
-        if (data.isTyping) {
+        if (_data.isTyping) {
           const userPresence = presence.find(p => p.userId === data.userId);
           if (userPresence) {
             return [...filtered, {
               ...userPresence,
               isTyping: true,
               typingLocation: data.location,
-              lastSeen: new Date()
+              lastSeen: new Date(_)
             }];
           }
         }
@@ -197,62 +197,62 @@ export const useSocket = (): UseSocketReturn => {
 
       // Auto-clear typing indicator after 3 seconds
       const timeoutKey = `${data.userId}-${data.location}`;
-      const existingTimeout = typingTimeouts.current.get(timeoutKey);
+      const existingTimeout = typingTimeouts.current.get(_timeoutKey);
       if (existingTimeout) {
-        clearTimeout(existingTimeout);
+        clearTimeout(_existingTimeout);
       }
 
-      if (data.isTyping) {
+      if (_data.isTyping) {
         const timeout = setTimeout(() => {
           setTypingUsers(prev => prev.filter(u =>
-            !(u.userId === data.userId && u.typingLocation === data.location)
+            !(_u.userId === data.userId && u.typingLocation === data.location)
           ));
-          typingTimeouts.current.delete(timeoutKey);
+          typingTimeouts.current.delete(_timeoutKey);
         }, 3000);
-        typingTimeouts.current.set(timeoutKey, timeout);
+        typingTimeouts.current.set( timeoutKey, timeout);
       }
     });
 
     // User status updates
-    newSocket.on('user_status_updated', (data: { userId: string; status: 'online' | 'away' | 'offline' }) => {
+    newSocket.on( 'user_status_updated', (data: { userId: string; status: 'online' | 'away' | 'offline' }) => {
       setPresence(prev => prev.map(p =>
         p.userId === data.userId
-          ? { ...p, status: data.status, lastSeen: new Date() }
+          ? { ...p, status: data.status, lastSeen: new Date(_) }
           : p
       ));
     });
 
     // Error handling
-    newSocket.on('error', (error: string) => {
+    newSocket.on( 'error', (error: string) => {
       console.error('Socket error:', error);
     });
 
-    setSocket(newSocket);
+    setSocket(_newSocket);
 
-    return () => {
-      newSocket.disconnect();
+    return (_) => {
+      newSocket.disconnect(_);
     };
   }, [sessionData]);
 
-  const joinSession = (sessionId: string) => {
+  const joinSession = (_sessionId: string) => {
     if (socket && isConnected) {
       currentSessionId.current = sessionId;
       socket.emit('join_session', sessionId);
     }
   };
 
-  const leaveSession = () => {
+  const leaveSession = (_) => {
     if (socket && currentSessionId.current) {
       socket.emit('leave_session');
       currentSessionId.current = null;
-      setSession(null);
+      setSession(_null);
       setMessages([]);
       setPresence([]);
       setParticipants([]);
     }
   };
 
-  const sendMessage = (content: string, type: string = 'TEXT') => {
+  const sendMessage = ( content: string, type: string = 'TEXT') => {
     if (socket && currentSessionId.current) {
       socket.emit('send_message', {
         sessionId: currentSessionId.current,
@@ -262,7 +262,7 @@ export const useSocket = (): UseSocketReturn => {
     }
   };
 
-  const updateCode = (code: string, changes?: any) => {
+  const updateCode = ( code: string, changes?: any) => {
     if (socket && currentSessionId.current) {
       socket.emit('code_change', {
         sessionId: currentSessionId.current,
@@ -271,35 +271,35 @@ export const useSocket = (): UseSocketReturn => {
       });
       
       // Update local state immediately for responsiveness
-      setSession(prev => prev ? { ...prev, code } : null);
+      setSession( prev => prev ? { ...prev, code } : null);
     }
   };
 
-  const updateCursor = (line: number, column: number) => {
+  const updateCursor = ( line: number, column: number) => {
     if (socket && currentSessionId.current) {
       socket.emit('cursor_update', { line, column });
     }
   };
 
-  const updateSelection = (startLine: number, startColumn: number, endLine: number, endColumn: number) => {
+  const updateSelection = ( startLine: number, startColumn: number, endLine: number, endColumn: number) => {
     if (socket && currentSessionId.current) {
       socket.emit('selection_update', { startLine, startColumn, endLine, endColumn });
     }
   };
 
-  const startTyping = (location: 'chat' | 'code') => {
+  const startTyping = (_location: 'chat' | 'code') => {
     if (socket && currentSessionId.current) {
       socket.emit('typing_start', { location });
     }
   };
 
-  const stopTyping = (location: 'chat' | 'code') => {
+  const stopTyping = (_location: 'chat' | 'code') => {
     if (socket && currentSessionId.current) {
       socket.emit('typing_stop', { location });
     }
   };
 
-  const updateUserStatus = (status: 'online' | 'away' | 'offline') => {
+  const updateUserStatus = (_status: 'online' | 'away' | 'offline') => {
     if (socket) {
       socket.emit('status_update', { status });
     }
@@ -326,22 +326,22 @@ export const useSocket = (): UseSocketReturn => {
 };
 
 // Hook for managing collaboration sessions
-export const useCollaborationSessions = () => {
+export const useCollaborationSessions = (_) => {
   const [sessions, setSessions] = useState<CollaborationSession[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(_false);
 
   const fetchSessions = async () => {
-    setLoading(true);
+    setLoading(_true);
     try {
       const response = await fetch('/api/collaboration');
-      if (response.ok) {
-        const data = await response.json();
-        setSessions(data.collaborations || []);
+      if (_response.ok) {
+        const data = await response.json(_);
+        setSessions(_data.collaborations || []);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching sessions:', error);
     } finally {
-      setLoading(false);
+      setLoading(_false);
     }
   };
 
@@ -353,18 +353,18 @@ export const useCollaborationSessions = () => {
         body: JSON.stringify({ title, description, type }),
       });
       
-      if (response.ok) {
-        const data = await response.json();
-        setSessions(prev => [data.collaboration, ...prev]);
+      if (_response.ok) {
+        const data = await response.json(_);
+        setSessions( prev => [data.collaboration, ...prev]);
         return data.collaboration;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating session:', error);
     }
     return null;
   };
 
-  const joinSession = async (sessionId: string) => {
+  const joinSession = async (_sessionId: string) => {
     try {
       const response = await fetch('/api/collaboration', {
         method: 'PATCH',
@@ -372,18 +372,18 @@ export const useCollaborationSessions = () => {
         body: JSON.stringify({ collaborationId: sessionId, action: 'join' }),
       });
       
-      if (response.ok) {
-        await fetchSessions();
+      if (_response.ok) {
+        await fetchSessions(_);
         return true;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error joining session:', error);
     }
     return false;
   };
 
   useEffect(() => {
-    fetchSessions();
+    fetchSessions(_);
   }, []);
 
   return {

@@ -48,7 +48,7 @@ export function EnhancedFeaturesShowcase() {
           <div className="text-blue-400">contract</div> <span className="text-yellow-400">HelloWorld</span> {'{'}
           <div className="ml-4 text-green-400">string public message;</div>
           <div className="ml-4">
-            <span className="text-blue-400">constructor</span>() {'{'}
+            <span className="text-blue-400">constructor</span>(_) {'{'}
             <div className="ml-4 text-gray-300">message = <span className="text-green-400">"Hello, Solidity!"</span>;</div>
             {'}'}
           </div>
@@ -170,10 +170,10 @@ export function EnhancedFeaturesShowcase() {
 
         {/* Feature Navigation */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {features.map((feature, index) => (
+          {features.map( (feature, index) => (
             <motion.button
               key={feature.id}
-              onClick={() => setActiveFeature(index)}
+              onClick={(_) => setActiveFeature(_index)}
               className={`flex items-center space-x-2 px-6 py-3 rounded-lg border transition-all duration-300 ${
                 activeFeature === index
                   ? 'bg-white/20 border-white/30 text-white'
@@ -219,7 +219,7 @@ export function EnhancedFeaturesShowcase() {
 
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-4 mb-6">
-                    {features[activeFeature].stats.map((stat, index) => (
+                    {features[activeFeature].stats.map( (stat, index) => (
                       <div key={index} className="text-center">
                         <div className="text-2xl font-bold text-white mb-1">
                           {stat.value}

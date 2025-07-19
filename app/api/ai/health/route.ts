@@ -52,7 +52,7 @@ async function handleHealthCheck(request: NextRequest) {
     // Get comprehensive health information
     const systemHealth = enhancedTutor.getSystemHealth();
     
-    const healthData: any = {
+    const healthData: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
       overall: {
         status: systemHealth.overall.healthyServices > 0 ? 'healthy' : 'degraded',
@@ -131,7 +131,18 @@ async function handleHealthCheck(request: NextRequest) {
   }
 }
 
-function generateHealthRecommendations(systemHealth: any): string[] {
+function generateHealthRecommendations(systemHealth: {
+  overall: {
+    healthyServices: number;
+    totalServices: number;
+    averageUptime: number;
+    averageResponseTime: number;
+  };
+  performance: {
+    fallbackRate: number;
+    successRate: number;
+  };
+}): string[] {
   const recommendations = [];
   
   if (systemHealth.overall.healthyServices === 0) {

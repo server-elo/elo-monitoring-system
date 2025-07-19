@@ -36,18 +36,18 @@ export class CollaborativeEditor {
   private client: CollaborationClient;
   private currentText: string = '';
   private isApplyingRemoteOperation = false;
-  private cursorDecorations: Map<string, string[]> = new Map();
-  private selectionDecorations: Map<string, string[]> = new Map();
-  private typingIndicators: Map<string, NodeJS.Timeout> = new Map();
+  private cursorDecorations: Map<string, string[]> = new Map(_);
+  private selectionDecorations: Map<string, string[]> = new Map(_);
+  private typingIndicators: Map<string, NodeJS.Timeout> = new Map(_);
   private lastCursorPosition: any = null;
   private debounceTimeout: NodeJS.Timeout | null = null;
 
   // Event handlers
-  private onUserJoined?: (user: CollaborationUser) => void;
-  private onUserLeft?: (userId: string) => void;
-  private onTypingIndicator?: (userId: string, isTyping: boolean) => void;
-  private onConnectionStatusChanged?: (status: string) => void;
-  private onCollaborativeCompilation?: (result: any) => void;
+  private onUserJoined?: (_user: CollaborationUser) => void;
+  private onUserLeft?: (_userId: string) => void;
+  private onTypingIndicator?: ( userId: string, isTyping: boolean) => void;
+  private onConnectionStatusChanged?: (_status: string) => void;
+  private onCollaborativeCompilation?: (_result: any) => void;
 
   constructor(
     editor: any,
@@ -56,7 +56,7 @@ export class CollaborativeEditor {
   ) {
     this.editor = editor;
     this.monaco = monaco;
-    this.currentText = editor.getValue();
+    this.currentText = editor.getValue(_);
     
     this.client = new CollaborationClient(
       options.wsUrl,
@@ -64,52 +64,52 @@ export class CollaborativeEditor {
       options.sessionId
     );
 
-    this.setupEventHandlers();
-    this.setupEditorListeners();
+    this.setupEventHandlers(_);
+    this.setupEditorListeners(_);
   }
 
   // Initialize collaboration
-  async initialize(): Promise<void> {
+  async initialize(_): Promise<void> {
     try {
-      await this.client.connect();
-      this.installCursorStyles();
-    } catch (error) {
+      await this.client.connect(_);
+      this.installCursorStyles(_);
+    } catch (_error) {
       console.error('Failed to initialize collaborative editor:', error);
       throw error;
     }
   }
 
   // Cleanup and disconnect
-  dispose(): void {
-    this.client.disconnect();
-    this.clearAllDecorations();
-    this.clearAllTypingIndicators();
+  dispose(_): void {
+    this.client.disconnect(_);
+    this.clearAllDecorations(_);
+    this.clearAllTypingIndicators(_);
     
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
+    if (_this.debounceTimeout) {
+      clearTimeout(_this.debounceTimeout);
     }
   }
 
   // Setup event handlers for collaboration client
-  private setupEventHandlers(): void {
+  private setupEventHandlers(_): void {
     this.client.onConnectionStatus((status) => {
-      this.onConnectionStatusChanged?.(status);
+      this.onConnectionStatusChanged?.(_status);
     });
 
     this.client.onOperation((operation) => {
-      this.applyRemoteOperation(operation);
+      this.applyRemoteOperation(_operation);
     });
 
-    this.client.onCursor((userId, cursor) => {
-      this.updateRemoteCursor(userId, cursor);
+    this.client.onCursor( (userId, cursor) => {
+      this.updateRemoteCursor( userId, cursor);
     });
 
     this.client.onPresence((users) => {
-      this.updateUserPresence(users);
+      this.updateUserPresence(_users);
     });
 
     this.client.onCompilation((result) => {
-      this.onCollaborativeCompilation?.(result);
+      this.onCollaborativeCompilation?.(_result);
     });
 
     this.client.onErrorEvent((error) => {
@@ -118,68 +118,68 @@ export class CollaborativeEditor {
   }
 
   // Setup Monaco Editor event listeners
-  private setupEditorListeners(): void {
+  private setupEditorListeners(_): void {
     // Listen for content changes
     this.editor.onDidChangeModelContent((event: any) => {
       if (!this.isApplyingRemoteOperation) {
-        this.handleLocalChange(event);
+        this.handleLocalChange(_event);
       }
     });
 
     // Listen for cursor position changes
     this.editor.onDidChangeCursorPosition((event: any) => {
-      if (this.options.enableCursorSync) {
-        this.handleCursorChange(event);
+      if (_this.options.enableCursorSync) {
+        this.handleCursorChange(_event);
       }
     });
 
     // Listen for selection changes
     this.editor.onDidChangeCursorSelection((event: any) => {
-      if (this.options.enableSelectionSync) {
-        this.handleSelectionChange(event);
+      if (_this.options.enableSelectionSync) {
+        this.handleSelectionChange(_event);
       }
     });
 
     // Listen for focus/blur events for typing indicators
     this.editor.onDidFocusEditorText(() => {
-      this.sendTypingIndicator(true);
+      this.sendTypingIndicator(_true);
     });
 
     this.editor.onDidBlurEditorText(() => {
-      this.sendTypingIndicator(false);
+      this.sendTypingIndicator(_false);
     });
   }
 
   // Handle local text changes
-  private handleLocalChange(_event: any): void {
-    const newText = this.editor.getValue();
+  private handleLocalChange( event: any): void {
+    const newText = this.editor.getValue(_);
     const operation = OperationalTransform.fromTextChange(
       this.currentText,
       newText,
-      this.editor.getPosition()
+      this.editor.getPosition(_)
     );
 
     operation.meta = {
       userId: this.options.userId,
-      timestamp: Date.now(),
-      cursor: this.editor.getPosition()
+      timestamp: Date.now(_),
+      cursor: this.editor.getPosition(_)
     };
 
     this.currentText = newText;
-    this.client.sendOperation(operation);
+    this.client.sendOperation(_operation);
 
     // Send typing indicator
-    this.sendTypingIndicator(true);
-    this.scheduleTypingIndicatorStop();
+    this.sendTypingIndicator(_true);
+    this.scheduleTypingIndicatorStop(_);
   }
 
   // Handle cursor position changes
-  private handleCursorChange(event: any): void {
+  private handleCursorChange(_event: any): void {
     const position = event.position;
     
     // Debounce cursor updates to avoid spam
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
+    if (_this.debounceTimeout) {
+      clearTimeout(_this.debounceTimeout);
     }
 
     this.debounceTimeout = setTimeout(() => {
@@ -201,7 +201,7 @@ export class CollaborativeEditor {
   }
 
   // Handle selection changes
-  private handleSelectionChange(event: any): void {
+  private handleSelectionChange(_event: any): void {
     const selection = event.selection;
     
     if (!selection.isEmpty()) {
@@ -223,22 +223,22 @@ export class CollaborativeEditor {
   }
 
   // Apply remote operation to editor
-  private applyRemoteOperation(operation: TextOperation): void {
+  private applyRemoteOperation(_operation: TextOperation): void {
     this.isApplyingRemoteOperation = true;
 
     try {
-      const newText = OperationalTransform.apply(this.currentText, operation);
+      const newText = OperationalTransform.apply( this.currentText, operation);
       
       // Calculate cursor position adjustment
-      const currentPosition = this.editor.getPosition();
-      const newPosition = this.transformCursorPosition(currentPosition, operation);
+      const currentPosition = this.editor.getPosition(_);
+      const newPosition = this.transformCursorPosition( currentPosition, operation);
 
       // Update editor content
-      this.editor.setValue(newText);
-      this.editor.setPosition(newPosition);
+      this.editor.setValue(_newText);
+      this.editor.setPosition(_newPosition);
       
       this.currentText = newText;
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to apply remote operation:', error);
     } finally {
       this.isApplyingRemoteOperation = false;
@@ -246,7 +246,7 @@ export class CollaborativeEditor {
   }
 
   // Transform cursor position based on operation
-  private transformCursorPosition(position: any, _operation: TextOperation): any {
+  private transformCursorPosition( position: any, operation: TextOperation): any {
     // Simplified cursor transformation - in production, this would be more sophisticated
     const line = position.lineNumber;
     const column = position.column;
@@ -258,11 +258,11 @@ export class CollaborativeEditor {
   }
 
   // Update remote user cursor
-  private updateRemoteCursor(userId: string, cursor: any): void {
+  private updateRemoteCursor( userId: string, cursor: any): void {
     if (userId === this.options.userId) return;
 
     // Clear existing decorations for this user
-    this.clearUserDecorations(userId);
+    this.clearUserDecorations(_userId);
 
     // Create cursor decoration
     const cursorDecoration = {
@@ -281,7 +281,7 @@ export class CollaborativeEditor {
 
     // Create selection decoration if present
     let selectionDecoration = null;
-    if (cursor.selection) {
+    if (_cursor.selection) {
       selectionDecoration = {
         range: new this.monaco.Range(
           cursor.selection.startLineNumber,
@@ -299,60 +299,60 @@ export class CollaborativeEditor {
     // Apply decorations
     const decorations = [cursorDecoration];
     if (selectionDecoration) {
-      decorations.push(selectionDecoration);
+      decorations.push(_selectionDecoration);
     }
 
-    const decorationIds = this.editor.deltaDecorations([], decorations);
-    this.cursorDecorations.set(userId, decorationIds);
+    const decorationIds = this.editor.deltaDecorations( [], decorations);
+    this.cursorDecorations.set( userId, decorationIds);
 
     // Update typing indicator
-    this.updateTypingIndicator(userId, true);
+    this.updateTypingIndicator( userId, true);
   }
 
   // Clear decorations for a specific user
-  private clearUserDecorations(userId: string): void {
-    const cursorDecorations = this.cursorDecorations.get(userId);
+  private clearUserDecorations(_userId: string): void {
+    const cursorDecorations = this.cursorDecorations.get(_userId);
     if (cursorDecorations) {
-      this.editor.deltaDecorations(cursorDecorations, []);
-      this.cursorDecorations.delete(userId);
+      this.editor.deltaDecorations( cursorDecorations, []);
+      this.cursorDecorations.delete(_userId);
     }
 
-    const selectionDecorations = this.selectionDecorations.get(userId);
+    const selectionDecorations = this.selectionDecorations.get(_userId);
     if (selectionDecorations) {
-      this.editor.deltaDecorations(selectionDecorations, []);
-      this.selectionDecorations.delete(userId);
+      this.editor.deltaDecorations( selectionDecorations, []);
+      this.selectionDecorations.delete(_userId);
     }
   }
 
   // Clear all decorations
-  private clearAllDecorations(): void {
-    for (const userId of this.cursorDecorations.keys()) {
-      this.clearUserDecorations(userId);
+  private clearAllDecorations(_): void {
+    for (_const userId of this.cursorDecorations.keys()) {
+      this.clearUserDecorations(_userId);
     }
   }
 
   // Update user presence
-  private updateUserPresence(users: CollaborationUser[]): void {
+  private updateUserPresence(_users: CollaborationUser[]): void {
     // Remove decorations for users who left
-    for (const userId of this.cursorDecorations.keys()) {
+    for (_const userId of this.cursorDecorations.keys()) {
       if (!users.find(user => user.id === userId)) {
-        this.clearUserDecorations(userId);
-        this.onUserLeft?.(userId);
+        this.clearUserDecorations(_userId);
+        this.onUserLeft?.(_userId);
       }
     }
 
     // Notify about new users
     users.forEach(user => {
-      if (user.id !== this.options.userId) {
-        this.onUserJoined?.(user);
+      if (_user.id !== this.options.userId) {
+        this.onUserJoined?.(_user);
       }
     });
   }
 
   // Send typing indicator
-  private sendTypingIndicator(isTyping: boolean): void {
+  private sendTypingIndicator(_isTyping: boolean): void {
     this.client.sendCursorUpdate({
-      position: this.editor.getPosition(),
+      position: this.editor.getPosition(_),
       userName: this.options.userName,
       color: this.options.userColor,
       isTyping
@@ -360,64 +360,64 @@ export class CollaborativeEditor {
   }
 
   // Schedule typing indicator stop
-  private scheduleTypingIndicatorStop(): void {
+  private scheduleTypingIndicatorStop(_): void {
     // Clear existing timeout
-    const existingTimeout = this.typingIndicators.get(this.options.userId);
+    const existingTimeout = this.typingIndicators.get(_this.options.userId);
     if (existingTimeout) {
-      clearTimeout(existingTimeout);
+      clearTimeout(_existingTimeout);
     }
 
     // Set new timeout to stop typing indicator
     const timeout = setTimeout(() => {
-      this.sendTypingIndicator(false);
-      this.typingIndicators.delete(this.options.userId);
+      this.sendTypingIndicator(_false);
+      this.typingIndicators.delete(_this.options.userId);
     }, 2000); // Stop typing indicator after 2 seconds of inactivity
 
-    this.typingIndicators.set(this.options.userId, timeout);
+    this.typingIndicators.set( this.options.userId, timeout);
   }
 
   // Update typing indicator for remote user
-  private updateTypingIndicator(userId: string, isTyping: boolean): void {
-    this.onTypingIndicator?.(userId, isTyping);
+  private updateTypingIndicator( userId: string, isTyping: boolean): void {
+    this.onTypingIndicator?.( userId, isTyping);
 
     if (isTyping) {
       // Clear existing timeout
-      const existingTimeout = this.typingIndicators.get(userId);
+      const existingTimeout = this.typingIndicators.get(_userId);
       if (existingTimeout) {
-        clearTimeout(existingTimeout);
+        clearTimeout(_existingTimeout);
       }
 
       // Set timeout to automatically stop typing indicator
       const timeout = setTimeout(() => {
-        this.onTypingIndicator?.(userId, false);
-        this.typingIndicators.delete(userId);
+        this.onTypingIndicator?.( userId, false);
+        this.typingIndicators.delete(_userId);
       }, 5000); // Auto-stop after 5 seconds
 
-      this.typingIndicators.set(userId, timeout);
+      this.typingIndicators.set( userId, timeout);
     } else {
       // Clear timeout and stop indicator
-      const timeout = this.typingIndicators.get(userId);
+      const timeout = this.typingIndicators.get(_userId);
       if (timeout) {
-        clearTimeout(timeout);
-        this.typingIndicators.delete(userId);
+        clearTimeout(_timeout);
+        this.typingIndicators.delete(_userId);
       }
     }
   }
 
   // Clear all typing indicators
-  private clearAllTypingIndicators(): void {
-    for (const timeout of this.typingIndicators.values()) {
-      clearTimeout(timeout);
+  private clearAllTypingIndicators(_): void {
+    for (_const timeout of this.typingIndicators.values()) {
+      clearTimeout(_timeout);
     }
-    this.typingIndicators.clear();
+    this.typingIndicators.clear(_);
   }
 
   // Install CSS styles for cursors and selections
-  private installCursorStyles(): void {
-    if (typeof document === 'undefined') return;
+  private installCursorStyles(_): void {
+    if (_typeof document === 'undefined') return;
 
     const styleId = 'collaboration-cursor-styles';
-    if (document.getElementById(styleId)) return;
+    if (_document.getElementById(styleId)) return;
 
     const style = document.createElement('style');
     style.id = styleId;
@@ -429,8 +429,8 @@ export class CollaborativeEditor {
       }
       
       .collaboration-selection {
-        background-color: rgba(0, 123, 255, 0.2);
-        border: 1px solid rgba(0, 123, 255, 0.4);
+        background-color: rgba( 0, 123, 255, 0.2);
+        border: 1px solid rgba( 0, 123, 255, 0.4);
       }
       
       @keyframes collaboration-cursor-blink {
@@ -439,11 +439,11 @@ export class CollaborativeEditor {
       }
       
       .collaboration-cursor::after {
-        content: attr(data-user-name);
+        content: attr(_data-user-name);
         position: absolute;
         top: -20px;
         left: 0;
-        background: var(--user-color, #007bff);
+        background: var( --user-color, #007bff);
         color: white;
         padding: 2px 6px;
         border-radius: 3px;
@@ -453,40 +453,40 @@ export class CollaborativeEditor {
       }
     `;
     
-    document.head.appendChild(style);
+    document.head.appendChild(_style);
   }
 
   // Public methods for external control
-  sendCompilationRequest(code: string): void {
-    this.client.sendCompilationRequest(code);
+  sendCompilationRequest(_code: string): void {
+    this.client.sendCompilationRequest(_code);
   }
 
-  getConnectionStatus(): string {
-    return this.client.getConnectionStatus();
+  getConnectionStatus(_): string {
+    return this.client.getConnectionStatus(_);
   }
 
-  isConnected(): boolean {
-    return this.client.isConnected();
+  isConnected(_): boolean {
+    return this.client.isConnected(_);
   }
 
   // Event handler setters
-  onUserJoin(handler: (user: CollaborationUser) => void): void {
+  onUserJoin(_handler: (user: CollaborationUser) => void): void {
     this.onUserJoined = handler;
   }
 
-  onUserLeave(handler: (userId: string) => void): void {
+  onUserLeave(_handler: (userId: string) => void): void {
     this.onUserLeft = handler;
   }
 
-  onTyping(handler: (userId: string, isTyping: boolean) => void): void {
+  onTyping( handler: (userId: string, isTyping: boolean) => void): void {
     this.onTypingIndicator = handler;
   }
 
-  onConnectionStatus(handler: (status: string) => void): void {
+  onConnectionStatus(_handler: (status: string) => void): void {
     this.onConnectionStatusChanged = handler;
   }
 
-  onCompilation(handler: (result: any) => void): void {
+  onCompilation(_handler: (result: any) => void): void {
     this.onCollaborativeCompilation = handler;
   }
 }

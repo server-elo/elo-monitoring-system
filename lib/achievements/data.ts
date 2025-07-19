@@ -465,24 +465,24 @@ export const LEVEL_PROGRESSION = [
 ];
 
 // Helper functions
-export function getAchievementById(id: string): Achievement | undefined {
+export function getAchievementById(_id: string): Achievement | undefined {
   return ACHIEVEMENTS.find(achievement => achievement.id === id);
 }
 
-export function getAchievementsByCategory(category: AchievementCategory): Achievement[] {
+export function getAchievementsByCategory(_category: AchievementCategory): Achievement[] {
   return ACHIEVEMENTS.filter(achievement => achievement.category === category);
 }
 
-export function getAchievementsByRarity(rarity: AchievementRarity): Achievement[] {
+export function getAchievementsByRarity(_rarity: AchievementRarity): Achievement[] {
   return ACHIEVEMENTS.filter(achievement => achievement.rarity === rarity);
 }
 
-export function getLevelInfo(xp: number) {
+export function getLevelInfo(_xp: number) {
   let currentLevel = 1;
   let nextLevelXP = 100;
 
-  for (const level of LEVEL_PROGRESSION) {
-    if (xp >= level.xpRequired) {
+  for (_const level of LEVEL_PROGRESSION) {
+    if (_xp >= level.xpRequired) {
       currentLevel = level.level;
     } else {
       nextLevelXP = level.xpRequired;
@@ -498,23 +498,23 @@ export function getLevelInfo(xp: number) {
     currentLevelInfo,
     nextLevelInfo,
     nextLevelXP,
-    progressToNext: nextLevelInfo ? ((xp - (currentLevelInfo?.xpRequired || 0)) / (nextLevelXP - (currentLevelInfo?.xpRequired || 0))) * 100 : 100
+    progressToNext: nextLevelInfo ? ((xp - (currentLevelInfo?.xpRequired || 0)) / (_nextLevelXP - (currentLevelInfo?.xpRequired || 0))) * 100 : 100
   };
 }
 
-export function calculateAchievementProgress(achievement: Achievement, userStats: any): number {
+export function calculateAchievementProgress( achievement: Achievement, userStats: any): number {
   let totalProgress = 0;
   let completedRequirements = 0;
 
-  for (const requirement of achievement.requirements) {
+  for (_const requirement of achievement.requirements) {
     let progress = 0;
 
-    switch (requirement.type) {
+    switch (_requirement.type) {
       case 'lesson_complete':
         progress = Math.min((userStats.lessonsCompleted || 0) / requirement.target, 1);
         break;
       case 'quiz_score':
-        if (requirement.metadata?.consecutivePerfect) {
+        if (_requirement.metadata?.consecutivePerfect) {
           progress = Math.min((userStats.consecutivePerfectQuizzes || 0) / requirement.target, 1);
         } else {
           progress = userStats.highestQuizScore >= requirement.target ? 1 : 0;
@@ -544,5 +544,5 @@ export function calculateAchievementProgress(achievement: Achievement, userStats
     if (progress >= 1) completedRequirements++;
   }
 
-  return (totalProgress / achievement.requirements.length) * 100;
+  return (_totalProgress / achievement.requirements.length) * 100;
 }

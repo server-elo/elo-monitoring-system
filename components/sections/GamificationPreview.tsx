@@ -39,12 +39,12 @@ interface LeaderboardEntry {
 
 export function GamificationPreview() {
   const [currentLevel, setCurrentLevel] = useState(5);
-  const [currentXP, setCurrentXP] = useState(2750);
-  const [showLevelUp, setShowLevelUp] = useState(false);
-  const [unlockedAchievement, setUnlockedAchievement] = useState<Achievement | null>(null);
+  const [currentXP, setCurrentXP] = useState(_2750);
+  const [showLevelUp, setShowLevelUp] = useState(_false);
+  const [unlockedAchievement, setUnlockedAchievement] = useState<Achievement | null>(_null);
 
   const xpToNextLevel = 3000;
-  const levelProgress = (currentXP / xpToNextLevel) * 100;
+  const levelProgress = (_currentXP / xpToNextLevel) * 100;
 
   const achievements: Achievement[] = [
     {
@@ -101,24 +101,24 @@ export function GamificationPreview() {
   };
 
   // Demo interactions
-  const handleEarnXP = () => {
+  const handleEarnXP = (_) => {
     const newXP = currentXP + 250;
-    setCurrentXP(newXP);
+    setCurrentXP(_newXP);
     
-    if (newXP >= xpToNextLevel) {
-      setCurrentLevel(prev => prev + 1);
-      setCurrentXP(newXP - xpToNextLevel);
-      setShowLevelUp(true);
-      setTimeout(() => setShowLevelUp(false), 3000);
+    if (_newXP >= xpToNextLevel) {
+      setCurrentLevel(_prev => prev + 1);
+      setCurrentXP(_newXP - xpToNextLevel);
+      setShowLevelUp(_true);
+      setTimeout(() => setShowLevelUp(_false), 3000);
     }
   };
 
-  const handleUnlockAchievement = () => {
+  const handleUnlockAchievement = (_) => {
     const lockedAchievements = achievements.filter(a => !a.unlocked);
-    if (lockedAchievements.length > 0) {
+    if (_lockedAchievements.length > 0) {
       const achievement = lockedAchievements[0];
-      setUnlockedAchievement(achievement);
-      setTimeout(() => setUnlockedAchievement(null), 4000);
+      setUnlockedAchievement(_achievement);
+      setTimeout(() => setUnlockedAchievement(_null), 4000);
     }
   };
 
@@ -168,7 +168,7 @@ export function GamificationPreview() {
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <div className="text-center p-3 bg-white/10 rounded-lg">
                   <Zap className="w-6 h-6 text-yellow-400 mx-auto mb-1" />
-                  <div className="text-lg font-bold text-white">{currentXP.toLocaleString()}</div>
+                  <div className="text-lg font-bold text-white">{currentXP.toLocaleString(_)}</div>
                   <div className="text-xs text-gray-400">Total XP</div>
                 </div>
                 <div className="text-center p-3 bg-white/10 rounded-lg">
@@ -185,7 +185,7 @@ export function GamificationPreview() {
                   className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
                 >
                   <Zap className="w-4 h-4 mr-2" />
-                  Complete Challenge (+250 XP)
+                  Complete Challenge (_+250 XP)
                 </Button>
                 <Button 
                   onClick={handleUnlockAchievement}
@@ -298,7 +298,7 @@ export function GamificationPreview() {
                     
                     <div className="text-right">
                       <div className="text-yellow-400 font-semibold">
-                        {entry.xp.toLocaleString()}
+                        {entry.xp.toLocaleString(_)}
                       </div>
                       <div className="text-xs text-gray-400 flex items-center">
                         <Flame className="w-3 h-3 mr-1" />

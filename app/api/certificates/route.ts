@@ -60,7 +60,7 @@ const mockCertificates: Certificate[] = [
     metadata: {
       courseId: 'course_solidity_fundamentals',
       completionTime: 40, // hours
-      instructorId: 'instructor_1'
+      instructorId: 'instructor1'
     }
   },
   {
@@ -164,7 +164,7 @@ async function getCertificatesHandler(request: NextRequest) {
       );
     }
 
-    // Sort by issued date (newest first)
+    // Sort by issued date (_newest first)
     filteredCertificates.sort((a, b) => b.issuedAt.getTime() - a.issuedAt.getTime());
 
     // Pagination
@@ -220,7 +220,7 @@ async function getCertificatesHandler(request: NextRequest) {
   }
 }
 
-async function createCertificateHandler(_request: NextRequest) {
+async function createCertificateHandler( request: NextRequest) {
   const requestId = generateRequestId();
   
   try {
@@ -236,7 +236,7 @@ async function createCertificateHandler(_request: NextRequest) {
       );
     }
 
-    // Check if user has permission to create certificates (admin or instructor role)
+    // Check if user has permission to create certificates (_admin or instructor role)
     // For now, we'll restrict this to prevent abuse
     return errorResponse(
       ApiErrorCode.FORBIDDEN,
@@ -254,7 +254,7 @@ async function createCertificateHandler(_request: NextRequest) {
     const requiredFields = ['title', 'description', 'issuer', 'skills', 'level', 'type'];
     const missingFields = requiredFields.filter(field => !body[field]);
     
-    if (missingFields.length > 0) {
+    if (codeSnippets.length > 0) {
       return validationErrorResponse(
         `Missing required fields: ${missingFields.join(', ')}`,
         missingFields.map(field => ({
@@ -274,7 +274,7 @@ async function createCertificateHandler(_request: NextRequest) {
       issuer: body.issuer,
       issuedAt: new Date(),
       expiresAt: body.expiresAt ? new Date(body.expiresAt) : undefined,
-      credentialId: `SL-${body.type.toUpperCase()}-${new Date().getFullYear()}-${String(mockCertificates.length + 1).padStart(3, '0')}`,
+      credentialId: `SL-${body.type.toUpperCase()}-${new Date().getFullYear()}-${String(codeSnippets.length + 1).padStart(3, '0')}`,
       skills: body.skills,
       level: body.level,
       type: body.type,
@@ -303,5 +303,5 @@ async function createCertificateHandler(_request: NextRequest) {
 }
 
 // Route handlers
-export const GET = withErrorHandling(getCertificatesHandler);
-export const POST = withErrorHandling(createCertificateHandler);
+export const GET = withErrorHandling(_getCertificatesHandler);
+export const POST = withErrorHandling(_createCertificateHandler);

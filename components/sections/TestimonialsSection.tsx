@@ -103,7 +103,7 @@ export function TestimonialsSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          {stats.map((stat, index) => (
+          {stats.map( (stat, index) => (
             <div key={stat.label} className="text-center">
               <motion.div
                 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2"
@@ -121,7 +121,7 @@ export function TestimonialsSection() {
 
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map( (testimonial, index) => (
             <motion.div
               key={testimonial.name}
               className="glass p-6 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300 relative"
@@ -136,7 +136,7 @@ export function TestimonialsSection() {
 
               {/* Rating */}
               <div className="flex items-center gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
+                {[...Array(_testimonial.rating)].map( (_, i) => (
                   <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
                 ))}
               </div>

@@ -110,13 +110,13 @@ export interface NeumorphismButtonProps extends Omit<EnhancedButtonProps, 'varia
 
 const neumorphismVariants = {
   light: {
-    raised: 'bg-gray-100 shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] hover:shadow-[4px_4px_8px_#d1d9e6,-4px_-4px_8px_#ffffff]',
-    pressed: 'bg-gray-100 shadow-[inset_8px_8px_16px_#d1d9e6,inset_-8px_-8px_16px_#ffffff]',
+    raised: 'bg-gray-100 shadow-[8px_8px16px_#d1d9e6,-8px_-8px16px_#ffffff] hover:shadow-[4px_4px_8px_#d1d9e6,-4px_-4px_8px_#ffffff]',
+    pressed: 'bg-gray-100 shadow-[inset_8px_8px16px_#d1d9e6,inset_-8px_-8px16px_#ffffff]',
     flat: 'bg-gray-100 shadow-[4px_4px_8px_#d1d9e6,-4px_-4px_8px_#ffffff]'
   },
   dark: {
-    raised: 'bg-gray-800 shadow-[8px_8px_16px_#1a1a1a,-8px_-8px_16px_#2a2a2a] hover:shadow-[4px_4px_8px_#1a1a1a,-4px_-4px_8px_#2a2a2a]',
-    pressed: 'bg-gray-800 shadow-[inset_8px_8px_16px_#1a1a1a,inset_-8px_-8px_16px_#2a2a2a]',
+    raised: 'bg-gray-800 shadow-[8px_8px16px_#1a1a1a,-8px_-8px16px_#2a2a2a] hover:shadow-[4px_4px_8px_#1a1a1a,-4px_-4px_8px_#2a2a2a]',
+    pressed: 'bg-gray-800 shadow-[inset_8px_8px16px_#1a1a1a,inset_-8px_-8px16px_#2a2a2a]',
     flat: 'bg-gray-800 shadow-[4px_4px_8px_#1a1a1a,-4px_-4px_8px_#2a2a2a]'
   }
 };
@@ -157,7 +157,7 @@ export function NeumorphismButton({
 }
 
 // Preset glassmorphism button components
-export function GlassPrimaryButton(props: Omit<GlassmorphismButtonProps, 'variant'>) {
+export function GlassPrimaryButton( props: Omit<GlassmorphismButtonProps, 'variant'>) {
   return (
     <GlassmorphismButton
       {...props}
@@ -168,7 +168,7 @@ export function GlassPrimaryButton(props: Omit<GlassmorphismButtonProps, 'varian
   );
 }
 
-export function GlassSecondaryButton(props: Omit<GlassmorphismButtonProps, 'variant'>) {
+export function GlassSecondaryButton( props: Omit<GlassmorphismButtonProps, 'variant'>) {
   return (
     <GlassmorphismButton
       {...props}
@@ -178,7 +178,7 @@ export function GlassSecondaryButton(props: Omit<GlassmorphismButtonProps, 'vari
   );
 }
 
-export function GlassSuccessButton(props: Omit<GlassmorphismButtonProps, 'variant'>) {
+export function GlassSuccessButton( props: Omit<GlassmorphismButtonProps, 'variant'>) {
   return (
     <GlassmorphismButton
       {...props}
@@ -189,7 +189,7 @@ export function GlassSuccessButton(props: Omit<GlassmorphismButtonProps, 'varian
   );
 }
 
-export function GlassDangerButton(props: Omit<GlassmorphismButtonProps, 'variant'>) {
+export function GlassDangerButton( props: Omit<GlassmorphismButtonProps, 'variant'>) {
   return (
     <GlassmorphismButton
       {...props}
@@ -201,7 +201,7 @@ export function GlassDangerButton(props: Omit<GlassmorphismButtonProps, 'variant
 }
 
 // Floating action button with glassmorphism
-export function GlassFloatingActionButton(props: GlassmorphismButtonProps) {
+export function GlassFloatingActionButton(_props: GlassmorphismButtonProps) {
   return (
     <motion.div
       className="fixed bottom-6 right-6 z-50"

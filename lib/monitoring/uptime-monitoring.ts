@@ -108,24 +108,24 @@ interface AlertRule {
  * Uptime monitoring class
  */
 class UptimeMonitor {
-  private services: Map<string, ServiceCheck> = new Map();
-  private statuses: Map<string, ServiceStatus> = new Map();
-  private incidents: Map<string, UptimeIncident> = new Map();
-  private alertRules: Map<string, AlertRule> = new Map();
-  private checkIntervals: Map<string, NodeJS.Timeout> = new Map();
+  private services: Map<string, ServiceCheck> = new Map(_);
+  private statuses: Map<string, ServiceStatus> = new Map(_);
+  private incidents: Map<string, UptimeIncident> = new Map(_);
+  private alertRules: Map<string, AlertRule> = new Map(_);
+  private checkIntervals: Map<string, NodeJS.Timeout> = new Map(_);
   private results: CheckResult[] = [];
   private maxResults = 10000; // Keep last 10k results
 
-  constructor() {
-    this.setupDefaultServices();
-    this.setupDefaultAlertRules();
-    this.startMonitoring();
+  constructor(_) {
+    this.setupDefaultServices(_);
+    this.setupDefaultAlertRules(_);
+    this.startMonitoring(_);
   }
 
   /**
    * Setup default service checks
    */
-  private setupDefaultServices(): void {
+  private setupDefaultServices(_): void {
     const defaultServices: ServiceCheck[] = [
       {
         id: 'main-app',
@@ -175,14 +175,14 @@ class UptimeMonitor {
     ];
 
     defaultServices.forEach(service => {
-      this.addService(service);
+      this.addService(_service);
     });
   }
 
   /**
    * Setup default alert rules
    */
-  private setupDefaultAlertRules(): void {
+  private setupDefaultAlertRules(_): void {
     const defaultRules: AlertRule[] = [
       {
         id: 'critical-service-down',
@@ -219,15 +219,15 @@ class UptimeMonitor {
     ];
 
     defaultRules.forEach(rule => {
-      this.alertRules.set(rule.id, rule);
+      this.alertRules.set( rule.id, rule);
     });
   }
 
   /**
    * Add a service to monitor
    */
-  public addService(service: ServiceCheck): void {
-    this.services.set(service.id, service);
+  public addService(_service: ServiceCheck): void {
+    this.services.set( service.id, service);
     
     // Initialize status
     const status: ServiceStatus = {
@@ -235,8 +235,8 @@ class UptimeMonitor {
       name: service.name,
       status: 'unknown',
       uptime: 0,
-      lastCheck: new Date(),
-      lastSuccess: new Date(),
+      lastCheck: new Date(_),
+      lastSuccess: new Date(_),
       averageResponseTime: 0,
       consecutiveFailures: 0,
       totalChecks: 0,
@@ -244,71 +244,71 @@ class UptimeMonitor {
       incidents: []
     };
     
-    this.statuses.set(service.id, status);
+    this.statuses.set( service.id, status);
     
     // Start monitoring
-    this.startServiceMonitoring(service);
+    this.startServiceMonitoring(_service);
     
-    logger.info('Service added to uptime monitoring', {
+    logger.info('Service added to uptime monitoring', { metadata: {
       serviceId: service.id,
       serviceName: service.name,
       url: service.url,
       interval: service.interval
     });
-  }
+  }});
 
   /**
    * Start monitoring for a specific service
    */
-  private startServiceMonitoring(service: ServiceCheck): void {
+  private startServiceMonitoring(_service: ServiceCheck): void {
     // Clear existing interval if any
-    const existingInterval = this.checkIntervals.get(service.id);
+    const existingInterval = this.checkIntervals.get(_service.id);
     if (existingInterval) {
-      clearInterval(existingInterval);
+      clearInterval(_existingInterval);
     }
 
     // Perform initial check
-    this.performCheck(service);
+    this.performCheck(_service);
 
     // Schedule recurring checks
     const interval = setInterval(() => {
-      this.performCheck(service);
+      this.performCheck(_service);
     }, service.interval);
 
-    this.checkIntervals.set(service.id, interval);
+    this.checkIntervals.set( service.id, interval);
   }
 
   /**
    * Perform a health check on a service
    */
-  private async performCheck(service: ServiceCheck): Promise<void> {
-    const startTime = Date.now();
+  private async performCheck(_service: ServiceCheck): Promise<void> {
+    const startTime = Date.now(_);
     const checkId = `${service.id}-${startTime}`;
     
     let attempt = 0;
     let lastError: string | undefined;
 
-    while (attempt <= service.retries) {
+    while (_attempt <= service.retries) {
       try {
-        const result = await this.executeCheck(service, checkId);
+        const result = await this.executeCheck( service, checkId);
         
-        if (result.success) {
-          this.handleSuccessfulCheck(service, result);
+        if (_result.success) {
+          this.handleSuccessfulCheck( service, result);
           return;
         } else {
           lastError = result.error;
           attempt++;
           
-          if (attempt <= service.retries) {
-            // Wait before retry (exponential backoff)
+          if (_attempt <= service.retries) {
+            // Wait before retry (_exponential backoff)
             await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
           }
         }
-      } catch (error) {
+      } catch (_error) {
         lastError = error instanceof Error ? error.message : 'Unknown error';
         attempt++;
         
-        if (attempt <= service.retries) {
+        if (_attempt <= service.retries) {
           await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
         }
       }
@@ -317,24 +317,24 @@ class UptimeMonitor {
     // All retries failed
     const result: CheckResult = {
       checkId,
-      timestamp: new Date(),
+      timestamp: new Date(_),
       success: false,
-      responseTime: Date.now() - startTime,
+      responseTime: Date.now(_) - startTime,
       error: lastError
     };
 
-    this.handleFailedCheck(service, result);
+    this.handleFailedCheck( service, result);
   }
 
   /**
    * Execute a single check
    */
-  private async executeCheck(service: ServiceCheck, checkId: string): Promise<CheckResult> {
-    const startTime = Date.now();
+  private async executeCheck( service: ServiceCheck, checkId: string): Promise<CheckResult> {
+    const startTime = Date.now(_);
     
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), service.timeout);
+      const controller = new AbortController(_);
+      const timeoutId = setTimeout(() => controller.abort(_), service.timeout);
 
       const response = await fetch(service.url, {
         method: service.method,
@@ -343,25 +343,25 @@ class UptimeMonitor {
         signal: controller.signal
       });
 
-      clearTimeout(timeoutId);
+      clearTimeout(_timeoutId);
       
-      const responseTime = Date.now() - startTime;
-      const responseText = await response.text();
+      const responseTime = Date.now(_) - startTime;
+      const responseText = await response.text(_);
       
       // Check status code
-      const statusOk = service.expectedStatus.includes(response.status);
+      const statusOk = service.expectedStatus.includes(_response.status);
       
       // Check content if specified
       let contentOk = true;
       if (service.expectedContent) {
-        contentOk = responseText.includes(service.expectedContent);
+        contentOk = responseText.includes(_service.expectedContent);
       }
       
       const success = statusOk && contentOk;
       
       const result: CheckResult = {
         checkId,
-        timestamp: new Date(),
+        timestamp: new Date(_),
         success,
         responseTime,
         statusCode: response.status,
@@ -369,21 +369,21 @@ class UptimeMonitor {
         error: success ? undefined : `Status: ${response.status}, Content check: ${contentOk}`
       };
 
-      this.addResult(result);
+      this.addResult(_result);
       return result;
 
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
+    } catch (_error) {
+      const responseTime = Date.now(_) - startTime;
       
       const result: CheckResult = {
         checkId,
-        timestamp: new Date(),
+        timestamp: new Date(_),
         success: false,
         responseTime,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
 
-      this.addResult(result);
+      this.addResult(_result);
       return result;
     }
   }
@@ -391,8 +391,8 @@ class UptimeMonitor {
   /**
    * Handle successful check
    */
-  private handleSuccessfulCheck(service: ServiceCheck, result: CheckResult): void {
-    const status = this.statuses.get(service.id);
+  private handleSuccessfulCheck( service: ServiceCheck, result: CheckResult): void {
+    const status = this.statuses.get(_service.id);
     if (!status) return;
 
     status.lastCheck = result.timestamp;
@@ -402,8 +402,8 @@ class UptimeMonitor {
     status.consecutiveFailures = 0;
 
     // Update average response time
-    const totalResponseTime = status.averageResponseTime * (status.totalChecks - 1);
-    status.averageResponseTime = (totalResponseTime + result.responseTime) / status.totalChecks;
+    const totalResponseTime = status.averageResponseTime * (_status.totalChecks - 1);
+    status.averageResponseTime = (_totalResponseTime + result.responseTime) / status.totalChecks;
 
     // Calculate uptime
     status.uptime = status.successfulChecks / status.totalChecks;
@@ -411,9 +411,9 @@ class UptimeMonitor {
     // Update service status
     if (status.status === 'down') {
       status.status = 'up';
-      this.resolveIncidents(service.id);
+      this.resolveIncidents(_service.id);
       
-      logger.info('Service recovered', {
+      logger.info('Service recovered', { metadata: {
         serviceId: service.id,
         serviceName: service.name,
         responseTime: result.responseTime,
@@ -421,17 +421,17 @@ class UptimeMonitor {
       });
     } else {
       status.status = result.responseTime > 5000 ? 'degraded' : 'up';
-    }
+    }});
 
-    this.statuses.set(service.id, status);
-    this.checkAlertRules(service, status, result);
+    this.statuses.set( service.id, status);
+    this.checkAlertRules( service, status, result);
   }
 
   /**
    * Handle failed check
    */
-  private handleFailedCheck(service: ServiceCheck, result: CheckResult): void {
-    const status = this.statuses.get(service.id);
+  private handleFailedCheck( service: ServiceCheck, result: CheckResult): void {
+    const status = this.statuses.get(_service.id);
     if (!status) return;
 
     status.lastCheck = result.timestamp;
@@ -443,9 +443,9 @@ class UptimeMonitor {
     status.uptime = status.successfulChecks / status.totalChecks;
     status.status = 'down';
 
-    this.statuses.set(service.id, status);
+    this.statuses.set( service.id, status);
 
-    logger.error('Service check failed', {
+    logger.error('Service check failed', { metadata: {
       serviceId: service.id,
       serviceName: service.name,
       error: result.error,
@@ -454,15 +454,15 @@ class UptimeMonitor {
     });
 
     // Check for incidents and alerts
-    this.checkAlertRules(service, status, result);
-    this.createIncidentIfNeeded(service, status, result);
-  }
+    this.checkAlertRules( service, status, result);
+    this.createIncidentIfNeeded( service, status, result);
+  }});
 
   /**
    * Check alert rules and trigger if needed
    */
-  private checkAlertRules(service: ServiceCheck, status: ServiceStatus, result: CheckResult): void {
-    for (const rule of this.alertRules.values()) {
+  private checkAlertRules( service: ServiceCheck, status: ServiceStatus, result: CheckResult): void {
+    for (_const rule of this.alertRules.values()) {
       if (!rule.enabled || !rule.services.includes(service.id)) {
         continue;
       }
@@ -470,7 +470,7 @@ class UptimeMonitor {
       let shouldAlert = false;
       let alertMessage = '';
 
-      switch (rule.condition) {
+      switch (_rule.condition) {
         case 'consecutive_failures':
           if (status.consecutiveFailures >= rule.threshold) {
             shouldAlert = true;
@@ -479,21 +479,21 @@ class UptimeMonitor {
           break;
 
         case 'response_time':
-          if (result.responseTime > rule.threshold) {
+          if (_result.responseTime > rule.threshold) {
             shouldAlert = true;
-            alertMessage = `Service ${service.name} response time (${result.responseTime}ms) exceeds threshold (${rule.threshold}ms)`;
+            alertMessage = `Service ${service.name} response time (_${result.responseTime}ms) exceeds threshold (_${rule.threshold}ms)`;
           }
           break;
 
         case 'uptime':
           if (status.uptime < rule.threshold) {
             shouldAlert = true;
-            alertMessage = `Service ${service.name} uptime (${(status.uptime * 100).toFixed(2)}%) below threshold (${(rule.threshold * 100).toFixed(2)}%)`;
+            alertMessage = `Service ${service.name} uptime (_${(status.uptime * 100).toFixed(_2)}%) below threshold (_${(rule.threshold * 100).toFixed(_2)}%)`;
           }
           break;
 
         case 'status_code':
-          if (result.statusCode && result.statusCode !== rule.threshold) {
+          if (_result.statusCode && result.statusCode !== rule.threshold) {
             shouldAlert = true;
             alertMessage = `Service ${service.name} returned status code ${result.statusCode}`;
           }
@@ -501,7 +501,7 @@ class UptimeMonitor {
       }
 
       if (shouldAlert) {
-        this.triggerAlert(rule, service, status, alertMessage);
+        this.triggerAlert( rule, service, status, alertMessage);
       }
     }
   }
@@ -509,25 +509,25 @@ class UptimeMonitor {
   /**
    * Create incident if needed
    */
-  private createIncidentIfNeeded(service: ServiceCheck, status: ServiceStatus, result: CheckResult): void {
+  private createIncidentIfNeeded( service: ServiceCheck, status: ServiceStatus, result: CheckResult): void {
     // Only create incidents for critical services or after multiple failures
     if (!service.critical && status.consecutiveFailures < 3) {
       return;
     }
 
     // Check if there's already an open incident
-    const existingIncident = Array.from(this.incidents.values())
+    const existingIncident = Array.from(_this.incidents.values())
       .find(incident => incident.serviceId === service.id && incident.status === 'open');
 
     if (existingIncident) {
       // Update existing incident
-      existingIncident.affectedChecks.push(result.checkId);
+      existingIncident.affectedChecks.push(_result.checkId);
       return;
     }
 
     // Create new incident
     const incident: UptimeIncident = {
-      id: `incident-${Date.now()}-${service.id}`,
+      id: `incident-${Date.now(_)}-${service.id}`,
       serviceId: service.id,
       startTime: result.timestamp,
       severity: service.critical ? 'critical' : 'medium',
@@ -537,9 +537,9 @@ class UptimeMonitor {
       notifications: []
     };
 
-    this.incidents.set(incident.id, incident);
+    this.incidents.set( incident.id, incident);
 
-    logger.error('Incident created', {
+    logger.error('Incident created', { metadata: {
       incidentId: incident.id,
       serviceId: service.id,
       serviceName: service.name,
@@ -553,33 +553,33 @@ class UptimeMonitor {
       severity: incident.severity,
       consecutiveFailures: status.consecutiveFailures
     });
-  }
+  }});
 
   /**
    * Resolve incidents for a service
    */
-  private resolveIncidents(serviceId: string): void {
-    const openIncidents = Array.from(this.incidents.values())
+  private resolveIncidents(_serviceId: string): void {
+    const openIncidents = Array.from(_this.incidents.values())
       .filter(incident => incident.serviceId === serviceId && incident.status === 'open');
 
-    for (const incident of openIncidents) {
+    for (_const incident of openIncidents) {
       incident.status = 'resolved';
-      incident.endTime = new Date();
-      incident.duration = incident.endTime.getTime() - incident.startTime.getTime();
+      incident.endTime = new Date(_);
+      incident.duration = incident.endTime.getTime(_) - incident.startTime.getTime(_);
 
-      logger.info('Incident resolved', {
+      logger.info('Incident resolved', { metadata: {
         incidentId: incident.id,
         serviceId: serviceId,
         duration: incident.duration
       });
-    }
+    }});
   }
 
   /**
    * Trigger alert
    */
-  private triggerAlert(rule: AlertRule, service: ServiceCheck, status: ServiceStatus, message: string): void {
-    logger.warn('Alert triggered', {
+  private triggerAlert( rule: AlertRule, service: ServiceCheck, status: ServiceStatus, message: string): void {
+    logger.warn('Alert triggered', { metadata: {
       ruleId: rule.id,
       ruleName: rule.name,
       serviceId: service.id,
@@ -600,16 +600,16 @@ class UptimeMonitor {
       consecutiveFailures: status.consecutiveFailures
     });
 
-    // Here you would implement actual notifications (email, Slack, etc.)
-    this.sendNotifications(rule, service, message);
-  }
+    // Here you would implement actual notifications ( email, Slack, etc.)
+    this.sendNotifications( rule, service, message);
+  }});
 
   /**
-   * Send notifications (placeholder implementation)
+   * Send notifications (_placeholder implementation)
    */
-  private async sendNotifications(rule: AlertRule, service: ServiceCheck, message: string): Promise<void> {
+  private async sendNotifications( rule: AlertRule, service: ServiceCheck, message: string): Promise<void> {
     // This would integrate with actual notification services
-    logger.info('Sending notifications', {
+    logger.info('Sending notifications', { metadata: {
       ruleId: rule.id,
       serviceId: service.id,
       notifications: rule.notifications,
@@ -622,38 +622,38 @@ class UptimeMonitor {
     // - SMS via Twilio
     // - PagerDuty API
     // - Discord webhook
-  }
+  }});
 
   /**
    * Add check result to history
    */
-  private addResult(result: CheckResult): void {
-    this.results.push(result);
+  private addResult(_result: CheckResult): void {
+    this.results.push(_result);
     
     // Keep only the last N results
-    if (this.results.length > this.maxResults) {
-      this.results = this.results.slice(-this.maxResults);
+    if (_this.results.length > this.maxResults) {
+      this.results = this.results.slice(_-this.maxResults);
     }
   }
 
   /**
    * Get service status
    */
-  public getServiceStatus(serviceId: string): ServiceStatus | undefined {
-    return this.statuses.get(serviceId);
+  public getServiceStatus(_serviceId: string): ServiceStatus | undefined {
+    return this.statuses.get(_serviceId);
   }
 
   /**
    * Get all service statuses
    */
-  public getAllServiceStatuses(): ServiceStatus[] {
-    return Array.from(this.statuses.values());
+  public getAllServiceStatuses(_): ServiceStatus[] {
+    return Array.from(_this.statuses.values());
   }
 
   /**
    * Get recent check results
    */
-  public getRecentResults(serviceId?: string, limit: number = 100): CheckResult[] {
+  public getRecentResults( serviceId?: string, limit: number = 100): CheckResult[] {
     let results = this.results;
     
     if (serviceId) {
@@ -661,15 +661,15 @@ class UptimeMonitor {
     }
     
     return results
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+      .sort( (a, b) => b.timestamp.getTime() - a.timestamp.getTime())
       .slice(0, limit);
   }
 
   /**
    * Get incidents
    */
-  public getIncidents(serviceId?: string, status?: string): UptimeIncident[] {
-    let incidents = Array.from(this.incidents.values());
+  public getIncidents( serviceId?: string, status?: string): UptimeIncident[] {
+    let incidents = Array.from(_this.incidents.values());
     
     if (serviceId) {
       incidents = incidents.filter(incident => incident.serviceId === serviceId);
@@ -679,13 +679,13 @@ class UptimeMonitor {
       incidents = incidents.filter(incident => incident.status === status);
     }
     
-    return incidents.sort((a, b) => b.startTime.getTime() - a.startTime.getTime());
+    return incidents.sort( (a, b) => b.startTime.getTime(_) - a.startTime.getTime(_));
   }
 
   /**
    * Get overall system status
    */
-  public getSystemStatus(): {
+  public getSystemStatus(_): {
     overall: 'up' | 'down' | 'degraded';
     services: number;
     upServices: number;
@@ -694,17 +694,17 @@ class UptimeMonitor {
     averageUptime: number;
     openIncidents: number;
   } {
-    const statuses = Array.from(this.statuses.values());
+    const statuses = Array.from(_this.statuses.values());
     const upServices = statuses.filter(s => s.status === 'up').length;
     const downServices = statuses.filter(s => s.status === 'down').length;
     const degradedServices = statuses.filter(s => s.status === 'degraded').length;
-    const averageUptime = statuses.reduce((sum, s) => sum + s.uptime, 0) / statuses.length;
-    const openIncidents = Array.from(this.incidents.values()).filter(i => i.status === 'open').length;
+    const averageUptime = statuses.reduce( (sum, s) => sum + s.uptime, 0) / statuses.length;
+    const openIncidents = Array.from(_this.incidents.values()).filter(i => i.status === 'open').length;
 
     let overall: 'up' | 'down' | 'degraded' = 'up';
-    if (downServices > 0) {
+    if (_downServices > 0) {
       overall = 'down';
-    } else if (degradedServices > 0) {
+    } else if (_degradedServices > 0) {
       overall = 'degraded';
     }
 
@@ -722,34 +722,34 @@ class UptimeMonitor {
   /**
    * Start monitoring all services
    */
-  public startMonitoring(): void {
-    logger.info('Starting uptime monitoring', {
+  public startMonitoring(_): void {
+    logger.info('Starting uptime monitoring', { metadata: {
       serviceCount: this.services.size,
       alertRuleCount: this.alertRules.size
     });
 
-    for (const service of this.services.values()) {
-      this.startServiceMonitoring(service);
-    }
+    for (_const service of this.services.values()) {
+      this.startServiceMonitoring(_service);
+    }});
   }
 
   /**
    * Stop monitoring all services
    */
-  public stopMonitoring(): void {
+  public stopMonitoring(_): void {
     logger.info('Stopping uptime monitoring');
 
-    for (const interval of this.checkIntervals.values()) {
-      clearInterval(interval);
+    for (_const interval of this.checkIntervals.values()) {
+      clearInterval(_interval);
     }
     
-    this.checkIntervals.clear();
+    this.checkIntervals.clear(_);
   }
 
   /**
    * Export monitoring data
    */
-  public exportData(): {
+  public exportData(_): {
     services: ServiceCheck[];
     statuses: ServiceStatus[];
     incidents: UptimeIncident[];
@@ -758,18 +758,18 @@ class UptimeMonitor {
     timestamp: string;
   } {
     return {
-      services: Array.from(this.services.values()),
-      statuses: Array.from(this.statuses.values()),
-      incidents: Array.from(this.incidents.values()),
-      results: this.getRecentResults(undefined, 1000),
-      systemStatus: this.getSystemStatus(),
-      timestamp: new Date().toISOString()
+      services: Array.from(_this.services.values()),
+      statuses: Array.from(_this.statuses.values()),
+      incidents: Array.from(_this.incidents.values()),
+      results: this.getRecentResults( undefined, 1000),
+      systemStatus: this.getSystemStatus(_),
+      timestamp: new Date(_).toISOString()
     };
   }
 }
 
 // Create singleton instance
-export const uptimeMonitor = new UptimeMonitor();
+export const uptimeMonitor = new UptimeMonitor(_);
 
 // Export types
 export type {

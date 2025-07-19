@@ -66,9 +66,9 @@ interface DeploymentResult {
 interface ProjectBasedLearningProps {
   projects: Project[];
   currentProject?: string;
-  onProjectSelect?: (projectId: string) => void;
-  onStepComplete?: (projectId: string, stepId: string) => void;
-  onDeploy?: (projectId: string, code: string) => Promise<DeploymentResult>;
+  onProjectSelect?: (_projectId: string) => void;
+  onStepComplete?: ( projectId: string, stepId: string) => void;
+  onDeploy?: ( projectId: string, code: string) => Promise<DeploymentResult>;
   className?: string;
 }
 
@@ -94,16 +94,16 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
   onDeploy,
   className = ''
 }) => {
-  const [selectedProject, setSelectedProject] = useState<string>(currentProject || projects[0]?.id);
-  const [isDeploying, setIsDeploying] = useState(false);
-  const [deploymentResult, setDeploymentResult] = useState<DeploymentResult | null>(null);
-  const [showHints, setShowHints] = useState(false);
-  const [testResults, setTestResults] = useState<{ [key: string]: boolean }>({});
-  const [showToast, setShowToast] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<string>(_currentProject || projects[0]?.id);
+  const [isDeploying, setIsDeploying] = useState(_false);
+  const [deploymentResult, setDeploymentResult] = useState<DeploymentResult | null>(_null);
+  const [showHints, setShowHints] = useState(_false);
+  const [testResults, setTestResults] = useState<{ [key: string]: boolean }>({  });
+  const [showToast, setShowToast] = useState(_false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning'>('success');
-  const [isRunning, setIsRunning] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
+  const [isRunning, setIsRunning] = useState(_false);
+  const [showShareModal, setShowShareModal] = useState(_false);
 
   const project = projects.find(p => p.id === selectedProject);
   const currentStep = project?.steps[project.currentStep];
@@ -116,37 +116,37 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
       project.steps.forEach(step => {
         initialTestResults[step.id] = step.completed;
       });
-      setTestResults(initialTestResults);
+      setTestResults(_initialTestResults);
     }
   }, [selectedProject, project]);
 
-  const showToastMessage = (message: string, type: 'success' | 'error' | 'warning') => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const showToastMessage = ( message: string, type: 'success' | 'error' | 'warning') => {
+    setToastMessage(_message);
+    setToastType(_type);
+    setShowToast(_true);
+    setTimeout(() => setShowToast(_false), 3000);
   };
 
-  const handleProjectSelect = (projectId: string) => {
-    setSelectedProject(projectId);
-    onProjectSelect?.(projectId);
+  const handleProjectSelect = (_projectId: string) => {
+    setSelectedProject(_projectId);
+    onProjectSelect?.(_projectId);
   };
 
-  const handleStepComplete = async (stepId: string) => {
+  const handleStepComplete = async (_stepId: string) => {
     if (!project) return;
     
     // Run tests for the current step
-    const testsPassed = await runTests(stepId);
+    const testsPassed = await runTests(_stepId);
     
     if (testsPassed) {
-      onStepComplete?.(project.id, stepId);
-      showToastMessage('Step completed successfully!', 'success');
+      onStepComplete?.( project.id, stepId);
+      showToastMessage( 'Step completed successfully!', 'success');
     } else {
-      showToastMessage('Tests failed. Please review your code.', 'error');
+      showToastMessage( 'Tests failed. Please review your code.', 'error');
     }
   };
 
-  const runTests = async (stepId: string): Promise<boolean> => {
+  const runTests = async (_stepId: string): Promise<boolean> => {
     // Simulate running tests
     await new Promise(resolve => setTimeout(resolve, 1000));
     
@@ -155,48 +155,48 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
       [stepId]: Math.random() > 0.3 // 70% success rate
     };
     
-    setTestResults(prev => ({ ...prev, ...mockResults }));
+    setTestResults( prev => ({ ...prev, ...mockResults }));
     return mockResults[stepId];
   };
 
   const handleDeploy = async () => {
     if (!project || !currentStep?.code) return;
 
-    setIsDeploying(true);
+    setIsDeploying(_true);
 
     try {
-      const result = await onDeploy?.(project.id, currentStep.code);
+      const result = await onDeploy?.( project.id, currentStep.code);
 
       if (result) {
-        setDeploymentResult(result);
-        if (result.success) {
-          showToastMessage('Contract deployed successfully!', 'success');
+        setDeploymentResult(_result);
+        if (_result.success) {
+          showToastMessage( 'Contract deployed successfully!', 'success');
         } else {
-          showToastMessage(`Deployment failed: ${result.error}`, 'error');
+          showToastMessage( `Deployment failed: ${result.error}`, 'error');
         }
       }
-    } catch (error) {
-      showToastMessage('Deployment error occurred', 'error');
+    } catch (_error) {
+      showToastMessage( 'Deployment error occurred', 'error');
     } finally {
-      setIsDeploying(false);
+      setIsDeploying(_false);
     }
   };
 
-  const handleRunCode = () => {
-    setIsRunning(true);
-    showToastMessage('Running code simulation...', 'success');
+  const handleRunCode = (_) => {
+    setIsRunning(_true);
+    showToastMessage( 'Running code simulation...', 'success');
     setTimeout(() => {
-      setIsRunning(false);
-      showToastMessage('Code execution completed!', 'success');
+      setIsRunning(_false);
+      showToastMessage( 'Code execution completed!', 'success');
     }, 2000);
   };
 
-  const handlePauseExecution = () => {
-    setIsRunning(false);
-    showToastMessage('Code execution paused', 'warning');
+  const handlePauseExecution = (_) => {
+    setIsRunning(_false);
+    showToastMessage( 'Code execution paused', 'warning');
   };
 
-  const handleDownloadProject = () => {
+  const handleDownloadProject = (_) => {
     if (!project) return;
 
     const projectData = {
@@ -206,64 +206,64 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
       code: currentStep?.code || ''
     };
 
-    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob( [JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(_blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${project.title.replace(/\s+/g, '_')}_project.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    a.download = `${project.title.replace(/\s+/g, '')}_project.json`;
+    document.body.appendChild(_a);
+    a.click(_);
+    document.body.removeChild(_a);
+    URL.revokeObjectURL(_url);
 
-    showToastMessage('Project downloaded successfully!', 'success');
+    showToastMessage( 'Project downloaded successfully!', 'success');
   };
 
-  const handleShareProject = () => {
-    setShowShareModal(true);
+  const handleShareProject = (_) => {
+    setShowShareModal(_true);
   };
 
-  const handleCloseShareModal = () => {
-    setShowShareModal(false);
+  const handleCloseShareModal = (_) => {
+    setShowShareModal(_false);
   };
 
-  const handleCopyShareLink = () => {
+  const handleCopyShareLink = (_) => {
     if (!project) return;
 
     const shareUrl = `${window.location.origin}/projects/${project.id}`;
-    navigator.clipboard.writeText(shareUrl);
-    showToastMessage('Share link copied to clipboard!', 'success');
+    navigator.clipboard.writeText(_shareUrl);
+    showToastMessage( 'Share link copied to clipboard!', 'success');
   };
 
-  const handleShareToSocial = (platform: string) => {
+  const handleShareToSocial = (_platform: string) => {
     if (!project) return;
 
     const shareUrl = `${window.location.origin}/projects/${project.id}`;
     const shareText = `Check out this awesome Solidity project: ${project.title}`;
 
     let socialUrl = '';
-    switch (platform) {
+    switch (_platform) {
       case 'twitter':
-        socialUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+        socialUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(_shareText)}&url=${encodeURIComponent(_shareUrl)}`;
         break;
       case 'linkedin':
-        socialUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+        socialUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(_shareUrl)}`;
         break;
       case 'discord':
         // Copy to clipboard for Discord
-        navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
-        showToastMessage('Share text copied for Discord!', 'success');
+        navigator.clipboard.writeText(_`${shareText} ${shareUrl}`);
+        showToastMessage( 'Share text copied for Discord!', 'success');
         return;
     }
 
     if (socialUrl) {
-      window.open(socialUrl, '_blank');
+      window.open( socialUrl, '_blank');
     }
   };
 
-  const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
+  const ProjectCard: React.FC<{ project: Project }> = ({ project  }) => {
     const completedSteps = project.steps.filter(s => s.completed).length;
-    const progress = (completedSteps / project.steps.length) * 100;
+    const progress = (_completedSteps / project.steps.length) * 100;
     
     return (
       <Card
@@ -272,7 +272,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
             ? 'bg-blue-500/20 border-blue-500/50' 
             : 'bg-white/10 border-white/20 hover:bg-white/20'
         }`}
-        onClick={() => handleProjectSelect(project.id)}
+        onClick={(_) => handleProjectSelect(_project.id)}
       >
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
@@ -337,12 +337,12 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
     );
   };
 
-  const StepNavigation: React.FC = () => {
+  const StepNavigation: React.FC = (_) => {
     if (!project) return null;
     
     return (
       <div className="flex items-center space-x-2 mb-6">
-        {project.steps.map((step, index) => (
+        {project.steps.map( (step, index) => (
           <div
             key={step.id}
             className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
@@ -440,7 +440,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
               <div className="space-y-3 mb-6">
                 <h4 className="font-medium text-white">Instructions:</h4>
                 <ol className="space-y-2 text-sm text-gray-300">
-                  {currentStep.instructions.map((instruction, index) => (
+                  {currentStep.instructions.map( (instruction, index) => (
                     <li key={index} className="flex items-start space-x-2">
                       <span className="flex-shrink-0 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center mt-0.5">
                         {index + 1}
@@ -454,7 +454,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
               {currentStep.hints && (
                 <div className="mb-6">
                   <Button
-                    onClick={() => setShowHints(!showHints)}
+                    onClick={(_) => setShowHints(!showHints)}
                     variant="outline"
                     size="sm"
                     className="border-yellow-500/50 text-yellow-400"
@@ -471,7 +471,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
                         className="mt-3 p-3 bg-yellow-500/20 border border-yellow-500/50 rounded-lg"
                       >
                         <div className="text-sm text-yellow-300 space-y-1">
-                          {currentStep.hints.map((hint, index) => (
+                          {currentStep.hints.map( (hint, index) => (
                             <div key={index}>💡 {hint}</div>
                           ))}
                         </div>
@@ -523,11 +523,11 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
                 </div>
 
                 {/* Test Results Display */}
-                {Object.keys(testResults).length > 0 && (
+                {Object.keys(_testResults).length > 0 && (
                   <div className="p-3 bg-gray-800/50 rounded-lg border border-gray-600">
                     <h4 className="text-sm font-medium text-white mb-2">Test Results</h4>
                     <div className="space-y-1">
-                      {Object.entries(testResults).map(([stepId, passed]) => {
+                      {Object.entries(_testResults).map( ([stepId, passed]) => {
                         const step = project.steps.find(s => s.id === stepId);
                         return (
                           <div key={stepId} className="flex items-center justify-between text-xs">
@@ -543,7 +543,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
                 )}
 
                 <Button
-                  onClick={() => handleStepComplete(currentStep.id)}
+                  onClick={(_) => handleStepComplete(_currentStep.id)}
                   className="w-full bg-green-600 hover:bg-green-700"
                   disabled={currentStep.completed}
                 >
@@ -589,7 +589,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
             <div className="lg:col-span-2">
               <InteractiveCodeEditor
                 initialCode={currentStep.code}
-                onCodeChange={(code) => {
+                onCodeChange={(_code) => {
                   // Update step code
                   if (currentStep) {
                     currentStep.code = code;
@@ -638,7 +638,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
                   <div className="flex justify-between">
                     <span className="text-gray-400">Gas Used:</span>
                     <span className="text-green-400">
-                      {deploymentResult.gasUsed?.toLocaleString()}
+                      {deploymentResult.gasUsed?.toLocaleString(_)}
                     </span>
                   </div>
                 </div>
@@ -667,7 +667,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-gray-900 border border-white/20 rounded-xl p-6 max-w-md w-full mx-4"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(_e) => e.stopPropagation(_)}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-white">Share Project</h3>
@@ -716,7 +716,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
                   <h4 className="text-sm font-medium text-white mb-2">Share on Social</h4>
                   <div className="flex space-x-2">
                     <Button
-                      onClick={() => handleShareToSocial('twitter')}
+                      onClick={(_) => handleShareToSocial('twitter')}
                       size="sm"
                       variant="outline"
                       className="flex-1 border-blue-500/50 text-blue-400"
@@ -724,7 +724,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
                       Twitter
                     </Button>
                     <Button
-                      onClick={() => handleShareToSocial('linkedin')}
+                      onClick={(_) => handleShareToSocial('linkedin')}
                       size="sm"
                       variant="outline"
                       className="flex-1 border-blue-600/50 text-blue-500"
@@ -732,7 +732,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
                       LinkedIn
                     </Button>
                     <Button
-                      onClick={() => handleShareToSocial('discord')}
+                      onClick={(_) => handleShareToSocial('discord')}
                       size="sm"
                       variant="outline"
                       className="flex-1 border-purple-500/50 text-purple-400"
@@ -753,7 +753,7 @@ export const ProjectBasedLearning: React.FC<ProjectBasedLearningProps> = ({
           <CustomToast
             message={toastMessage}
             type={toastType}
-            onClose={() => setShowToast(false)}
+            onClose={(_) => setShowToast(_false)}
           />
         )}
       </AnimatePresence>

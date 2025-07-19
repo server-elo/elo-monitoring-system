@@ -7,47 +7,47 @@ import { aiServiceManager } from '../../lib/ai/AIServiceManager';
 import { AI_CONFIG } from '../../lib/config/ai-config';
 
 // Mock external dependencies
-jest.mock('../../services/geminiService', () => ({
-  sendMessageToGeminiChat: jest.fn().mockResolvedValue('Mocked Gemini response'),
-  initializeChatForModule: jest.fn().mockResolvedValue(undefined)
+jest.mock( '../../services/geminiService', () => ({
+  sendMessageToGeminiChat: jest.fn(_).mockResolvedValue('Mocked Gemini response'),
+  initializeChatForModule: jest.fn(_).mockResolvedValue(_undefined)
 }));
 
-jest.mock('../../lib/prisma', () => ({
+jest.mock( '../../lib/prisma', () => ({
   prisma: {
     user: {
-      findUnique: jest.fn(),
-      update: jest.fn()
+      findUnique: jest.fn(_),
+      update: jest.fn(_)
     },
     aIInteraction: {
-      create: jest.fn(),
-      findMany: jest.fn(),
-      update: jest.fn()
+      create: jest.fn(_),
+      findMany: jest.fn(_),
+      update: jest.fn(_)
     },
     securityAnalysis: {
-      create: jest.fn(),
-      findFirst: jest.fn(),
-      findMany: jest.fn()
+      create: jest.fn(_),
+      findFirst: jest.fn(_),
+      findMany: jest.fn(_)
     },
     personalizedChallenge: {
-      create: jest.fn(),
-      findMany: jest.fn(),
-      update: jest.fn()
+      create: jest.fn(_),
+      findMany: jest.fn(_),
+      update: jest.fn(_)
     }
   }
 }));
 
 // Mock axios for local LLM calls
-jest.mock('axios', () => ({
+jest.mock( 'axios', () => ({
   default: {
-    get: jest.fn(),
-    post: jest.fn()
+    get: jest.fn(_),
+    post: jest.fn(_)
   }
 }));
 
 import axios from 'axios';
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe('Enhanced AI Tutor System', () => {
+describe( 'Enhanced AI Tutor System', () => {
   const mockUserId = 'test-user-123';
   const mockUserContext = {
     userId: mockUserId,
@@ -60,14 +60,14 @@ describe('Enhanced AI Tutor System', () => {
     preferredLearningStyle: 'mixed' as const,
     totalXP: 250,
     streak: 5,
-    lastActiveDate: new Date()
+    lastActiveDate: new Date(_)
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
     
     // Mock successful local LLM health check
-    mockedAxios.get.mockResolvedValue({ status: 200 });
+    mockedAxios.get.mockResolvedValue({ status: 200  });
     
     // Mock successful local LLM response
     mockedAxios.post.mockResolvedValue({
@@ -82,83 +82,83 @@ describe('Enhanced AI Tutor System', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.restoreAllMocks(_);
   });
 
-  describe('User Context Management', () => {
-    it('should get user context successfully', async () => {
-      const context = await enhancedTutor.getUserContext(mockUserId);
+  describe( 'User Context Management', () => {
+    it( 'should get user context successfully', async () => {
+      const context = await enhancedTutor.getUserContext(_mockUserId);
       
-      expect(context).toBeDefined();
-      expect(context.userId).toBe(mockUserId);
-      expect(context.skillLevel).toBe('BEGINNER'); // Default value
-      expect(context.totalXP).toBe(150); // Default value
+      expect(_context).toBeDefined(_);
+      expect(_context.userId).toBe(_mockUserId);
+      expect(_context.skillLevel).toBe('BEGINNER'); // Default value
+      expect(_context.totalXP).toBe(150); // Default value
     });
 
-    it('should update user context successfully', async () => {
+    it( 'should update user context successfully', async () => {
       const updates = {
         currentLevel: 3,
         totalXP: 300,
         weakAreas: ['Security Patterns']
       };
 
-      await enhancedTutor.updateUserContext(mockUserId, updates);
+      await enhancedTutor.updateUserContext( mockUserId, updates);
       
-      const updatedContext = await enhancedTutor.getUserContext(mockUserId);
-      expect(updatedContext.currentLevel).toBe(3);
-      expect(updatedContext.totalXP).toBe(300);
-      expect(updatedContext.weakAreas).toContain('Security Patterns');
+      const updatedContext = await enhancedTutor.getUserContext(_mockUserId);
+      expect(_updatedContext.currentLevel).toBe(3);
+      expect(_updatedContext.totalXP).toBe(300);
+      expect(_updatedContext.weakAreas).toContain('Security Patterns');
     });
   });
 
-  describe('AI Response Generation', () => {
-    it('should explain concepts using appropriate AI model', async () => {
+  describe( 'AI Response Generation', () => {
+    it( 'should explain concepts using appropriate AI model', async () => {
       const concept = 'smart contracts';
-      const response = await enhancedTutor.explainConcept(concept, mockUserId);
+      const response = await enhancedTutor.explainConcept( concept, mockUserId);
       
-      expect(response).toBeDefined();
-      expect(response.content).toBeTruthy();
-      expect(response.model).toBeTruthy();
-      expect(response.responseTime).toBeGreaterThan(0);
-      expect(response.confidence).toBeGreaterThan(0);
+      expect(_response).toBeDefined(_);
+      expect(_response.content).toBeTruthy(_);
+      expect(_response.model).toBeTruthy(_);
+      expect(_response.responseTime).toBeGreaterThan(0);
+      expect(_response.confidence).toBeGreaterThan(0);
     });
 
-    it('should generate personalized challenges', async () => {
+    it( 'should generate personalized challenges', async () => {
       const topic = 'Functions';
-      const challenge = await enhancedTutor.generatePersonalizedChallenge(mockUserId, topic);
+      const challenge = await enhancedTutor.generatePersonalizedChallenge( mockUserId, topic);
       
-      expect(challenge).toBeDefined();
-      expect(challenge.title).toBeTruthy();
-      expect(challenge.description).toBeTruthy();
-      expect(challenge.difficulty).toBeGreaterThanOrEqual(1);
-      expect(challenge.difficulty).toBeLessThanOrEqual(10);
-      expect(challenge.starterCode).toBeTruthy();
-      expect(Array.isArray(challenge.hints)).toBe(true);
-      expect(Array.isArray(challenge.learningObjectives)).toBe(true);
+      expect(_challenge).toBeDefined(_);
+      expect(_challenge.title).toBeTruthy(_);
+      expect(_challenge.description).toBeTruthy(_);
+      expect(_challenge.difficulty).toBeGreaterThanOrEqual(1);
+      expect(_challenge.difficulty).toBeLessThanOrEqual(10);
+      expect(_challenge.starterCode).toBeTruthy(_);
+      expect(_Array.isArray(challenge.hints)).toBe(_true);
+      expect(_Array.isArray(challenge.learningObjectives)).toBe(_true);
     });
 
-    it('should analyze code security', async () => {
+    it( 'should analyze code security', async () => {
       const testCode = `
         pragma solidity ^0.8.20;
         contract TestContract {
           uint256 public value;
-          function setValue(uint256 _value) public {
+          function setValue(_uint256 _value) public {
             value = _value;
           }
         }
       `;
       
-      const analysis = await enhancedTutor.analyzeCodeSecurity(testCode, mockUserId);
+      const analysis = await enhancedTutor.analyzeCodeSecurity( testCode, mockUserId);
       
-      expect(analysis).toBeDefined();
-      expect(analysis.overallScore).toBeGreaterThanOrEqual(0);
-      expect(analysis.overallScore).toBeLessThanOrEqual(100);
-      expect(Array.isArray(analysis.vulnerabilities)).toBe(true);
-      expect(Array.isArray(analysis.gasOptimizations)).toBe(true);
-      expect(Array.isArray(analysis.bestPractices)).toBe(true);
+      expect(_analysis).toBeDefined(_);
+      expect(_analysis.overallScore).toBeGreaterThanOrEqual(0);
+      expect(_analysis.overallScore).toBeLessThanOrEqual(100);
+      expect(_Array.isArray(analysis.vulnerabilities)).toBe(_true);
+      expect(_Array.isArray(analysis.gasOptimizations)).toBe(_true);
+      expect(_Array.isArray(analysis.bestPractices)).toBe(_true);
     });
 
-    it('should generate smart contracts with explanations', async () => {
+    it( 'should generate smart contracts with explanations', async () => {
       const description = 'A simple token contract';
       const requirements = ['ERC20 compatible', 'Mintable', 'Burnable'];
       
@@ -168,178 +168,178 @@ describe('Enhanced AI Tutor System', () => {
         mockUserId
       );
       
-      expect(result).toBeDefined();
-      expect(result.code).toBeTruthy();
-      expect(result.explanation).toBeTruthy();
-      expect(Array.isArray(result.securityConsiderations)).toBe(true);
-      expect(Array.isArray(result.gasOptimizations)).toBe(true);
-      expect(Array.isArray(result.testSuggestions)).toBe(true);
+      expect(_result).toBeDefined(_);
+      expect(_result.code).toBeTruthy(_);
+      expect(_result.explanation).toBeTruthy(_);
+      expect(_Array.isArray(result.securityConsiderations)).toBe(_true);
+      expect(_Array.isArray(result.gasOptimizations)).toBe(_true);
+      expect(_Array.isArray(result.testSuggestions)).toBe(_true);
     });
   });
 
-  describe('Adaptive Learning', () => {
-    it('should generate adaptive learning paths', async () => {
-      const learningPath = await enhancedTutor.generateAdaptiveLearningPath(mockUserId);
+  describe( 'Adaptive Learning', () => {
+    it( 'should generate adaptive learning paths', async () => {
+      const learningPath = await enhancedTutor.generateAdaptiveLearningPath(_mockUserId);
       
-      expect(Array.isArray(learningPath)).toBe(true);
-      expect(learningPath.length).toBeGreaterThan(0);
-      expect(learningPath.length).toBeLessThanOrEqual(AI_CONFIG.CONTEXT.LEARNING_PATH_LENGTH);
+      expect(_Array.isArray(learningPath)).toBe(_true);
+      expect(_learningPath.length).toBeGreaterThan(0);
+      expect(_learningPath.length).toBeLessThanOrEqual(_AI_CONFIG.CONTEXT.LEARNING_PATH_LENGTH);
     });
 
-    it('should get learning analytics', async () => {
-      const analytics = await enhancedTutor.getLearningAnalytics(mockUserId);
+    it( 'should get learning analytics', async () => {
+      const analytics = await enhancedTutor.getLearningAnalytics(_mockUserId);
       
-      expect(analytics).toBeDefined();
-      expect(typeof analytics.conceptMastery).toBe('object');
-      expect(typeof analytics.timeSpentPerTopic).toBe('object');
-      expect(Array.isArray(analytics.errorPatterns)).toBe(true);
-      expect(Array.isArray(analytics.successPatterns)).toBe(true);
-      expect(Array.isArray(analytics.recommendedNextTopics)).toBe(true);
-      expect(typeof analytics.difficultyPreference).toBe('number');
+      expect(_analytics).toBeDefined(_);
+      expect(_typeof analytics.conceptMastery).toBe('object');
+      expect(_typeof analytics.timeSpentPerTopic).toBe('object');
+      expect(_Array.isArray(analytics.errorPatterns)).toBe(_true);
+      expect(_Array.isArray(analytics.successPatterns)).toBe(_true);
+      expect(_Array.isArray(analytics.recommendedNextTopics)).toBe(_true);
+      expect(_typeof analytics.difficultyPreference).toBe('number');
     });
   });
 
-  describe('Multi-modal Features', () => {
-    it('should generate multi-modal explanations', async () => {
+  describe( 'Multi-modal Features', () => {
+    it( 'should generate multi-modal explanations', async () => {
       const concept = 'inheritance';
-      const explanation = await enhancedTutor.generateMultiModalExplanation(concept, mockUserId);
+      const explanation = await enhancedTutor.generateMultiModalExplanation( concept, mockUserId);
       
-      expect(explanation).toBeDefined();
-      expect(explanation.textExplanation).toBeTruthy();
-      expect(typeof explanation.visualDiagram).toBe('string');
-      expect(typeof explanation.interactiveExample).toBe('string');
-      expect(typeof explanation.codeExample).toBe('string');
+      expect(_explanation).toBeDefined(_);
+      expect(_explanation.textExplanation).toBeTruthy(_);
+      expect(_typeof explanation.visualDiagram).toBe('string');
+      expect(_typeof explanation.interactiveExample).toBe('string');
+      expect(_typeof explanation.codeExample).toBe('string');
     });
 
-    it('should process voice commands', async () => {
+    it( 'should process voice commands', async () => {
       const audioData = 'mock-audio-data';
-      const result = await enhancedTutor.processVoiceCommand(audioData, mockUserId);
+      const result = await enhancedTutor.processVoiceCommand( audioData, mockUserId);
       
-      expect(result).toBeDefined();
-      expect(result.command).toBeTruthy();
-      expect(result.response).toBeDefined();
-      expect(result.action).toBeTruthy();
+      expect(_result).toBeDefined(_);
+      expect(_result.command).toBeTruthy(_);
+      expect(_result.response).toBeDefined(_);
+      expect(_result.action).toBeTruthy(_);
     });
   });
 
-  describe('Performance and Health', () => {
-    it('should return performance metrics', () => {
-      const metrics = enhancedTutor.getPerformanceMetrics();
+  describe( 'Performance and Health', () => {
+    it( 'should return performance metrics', () => {
+      const metrics = enhancedTutor.getPerformanceMetrics(_);
       
-      expect(metrics).toBeDefined();
-      expect(typeof metrics.localLLMHealth).toBe('boolean');
-      expect(typeof metrics.averageResponseTime).toBe('number');
-      expect(typeof metrics.totalRequests).toBe('number');
-      expect(typeof metrics.fallbackRate).toBe('number');
+      expect(_metrics).toBeDefined(_);
+      expect(_typeof metrics.localLLMHealth).toBe('boolean');
+      expect(_typeof metrics.averageResponseTime).toBe('number');
+      expect(_typeof metrics.totalRequests).toBe('number');
+      expect(_typeof metrics.fallbackRate).toBe('number');
     });
   });
 });
 
-describe('AI Service Manager', () => {
+describe( 'AI Service Manager', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
   });
 
-  describe('Service Health Monitoring', () => {
-    it('should track service health', () => {
-      const healthMap = aiServiceManager.getServiceHealth();
+  describe( 'Service Health Monitoring', () => {
+    it( 'should track service health', () => {
+      const healthMap = aiServiceManager.getServiceHealth(_);
       
-      expect(healthMap).toBeDefined();
-      expect(healthMap.size).toBeGreaterThan(0);
-      expect(healthMap.has('enhanced-tutor')).toBe(true);
-      expect(healthMap.has('local-llm')).toBe(true);
-      expect(healthMap.has('gemini')).toBe(true);
+      expect(_healthMap).toBeDefined(_);
+      expect(_healthMap.size).toBeGreaterThan(0);
+      expect(_healthMap.has('enhanced-tutor')).toBe(_true);
+      expect(_healthMap.has('local-llm')).toBe(_true);
+      expect(_healthMap.has('gemini')).toBe(_true);
     });
 
-    it('should check if services are healthy', () => {
+    it( 'should check if services are healthy', () => {
       const tutorHealthy = aiServiceManager.isServiceHealthy('enhanced-tutor');
       const localLLMHealthy = aiServiceManager.isServiceHealthy('local-llm');
       const geminiHealthy = aiServiceManager.isServiceHealthy('gemini');
       
-      expect(typeof tutorHealthy).toBe('boolean');
-      expect(typeof localLLMHealthy).toBe('boolean');
-      expect(typeof geminiHealthy).toBe('boolean');
+      expect(_typeof tutorHealthy).toBe('boolean');
+      expect(_typeof localLLMHealthy).toBe('boolean');
+      expect(_typeof geminiHealthy).toBe('boolean');
     });
 
-    it('should recommend appropriate service for request types', () => {
+    it( 'should recommend appropriate service for request types', () => {
       const codeService = aiServiceManager.getRecommendedService('code');
       const explanationService = aiServiceManager.getRecommendedService('explanation');
       const analysisService = aiServiceManager.getRecommendedService('analysis');
       
-      expect(typeof codeService).toBe('string');
-      expect(typeof explanationService).toBe('string');
-      expect(typeof analysisService).toBe('string');
+      expect(_typeof codeService).toBe('string');
+      expect(_typeof explanationService).toBe('string');
+      expect(_typeof analysisService).toBe('string');
     });
   });
 
-  describe('Rate Limiting', () => {
-    it('should enforce rate limits', () => {
+  describe( 'Rate Limiting', () => {
+    it( 'should enforce rate limits', () => {
       const userId = 'test-user-rate-limit';
       const requestType = 'explanation';
       
       // First request should pass
-      const firstRequest = aiServiceManager.checkRateLimit(userId, requestType);
-      expect(firstRequest).toBe(true);
+      const firstRequest = aiServiceManager.checkRateLimit( userId, requestType);
+      expect(_firstRequest).toBe(_true);
       
       // Simulate many requests to hit rate limit
       for (let i = 0; i < AI_CONFIG.RATE_LIMITS.AI_REQUESTS_PER_HOUR; i++) {
-        aiServiceManager.checkRateLimit(userId, requestType);
+        aiServiceManager.checkRateLimit( userId, requestType);
       }
       
       // Next request should be rate limited
-      const rateLimitedRequest = aiServiceManager.checkRateLimit(userId, requestType);
-      expect(rateLimitedRequest).toBe(false);
+      const rateLimitedRequest = aiServiceManager.checkRateLimit( userId, requestType);
+      expect(_rateLimitedRequest).toBe(_false);
     });
   });
 
-  describe('Metrics Collection', () => {
-    it('should collect and return metrics', () => {
-      const metrics = aiServiceManager.getMetrics();
+  describe( 'Metrics Collection', () => {
+    it( 'should collect and return metrics', () => {
+      const metrics = aiServiceManager.getMetrics(_);
       
-      expect(metrics).toBeDefined();
-      expect(typeof metrics.totalRequests).toBe('number');
-      expect(typeof metrics.successfulRequests).toBe('number');
-      expect(typeof metrics.failedRequests).toBe('number');
-      expect(typeof metrics.averageResponseTime).toBe('number');
-      expect(typeof metrics.fallbackRate).toBe('number');
-      expect(typeof metrics.userSatisfactionScore).toBe('number');
-      expect(typeof metrics.activeUsers).toBe('number');
+      expect(_metrics).toBeDefined(_);
+      expect(_typeof metrics.totalRequests).toBe('number');
+      expect(_typeof metrics.successfulRequests).toBe('number');
+      expect(_typeof metrics.failedRequests).toBe('number');
+      expect(_typeof metrics.averageResponseTime).toBe('number');
+      expect(_typeof metrics.fallbackRate).toBe('number');
+      expect(_typeof metrics.userSatisfactionScore).toBe('number');
+      expect(_typeof metrics.activeUsers).toBe('number');
     });
   });
 
-  describe('Feature Flags', () => {
-    it('should check feature flags correctly', () => {
+  describe( 'Feature Flags', () => {
+    it( 'should check feature flags correctly', () => {
       const enhancedTutorEnabled = aiServiceManager.isFeatureEnabled('ENHANCED_AI_TUTOR');
       const personalizedChallengesEnabled = aiServiceManager.isFeatureEnabled('PERSONALIZED_CHALLENGES');
       const tokenEconomyEnabled = aiServiceManager.isFeatureEnabled('TOKEN_ECONOMY');
       
-      expect(enhancedTutorEnabled).toBe(true);
-      expect(personalizedChallengesEnabled).toBe(true);
-      expect(tokenEconomyEnabled).toBe(false); // Phase 4 feature
+      expect(_enhancedTutorEnabled).toBe(_true);
+      expect(_personalizedChallengesEnabled).toBe(_true);
+      expect(_tokenEconomyEnabled).toBe(_false); // Phase 4 feature
     });
   });
 });
 
-describe('AI Configuration', () => {
-  it('should have valid configuration values', () => {
-    expect(AI_CONFIG.LOCAL_LLM.BASE_URL).toBeTruthy();
-    expect(AI_CONFIG.LOCAL_LLM.MODEL).toBeTruthy();
-    expect(AI_CONFIG.LOCAL_LLM.MAX_TOKENS).toBeGreaterThan(0);
-    expect(AI_CONFIG.LOCAL_LLM.TIMEOUT).toBeGreaterThan(0);
+describe( 'AI Configuration', () => {
+  it( 'should have valid configuration values', () => {
+    expect(_AI_CONFIG.LOCAL_LLM.BASE_URL).toBeTruthy(_);
+    expect(_AI_CONFIG.LOCAL_LLM.MODEL).toBeTruthy(_);
+    expect(_AI_CONFIG.LOCAL_LLM.MAX_TOKENS).toBeGreaterThan(0);
+    expect(_AI_CONFIG.LOCAL_LLM.TIMEOUT).toBeGreaterThan(0);
     
-    expect(AI_CONFIG.GEMINI.MODEL).toBeTruthy();
-    expect(AI_CONFIG.GEMINI.MAX_TOKENS).toBeGreaterThan(0);
+    expect(_AI_CONFIG.GEMINI.MODEL).toBeTruthy(_);
+    expect(_AI_CONFIG.GEMINI.MAX_TOKENS).toBeGreaterThan(0);
     
-    expect(Array.isArray(AI_CONFIG.ROUTING.LOCAL_LLM_TYPES)).toBe(true);
-    expect(Array.isArray(AI_CONFIG.ROUTING.GEMINI_TYPES)).toBe(true);
+    expect(_Array.isArray(AI_CONFIG.ROUTING.LOCAL_LLM_TYPES)).toBe(_true);
+    expect(_Array.isArray(AI_CONFIG.ROUTING.GEMINI_TYPES)).toBe(_true);
     
-    expect(AI_CONFIG.RATE_LIMITS.AI_REQUESTS_PER_HOUR).toBeGreaterThan(0);
-    expect(AI_CONFIG.RATE_LIMITS.SECURITY_ANALYSES_PER_HOUR).toBeGreaterThan(0);
+    expect(_AI_CONFIG.RATE_LIMITS.AI_REQUESTS_PER_HOUR).toBeGreaterThan(0);
+    expect(_AI_CONFIG.RATE_LIMITS.SECURITY_ANALYSES_PER_HOUR).toBeGreaterThan(0);
   });
 
-  it('should have environment-specific configurations', () => {
+  it( 'should have environment-specific configurations', () => {
     // Test that configuration adapts to environment
-    expect(typeof AI_CONFIG.MONITORING.COLLECT_PERFORMANCE_METRICS).toBe('boolean');
-    expect(typeof AI_CONFIG.ERROR_HANDLING.LOG_ALL_ERRORS).toBe('boolean');
+    expect(_typeof AI_CONFIG.MONITORING.COLLECT_PERFORMANCE_METRICS).toBe('boolean');
+    expect(_typeof AI_CONFIG.ERROR_HANDLING.LOG_ALL_ERRORS).toBe('boolean');
   });
 });

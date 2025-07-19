@@ -52,15 +52,15 @@ export default function CookiePolicyPage() {
     }
   ];
 
-  const handlePreferenceChange = (type: string, value: boolean) => {
-    if (type === 'essential') return; // Essential cookies cannot be disabled
+  const handlePreferenceChange = ( type: string, value: boolean) => {
+    if (_type === 'essential') return; // Essential cookies cannot be disabled
     setCookiePreferences(prev => ({
       ...prev,
       [type]: value
     }));
   };
 
-  const savePreferences = () => {
+  const savePreferences = (_) => {
     // In a real implementation, this would save to localStorage or send to server
     console.log('Saving cookie preferences:', cookiePreferences);
     alert('Cookie preferences saved successfully!');
@@ -87,7 +87,7 @@ export default function CookiePolicyPage() {
               Learn about how we use cookies to improve your learning experience and protect your privacy.
             </p>
             <p className="text-sm text-gray-400">
-              Last updated: {new Date().toLocaleDateString()}
+              Last updated: {new Date(_).toLocaleDateString(_)}
             </p>
           </motion.div>
 
@@ -107,7 +107,7 @@ export default function CookiePolicyPage() {
               </p>
               <p className="text-gray-300 leading-relaxed">
                 We use different types of cookies for various purposes, and you have control over which ones you 
-                allow (except for essential cookies that are required for the platform to function).
+                allow (_except for essential cookies that are required for the platform to function).
               </p>
             </div>
           </motion.div>
@@ -121,7 +121,7 @@ export default function CookiePolicyPage() {
           >
             <h2 className="text-2xl font-bold text-white mb-8">Types of Cookies We Use</h2>
             <div className="space-y-6">
-              {cookieTypes.map((type, index) => (
+              {cookieTypes.map( (type, index) => (
                 <motion.div
                   key={type.name}
                   initial={{ opacity: 0, y: 20 }}
@@ -147,7 +147,7 @@ export default function CookiePolicyPage() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => handlePreferenceChange(
+                        onClick={(_) => handlePreferenceChange(
                           type.name.toLowerCase().split(' ')[0], 
                           !cookiePreferences[type.name.toLowerCase().split(' ')[0] as keyof typeof cookiePreferences]
                         )}
@@ -172,7 +172,7 @@ export default function CookiePolicyPage() {
                   <div>
                     <h4 className="text-white font-medium mb-2">Examples:</h4>
                     <ul className="space-y-1">
-                      {type.examples.map((example, exampleIndex) => (
+                      {type.examples.map( (example, exampleIndex) => (
                         <li key={exampleIndex} className="text-gray-400 text-sm flex items-start">
                           <span className="text-blue-400 mr-2">•</span>
                           {example}
@@ -213,7 +213,7 @@ export default function CookiePolicyPage() {
                   <span>Save Preferences</span>
                 </button>
                 <button
-                  onClick={() => setCookiePreferences({
+                  onClick={(_) => setCookiePreferences({
                     essential: true,
                     analytics: false,
                     marketing: false,

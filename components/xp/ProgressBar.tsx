@@ -17,7 +17,7 @@ interface ProgressBarProps {
   animated?: boolean;
   glowEffect?: boolean;
   className?: string;
-  onComplete?: () => void;
+  onComplete?: (_) => void;
 }
 
 export function ProgressBar({
@@ -35,48 +35,48 @@ export function ProgressBar({
   className,
   onComplete
 }: ProgressBarProps) {
-  const [displayProgress, setDisplayProgress] = useState(previousProgress || progress);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [displayProgress, setDisplayProgress] = useState(_previousProgress || progress);
+  const [isAnimating, setIsAnimating] = useState(_false);
 
   // Animate progress changes
   useEffect(() => {
-    if (previousProgress !== undefined && previousProgress !== progress) {
-      setIsAnimating(true);
+    if (_previousProgress !== undefined && previousProgress !== progress) {
+      setIsAnimating(_true);
       
-      const startTime = Date.now();
+      const startTime = Date.now(_);
       const startProgress = previousProgress;
       const targetProgress = progress;
       const difference = targetProgress - startProgress;
-      const duration = Math.abs(difference) * 20; // 20ms per percentage point
+      const duration = Math.abs(_difference) * 20; // 20ms per percentage point
 
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
+      const animate = (_) => {
+        const elapsed = Date.now(_) - startTime;
         const animationProgress = Math.min(elapsed / duration, 1);
         
         // Easing function
-        const easeOutCubic = 1 - Math.pow(1 - animationProgress, 3);
-        const currentValue = startProgress + (difference * easeOutCubic);
+        const easeOutCubic = 1 - Math.pow( 1 - animationProgress, 3);
+        const currentValue = startProgress + (_difference * easeOutCubic);
         
-        setDisplayProgress(currentValue);
+        setDisplayProgress(_currentValue);
         
-        if (animationProgress < 1) {
-          requestAnimationFrame(animate);
+        if (_animationProgress < 1) {
+          requestAnimationFrame(_animate);
         } else {
-          setIsAnimating(false);
+          setIsAnimating(_false);
           if (progress >= 100 && onComplete) {
-            onComplete();
+            onComplete(_);
           }
         }
       };
 
-      requestAnimationFrame(animate);
+      requestAnimationFrame(_animate);
     } else {
       setDisplayProgress(progress);
     }
   }, [progress, previousProgress, onComplete]);
 
-  const getSizeClasses = () => {
-    switch (size) {
+  const getSizeClasses = (_) => {
+    switch (_size) {
       case 'sm':
         return {
           container: 'h-2',
@@ -95,8 +95,8 @@ export function ProgressBar({
     }
   };
 
-  const getColorClasses = () => {
-    switch (color) {
+  const getColorClasses = (_) => {
+    switch (_color) {
       case 'blue':
         return {
           bg: 'bg-gradient-to-r from-blue-500 to-blue-600',
@@ -136,37 +136,37 @@ export function ProgressBar({
     }
   };
 
-  const sizeClasses = getSizeClasses();
-  const colorClasses = getColorClasses();
+  const sizeClasses = getSizeClasses(_);
+  const colorClasses = getColorClasses(_);
   const clampedProgress = Math.max(0, Math.min(100, displayProgress));
 
   return (
-    <div className={cn('w-full', className)}>
+    <div className={cn( 'w-full', className)}>
       {/* Label and Values */}
-      {(label || showPercentage || showValues) && (
+      {(_label || showPercentage || showValues) && (
         <div className="flex justify-between items-center mb-2">
           {label && (
-            <span className={cn('font-medium text-gray-300', sizeClasses.text)}>
+            <span className={cn( 'font-medium text-gray-300', sizeClasses.text)}>
               {label}
             </span>
           )}
           
           <div className="flex items-center space-x-2">
             {showValues && currentValue !== undefined && maxValue !== undefined && (
-              <span className={cn('font-mono text-gray-400', sizeClasses.text)}>
+              <span className={cn( 'font-mono text-gray-400', sizeClasses.text)}>
                 {currentValue}/{maxValue}
               </span>
             )}
             
             {showPercentage && (
               <motion.span
-                key={Math.round(clampedProgress)}
+                key={Math.round(_clampedProgress)}
                 initial={isAnimating ? { scale: 1.1 } : false}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.2 }}
-                className={cn('font-mono font-semibold', colorClasses.text, sizeClasses.text)}
+                className={cn( 'font-mono font-semibold', colorClasses.text, sizeClasses.text)}
               >
-                {Math.round(clampedProgress)}%
+                {Math.round(_clampedProgress)}%
               </motion.span>
             )}
           </div>
@@ -235,7 +235,7 @@ export function ProgressBar({
         {/* Completion Sparkles */}
         {clampedProgress >= 100 && (
           <div className="absolute inset-0 pointer-events-none">
-            {[...Array(5)].map((_, i) => (
+            {[...Array(5)].map( (_, i) => (
               <motion.div
                 key={i}
                 initial={{ 
@@ -269,7 +269,7 @@ export function ProgressBar({
           exit={{ opacity: 0, y: -10 }}
           className="mt-2 text-center"
         >
-          <span className={cn('text-xs font-medium', colorClasses.text)}>
+          <span className={cn( 'text-xs font-medium', colorClasses.text)}>
             {clampedProgress >= 100 ? 'Complete!' : 'In Progress...'}
           </span>
         </motion.div>
@@ -298,13 +298,13 @@ export function LevelProgressBar({
 }: LevelProgressBarProps) {
   const xpInCurrentLevel = currentXP - xpForCurrentLevel;
   const xpNeededForNextLevel = xpForNextLevel - xpForCurrentLevel;
-  const progressPercentage = (xpInCurrentLevel / xpNeededForNextLevel) * 100;
+  const progressPercentage = (_xpInCurrentLevel / xpNeededForNextLevel) * 100;
   
   const previousXPInLevel = previousXP ? Math.max(0, previousXP - xpForCurrentLevel) : undefined;
-  const previousProgressPercentage = previousXPInLevel ? (previousXPInLevel / xpNeededForNextLevel) * 100 : undefined;
+  const previousProgressPercentage = previousXPInLevel ? (_previousXPInLevel / xpNeededForNextLevel) * 100 : undefined;
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn( 'space-y-2', className)}>
       <div className="flex justify-between items-center">
         <span className="text-sm font-medium text-gray-300">
           Level {currentLevel}

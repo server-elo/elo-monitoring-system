@@ -32,10 +32,10 @@ export function CollaborationHub() {
 
 // Real-time collaboration component with Socket.io integration
 function RealTimeCollaborationHub() {
-  const { data: sessionData, status } = useSession();
+  const { data: sessionData, status } = useSession(_);
   const user = sessionData?.user;
   const isAuthenticated = !!sessionData?.user;
-  const { socket, isConnected, joinSession: socketJoinSession, session, participants, presence } = useSocket();
+  const { socket, isConnected, joinSession: socketJoinSession, session, participants, presence } = useSocket(_);
 
   // Enhanced collaboration features using previously unused variables
   const handleUserInteraction = useCallback((userId: string) => {
@@ -44,7 +44,7 @@ function RealTimeCollaborationHub() {
       const interactionData = {
         userId,
         sessionId: session?.id || 'no-session',
-        timestamp: Date.now(),
+        timestamp: Date.now(_),
         action: 'user-click',
         userAgent: navigator.userAgent,
         location: window.location.pathname
@@ -53,9 +53,9 @@ function RealTimeCollaborationHub() {
       socket.emit('user-interaction', interactionData);
 
       // Store interaction locally for analytics
-      const interactions = JSON.parse(localStorage.getItem('user-interactions') || '[]');
-      interactions.push(interactionData);
-      localStorage.setItem('user-interactions', JSON.stringify(interactions.slice(-100))); // Keep last 100
+      const interactions = JSON.parse(_localStorage.getItem('user-interactions') || '[]');
+      interactions.push(_interactionData);
+      localStorage.setItem( 'user-interactions', JSON.stringify(interactions.slice(-100))); // Keep last 100
 
       console.log('User interaction tracked:', interactionData);
     }
@@ -66,33 +66,33 @@ function RealTimeCollaborationHub() {
       socket.emit('presence-update', presenceData);
     }
   }, [presence, socket]);
-  const { sessions, loading, createSession, joinSession, fetchSessions } = useCollaborationSessions();
+  const { sessions, loading, createSession, joinSession, fetchSessions } = useCollaborationSessions(_);
 
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(_false);
   const [newSessionTitle, setNewSessionTitle] = useState('');
   const [newSessionDescription, setNewSessionDescription] = useState('');
   const [newSessionType, setNewSessionType] = useState('PAIR_PROGRAMMING');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
+  const [isCreating, setIsCreating] = useState(_false);
 
-  const { toast } = useToast();
+  const { toast } = useToast(_);
 
   // Auto-refresh sessions when component mounts
   useEffect(() => {
     if (isAuthenticated) {
-      fetchSessions();
+      fetchSessions(_);
     }
   }, [isAuthenticated, fetchSessions]);
 
   // Handle presence updates
   useEffect(() => {
     if (presence && presence.length > 0) {
-      handlePresenceUpdate(presence);
+      handlePresenceUpdate(_presence);
     }
   }, [presence, handlePresenceUpdate]);
 
   // Show loading state
-  if (loading || status === 'loading') {
+  if (_loading || status === 'loading') {
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -114,7 +114,7 @@ function RealTimeCollaborationHub() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(3)].map((_, i) => (
+          {[...Array(3)].map( (_, i) => (
             <Card key={i} className="glass border-white/10 animate-pulse">
               <CardContent className="p-6">
                 <div className="h-4 bg-white/20 rounded w-3/4 mb-2"></div>
@@ -148,18 +148,18 @@ function RealTimeCollaborationHub() {
       return;
     }
 
-    setIsCreating(true);
+    setIsCreating(_true);
     try {
       const newSession = await createSession(
-        newSessionTitle.trim(),
-        newSessionDescription.trim() || 'Collaborative coding session',
+        newSessionTitle.trim(_),
+        newSessionDescription.trim(_) || 'Collaborative coding session',
         newSessionType
       );
 
       if (newSession) {
         // Join the session via Socket.io
-        socketJoinSession(newSession.id);
-        setShowCreateDialog(false);
+        socketJoinSession(_newSession.id);
+        setShowCreateDialog(_false);
         setNewSessionTitle('');
         setNewSessionDescription('');
         toast({
@@ -167,29 +167,29 @@ function RealTimeCollaborationHub() {
           description: "Your collaboration session is ready.",
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Failed to create session",
         description: error instanceof Error ? error.message : "Unknown error occurred",
         variant: "destructive",
       });
     } finally {
-      setIsCreating(false);
+      setIsCreating(_false);
     }
   };
 
-  const handleJoinSession = async (sessionId: string) => {
+  const handleJoinSession = async (_sessionId: string) => {
     try {
-      const success = await joinSession(sessionId);
+      const success = await joinSession(_sessionId);
       if (success) {
         // Join the session via Socket.io
-        socketJoinSession(sessionId);
+        socketJoinSession(_sessionId);
         toast({
           title: "Joined session!",
           description: "You're now collaborating with others.",
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Failed to join session",
         description: error instanceof Error ? error.message : "Unknown error occurred",
@@ -199,8 +199,8 @@ function RealTimeCollaborationHub() {
   };
 
   const filteredSessions = sessions.filter(session =>
-    session.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    session.type.toLowerCase().includes(searchTerm.toLowerCase())
+    session.title.toLowerCase().includes(_searchTerm.toLowerCase()) ||
+    session.type.toLowerCase().includes(_searchTerm.toLowerCase())
   );
 
   // If user is in a session, show the real-time collaborative editor
@@ -214,7 +214,7 @@ function RealTimeCollaborationHub() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              {(session as any)?.title || 'Collaboration Session'}
+              {(_session as any)?.title || 'Collaboration Session'}
             </motion.h1>
             <motion.p
               className="text-lg text-gray-300"
@@ -234,8 +234,8 @@ function RealTimeCollaborationHub() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3">
             <RealTimeCodeEditor
-              sessionId={(session as any)?.id || 'default-session'}
-              initialCode={(session as any)?.code || '// Start coding together!'}
+              sessionId={(_session as any)?.id || 'default-session'}
+              initialCode={(_session as any)?.code || '// Start coding together!'}
               language="solidity"
             />
           </div>
@@ -306,17 +306,17 @@ function RealTimeCollaborationHub() {
                   id="title"
                   placeholder="e.g., Building a DeFi Protocol"
                   value={newSessionTitle}
-                  onChange={(e) => setNewSessionTitle(e.target.value)}
+                  onChange={(_e) => setNewSessionTitle(_e.target.value)}
                   className="mt-1"
                 />
               </div>
               <div>
-                <Label htmlFor="description" className="text-white">Description (Optional)</Label>
+                <Label htmlFor="description" className="text-white">Description (_Optional)</Label>
                 <Input
                   id="description"
                   placeholder="Brief description of what you'll be working on"
                   value={newSessionDescription}
-                  onChange={(e) => setNewSessionDescription(e.target.value)}
+                  onChange={(_e) => setNewSessionDescription(_e.target.value)}
                   className="mt-1"
                 />
               </div>
@@ -335,7 +335,7 @@ function RealTimeCollaborationHub() {
                 </Select>
               </div>
               <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+                <Button variant="outline" onClick={(_) => setShowCreateDialog(_false)}>
                   Cancel
                 </Button>
                 <Button onClick={handleCreateSession} disabled={isCreating}>
@@ -357,7 +357,7 @@ function RealTimeCollaborationHub() {
               <Input
                 placeholder="Search sessions..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(_e) => setSearchTerm(_e.target.value)}
                 className="pl-10 w-64"
               />
             </div>
@@ -374,7 +374,7 @@ function RealTimeCollaborationHub() {
                   {searchTerm ? 'No sessions match your search.' : 'Be the first to create a collaboration session!'}
                 </p>
                 {!searchTerm && (
-                  <Button onClick={() => setShowCreateDialog(true)}>
+                  <Button onClick={(_) => setShowCreateDialog(_true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Create First Session
                   </Button>
@@ -394,7 +394,7 @@ function RealTimeCollaborationHub() {
                   <CardHeader>
                     <div className="flex items-center justify-between mb-2">
                       <Badge variant="outline" className="text-xs">
-                        {session.type.replace('_', ' ')}
+                        {session.type.replace('', ' ')}
                       </Badge>
                       <div className="flex items-center space-x-1 text-xs text-gray-400">
                         <Users className="w-3 h-3" />
@@ -406,18 +406,18 @@ function RealTimeCollaborationHub() {
                     </CardTitle>
                     <CardDescription className="flex items-center space-x-2 text-xs">
                       <Clock className="w-3 h-3" />
-                      <span>Created {session.createdAt ? new Date(session.createdAt).toLocaleTimeString() : 'Recently'}</span>
+                      <span>Created {session.createdAt ? new Date(_session.createdAt).toLocaleTimeString(_) : 'Recently'}</span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <div className="flex -space-x-2">
-                          {[...Array(Math.min(session.participants.length, 3))].map((_, i) => (
+                          {[...Array( Math.min(session.participants.length, 3))].map( (_, i) => (
                             <div
                               key={i}
                               className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 border-2 border-slate-800 flex items-center justify-center text-white text-xs cursor-pointer hover:scale-110 transition-transform"
-                              onClick={() => handleUserInteraction(`participant-${i}`)}
+                              onClick={(_) => handleUserInteraction(_`participant-${i}`)}
                               title={`Participant ${i + 1}`}
                             >
                               {i + 1}
@@ -432,7 +432,7 @@ function RealTimeCollaborationHub() {
                       </div>
                       <Button
                         size="sm"
-                        onClick={() => handleJoinSession(session.id)}
+                        onClick={(_) => handleJoinSession(_session.id)}
                         disabled={session.participants.length >= 4}
                       >
                         <Play className="w-3 h-3 mr-1" />
@@ -454,7 +454,7 @@ function RealTimeCollaborationHub() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Code className="w-5 h-5 text-blue-400" />
-                <span>Collaborative Editor - {(session as any)?.title || 'Untitled Session'}</span>
+                <span>Collaborative Editor - {(_session as any)?.title || 'Untitled Session'}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -463,7 +463,7 @@ function RealTimeCollaborationHub() {
                   Collaborative Editor will be implemented here
                 </p>
                 <p className="text-sm text-gray-500 text-center mt-2">
-                  Session: {(session as any)?.id || 'No session'} | Participants: {participants.length}
+                  Session: {(_session as any)?.id || 'No session'} | Participants: {participants.length}
                 </p>
               </div>
             </CardContent>
@@ -489,7 +489,7 @@ function RealTimeCollaborationHub() {
             title: "Instant Compilation",
             description: "Compile and test your Solidity contracts in real-time"
           }
-        ].map((feature, index) => (
+        ].map( (feature, index) => (
           <motion.div
             key={feature.title}
             initial={{ opacity: 0, y: 20 }}

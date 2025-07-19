@@ -9,16 +9,16 @@ interface AutoSaveOptions {
   language?: string;
   enabled?: boolean;
   debounceMs?: number;
-  onSaveStatusChange?: (status: SaveStatus) => void;
+  onSaveStatusChange?: (_status: SaveStatus) => void;
 }
 
 interface AutoSaveReturn {
   saveStatus: SaveStatus;
-  saveCode: (code: string, force?: boolean) => Promise<void>;
-  loadCode: () => Promise<string | null>;
-  resetCode: () => Promise<void>;
+  saveCode: ( code: string, force?: boolean) => Promise<void>;
+  loadCode: (_) => Promise<string | null>;
+  resetCode: (_) => Promise<void>;
   isAutoSaveEnabled: boolean;
-  toggleAutoSave: () => void;
+  toggleAutoSave: (_) => void;
   lastSaved: Date | null;
   hasUnsavedChanges: boolean;
 }
@@ -31,24 +31,24 @@ export function useAutoSave({
   debounceMs = 2500,
   onSaveStatusChange
 }: AutoSaveOptions): AutoSaveReturn {
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>({ status: 'idle' });
-  const [isAutoSaveEnabled, setIsAutoSaveEnabled] = useState(enabled);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>({ status: 'idle'  });
+  const [isAutoSaveEnabled, setIsAutoSaveEnabled] = useState(_enabled);
+  const [lastSaved, setLastSaved] = useState<Date | null>(_null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(_false);
   
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const saveTimeoutRef = useRef<NodeJS.Timeout>(_);
   const lastCodeRef = useRef<string>('');
-  const isInitializedRef = useRef(false);
+  const isInitializedRef = useRef(_false);
 
   // Subscribe to save status changes from persistence manager
   useEffect(() => {
     const unsubscribe = codePersistence.onSaveStatusChange((status) => {
-      setSaveStatus(status);
+      setSaveStatus(_status);
       if (status.status === 'saved' && status.lastSaved) {
-        setLastSaved(status.lastSaved);
-        setHasUnsavedChanges(false);
+        setLastSaved(_status.lastSaved);
+        setHasUnsavedChanges(_false);
       }
-      onSaveStatusChange?.(status);
+      onSaveStatusChange?.(_status);
     });
 
     return unsubscribe;
@@ -58,24 +58,24 @@ export function useAutoSave({
   useEffect(() => {
     const loadExistingCode = async () => {
       try {
-        const session = await codePersistence.loadCodeSession(sessionId);
+        const session = await codePersistence.loadCodeSession(_sessionId);
         if (session) {
           lastCodeRef.current = session.code;
-          setLastSaved(session.lastModified);
-          setIsAutoSaveEnabled(session.autoSaveEnabled);
+          setLastSaved(_session.lastModified);
+          setIsAutoSaveEnabled(_session.autoSaveEnabled);
         }
         isInitializedRef.current = true;
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to load existing code:', error);
         isInitializedRef.current = true;
       }
     };
 
-    loadExistingCode();
+    loadExistingCode(_);
   }, [sessionId]);
 
-  const saveCode = useCallback(async (code: string, force = false) => {
-    // Don't save if not initialized or if code hasn't changed (unless forced)
+  const saveCode = useCallback( async (code: string, force = false) => {
+    // Don't save if not initialized or if code hasn't changed (_unless forced)
     if (!isInitializedRef.current || (!force && code === lastCodeRef.current)) {
       return;
     }
@@ -93,9 +93,9 @@ export function useAutoSave({
         }
       };
 
-      await codePersistence.saveCodeSession(session);
+      await codePersistence.saveCodeSession(_session);
       lastCodeRef.current = code;
-    } catch (error) {
+    } catch (_error) {
       console.error('Auto-save failed:', error);
       // The error status will be handled by the persistence manager callback
     }
@@ -105,45 +105,45 @@ export function useAutoSave({
     if (!isAutoSaveEnabled) return;
 
     // Mark as having unsaved changes
-    if (code !== lastCodeRef.current) {
-      setHasUnsavedChanges(true);
+    if (_code !== lastCodeRef.current) {
+      setHasUnsavedChanges(_true);
     }
 
     // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
+    if (_saveTimeoutRef.current) {
+      clearTimeout(_saveTimeoutRef.current);
     }
 
     // Set new timeout for debounced save
     saveTimeoutRef.current = setTimeout(() => {
-      saveCode(code);
+      saveCode(_code);
     }, debounceMs);
   }, [saveCode, isAutoSaveEnabled, debounceMs]);
 
-  const loadCode = useCallback(async (): Promise<string | null> => {
+  const loadCode = useCallback( async (): Promise<string | null> => {
     try {
-      const session = await codePersistence.loadCodeSession(sessionId);
+      const session = await codePersistence.loadCodeSession(_sessionId);
       if (session) {
         lastCodeRef.current = session.code;
-        setLastSaved(session.lastModified);
-        setHasUnsavedChanges(false);
+        setLastSaved(_session.lastModified);
+        setHasUnsavedChanges(_false);
         return session.code;
       }
       return null;
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load code:', error);
       return null;
     }
   }, [sessionId]);
 
-  const resetCode = useCallback(async () => {
+  const resetCode = useCallback( async () => {
     try {
-      await codePersistence.deleteSession(sessionId);
+      await codePersistence.deleteSession(_sessionId);
       lastCodeRef.current = '';
-      setLastSaved(null);
-      setHasUnsavedChanges(false);
-      setSaveStatus({ status: 'idle' });
-    } catch (error) {
+      setLastSaved(_null);
+      setHasUnsavedChanges(_false);
+      setSaveStatus({ status: 'idle'  });
+    } catch (_error) {
       console.error('Failed to reset code:', error);
     }
   }, [sessionId]);
@@ -154,7 +154,7 @@ export function useAutoSave({
       
       // If enabling auto-save and there are unsaved changes, save immediately
       if (newValue && hasUnsavedChanges && lastCodeRef.current) {
-        saveCode(lastCodeRef.current, true);
+        saveCode( lastCodeRef.current, true);
       }
       
       return newValue;
@@ -163,16 +163,16 @@ export function useAutoSave({
 
   // Cleanup timeout on unmount
   useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
+    return (_) => {
+      if (_saveTimeoutRef.current) {
+        clearTimeout(_saveTimeoutRef.current);
       }
     };
   }, []);
 
   // Auto-save when component unmounts or page unloads
   useEffect(() => {
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = (_) => {
       if (hasUnsavedChanges && lastCodeRef.current) {
         // Use synchronous localStorage as fallback for page unload
         try {
@@ -182,29 +182,29 @@ export function useAutoSave({
             code: lastCodeRef.current,
             language,
             autoSaveEnabled: isAutoSaveEnabled,
-            lastModified: new Date(),
+            lastModified: new Date(_),
             metadata: {
               lineCount: lastCodeRef.current.split('\n').length,
               characterCount: lastCodeRef.current.length
             }
           };
-          localStorage.setItem(`emergency_save_${sessionId}`, JSON.stringify(session));
-        } catch (error) {
+          localStorage.setItem( `emergency_save_${sessionId}`, JSON.stringify(session));
+        } catch (_error) {
           console.error('Emergency save failed:', error);
         }
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener( 'beforeunload', handleBeforeUnload);
+    return (_) => window.removeEventListener( 'beforeunload', handleBeforeUnload);
   }, [sessionId, lessonId, language, isAutoSaveEnabled, hasUnsavedChanges]);
 
   // Wrap debouncedSave to match the expected signature
-  const saveCodeAsync = useCallback(async (code: string, force = false): Promise<void> => {
+  const saveCodeAsync = useCallback( async (code: string, force = false): Promise<void> => {
     if (force) {
-      await saveCode(code, force);
+      await saveCode( code, force);
     } else {
-      debouncedSave(code);
+      debouncedSave(_code);
     }
   }, [saveCode, debouncedSave]);
 
@@ -223,41 +223,41 @@ export function useAutoSave({
 // Hook for managing multiple code sessions
 export function useCodeSessions() {
   const [sessions, setSessions] = useState<CodeSession[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(_true);
 
-  const loadAllSessions = useCallback(async () => {
+  const loadAllSessions = useCallback( async () => {
     try {
-      setLoading(true);
-      const allSessions = await codePersistence.getAllSessions();
-      setSessions(allSessions);
-    } catch (error) {
+      setLoading(_true);
+      const allSessions = await codePersistence.getAllSessions(_);
+      setSessions(_allSessions);
+    } catch (_error) {
       console.error('Failed to load sessions:', error);
     } finally {
-      setLoading(false);
+      setLoading(_false);
     }
   }, []);
 
-  const deleteSession = useCallback(async (sessionId: string) => {
+  const deleteSession = useCallback( async (sessionId: string) => {
     try {
-      await codePersistence.deleteSession(sessionId);
-      setSessions(prev => prev.filter(session => session.id !== sessionId));
-    } catch (error) {
+      await codePersistence.deleteSession(_sessionId);
+      setSessions(_prev => prev.filter(session => session.id !== sessionId));
+    } catch (_error) {
       console.error('Failed to delete session:', error);
       throw error;
     }
   }, []);
 
-  const cleanupOldSessions = useCallback(async () => {
+  const cleanupOldSessions = useCallback( async () => {
     try {
-      await codePersistence.cleanupOldSessions();
-      await loadAllSessions(); // Refresh the list
-    } catch (error) {
+      await codePersistence.cleanupOldSessions(_);
+      await loadAllSessions(_); // Refresh the list
+    } catch (_error) {
       console.error('Failed to cleanup old sessions:', error);
     }
   }, [loadAllSessions]);
 
   useEffect(() => {
-    loadAllSessions();
+    loadAllSessions(_);
   }, [loadAllSessions]);
 
   return {

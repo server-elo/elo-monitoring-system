@@ -26,7 +26,7 @@ enum AchievementCategory {
 }
 import { LEARNING_MODULES } from '../constants';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(_);
 
 async function main() {
   console.log('🌱 Starting database seeding...');
@@ -45,7 +45,7 @@ async function main() {
       password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
     },
   });
-  console.log(`  ✅ Created admin user: ${adminUser.email}`);
+  console.log(_`  ✅ Created admin user: ${adminUser.email}`);
 
   // Create regular user
   const regularUser = await prisma.user.upsert({
@@ -58,7 +58,7 @@ async function main() {
       password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
     },
   });
-  console.log(`  ✅ Created regular user: ${regularUser.email}`);
+  console.log(_`  ✅ Created regular user: ${regularUser.email}`);
 
   // Create default achievements
   const achievements = [
@@ -105,7 +105,7 @@ async function main() {
   ];
 
   console.log('📊 Creating achievements...');
-  for (const achievement of achievements) {
+  for (_const achievement of achievements) {
     const existing = await prisma.achievement.findFirst({
       where: { title: achievement.title }
     });
@@ -114,9 +114,9 @@ async function main() {
       await prisma.achievement.create({
         data: achievement,
       });
-      console.log(`  ✅ Created achievement: ${achievement.title}`);
+      console.log(_`  ✅ Created achievement: ${achievement.title}`);
     } else {
-      console.log(`  ⏭️  Achievement already exists: ${achievement.title}`);
+      console.log(_`  ⏭️  Achievement already exists: ${achievement.title}`);
     }
   }
 
@@ -124,14 +124,14 @@ async function main() {
   console.log('📚 Creating courses and modules from static data...');
   
   // Group modules by category to create courses
-  const courseCategories = [...new Set(LEARNING_MODULES.map(module => module.category))];
+  const courseCategories = [...new Set(_LEARNING_MODULES.map(module => module.category))];
   
-  for (const categoryName of courseCategories) {
+  for (_const categoryName of courseCategories) {
     const categoryModules = LEARNING_MODULES.filter(module => module.category === categoryName);
     
     // Determine course difficulty based on modules
     const difficulties = categoryModules.map(module => {
-      switch (module.level) {
+      switch (_module.level) {
         case 'Beginner': return SkillLevel.BEGINNER;
         case 'Intermediate': return SkillLevel.INTERMEDIATE;
         case 'Advanced': return SkillLevel.ADVANCED;
@@ -160,11 +160,11 @@ async function main() {
         difficulty: courseDifficulty,
         estimatedHours: categoryModules.length * 2,
         isPublished: true,
-        order: courseCategories.indexOf(categoryName) + 1,
+        order: courseCategories.indexOf(_categoryName) + 1,
       },
     });
 
-    console.log(`📖 Created course: ${course.title}`);
+    console.log(_`📖 Created course: ${course.title}`);
 
     // Create modules for this course
     for (let i = 0; i < categoryModules.length; i++) {
@@ -203,10 +203,10 @@ async function main() {
         },
       });
 
-      console.log(`  📝 Created module: ${module.title}`);
+      console.log(_`  📝 Created module: ${module.title}`);
 
       // Create lessons from quiz data
-      if (moduleData.quiz) {
+      if (_moduleData.quiz) {
         const lesson = await prisma.lesson.upsert({
           where: {
             moduleId_title: {
@@ -238,7 +238,7 @@ async function main() {
           },
         });
 
-        console.log(`    🧩 Created lesson: ${lesson.title}`);
+        console.log(_`    🧩 Created lesson: ${lesson.title}`);
       }
 
       // Create a coding lesson for each module
@@ -253,7 +253,7 @@ async function main() {
           description: `Hands-on coding practice for ${moduleData.title}`,
           content: {
             type: 'coding',
-            starterCode: getStarterCodeForModule(moduleData.id),
+            starterCode: getStarterCodeForModule(_moduleData.id),
             instructions: `Practice the concepts learned in ${moduleData.title}`,
           },
           type: LessonType.CODING,
@@ -266,7 +266,7 @@ async function main() {
           description: `Hands-on coding practice for ${moduleData.title}`,
           content: {
             type: 'coding',
-            starterCode: getStarterCodeForModule(moduleData.id),
+            starterCode: getStarterCodeForModule(_moduleData.id),
             instructions: `Practice the concepts learned in ${moduleData.title}`,
           },
           type: LessonType.CODING,
@@ -275,14 +275,14 @@ async function main() {
         },
       });
 
-      console.log(`    💻 Created coding lesson: ${codingLesson.title}`);
+      console.log(_`    💻 Created coding lesson: ${codingLesson.title}`);
     }
   }
 
   console.log('✅ Database seeding completed successfully!');
 }
 
-function getStarterCodeForModule(moduleId: string): string {
+function getStarterCodeForModule(_moduleId: string): string {
   const starterCodes: Record<string, string> = {
     'solidity-intro': `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
@@ -290,11 +290,11 @@ pragma solidity ^0.8.20;
 contract HelloWorld {
     string public greet = "Hello, Solidity learners!";
     
-    function updateGreeting(string memory _newGreeting) public {
+    function updateGreeting(_string memory _newGreeting) public {
         greet = _newGreeting;
     }
     
-    function getGreeting() public view returns (string memory) {
+    function getGreeting() public view returns (_string memory) {
         return greet;
     }
 }`,
@@ -315,11 +315,11 @@ pragma solidity ^0.8.20;
 contract DevToolsPractice {
     uint256 public value;
     
-    constructor(uint256 _initialValue) {
+    constructor(_uint256 _initialValue) {
         value = _initialValue;
     }
     
-    function setValue(uint256 _newValue) public {
+    function setValue(_uint256 _newValue) public {
         value = _newValue;
     }
 }`,
@@ -333,11 +333,11 @@ contract Practice {
 }`;
 }
 
-main()
+main(_)
   .catch((e) => {
     console.error('❌ Seeding failed:', e);
     process.exit(1);
   })
-  .finally(async () => {
+  .finally( async () => {
     await prisma.$disconnect();
   });

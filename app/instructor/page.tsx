@@ -95,7 +95,7 @@ export default function InstructorPage() {
                 { title: 'Solidity Fundamentals', students: 89, progress: 78 },
                 { title: 'Smart Contract Security', students: 67, progress: 92 },
                 { title: 'DeFi Development', students: 45, progress: 65 },
-              ].map((course, index) => (
+              ].map( (course, index) => (
                 <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                   <div>
                     <h4 className="text-white font-medium">{course.title}</h4>

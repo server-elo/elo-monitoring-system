@@ -5,26 +5,26 @@ import {
   Shield, 
   User, 
   Mail, 
-  Lock,
-  AlertTriangle,
-  CheckCircle,
-  RefreshCw,
-  Eye,
-  ExternalLink,
-  Play,
-  BookOpen,
-  Rocket,
-  Trophy,
-  Target,
-  Zap,
-  Crown,
-  Info,
-  ArrowRight,
-  Clock,
-  BarChart3,
-  X,
-  Code,
-  Calendar,
+  Lock 
+  AlertTriangle 
+  CheckCircle 
+  RefreshCw 
+  Eye 
+  ExternalLink 
+  Play 
+  BookOpen 
+  Rocket 
+  Trophy 
+  Target 
+  Zap 
+  Crown 
+  Info 
+  ArrowRight 
+  Clock 
+  BarChart3 
+  X 
+  Code 
+  Calendar 
   Award
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -44,12 +44,12 @@ import { cn } from '@/lib/utils';
 
 export function AuthTesting() {
   const [testResults, setTestResults] = useState<string[]>([]);
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(_false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [testCredentials, setTestCredentials] = useState({
-    email: 'test@example.com',
-    password: 'TestPassword123!',
-    name: 'Test User'
+    email: 'test@example.com' 
+    password: 'TestPassword123!' 
+    name: 'Test User' 
   });
   const [sessionManager] = useState(() => SessionManager.getInstance());
 
@@ -62,20 +62,20 @@ export function AuthTesting() {
   const { data: session } = useSession();
   const user = session?.user;
   const {
-    currentXP,
-    previousXP: _previousXP,
-    levelInfo,
-    sessionXP,
-    addLessonXP,
-    addQuizXP,
-    addProjectXP,
-    addStreakXP,
-    addAchievementXP,
+    currentXP 
+    previousXP: _previousXP 
+    levelInfo 
+    sessionXP 
+    addLessonXP 
+    addQuizXP 
+    addProjectXP 
+    addStreakXP 
+    addAchievementXP 
     resetSessionXP
   } = useRealTimeXP();
 
   const [curriculumManager] = useState(() => CurriculumManager.getInstance());
-  const [userProgress, setUserProgress] = useState<any>(null);
+  const [userProgress, setUserProgress] = useState<any>(_null);
 
   const addTestResult = (result: string) => {
     setTestResults(prev => [...prev, `${new Date().toLocaleTimeString()}: ${result}`]);
@@ -96,52 +96,52 @@ export function AuthTesting() {
     }
   };
 
-  const testSessionExpiration = () => {
+  const testSessionExpiration = (() => {
     addTestResult('Simulating session expiration...');
     // Simulate session expiration by setting a very short expiry
     const mockSession = {
-      userId: 'test-user',
-      email: 'test@example.com',
-      name: 'Test User',
-      role: 'STUDENT',
-      expiresAt: new Date(Date.now() + 30000), // 30 seconds
-      lastActivity: new Date(),
-      createdAt: new Date(),
-      deviceId: 'test-device',
-      sessionId: 'test-session'
+      userId: 'test-user' 
+      email: 'test@example.com' 
+      name: 'Test User' 
+      role: 'STUDENT' 
+      expiresAt: new Date(_Date.now() + 30000), // 30 seconds
+      lastActivity: new Date() 
+      createdAt: new Date() 
+      deviceId: 'test-device' 
+      sessionId: 'test-session' 
     };
-    sessionManager.setSession(mockSession);
+    sessionManager.setSession(_mockSession);
     addTestResult('✅ Session set to expire in 30 seconds');
   };
 
-  const testSessionWarning = () => {
+  const testSessionWarning = (() => {
     addTestResult('Triggering session warning...');
     // Set session to expire in warning threshold
     const mockSession = {
-      userId: 'test-user',
-      email: 'test@example.com',
-      name: 'Test User',
-      role: 'STUDENT',
-      expiresAt: new Date(Date.now() + 8 * 60 * 1000), // 8 minutes
-      lastActivity: new Date(),
-      createdAt: new Date(),
-      deviceId: 'test-device',
-      sessionId: 'test-session'
+      userId: 'test-user' 
+      email: 'test@example.com' 
+      name: 'Test User' 
+      role: 'STUDENT' 
+      expiresAt: new Date(_Date.now() + 8 * 60 * 1000), // 8 minutes
+      lastActivity: new Date() 
+      createdAt: new Date() 
+      deviceId: 'test-device' 
+      sessionId: 'test-session' 
     };
-    sessionManager.setSession(mockSession);
+    sessionManager.setSession(_mockSession);
     addTestResult('✅ Session set to trigger warning');
   };
 
-  const testCrossTabSync = () => {
+  const testCrossTabSync = (() => {
     addTestResult('Testing cross-tab synchronization...');
     // Simulate cross-tab activity
-    if (typeof window !== 'undefined' && window.BroadcastChannel) {
+    if (_typeof window !== 'undefined' && window.BroadcastChannel) {
       const channel = new BroadcastChannel('session_sync');
       channel.postMessage({
-        type: 'activity_update',
-        data: {
-          deviceId: 'other-tab',
-          timestamp: Date.now()
+        type: 'activity_update' 
+        data: { 
+          deviceId: 'other-tab' 
+          timestamp: Date.now() 
         }
       });
       channel.close();
@@ -151,7 +151,7 @@ export function AuthTesting() {
     }
   };
 
-  const testSessionAnalytics = () => {
+  const testSessionAnalytics = (() => {
     addTestResult('Session Analytics:');
     addTestResult(`- Health: ${sessionHealth}`);
     addTestResult(`- Duration: ${analytics.sessionDuration ? Math.floor(analytics.sessionDuration / 60000) : 0}m`);
@@ -165,86 +165,86 @@ export function AuthTesting() {
   };
 
   // Test different authentication scenarios
-  const testInvalidCredentials = () => {
+  const testInvalidCredentials = (() => {
     const authError = ErrorFactory.createAuthError({
-      message: 'Invalid credentials',
-      authType: 'login',
-      userMessage: 'Invalid email or password. Please check your credentials and try again.'
+      message: 'Invalid credentials' 
+      authType: 'login' 
+      userMessage: 'Invalid email or password. Please check your credentials and try again.' 
     });
     
-    showAuthError('login', authError.userMessage);
+    showAuthError("'login', authError.userMessage);
     addTestResult('Invalid credentials error simulated');
   };
 
-  const testDuplicateRegistration = () => {
+  const testDuplicateRegistration = (() => {
     const authError = ErrorFactory.createAuthError({
-      message: 'User already exists',
-      authType: 'register',
-      userMessage: 'An account with this email already exists. Would you like to sign in instead?'
+      message: 'User already exists' 
+      authType: 'register' 
+      userMessage: 'An account with this email already exists. Would you like to sign in instead?' 
     });
     
-    showAuthError('register', authError.userMessage);
+    showAuthError("'register', authError.userMessage);
     addTestResult('Duplicate registration error simulated');
   };
 
-  const testSessionExpired = () => {
+  const testSessionExpired = (() => {
     const authError = ErrorFactory.createAuthError({
-      message: 'Session expired',
-      authType: 'refresh',
-      userMessage: 'Your session has expired. Please log in again to continue.'
+      message: 'Session expired' 
+      authType: 'refresh' 
+      userMessage: 'Your session has expired. Please log in again to continue.' 
     });
     
-    showAuthError('login', authError.userMessage);
+    showAuthError("'login', authError.userMessage);
     addTestResult('Session expired error simulated');
   };
 
-  const testPermissionDenied = () => {
+  const testPermissionDenied = (() => {
     const authError = ErrorFactory.createAuthError({
-      message: 'Permission denied',
-      authType: 'permission',
-      requiredRole: 'admin',
-      userMessage: 'You need administrator privileges to access this feature.'
+      message: 'Permission denied' 
+      authType: 'permission' 
+      requiredRole: 'admin' 
+      userMessage: 'You need administrator privileges to access this feature.' 
     });
     
-    showAuthError('permission', authError.userMessage);
+    showAuthError("'permission', authError.userMessage);
     addTestResult('Permission denied error simulated');
   };
 
-  const testFormValidationErrors = () => {
+  const testFormValidationErrors = (() => {
     // Test email validation
     handleFieldError('email', 'Please enter a valid email address', {
-      validationRule: 'email',
-      expectedFormat: 'user@example.com'
+      validationRule: 'email' 
+      expectedFormat: 'user@example.com' 
     });
 
     // Test password validation
     handleFieldError('password', 'Password must be at least 8 characters long', {
-      validationRule: 'minLength',
-      expectedFormat: 'At least 8 characters'
+      validationRule: 'minLength' 
+      expectedFormat: 'At least 8 characters' 
     });
 
     // Test confirm password validation
     handleFieldError('confirmPassword', 'Passwords do not match', {
-      validationRule: 'match'
+      validationRule: 'match' 
     });
 
     addTestResult('Form validation errors simulated');
   };
 
-  const testNetworkFailure = () => {
+  const testNetworkFailure = (() => {
     const networkError = new Error('Network request failed');
     handleSubmissionError(networkError, testCredentials);
     addTestResult('Network failure during auth simulated');
   };
 
-  const testRateLimiting = () => {
+  const testRateLimiting = (() => {
     const authError = ErrorFactory.createAuthError({
-      message: 'Too many attempts',
-      authType: 'login',
-      userMessage: 'Too many login attempts. Please wait 5 minutes before trying again.'
+      message: 'Too many attempts' 
+      authType: 'login' 
+      userMessage: 'Too many login attempts. Please wait 5 minutes before trying again.' 
     });
     
-    showAuthError('login', authError.userMessage);
+    showAuthError("'login', authError.userMessage);
     addTestResult('Rate limiting error simulated');
   };
 
@@ -282,9 +282,9 @@ export function AuthTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Authentication Modal Testing</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 setAuthMode('login');
-                setShowAuthModal(true);
+                setShowAuthModal(_true);
                 addTestResult('Login modal opened');
               }}
               className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -296,9 +296,9 @@ export function AuthTesting() {
             </EnhancedButton>
             
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 setAuthMode('register');
-                setShowAuthModal(true);
+                setShowAuthModal(_true);
                 addTestResult('Register modal opened');
               }}
               className="bg-green-600 hover:bg-green-700 text-white"
@@ -310,8 +310,8 @@ export function AuthTesting() {
             </EnhancedButton>
             
             <EnhancedButton
-              onClick={() => {
-                setShowAuthModal(false);
+              onClick={(() => {
+                setShowAuthModal(_false);
                 addTestResult('Auth modal closed');
               }}
               variant="outline"
@@ -322,7 +322,7 @@ export function AuthTesting() {
             </EnhancedButton>
             
             <EnhancedButton
-              onClick={() => setTestResults([])}
+              onClick={(() => setTestResults([])}
               variant="ghost"
               className="text-gray-400 hover:text-white"
               touchTarget
@@ -419,12 +419,12 @@ export function AuthTesting() {
               touchTarget
               tooltip="Test successful authentication flow with loading states"
               asyncOptions={{
-                debounceMs: 500,
-                successDuration: 3000,
-                onSuccess: () => {
+                debounceMs: 500 
+                successDuration: 3000 
+                onSuccess: (() => { 
                   addTestResult('✅ Async successful auth test completed');
-                },
-                onError: (error: Error) => {
+                } 
+                onError: (error: Error) => { 
                   addTestResult(`❌ Async auth test failed: ${error.message}`);
                 }
               }}
@@ -437,12 +437,12 @@ export function AuthTesting() {
               touchTarget
               tooltip="Test failed authentication with error recovery"
               asyncOptions={{
-                debounceMs: 500,
-                errorDuration: 4000,
-                onSuccess: () => {
+                debounceMs: 500 
+                errorDuration: 4000 
+                onSuccess: (() => { 
                   addTestResult('✅ Async failed auth test completed');
-                },
-                onError: (error: Error) => {
+                } 
+                onError: (error: Error) => { 
                   addTestResult(`❌ Expected auth failure: ${error.message}`);
                 }
               }}
@@ -459,7 +459,7 @@ export function AuthTesting() {
               <input
                 type="email"
                 value={testCredentials.email}
-                onChange={(e) => setTestCredentials(prev => ({ ...prev, email: e.target.value }))}
+                onChange={(_e) => setTestCredentials(prev => ({ ...prev, email: e.target.value }))}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -469,7 +469,7 @@ export function AuthTesting() {
               <input
                 type="password"
                 value={testCredentials.password}
-                onChange={(e) => setTestCredentials(prev => ({ ...prev, password: e.target.value }))}
+                onChange={(_e) => setTestCredentials(prev => ({ ...prev, password: e.target.value }))}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -479,7 +479,7 @@ export function AuthTesting() {
               <input
                 type="text"
                 value={testCredentials.name}
-                onChange={(e) => setTestCredentials(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(_e) => setTestCredentials(prev => ({ ...prev, name: e.target.value }))}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -492,15 +492,15 @@ export function AuthTesting() {
           <div className="bg-black/20 rounded-lg p-4 h-48 overflow-y-auto">
             {testResults.length === 0 ? (
               <p className="text-gray-500 text-sm">No tests run yet...</p>
-            ) : (
+           ) : (
               <div className="space-y-1">
                 {testResults.map((result, index) => (
                   <p key={index} className="text-sm text-gray-300 font-mono">
                     {result}
                   </p>
-                ))}
+               ))}
               </div>
-            )}
+           )}
           </div>
         </Card>
 
@@ -509,13 +509,13 @@ export function AuthTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Accessibility Testing</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test keyboard navigation
                 const modal = document.querySelector('[role="dialog"]');
                 if (modal) {
                   const focusableElements = modal.querySelectorAll(
                     'button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
-                  );
+                 );
                   addTestResult(`Found ${focusableElements.length} focusable elements in modal`);
                 } else {
                   addTestResult('No modal found for keyboard navigation test');
@@ -530,9 +530,9 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test ARIA labels
-                const inputs = document.querySelectorAll('input[aria-label], input[aria-describedby]');
+                const inputs = document.querySelectorAll("'input[aria-label], input[aria-describedby]');
                 addTestResult(`Found ${inputs.length} inputs with ARIA attributes`);
               }}
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -544,9 +544,9 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test error announcements
-                const errorElements = document.querySelectorAll('[role="alert"], [aria-live]');
+                const errorElements = document.querySelectorAll("'[role="alert"], [aria-live]');
                 addTestResult(`Found ${errorElements.length} elements with error announcements`);
               }}
               className="bg-pink-600 hover:bg-pink-700 text-white"
@@ -567,7 +567,7 @@ export function AuthTesting() {
               <h3 className="text-lg font-medium text-white mb-3">Touch Targets</h3>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-300">Minimum Size (44px)</span>
+                  <span className="text-gray-300">Minimum Size (_44px)</span>
                   <span className="text-green-400">✓ Compliant</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
@@ -589,7 +589,7 @@ export function AuthTesting() {
                   <span className="text-green-400">✓ Optimized</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-300">Tablet (768px+)</span>
+                  <span className="text-gray-300">Tablet (_768px+)</span>
                   <span className="text-green-400">✓ Optimized</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
@@ -606,7 +606,7 @@ export function AuthTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Security Testing</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test password strength validation
                 addTestResult(`Weak password score: Low`);
                 addTestResult(`Strong password score: High`);
@@ -620,7 +620,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test CSRF protection
                 addTestResult('CSRF token validation: Active');
                 addTestResult('Request origin validation: Enabled');
@@ -634,7 +634,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test rate limiting
                 addTestResult('Rate limiting: 5 attempts per 15 minutes');
                 addTestResult('IP-based throttling: Active');
@@ -648,7 +648,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test session security
                 addTestResult('Session timeout: 24 hours');
                 addTestResult('Secure cookies: Enabled');
@@ -669,8 +669,8 @@ export function AuthTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Route Protection Testing</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <EnhancedButton
-              onClick={() => {
-                window.open('/admin', '_blank');
+              onClick={(() => {
+                window.open("'/admin', '_blank');
                 addTestResult('Tested admin route protection (ADMIN required)');
               }}
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -682,8 +682,8 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
-                window.open('/instructor', '_blank');
+              onClick={(() => {
+                window.open("'/instructor', '_blank');
                 addTestResult('Tested instructor route protection (INSTRUCTOR/ADMIN required)');
               }}
               className="bg-purple-600 hover:bg-purple-700 text-white"
@@ -695,8 +695,8 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
-                window.open('/mentor', '_blank');
+              onClick={(() => {
+                window.open("'/mentor', '_blank');
                 addTestResult('Tested mentor route protection (MENTOR/INSTRUCTOR/ADMIN required)');
               }}
               className="bg-green-600 hover:bg-green-700 text-white"
@@ -708,8 +708,8 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
-                window.open('/profile', '_blank');
+              onClick={(() => {
+                window.open("'/profile', '_blank');
                 addTestResult('Tested profile route protection (authentication required)');
               }}
               className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -721,8 +721,8 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
-                window.open('/settings', '_blank');
+              onClick={(() => {
+                window.open("'/settings', '_blank');
                 addTestResult('Tested settings route protection (authentication required)');
               }}
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -734,8 +734,8 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
-                window.open('/dashboard', '_blank');
+              onClick={(() => {
+                window.open("'/dashboard', '_blank');
                 addTestResult('Tested dashboard route protection (authentication required)');
               }}
               className="bg-teal-600 hover:bg-teal-700 text-white"
@@ -753,7 +753,7 @@ export function AuthTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Redirect Logic Testing</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 const returnUrl = encodeURIComponent('/dashboard?tab=courses');
                 window.open(`/auth?returnUrl=${returnUrl}`, '_blank');
                 addTestResult('Tested auth redirect with return URL');
@@ -767,8 +767,8 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
-                window.open('/unauthorized?reason=insufficient_role&required=ADMIN&current=STUDENT', '_blank');
+              onClick={(() => {
+                window.open("'/unauthorized?reason=insufficient_role&required=ADMIN&current=STUDENT', '_blank');
                 addTestResult('Tested unauthorized page with role mismatch');
               }}
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -780,7 +780,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 const returnUrl = encodeURIComponent('/profile/settings');
                 window.open(`/session-expired?reason=expired&returnUrl=${returnUrl}`, '_blank');
                 addTestResult('Tested session expired page with return URL');
@@ -794,7 +794,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test middleware protection by making API call
                 fetch('/api/admin/users')
                   .then(response => {
@@ -825,7 +825,7 @@ export function AuthTesting() {
           <h2 className="text-xl font-semibold text-white mb-4">Permission System Testing</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test permission checking
                 const permissions = ['read:lessons', 'write:progress', 'read:profile'];
                 addTestResult(`Testing permissions: ${permissions.join(', ')}`);
@@ -840,7 +840,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test role hierarchy
                 const roles = ['STUDENT', 'MENTOR', 'INSTRUCTOR', 'ADMIN'];
                 addTestResult(`Role hierarchy: ${roles.join(' < ')}`);
@@ -855,7 +855,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test access request functionality
                 addTestResult('Testing access request system...');
                 setTimeout(() => {
@@ -871,7 +871,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test session validation
                 addTestResult('Testing session validation...');
                 addTestResult('✅ Session validation system active');
@@ -898,30 +898,30 @@ export function AuthTesting() {
                 <div>
                   <span className="text-gray-400">Status:</span>
                   <span className={cn(
-                    'ml-2 font-medium',
+                    'ml-2 font-medium' 
                     sessionStatus.isValid ? 'text-green-400' : 'text-red-400'
-                  )}>
+                 )}>
                     {sessionStatus.isValid ? 'Valid' : 'Invalid'}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-400">Expires in:</span>
                   <span className={cn(
-                    'ml-2 font-mono',
+                    'ml-2 font-mono' 
                     sessionStatus.isExpiringSoon ? 'text-yellow-400' : 'text-white'
-                  )}>
+                 )}>
                     {timeDisplay}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-400">Health:</span>
                   <span className={cn(
-                    'ml-2 font-medium',
+                    'ml-2 font-medium' 
                     sessionHealth === 'healthy' ? 'text-green-400' :
                     sessionHealth === 'warning' ? 'text-yellow-400' :
                     sessionHealth === 'critical' ? 'text-red-400' :
                     'text-gray-400'
-                  )}>
+                 )}>
                     {sessionHealth}
                   </span>
                 </div>
@@ -934,12 +934,12 @@ export function AuthTesting() {
               {activeWarnings.length > 0 && (
                 <div className="mt-3 p-2 bg-yellow-500/20 border border-yellow-500/30 rounded">
                   <span className="text-yellow-400 text-sm">
-                    Active warnings: {activeWarnings.join(', ')}
+                    Active warnings: {activeWarnings.join("', ')}
                   </span>
                 </div>
-              )}
+             )}
             </div>
-          )}
+         )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <EnhancedButton
@@ -993,7 +993,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 sessionManager.clearSession();
                 addTestResult('✅ Session cleared manually');
               }}
@@ -1006,9 +1006,9 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 const stats = sessionManager.getSessionStats();
-                addTestResult(`Session Stats: Valid=${stats.isValid}, Expiry=${Math.floor(stats.timeUntilExpiry/60000)}m, Activity=${Math.floor(stats.timeSinceActivity/60000)}m ago`);
+                addTestResult(`Session Stats: Valid=${stats.isValid}, Expiry=${Math.floor(stats.timeUntilExpiry/60000)}m, Activity=${Math.floor(_stats.timeSinceActivity/60000)}m ago`);
               }}
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
               touchTarget
@@ -1019,7 +1019,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Test activity tracking
                 sessionManager.updateActivity();
                 addTestResult('✅ Activity timestamp updated');
@@ -1043,7 +1043,7 @@ export function AuthTesting() {
               onClick={async () => {
                 try {
                   await triggerAchievementEvent({
-                    type: 'lesson_complete',
+                    type: 'lesson_complete' 
                     data: { lessonId: 'test-lesson-1', xpReward: 100 }
                   });
                   addTestResult('✅ Lesson completion event triggered');
@@ -1063,7 +1063,7 @@ export function AuthTesting() {
               onClick={async () => {
                 try {
                   await triggerAchievementEvent({
-                    type: 'quiz_complete',
+                    type: 'quiz_complete' 
                     data: { quizId: 'test-quiz-1', score: 100, xpReward: 50 }
                   });
                   addTestResult('✅ Perfect quiz score event triggered');
@@ -1083,7 +1083,7 @@ export function AuthTesting() {
               onClick={async () => {
                 try {
                   await triggerAchievementEvent({
-                    type: 'project_submit',
+                    type: 'project_submit' 
                     data: { projectId: 'test-project-1', category: 'defi', xpReward: 200 }
                   });
                   addTestResult('✅ Project submission event triggered');
@@ -1103,8 +1103,8 @@ export function AuthTesting() {
               onClick={async () => {
                 try {
                   await triggerAchievementEvent({
-                    type: 'xp_gain',
-                    data: { amount: 500 }
+                    type: 'xp_gain' 
+                    data: { amount: 500 } 
                   });
                   addTestResult('✅ XP gain event triggered');
                 } catch (error) {
@@ -1123,8 +1123,8 @@ export function AuthTesting() {
               onClick={async () => {
                 try {
                   await triggerAchievementEvent({
-                    type: 'login',
-                    data: { date: new Date().toDateString() }
+                    type: 'login' 
+                    data: { date: new Date().toDateString() } 
                   });
                   addTestResult('✅ Login streak event triggered');
                 } catch (error) {
@@ -1140,7 +1140,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Navigate to achievements page
                 window.location.href = '/achievements';
               }}
@@ -1153,7 +1153,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 addTestResult('Achievement System Features:');
                 addTestResult('- Real-time achievement tracking');
                 addTestResult('- Progress visualization');
@@ -1177,15 +1177,15 @@ export function AuthTesting() {
                 try {
                   // Trigger multiple events for testing
                   const events = [
-                    { type: 'lesson_complete' as const, data: { lessonId: 'lesson-1' } },
-                    { type: 'lesson_complete' as const, data: { lessonId: 'lesson-2' } },
-                    { type: 'lesson_complete' as const, data: { lessonId: 'lesson-3' } },
-                    { type: 'quiz_complete' as const, data: { quizId: 'quiz-1', score: 100 } },
+                    { type: 'lesson_complete' as const, data: { lessonId: 'lesson-1' } } 
+                    { type: 'lesson_complete' as const, data: { lessonId: 'lesson-2' } } 
+                    { type: 'lesson_complete' as const, data: { lessonId: 'lesson-3' } } 
+                    { type: 'quiz_complete' as const, data: { quizId: 'quiz-1', score: 100 } } 
                     { type: 'xp_gain' as const, data: { amount: 1000 } }
                   ];
 
-                  for (const event of events) {
-                    await triggerAchievementEvent(event);
+                  for (_const event of events) {
+                    await triggerAchievementEvent(_event);
                   }
 
                   addTestResult('✅ Multiple achievement events triggered');
@@ -1227,7 +1227,7 @@ export function AuthTesting() {
               <div>
                 <span className="text-gray-400">Progress:</span>
                 <span className="ml-2 font-mono text-purple-400">
-                  {Math.round(levelInfo.progressToNext)}%
+                  {Math.round(_levelInfo.progressToNext)}%
                 </span>
               </div>
             </div>
@@ -1237,17 +1237,17 @@ export function AuthTesting() {
                 <span className="text-green-400 text-sm">
                   Session breakdown: {Object.entries(sessionXP.breakdown).map(([source, amount]) =>
                     `${source}: +${amount} XP`
-                  ).join(', ')}
+                 ).join("', ')}
                 </span>
               </div>
-            )}
+           )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 const position = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-                addLessonXP(100, 'test-lesson-1', position);
+                addLessonXP(00, 'test-lesson-1', position);
                 addTestResult('✅ Lesson XP added (+100 XP)');
               }}
               className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -1259,9 +1259,9 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 const position = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-                addQuizXP(50, 100, position);
+                addQuizXP(0, 100, position);
                 addTestResult('✅ Perfect quiz XP added (+50 XP)');
               }}
               className="bg-green-600 hover:bg-green-700 text-white"
@@ -1273,9 +1273,9 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 const position = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-                addProjectXP(200, 'DeFi Project', position);
+                addProjectXP(00, 'DeFi Project', position);
                 addTestResult('✅ Project XP added (+200 XP)');
               }}
               className="bg-purple-600 hover:bg-purple-700 text-white"
@@ -1287,9 +1287,9 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 const position = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-                addStreakXP(75, 7, position);
+                addStreakXP(5, 7, position);
                 addTestResult('✅ Streak XP added (+75 XP)');
               }}
               className="bg-orange-600 hover:bg-orange-700 text-white"
@@ -1301,9 +1301,9 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 const position = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-                addAchievementXP(150, 'First Lesson', position);
+                addAchievementXP(50, 'First Lesson', position);
                 addTestResult('✅ Achievement XP added (+150 XP)');
               }}
               className="bg-yellow-600 hover:bg-yellow-700 text-white"
@@ -1315,7 +1315,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 // Add enough XP to trigger level up
                 const xpNeeded = levelInfo.xpForNextLevel - currentXP;
                 const position = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -1332,7 +1332,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 resetSessionXP();
                 addTestResult('✅ Session XP reset');
               }}
@@ -1345,7 +1345,7 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
+              onClick={(() => {
                 addTestResult('Real-Time XP System Features:');
                 addTestResult('- Instant XP notifications with animations');
                 addTestResult('- Smooth progress bar updates');
@@ -1396,9 +1396,9 @@ export function AuthTesting() {
                   <span className="ml-2 font-mono text-yellow-400">{userProgress.totalXPEarned || 0}</span>
                 </div>
               </div>
-            ) : (
+           ) : (
               <div className="text-gray-400">No progress data loaded</div>
-            )}
+           )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1486,9 +1486,9 @@ export function AuthTesting() {
             </EnhancedButton>
 
             <EnhancedButton
-              onClick={() => {
-                if (typeof window !== 'undefined') {
-                  window.open('/dashboard', '_blank');
+              onClick={(() => {
+                if (_typeof window !== 'undefined') {
+                  window.open("'/dashboard', '_blank');
                   addTestResult('✅ Opened curriculum dashboard in new tab');
                   addTestResult('🎯 Test the full dashboard experience!');
                 }
@@ -1506,10 +1506,10 @@ export function AuthTesting() {
         {/* Authentication Modal */}
         <AuthModal
           isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
+          onClose={(() => setShowAuthModal(_false)}
           defaultMode={authMode}
         />
       </div>
     </div>
-  );
+ );
 }

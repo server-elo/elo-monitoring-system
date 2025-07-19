@@ -15,19 +15,19 @@ import { cn } from '@/lib/utils';
 import { withAuthErrorBoundary } from '@/lib/components/ErrorBoundaryHOCs';
 
 function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useRouter(_);
+  const searchParams = useSearchParams(_);
   const returnUrl = searchParams.get('returnUrl') || '/dashboard';
   const error = searchParams.get('error');
   
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [isCheckingSession, setIsCheckingSession] = useState(true);
+  const [showPassword, setShowPassword] = useState(_false);
+  const [isLoading, setIsLoading] = useState(_false);
+  const [authError, setAuthError] = useState<string | null>(_null);
+  const [isCheckingSession, setIsCheckingSession] = useState(_true);
 
   // Form setup
   const form = useForm<LoginData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(_loginSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -38,25 +38,25 @@ function LoginPage() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const session = await getSession();
+        const session = await getSession(_);
         if (session) {
-          router.replace(returnUrl);
+          router.replace(_returnUrl);
           return;
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Session check failed:', error);
       } finally {
-        setIsCheckingSession(false);
+        setIsCheckingSession(_false);
       }
     };
 
-    checkSession();
+    checkSession(_);
   }, [router, returnUrl]);
 
   // Handle URL error parameter
   useEffect(() => {
     if (error) {
-      switch (error) {
+      switch (_error) {
         case 'CredentialsSignin':
           setAuthError('Invalid email or password. Please check your credentials and try again.');
           break;
@@ -86,9 +86,9 @@ function LoginPage() {
     }
   }, [error]);
 
-  const handleSubmit = async (data: LoginData) => {
-    setIsLoading(true);
-    setAuthError(null);
+  const handleSubmit = async (_data: LoginData) => {
+    setIsLoading(_true);
+    setAuthError(_null);
 
     try {
       const result = await signIn('credentials', {
@@ -97,7 +97,7 @@ function LoginPage() {
         redirect: false,
       });
 
-      if (result?.error) {
+      if (_result?.error) {
         setAuthError(
           result.error === 'CredentialsSignin'
             ? 'Invalid email or password. Please check your credentials and try again.'
@@ -106,37 +106,37 @@ function LoginPage() {
         return;
       }
 
-      if (result?.ok) {
+      if (_result?.ok) {
         // Get the updated session to check user role
-        const updatedSession = await getSession();
+        const updatedSession = await getSession(_);
 
         // Role-based redirect logic
-        if (updatedSession?.user?.role === 'ADMIN') {
+        if (_updatedSession?.user?.role === 'ADMIN') {
           router.replace('/admin');
-        } else if (updatedSession?.user?.role === 'INSTRUCTOR') {
+        } else if (_updatedSession?.user?.role === 'INSTRUCTOR') {
           router.replace('/instructor');
         } else {
-          router.replace(returnUrl);
+          router.replace(_returnUrl);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Login error:', error);
       setAuthError('An unexpected error occurred. Please try again.');
     } finally {
-      setIsLoading(false);
+      setIsLoading(_false);
     }
   };
 
-  const handleOAuthSignIn = async (provider: string) => {
-    setIsLoading(true);
-    setAuthError(null);
+  const handleOAuthSignIn = async (_provider: string) => {
+    setIsLoading(_true);
+    setAuthError(_null);
 
     try {
-      await signIn(provider, { callbackUrl: returnUrl });
-    } catch (error) {
+      await signIn( provider, { callbackUrl: returnUrl });
+    } catch (_error) {
       console.error(`${provider} sign-in error:`, error);
-      setAuthError(`${provider} sign-in failed. Please try again.`);
-      setIsLoading(false);
+      setAuthError(_`${provider} sign-in failed. Please try again.`);
+      setIsLoading(_false);
     }
   };
 
@@ -190,7 +190,7 @@ function LoginPage() {
                     severity: 'critical',
                     category: 'auth',
                     context: 'inline',
-                    timestamp: new Date(),
+                    timestamp: new Date(_),
                     userMessage: authError,
                     actionable: false,
                     retryable: false
@@ -203,7 +203,7 @@ function LoginPage() {
             {/* OAuth Providers */}
             <div className="space-y-3 mb-6">
               <button
-                onClick={() => handleOAuthSignIn('github')}
+                onClick={(_) => handleOAuthSignIn('github')}
                 disabled={isLoading}
                 className={cn(
                   "w-full flex items-center justify-center space-x-3 p-4 rounded-lg",
@@ -218,7 +218,7 @@ function LoginPage() {
               </button>
 
               <button
-                onClick={() => handleOAuthSignIn('google')}
+                onClick={(_) => handleOAuthSignIn('google')}
                 disabled={isLoading}
                 className={cn(
                   "w-full flex items-center justify-center space-x-3 p-4 rounded-lg",
@@ -244,7 +244,7 @@ function LoginPage() {
             </div>
 
             {/* Email/Password Form */}
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(_handleSubmit)} className="space-y-4">
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
@@ -295,7 +295,7 @@ function LoginPage() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={(_) => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -311,8 +311,8 @@ function LoginPage() {
               {/* Submit Button */}
               <AsyncSubmitButton
                 onSubmit={async () => {
-                  const data = form.getValues();
-                  await handleSubmit(data);
+                  const data = form.getValues(_);
+                  await handleSubmit(_data);
                 }}
                 submitText="Sign In"
                 loadingText="Signing In..."
@@ -332,7 +332,7 @@ function LoginPage() {
               <p className="text-gray-400 text-sm">
                 Don't have an account?{' '}
                 <button
-                  onClick={() => router.push(`/auth/register${returnUrl !== '/dashboard' ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`)}
+                  onClick={(_) => router.push(_`/auth/register${returnUrl !== '/dashboard' ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`)}
                   className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 >
                   Sign up
@@ -340,7 +340,7 @@ function LoginPage() {
               </p>
               <p className="text-gray-400 text-sm">
                 <button
-                  onClick={() => router.push('/auth/forgot-password')}
+                  onClick={(_) => router.push('/auth/forgot-password')}
                   className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 >
                   Forgot your password?

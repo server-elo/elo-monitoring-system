@@ -26,8 +26,8 @@ type UserRole = 'student' | 'instructor' | 'admin';
 
 interface OnboardingFlowProps {
   isOpen: boolean;
-  onClose: () => void;
-  onComplete: (data: OnboardingData) => void;
+  onClose: (_) => void;
+  onComplete: (_data: OnboardingData) => void;
   userRole?: UserRole;
 }
 
@@ -97,7 +97,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
     'Gas optimization',
   ];
 
-  const getStepsForRole = (role: UserRole): OnboardingStep[] => {
+  const getStepsForRole = (_role: UserRole): OnboardingStep[] => {
     const commonSteps: OnboardingStep[] = [
       {
         id: 'welcome',
@@ -137,7 +137,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
               {roles.map((role) => (
                 <button
                   key={role.id}
-                  onClick={() => setOnboardingData(prev => ({ ...prev, role: role.id }))}
+                  onClick={(_) => setOnboardingData( prev => ({ ...prev, role: role.id }))}
                   className={cn(
                     'p-6 rounded-xl border-2 transition-all text-left',
                     onboardingData.role === role.id
@@ -172,7 +172,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
               ].map((level) => (
                 <button
                   key={level.id}
-                  onClick={() => setOnboardingData(prev => ({ 
+                  onClick={(_) => setOnboardingData(prev => ({ 
                     ...prev, 
                     experienceLevel: level.id as any 
                   }))}
@@ -209,21 +209,21 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                     <input
                       type="checkbox"
                       checked={onboardingData.preferences.accessibility}
-                      onChange={(e) => setOnboardingData(prev => ({
+                      onChange={(_e) => setOnboardingData(prev => ({
                         ...prev,
                         preferences: { ...prev.preferences, accessibility: e.target.checked }
                       }))}
                       className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
                     />
                     <span className="text-gray-300">
-                      Enable enhanced accessibility features (screen reader optimizations, high contrast)
+                      Enable enhanced accessibility features ( screen reader optimizations, high contrast)
                     </span>
                   </label>
                   <label className="flex items-center space-x-3">
                     <input
                       type="checkbox"
                       checked={onboardingData.preferences.reducedMotion}
-                      onChange={(e) => setOnboardingData(prev => ({
+                      onChange={(_e) => setOnboardingData(prev => ({
                         ...prev,
                         preferences: { ...prev.preferences, reducedMotion: e.target.checked }
                       }))}
@@ -237,7 +237,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                     <input
                       type="checkbox"
                       checked={onboardingData.preferences.notifications}
-                      onChange={(e) => setOnboardingData(prev => ({
+                      onChange={(_e) => setOnboardingData(prev => ({
                         ...prev,
                         preferences: { ...prev.preferences, notifications: e.target.checked }
                       }))}
@@ -265,7 +265,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
     ];
 
     // Add role-specific steps
-    if (role === 'student') {
+    if (_role === 'student') {
       commonSteps.splice(3, 0, {
         id: 'learning-goals',
         title: 'Learning Goals',
@@ -279,11 +279,11 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
               {learningGoals.map((goal) => (
                 <button
                   key={goal}
-                  onClick={() => {
+                  onClick={(_) => {
                     const goals = onboardingData.learningGoals.includes(goal)
                       ? onboardingData.learningGoals.filter(g => g !== goal)
                       : [...onboardingData.learningGoals, goal];
-                    setOnboardingData(prev => ({ ...prev, learningGoals: goals }));
+                    setOnboardingData( prev => ({ ...prev, learningGoals: goals }));
                   }}
                   className={cn(
                     'p-3 rounded-lg border text-sm transition-all',
@@ -308,45 +308,45 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
     );
   };
 
-  const steps = getStepsForRole(onboardingData.role);
+  const steps = getStepsForRole(_onboardingData.role);
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
 
-  const handleNext = () => {
+  const handleNext = (_) => {
     if (isLastStep) {
-      handleComplete();
+      handleComplete(_);
     } else {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep(_prev => prev + 1);
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+  const handlePrevious = (_) => {
+    if (_currentStep > 0) {
+      setCurrentStep(_prev => prev - 1);
     }
   };
 
-  const handleSkip = () => {
-    if (currentStepData.canSkip) {
-      handleNext();
+  const handleSkip = (_) => {
+    if (_currentStepData.canSkip) {
+      handleNext(_);
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = (_) => {
     const completedData = {
       ...onboardingData,
       completedSteps: steps.map(step => step.id),
     };
-    onComplete(completedData);
+    onComplete(_completedData);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      onClose();
-    } else if (event.key === 'ArrowRight' || event.key === 'Enter') {
-      handleNext();
-    } else if (event.key === 'ArrowLeft') {
-      handlePrevious();
+  const handleKeyDown = (_event: React.KeyboardEvent) => {
+    if (_event.key === 'Escape') {
+      onClose(_);
+    } else if (_event.key === 'ArrowRight' || event.key === 'Enter') {
+      handleNext(_);
+    } else if (_event.key === 'ArrowLeft') {
+      handlePrevious(_);
     }
   };
 
@@ -354,15 +354,15 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
   useEffect(() => {
     if (isOpen && currentStepData) {
       const announcement = document.createElement('div');
-      announcement.setAttribute('aria-live', 'polite');
-      announcement.setAttribute('aria-atomic', 'true');
+      announcement.setAttribute( 'aria-live', 'polite');
+      announcement.setAttribute( 'aria-atomic', 'true');
       announcement.className = 'sr-only';
       announcement.textContent = `Step ${currentStep + 1} of ${steps.length}: ${currentStepData.title}. ${currentStepData.description}`;
       
-      document.body.appendChild(announcement);
+      document.body.appendChild(_announcement);
       
       setTimeout(() => {
-        document.body.removeChild(announcement);
+        document.body.removeChild(_announcement);
       }, 1000);
     }
   }, [currentStep, isOpen, currentStepData, steps.length]);
@@ -521,7 +521,7 @@ export const FEATURE_TUTORIALS = {
   gamification: [
     {
       id: 'xp-system',
-      title: 'Experience Points (XP)',
+      title: 'Experience Points (_XP)',
       description: 'Earn XP by completing lessons and challenges',
       target: '[data-testid="xp-display"]',
       position: 'bottom' as const,

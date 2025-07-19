@@ -8,59 +8,59 @@ import { communityStatsManager } from '@/lib/community/statistics';
 import { realTimeManager } from '@/lib/community/websocket';
 
 // Mock the community managers
-jest.mock('@/lib/community/leaderboard', () => ({
+jest.mock( '@/lib/community/leaderboard', () => ({
   leaderboardManager: {
-    getLeaderboard: jest.fn(),
-    getLeaderboardCategories: jest.fn(),
-    getUserRank: jest.fn(),
-    refreshLeaderboard: jest.fn(),
-    subscribeToUpdates: jest.fn(),
-    getDefaultCategories: jest.fn(),
-    getDefaultFilters: jest.fn()
+    getLeaderboard: jest.fn(_),
+    getLeaderboardCategories: jest.fn(_),
+    getUserRank: jest.fn(_),
+    refreshLeaderboard: jest.fn(_),
+    subscribeToUpdates: jest.fn(_),
+    getDefaultCategories: jest.fn(_),
+    getDefaultFilters: jest.fn(_)
   },
   LeaderboardUtils: {
-    calculateRankChange: jest.fn(),
-    formatXP: jest.fn(),
-    formatTimeSpent: jest.fn(),
-    getRankIcon: jest.fn(),
-    getRankColor: jest.fn(),
-    getStreakColor: jest.fn()
+    calculateRankChange: jest.fn(_),
+    formatXP: jest.fn(_),
+    formatTimeSpent: jest.fn(_),
+    getRankIcon: jest.fn(_),
+    getRankColor: jest.fn(_),
+    getStreakColor: jest.fn(_)
   }
 }));
 
-jest.mock('@/lib/community/statistics', () => ({
+jest.mock( '@/lib/community/statistics', () => ({
   communityStatsManager: {
-    getCommunityStats: jest.fn(),
-    getTrendingTopics: jest.fn(),
-    getCommunityMilestones: jest.fn(),
-    exportStats: jest.fn(),
-    subscribe: jest.fn(),
-    getDefaultFilters: jest.fn()
+    getCommunityStats: jest.fn(_),
+    getTrendingTopics: jest.fn(_),
+    getCommunityMilestones: jest.fn(_),
+    exportStats: jest.fn(_),
+    subscribe: jest.fn(_),
+    getDefaultFilters: jest.fn(_)
   },
   StatsUtils: {
-    formatNumber: jest.fn(),
-    formatPercentage: jest.fn(),
-    formatDuration: jest.fn(),
-    calculateGrowthRate: jest.fn(),
-    formatGrowthRate: jest.fn(),
-    getGrowthColor: jest.fn(),
-    getTrendIcon: jest.fn(),
-    formatTimeRange: jest.fn(),
-    generateExportFilename: jest.fn()
+    formatNumber: jest.fn(_),
+    formatPercentage: jest.fn(_),
+    formatDuration: jest.fn(_),
+    calculateGrowthRate: jest.fn(_),
+    formatGrowthRate: jest.fn(_),
+    getGrowthColor: jest.fn(_),
+    getTrendIcon: jest.fn(_),
+    formatTimeRange: jest.fn(_),
+    generateExportFilename: jest.fn(_)
   }
 }));
 
-jest.mock('@/lib/community/websocket', () => ({
+jest.mock( '@/lib/community/websocket', () => ({
   realTimeManager: {
-    subscribe: jest.fn(),
-    isConnected: jest.fn(),
-    getConnectionType: jest.fn(),
-    getLatency: jest.fn()
+    subscribe: jest.fn(_),
+    isConnected: jest.fn(_),
+    getConnectionType: jest.fn(_),
+    getLatency: jest.fn(_)
   }
 }));
 
-jest.mock('@/lib/hooks/useAuth', () => ({
-  useAuth: () => ({
+jest.mock( '@/lib/hooks/useAuth', () => ({
+  useAuth: (_) => ({
     user: {
       id: 'test-user-1',
       name: 'Test User',
@@ -73,7 +73,7 @@ jest.mock('@/lib/hooks/useAuth', () => ({
 const mockLeaderboardData = {
   users: [
     {
-      id: 'user_1',
+      id: 'user1',
       name: 'Alice Johnson',
       email: 'alice@example.com',
       xpTotal: 15420,
@@ -88,7 +88,7 @@ const mockLeaderboardData = {
       badges: [],
       recentAchievements: [],
       joinedAt: new Date('2023-06-01'),
-      lastActiveAt: new Date(),
+      lastActiveAt: new Date(_),
       region: 'US',
       role: 'student' as const,
       completionRate: 92,
@@ -102,7 +102,7 @@ const mockLeaderboardData = {
   totalPages: 1,
   hasNextPage: false,
   hasPreviousPage: false,
-  lastUpdated: new Date(),
+  lastUpdated: new Date(_),
   category: {
     id: 'global_xp',
     name: 'Global XP Leaders',
@@ -165,392 +165,392 @@ const mockStats = {
     contentGrowthRate: 12.3,
     engagementGrowthRate: 6.7
   },
-  lastUpdated: new Date()
+  lastUpdated: new Date(_)
 };
 
-describe('Community Features', () => {
+describe( 'Community Features', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(_);
     
     // Setup default mock implementations
-    (leaderboardManager.getLeaderboard as jest.Mock).mockResolvedValue(mockLeaderboardData);
-    (leaderboardManager.getLeaderboardCategories as jest.Mock).mockResolvedValue(mockCategories);
-    (leaderboardManager.getDefaultCategories as jest.Mock).mockReturnValue(mockCategories);
-    (leaderboardManager.getDefaultFilters as jest.Mock).mockReturnValue({
+    (_leaderboardManager.getLeaderboard as jest.Mock).mockResolvedValue(_mockLeaderboardData);
+    (_leaderboardManager.getLeaderboardCategories as jest.Mock).mockResolvedValue(_mockCategories);
+    (_leaderboardManager.getDefaultCategories as jest.Mock).mockReturnValue(_mockCategories);
+    (_leaderboardManager.getDefaultFilters as jest.Mock).mockReturnValue({
       timeframe: 'all-time',
       category: 'global_xp',
       userRole: 'all'
     });
-    (leaderboardManager.subscribeToUpdates as jest.Mock).mockReturnValue(() => {});
+    (_leaderboardManager.subscribeToUpdates as jest.Mock).mockReturnValue(() => {});
     
-    (communityStatsManager.getCommunityStats as jest.Mock).mockResolvedValue(mockStats);
-    (communityStatsManager.getTrendingTopics as jest.Mock).mockResolvedValue([]);
-    (communityStatsManager.getCommunityMilestones as jest.Mock).mockResolvedValue([]);
-    (communityStatsManager.getDefaultFilters as jest.Mock).mockReturnValue({
-      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      endDate: new Date()
+    (_communityStatsManager.getCommunityStats as jest.Mock).mockResolvedValue(_mockStats);
+    (_communityStatsManager.getTrendingTopics as jest.Mock).mockResolvedValue([]);
+    (_communityStatsManager.getCommunityMilestones as jest.Mock).mockResolvedValue([]);
+    (_communityStatsManager.getDefaultFilters as jest.Mock).mockReturnValue({
+      startDate: new Date(_Date.now() - 30 * 24 * 60 * 60 * 1000),
+      endDate: new Date(_)
     });
-    (communityStatsManager.subscribe as jest.Mock).mockReturnValue(() => {});
+    (_communityStatsManager.subscribe as jest.Mock).mockReturnValue(() => {});
     
-    (realTimeManager.subscribe as jest.Mock).mockReturnValue(() => {});
-    (realTimeManager.isConnected as jest.Mock).mockReturnValue(true);
-    (realTimeManager.getConnectionType as jest.Mock).mockReturnValue('websocket');
-    (realTimeManager.getLatency as jest.Mock).mockReturnValue(50);
+    (_realTimeManager.subscribe as jest.Mock).mockReturnValue(() => {});
+    (_realTimeManager.isConnected as jest.Mock).mockReturnValue(_true);
+    (_realTimeManager.getConnectionType as jest.Mock).mockReturnValue('websocket');
+    (_realTimeManager.getLatency as jest.Mock).mockReturnValue(50);
   });
 
-  describe('Leaderboards Component', () => {
-    test('should render leaderboards with loading state', async () => {
+  describe( 'Leaderboards Component', () => {
+    test( 'should render leaderboards with loading state', async () => {
       render(<Leaderboards />);
 
-      expect(screen.getByText('Leaderboards')).toBeInTheDocument();
-      expect(screen.getByText('Compete with the community and track your progress')).toBeInTheDocument();
+      expect(_screen.getByText('Leaderboards')).toBeInTheDocument(_);
+      expect(_screen.getByText('Compete with the community and track your progress')).toBeInTheDocument(_);
       
       // Should show loading initially
       await waitFor(() => {
-        expect(screen.getByText('Refresh')).toBeInTheDocument();
+        expect(_screen.getByText('Refresh')).toBeInTheDocument(_);
       });
     });
 
-    test('should load and display leaderboard data', async () => {
+    test( 'should load and display leaderboard data', async () => {
       render(<Leaderboards />);
 
       await waitFor(() => {
-        expect(leaderboardManager.getLeaderboardCategories).toHaveBeenCalled();
-        expect(leaderboardManager.getLeaderboard).toHaveBeenCalled();
+        expect(_leaderboardManager.getLeaderboardCategories).toHaveBeenCalled(_);
+        expect(_leaderboardManager.getLeaderboard).toHaveBeenCalled(_);
       });
 
       await waitFor(() => {
-        expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
+        expect(_screen.getByText('Alice Johnson')).toBeInTheDocument(_);
       });
     });
 
-    test('should handle filter changes', async () => {
+    test( 'should handle filter changes', async () => {
       render(<Leaderboards />);
 
       await waitFor(() => {
-        expect(screen.getByDisplayValue('All Time')).toBeInTheDocument();
+        expect(_screen.getByDisplayValue('All Time')).toBeInTheDocument(_);
       });
 
       const timeframeSelect = screen.getByDisplayValue('All Time');
-      fireEvent.change(timeframeSelect, { target: { value: 'weekly' } });
+      fireEvent.change( timeframeSelect, { target: { value: 'weekly' } });
 
       await waitFor(() => {
-        expect(leaderboardManager.getLeaderboard).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({ timeframe: 'weekly' }),
-          expect.any(Number),
-          expect.any(Number)
+        expect(_leaderboardManager.getLeaderboard).toHaveBeenCalledWith(
+          expect.any(_String),
+          expect.objectContaining({ timeframe: 'weekly'  }),
+          expect.any(_Number),
+          expect.any(_Number)
         );
       });
     });
 
-    test('should handle refresh action', async () => {
+    test( 'should handle refresh action', async () => {
       render(<Leaderboards />);
 
       await waitFor(() => {
-        expect(screen.getByText('Refresh')).toBeInTheDocument();
+        expect(_screen.getByText('Refresh')).toBeInTheDocument(_);
       });
 
       const refreshButton = screen.getByText('Refresh');
-      fireEvent.click(refreshButton);
+      fireEvent.click(_refreshButton);
 
       await waitFor(() => {
-        expect(leaderboardManager.refreshLeaderboard).toHaveBeenCalled();
+        expect(_leaderboardManager.refreshLeaderboard).toHaveBeenCalled(_);
       });
     });
 
-    test('should handle search functionality', async () => {
+    test( 'should handle search functionality', async () => {
       render(<Leaderboards />);
 
       await waitFor(() => {
         const searchInput = screen.getByPlaceholderText('Search users...');
-        expect(searchInput).toBeInTheDocument();
+        expect(_searchInput).toBeInTheDocument(_);
       });
 
       const searchInput = screen.getByPlaceholderText('Search users...');
-      fireEvent.change(searchInput, { target: { value: 'Alice' } });
+      fireEvent.change( searchInput, { target: { value: 'Alice' } });
 
       await waitFor(() => {
-        expect(leaderboardManager.getLeaderboard).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({ search: 'Alice' }),
-          expect.any(Number),
-          expect.any(Number)
+        expect(_leaderboardManager.getLeaderboard).toHaveBeenCalledWith(
+          expect.any(_String),
+          expect.objectContaining({ search: 'Alice'  }),
+          expect.any(_Number),
+          expect.any(_Number)
         );
       });
     });
 
-    test('should handle real-time updates', async () => {
-      const mockSubscribe = jest.fn();
-      (leaderboardManager.subscribeToUpdates as jest.Mock).mockReturnValue(mockSubscribe);
+    test( 'should handle real-time updates', async () => {
+      const mockSubscribe = jest.fn(_);
+      (_leaderboardManager.subscribeToUpdates as jest.Mock).mockReturnValue(_mockSubscribe);
 
       render(<Leaderboards />);
 
       await waitFor(() => {
-        expect(leaderboardManager.subscribeToUpdates).toHaveBeenCalled();
+        expect(_leaderboardManager.subscribeToUpdates).toHaveBeenCalled(_);
       });
     });
   });
 
-  describe('Community Statistics Component', () => {
-    test('should render statistics dashboard', async () => {
+  describe( 'Community Statistics Component', () => {
+    test( 'should render statistics dashboard', async () => {
       render(<CommunityStats />);
 
-      expect(screen.getByText('Community Statistics')).toBeInTheDocument();
-      expect(screen.getByText('Track community engagement and platform growth')).toBeInTheDocument();
+      expect(_screen.getByText('Community Statistics')).toBeInTheDocument(_);
+      expect(_screen.getByText('Track community engagement and platform growth')).toBeInTheDocument(_);
     });
 
-    test('should load and display statistics data', async () => {
+    test( 'should load and display statistics data', async () => {
       render(<CommunityStats />);
 
       await waitFor(() => {
-        expect(communityStatsManager.getCommunityStats).toHaveBeenCalled();
-        expect(communityStatsManager.getTrendingTopics).toHaveBeenCalled();
-        expect(communityStatsManager.getCommunityMilestones).toHaveBeenCalled();
+        expect(_communityStatsManager.getCommunityStats).toHaveBeenCalled(_);
+        expect(_communityStatsManager.getTrendingTopics).toHaveBeenCalled(_);
+        expect(_communityStatsManager.getCommunityMilestones).toHaveBeenCalled(_);
       });
     });
 
-    test('should handle export functionality', async () => {
-      (communityStatsManager.exportStats as jest.Mock).mockResolvedValue('csv,data');
+    test( 'should handle export functionality', async () => {
+      (_communityStatsManager.exportStats as jest.Mock).mockResolvedValue('csv,data');
       
       render(<CommunityStats />);
 
       await waitFor(() => {
-        expect(screen.getByText('Export CSV')).toBeInTheDocument();
+        expect(_screen.getByText('Export CSV')).toBeInTheDocument(_);
       });
 
       const exportButton = screen.getByText('Export CSV');
-      fireEvent.click(exportButton);
+      fireEvent.click(_exportButton);
 
       await waitFor(() => {
-        expect(communityStatsManager.exportStats).toHaveBeenCalledWith(
-          expect.objectContaining({ format: 'csv' })
+        expect(_communityStatsManager.exportStats).toHaveBeenCalledWith(
+          expect.objectContaining({ format: 'csv'  })
         );
       });
     });
 
-    test('should handle date filter changes', async () => {
+    test( 'should handle date filter changes', async () => {
       render(<CommunityStats />);
 
       await waitFor(() => {
         const startDateInput = screen.getByLabelText('Start Date');
-        expect(startDateInput).toBeInTheDocument();
+        expect(_startDateInput).toBeInTheDocument(_);
       });
 
       const startDateInput = screen.getByLabelText('Start Date');
-      fireEvent.change(startDateInput, { target: { value: '2024-01-01' } });
+      fireEvent.change( startDateInput, { target: { value: '2024-01-01' } });
 
       await waitFor(() => {
-        expect(communityStatsManager.getCommunityStats).toHaveBeenCalledWith(
+        expect(_communityStatsManager.getCommunityStats).toHaveBeenCalledWith(
           expect.objectContaining({
-            startDate: expect.any(Date)
+            startDate: expect.any(_Date)
           })
         );
       });
     });
 
-    test('should handle refresh action', async () => {
+    test( 'should handle refresh action', async () => {
       render(<CommunityStats />);
 
       await waitFor(() => {
-        expect(screen.getByText('Refresh')).toBeInTheDocument();
+        expect(_screen.getByText('Refresh')).toBeInTheDocument(_);
       });
 
       const refreshButton = screen.getByText('Refresh');
-      fireEvent.click(refreshButton);
+      fireEvent.click(_refreshButton);
 
       await waitFor(() => {
-        expect(communityStatsManager.getCommunityStats).toHaveBeenCalled();
+        expect(_communityStatsManager.getCommunityStats).toHaveBeenCalled(_);
       });
     });
   });
 
-  describe('Community Hub Component', () => {
-    test('should render community hub with all tabs', async () => {
+  describe( 'Community Hub Component', () => {
+    test( 'should render community hub with all tabs', async () => {
       render(<CommunityHub />);
 
-      expect(screen.getByText('Community Hub')).toBeInTheDocument();
-      expect(screen.getByText('Connect, compete, and grow with the Solidity learning community')).toBeInTheDocument();
+      expect(_screen.getByText('Community Hub')).toBeInTheDocument(_);
+      expect( screen.getByText('Connect, compete, and grow with the Solidity learning community')).toBeInTheDocument(_);
       
       // Check tab navigation
-      expect(screen.getByText('Overview')).toBeInTheDocument();
-      expect(screen.getByText('Leaderboards')).toBeInTheDocument();
-      expect(screen.getByText('Statistics')).toBeInTheDocument();
+      expect(_screen.getByText('Overview')).toBeInTheDocument(_);
+      expect(_screen.getByText('Leaderboards')).toBeInTheDocument(_);
+      expect(_screen.getByText('Statistics')).toBeInTheDocument(_);
     });
 
-    test('should display connection status', async () => {
+    test( 'should display connection status', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(screen.getByText(/Connected via websocket/)).toBeInTheDocument();
+        expect(_screen.getByText(/Connected via websocket/)).toBeInTheDocument(_);
       });
     });
 
-    test('should handle tab switching', async () => {
+    test( 'should handle tab switching', async () => {
       render(<CommunityHub />);
 
       const leaderboardsTab = screen.getByText('Leaderboards');
-      fireEvent.click(leaderboardsTab);
+      fireEvent.click(_leaderboardsTab);
 
       await waitFor(() => {
-        expect(screen.getByText('Compete with the community and track your progress')).toBeInTheDocument();
+        expect(_screen.getByText('Compete with the community and track your progress')).toBeInTheDocument(_);
       });
 
       const statisticsTab = screen.getByText('Statistics');
-      fireEvent.click(statisticsTab);
+      fireEvent.click(_statisticsTab);
 
       await waitFor(() => {
-        expect(screen.getByText('Track community engagement and platform growth')).toBeInTheDocument();
+        expect(_screen.getByText('Track community engagement and platform growth')).toBeInTheDocument(_);
       });
     });
 
-    test('should display quick stats', async () => {
+    test( 'should display quick stats', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(screen.getByText('Active Users')).toBeInTheDocument();
-        expect(screen.getByText('Online Now')).toBeInTheDocument();
-        expect(screen.getByText('Lessons Today')).toBeInTheDocument();
-        expect(screen.getByText('XP Earned')).toBeInTheDocument();
+        expect(_screen.getByText('Active Users')).toBeInTheDocument(_);
+        expect(_screen.getByText('Online Now')).toBeInTheDocument(_);
+        expect(_screen.getByText('Lessons Today')).toBeInTheDocument(_);
+        expect(_screen.getByText('XP Earned')).toBeInTheDocument(_);
       });
     });
 
-    test('should display welcome message for authenticated user', async () => {
+    test( 'should display welcome message for authenticated user', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(screen.getByText('Welcome back, Test User!')).toBeInTheDocument();
+        expect( screen.getByText('Welcome back, Test User!')).toBeInTheDocument(_);
       });
     });
 
-    test('should display top performers section', async () => {
+    test( 'should display top performers section', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(screen.getByText('Top Performers This Week')).toBeInTheDocument();
-        expect(screen.getByText('View Full Leaderboard')).toBeInTheDocument();
+        expect(_screen.getByText('Top Performers This Week')).toBeInTheDocument(_);
+        expect(_screen.getByText('View Full Leaderboard')).toBeInTheDocument(_);
       });
     });
 
-    test('should display recent achievements section', async () => {
+    test( 'should display recent achievements section', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(screen.getByText('Recent Achievements')).toBeInTheDocument();
-        expect(screen.getByText('View All Statistics')).toBeInTheDocument();
+        expect(_screen.getByText('Recent Achievements')).toBeInTheDocument(_);
+        expect(_screen.getByText('View All Statistics')).toBeInTheDocument(_);
       });
     });
 
-    test('should display live activity feed', async () => {
+    test( 'should display live activity feed', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(screen.getByText('Live Activity Feed')).toBeInTheDocument();
+        expect(_screen.getByText('Live Activity Feed')).toBeInTheDocument(_);
       });
     });
   });
 
-  describe('Real-time Updates', () => {
-    test('should subscribe to real-time updates', async () => {
+  describe( 'Real-time Updates', () => {
+    test( 'should subscribe to real-time updates', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(realTimeManager.subscribe).toHaveBeenCalledWith('connection', expect.any(Function));
+        expect(_realTimeManager.subscribe).toHaveBeenCalledWith( 'connection', expect.any(Function));
       });
     });
 
-    test('should handle connection status changes', async () => {
-      (realTimeManager.isConnected as jest.Mock).mockReturnValue(false);
-      (realTimeManager.getConnectionType as jest.Mock).mockReturnValue('polling');
+    test( 'should handle connection status changes', async () => {
+      (_realTimeManager.isConnected as jest.Mock).mockReturnValue(_false);
+      (_realTimeManager.getConnectionType as jest.Mock).mockReturnValue('polling');
 
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(screen.getByText(/Disconnected via polling/)).toBeInTheDocument();
+        expect(_screen.getByText(/Disconnected via polling/)).toBeInTheDocument(_);
       });
     });
 
-    test('should update connection latency', async () => {
-      (realTimeManager.getLatency as jest.Mock).mockReturnValue(150);
+    test( 'should update connection latency', async () => {
+      (_realTimeManager.getLatency as jest.Mock).mockReturnValue(150);
 
       render(<CommunityHub />);
 
       await waitFor(() => {
-        expect(screen.getByText(/Connected via websocket \(150ms\)/)).toBeInTheDocument();
+        expect(_screen.getByText(/Connected via websocket \(150ms\)/)).toBeInTheDocument(_);
       });
     });
   });
 
-  describe('Error Handling', () => {
-    test('should handle leaderboard fetch errors gracefully', async () => {
-      (leaderboardManager.getLeaderboard as jest.Mock).mockRejectedValue(new Error('Network error'));
+  describe( 'Error Handling', () => {
+    test( 'should handle leaderboard fetch errors gracefully', async () => {
+      (_leaderboardManager.getLeaderboard as jest.Mock).mockRejectedValue(_new Error('Network error'));
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleSpy = jest.spyOn( console, 'error').mockImplementation(_);
 
       render(<Leaderboards />);
 
       await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith('Failed to load leaderboard:', expect.any(Error));
+        expect(_consoleSpy).toHaveBeenCalledWith( 'Failed to load leaderboard:', expect.any(Error));
       });
 
-      consoleSpy.mockRestore();
+      consoleSpy.mockRestore(_);
     });
 
-    test('should handle statistics fetch errors gracefully', async () => {
-      (communityStatsManager.getCommunityStats as jest.Mock).mockRejectedValue(new Error('Network error'));
+    test( 'should handle statistics fetch errors gracefully', async () => {
+      (_communityStatsManager.getCommunityStats as jest.Mock).mockRejectedValue(_new Error('Network error'));
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleSpy = jest.spyOn( console, 'error').mockImplementation(_);
 
       render(<CommunityStats />);
 
       await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith('Failed to load community stats:', expect.any(Error));
+        expect(_consoleSpy).toHaveBeenCalledWith( 'Failed to load community stats:', expect.any(Error));
       });
 
-      consoleSpy.mockRestore();
+      consoleSpy.mockRestore(_);
     });
 
-    test('should handle export errors gracefully', async () => {
-      (communityStatsManager.exportStats as jest.Mock).mockRejectedValue(new Error('Export failed'));
+    test( 'should handle export errors gracefully', async () => {
+      (_communityStatsManager.exportStats as jest.Mock).mockRejectedValue(_new Error('Export failed'));
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleSpy = jest.spyOn( console, 'error').mockImplementation(_);
 
       render(<CommunityStats />);
 
       await waitFor(() => {
         const exportButton = screen.getByText('Export CSV');
-        fireEvent.click(exportButton);
+        fireEvent.click(_exportButton);
       });
 
       await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith('Failed to export stats:', expect.any(Error));
+        expect(_consoleSpy).toHaveBeenCalledWith( 'Failed to export stats:', expect.any(Error));
       });
 
-      consoleSpy.mockRestore();
+      consoleSpy.mockRestore(_);
     });
   });
 
-  describe('Performance', () => {
-    test('should render components within reasonable time', async () => {
-      const startTime = performance.now();
+  describe( 'Performance', () => {
+    test( 'should render components within reasonable time', async () => {
+      const startTime = performance.now(_);
       
       render(<CommunityHub />);
       
       await waitFor(() => {
-        expect(screen.getByText('Community Hub')).toBeInTheDocument();
+        expect(_screen.getByText('Community Hub')).toBeInTheDocument(_);
       });
       
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       const renderTime = endTime - startTime;
       
       // Should render within 2 seconds
-      expect(renderTime).toBeLessThan(2000);
+      expect(_renderTime).toBeLessThan(2000);
     });
 
-    test('should handle large leaderboard datasets efficiently', async () => {
+    test( 'should handle large leaderboard datasets efficiently', async () => {
       const largeDataset = {
         ...mockLeaderboardData,
-        users: Array.from({ length: 1000 }, (_, i) => ({
+        users: Array.from( { length: 1000 }, (_, i) => ({
           ...mockLeaderboardData.users[0],
           id: `user_${i}`,
           name: `User ${i}`,
@@ -559,50 +559,50 @@ describe('Community Features', () => {
         total: 1000
       };
 
-      (leaderboardManager.getLeaderboard as jest.Mock).mockResolvedValue(largeDataset);
+      (_leaderboardManager.getLeaderboard as jest.Mock).mockResolvedValue(_largeDataset);
 
-      const startTime = performance.now();
+      const startTime = performance.now(_);
       
       render(<Leaderboards />);
       
       await waitFor(() => {
-        expect(screen.getByText('Leaderboards')).toBeInTheDocument();
+        expect(_screen.getByText('Leaderboards')).toBeInTheDocument(_);
       });
       
-      const endTime = performance.now();
+      const endTime = performance.now(_);
       const renderTime = endTime - startTime;
       
       // Should handle large datasets efficiently
-      expect(renderTime).toBeLessThan(3000);
+      expect(_renderTime).toBeLessThan(3000);
     });
   });
 
-  describe('Accessibility', () => {
-    test('should have proper ARIA labels and roles', async () => {
+  describe( 'Accessibility', () => {
+    test( 'should have proper ARIA labels and roles', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
         // Check for proper semantic elements
-        expect(screen.getByRole('main') || screen.getByRole('region')).toBeInTheDocument();
+        expect(_screen.getByRole('main') || screen.getByRole('region')).toBeInTheDocument(_);
       });
     });
 
-    test('should support keyboard navigation', async () => {
+    test( 'should support keyboard navigation', async () => {
       render(<CommunityHub />);
 
       await waitFor(() => {
         // Should have focusable tab elements
         const tabs = screen.getAllByRole('button');
-        expect(tabs.length).toBeGreaterThan(0);
+        expect(_tabs.length).toBeGreaterThan(0);
       });
     });
 
-    test('should have proper form labels', async () => {
+    test( 'should have proper form labels', async () => {
       render(<CommunityStats />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText('Start Date')).toBeInTheDocument();
-        expect(screen.getByLabelText('End Date')).toBeInTheDocument();
+        expect(_screen.getByLabelText('Start Date')).toBeInTheDocument(_);
+        expect(_screen.getByLabelText('End Date')).toBeInTheDocument(_);
       });
     });
   });

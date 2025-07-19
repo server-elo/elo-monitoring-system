@@ -10,7 +10,7 @@ import { logger } from '@/lib/api/logger';
 interface RateLimitConfig {
   windowMs: number; // Time window in milliseconds
   maxRequests: number; // Maximum requests per window
-  keyGenerator?: (identifier: string) => string;
+  keyGenerator?: (_identifier: string) => string;
   skipSuccessfulRequests?: boolean;
   skipFailedRequests?: boolean;
   message?: string;
@@ -24,46 +24,46 @@ interface RateLimitResult {
 }
 
 class InMemoryStore {
-  private store = new Map<string, { count: number; resetTime: number }>();
+  private store = new Map<string, { count: number; resetTime: number }>(_);
 
-  async get(key: string): Promise<{ count: number; resetTime: number } | null> {
-    const data = this.store.get(key);
+  async get(_key: string): Promise<{ count: number; resetTime: number } | null> {
+    const data = this.store.get(_key);
     if (!data) return null;
     
     // Clean up expired entries
-    if (Date.now() > data.resetTime) {
-      this.store.delete(key);
+    if (_Date.now() > data.resetTime) {
+      this.store.delete(_key);
       return null;
     }
     
     return data;
   }
 
-  async set(key: string, value: { count: number; resetTime: number }): Promise<void> {
-    this.store.set(key, value);
+  async set( key: string, value: { count: number; resetTime: number }): Promise<void> {
+    this.store.set( key, value);
   }
 
-  async increment(key: string, windowMs: number): Promise<{ count: number; resetTime: number }> {
-    const now = Date.now();
-    const existing = await this.get(key);
+  async increment( key: string, windowMs: number): Promise<{ count: number; resetTime: number }> {
+    const now = Date.now(_);
+    const existing = await this.get(_key);
     
     if (!existing) {
       const newData = { count: 1, resetTime: now + windowMs };
-      await this.set(key, newData);
+      await this.set( key, newData);
       return newData;
     }
     
     existing.count++;
-    await this.set(key, existing);
+    await this.set( key, existing);
     return existing;
   }
 
   // Cleanup expired entries periodically
-  cleanup(): void {
-    const now = Date.now();
-    for (const [key, data] of this.store.entries()) {
+  cleanup(_): void {
+    const now = Date.now(_);
+    for ( const [key, data] of this.store.entries()) {
       if (now > data.resetTime) {
-        this.store.delete(key);
+        this.store.delete(_key);
       }
     }
   }
@@ -73,12 +73,12 @@ export class RateLimiter {
   private store: InMemoryStore;
   private cleanupInterval: NodeJS.Timeout;
 
-  constructor() {
-    this.store = new InMemoryStore();
+  constructor(_) {
+    this.store = new InMemoryStore(_);
     
     // Cleanup expired entries every 5 minutes
     this.cleanupInterval = setInterval(() => {
-      this.store.cleanup();
+      this.store.cleanup(_);
     }, 5 * 60 * 1000);
   }
 
@@ -86,8 +86,8 @@ export class RateLimiter {
     identifier: string,
     config: RateLimitConfig
   ): Promise<RateLimitResult> {
-    const key = config.keyGenerator ? config.keyGenerator(identifier) : identifier;
-    const data = await this.store.increment(key, config.windowMs);
+    const key = config.keyGenerator ? config.keyGenerator(_identifier) : identifier;
+    const data = await this.store.increment( key, config.windowMs);
     
     const allowed = data.count <= config.maxRequests;
     const remaining = Math.max(0, config.maxRequests - data.count);
@@ -100,15 +100,15 @@ export class RateLimiter {
     };
   }
 
-  destroy(): void {
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
+  destroy(_): void {
+    if (_this.cleanupInterval) {
+      clearInterval(_this.cleanupInterval);
     }
   }
 }
 
 // Global rate limiter instance
-const globalRateLimiter = new RateLimiter();
+const globalRateLimiter = new RateLimiter(_);
 
 // Predefined rate limit configurations
 export const rateLimitConfigs = {
@@ -149,18 +149,18 @@ export const rateLimitConfigs = {
 };
 
 // Helper function to get user tier
-export function getUserTier(user: any): 'free' | 'premium' {
+export function getUserTier(_user: any): 'free' | 'premium' {
   // This would typically check user's subscription status
   return user?.profile?.tier || 'free';
 }
 
 // Helper function to get client IP
-export function getClientIP(request: Request): string {
+export function getClientIP(_request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for');
   const realIP = request.headers.get('x-real-ip');
   
   if (forwarded) {
-    return forwarded.split(',')[0].trim();
+    return forwarded.split(',')[0].trim(_);
   }
   
   if (realIP) {
@@ -176,19 +176,19 @@ export async function checkRateLimit(
   configName: keyof typeof rateLimitConfigs
 ): Promise<RateLimitResult> {
   const config = rateLimitConfigs[configName];
-  return globalRateLimiter.checkLimit(identifier, config);
+  return globalRateLimiter.checkLimit( identifier, config);
 }
 
 // Rate limiting middleware for Next.js API routes
 export function withRateLimit(
-  handler: (request: Request) => Promise<Response>,
+  handler: (_request: Request) => Promise<Response>,
   configName: keyof typeof rateLimitConfigs,
-  identifierFn?: (request: Request) => string
+  identifierFn?: (_request: Request) => string
 ) {
-  return async function rateLimitedHandler(request: Request, ...args: any[]) {
+  return async function rateLimitedHandler( request: Request, ...args: any[]) {
     try {
-      const identifier = identifierFn ? identifierFn(request) : getClientIP(request);
-      const result = await checkRateLimit(identifier, configName);
+      const identifier = identifierFn ? identifierFn(_request) : getClientIP(_request);
+      const result = await checkRateLimit( identifier, configName);
       
       if (!result.allowed) {
         const config = rateLimitConfigs[configName];
@@ -211,29 +211,29 @@ export function withRateLimit(
       }
       
       // Add rate limit headers to successful responses
-      const response = await handler(request, ...args);
+      const response = await handler( request, ...args);
       
-      if (response instanceof Response) {
+      if (_response instanceof Response) {
         const config = rateLimitConfigs[configName];
-        response.headers.set('X-RateLimit-Limit', config.maxRequests.toString());
-        response.headers.set('X-RateLimit-Remaining', result.remaining.toString());
-        response.headers.set('X-RateLimit-Reset', result.resetTime.toString());
+        response.headers.set( 'X-RateLimit-Limit', config.maxRequests.toString());
+        response.headers.set( 'X-RateLimit-Remaining', result.remaining.toString());
+        response.headers.set( 'X-RateLimit-Reset', result.resetTime.toString());
       }
       
       return response;
-    } catch (error) {
-      logger.error('Rate limiting error', {
+    } catch (_error) {
+      logger.error('Rate limiting error', { metadata: {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
         operation: 'rate-limiting'
       }, error instanceof Error ? error : undefined);
       // If rate limiting fails, allow the request to proceed
-      return handler(request, ...args);
-    }
+      return handler( request, ...args);
+    }});
   };
 }
 
 // Cleanup function for graceful shutdown
 export function cleanupRateLimiter(): void {
-  globalRateLimiter.destroy();
+  globalRateLimiter.destroy(_);
 }

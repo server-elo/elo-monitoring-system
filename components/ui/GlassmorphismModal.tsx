@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 
 interface GlassmorphismModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
   title?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   children: React.ReactNode;
@@ -39,20 +39,20 @@ export const GlassmorphismModal: React.FC<GlassmorphismModalProps> = ({
       document.body.style.overflow = 'unset';
     }
 
-    return () => {
+    return (_) => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
+    const handleEscape = (_e: KeyboardEvent) => {
+      if (_e.key === 'Escape' && isOpen) {
+        onClose(_);
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener( 'keydown', handleEscape);
+    return (_) => document.removeEventListener( 'keydown', handleEscape);
   }, [isOpen, onClose]);
 
   return (
@@ -87,7 +87,7 @@ export const GlassmorphismModal: React.FC<GlassmorphismModalProps> = ({
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
             {/* Header */}
-            {(title || showCloseButton) && (
+            {(_title || showCloseButton) && (
               <div className="flex items-center justify-between p-6 border-b border-white/10">
                 {title && (
                   <h2 className="text-xl font-semibold text-white">{title}</h2>

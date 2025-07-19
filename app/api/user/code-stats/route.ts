@@ -7,7 +7,7 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -20,46 +20,46 @@ export async function GET(_request: NextRequest) {
     
     // Count completed coding lessons/projects as proxy for lines written
     const completedCodingLessons = await prisma.userProgress.count({
-      where: {
-        userId: session.user.id,
-        status: 'COMPLETED',
-        lesson: {
-          type: {
-            in: ['CODING', 'PROJECT'],
-          },
-        },
-      },
+      where: { 
+        userId: session.user.id 
+        status: 'COMPLETED' 
+        lesson: { 
+          type: { 
+            in: ['CODING', 'PROJECT'] 
+          } 
+        } 
+      } 
     });
 
     // Estimate lines written based on completed lessons
     const estimatedLinesPerLesson = 50;
     const linesWritten = completedCodingLessons * estimatedLinesPerLesson;
 
-    // Count deployed contracts (would be tracked in a real app)
+    // Count deployed contracts (_would be tracked in a real app)
     // For now, use a simple calculation based on completed projects
     const completedProjects = await prisma.userProgress.count({
-      where: {
-        userId: session.user.id,
-        status: 'COMPLETED',
-        lesson: {
-          type: 'PROJECT',
-        },
-      },
+      where: { 
+        userId: session.user.id 
+        status: 'COMPLETED' 
+        lesson: { 
+          type: 'PROJECT' 
+        } 
+      } 
     });
 
-    const contractsDeployed = Math.floor(completedProjects * 0.8); // Assume 80% of projects result in deployment
+    const contractsDeployed = Math.floor(_completedProjects * 0.8); // Assume 80% of projects result in deployment
 
     // Estimate tests written
-    const testsWritten = Math.floor(linesWritten * 0.3); // Assume 30% test coverage
+    const testsWritten = Math.floor(_linesWritten * 0.3); // Assume 30% test coverage
 
     const stats = {
-      linesWritten,
-      contractsDeployed,
-      testsWritten,
+      linesWritten 
+      contractsDeployed 
+      testsWritten 
       // Additional metrics that could be tracked
-      functionsWritten: Math.floor(linesWritten / 10),
-      commitsMade: Math.floor(completedCodingLessons * 1.5),
-      codeReviews: Math.floor(completedCodingLessons * 0.2),
+      functionsWritten: Math.floor(_linesWritten / 10) 
+      commitsMade: Math.floor(_completedCodingLessons * 1.5) 
+      codeReviews: Math.floor(_completedCodingLessons * 0.2) 
     };
 
     return NextResponse.json({ stats });
@@ -84,40 +84,40 @@ export async function POST(request: NextRequest) {
         const { linesAdded, linesRemoved, language, projectId } = data;
         
         // TODO: Implement real-time code tracking
-        logger.info(`User ${session.user.id} code activity`, {
-          userId: session.user.id,
-          metadata: {
-            linesAdded,
-            linesRemoved,
-            language,
-            projectId,
-          }
+        logger.info(`User ${session.user.id} code activity`, { metadata: {
+          userId: session.user.id 
+          metadata: { 
+            linesAdded 
+            linesRemoved 
+            language 
+            projectId 
+          });
         });
 
         return NextResponse.json({ 
           success: true, 
-          message: 'Code activity tracked successfully' 
+          message: 'Code activity tracked successfully'  
         });
 
       case 'deploy_contract':
         const { contractAddress, networkId, gasUsed } = data;
         
         // TODO: Track contract deployments
-        logger.info(`User ${session.user.id} deployed contract`, {
-          userId: session.user.id,
-          metadata: {
-            contractAddress,
-            networkId,
-            gasUsed,
-          }
+        logger.info(`User ${session.user.id} deployed contract`, { metadata: {
+          userId: session.user.id 
+          metadata: { 
+            contractAddress 
+            networkId 
+            gasUsed 
+          });
         });
 
         return NextResponse.json({ 
           success: true, 
-          message: 'Contract deployment tracked successfully' 
+          message: 'Contract deployment tracked successfully'  
         });
 
-      default:
+      default: 
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {

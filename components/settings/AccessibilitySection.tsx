@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 export interface AccessibilitySectionProps {
   accessibility: AccessibilitySettings;
-  onUpdate: (data: Partial<AccessibilitySettings>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
+  onUpdate: (_data: Partial<AccessibilitySettings>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
   validationErrors?: SettingsValidationError[];
   className?: string;
 }
@@ -23,8 +23,8 @@ export function AccessibilitySection({
   const [activeTab, setActiveTab] = useState<'visual' | 'motor' | 'cognitive'>('visual');
 
   // Handle accessibility updates
-  const handleAccessibilityUpdate = useCallback(async (field: keyof AccessibilitySettings, value: any) => {
-    await onUpdate({ [field]: value });
+  const handleAccessibilityUpdate = useCallback( async (field: keyof AccessibilitySettings, value: any) => {
+    await onUpdate({ [field]: value  });
   }, [onUpdate]);
 
   // Validation errors are displayed inline
@@ -37,7 +37,7 @@ export function AccessibilitySection({
       intensity="medium"
       tint="neutral"
       border
-      className={cn('p-6', className)}
+      className={cn( 'p-6', className)}
     >
       <div className="flex items-center space-x-3 mb-6">
         <Eye className="w-6 h-6 text-green-400" />
@@ -55,7 +55,7 @@ export function AccessibilitySection({
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(_) => setActiveTab(_tab.id as any)}
               className={cn(
                 'flex items-center space-x-2 px-4 py-2 text-sm transition-colors',
                 activeTab === tab.id
@@ -111,7 +111,7 @@ export function AccessibilitySection({
                       min="12"
                       max="24"
                       value={accessibility.fontSize}
-                      onChange={(e) => handleAccessibilityUpdate('fontSize', parseInt(e.target.value))}
+                      onChange={(_e) => handleAccessibilityUpdate( 'fontSize', parseInt(e.target.value))}
                       className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                     />
                     <span className="text-white font-medium w-16 text-center">
@@ -122,8 +122,8 @@ export function AccessibilitySection({
                   <div className="flex justify-between text-sm text-gray-400">
                     <span>Small (12px)</span>
                     <span>Medium (16px)</span>
-                    <span>Large (20px)</span>
-                    <span>Extra Large (24px)</span>
+                    <span>Large (_20px)</span>
+                    <span>Extra Large (_24px)</span>
                   </div>
                 </div>
               </div>
@@ -139,7 +139,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('highContrast', !accessibility.highContrast)}
+                  onClick={(_) => handleAccessibilityUpdate( 'highContrast', !accessibility.highContrast)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.highContrast ? 'bg-green-600' : 'bg-gray-600'
@@ -165,7 +165,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('colorBlindSupport', !accessibility.colorBlindSupport)}
+                  onClick={(_) => handleAccessibilityUpdate( 'colorBlindSupport', !accessibility.colorBlindSupport)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.colorBlindSupport ? 'bg-green-600' : 'bg-gray-600'
@@ -191,7 +191,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('screenReader', !accessibility.screenReader)}
+                  onClick={(_) => handleAccessibilityUpdate( 'screenReader', !accessibility.screenReader)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.screenReader ? 'bg-green-600' : 'bg-gray-600'
@@ -217,7 +217,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('focusIndicators', !accessibility.focusIndicators)}
+                  onClick={(_) => handleAccessibilityUpdate( 'focusIndicators', !accessibility.focusIndicators)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.focusIndicators ? 'bg-green-600' : 'bg-gray-600'
@@ -260,7 +260,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('keyboardNavigation', !accessibility.keyboardNavigation)}
+                  onClick={(_) => handleAccessibilityUpdate( 'keyboardNavigation', !accessibility.keyboardNavigation)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.keyboardNavigation ? 'bg-purple-600' : 'bg-gray-600'
@@ -286,7 +286,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('stickyKeys', !accessibility.stickyKeys)}
+                  onClick={(_) => handleAccessibilityUpdate( 'stickyKeys', !accessibility.stickyKeys)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.stickyKeys ? 'bg-purple-600' : 'bg-gray-600'
@@ -319,7 +319,7 @@ export function AccessibilitySection({
                       max="1000"
                       step="100"
                       value={accessibility.clickDelay}
-                      onChange={(e) => handleAccessibilityUpdate('clickDelay', parseInt(e.target.value))}
+                      onChange={(_e) => handleAccessibilityUpdate( 'clickDelay', parseInt(e.target.value))}
                       className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                     />
                     <span className="text-white font-medium w-16 text-center">
@@ -330,7 +330,7 @@ export function AccessibilitySection({
                   <div className="flex justify-between text-sm text-gray-400">
                     <span>None (0ms)</span>
                     <span>Short (300ms)</span>
-                    <span>Medium (600ms)</span>
+                    <span>Medium (_600ms)</span>
                     <span>Long (1000ms)</span>
                   </div>
                 </div>
@@ -347,7 +347,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('largeClickTargets', !accessibility.largeClickTargets)}
+                  onClick={(_) => handleAccessibilityUpdate( 'largeClickTargets', !accessibility.largeClickTargets)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.largeClickTargets ? 'bg-purple-600' : 'bg-gray-600'
@@ -390,7 +390,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('reduceMotion', !accessibility.reduceMotion)}
+                  onClick={(_) => handleAccessibilityUpdate( 'reduceMotion', !accessibility.reduceMotion)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.reduceMotion ? 'bg-orange-600' : 'bg-gray-600'
@@ -416,7 +416,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('simpleLanguage', !accessibility.simpleLanguage)}
+                  onClick={(_) => handleAccessibilityUpdate( 'simpleLanguage', !accessibility.simpleLanguage)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.simpleLanguage ? 'bg-orange-600' : 'bg-gray-600'
@@ -442,7 +442,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('readingGuide', !accessibility.readingGuide)}
+                  onClick={(_) => handleAccessibilityUpdate( 'readingGuide', !accessibility.readingGuide)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.readingGuide ? 'bg-orange-600' : 'bg-gray-600'
@@ -468,7 +468,7 @@ export function AccessibilitySection({
                 </div>
                 
                 <button
-                  onClick={() => handleAccessibilityUpdate('autoPauseMedia', !accessibility.autoPauseMedia)}
+                  onClick={(_) => handleAccessibilityUpdate( 'autoPauseMedia', !accessibility.autoPauseMedia)}
                   className={cn(
                     'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                     accessibility.autoPauseMedia ? 'bg-orange-600' : 'bg-gray-600'
@@ -500,7 +500,7 @@ export function AccessibilitySection({
                       min="1"
                       max="10"
                       value={accessibility.sessionTimeoutWarning}
-                      onChange={(e) => handleAccessibilityUpdate('sessionTimeoutWarning', parseInt(e.target.value))}
+                      onChange={(_e) => handleAccessibilityUpdate( 'sessionTimeoutWarning', parseInt(e.target.value))}
                       className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                     />
                     <span className="text-white font-medium w-16 text-center">

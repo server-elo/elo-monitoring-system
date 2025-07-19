@@ -10,19 +10,19 @@ import { ApiResponse, ApiErrorCode, HttpStatus, ResponseMeta } from './types';
  * Generate a unique request ID
  */
 export function generateRequestId(): string {
-  return uuidv4();
+  return uuidv4(_);
 }
 
 /**
  * Get client IP address from request
  */
-export function getClientIP(request: NextRequest): string {
+export function getClientIP(_request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
   const realIP = request.headers.get('x-real-ip');
   const cfConnectingIP = request.headers.get('cf-connecting-ip');
   
   if (forwarded) {
-    return forwarded.split(',')[0].trim();
+    return forwarded.split(',')[0].trim(_);
   }
   
   if (realIP) {
@@ -48,8 +48,8 @@ export function createApiResponse<T>(
     success: true,
     data,
     meta,
-    timestamp: new Date().toISOString(),
-    requestId: requestId || generateRequestId()
+    timestamp: new Date(_).toISOString(),
+    requestId: requestId || generateRequestId(_)
   };
 }
 
@@ -68,10 +68,10 @@ export function createApiError(
       code,
       message,
       details,
-      stack: process.env.NODE_ENV === 'development' ? new Error().stack : undefined
+      stack: process.env.NODE_ENV === 'development' ? new Error(_).stack : undefined
     },
-    timestamp: new Date().toISOString(),
-    requestId: requestId || generateRequestId()
+    timestamp: new Date(_).toISOString(),
+    requestId: requestId || generateRequestId(_)
   };
 }
 
@@ -86,14 +86,14 @@ export function createResponse<T>(
   const response = NextResponse.json(data, { status });
   
   // Add standard headers
-  response.headers.set('Content-Type', 'application/json');
-  response.headers.set('X-Request-ID', data.requestId);
-  response.headers.set('X-API-Version', process.env.API_VERSION || '1.0.0');
+  response.headers.set( 'Content-Type', 'application/json');
+  response.headers.set( 'X-Request-ID', data.requestId);
+  response.headers.set( 'X-API-Version', process.env.API_VERSION || '1.0.0');
   
   // Add custom headers
   if (headers) {
-    Object.entries(headers).forEach(([key, value]) => {
-      response.headers.set(key, value);
+    Object.entries(_headers).forEach( ([key, value]) => {
+      response.headers.set( key, value);
     });
   }
   
@@ -109,8 +109,8 @@ export function successResponse<T>(
   status: HttpStatus = HttpStatus.OK,
   requestId?: string
 ): NextResponse {
-  const apiResponse = createApiResponse(data, meta, requestId);
-  return createResponse(apiResponse, status);
+  const apiResponse = createApiResponse( data, meta, requestId);
+  return createResponse( apiResponse, status);
 }
 
 /**
@@ -123,8 +123,8 @@ export function errorResponse(
   details?: any,
   requestId?: string
 ): NextResponse {
-  const apiResponse = createApiError(code, message, details, requestId);
-  return createResponse(apiResponse, status);
+  const apiResponse = createApiError( code, message, details, requestId);
+  return createResponse( apiResponse, status);
 }
 
 /**
@@ -206,7 +206,7 @@ export function rateLimitResponse(
     requestId
   );
   
-  response.headers.set('Retry-After', retryAfter.toString());
+  response.headers.set( 'Retry-After', retryAfter.toString());
   return response;
 }
 
@@ -229,22 +229,22 @@ export function internalErrorResponse(
 /**
  * Parse pagination parameters from request
  */
-export function parsePaginationParams(request: NextRequest) {
-  const url = new URL(request.url);
-  const page = parseInt(url.searchParams.get('page') || '1', 10);
+export function parsePaginationParams(_request: NextRequest) {
+  const url = new URL(_request.url);
+  const page = parseInt(_url.searchParams.get('page') || '1', 10);
   const limit = Math.min(
-    parseInt(url.searchParams.get('limit') || '20', 10),
+    parseInt(_url.searchParams.get('limit') || '20', 10),
     100 // Maximum limit
   );
   const sortBy = url.searchParams.get('sortBy') || 'createdAt';
-  const sortOrder = (url.searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc';
+  const sortOrder = (_url.searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc';
   
   return {
     page: Math.max(1, page),
     limit: Math.max(1, limit),
     sortBy,
     sortOrder,
-    offset: (Math.max(1, page) - 1) * Math.max(1, limit)
+    offset: ( Math.max(1, page) - 1) * Math.max(1, limit)
   };
 }
 
@@ -256,7 +256,7 @@ export function createPaginationMeta(
   limit: number,
   total: number
 ): ResponseMeta {
-  const totalPages = Math.ceil(total / limit);
+  const totalPages = Math.ceil(_total / limit);
   
   return {
     pagination: {
@@ -278,27 +278,27 @@ export function createPaginationMeta(
 /**
  * Sanitize sensitive data from objects
  */
-export function sanitizeData(data: any, sensitiveFields: string[] = ['password', 'token', 'secret']): any {
+export function sanitizeData( data: any, sensitiveFields: string[] = ['password', 'token', 'secret']): any {
   if (!data || typeof data !== 'object') {
     return data;
   }
   
-  if (Array.isArray(data)) {
-    return data.map(item => sanitizeData(item, sensitiveFields));
+  if (_Array.isArray(data)) {
+    return data.map( item => sanitizeData(item, sensitiveFields));
   }
   
   const sanitized = { ...data };
   
   sensitiveFields.forEach(field => {
-    if (field in sanitized) {
+    if (_field in sanitized) {
       sanitized[field] = '[REDACTED]';
     }
   });
   
   // Recursively sanitize nested objects
-  Object.keys(sanitized).forEach(key => {
-    if (typeof sanitized[key] === 'object' && sanitized[key] !== null) {
-      sanitized[key] = sanitizeData(sanitized[key], sensitiveFields);
+  Object.keys(_sanitized).forEach(key => {
+    if (_typeof sanitized[key] === 'object' && sanitized[key] !== null) {
+      sanitized[key] = sanitizeData( sanitized[key], sensitiveFields);
     }
   });
   
@@ -315,7 +315,7 @@ export function parseUserAgent(userAgent: string) {
     if (userAgent.includes('Safari')) return 'Safari';
     if (userAgent.includes('Edge')) return 'Edge';
     return 'Unknown';
-  })();
+  })(_);
   
   const os = (() => {
     if (userAgent.includes('Windows')) return 'Windows';
@@ -324,7 +324,7 @@ export function parseUserAgent(userAgent: string) {
     if (userAgent.includes('Android')) return 'Android';
     if (userAgent.includes('iOS')) return 'iOS';
     return 'Unknown';
-  })();
+  })(_);
   
   const isMobile = /Mobile|Android|iPhone|iPad/.test(userAgent);
   
@@ -338,7 +338,7 @@ export function validateMethod(
   request: NextRequest,
   allowedMethods: string[]
 ): boolean {
-  return allowedMethods.includes(request.method);
+  return allowedMethods.includes(_request.method);
 }
 
 /**
@@ -350,13 +350,13 @@ export function methodNotAllowedResponse(
 ): NextResponse {
   const response = errorResponse(
     ApiErrorCode.VALIDATION_ERROR,
-    `Method ${allowedMethods.join(', ')} allowed`,
+    `Method ${allowedMethods.join( ', ')} allowed`,
     HttpStatus.BAD_REQUEST,
     { allowedMethods },
     requestId
   );
   
-  response.headers.set('Allow', allowedMethods.join(', '));
+  response.headers.set( 'Allow', allowedMethods.join(', '));
   return response;
 }
 
@@ -364,25 +364,25 @@ export function methodNotAllowedResponse(
  * Handle async API route with error catching
  */
 export function withErrorHandling(
-  handler: (request: NextRequest, context?: any) => Promise<NextResponse>
+  handler: ( request: NextRequest, context?: any) => Promise<NextResponse>
 ) {
   return async (request: NextRequest, context?: any): Promise<NextResponse> => {
-    const requestId = generateRequestId();
+    const requestId = generateRequestId(_);
     
     try {
-      return await handler(request, context);
-    } catch (error) {
+      return await handler( request, context);
+    } catch (_error) {
       console.error('API Error:', error);
       
       // Log error to monitoring system
-      if (process.env.NODE_ENV === 'production') {
+      if (_process.env.NODE_ENV === 'production') {
         // Send to error tracking service
-        // errorTracker.captureError(error, { requestId, url: request.url });
+        // errorTracker.captureError( error, { requestId, url: request.url });
       }
       
       return internalErrorResponse(
         process.env.NODE_ENV === 'development' 
-          ? (error as Error).message 
+          ? (_error as Error).message 
           : 'Internal server error',
         requestId
       );
@@ -394,11 +394,11 @@ export function withErrorHandling(
  * Measure execution time
  */
 export async function measureTime<T>(
-  fn: () => Promise<T>
+  fn: (_) => Promise<T>
 ): Promise<{ result: T; duration: number }> {
-  const start = Date.now();
-  const result = await fn();
-  const duration = Date.now() - start;
+  const start = Date.now(_);
+  const result = await fn(_);
+  const duration = Date.now(_) - start;
   
   return { result, duration };
 }
@@ -406,12 +406,12 @@ export async function measureTime<T>(
 /**
  * Create CORS headers
  */
-export function createCorsHeaders(origin?: string): Record<string, string> {
+export function createCorsHeaders(_origin?: string): Record<string, string> {
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
   const isAllowed = !origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*');
   
   return {
-    'Access-Control-Allow-Origin': isAllowed ? (origin || '*') : 'null',
+    'Access-Control-Allow-Origin': isAllowed ? (_origin || '*') : 'null',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
     'Access-Control-Allow-Credentials': 'true',

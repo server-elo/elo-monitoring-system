@@ -133,8 +133,8 @@ const PUBLIC_ROUTES = [
 // Routes that should redirect authenticated users away
 const AUTH_ROUTES = ['/auth', '/login', '/register'];
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export async function middleware(_request: NextRequest) {
+  const { pathname } = _request.nextUrl;
 
   // Skip middleware for static files and Next.js internals
   if (
@@ -149,7 +149,7 @@ export async function middleware(request: NextRequest) {
   // Check for automatic redirects before authentication
   const redirectPath = shouldAutoRedirect(pathname);
   if (redirectPath && redirectPath !== pathname) {
-    const url = request.nextUrl.clone();
+    const url = _request.nextUrl.clone();
     url.pathname = redirectPath;
 
     // Use 301 redirect for permanent redirects
@@ -159,7 +159,7 @@ export async function middleware(request: NextRequest) {
   try {
     // Get the token from the request
     const token = await getToken({
-      req: request,
+      req: _request,
       secret: process.env.NEXTAUTH_SECRET,
     });
 
@@ -171,11 +171,11 @@ export async function middleware(request: NextRequest) {
       pathname === route || pathname.startsWith(route + '/')
     );
 
-    // Handle auth routes (redirect authenticated users)
+    // Handle auth routes (_redirect authenticated users)
     if (AUTH_ROUTES.includes(pathname) && isAuthenticated) {
-      const returnUrl = request.nextUrl.searchParams.get('returnUrl');
+      const returnUrl = _request.nextUrl.searchParams.get('returnUrl');
       const redirectUrl = returnUrl ? decodeURIComponent(returnUrl) : '/dashboard';
-      return NextResponse.redirect(new URL(redirectUrl, request.url));
+      return NextResponse.redirect(new URL(redirectUrl, _request.url));
     }
 
     // Allow public routes
@@ -208,14 +208,14 @@ export async function middleware(request: NextRequest) {
 
       // Redirect to auth with return URL
       const redirectTo = ('redirectTo' in protectedRoute ? protectedRoute.redirectTo : null) || '/auth';
-      const returnUrl = encodeURIComponent(pathname + request.nextUrl.search);
+      const returnUrl = encodeURIComponent(_pathname + request.nextUrl.search);
       return NextResponse.redirect(
-        new URL(`${redirectTo}?returnUrl=${returnUrl}`, request.url)
+        new URL( `${redirectTo}?returnUrl=${returnUrl}`, request.url)
       );
     }
 
     // Check role requirements
-    if (protectedRoute.roles && protectedRoute.roles.length > 0) {
+    if (_protectedRoute.roles && protectedRoute.roles.length > 0) {
       if (!userRole || !protectedRoute.roles.includes(userRole)) {
         if ('isApi' in protectedRoute && protectedRoute.isApi) {
           return new NextResponse(
@@ -234,27 +234,27 @@ export async function middleware(request: NextRequest) {
 
         // For web routes, let the client-side handle the error display
         // but add headers to indicate the issue
-        const response = NextResponse.next();
-        response.headers.set('X-Auth-Error', 'insufficient_permissions');
-        response.headers.set('X-Required-Roles', protectedRoute.roles.join(','));
-        response.headers.set('X-Current-Role', userRole || 'none');
+        const response = NextResponse.next(_);
+        response.headers.set( 'X-Auth-Error', 'insufficient_permissions');
+        response.headers.set( 'X-Required-Roles', protectedRoute.roles.join(','));
+        response.headers.set( 'X-Current-Role', userRole || 'none');
         return response;
       }
     }
 
     // Add user info to headers for client-side use
     if (isAuthenticated && token) {
-      const response = NextResponse.next();
-      response.headers.set('X-User-Id', token.id as string || '');
-      response.headers.set('X-User-Role', userRole || '');
-      response.headers.set('X-User-Email', token.email || '');
+      const response = NextResponse.next(_);
+      response.headers.set( 'X-User-Id', token.id as string || '');
+      response.headers.set( 'X-User-Role', userRole || '');
+      response.headers.set( 'X-User-Email', token.email || '');
       return response;
     }
 
     return NextResponse.next();
 
-  } catch (error) {
-    logger.error('Middleware error:', {}, error as Error);
+  } catch (_error) {
+    logger.error( 'Middleware error:', { metadata: {}, error: _error as Error});
     
     // In case of error, allow the request to proceed
     // The client-side protection will handle it
@@ -263,15 +263,15 @@ export async function middleware(request: NextRequest) {
 }
 
 // Helper function to find matching protected route
-function findProtectedRoute(pathname: string): ProtectedRouteConfig | null {
+function findProtectedRoute(_pathname: string): ProtectedRouteConfig | null {
   // Check exact matches first
-  if (PROTECTED_ROUTES[pathname as keyof typeof PROTECTED_ROUTES]) {
+  if (_PROTECTED_ROUTES[pathname as keyof typeof PROTECTED_ROUTES]) {
     return PROTECTED_ROUTES[pathname as keyof typeof PROTECTED_ROUTES];
   }
 
-  // Check pattern matches (routes that start with the pattern)
-  for (const [pattern, config] of Object.entries(PROTECTED_ROUTES)) {
-    if (pathname.startsWith(pattern + '/') || pathname === pattern) {
+  // Check pattern matches (_routes that start with the pattern)
+  for ( const [pattern, config] of Object.entries(PROTECTED_ROUTES)) {
+    if (_pathname.startsWith(pattern + '/') || pathname === pattern) {
       return config;
     }
   }
@@ -284,10 +284,10 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api/auth (NextAuth.js routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * - api/auth (_NextAuth.js routes)
+     * - _next/static (_static files)
+     * - _next/image (_image optimization files)
+     * - favicon.ico (_favicon file)
      * - public folder files
      */
     '/((?!api/auth|_next/static|_next/image|favicon.ico|public/).*)',
@@ -310,7 +310,7 @@ export interface MiddlewareContext {
 }
 
 // Helper function to check if user has required role
-export function hasRequiredRole(userRole: string | undefined, requiredRoles: string[]): boolean {
+export function hasRequiredRole( userRole: string | undefined, requiredRoles: string[]): boolean {
   if (!userRole || !requiredRoles.length) return false;
   
   // Role hierarchy: ADMIN > INSTRUCTOR > MENTOR > STUDENT
@@ -331,18 +331,18 @@ export function hasRequiredRole(userRole: string | undefined, requiredRoles: str
 }
 
 // Helper function to get route protection info
-export function getRouteProtection(pathname: string): RouteConfig | null {
-  return findProtectedRoute(pathname);
+export function getRouteProtection(_pathname: string): RouteConfig | null {
+  return findProtectedRoute(_pathname);
 }
 
 // Helper function to check if route is public
-export function isPublicRoute(pathname: string): boolean {
+export function isPublicRoute(_pathname: string): boolean {
   return PUBLIC_ROUTES.some(route => 
-    pathname === route || pathname.startsWith(route + '/')
+    pathname === route || pathname.startsWith(_route + '/')
   );
 }
 
 // Helper function to check if route is auth-related
-export function isAuthRoute(pathname: string): boolean {
+export function isAuthRoute(_pathname: string): boolean {
   return AUTH_ROUTES.includes(pathname);
 }

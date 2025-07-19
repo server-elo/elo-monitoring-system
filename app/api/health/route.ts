@@ -14,64 +14,64 @@ import os from 'os';
  */
 
 interface HealthCheckResult {
-  status: 'healthy' | 'degraded' | 'unhealthy';
-  timestamp: string;
-  uptime: number;
-  version: string;
-  environment: string;
-  checks: {
-    database: ComponentHealth;
-    redis: ComponentHealth;
-    ai_services: ComponentHealth;
-    monitoring: ComponentHealth;
-    security: ComponentHealth;
-    performance: ComponentHealth;
+  status: 'healthy' | 'degraded' | 'unhealthy'; 
+  timestamp: string; 
+  uptime: number; 
+  version: string; 
+  environment: string; 
+  checks: { 
+    database: ComponentHealth; 
+    redis: ComponentHealth; 
+    ai_services: ComponentHealth; 
+    monitoring: ComponentHealth; 
+    security: ComponentHealth; 
+    performance: ComponentHealth; 
   };
-  metrics: {
-    memory: MemoryMetrics;
-    cpu: CPUMetrics;
-    requests: RequestMetrics;
-    errors: ErrorMetrics;
+  metrics: { 
+    memory: MemoryMetrics; 
+    cpu: CPUMetrics; 
+    requests: RequestMetrics; 
+    errors: ErrorMetrics; 
   };
 }
 
 interface ComponentHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: 'healthy' | 'degraded' | 'unhealthy'; 
   responseTime?: number;
-  lastCheck: string;
+  lastCheck: string; 
   message?: string;
   details?: Record<string, any>;
 }
 
 interface MemoryMetrics {
-  used: number;
-  total: number;
-  percentage: number;
-  heap: {
-    used: number;
-    total: number;
+  used: number; 
+  total: number; 
+  percentage: number; 
+  heap: { 
+    used: number; 
+    total: number; 
   };
 }
 
 interface CPUMetrics {
-  usage: number;
-  loadAverage: number[];
+  usage: number; 
+  loadAverage: number[]; 
 }
 
 interface RequestMetrics {
-  total: number;
-  perMinute: number;
-  averageResponseTime: number;
-  errorRate: number;
+  total: number; 
+  perMinute: number; 
+  averageResponseTime: number; 
+  errorRate: number; 
 }
 
 interface ErrorMetrics {
-  total: number;
-  perHour: number;
-  criticalErrors: number;
+  total: number; 
+  perHour: number; 
+  criticalErrors: number; 
   lastError?: {
-    message: string;
-    timestamp: string;
+    message: string; 
+    timestamp: string; 
   };
 }
 
@@ -95,52 +95,52 @@ class HealthChecker {
         aiServicesHealth,
         monitoringHealth,
         securityHealth,
-        performanceHealth,
+        performanceHealth
       ] = await Promise.allSettled([
-        this.checkDatabase(),
-        this.checkRedis(),
-        this.checkAIServices(),
-        this.checkMonitoring(),
-        this.checkSecurity(),
-        this.checkPerformance(),
+        this.checkDatabase() 
+        this.checkRedis() 
+        this.checkAIServices() 
+        this.checkMonitoring() 
+        this.checkSecurity() 
+        this.checkPerformance() 
       ]);
 
       const checks = {
-        database: this.getResultValue(databaseHealth),
-        redis: this.getResultValue(redisHealth),
-        ai_services: this.getResultValue(aiServicesHealth),
-        monitoring: this.getResultValue(monitoringHealth),
-        security: this.getResultValue(securityHealth),
-        performance: this.getResultValue(performanceHealth),
+        database: this.getResultValue(databaseHealth) 
+        redis: this.getResultValue(redisHealth) 
+        ai_services: this.getResultValue(aiServicesHealth) 
+        monitoring: this.getResultValue(monitoringHealth) 
+        security: this.getResultValue(securityHealth) 
+        performance: this.getResultValue(performanceHealth) 
       };
 
       const overallStatus = this.calculateOverallStatus(checks);
       const metrics = await this.collectMetrics();
 
       const result: HealthCheckResult = {
-        status: overallStatus,
-        timestamp: new Date().toISOString(),
-        uptime: Date.now() - this.startTime,
-        version: env.NEXT_PUBLIC_APP_VERSION,
-        environment: env.NODE_ENV,
-        checks,
-        metrics,
+        status: overallStatus 
+        timestamp: new Date().toISOString() ,
+        uptime: Date.now() - this.startTime 
+        version: env.NEXT_PUBLIC_APP_VERSION 
+        environment: env.NODE_ENV 
+        checks 
+        metrics 
       };
 
       // Log health check
-      logger.info('Health check completed', {
-        metadata: {
-          status: overallStatus,
-          duration: Date.now() - startTime,
-          checks: Object.keys(checks).length
-        },
+      logger.info('Health check completed', { metadata: {
+        metadata: { 
+          status: overallStatus 
+          duration: Date.now() - startTime 
+          checks: Object.keys(_checks).length 
+        } 
       });
 
       return result;
     } catch (error) {
       logger.error('Health check failed', error as Error);
       throw error;
-    }
+    });
   }
 
   /**
@@ -157,22 +157,22 @@ class HealthChecker {
       const responseTime = Date.now() - start;
       
       return {
-        status: 'healthy',
-        responseTime,
-        lastCheck: new Date().toISOString(),
-        message: 'Database connection successful',
-        details: {
-          connectionPool: 'active',
-          activeConnections: 5,
-          maxConnections: 20,
-        },
+        status: 'healthy' 
+        responseTime 
+        lastCheck: new Date().toISOString() 
+        message: 'Database connection successful' 
+        details: { 
+          connectionPool: 'active' 
+          activeConnections: 5 
+          maxConnections: 20 
+        } 
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
-        responseTime: Date.now() - start,
-        lastCheck: new Date().toISOString(),
-        message: `Database check failed: ${(error as Error).message}`,
+        status: 'unhealthy' 
+        responseTime: Date.now() - start 
+        lastCheck: new Date().toISOString() 
+        message: `Database check failed: ${(error as Error).message}` 
       };
     }
   }
@@ -190,22 +190,22 @@ class HealthChecker {
       const responseTime = Date.now() - start;
       
       return {
-        status: 'healthy',
-        responseTime,
-        lastCheck: new Date().toISOString(),
-        message: 'Redis connection successful',
-        details: {
-          memory: '50MB',
-          connectedClients: 10,
-          keyspace: 'db0:keys=1000',
-        },
+        status: 'healthy' 
+        responseTime 
+        lastCheck: new Date().toISOString() 
+        message: 'Redis connection successful' 
+        details: { 
+          memory: '50MB' 
+          connectedClients: 10 
+          keyspace: 'db0:keys=1000' 
+        } 
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
-        responseTime: Date.now() - start,
-        lastCheck: new Date().toISOString(),
-        message: `Redis check failed: ${(error as Error).message}`,
+        status: 'unhealthy' 
+        responseTime: Date.now() - start 
+        lastCheck: new Date().toISOString() 
+        message: `Redis check failed: ${(error as Error).message}` 
       };
     }
   }
@@ -223,10 +223,10 @@ class HealthChecker {
       
       if (!hasOpenAI && !hasGoogleAI) {
         return {
-          status: 'degraded',
-          responseTime: Date.now() - start,
-          lastCheck: new Date().toISOString(),
-          message: 'No AI services configured',
+          status: 'degraded' 
+          responseTime: Date.now() - start 
+          lastCheck: new Date().toISOString() 
+          message: 'No AI services configured' 
         };
       }
 
@@ -234,21 +234,21 @@ class HealthChecker {
       await new Promise(resolve => setTimeout(resolve, 20));
       
       return {
-        status: 'healthy',
-        responseTime: Date.now() - start,
-        lastCheck: new Date().toISOString(),
-        message: 'AI services available',
-        details: {
-          openai: hasOpenAI ? 'configured' : 'not configured',
-          googleAI: hasGoogleAI ? 'configured' : 'not configured',
-        },
+        status: 'healthy' 
+        responseTime: Date.now() - start 
+        lastCheck: new Date().toISOString() 
+        message: 'AI services available' 
+        details: { 
+          openai: hasOpenAI ? 'configured' : 'not configured' 
+          googleAI: hasGoogleAI ? 'configured' : 'not configured' 
+        } 
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
-        responseTime: Date.now() - start,
-        lastCheck: new Date().toISOString(),
-        message: `AI services check failed: ${(error as Error).message}`,
+        status: 'unhealthy' 
+        responseTime: Date.now() - start 
+        lastCheck: new Date().toISOString() 
+        message: `AI services check failed: ${(error as Error).message}` 
       };
     }
   }
@@ -267,22 +267,22 @@ class HealthChecker {
       const responseTime = Date.now() - start;
       
       return {
-        status: 'healthy',
-        responseTime,
-        lastCheck: new Date().toISOString(),
-        message: 'Monitoring systems operational',
-        details: {
-          logger: loggerStats,
-          errorTracking: errorStats,
-          analytics: analyticsStats,
-        },
+        status: 'healthy' 
+        responseTime 
+        lastCheck: new Date().toISOString() 
+        message: 'Monitoring systems operational' 
+        details: { 
+          logger: loggerStats 
+          errorTracking: errorStats 
+          analytics: analyticsStats 
+        } 
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
-        responseTime: Date.now() - start,
-        lastCheck: new Date().toISOString(),
-        message: `Monitoring check failed: ${(error as Error).message}`,
+        status: 'unhealthy' 
+        responseTime: Date.now() - start 
+        lastCheck: new Date().toISOString() 
+        message: `Monitoring check failed: ${(error as Error).message}` 
       };
     }
   }
@@ -300,21 +300,21 @@ class HealthChecker {
       const responseTime = Date.now() - start;
       
       return {
-        status: 'healthy',
-        responseTime,
-        lastCheck: new Date().toISOString(),
-        message: 'Security systems operational',
-        details: {
-          rateLimiting: rateLimitStats,
-          sessions: sessionStats,
-        },
+        status: 'healthy' 
+        responseTime 
+        lastCheck: new Date().toISOString() 
+        message: 'Security systems operational' 
+        details: { 
+          rateLimiting: rateLimitStats 
+          sessions: sessionStats 
+        } 
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
-        responseTime: Date.now() - start,
-        lastCheck: new Date().toISOString(),
-        message: `Security check failed: ${(error as Error).message}`,
+        status: 'unhealthy' 
+        responseTime: Date.now() - start 
+        lastCheck: new Date().toISOString() 
+        message: `Security check failed: ${(error as Error).message}` 
       };
     }
   }
@@ -336,22 +336,22 @@ class HealthChecker {
       const responseTime = Date.now() - start;
       
       return {
-        status,
-        responseTime,
-        lastCheck: new Date().toISOString(),
-        message: `Performance metrics collected (Memory: ${memoryPercentage.toFixed(1)}%)`,
-        details: {
-          memory: memoryUsage,
-          cpu: cpuUsage,
-          uptime: process.uptime(),
-        },
+        status 
+        responseTime 
+        lastCheck: new Date().toISOString() 
+        message: `Performance metrics collected (_Memory: ${memoryPercentage.toFixed(1)}%)` 
+        details: { 
+          memory: memoryUsage 
+          cpu: cpuUsage 
+          uptime: process.uptime() 
+        } 
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
-        responseTime: Date.now() - start,
-        lastCheck: new Date().toISOString(),
-        message: `Performance check failed: ${(error as Error).message}`,
+        status: 'unhealthy' 
+        responseTime: Date.now() - start 
+        lastCheck: new Date().toISOString() 
+        message: `Performance check failed: ${(error as Error).message}` 
       };
     }
   }
@@ -364,33 +364,33 @@ class HealthChecker {
     const cpuUsage = process.cpuUsage();
     
     return {
-      memory: {
-        used: memoryUsage.heapUsed,
-        total: memoryUsage.heapTotal,
-        percentage: (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100,
-        heap: {
-          used: memoryUsage.heapUsed,
-          total: memoryUsage.heapTotal,
-        },
-      },
-      cpu: {
+      memory: { 
+        used: memoryUsage.heapUsed 
+        total: memoryUsage.heapTotal 
+        percentage: (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100 
+        heap: { 
+          used: memoryUsage.heapUsed 
+          total: memoryUsage.heapTotal 
+        } 
+      } 
+      cpu: { 
         usage: (cpuUsage.user + cpuUsage.system) / 1000000, // Convert to seconds
-        loadAverage: process.platform !== 'win32' ? os.loadavg() : [0, 0, 0],
-      },
-      requests: {
-        total: this.requestCount,
-        perMinute: this.calculateRequestsPerMinute(),
-        averageResponseTime: this.responseTimeSum / Math.max(this.requestCount, 1),
-        errorRate: (this.errorCount / Math.max(this.requestCount, 1)) * 100,
-      },
-      errors: {
-        total: this.errorCount,
-        perHour: this.calculateErrorsPerHour(),
-        criticalErrors: this.lastErrors.filter(e => 
+        loadAverage: process.platform !== 'win32' ? os.loadavg() : [0, 0, 0] 
+      } 
+      requests: { 
+        total: this.requestCount 
+        perMinute: this.calculateRequestsPerMinute() 
+        averageResponseTime: this.responseTimeSum / Math.max(this.requestCount, 1) 
+        errorRate: (this.errorCount / Math.max(this.requestCount, 1)) * 100 
+      } 
+      errors: { 
+        total: this.errorCount 
+        perHour: this.calculateErrorsPerHour() 
+        criticalErrors: this.lastErrors.filter(e =>  
           Date.now() - new Date(e.timestamp).getTime() < 60 * 60 * 1000
-        ).length,
-        lastError: this.lastErrors[this.lastErrors.length - 1],
-      },
+       ).length 
+        lastError: this.lastErrors[this.lastErrors.length - 1] 
+      } 
     };
   }
 
@@ -398,7 +398,7 @@ class HealthChecker {
    * Calculate overall status from component checks
    */
   private calculateOverallStatus(checks: Record<string, ComponentHealth>): 'healthy' | 'degraded' | 'unhealthy' {
-    const statuses = Object.values(checks).map(check => check.status);
+    const statuses = Object.values(_checks).map(check => check.status);
     
     if (statuses.includes('unhealthy')) {
       return 'unhealthy';
@@ -419,9 +419,9 @@ class HealthChecker {
       return result.value;
     } else {
       return {
-        status: 'unhealthy',
-        lastCheck: new Date().toISOString(),
-        message: `Check failed: ${result.reason}`,
+        status: 'unhealthy' 
+        lastCheck: new Date().toISOString() 
+        message: `Check failed: ${result.reason}` 
       };
     }
   }
@@ -452,8 +452,8 @@ class HealthChecker {
     if (isError) {
       this.errorCount++;
       this.lastErrors.push({
-        message: 'Request error',
-        timestamp: new Date().toISOString(),
+        message: 'Request error' 
+        timestamp: new Date().toISOString() ,
       });
       
       // Keep only last 100 errors
@@ -464,13 +464,13 @@ class HealthChecker {
   }
 }
 
-// Create singleton instance (not exported to avoid Next.js API route conflicts)
+// Create singleton instance (_not exported to avoid Next.js API route conflicts)
 const healthChecker = new HealthChecker();
 
 /**
  * Health check endpoint
  */
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   const start = Date.now();
   
   try {
@@ -485,12 +485,12 @@ export async function GET(_request: NextRequest) {
                       healthResult.status === 'degraded' ? 200 : 503;
     
     return NextResponse.json(healthResult, { 
-      status: statusCode,
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'X-Health-Status': healthResult.status,
-        'X-Response-Time': responseTime.toString(),
-      },
+      status: statusCode 
+      headers: { 
+        'Cache-Control': 'no-cache, no-store, must-revalidate' 
+        'X-Health-Status': healthResult.status 
+        'X-Response-Time': responseTime.toString() 
+      } 
     });
   } catch (error) {
     const responseTime = Date.now() - start;
@@ -501,16 +501,16 @@ export async function GET(_request: NextRequest) {
     logger.error('Health check endpoint failed', error as Error);
     
     return NextResponse.json({
-      status: 'unhealthy',
-      timestamp: new Date().toISOString(),
-      error: 'Health check failed',
-      message: (error as Error).message,
+      status: 'unhealthy' 
+      timestamp: new Date().toISOString() ,
+      error: 'Health check failed' 
+      message: (error as Error).message 
     }, { 
-      status: 503,
-      headers: {
-        'X-Health-Status': 'unhealthy',
-        'X-Response-Time': responseTime.toString(),
-      },
+      status: 503 
+      headers: { 
+        'X-Health-Status': 'unhealthy' 
+        'X-Response-Time': responseTime.toString() 
+      } 
     });
   }
 }

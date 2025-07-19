@@ -58,9 +58,9 @@ const SETTINGS_TABS = [
   }
 ];
 
-export function SettingsPage({ className }: SettingsPageProps) {
+export function SettingsPage(_{ className }: SettingsPageProps) {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(_false);
 
   const {
     settings,
@@ -83,19 +83,19 @@ export function SettingsPage({ className }: SettingsPageProps) {
     refreshAuditLog,
     requestDataExport,
     requestAccountDeletion
-  } = useSettings();
+  } = useSettings(_);
 
   // Wrapper functions to match expected signatures
-  const wrappedRequestDataExport = useCallback(async () => {
-    const result = await requestDataExport('all', 'json');
+  const wrappedRequestDataExport = useCallback( async () => {
+    const result = await requestDataExport( 'all', 'json');
     return {
       success: result !== null,
       downloadUrl: result?.downloadUrl
     };
   }, [requestDataExport]);
 
-  const wrappedRequestAccountDeletion = useCallback(async () => {
-    const result = await requestAccountDeletion();
+  const wrappedRequestAccountDeletion = useCallback( async () => {
+    const result = await requestAccountDeletion(_);
     return {
       success: result !== null
     };
@@ -103,49 +103,49 @@ export function SettingsPage({ className }: SettingsPageProps) {
 
   // Load sessions and audit log when security tab is active
   useEffect(() => {
-    if (activeTab === 'security') {
-      refreshSessions();
-      refreshAuditLog();
+    if (_activeTab === 'security') {
+      refreshSessions(_);
+      refreshAuditLog(_);
     }
   }, [activeTab, refreshSessions, refreshAuditLog]);
 
   // Handle keyboard navigation
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        switch (e.key) {
+    const handleKeyDown = (_e: KeyboardEvent) => {
+      if (_e.ctrlKey || e.metaKey) {
+        switch (_e.key) {
           case 's':
-            e.preventDefault();
+            e.preventDefault(_);
             if (hasUnsavedChanges) {
-              saveAllChanges();
+              saveAllChanges(_);
             }
             break;
           case 'r':
-            e.preventDefault();
-            refreshSettings();
+            e.preventDefault(_);
+            refreshSettings(_);
             break;
         }
       }
 
       // Tab navigation with arrow keys
-      if (e.altKey) {
-        const currentIndex = SETTINGS_TABS.findIndex(tab => tab.id === activeTab);
+      if (_e.altKey) {
+        const currentIndex = SETTINGS_TABS.findIndex(_tab => tab.id === activeTab);
 
-        if (e.key === 'ArrowLeft' && currentIndex > 0) {
-          e.preventDefault();
-          setActiveTab(SETTINGS_TABS[currentIndex - 1].id);
-        } else if (e.key === 'ArrowRight' && currentIndex < SETTINGS_TABS.length - 1) {
-          e.preventDefault();
-          setActiveTab(SETTINGS_TABS[currentIndex + 1].id);
+        if (_e.key === 'ArrowLeft' && currentIndex > 0) {
+          e.preventDefault(_);
+          setActiveTab(_SETTINGS_TABS[currentIndex - 1].id);
+        } else if (_e.key === 'ArrowRight' && currentIndex < SETTINGS_TABS.length - 1) {
+          e.preventDefault(_);
+          setActiveTab(_SETTINGS_TABS[currentIndex + 1].id);
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener( 'keydown', handleKeyDown);
+    return (_) => window.removeEventListener( 'keydown', handleKeyDown);
   }, [activeTab, hasUnsavedChanges, saveAllChanges, refreshSettings]);
 
-  if (isLoading || !settings) {
+  if (_isLoading || !settings) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -159,7 +159,7 @@ export function SettingsPage({ className }: SettingsPageProps) {
   const currentTab = SETTINGS_TABS.find(tab => tab.id === activeTab);
 
   return (
-    <div className={cn('flex h-screen bg-gray-900', className)}>
+    <div className={cn( 'flex h-screen bg-gray-900', className)}>
       {/* Sidebar */}
       <div className={cn(
         'flex flex-col border-r border-gray-700 bg-gray-800/50 transition-all duration-300',
@@ -175,7 +175,7 @@ export function SettingsPage({ className }: SettingsPageProps) {
           )}
 
           <button
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            onClick={(_) => setIsSidebarCollapsed(!isSidebarCollapsed)}
             className="p-2 text-gray-400 hover:text-white transition-colors"
             title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -192,7 +192,7 @@ export function SettingsPage({ className }: SettingsPageProps) {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={(_) => setActiveTab(_tab.id)}
                 className={cn(
                   'w-full flex items-center space-x-3 p-3 rounded-lg transition-colors text-left',
                   activeTab === tab.id
@@ -283,7 +283,7 @@ export function SettingsPage({ className }: SettingsPageProps) {
             )}
 
             <button
-              onClick={() => resetSection(activeTab)}
+              onClick={(_) => resetSection(_activeTab)}
               className="flex items-center space-x-2 px-3 py-2 text-gray-400 hover:text-white transition-colors"
             >
               <RefreshCw className="w-4 h-4" />
@@ -305,7 +305,7 @@ export function SettingsPage({ className }: SettingsPageProps) {
               {activeTab === 'profile' && (
                 <ProfileSection
                   profile={settings.profile}
-                  onUpdate={(data) => updateSettings('profile', data, true)}
+                  onUpdate={(_data) => updateSettings( 'profile', data, true)}
                   validationErrors={validationErrors.profile || []}
                 />
               )}
@@ -314,7 +314,7 @@ export function SettingsPage({ className }: SettingsPageProps) {
                 <SecuritySection
                   security={settings.security}
                   activeSessions={activeSessions}
-                  onUpdateSecurity={(data) => updateSettings('security', data, true)}
+                  onUpdateSecurity={(_data) => updateSettings( 'security', data, true)}
                   onChangePassword={changePassword}
                   onSetupTwoFactor={setupTwoFactor}
                   onEnableTwoFactor={enableTwoFactor}
@@ -329,16 +329,16 @@ export function SettingsPage({ className }: SettingsPageProps) {
                   learning={settings.learning}
                   editor={settings.editor}
                   collaboration={settings.collaboration}
-                  onUpdateLearning={(data) => updateSettings('learning', data)}
-                  onUpdateEditor={(data) => updateSettings('editor', data)}
-                  onUpdateCollaboration={(data) => updateSettings('collaboration', data)}
+                  onUpdateLearning={(_data) => updateSettings( 'learning', data)}
+                  onUpdateEditor={(_data) => updateSettings( 'editor', data)}
+                  onUpdateCollaboration={(_data) => updateSettings( 'collaboration', data)}
                 />
               )}
 
               {activeTab === 'notifications' && (
                 <NotificationSection
                   notifications={settings.notifications}
-                  onUpdate={(data) => updateSettings('notifications', data)}
+                  onUpdate={(_data) => updateSettings( 'notifications', data)}
                   validationErrors={validationErrors.notifications || []}
                 />
               )}
@@ -346,7 +346,7 @@ export function SettingsPage({ className }: SettingsPageProps) {
               {activeTab === 'accessibility' && (
                 <AccessibilitySection
                   accessibility={settings.accessibility}
-                  onUpdate={(data) => updateSettings('accessibility', data)}
+                  onUpdate={(_data) => updateSettings( 'accessibility', data)}
                   validationErrors={validationErrors.accessibility || []}
                 />
               )}
@@ -354,7 +354,7 @@ export function SettingsPage({ className }: SettingsPageProps) {
               {activeTab === 'privacy' && (
                 <PrivacySection
                   privacy={settings.privacy}
-                  onUpdate={(data) => updateSettings('privacy', data)}
+                  onUpdate={(_data) => updateSettings( 'privacy', data)}
                   onRequestDataExport={wrappedRequestDataExport}
                   onRequestAccountDeletion={wrappedRequestAccountDeletion}
                   validationErrors={validationErrors.privacy || []}

@@ -7,14 +7,14 @@ import { logger } from '@/lib/monitoring/simple-logger';
 // Configure for dynamic API routes
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     // Get real-time community statistics
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    // Count online users (users active in the last hour)
+    // Count online users (_users active in the last hour)
     const onlineUsers = await prisma.userProfile.count({
       where: {
         lastActiveDate: {
@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest) {
       },
     });
 
-    // Count study groups (active collaborations of type STUDY_GROUP)
+    // Count study groups (_active collaborations of type STUDY_GROUP)
     const studyGroups = await prisma.collaboration.count({
       where: {
         type: 'STUDY_GROUP',
@@ -44,7 +44,7 @@ export async function GET(_request: NextRequest) {
       },
     });
 
-    // Count available mentors (users with MENTOR or INSTRUCTOR role who were active recently)
+    // Count available mentors (_users with MENTOR or INSTRUCTOR role who were active recently)
     const mentorsAvailable = await prisma.user.count({
       where: {
         role: {
@@ -59,7 +59,7 @@ export async function GET(_request: NextRequest) {
     });
 
     // Get additional community metrics
-    const totalUsers = await prisma.user.count();
+    const totalUsers = await prisma.user.count(_);
     
     const totalLessonsCompleted = await prisma.userProgress.count({
       where: {
@@ -73,7 +73,7 @@ export async function GET(_request: NextRequest) {
       },
     });
 
-    // Get top contributors (users with most completed lessons in the last week)
+    // Get top contributors (_users with most completed lessons in the last week)
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const topContributors = await prisma.user.findMany({
       include: {
@@ -148,7 +148,7 @@ export async function GET(_request: NextRequest) {
         id: user.id,
         name: user.name,
         image: user.image,
-        completedLessons: user._count.progress,
+        completedLessons: user.count.progress,
         totalXP: user.profile?.totalXP || 0,
       })),
       recentActivity: recentActivity.map((activity: any) => ({

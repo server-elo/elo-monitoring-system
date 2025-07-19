@@ -14,49 +14,49 @@ interface ContentManagementProps {
 }
 
 interface ContentTableProps {
-  content: AdminContent[];
-  selectedContent: Set<string>;
-  onSelectContent: (contentId: string) => void;
-  onSelectAll: (selected: boolean) => void;
+  content: AdminContent[]; 
+  selectedContent: Set<string>; 
+  onSelectContent: (_contentId: string) => void; 
+  onSelectAll: (_selected: boolean) => void; 
   onContentAction: (contentId: string, action: string) => void;
   loading?: boolean;
 }
 
 function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, onContentAction, loading }: ContentTableProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const getStatusColor = (_status: string) => {
+    switch (_status) {
       case 'published': return 'text-green-400 bg-green-500/10';
       case 'pending': return 'text-yellow-400 bg-yellow-500/10';
       case 'draft': return 'text-gray-400 bg-gray-500/10';
       case 'archived': return 'text-red-400 bg-red-500/10';
-      default: return 'text-gray-400 bg-gray-500/10';
+      default: return 'text-gray-400 bg-gray-500/10'; 
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
+  const getTypeIcon = (_type: string) => {
+    switch (_type) {
       case 'lesson': return BookOpen;
       case 'tutorial': return PlayCircle;
       case 'module': return Layers;
       case 'quiz': return FileQuestion;
-      default: return FileText;
+      default: return FileText; 
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
+  const getDifficultyColor = (_difficulty: string) => {
+    switch (_difficulty) {
       case 'beginner': return 'text-green-400';
       case 'intermediate': return 'text-yellow-400';
       case 'advanced': return 'text-red-400';
-      default: return 'text-gray-400';
+      default: return 'text-gray-400'; 
     }
   };
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+      year: 'numeric' 
+      month: 'short' 
+      day: 'numeric' 
     }).format(date);
   };
 
@@ -76,11 +76,11 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
                 <div className="w-20 h-6 bg-gray-600 animate-pulse rounded" />
                 <div className="w-16 h-6 bg-gray-600 animate-pulse rounded" />
               </div>
-            ))}
+           ))}
           </div>
         </div>
       </Card>
-    );
+   );
   }
 
   return (
@@ -93,7 +93,7 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
                 <input
                   type="checkbox"
                   checked={selectedContent.size === content.length && content.length > 0}
-                  onChange={(e) => onSelectAll(e.target.checked)}
+                  onChange={(_e) => onSelectAll(_e.target.checked)}
                   className="rounded border-white/20 bg-white/10 text-blue-500 focus:ring-blue-500"
                 />
               </th>
@@ -108,7 +108,7 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
           </thead>
           <tbody className="divide-y divide-white/10">
             {content.map((item) => {
-              const TypeIcon = getTypeIcon(item.type);
+              const TypeIcon = getTypeIcon(_item.type);
               
               return (
                 <motion.tr
@@ -120,8 +120,8 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
                   <td className="px-6 py-4">
                     <input
                       type="checkbox"
-                      checked={selectedContent.has(item.id)}
-                      onChange={() => onSelectContent(item.id)}
+                      checked={selectedContent.has(_item.id)}
+                      onChange={(() => onSelectContent(_item.id)}
                       className="rounded border-white/20 bg-white/10 text-blue-500 focus:ring-blue-500"
                     />
                   </td>
@@ -132,7 +132,7 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
                         <div className="font-medium text-white">{item.title}</div>
                         <div className="text-sm text-gray-400 max-w-xs truncate">{item.description}</div>
                         <div className="flex items-center space-x-2 mt-1">
-                          <span className={cn('text-xs', getDifficultyColor(item.difficulty))}>
+                          <span className={cn("'text-xs', getDifficultyColor(item.difficulty))}>
                             {item.difficulty}
                           </span>
                           <span className="text-xs text-gray-500">•</span>
@@ -145,13 +145,13 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
                                   <span key={tag} className="text-xs bg-blue-500/20 text-blue-400 px-1 rounded">
                                     {tag}
                                   </span>
-                                ))}
+                               ))}
                                 {item.tags.length > 2 && (
                                   <span className="text-xs text-gray-400">+{item.tags.length - 2}</span>
-                                )}
+                               )}
                               </div>
                             </>
-                          )}
+                         )}
                         </div>
                       </div>
                     </div>
@@ -163,9 +163,9 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
                   </td>
                   <td className="px-6 py-4">
                     <span className={cn(
-                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                      getStatusColor(item.status)
-                    )}>
+                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium' 
+                      getStatusColor(_item.status)
+                   )}>
                       {item.status === 'published' && <CheckCircle className="w-3 h-3 mr-1" />}
                       {item.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
                       {item.status === 'archived' && <Archive className="w-3 h-3 mr-1" />}
@@ -193,42 +193,42 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
                           <Star className="w-3 h-3 text-yellow-400" />
                           <span className="text-xs text-gray-400">{item.averageRating.toFixed(1)}</span>
                         </div>
-                      )}
+                     )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-300">
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-3 h-3" />
-                        <span>{formatDate(item.updatedAt)}</span>
+                        <span>{formatDate(_item.updatedAt)}</span>
                       </div>
                       {item.publishedAt && (
                         <div className="text-xs text-gray-400 mt-1">
-                          Published {formatDate(item.publishedAt)}
+                          Published {formatDate(_item.publishedAt)}
                         </div>
-                      )}
+                     )}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end space-x-2">
                       <Button
-                        onClick={() => onContentAction(item.id, 'view')}
+                        onClick={(() => onContentAction(item.id, 'view')}
                         variant="ghost"
                         size="sm"
                         className="text-gray-400 hover:text-white"
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      {adminAuth.hasPermission(ADMIN_PERMISSIONS.CONTENT_WRITE) && (
+                      {adminAuth.hasPermission(_ADMIN_PERMISSIONS.CONTENT_WRITE) && (
                         <Button
-                          onClick={() => onContentAction(item.id, 'edit')}
+                          onClick={(() => onContentAction(item.id, 'edit')}
                           variant="ghost"
                           size="sm"
                           className="text-gray-400 hover:text-white"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
-                      )}
+                     )}
                       <div className="relative">
                         <Button
                           variant="ghost"
@@ -241,29 +241,29 @@ function ContentTable({ content, selectedContent, onSelectContent, onSelectAll, 
                     </div>
                   </td>
                 </motion.tr>
-              );
+             );
             })}
           </tbody>
         </table>
       </div>
     </Card>
-  );
+ );
 }
 
-export function ContentManagement({ className }: ContentManagementProps) {
+export function ContentManagement(_{ className }: ContentManagementProps) {
   const [content, setContent] = useState<AdminContent[]>([]);
-  const [selectedContent, setSelectedContent] = useState<Set<string>>(new Set());
+  const [selectedContent, setSelectedContent] = useState<Set<string>>(_new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(_true);
 
   useEffect(() => {
     loadContent();
   }, [searchQuery, statusFilter, typeFilter]);
 
   const loadContent = async () => {
-    setLoading(true);
+    setLoading(_true);
     
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -271,88 +271,88 @@ export function ContentManagement({ className }: ContentManagementProps) {
     // Mock content data
     const mockContent: AdminContent[] = [
       {
-        id: '1',
-        title: 'Introduction to Solidity',
-        type: 'lesson',
-        status: 'published',
-        authorId: 'author1',
-        authorName: 'Jane Smith',
-        createdAt: new Date('2023-01-15'),
-        updatedAt: new Date('2024-01-10'),
-        publishedAt: new Date('2023-02-01'),
-        version: 3,
-        completionRate: 87,
-        averageRating: 4.5,
-        totalViews: 1250,
-        totalCompletions: 1087,
-        difficulty: 'beginner',
-        estimatedDuration: 45,
-        tags: ['solidity', 'basics', 'blockchain'],
-        description: 'Learn the fundamentals of Solidity programming language',
-        isDeleted: false
-      },
+        id: '1' 
+        title: 'Introduction to Solidity' 
+        type: 'lesson' 
+        status: 'published' 
+        authorId: 'author1' 
+        authorName: 'Jane Smith' 
+        createdAt: new Date('2023-01-15') 
+        updatedAt: new Date('2024-01-10') 
+        publishedAt: new Date('2023-02-01') 
+        version: 3 
+        completionRate: 87 
+        averageRating: 4.5 
+        totalViews: 1250 
+        totalCompletions: 1087 
+        difficulty: 'beginner' 
+        estimatedDuration: 45 
+        tags: ['solidity', 'basics', 'blockchain'] 
+        description: 'Learn the fundamentals of Solidity programming language' 
+        isDeleted: false 
+      } 
       {
-        id: '2',
-        title: 'Smart Contract Security',
-        type: 'tutorial',
-        status: 'pending',
-        authorId: 'author2',
-        authorName: 'Bob Wilson',
-        createdAt: new Date('2023-03-20'),
-        updatedAt: new Date('2024-01-08'),
-        version: 1,
-        completionRate: 0,
-        averageRating: 0,
-        totalViews: 0,
-        totalCompletions: 0,
-        difficulty: 'advanced',
-        estimatedDuration: 90,
-        tags: ['security', 'best-practices', 'auditing'],
-        description: 'Advanced security patterns and vulnerability prevention',
-        isDeleted: false
-      },
+        id: '2' 
+        title: 'Smart Contract Security' 
+        type: 'tutorial' 
+        status: 'pending' 
+        authorId: 'author2' 
+        authorName: 'Bob Wilson' 
+        createdAt: new Date('2023-03-20') 
+        updatedAt: new Date('2024-01-08') 
+        version: 1 
+        completionRate: 0 
+        averageRating: 0 
+        totalViews: 0 
+        totalCompletions: 0 
+        difficulty: 'advanced' 
+        estimatedDuration: 90 
+        tags: ['security', 'best-practices', 'auditing'] 
+        description: 'Advanced security patterns and vulnerability prevention' 
+        isDeleted: false 
+      } 
       {
-        id: '3',
-        title: 'DeFi Protocols Quiz',
-        type: 'quiz',
-        status: 'published',
-        authorId: 'author3',
-        authorName: 'Alice Johnson',
-        createdAt: new Date('2023-05-10'),
-        updatedAt: new Date('2024-01-05'),
-        publishedAt: new Date('2023-06-01'),
-        version: 2,
-        completionRate: 72,
-        averageRating: 4.2,
-        totalViews: 890,
-        totalCompletions: 641,
-        difficulty: 'intermediate',
-        estimatedDuration: 30,
-        tags: ['defi', 'quiz', 'protocols'],
-        description: 'Test your knowledge of DeFi protocols and mechanisms',
-        isDeleted: false
+        id: '3' 
+        title: 'DeFi Protocols Quiz' 
+        type: 'quiz' 
+        status: 'published' 
+        authorId: 'author3' 
+        authorName: 'Alice Johnson' 
+        createdAt: new Date('2023-05-10') 
+        updatedAt: new Date('2024-01-05') 
+        publishedAt: new Date('2023-06-01') 
+        version: 2 
+        completionRate: 72 
+        averageRating: 4.2 
+        totalViews: 890 
+        totalCompletions: 641 
+        difficulty: 'intermediate' 
+        estimatedDuration: 30 
+        tags: ['defi', 'quiz', 'protocols'] 
+        description: 'Test your knowledge of DeFi protocols and mechanisms' 
+        isDeleted: false 
       }
     ];
 
-    setContent(mockContent);
-    setLoading(false);
+    setContent(_mockContent);
+    setLoading(_false);
   };
 
-  const handleSelectContent = (contentId: string) => {
-    const newSelected = new Set(selectedContent);
-    if (newSelected.has(contentId)) {
-      newSelected.delete(contentId);
+  const handleSelectContent = (_contentId: string) => {
+    const newSelected = new Set(_selectedContent);
+    if (_newSelected.has(contentId)) {
+      newSelected.delete(_contentId);
     } else {
-      newSelected.add(contentId);
+      newSelected.add(_contentId);
     }
-    setSelectedContent(newSelected);
+    setSelectedContent(_newSelected);
   };
 
-  const handleSelectAll = (selected: boolean) => {
+  const handleSelectAll = (_selected: boolean) => {
     if (selected) {
-      setSelectedContent(new Set(content.map(item => item.id)));
+      setSelectedContent(_new Set(content.map(item => item.id)));
     } else {
-      setSelectedContent(new Set());
+      setSelectedContent(_new Set());
     }
   };
 
@@ -361,13 +361,13 @@ export function ContentManagement({ className }: ContentManagementProps) {
     // Implement content actions
   };
 
-  const handleBulkAction = (action: string) => {
+  const handleBulkAction = (_action: string) => {
     console.log(`Bulk action ${action} on content:`, Array.from(selectedContent));
     // Implement bulk actions
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("'space-y-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -383,12 +383,12 @@ export function ContentManagement({ className }: ContentManagementProps) {
             <Upload className="w-4 h-4 mr-2" />
             Import
           </Button>
-          {adminAuth.hasPermission(ADMIN_PERMISSIONS.CONTENT_WRITE) && (
+          {adminAuth.hasPermission(_ADMIN_PERMISSIONS.CONTENT_WRITE) && (
             <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
               <Plus className="w-4 h-4 mr-2" />
               Create Content
             </Button>
-          )}
+         )}
         </div>
       </div>
 
@@ -401,14 +401,14 @@ export function ContentManagement({ className }: ContentManagementProps) {
               type="text"
               placeholder="Search content by title, author, or tags..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(_e) => setSearchQuery(_e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"
             />
           </div>
           
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(_e) => setStatusFilter(_e.target.value)}
             className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400"
           >
             <option value="all">All Status</option>
@@ -420,7 +420,7 @@ export function ContentManagement({ className }: ContentManagementProps) {
 
           <select
             value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
+            onChange={(_e) => setTypeFilter(_e.target.value)}
             className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-400"
           >
             <option value="all">All Types</option>
@@ -444,7 +444,7 @@ export function ContentManagement({ className }: ContentManagementProps) {
               </span>
               <div className="flex space-x-2">
                 <Button
-                  onClick={() => handleBulkAction('publish')}
+                  onClick={(() => handleBulkAction('publish')}
                   size="sm"
                   variant="outline"
                   className="border-green-400/30 text-green-400 hover:bg-green-500/10"
@@ -453,7 +453,7 @@ export function ContentManagement({ className }: ContentManagementProps) {
                   Publish
                 </Button>
                 <Button
-                  onClick={() => handleBulkAction('archive')}
+                  onClick={(() => handleBulkAction('archive')}
                   size="sm"
                   variant="outline"
                   className="border-yellow-400/30 text-yellow-400 hover:bg-yellow-500/10"
@@ -462,7 +462,7 @@ export function ContentManagement({ className }: ContentManagementProps) {
                   Archive
                 </Button>
                 <Button
-                  onClick={() => handleBulkAction('delete')}
+                  onClick={(() => handleBulkAction('delete')}
                   size="sm"
                   variant="outline"
                   className="border-red-400/30 text-red-400 hover:bg-red-500/10"
@@ -473,7 +473,7 @@ export function ContentManagement({ className }: ContentManagementProps) {
               </div>
             </div>
           </motion.div>
-        )}
+       )}
       </Card>
 
       {/* Content Table */}
@@ -486,5 +486,5 @@ export function ContentManagement({ className }: ContentManagementProps) {
         loading={loading}
       />
     </div>
-  );
+ );
 }

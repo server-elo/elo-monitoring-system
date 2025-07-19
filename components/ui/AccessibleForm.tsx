@@ -10,7 +10,7 @@ interface AccessibleFieldProps {
   label: string;
   type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'search';
   value: string;
-  onChange: (value: string) => void;
+  onChange: (_value: string) => void;
   error?: string;
   required?: boolean;
   disabled?: boolean;
@@ -45,11 +45,11 @@ export const AccessibleField: React.FC<AccessibleFieldProps> = ({
   pattern,
   'aria-describedby': ariaDescribedBy,
 }) => {
-  const fieldId = useId();
-  const errorId = useId();
-  const descriptionId = useId();
-  const [showPassword, setShowPassword] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const fieldId = useId(_);
+  const errorId = useId(_);
+  const descriptionId = useId(_);
+  const [showPassword, setShowPassword] = useState(_false);
+  const inputRef = useRef<HTMLInputElement>(_null);
 
   const inputType = type === 'password' && showPassword ? 'text' : type;
 
@@ -60,7 +60,7 @@ export const AccessibleField: React.FC<AccessibleFieldProps> = ({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn( 'space-y-2', className)}>
       {/* Label */}
       <label 
         htmlFor={fieldId}
@@ -104,7 +104,7 @@ export const AccessibleField: React.FC<AccessibleFieldProps> = ({
           id={fieldId}
           type={inputType}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(_e) => onChange(_e.target.value)}
           required={required}
           disabled={disabled}
           placeholder={placeholder}
@@ -129,7 +129,7 @@ export const AccessibleField: React.FC<AccessibleFieldProps> = ({
         {showPasswordToggle && type === 'password' && (
           <button
             type="button"
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={(_) => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
             tabIndex={0}
@@ -168,7 +168,7 @@ export const AccessibleField: React.FC<AccessibleFieldProps> = ({
 // Accessible Form Component
 interface AccessibleFormProps {
   children: React.ReactNode;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (_e: React.FormEvent) => void;
   title?: string;
   description?: string;
   className?: string;
@@ -183,16 +183,16 @@ export const AccessibleForm: React.FC<AccessibleFormProps> = ({
   className = '',
   noValidate = true,
 }) => {
-  const formId = useId();
-  const titleId = useId();
-  const descriptionId = useId();
+  const formId = useId(_);
+  const titleId = useId(_);
+  const descriptionId = useId(_);
 
   return (
     <form
       id={formId}
       onSubmit={onSubmit}
       noValidate={noValidate}
-      className={cn('space-y-6', className)}
+      className={cn( 'space-y-6', className)}
       aria-labelledby={title ? titleId : undefined}
       aria-describedby={description ? descriptionId : undefined}
     >
@@ -248,7 +248,7 @@ export const FormErrorSummary: React.FC<FormErrorSummaryProps> = ({
   errors,
   className = '',
 }) => {
-  if (errors.length === 0) return null;
+  if (_errors.length === 0) return null;
 
   return (
     <motion.div
@@ -266,7 +266,7 @@ export const FormErrorSummary: React.FC<FormErrorSummaryProps> = ({
         Please correct the following errors:
       </h3>
       <ul className="space-y-1">
-        {errors.map((error, index) => (
+        {errors.map( (error, index) => (
           <li key={index} className="text-sm text-red-300">
             <strong>{error.field}:</strong> {error.message}
           </li>
@@ -309,7 +309,7 @@ export const AccessibleSubmitButton: React.FC<AccessibleSubmitButtonProps> = ({
       className={cn(
         baseClasses,
         variantClasses[variant],
-        (disabled || loading) && 'opacity-50 cursor-not-allowed',
+        (_disabled || loading) && 'opacity-50 cursor-not-allowed',
         className
       )}
     >

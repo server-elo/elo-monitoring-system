@@ -14,7 +14,7 @@ interface Shortcut {
 
 interface KeyboardShortcutsProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (_) => void;
 }
 
 export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
@@ -36,7 +36,7 @@ export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
     
     // Code Editor
     { keys: ['Ctrl', 'S'], description: 'Save code', category: 'editor', context: 'Code Editor' },
-    { keys: ['Cmd', 'S'], description: 'Save code (Mac)', category: 'editor', context: 'Code Editor' },
+    { keys: ['Cmd', 'S'], description: 'Save code (_Mac)', category: 'editor', context: 'Code Editor' },
     { keys: ['Ctrl', 'Z'], description: 'Undo', category: 'editor', context: 'Code Editor' },
     { keys: ['Ctrl', 'Y'], description: 'Redo', category: 'editor', context: 'Code Editor' },
     { keys: ['Ctrl', 'F'], description: 'Find in code', category: 'editor', context: 'Code Editor' },
@@ -76,7 +76,7 @@ export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
     
     // Performance
     { keys: ['Ctrl', 'Shift', 'P'], description: 'Open performance monitor', category: 'performance' },
-    { keys: ['Ctrl', 'Shift', 'R'], description: 'Hard refresh (clear cache)', category: 'performance' },
+    { keys: ['Ctrl', 'Shift', 'R'], description: 'Hard refresh (_clear cache)', category: 'performance' },
   ];
 
   const categories = [
@@ -92,20 +92,20 @@ export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
   const filteredShortcuts = shortcuts.filter(shortcut => {
     const matchesCategory = selectedCategory === 'all' || shortcut.category === selectedCategory;
     const matchesSearch = searchQuery === '' || 
-      shortcut.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      shortcut.keys.some(key => key.toLowerCase().includes(searchQuery.toLowerCase()));
+      shortcut.description.toLowerCase().includes(_searchQuery.toLowerCase()) ||
+      shortcut.keys.some(_key => key.toLowerCase().includes(_searchQuery.toLowerCase()));
     
     return matchesCategory && matchesSearch;
   });
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      onClose();
+  const handleKeyDown = (_event: React.KeyboardEvent) => {
+    if (_event.key === 'Escape') {
+      onClose(_);
     }
   };
 
-  const formatKeys = (keys: string[]) => {
-    return keys.map((key, index) => (
+  const formatKeys = (_keys: string[]) => {
+    return keys.map( (key, index) => (
       <React.Fragment key={key}>
         <kbd className="px-2 py-1 bg-gray-800 border border-gray-600 rounded text-xs font-mono">
           {key}
@@ -116,18 +116,18 @@ export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
   };
 
   useEffect(() => {
-    const handleGlobalKeyDown = (event: KeyboardEvent) => {
-      // Global shortcut to open keyboard shortcuts (Ctrl+Shift+?)
-      if (event.ctrlKey && event.shiftKey && event.key === '?') {
-        event.preventDefault();
+    const handleGlobalKeyDown = (_event: KeyboardEvent) => {
+      // Global shortcut to open keyboard shortcuts (_Ctrl+Shift+?)
+      if (_event.ctrlKey && event.shiftKey && event.key === '?') {
+        event.preventDefault(_);
         if (!isOpen) {
           // This would be handled by the parent component
         }
       }
     };
 
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener( 'keydown', handleGlobalKeyDown);
+    return (_) => window.removeEventListener( 'keydown', handleGlobalKeyDown);
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -176,7 +176,7 @@ export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
                   type="text"
                   placeholder="Search shortcuts..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(_e) => setSearchQuery(_e.target.value)}
                   className="w-full px-3 py-2 glass border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Search keyboard shortcuts"
                 />
@@ -190,7 +190,7 @@ export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
                 {categories.map((category) => (
                   <button
                     key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
+                    onClick={(_) => setSelectedCategory(_category.id)}
                     className={cn(
                       'w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors',
                       selectedCategory === category.id
@@ -217,7 +217,7 @@ export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
               </div>
 
               <div className="space-y-4">
-                {filteredShortcuts.map((shortcut, index) => (
+                {filteredShortcuts.map( (shortcut, index) => (
                   <div
                     key={index}
                     className="flex items-center justify-between p-4 glass border border-white/10 rounded-lg"
@@ -233,7 +233,7 @@ export const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({
                       )}
                     </div>
                     <div className="flex items-center space-x-1 ml-4">
-                      {formatKeys(shortcut.keys)}
+                      {formatKeys(_shortcut.keys)}
                     </div>
                   </div>
                 ))}

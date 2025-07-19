@@ -16,9 +16,9 @@ export interface LearningPreferencesSectionProps {
   learning: LearningPreferences;
   editor: EditorPreferences;
   collaboration: CollaborationPreferences;
-  onUpdateLearning: (data: Partial<LearningPreferences>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
-  onUpdateEditor: (data: Partial<EditorPreferences>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
-  onUpdateCollaboration: (data: Partial<CollaborationPreferences>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
+  onUpdateLearning: (_data: Partial<LearningPreferences>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
+  onUpdateEditor: (_data: Partial<EditorPreferences>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
+  onUpdateCollaboration: (_data: Partial<CollaborationPreferences>) => Promise<{ success: boolean; errors?: SettingsValidationError[] }>;
   className?: string;
 }
 
@@ -34,22 +34,22 @@ export function LearningPreferencesSection({
   const [activeTab, setActiveTab] = useState<'learning' | 'editor' | 'collaboration'>('learning');
 
   // Handle learning preference updates
-  const handleLearningUpdate = useCallback(async (field: keyof LearningPreferences, value: any) => {
-    if (field === 'studyReminders' || field === 'progressTracking' || field === 'contentPreferences') {
-      await onUpdateLearning({ [field]: { ...learning[field], ...value } });
+  const handleLearningUpdate = useCallback( async (field: keyof LearningPreferences, value: any) => {
+    if (_field === 'studyReminders' || field === 'progressTracking' || field === 'contentPreferences') {
+      await onUpdateLearning( { [field]: { ...learning[field], ...value } });
     } else {
-      await onUpdateLearning({ [field]: value });
+      await onUpdateLearning({ [field]: value  });
     }
   }, [learning, onUpdateLearning]);
 
   // Handle editor preference updates
-  const handleEditorUpdate = useCallback(async (field: keyof EditorPreferences, value: any) => {
-    await onUpdateEditor({ [field]: value });
+  const handleEditorUpdate = useCallback( async (field: keyof EditorPreferences, value: any) => {
+    await onUpdateEditor({ [field]: value  });
   }, [onUpdateEditor]);
 
   // Handle collaboration preference updates
-  const handleCollaborationUpdate = useCallback(async (field: keyof CollaborationPreferences, value: any) => {
-    await onUpdateCollaboration({ [field]: value });
+  const handleCollaborationUpdate = useCallback( async (field: keyof CollaborationPreferences, value: any) => {
+    await onUpdateCollaboration({ [field]: value  });
   }, [onUpdateCollaboration]);
 
   return (
@@ -57,7 +57,7 @@ export function LearningPreferencesSection({
       intensity="medium"
       tint="neutral"
       border
-      className={cn('p-6', className)}
+      className={cn( 'p-6', className)}
     >
       <div className="flex items-center space-x-3 mb-6">
         <BookOpen className="w-6 h-6 text-purple-400" />
@@ -75,7 +75,7 @@ export function LearningPreferencesSection({
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={(_) => setActiveTab(_tab.id as any)}
               className={cn(
                 'flex items-center space-x-2 px-4 py-2 text-sm transition-colors',
                 activeTab === tab.id
@@ -120,7 +120,7 @@ export function LearningPreferencesSection({
                   ].map((level) => (
                     <button
                       key={level.value}
-                      onClick={() => handleLearningUpdate('difficulty', level.value)}
+                      onClick={(_) => handleLearningUpdate( 'difficulty', level.value)}
                       className={cn(
                         'p-3 rounded-lg border text-left transition-colors',
                         learning.difficulty === level.value
@@ -147,7 +147,7 @@ export function LearningPreferencesSection({
                   </div>
                   
                   <button
-                    onClick={() => handleLearningUpdate('studyReminders', { enabled: !learning.studyReminders.enabled })}
+                    onClick={(_) => handleLearningUpdate( 'studyReminders', { enabled: !learning.studyReminders.enabled })}
                     className={cn(
                       'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                       learning.studyReminders.enabled ? 'bg-purple-600' : 'bg-gray-600'
@@ -171,7 +171,7 @@ export function LearningPreferencesSection({
                         </label>
                         <select
                           value={learning.studyReminders.frequency}
-                          onChange={(e) => handleLearningUpdate('studyReminders', { frequency: e.target.value })}
+                          onChange={(_e) => handleLearningUpdate( 'studyReminders', { frequency: e.target.value })}
                           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                         >
                           <option value="daily">Daily</option>
@@ -187,7 +187,7 @@ export function LearningPreferencesSection({
                         <input
                           type="time"
                           value={learning.studyReminders.time}
-                          onChange={(e) => handleLearningUpdate('studyReminders', { time: e.target.value })}
+                          onChange={(_e) => handleLearningUpdate( 'studyReminders', { time: e.target.value })}
                           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
                       </div>
@@ -215,7 +215,7 @@ export function LearningPreferencesSection({
                     </div>
                     
                     <button
-                      onClick={() => handleLearningUpdate('progressTracking', { showDetailedStats: !learning.progressTracking.showDetailedStats })}
+                      onClick={(_) => handleLearningUpdate( 'progressTracking', { showDetailedStats: !learning.progressTracking.showDetailedStats })}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         learning.progressTracking.showDetailedStats ? 'bg-purple-600' : 'bg-gray-600'
@@ -238,7 +238,7 @@ export function LearningPreferencesSection({
                     </div>
                     
                     <button
-                      onClick={() => handleLearningUpdate('progressTracking', { shareProgress: !learning.progressTracking.shareProgress })}
+                      onClick={(_) => handleLearningUpdate( 'progressTracking', { shareProgress: !learning.progressTracking.shareProgress })}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         learning.progressTracking.shareProgress ? 'bg-purple-600' : 'bg-gray-600'
@@ -256,7 +256,7 @@ export function LearningPreferencesSection({
                   {/* Weekly Goals */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Weekly Learning Goal (hours)
+                      Weekly Learning Goal (_hours)
                     </label>
                     <div className="flex items-center space-x-4">
                       <input
@@ -264,7 +264,7 @@ export function LearningPreferencesSection({
                         min="1"
                         max="40"
                         value={learning.progressTracking.weeklyGoals}
-                        onChange={(e) => handleLearningUpdate('progressTracking', { weeklyGoals: parseInt(e.target.value) })}
+                        onChange={(_e) => handleLearningUpdate( 'progressTracking', { weeklyGoals: parseInt(e.target.value) })}
                         className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                       />
                       <span className="text-white font-medium w-12 text-center">
@@ -293,12 +293,12 @@ export function LearningPreferencesSection({
                     </label>
                     <select
                       value={learning.contentPreferences.videoSpeed}
-                      onChange={(e) => handleLearningUpdate('contentPreferences', { videoSpeed: parseFloat(e.target.value) })}
+                      onChange={(_e) => handleLearningUpdate( 'contentPreferences', { videoSpeed: parseFloat(e.target.value) })}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                     >
                       <option value={0.5}>0.5x</option>
                       <option value={0.75}>0.75x</option>
-                      <option value={1.0}>1.0x (Normal)</option>
+                      <option value={1.0}>1.0x (_Normal)</option>
                       <option value={1.25}>1.25x</option>
                       <option value={1.5}>1.5x</option>
                       <option value={2.0}>2.0x</option>
@@ -313,7 +313,7 @@ export function LearningPreferencesSection({
                     </div>
                     
                     <button
-                      onClick={() => handleLearningUpdate('contentPreferences', { autoplayVideos: !learning.contentPreferences.autoplayVideos })}
+                      onClick={(_) => handleLearningUpdate( 'contentPreferences', { autoplayVideos: !learning.contentPreferences.autoplayVideos })}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         learning.contentPreferences.autoplayVideos ? 'bg-purple-600' : 'bg-gray-600'
@@ -336,7 +336,7 @@ export function LearningPreferencesSection({
                     </div>
                     
                     <button
-                      onClick={() => handleLearningUpdate('contentPreferences', { showHints: !learning.contentPreferences.showHints })}
+                      onClick={(_) => handleLearningUpdate( 'contentPreferences', { showHints: !learning.contentPreferences.showHints })}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         learning.contentPreferences.showHints ? 'bg-purple-600' : 'bg-gray-600'
@@ -359,7 +359,7 @@ export function LearningPreferencesSection({
                     </div>
                     
                     <button
-                      onClick={() => handleLearningUpdate('contentPreferences', { skipIntroductions: !learning.contentPreferences.skipIntroductions })}
+                      onClick={(_) => handleLearningUpdate( 'contentPreferences', { skipIntroductions: !learning.contentPreferences.skipIntroductions })}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                         learning.contentPreferences.skipIntroductions ? 'bg-purple-600' : 'bg-gray-600'
@@ -400,7 +400,7 @@ export function LearningPreferencesSection({
                   ].map((theme) => (
                     <button
                       key={theme.value}
-                      onClick={() => handleEditorUpdate('theme', theme.value)}
+                      onClick={(_) => handleEditorUpdate( 'theme', theme.value)}
                       className={cn(
                         'p-3 rounded-lg border text-left transition-colors',
                         editor.theme === theme.value
@@ -437,7 +437,7 @@ export function LearningPreferencesSection({
                         min="8"
                         max="32"
                         value={editor.fontSize}
-                        onChange={(e) => handleEditorUpdate('fontSize', parseInt(e.target.value))}
+                        onChange={(_e) => handleEditorUpdate( 'fontSize', parseInt(e.target.value))}
                         className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                       />
                       <span className="text-white font-medium w-12 text-center">
@@ -458,7 +458,7 @@ export function LearningPreferencesSection({
                         max="2.0"
                         step="0.1"
                         value={editor.lineHeight}
-                        onChange={(e) => handleEditorUpdate('lineHeight', parseFloat(e.target.value))}
+                        onChange={(_e) => handleEditorUpdate( 'lineHeight', parseFloat(e.target.value))}
                         className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                       />
                       <span className="text-white font-medium w-12 text-center">
@@ -474,7 +474,7 @@ export function LearningPreferencesSection({
                     </label>
                     <select
                       value={editor.fontFamily}
-                      onChange={(e) => handleEditorUpdate('fontFamily', e.target.value)}
+                      onChange={(_e) => handleEditorUpdate( 'fontFamily', e.target.value)}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="JetBrains Mono, Consolas, Monaco, monospace">JetBrains Mono</option>
@@ -510,7 +510,7 @@ export function LearningPreferencesSection({
                         min="1"
                         max="8"
                         value={editor.tabSize}
-                        onChange={(e) => handleEditorUpdate('tabSize', parseInt(e.target.value))}
+                        onChange={(_e) => handleEditorUpdate( 'tabSize', parseInt(e.target.value))}
                         className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                       />
                       <span className="text-white font-medium w-12 text-center">
@@ -522,7 +522,7 @@ export function LearningPreferencesSection({
                   {/* Auto Save Interval */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Auto Save Interval (seconds)
+                      Auto Save Interval (_seconds)
                     </label>
                     <div className="flex items-center space-x-4">
                       <input
@@ -530,7 +530,7 @@ export function LearningPreferencesSection({
                         min="1"
                         max="10"
                         value={editor.autoSaveInterval / 1000}
-                        onChange={(e) => handleEditorUpdate('autoSaveInterval', parseInt(e.target.value) * 1000)}
+                        onChange={(_e) => handleEditorUpdate( 'autoSaveInterval', parseInt(e.target.value) * 1000)}
                         className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                       />
                       <span className="text-white font-medium w-12 text-center">
@@ -556,7 +556,7 @@ export function LearningPreferencesSection({
                         </div>
 
                         <button
-                          onClick={() => handleEditorUpdate(option.key as keyof EditorPreferences, !editor[option.key as keyof EditorPreferences])}
+                          onClick={(_) => handleEditorUpdate( option.key as keyof EditorPreferences, !editor[option.key as keyof EditorPreferences])}
                           className={cn(
                             'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
                             editor[option.key as keyof EditorPreferences] ? 'bg-blue-600' : 'bg-gray-600'
@@ -604,7 +604,7 @@ export function LearningPreferencesSection({
                       </div>
 
                       <button
-                        onClick={() => handleCollaborationUpdate(option.key as keyof CollaborationPreferences, !collaboration[option.key as keyof CollaborationPreferences])}
+                        onClick={(_) => handleCollaborationUpdate( option.key as keyof CollaborationPreferences, !collaboration[option.key as keyof CollaborationPreferences])}
                         className={cn(
                           'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                           collaboration[option.key as keyof CollaborationPreferences] ? 'bg-green-600' : 'bg-gray-600'
@@ -646,7 +646,7 @@ export function LearningPreferencesSection({
                       </div>
 
                       <button
-                        onClick={() => handleCollaborationUpdate(option.key as keyof CollaborationPreferences, !collaboration[option.key as keyof CollaborationPreferences])}
+                        onClick={(_) => handleCollaborationUpdate( option.key as keyof CollaborationPreferences, !collaboration[option.key as keyof CollaborationPreferences])}
                         className={cn(
                           'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
                           collaboration[option.key as keyof CollaborationPreferences] ? 'bg-green-600' : 'bg-gray-600'
@@ -682,7 +682,7 @@ export function LearningPreferencesSection({
                   ].map((permission) => (
                     <button
                       key={permission.value}
-                      onClick={() => handleCollaborationUpdate('defaultPermissions', permission.value)}
+                      onClick={(_) => handleCollaborationUpdate( 'defaultPermissions', permission.value)}
                       className={cn(
                         'p-3 rounded-lg border text-left transition-colors',
                         collaboration.defaultPermissions === permission.value

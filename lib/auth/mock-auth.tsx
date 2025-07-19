@@ -24,10 +24,10 @@ export interface MockAuthState {
 }
 
 export interface MockAuthActions {
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
-  clearError: () => void;
+  login: ( email: string, password: string) => Promise<boolean>;
+  register: ( name: string, email: string, password: string) => Promise<boolean>;
+  logout: (_) => void;
+  clearError: (_) => void;
 }
 
 // Mock users for testing
@@ -37,32 +37,32 @@ const MOCK_USERS: MockUser[] = [
     name: 'Alice Johnson',
     email: 'alice@example.com',
     role: 'STUDENT',
-    createdAt: new Date(),
+    createdAt: new Date(_),
   },
   {
     id: '2',
     name: 'Bob Smith',
     email: 'bob@example.com',
     role: 'MENTOR',
-    createdAt: new Date(),
+    createdAt: new Date(_),
   },
   {
     id: '3',
     name: 'Carol Davis',
     email: 'carol@example.com',
     role: 'INSTRUCTOR',
-    createdAt: new Date(),
+    createdAt: new Date(_),
   },
   {
     id: '4',
     name: 'David Wilson',
     email: 'admin@example.com',
     role: 'ADMIN',
-    createdAt: new Date(),
+    createdAt: new Date(_),
   },
 ];
 
-// Mock passwords (in real app, these would be hashed)
+// Mock passwords ( in real app, these would be hashed)
 const MOCK_PASSWORDS: Record<string, string> = {
   'alice@example.com': 'password123',
   'bob@example.com': 'password123',
@@ -70,19 +70,19 @@ const MOCK_PASSWORDS: Record<string, string> = {
   'admin@example.com': 'admin123',
 };
 
-const MockAuthContext = createContext<(MockAuthState & MockAuthActions) | null>(null);
+const MockAuthContext = createContext<(_MockAuthState & MockAuthActions) | null>(_null);
 
-export function MockAuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<MockUser | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function MockAuthProvider(_{ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<MockUser | null>(_null);
+  const [isLoading, setIsLoading] = useState(_false);
+  const [error, setError] = useState<string | null>(_null);
 
   // Load user from localStorage on mount
   useEffect(() => {
     const savedUser = localStorage.getItem('mockAuthUser');
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        setUser(_JSON.parse(savedUser));
       } catch (e) {
         localStorage.removeItem('mockAuthUser');
       }
@@ -90,8 +90,8 @@ export function MockAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(_true);
+    setError(_null);
 
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -101,57 +101,57 @@ export function MockAuthProvider({ children }: { children: ReactNode }) {
 
     if (!mockUser || mockPassword !== password) {
       setError('Invalid email or password');
-      setIsLoading(false);
+      setIsLoading(_false);
       return false;
     }
 
-    setUser(mockUser);
-    localStorage.setItem('mockAuthUser', JSON.stringify(mockUser));
-    setIsLoading(false);
+    setUser(_mockUser);
+    localStorage.setItem( 'mockAuthUser', JSON.stringify(mockUser));
+    setIsLoading(_false);
     return true;
   };
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(_true);
+    setError(_null);
 
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     // Check if user already exists
-    if (MOCK_USERS.find(u => u.email === email)) {
+    if (_MOCK_USERS.find(u => u.email === email)) {
       setError('User with this email already exists');
-      setIsLoading(false);
+      setIsLoading(_false);
       return false;
     }
 
     // Create new mock user
     const newUser: MockUser = {
-      id: Date.now().toString(),
+      id: Date.now(_).toString(),
       name,
       email,
       role: 'STUDENT',
-      createdAt: new Date(),
+      createdAt: new Date(_),
     };
 
     // Add to mock data
-    MOCK_USERS.push(newUser);
+    MOCK_USERS.push(_newUser);
     MOCK_PASSWORDS[email] = password;
 
-    setUser(newUser);
-    localStorage.setItem('mockAuthUser', JSON.stringify(newUser));
-    setIsLoading(false);
+    setUser(_newUser);
+    localStorage.setItem( 'mockAuthUser', JSON.stringify(newUser));
+    setIsLoading(_false);
     return true;
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = (_) => {
+    setUser(_null);
     localStorage.removeItem('mockAuthUser');
-    setError(null);
+    setError(_null);
   };
 
-  const clearError = () => {
-    setError(null);
+  const clearError = (_) => {
+    setError(_null);
   };
 
   const value = {
@@ -173,7 +173,7 @@ export function MockAuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useMockAuth() {
-  const context = useContext(MockAuthContext);
+  const context = useContext(_MockAuthContext);
   if (!context) {
     throw new Error('useMockAuth must be used within a MockAuthProvider');
   }
@@ -182,9 +182,9 @@ export function useMockAuth() {
 
 // Mock permissions hook
 export function useMockPermissions() {
-  const { user } = useMockAuth();
+  const { user } = useMockAuth(_);
 
-  const hasPermission = (permission: string): boolean => {
+  const hasPermission = (_permission: string): boolean => {
     if (!user) return false;
 
     const permissions = {
@@ -222,17 +222,17 @@ export function useMockPermissions() {
     return userPermissions.includes('*') || userPermissions.includes(permission);
   };
 
-  const hasRole = (role: string | string[]): boolean => {
+  const hasRole = (_role: string | string[]): boolean => {
     if (!user) return false;
     
-    if (Array.isArray(role)) {
-      return role.includes(user.role);
+    if (_Array.isArray(role)) {
+      return role.includes(_user.role);
     }
     
     return user.role === role;
   };
 
-  const hasMinimumRole = (minimumRole: string): boolean => {
+  const hasMinimumRole = (_minimumRole: string): boolean => {
     if (!user) return false;
 
     const roleHierarchy = {
@@ -257,7 +257,7 @@ export function useMockPermissions() {
 
 // Mock auth status hook
 export function useMockAuthStatus() {
-  const { isLoading, isAuthenticated } = useMockAuth();
+  const { isLoading, isAuthenticated } = useMockAuth(_);
   
   return {
     isLoading,
