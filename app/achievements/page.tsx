@@ -1,29 +1,17 @@
 'use client';
+
 import { motion } from 'framer-motion';
 import { Trophy, Star, Target, Zap, Crown, Calendar } from 'lucide-react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { AchievementGrid } from '@/components/achievements/AchievementGrid';
 import { AchievementNotificationManager } from '@/components/achievements/AchievementNotification';
-import { GlassCard } from '@/components/ui/Glassmorphism';
+import { GlassCard } from '@/components/ui/Glass';
 import { SmartBreadcrumbs } from '@/components/navigation/SmartNavigation';
 import { useAchievements, useGamificationStats } from '@/lib/hooks/useAchievements';
 
 export default function AchievementsPage() {
-  const { 
-    achievements, 
-    userAchievements, 
-    stats, 
-    isLoading, 
-    error 
-  } = useAchievements();
-  
-  const { 
-    levelProgress, 
-    achievementCounts, 
-    currentStreak, 
-    longestStreak,
-    completionPercentage 
-  } = useGamificationStats();
+  const { achievements, userAchievements, stats, isLoading, error } = useAchievements();
+  const { levelProgress, achievementCounts, currentStreak, longestStreak, completionPercentage } = useGamificationStats();
 
   const handleAchievementClick = () => {
     // Future implementation for achievement details modal
@@ -97,7 +85,6 @@ export default function AchievementsPage() {
                   {levelProgress?.currentLevel || 1}
                 </span>
               </div>
-              
               {levelProgress && (
                 <div>
                   <div className="flex justify-between text-sm mb-2">
@@ -129,7 +116,6 @@ export default function AchievementsPage() {
                   {achievementCounts.unlocked}
                 </span>
               </div>
-              
               <div>
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-gray-400">Completion</span>
@@ -159,7 +145,6 @@ export default function AchievementsPage() {
                   {currentStreak}
                 </span>
               </div>
-              
               <div className="text-center">
                 <div className="text-sm text-gray-400 mb-1">Longest Streak</div>
                 <div className="text-lg font-semibold text-gray-300">
@@ -179,7 +164,6 @@ export default function AchievementsPage() {
                   {achievementCounts.inProgress}
                 </span>
               </div>
-              
               <div className="text-center">
                 <div className="text-sm text-gray-400 mb-1">Locked</div>
                 <div className="text-lg font-semibold text-gray-300">
@@ -196,12 +180,11 @@ export default function AchievementsPage() {
                 <Star className="w-5 h-5 text-yellow-400 mr-2" />
                 Recent Achievements
               </h3>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {stats.recentUnlocks.slice(0, 6).map((userAchievement) => {
                   const achievement = achievements.find(a => a.id === userAchievement.achievementId);
                   if (!achievement) return null;
-                  
+
                   return (
                     <motion.div
                       key={achievement.id}

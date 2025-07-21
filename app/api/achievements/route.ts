@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/config';
 import { prisma } from '@/lib/prisma';
-import { logger } from '@/lib/monitoring/simple-logger';
+import { logger } from '@/lib/monitoring/server-logger';
 import { AchievementWithProgress } from '../types';
 
 // Configure for dynamic API routes
@@ -21,13 +21,13 @@ export async function GET(request: NextRequest) {
       where: { isActive: true },
       include: {
         userAchievements: {
-          where: { userId: session.user.id },
-        },
+          where: { userId: session.user.id }
+        }
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: 'asc' }
     });
 
-    const achievementsWithProgress = achievements.map((achievement): AchievementWithProgress => ({
+    const achievementsWithProgress: AchievementWithProgress[] = achievements.map(achievement => ({
       id: achievement.id,
       title: achievement.title,
       description: achievement.description,
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       isUnlocked: achievement.userAchievements.length > 0,
       isCompleted: achievement.userAchievements[0]?.isCompleted || false,
       unlockedAt: achievement.userAchievements[0]?.unlockedAt || null,
-      progress: achievement.userAchievements[0]?.progress || 0,
+      progress: achievement.userAchievements[0]?.progress || 0
     }));
 
     return NextResponse.json({ achievements: achievementsWithProgress });
@@ -58,8 +58,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { achievementId, action = 'claim' } = await request.json();
-
+    const { achievementId, action } = await request.json();
+    
     if (!achievementId) {
       return NextResponse.json({ error: 'Achievement ID is required' }, { status: 400 });
     }
@@ -70,12 +70,10 @@ export async function POST(request: NextRequest) {
         where: {
           userId_achievementId: {
             userId: session.user.id,
-            achievementId,
-          },
+            achievementId
+          }
         },
-        include: {
-          achievement: true,
-        },
+        include: { achievement: true }
       });
 
       if (!userAchievement) {
@@ -91,13 +89,13 @@ export async function POST(request: NextRequest) {
         where: {
           userId_achievementId: {
             userId: session.user.id,
-            achievementId,
-          },
+            achievementId
+          }
         },
         data: {
           isCompleted: true,
-          progress: 100,
-        },
+          progress: 100
+        }
       });
 
       // Award XP to user profile
@@ -105,21 +103,27 @@ export async function POST(request: NextRequest) {
         where: { userId: session.user.id },
         data: {
           totalXP: {
-            increment: userAchievement.achievement.xpReward,
-          },
-        },
+            increment: userAchievement.achievement.xpReward
+          }
+        }
       });
 
-      return NextResponse.json({ 
-        success: true, 
+      logger.info('Achievement claimed successfully', {
+        userId: session.user.id,
+        achievementId,
+        xpAwarded: userAchievement.achievement.xpReward
+      });
+
+      return NextResponse.json({
+        success: true,
         achievement: updatedAchievement,
-        xpAwarded: userAchievement.achievement.xpReward,
+        xpAwarded: userAchievement.achievement.xpReward
       });
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
-    logger.error('Error processing achievement', error as Error);
+    logger.error('Error processing achievement action', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
