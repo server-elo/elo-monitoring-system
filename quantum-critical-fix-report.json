@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-07-22T11:08:53.522Z",
+  "criticalFixesApplied": 4,
+  "totalCriticalFiles": 6,
+  "results": [
+    {
+      "file": "app/api/user/progress/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/auth/demo/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/auth/login/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "types/settings.ts",
+      "fixed": false,
+      "errors": 0,
+      "message": "No changes needed"
+    },
+    {
+      "file": "types/global.d.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "types/next-auth.d.ts",
+      "fixed": false,
+      "errors": 0,
+      "message": "No changes needed"
+    }
+  ],
+  "summary": {
+    "fixed": 4,
+    "failed": 2,
+    "errors": 0
+  }
+}
