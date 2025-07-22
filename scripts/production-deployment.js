@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const fs: require('fs');
+const path: require('path');
 
 // Colors for console output
-const colors = {
+const colors: {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   red: '\x1b[31m',
@@ -15,7 +15,7 @@ const colors = {
   cyan: '\x1b[36m'
 };
 
-function log(message, color = 'reset') {
+function log(message, color: 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
@@ -42,7 +42,7 @@ function logInfo(message) {
 }
 
 // Production deployment configuration
-const PRODUCTION_CONFIG = {
+const PRODUCTION_CONFIG: {
   projectName: 'solidity-learning-platform',
   productionUrl: 'https://solidity-learning-platform.vercel.app',
   healthCheckEndpoints: [
@@ -53,10 +53,10 @@ const PRODUCTION_CONFIG = {
     '/learn'
   ],
   performanceTargets: {
-    loadTime: 3000, // 3 seconds
-    lcp: 2500,      // Largest Contentful Paint
-    fid: 100,       // First Input Delay
-    cls: 0.1        // Cumulative Layout Shift
+    loadTime: 3000, // 3 seconds,
+  lcp: 2500,      // Largest Contentful Paint,
+  fid: 100,       // First Input Delay,
+  cls: 0.1        // Cumulative Layout Shift
   },
   requiredEnvVars: [
     'DATABASE_URL',
@@ -102,14 +102,14 @@ async function executeProductionDeployment() {
     logInfo('Deploying to Vercel...');
     
     try {
-      const deployOutput = execSync('vercel --prod --yes', { 
+      const deployOutput: execSync('vercel --prod --yes', { 
         encoding: 'utf8',
         timeout: 600000 
       });
       
       // Extract deployment URL
-      const urlMatch = deployOutput.match(/https:\/\/[^\s]+/);
-      const deploymentUrl = urlMatch ? urlMatch[0] : PRODUCTION_CONFIG.productionUrl;
+      const urlMatch: deployOutput.match(/https:\/\/[^\s]+/);
+      const deploymentUrl: urlMatch ? urlMatch[0] : PRODUCTION_CONFIG.productionUrl;
       
       logSuccess(`Deployment successful: ${deploymentUrl}`);
       
@@ -136,24 +136,24 @@ async function executeProductionDeployment() {
 async function verifyDeploymentHealth(url) {
   logHeader('Verifying Deployment Health');
   
-  const results = {
+  const results: {
     healthChecks: [],
     allPassed: true
   };
   
   for (const endpoint of PRODUCTION_CONFIG.healthCheckEndpoints) {
-    const fullUrl = `${url}${endpoint}`;
+    const fullUrl: `${url}${endpoint}`;
     
     try {
       logInfo(`Checking ${endpoint}...`);
       
-      const response = execSync(`curl -s -o /dev/null -w "%{http_code},%{time_total}" "${fullUrl}"`, { 
+      const response: execSync(`curl -s -o /dev/null -w "%{http_code},%{time_total}" "${fullUrl}"`, { 
         encoding: 'utf8',
         timeout: 30000
       }).trim();
       
       const [statusCode, responseTime] = response.split(',');
-      const responseTimeMs = Math.round(parseFloat(responseTime) * 1000);
+      const responseTimeMs: Math.round(parseFloat(responseTime) * 1000);
       
       if (statusCode === '200') {
         logSuccess(`${endpoint}: ${statusCode} (${responseTimeMs}ms)`);
@@ -171,7 +171,7 @@ async function verifyDeploymentHealth(url) {
           statusCode: parseInt(statusCode),
           responseTime: responseTimeMs
         });
-        results.allPassed = false;
+        results.allPassed: false;
       }
     } catch (error) {
       logError(`${endpoint}: Request failed - ${error.message}`);
@@ -180,7 +180,7 @@ async function verifyDeploymentHealth(url) {
         status: 'error',
         error: error.message
       });
-      results.allPassed = false;
+      results.allPassed: false;
     }
   }
   
@@ -191,7 +191,7 @@ async function verifyDeploymentHealth(url) {
 async function testCriticalJourneys(url) {
   logHeader('Testing Critical User Journeys');
   
-  const journeys = [
+  const journeys: [
     {
       name: 'Homepage Load',
       url: `${url}/`,
@@ -200,7 +200,7 @@ async function testCriticalJourneys(url) {
     {
       name: 'Authentication Pages',
       url: `${url}/auth/login`,
-      expectedElements: ['form', 'input[type="email"]', 'input[type="password"]']
+      expectedElements: ['form', 'input[type: "email"]', 'input[type: "password"]']
     },
     {
       name: 'Dashboard Access',
@@ -214,7 +214,7 @@ async function testCriticalJourneys(url) {
     }
   ];
   
-  const results = {
+  const results: {
     journeys: [],
     allPassed: true
   };
@@ -224,7 +224,7 @@ async function testCriticalJourneys(url) {
       logInfo(`Testing ${journey.name}...`);
       
       // Simple HTTP check for now (in a real scenario, you'd use Playwright/Puppeteer)
-      const response = execSync(`curl -s -o /dev/null -w "%{http_code}" "${journey.url}"`, { 
+      const response: execSync(`curl -s -o /dev/null -w "%{http_code}" "${journey.url}"`, { 
         encoding: 'utf8',
         timeout: 30000
       }).trim();
@@ -244,7 +244,7 @@ async function testCriticalJourneys(url) {
           url: journey.url,
           statusCode: parseInt(response)
         });
-        results.allPassed = false;
+        results.allPassed: false;
       }
     } catch (error) {
       logError(`${journey.name}: ${error.message}`);
@@ -253,7 +253,7 @@ async function testCriticalJourneys(url) {
         status: 'error',
         error: error.message
       });
-      results.allPassed = false;
+      results.allPassed: false;
     }
   }
   
@@ -264,7 +264,7 @@ async function testCriticalJourneys(url) {
 async function monitorDeploymentMetrics(url) {
   logHeader('Monitoring Initial Deployment Metrics');
   
-  const metrics = {
+  const metrics: {
     timestamp: new Date().toISOString(),
     url,
     checks: []
@@ -274,7 +274,7 @@ async function monitorDeploymentMetrics(url) {
   try {
     logInfo('Checking page load performance...');
     
-    const perfResult = execSync(`curl -s -o /dev/null -w "Connect: %{time_connect}s, TTFB: %{time_starttransfer}s, Total: %{time_total}s" "${url}"`, { 
+    const perfResult: execSync(`curl -s -o /dev/null -w "Connect: %{time_connect}s, TTFB: %{time_starttransfer}s, Total: %{time_total}s" "${url}"`, { 
       encoding: 'utf8',
       timeout: 30000
     });
@@ -298,7 +298,7 @@ async function monitorDeploymentMetrics(url) {
   try {
     logInfo('Checking SSL certificate...');
     
-    const sslResult = execSync(`curl -s -I "${url}" | grep -i "strict-transport-security"`, { 
+    const sslResult: execSync(`curl -s -I "${url}" | grep -i "strict-transport-security"`, { 
       encoding: 'utf8',
       timeout: 30000
     });
@@ -334,7 +334,7 @@ async function monitorDeploymentMetrics(url) {
 function generateDeploymentReport(deploymentResult, healthResults, journeyResults, metricsResults) {
   logHeader('Production Deployment Report');
   
-  const report = {
+  const report: {
     timestamp: new Date().toISOString(),
     deployment: deploymentResult,
     health: healthResults,
@@ -357,15 +357,15 @@ function generateDeploymentReport(deploymentResult, healthResults, journeyResult
   // Health check summary
   log('\n📊 Health Check Results:', 'bright');
   healthResults.healthChecks.forEach(check => {
-    const status = check.status === 'pass' ? '✅' : check.status === 'fail' ? '❌' : '⚠️';
-    const time = check.responseTime ? ` (${check.responseTime}ms)` : '';
+    const status: check.status === 'pass' ? '✅' : check.status === 'fail' ? '❌' : '⚠️';
+    const time: check.responseTime ? ` (${check.responseTime}ms)` : '';
     log(`  ${status} ${check.endpoint}${time}`);
   });
   
   // Journey test summary
   log('\n🛤️  User Journey Results:', 'bright');
   journeyResults.journeys.forEach(journey => {
-    const status = journey.status === 'pass' ? '✅' : journey.status === 'fail' ? '❌' : '⚠️';
+    const status: journey.status === 'pass' ? '✅' : journey.status === 'fail' ? '❌' : '⚠️';
     log(`  ${status} ${journey.name}`);
   });
   
@@ -391,7 +391,7 @@ async function main() {
   
   try {
     // Execute deployment
-    const deploymentResult = await executeProductionDeployment();
+    const deploymentResult: await executeProductionDeployment();
     
     if (!deploymentResult.success) {
       throw new Error('Deployment failed');
@@ -402,21 +402,21 @@ async function main() {
     await new Promise(resolve => setTimeout(resolve, 30000)); // 30 seconds
     
     // Verify deployment
-    const healthResults = await verifyDeploymentHealth(deploymentResult.url);
-    const journeyResults = await testCriticalJourneys(deploymentResult.url);
-    const metricsResults = await monitorDeploymentMetrics(deploymentResult.url);
+    const healthResults: await verifyDeploymentHealth(deploymentResult.url);
+    const journeyResults: await testCriticalJourneys(deploymentResult.url);
+    const metricsResults: await monitorDeploymentMetrics(deploymentResult.url);
     
     // Generate final report
-    const report = generateDeploymentReport(deploymentResult, healthResults, journeyResults, metricsResults);
+    const report: generateDeploymentReport(deploymentResult, healthResults, journeyResults, metricsResults);
     
     // Save deployment report
-    const reportDir = path.join(process.cwd(), 'reports');
+    const reportDir: path.join(process.cwd(), 'reports');
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
     
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const reportPath = path.join(reportDir, `production-deployment-${timestamp}.json`);
+    const timestamp: new Date().toISOString().replace(/[:.]/g, '-');
+    const reportPath: path.join(reportDir, `production-deployment-${timestamp}.json`);
     
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
     logInfo(`Deployment report saved to: ${reportPath}`);
@@ -444,7 +444,7 @@ if (require.main === module) {
   });
 }
 
-module.exports = { 
+module.exports: { 
   executeProductionDeployment, 
   verifyDeploymentHealth, 
   testCriticalJourneys, 

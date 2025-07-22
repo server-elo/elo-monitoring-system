@@ -1,10 +1,6 @@
-/**
- * Ethereum ABI (_Application Binary Interface) type definitions
- */
-
-export type ABIType = 'function' | 'constructor' | 'event' | 'fallback' | 'receive';
-export type ABIStateMutability = 'pure' | 'view' | 'nonpayable' | 'payable';
-
+/** * Ethereum ABI (Application Binary Interface) type definitions */ export type ABIType =
+  "function" | "constructor" | "event" | "fallback" | "receive";
+export type ABIStateMutability = "pure" | "view" | "nonpayable" | "payable";
 export interface ABIParameter {
   name: string;
   type: string;
@@ -12,9 +8,8 @@ export interface ABIParameter {
   components?: ABIParameter[];
   internalType?: string;
 }
-
 export interface ABIFunctionDescription {
-  type: 'function';
+  type: "function";
   name: string;
   inputs: ABIParameter[];
   outputs: ABIParameter[];
@@ -22,37 +17,31 @@ export interface ABIFunctionDescription {
   constant?: boolean;
   payable?: boolean;
 }
-
 export interface ABIConstructorDescription {
-  type: 'constructor';
+  type: "constructor";
   inputs: ABIParameter[];
   stateMutability: ABIStateMutability;
   payable?: boolean;
 }
-
 export interface ABIEventDescription {
-  type: 'event';
+  type: "event";
   name: string;
   inputs: ABIParameter[];
   anonymous?: boolean;
 }
-
 export interface ABIFallbackDescription {
-  type: 'fallback';
+  type: "fallback";
   stateMutability: ABIStateMutability;
   payable?: boolean;
 }
-
 export interface ABIReceiveDescription {
-  type: 'receive';
-  stateMutability: 'payable';
+  type: "receive";
+  stateMutability: "payable";
 }
-
-export type ABIDescription = 
-  | ABIFunctionDescription 
-  | ABIConstructorDescription 
-  | ABIEventDescription 
-  | ABIFallbackDescription 
+export type ABIDescription =
+  | ABIFunctionDescription
+  | ABIConstructorDescription
+  | ABIEventDescription
+  | ABIFallbackDescription
   | ABIReceiveDescription;
-
 export type ContractABI = ABIDescription[];

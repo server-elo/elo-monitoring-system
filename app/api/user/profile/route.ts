@@ -1,232 +1,124 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth/config';
-import { prisma } from '@/lib/prisma';
-import { logger } from '@/lib/monitoring/simple-logger';
-
-// Configure for dynamic API routes
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: NextRequest) {
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/config";
+import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+// Profile update schema
+const profileUpdateSchema = z.object({
+  name: z.string().min(2).optional(),
+  bio: z.string().max(500).optional(),
+  githubUsername: z.string().max(50).optional(),
+  twitterUsername: z.string().max(50).optional(),
+  linkedinUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: z.string().url().optional().or(z.literal("")),
+});
+export async function GET(): void {
   try {
     const session = await getServerSession(authOptions);
-    
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    // Get user with profile and achievements
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
         profile: true,
-        achievements: {
-          include: {
-            achievement: true,
-          },
-          where: {
-            isCompleted: true,
-          },
-        },
-        progress: {
-          include: {
-            course: true,
-            module: true,
-            lesson: true,
-          },
-        },
       },
     });
-
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-
-    // Calculate level based on XP
-    const totalXP = user.profile?.totalXP || 0;
-    let currentLevel = 1;
-    let skillLevel = 'BEGINNER';
-    
-    if (_totalXP >= 10000) {
-      currentLevel = Math.floor(_totalXP / 2000) + 1;
-      skillLevel = 'EXPERT';
-    } else if (_totalXP >= 5000) {
-      currentLevel = Math.floor((totalXP - 5000) / 1000) + 6;
-      skillLevel = 'ADVANCED';
-    } else if (_totalXP >= 1000) {
-      currentLevel = Math.floor((totalXP - 1000) / 800) + 2;
-      skillLevel = 'INTERMEDIATE';
-    }
-
-    // Update profile with calculated level if it has changed
-    if (user.profile && (user.profile.currentLevel !== currentLevel || user.profile.skillLevel !== skillLevel)) {
-      await prisma.userProfile.update({
-        where: { userId: session.user.id },
-        data: {
-          currentLevel,
-          skillLevel: skillLevel as any,
-        },
-      });
-    }
-
+    // Combine user and profile data
     const profileData = {
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        role: user.role,
-      },
-      profile: user.profile ? {
-        ...user.profile,
-        currentLevel,
-        skillLevel,
-      } : null,
-      achievements: user.achievements,
-      progress: user.progress,
-      stats: {
-        totalLessons: user.progress.length,
-        completedLessons: user.progress.filter((p: any) => p.status === 'COMPLETED').length,
-        totalXP: totalXP,
-        currentLevel,
-        streak: user.profile?.streak || 0,
-      },
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      bio: user.profile?.bio || "",
+      githubUsername: user.profile?.githubUsername || "",
+      twitterUsername: user.profile?.twitterUsername || "",
+      linkedinUrl: user.profile?.linkedinUrl || "",
+      websiteUrl: user.profile?.websiteUrl || "",
+      totalXP: user.profile?.totalXP || 0,
+      currentLevel: user.profile?.currentLevel || 1,
+      streak: user.profile?.streak || 0,
+      skillLevel: user.profile?.skillLevel || "BEGINNER",
     };
-
-    return NextResponse.json(_profileData);
+    return NextResponse.json(profileData);
   } catch (error) {
-    logger.error('Error fetching user profile', error as Error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Profile fetch error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch profile" },
+      { status: 500 },
+    );
   }
 }
-
-export async function PATCH(request: NextRequest) {
+export async function PUT(request: Request): void {
   try {
     const session = await getServerSession(authOptions);
-    
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const updates = await request.json();
-
-    // Get or create user profile
-    let userProfile = await prisma.userProfile.findUnique({
-      where: { userId: session.user.id },
-    });
-
-    if (!userProfile) {
-      userProfile = await prisma.userProfile.create({
-        data: {
-          userId: session.user.id,
-        },
+    const body = await request.json();
+    // Validate input
+    const validatedData = profileUpdateSchema.parse(body);
+    // Update user name if provided
+    if (validatedData.name) {
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: { name: validatedData.name },
       });
     }
-
-    // Update profile
-    const updatedProfile = await prisma.userProfile.update({
+    // Update or create profile
+    const profile = await prisma.userProfile.upsert({
       where: { userId: session.user.id },
-      data: {
-        ...updates,
-        updatedAt: new Date(),
+      update: {
+        bio: validatedData.bio,
+        githubUsername: validatedData.githubUsername,
+        twitterUsername: validatedData.twitterUsername,
+        linkedinUrl: validatedData.linkedinUrl || null,
+        websiteUrl: validatedData.websiteUrl || null,
+      },
+      create: {
+        userId: session.user.id,
+        bio: validatedData.bio || "",
+        githubUsername: validatedData.githubUsername,
+        twitterUsername: validatedData.twitterUsername,
+        linkedinUrl: validatedData.linkedinUrl || null,
+        websiteUrl: validatedData.websiteUrl || null,
       },
     });
-
-    return NextResponse.json({ 
-      success: true, 
-      profile: updatedProfile 
+    // Fetch updated user data
+    const updatedUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { profile: true },
     });
+    const profileData = {
+      id: updatedUser!.id,
+      name: updatedUser!.name,
+      email: updatedUser!.email,
+      image: updatedUser!.image,
+      bio: profile.bio || "",
+      githubUsername: profile.githubUsername || "",
+      twitterUsername: profile.twitterUsername || "",
+      linkedinUrl: profile.linkedinUrl || "",
+      websiteUrl: profile.websiteUrl || "",
+      totalXP: profile.totalXP || 0,
+      currentLevel: profile.currentLevel || 1,
+      streak: profile.streak || 0,
+      skillLevel: profile.skillLevel || "BEGINNER",
+    };
+    return NextResponse.json(profileData);
   } catch (error) {
-    logger.error('Error updating user profile', error as Error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    console.error("Profile update error:", error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation error", details: error.errors },
+        { status: 400 },
+      );
     }
-
-    const { action, data } = await request.json();
-
-    switch (action) {
-      case 'updateXP':
-        const { xpGained } = data;
-        
-        // Update user XP
-        const updatedProfile = await prisma.userProfile.upsert({
-          where: { userId: session.user.id },
-          update: {
-            totalXP: {
-              increment: xpGained,
-            },
-            lastActiveDate: new Date(),
-          },
-          create: {
-            userId: session.user.id,
-            totalXP: xpGained,
-            lastActiveDate: new Date(),
-          },
-        });
-
-        // Check for level up
-        const newLevel = Math.floor(updatedProfile.totalXP / 1000) + 1;
-        if (_newLevel > updatedProfile.currentLevel) {
-          await prisma.userProfile.update({
-            where: { userId: session.user.id },
-            data: { currentLevel: newLevel },
-          });
-        }
-
-        return NextResponse.json({ 
-          success: true, 
-          newXP: updatedProfile.totalXP,
-          levelUp: newLevel > updatedProfile.currentLevel,
-          newLevel: Math.max(newLevel, updatedProfile.currentLevel),
-        });
-
-      case 'updateStreak':
-        const today = new Date();
-        const profile = await prisma.userProfile.findUnique({
-          where: { userId: session.user.id },
-        });
-
-        if (profile) {
-          const lastActiveDate = new Date(profile.lastActiveDate);
-          const daysDiff = Math.floor((today.getTime() - lastActiveDate.getTime(_)) / (1000 * 60 * 60 * 24));
-          
-          let newStreak = profile.streak;
-          if (daysDiff === 1) {
-            newStreak += 1;
-          } else if (daysDiff > 1) {
-            newStreak = 1;
-          }
-
-          await prisma.userProfile.update({
-            where: { userId: session.user.id },
-            data: {
-              streak: newStreak,
-              lastActiveDate: today,
-            },
-          });
-
-          return NextResponse.json({ 
-            success: true, 
-            streak: newStreak 
-          });
-        }
-        break;
-
-      default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-    }
-
-    return NextResponse.json({ error: 'Action not processed' }, { status: 400 });
-  } catch (error) {
-    logger.error('Error processing profile action', error as Error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update profile" },
+      { status: 500 },
+    );
   }
 }

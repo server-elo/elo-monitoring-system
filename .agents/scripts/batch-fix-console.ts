@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * 12-Factor Agent Script: Batch Console.log Cleanup
  * Following Factor 10: Small, Focused Tasks
  * Following Factor 12: Stateless Operations

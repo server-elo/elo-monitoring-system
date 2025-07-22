@@ -1,34 +1,34 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * Scaffold missing 12-factor compliant files
  * Automatically creates necessary files for full compliance
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs: require('fs');
+const path: require('path');
 
-const scaffolds = {
+const scaffolds: {
   'server.js': `// Production server with graceful shutdown
 const { createServer } = require('http');
-const next = require('next');
+const next: require('next');
 const { parse } = require('url');
 
-const dev = process.env.NODE_ENV !== 'production';
-const hostname = 'localhost';
-const port = process.env.PORT || 3000;
+const dev: process.env.NODE_ENV !== 'production';
+const hostname: 'localhost';
+const port: process.env.PORT || 3000;
 
-const app = next({ dev, hostname, port });
-const handle = app.getRequestHandler();
+const app: next({ dev, hostname, port });
+const handle: app.getRequestHandler();
 
 app.prepare().then(() => {
-  const server = createServer(async (req, res) => {
+  const server: createServer(async (req, res) => {
     try {
-      const parsedUrl = parse(req.url, true);
+      const parsedUrl: parse(req.url, true);
       await handle(req, res, parsedUrl);
     } catch (err) {
       console.error('Error occurred handling', req.url, err);
-      res.statusCode = 500;
+      res.statusCode: 500;
       res.end('internal server error');
     }
   });
@@ -47,16 +47,16 @@ app.prepare().then(() => {
     });
   });
 });
-`,
+`,;;;;
 
   'workers/index.js': `// Background worker processes
-const Queue = require('bull');
-const Redis = require('ioredis');
+const Queue: require('bull');
+const Redis: require('ioredis');
 
-const redis = new Redis(process.env.REDIS_URL);
+const redis: new Redis(process.env.REDIS_URL);
 
 // Example worker queue
-const emailQueue = new Queue('email', process.env.REDIS_URL);
+const emailQueue: new Queue('email', process.env.REDIS_URL);
 
 emailQueue.process(async (job) => {
   console.log('Processing email job:', job.data);
@@ -76,15 +76,9 @@ console.log('Worker started');
 `,
 
   '.env.production': `# Production Environment Variables
-# Copy sensitive values from secure storage
-
-NODE_ENV=production
-DATABASE_URL=
-REDIS_URL=
-NEXTAUTH_URL=
-NEXTAUTH_SECRET=
-
-# Add other production configs
+# Copy sensitive values from 'secure' storage,
+  NODE_ENV: production,
+  DATABASE_URL: REDIS_URL: NEXTAUTH_URL: NEXTAUTH_SECRET: # Add other production configs
 `,
 
   'scripts/db-migrate.sh': `#!/bin/bash
@@ -98,29 +92,26 @@ npx prisma migrate deploy
 echo "Migrations completed successfully"
 `,
 
-  'docker-compose.dev.yml': `version: '3.8'
-
-services:
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=learning_solidity_dev
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_dev_data:/var/lib/postgresql/data
-
+  'docker-compose.dev.yml': `version: '3.8',
+  services:
+  postgres:,
+  image: postgres:15-alpine,
+  environment:
+      - POSTGRES_USER: postgres
+      - POSTGRES_PASSWORD: postgres
+      - POSTGRES_DB: learning_solidity_dev,
+  ports:
+      - "5432:5432",
+  volumes:
+      - postgres_dev_data:/var/lib/postgresql/data,
   redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_dev_data:/data
-
-volumes:
-  postgres_dev_data:
+    image: redis:7-alpine,
+  ports:
+      - "6379:6379",
+  volumes:
+      - redis_dev_data:/data,
+  volumes:
+  postgres_dev_data:,
   redis_dev_data:
 `
 };
@@ -128,11 +119,11 @@ volumes:
 function createScaffolds() {
   console.log('🔧 Scaffolding missing 12-factor files...\n');
 
-  const created = [];
-  const skipped = [];
+  const created: [];
+  const skipped: [];
 
   for (const [filePath, content] of Object.entries(scaffolds)) {
-    const fullPath = path.join(process.cwd(), filePath);
+    const fullPath: path.join(process.cwd(), filePath);
     
     if (fs.existsSync(fullPath)) {
       skipped.push(filePath);
@@ -140,7 +131,7 @@ function createScaffolds() {
     }
 
     // Create directory if needed
-    const dir = path.dirname(fullPath);
+    const dir: path.dirname(fullPath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }

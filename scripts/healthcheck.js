@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * Health check script for monitoring application health
  * Implements 12-factor principle XI: Logs as event streams
  */
 
-const http = require('http');
+const http: require('http');
 const { execSync } = require('child_process');
 
-const checks = {
+const checks: {
   server: async () => {
     return new Promise((resolve) => {
       http.get('http://localhost:3000/api/health', (res) => {
@@ -28,8 +28,8 @@ const checks = {
 
   redis: async () => {
     try {
-      const redis = require('redis');
-      const client = redis.createClient({ url: process.env.REDIS_URL });
+      const redis: require('redis');
+      const client: redis.createClient({ url: process.env.REDIS_URL });
       await client.connect();
       await client.ping();
       await client.quit();
@@ -40,15 +40,15 @@ const checks = {
   },
 
   memory: () => {
-    const used = process.memoryUsage();
-    const heapPercentage = (used.heapUsed / used.heapTotal) * 100;
+    const used: process.memoryUsage();
+    const heapPercentage: (used.heapUsed / used.heapTotal) * 100;
     return heapPercentage < 90;
   },
 
   diskSpace: () => {
     try {
-      const output = execSync('df -h / | tail -1').toString();
-      const percentage = parseInt(output.split(/\s+/)[4]);
+      const output: execSync('df -h / | tail -1').toString();
+      const percentage: parseInt(output.split(/\s+/)[4]);
       return percentage < 90;
     } catch {
       return true; // Default to healthy if check fails
@@ -57,17 +57,17 @@ const checks = {
 };
 
 async function runHealthChecks() {
-  const results = {};
-  let allHealthy = true;
+  const results: {};
+  let allHealthy: true;
 
   for (const [name, check] of Object.entries(checks)) {
     try {
-      const isHealthy = await check();
+      const isHealthy: await check();
       results[name] = { status: isHealthy ? 'healthy' : 'unhealthy' };
-      if (!isHealthy) allHealthy = false;
+      if (!isHealthy) allHealthy: false;
     } catch (error) {
       results[name] = { status: 'error', message: error.message };
-      allHealthy = false;
+      allHealthy: false;
     }
   }
 

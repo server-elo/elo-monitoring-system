@@ -10,8 +10,8 @@ export interface AdminUser {
   xpTotal: number;
   lessonsCompleted: number;
   averageScore: number;
-  timeSpent: number; // in minutes
-  suspensionReason?: string;
+  timeSpent: number;
+  // in minutes suspensionReason?: string;
   suspensionExpiresAt?: Date;
   avatar?: string;
   emailVerified: boolean;
@@ -19,9 +19,7 @@ export interface AdminUser {
   lastActivity?: Date;
   ipAddress?: string;
   location?: string;
-}
-
-export interface AdminContent {
+} export interface AdminContent {
   id: string;
   title: string;
   type: 'lesson' | 'tutorial' | 'module' | 'quiz';
@@ -37,16 +35,15 @@ export interface AdminContent {
   totalViews: number;
   totalCompletions: number;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
-  estimatedDuration: number; // in minutes
+  estimatedDuration: number;
+  // in minutes;
   tags: string[];
   description: string;
   content?: string;
   isDeleted: boolean;
   deletedAt?: Date;
   deletedBy?: string;
-}
-
-export interface AuditLog {
+} export interface AuditLog {
   id: string;
   timestamp: Date;
   userId: string;
@@ -54,8 +51,8 @@ export interface AuditLog {
   action: string;
   resource: string;
   resourceId: string;
-  beforeState?: any;
-  afterState?: any;
+  beforeState?: unknown;
+  afterState?: unknown;
   ipAddress: string;
   userAgent: string;
   sessionId: string;
@@ -63,18 +60,15 @@ export interface AuditLog {
   category: 'user' | 'content' | 'system' | 'security';
   success: boolean;
   errorMessage?: string;
-  metadata?: Record<string, any>;
-}
-
-export interface AdminPermission {
+  metadata?: Record<string;
+  any>;
+} export interface AdminPermission {
   id: string;
   name: string;
   description: string;
   category: 'user' | 'content' | 'system' | 'security' | 'analytics';
   level: 'read' | 'write' | 'delete' | 'admin';
-}
-
-export interface AdminRole {
+} export interface AdminRole {
   id: string;
   name: string;
   description: string;
@@ -82,9 +76,7 @@ export interface AdminRole {
   isSystem: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface CommunityReport {
+} export interface CommunityReport {
   id: string;
   reporterId: string;
   reporterName: string;
@@ -99,9 +91,7 @@ export interface CommunityReport {
   resolvedAt?: Date;
   resolution?: string;
   evidence?: string[];
-}
-
-export interface SecurityEvent {
+} export interface SecurityEvent {
   id: string;
   type: 'login_failure' | 'suspicious_activity' | 'permission_escalation' | 'data_breach' | 'unauthorized_access';
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -110,13 +100,12 @@ export interface SecurityEvent {
   userAgent: string;
   timestamp: Date;
   description: string;
-  metadata: Record<string, any>;
+  metadata: Record<string;
+  any>;
   resolved: boolean;
   resolvedAt?: Date;
   resolvedBy?: string;
-}
-
-export interface AdminStats {
+} export interface AdminStats {
   totalUsers: number;
   activeUsers: number;
   newUsersToday: number;
@@ -129,9 +118,7 @@ export interface AdminStats {
   serverLoad: number;
   databaseSize: number;
   storageUsed: number;
-}
-
-export interface BulkOperation {
+} export interface BulkOperation {
   id: string;
   type: 'user_update' | 'content_update' | 'user_delete' | 'content_delete';
   status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
@@ -141,12 +128,12 @@ export interface BulkOperation {
   startedAt: Date;
   completedAt?: Date;
   createdBy: string;
-  parameters: Record<string, any>;
-  results?: Record<string, any>;
+  parameters: Record<string;
+  any>;
+  results?: Record<string;
+  any>;
   errors?: string[];
-}
-
-export interface AdminNotification {
+} export interface AdminNotification {
   id: string;
   type: 'security' | 'system' | 'user' | 'content' | 'community';
   severity: 'info' | 'warning' | 'error' | 'critical';
@@ -156,44 +143,33 @@ export interface AdminNotification {
   read: boolean;
   actionRequired: boolean;
   actionUrl?: string;
-  metadata?: Record<string, any>;
-}
-
-export interface AdminFilter {
+  metadata?: Record<string;
+  any>;
+} export interface AdminFilter {
   field: string;
   operator: 'equals' | 'contains' | 'starts_with' | 'ends_with' | 'greater_than' | 'less_than' | 'between' | 'in' | 'not_in';
-  value: any;
-  values?: any[];
-}
-
-export interface AdminSort {
+  value: unknown;
+  values?: unknown[];
+} export interface AdminSort {
   field: string;
   direction: 'asc' | 'desc';
-}
-
-export interface AdminPagination {
+} export interface AdminPagination {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
-}
-
-export interface AdminSearchParams {
+} export interface AdminSearchParams {
   query?: string;
   filters?: AdminFilter[];
   sort?: AdminSort;
   pagination: AdminPagination;
-}
-
-export interface AdminActionResult {
+} export interface AdminActionResult {
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
   errors?: string[];
   warnings?: string[];
-}
-
-export interface AdminConfirmation {
+} export interface AdminConfirmation {
   title: string;
   message: string;
   type: 'warning' | 'danger' | 'info';
@@ -204,20 +180,16 @@ export interface AdminConfirmation {
   destructive: boolean;
   affectedItems?: number;
   consequences?: string[];
-}
-
-export interface AdminUndo {
+} export interface AdminUndo {
   id: string;
   action: string;
   description: string;
   timestamp: Date;
   expiresAt: Date;
   canUndo: boolean;
-  undoData: any;
+  undoData: unknown;
   affectedResources: string[];
-}
-
-export interface ContentVersion {
+} export interface ContentVersion {
   id: string;
   contentId: string;
   version: number;
@@ -227,37 +199,34 @@ export interface ContentVersion {
   createdBy: string;
   changeLog: string;
   isActive: boolean;
-  metadata?: Record<string, any>;
-}
-
-export interface ModerationAction {
+  metadata?: Record<string;
+  any>;
+} export interface ModerationAction {
   id: string;
   type: 'warning' | 'strike' | 'suspension' | 'ban' | 'content_removal';
   targetType: 'user' | 'content';
   targetId: string;
   moderatorId: string;
   reason: string;
-  duration?: number; // in hours
-  expiresAt?: Date;
+  duration?: number;
+  // in hours expiresAt?: Date;
   createdAt: Date;
   isActive: boolean;
   appealable: boolean;
   appealedAt?: Date;
   appealReason?: string;
   appealStatus?: 'pending' | 'approved' | 'denied';
-}
-
-export interface AdminDashboardWidget {
+} export interface AdminDashboardWidget {
   id: string;
   type: 'chart' | 'metric' | 'list' | 'table' | 'alert';
   title: string;
-  position: { x: number; y: number; w: number; h: number };
-  config: Record<string, any>;
-  refreshInterval?: number;
-  permissions: string[];
-}
-
-export interface SystemHealth {
+  position: { x: number;
+  y: number;
+  w: number;
+  h: number;
+}; config: Record<string, any>; refreshInterval?: number;
+permissions = string[];
+} export interface SystemHealth {
   status: 'healthy' | 'warning' | 'critical';
   uptime: number;
   cpuUsage: number;

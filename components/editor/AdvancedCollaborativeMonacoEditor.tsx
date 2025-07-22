@@ -1,10 +1,9 @@
-'use client';
-
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Editor, Monaco } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
-import { MonacoSoliditySetup } from '@/lib/editor/MonacoSoliditySetup';
-import { motion, AnimatePresence } from 'framer-motion';
+"use client";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { Editor, Monaco } from "@monaco-editor/react";
+import { editor } from "monaco-editor";
+import { MonacoSoliditySetup } from "@/lib/editor/MonacoSoliditySetup";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
   Wifi,
@@ -19,12 +18,14 @@ import {
   XCircle,
   Lightbulb,
   Zap
-} from 'lucide-react';
-import { useAdvancedCollaborativeEditor } from '@/lib/hooks/useAdvancedCollaborativeEditor';
-import { CursorPosition, SelectionRange } from '@/lib/collaboration/OperationalTransform';
-import { GlassContainer } from '@/components/ui/Glassmorphism';
-import { cn } from '@/lib/utils';
-
+} from "lucide-react";
+import { useAdvancedCollaborativeEditor } from "@/lib/hooks/useAdvancedCollaborativeEditor";
+import {
+  CursorPosition,
+  SelectionRange
+} from "@/lib/collaboration/OperationalTransform";
+import { GlassContainer } from "@/components/ui/Glass";
+import { cn } from "@/lib/utils";
 export interface AdvancedCollaborativeMonacoEditorProps {
   documentId: string;
   initialContent?: string;
@@ -38,30 +39,29 @@ export interface AdvancedCollaborativeMonacoEditorProps {
   showMinimap?: boolean;
   readOnly?: boolean;
   className?: string;
-  onContentChange?: (_content: string) => void;
-  onCursorChange?: ( cursor: CursorPosition, selection?: SelectionRange) => void;
+  onContentChange?: (content: string) => void;
+  onCursorChange?: (cursor: CursorPosition;
+  selection?: SelectionRange) => void;
 }
-
 export function AdvancedCollaborativeMonacoEditor({
   documentId,
-  initialContent = '',
-  language = 'solidity',
-  theme: _theme = 'vs-dark',
-  height = '400px',
-  width = '100%',
-  autoSave = true,
-  autoSaveInterval = 2000,
-  showCollaborators = true,
-  showMinimap = true,
-  readOnly = false,
+  initialContent = "",
+  language = "solidity",
+  theme = "vs-dark",
+  height = "400px",
+  width = "100%",
+  autoSave: true,
+  autoSaveInterval: 2000,
+  showCollaborators: true,
+  showMinimap: true,
+  readOnly: false,
   className,
   onContentChange,
   onCursorChange
-}: AdvancedCollaborativeMonacoEditorProps) {
+}: AdvancedCollaborativeMonacoEditorProps): void {
   // Collaborative editor hook
   const {
     content,
-    version: _version,
     collaborators,
     isConnected,
     hasUnsavedChanges,
@@ -72,7 +72,7 @@ export function AdvancedCollaborativeMonacoEditor({
     updateCursor,
     undo,
     manualSave,
-    resolveConflicts: _resolveConflicts,
+    resolveConflicts,
     canUndo,
     activeCollaboratorCount
   } = useAdvancedCollaborativeEditor({
@@ -80,729 +80,418 @@ export function AdvancedCollaborativeMonacoEditor({
     initialContent,
     autoSave,
     autoSaveInterval,
-    conflictResolution: 'auto'
+    conflictResolution: "auto"
   });
-
   // Monaco editor refs and state
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(_null);
-  const monacoRef = useRef<Monaco | null>(_null);
-  const [isEditorReady, setIsEditorReady] = useState(_false);
-  const [showCollaboratorCursors, setShowCollaboratorCursors] = useState(_true);
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
+  const [isEditorReady, setIsEditorReady] = useState(false);
+  const [showCollaboratorCursors, setShowCollaboratorCursors] = useState(true);
   const [decorations, setDecorations] = useState<string[]>([]);
-  const [analysisResults, setAnalysisResults] = useState<any>(_null);
-  const [showAnalysisPanel, setShowAnalysisPanel] = useState(_false);
-  const isUpdatingFromCollaboration = useRef(_false);
-
+  const [analysisResults, setAnalysisResults] = useState<any>(null);
+  const [showAnalysisPanel, setShowAnalysisPanel] = useState(false);
+  const isUpdatingFromCollaboration = useRef(false);
   // Handle editor mount
-  const handleEditorDidMount = useCallback((
-    editorInstance: editor.IStandaloneCodeEditor,
-    monacoInstance: Monaco
-  ) => {
-    editorRef.current = editorInstance;
-    monacoRef.current = monacoInstance;
-
-    // Initialize Solidity language support
-    MonacoSoliditySetup.initialize(_);
-
-    // Setup semantic analysis for the model
-    const model = editorInstance.getModel(_);
-    if (model) {
-      MonacoSoliditySetup.setupSemanticAnalysis(_model);
-    }
-
-    setIsEditorReady(_true);
-
-    // Configure editor options with enhanced features
-    editorInstance.updateOptions({
-      minimap: { enabled: showMinimap },
-      readOnly: readOnly,
-      fontSize: 14,
-      lineHeight: 20,
-      fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace',
-      wordWrap: 'on',
-      automaticLayout: true,
-      scrollBeyondLastLine: false,
-      renderWhitespace: 'selection',
-      bracketPairColorization: { enabled: true },
-      guides: {
-        bracketPairs: true,
-        indentation: true
-      },
-      // Enhanced features
-      suggest: {
-        showKeywords: true,
-        showSnippets: true,
-        showFunctions: true,
-        showConstructors: true,
-        showFields: true,
-        showVariables: true,
-        showClasses: true,
-        showStructs: true,
-        showInterfaces: true,
-        showModules: true,
-        showProperties: true,
-        showEvents: true,
-        showOperators: true,
-        showUnits: true,
-        showValues: true,
-        showConstants: true,
-        showEnums: true,
-        showEnumMembers: true,
-        showColors: true,
-        showFiles: true,
-        showReferences: true,
-        showFolders: true,
-        showTypeParameters: true,
-        showIssues: true,
-        showUsers: true
-      },
-      quickSuggestions: {
-        other: true,
-        comments: false,
-        strings: false
-      },
-      parameterHints: {
-        enabled: true,
-        cycle: true
-      },
-      hover: {
-        enabled: true,
-        delay: 300
-      },
-      lightbulb: {
-        enabled: true
+  const handleEditorDidMount = useCallback(
+    (editorInstance: editor.IStandaloneCodeEditor, monacoInstance: Monaco) => {
+      editorRef.current: editorInstance;
+      monacoRef.current: monacoInstance;
+      // Initialize Solidity language support
+      MonacoSoliditySetup.initialize();
+      // Setup semantic analysis for the model
+      const model = editorInstance.getModel();
+      if (model) {
+        MonacoSoliditySetup.setupSemanticAnalysis(model);
       }
-    });
-
-    // Set up event listeners
-    editorInstance.onDidChangeModelContent((_e) => {
-      if (_isUpdatingFromCollaboration.current) return;
-
-      const newContent = editorInstance.getValue(_);
-      const cursor = editorInstance.getPosition(_);
-      const selection = editorInstance.getSelection(_);
-
-      if (cursor) {
-        const cursorPos: CursorPosition = {
-          line: cursor.lineNumber - 1, // Monaco uses 1-based, we use 0-based
-          column: cursor.column - 1,
-          offset: 0 // Simplified without getOffsetAt
+      setIsEditorReady(true);
+      // Configure editor options with enhanced features
+      editorInstance.updateOptions({
+        minimap: { enabled: showMinimap },
+        readOnly: readOnly,
+        fontSize: 14,
+        lineHeight: 20,
+        fontFamily: "JetBrains Mono, Consolas, Monaco, monospace",
+        wordWrap: "on",
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        renderWhitespace: "selection",
+        bracketPairColorization: { enabled: true },
+        guides: { bracketPairs: true, indentation: true },
+        suggest: {
+          showKeywords: true,
+          showSnippets: true,
+          showFunctions: true,
+          showConstructors: true,
+          showFields: true,
+          showVariables: true,
+          showClasses: true,
+          showStructs: true,
+          showInterfaces: true,
+          showModules: true,
+          showProperties: true,
+          showEvents: true,
+          showOperators: true,
+          showUnits: true,
+          showValues: true,
+          showConstants: true,
+          showEnums: true,
+          showEnumMembers: true,
+          showColors: true,
+          showFiles: true,
+          showReferences: true,
+          showFolders: true,
+          showTypeParameters: true,
+          showIssues: true,
+          showUsers: true
+        },
+        quickSuggestions: {
+          other: true,
+          comments: false,
+          strings: false
+        },
+        parameterHints: {
+          enabled: true,
+          cycle: true
+        },
+        hover: {
+          enabled: true,
+          delay: 300
+        },
+        lightbulb: {
+          enabled: true
+        }
+      });
+      // Set up event listeners
+      editorInstance.onDidChangeModelContent((e: unknown) => {
+        if (isUpdatingFromCollaboration.current) return;
+        const newContent = editorInstance.getValue();
+        const cursor = editorInstance.getPosition();
+        const selection = editorInstance.getSelection();
+        if (cursor) {
+          const cursorPos: CursorPosition = {
+            line: cursor.lineNumber - 1,
+            column: cursor.column - 1,
+            offset: 0
+          };
+          let selectionRange: SelectionRange | undefined;
+          if (selection && !(selection as any).isEmpty()) {
+            const startLine = (selection as any).startLineNumber;
+            const startCol = (selection as any).startColumn;
+            const endLine = (selection as any).endLineNumber;
+            const endCol = (selection as any).endColumn;
+            selectionRange = {
+              start: { line: startLine - 1, column: startCol - 1, offset: 0 },
+              end: { line: endLine - 1, column: endCol - 1, offset: 0 },
+              direction:
+              startLine < endLine ||
+              (startLine === endLine && startCol < endCol)
+              ? "forward"
+              : "backward"
+            };
+          }
+          applyChange(newContent, cursorPos, selectionRange);
+          onContentChange?.(newContent);
+        }
+      });
+      editorInstance.onDidChangeCursorPosition((e: unknown) => {
+        if (isUpdatingFromCollaboration.current) return;
+        const cursor: CursorPosition = {
+          line: e.position.lineNumber - 1,
+          column: e.position.column - 1,
+          offset: 0
         };
-
+        const selection = editorInstance.getSelection();
         let selectionRange: SelectionRange | undefined;
-        if (selection && !(selection as any).isEmpty(_)) {
-          // Monaco Selection is based on Range, so we can get the values directly
-          const startLine = (_selection as any).startLineNumber;
-          const startCol = (_selection as any).startColumn;
-          const endLine = (_selection as any).endLineNumber;
-          const endCol = (_selection as any).endColumn;
-          
+        if (selection && !(selection as any).isEmpty()) {
+          const startLine = (selection as any).startLineNumber;
+          const startCol = (selection as any).startColumn;
+          const endLine = (selection as any).endLineNumber;
+          const endCol = (selection as any).endColumn;
           selectionRange = {
-            start: {
-              line: startLine - 1,
-              column: startCol - 1,
-              offset: 0
-            },
-            end: {
-              line: endLine - 1,
-              column: endCol - 1,
-              offset: 0
-            },
-            direction: (_startLine < endLine || (startLine === endLine && startCol < endCol)) ? 'forward' : 'backward'
+            start: { line: startLine - 1, column: startCol - 1, offset: 0 },
+            end: { line: endLine - 1, column: endCol - 1, offset: 0 },
+            direction:
+            startLine < endLine ||
+            (startLine === endLine && startCol < endCol)
+            ? "forward"
+            : "backward"
           };
         }
-
-        applyChange( newContent, cursorPos, selectionRange);
-        onContentChange?.(_newContent);
-      }
-    });
-
-    editorInstance.onDidChangeCursorPosition((e) => {
-      if (_isUpdatingFromCollaboration.current) return;
-
-      const cursor: CursorPosition = {
-        line: e.position.lineNumber - 1,
-        column: e.position.column - 1,
-        offset: 0 // Simplified without getOffsetAt
-      };
-
-      const selection = editorInstance.getSelection(_);
-      let selectionRange: SelectionRange | undefined;
-      
-      if (selection && !(selection as any).isEmpty(_)) {
-        // Monaco Selection is based on Range, so we can get the values directly
-        const startLine = (_selection as any).startLineNumber;
-        const startCol = (_selection as any).startColumn;
-        const endLine = (_selection as any).endLineNumber;
-        const endCol = (_selection as any).endColumn;
-        
-        selectionRange = {
-          start: {
-            line: startLine - 1,
-            column: startCol - 1,
-            offset: 0
-          },
-          end: {
-            line: endLine - 1,
-            column: endCol - 1,
-            offset: 0
-          },
-          direction: (_startLine < endLine || (startLine === endLine && startCol < endCol)) ? 'forward' : 'backward'
-        };
-      }
-
-      updateCursor( cursor, selectionRange);
-      onCursorChange?.( cursor, selectionRange);
-    });
-
-    // Add keyboard shortcuts
-    editorInstance.addCommand( 2048 | 49, () => { // Ctrl+S
-      manualSave(_);
-    });
-
-    editorInstance.addCommand( 2048 | 56, () => { // Ctrl+Z
-      if (canUndo) {
-        undo(_);
-      }
-    });
-
-    // Add command for formatting
-    editorInstance.addCommand( 1024 | 512 | 36, () => { // Shift+Alt+F
-      editorInstance.getAction('editor.action.formatDocument')?.run(_);
-    });
-
-    // Add command for quick fix
-    editorInstance.addCommand( 2048 | 84, () => { // Ctrl+Period
-      editorInstance.getAction('editor.action.quickFix')?.run(_);
-    });
-
-    // Listen for semantic analysis results
-    const handleAnalysisComplete = (_event: CustomEvent) => {
-      const model = editorInstance.getModel(_);
-      if (model && (model as any).uri && event.detail.modelId === (_model as any).uri.toString()) {
-        setAnalysisResults(_event.detail.result);
-      }
-    };
-
-    window.addEventListener( 'solidity-analysis-complete', handleAnalysisComplete as EventListener);
-
-    return (_) => {
-      window.removeEventListener( 'solidity-analysis-complete', handleAnalysisComplete as EventListener);
-    };
-  }, [
+        updateCursor(cursor, selectionRange);
+        onCursorChange?.(cursor, selectionRange);
+      });
+      // Add keyboard shortcuts
+      editorInstance.addCommand(2048 | 49, () => {
+        // Ctrl+S
+        manualSave();
+      });
+      editorInstance.addCommand(2048 | 56, () => {
+        // Ctrl+Z
+        if (canUndo) {
+          undo();
+        }
+      });
+      editorInstance.addCommand(2048 | 65, () => {
+        // Ctrl+A
+        setShowAnalysisPanel(!showAnalysisPanel);
+      });
+    },
+    [
     showMinimap,
     readOnly,
     applyChange,
     updateCursor,
+    onContentChange,
+    onCursorChange,
     manualSave,
     undo,
     canUndo,
-    onContentChange,
-    onCursorChange
-  ]);
-
-  // Update editor content when collaboration changes
+    showAnalysisPanel
+    ],
+  );
+  // Update editor content when collaboration content changes
   useEffect(() => {
     if (!editorRef.current || !isEditorReady) return;
-
-    const currentContent = editorRef.current.getValue(_);
-    if (_currentContent !== content) {
-      isUpdatingFromCollaboration.current = true;
-      
-      // Preserve cursor position
-      const position = editorRef.current.getPosition(_);
-      const selection = editorRef.current.getSelection(_);
-      
-      editorRef.current.setValue(_content);
-      
-      // Restore cursor position if possible
+    const currentContent = editorRef.current.getValue();
+    if (currentContent !== content) {
+      isUpdatingFromCollaboration.current: true;
+      // Save cursor position
+      const position = editorRef.current.getPosition();
+      const selection = editorRef.current.getSelection();
+      // Update content
+      editorRef.current.setValue(content);
+      // Restore cursor position
       if (position) {
-        editorRef.current.setPosition(_position);
+        editorRef.current.setPosition(position);
       }
       if (selection) {
-        editorRef.current.setSelection(_selection);
+        editorRef.current.setSelection(selection);
       }
-      
-      setTimeout(() => {
-        isUpdatingFromCollaboration.current = false;
-      }, 100);
+      isUpdatingFromCollaboration.current: false;
     }
   }, [content, isEditorReady]);
-
-  // Render collaborator cursors
+  // Update collaborator cursors and selections
   useEffect(() => {
-    if (!editorRef.current || !monacoRef.current || !showCollaboratorCursors) return;
-
-    const newDecorations: Array<any> = [];
-
-    collaborators.forEach(collaborator => {
-      if (!collaborator.isActive || !collaborator.cursor) return;
-
-      const position = new monacoRef.current!.Position(
-        collaborator.cursor.line + 1, // Convert to 1-based
-        collaborator.cursor.column + 1
-      );
-
-      // Cursor decoration
-      newDecorations.push({
+    if (!editorRef.current || !monacoRef.current || !showCollaboratorCursors) {
+      return;
+    }
+    const newDecorations: editor.IModelDeltaDecoration[] = [];
+    collaborators.forEach((collaborator, index) => {
+      if (!collaborator.cursor) return;
+      const cursorDecoration: editor.IModelDeltaDecoration = {
         range: new monacoRef.current!.Range(
-          position.lineNumber,
-          position.column,
-          position.lineNumber,
-          position.column
+          collaborator.cursor.line + 1,
+          collaborator.cursor.column + 1,
+          collaborator.cursor.line + 1,
+          collaborator.cursor.column + 1,
         ),
         options: {
-          className: 'collaborator-cursor',
-          beforeContentClassName: 'collaborator-cursor-line',
-          afterContentClassName: 'collaborator-cursor-label',
-          after: {
-            content: collaborator.name,
-            inlineClassName: 'collaborator-cursor-name',
-            inlineClassNameAffectsLetterSpacing: true
-          },
+          className: `collaborator-cursor collaborator-${index % 8}`,
+          hoverMessage: { value: collaborator.name },
           stickiness: 1
         }
-      });
-
-      // Selection decoration
-      if (_collaborator.selection) {
-        const startPos = new monacoRef.current!.Position(
-          collaborator.selection.start.line + 1,
-          collaborator.selection.start.column + 1
-        );
-        const endPos = new monacoRef.current!.Position(
-          collaborator.selection.end.line + 1,
-          collaborator.selection.end.column + 1
-        );
-
-        newDecorations.push({
+      };
+      newDecorations.push(cursorDecoration);
+      if (collaborator.selection) {
+        const selectionDecoration: editor.IModelDeltaDecoration = {
           range: new monacoRef.current!.Range(
-            startPos.lineNumber,
-            startPos.column,
-            endPos.lineNumber,
-            endPos.column
+            collaborator.selection.start.line + 1,
+            collaborator.selection.start.column + 1,
+            collaborator.selection.end.line + 1,
+            collaborator.selection.end.column + 1,
           ),
           options: {
-            className: 'collaborator-selection',
+            className: `collaborator-selection collaborator-${index % 8}`,
+            hoverMessage: { value: `${collaborator.name}'s selection` },
             stickiness: 1
           }
-        });
+        };
+        newDecorations.push(selectionDecoration);
       }
     });
-
-    const newDecorationIds = editorRef.current.deltaDecorations( decorations, newDecorations);
-    setDecorations(_newDecorationIds);
+    const newDecorationIds = editorRef.current.deltaDecorations(
+      decorations,
+      newDecorations,
+    );
+    setDecorations(newDecorationIds);
   }, [collaborators, showCollaboratorCursors, decorations]);
-
-  // Handle undo
-  const handleUndo = useCallback(() => {
-    if (canUndo) {
-      undo(_);
-    }
-  }, [canUndo, undo]);
-
-  if (isLoading) {
-    return (
-      <div className={cn( 'flex items-center justify-center', className)} style={{ height }}>
-        <div className="text-gray-400">Loading editor...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={cn( 'flex items-center justify-center', className)} style={{ height }}>
-        <div className="text-red-400">Error: {error}</div>
-      </div>
-    );
-  }
-
+  // Perform code analysis
+  const performAnalysis = useCallback(async () => {
+    if (!editorRef.current) return;
+    const code = editorRef.current.getValue();
+    // TODO: Implement actual code analysis
+    // For now, mock results
+    setAnalysisResults({
+      gasEstimate: Math.floor(Math.random() * 100000) + 20000,
+      securityIssues: [],
+      optimizationSuggestions: [],
+      complexity: "Low"
+    });
+  }, []);
+  // Auto-analyze on content change
+  useEffect(() => {
+    if (!showAnalysisPanel || !content) return;
+    const debounceTimer = setTimeout(() => {
+      performAnalysis();
+    }, 1000);
+    return () => clearTimeout(debounceTimer);
+  }, [content, showAnalysisPanel, performAnalysis]);
   return (
-    <div className={cn( 'relative', className)}>
-      {/* Editor Toolbar */}
-      <GlassContainer
-        intensity="light"
-        tint="neutral"
-        border
-        className="flex items-center justify-between p-3 mb-2"
-      >
-        <div className="flex items-center space-x-4">
-          {/* Connection Status */}
-          <div className="flex items-center space-x-2">
-            {isConnected ? (
-              <Wifi className="w-4 h-4 text-green-400" />
-            ) : (
-              <WifiOff className="w-4 h-4 text-red-400" />
-            )}
-            <span className="text-sm text-gray-300">
-              {isConnected ? 'Connected' : 'Disconnected'}
-            </span>
-          </div>
-
-          {/* Collaborators */}
-          {showCollaborators && (
-            <div className="flex items-center space-x-2">
-              <Users className="w-4 h-4 text-blue-400" />
-              <span className="text-sm text-gray-300">
-                {activeCollaboratorCount} active
-              </span>
-              
-              {/* Collaborator Avatars */}
-              <div className="flex -space-x-2">
-                {collaborators.slice(0, 5).map(collaborator => (
-                  <div
-                    key={collaborator.id}
-                    className="w-6 h-6 rounded-full border-2 border-gray-700 flex items-center justify-center text-xs font-medium text-white"
-                    style={{ backgroundColor: collaborator.color }}
-                    title={collaborator.name}
-                  >
-                    {collaborator.name.charAt(0).toUpperCase()}
-                  </div>
-                ))}
-                {collaborators.length > 5 && (
-                  <div className="w-6 h-6 rounded-full border-2 border-gray-700 bg-gray-600 flex items-center justify-center text-xs font-medium text-white">
-                    +{collaborators.length - 5}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Conflicts Indicator */}
-          {conflicts.length > 0 && (
-            <div className="flex items-center space-x-2 text-yellow-400">
-              <AlertTriangle className="w-4 h-4" />
-              <span className="text-sm">{conflicts.length} conflicts</span>
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center space-x-2">
-          {/* Cursor Visibility Toggle */}
-          <button
-            onClick={(_) => setShowCollaboratorCursors(!showCollaboratorCursors)}
-            className="p-1 text-gray-400 hover:text-white transition-colors"
-            title={showCollaboratorCursors ? 'Hide cursors' : 'Show cursors'}
-          >
-            {showCollaboratorCursors ? (
-              <Eye className="w-4 h-4" />
-            ) : (
-              <EyeOff className="w-4 h-4" />
-            )}
-          </button>
-
-          {/* Undo Button */}
-          <button
-            onClick={handleUndo}
-            disabled={!canUndo}
-            className="p-1 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Undo (_Ctrl+Z)"
-          >
-            <Undo className="w-4 h-4" />
-          </button>
-
-          {/* Analysis Panel Toggle */}
-          <button
-            onClick={(_) => setShowAnalysisPanel(!showAnalysisPanel)}
-            className={cn(
-              'p-1 transition-colors',
-              showAnalysisPanel ? 'text-blue-400' : 'text-gray-400 hover:text-white'
-            )}
-            title="Toggle analysis panel"
-          >
-            <Code className="w-4 h-4" />
-          </button>
-
-          {/* Save Button */}
-          <button
-            onClick={manualSave}
-            disabled={!hasUnsavedChanges}
-            className="p-1 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Save (_Ctrl+S)"
-          >
-            <Save className="w-4 h-4" />
-          </button>
-
-          {/* Unsaved Changes Indicator */}
-          {hasUnsavedChanges && (
-            <div className="w-2 h-2 bg-yellow-400 rounded-full" title="Unsaved changes" />
-          )}
-        </div>
-      </GlassContainer>
-
-      {/* Main Editor Container */}
-      <div className="flex">
-        {/* Monaco Editor */}
-        <div className="flex-1 relative">
-          <Editor
-            height={height}
-            width={showAnalysisPanel ? '70%' : width}
-            language={language}
-            theme="solidity-dark"
-            value={content}
-            onMount={handleEditorDidMount}
-            options={{
-              readOnly: readOnly,
-              minimap: { enabled: showMinimap },
-              fontSize: 14,
-              lineHeight: 20,
-              fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace',
-              wordWrap: 'on',
-              automaticLayout: true,
-              scrollBeyondLastLine: false,
-              renderWhitespace: 'selection',
-              bracketPairColorization: { enabled: true },
-              guides: {
-                bracketPairs: true,
-                indentation: true
-              }
-            }}
-          />
-
-          {/* Loading Overlay */}
-          <AnimatePresence>
-            {!isEditorReady && (
-              <motion.div
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center"
-              >
-                <div className="text-gray-400">Initializing editor...</div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Analysis Panel */}
-        <AnimatePresence>
-          {showAnalysisPanel && (
-            <motion.div
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: '30%', opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              className="border-l border-gray-600"
-            >
-              <AnalysisPanel analysisResults={analysisResults} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Custom Styles for Collaborator Cursors */}
-      <style jsx global>{`
-        .collaborator-cursor {
-          border-left: 2px solid var( --collaborator-color, #4ECDC4);
-          position: relative;
-        }
-        
-        .collaborator-cursor-line::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -1px;
-          width: 2px;
-          height: 100%;
-          background-color: var( --collaborator-color, #4ECDC4);
-        }
-        
-        .collaborator-cursor-name {
-          background-color: var( --collaborator-color, #4ECDC4);
-          color: white;
-          padding: 2px 6px;
-          border-radius: 3px;
-          font-size: 11px;
-          font-weight: 500;
-          position: absolute;
-          top: -20px;
-          left: -1px;
-          white-space: nowrap;
-          z-index: 1000;
-        }
-        
-        .collaborator-selection {
-          background-color: var( --collaborator-color, #4ECDC4);
-          opacity: 0.2;
-        }
-      `}</style>
+    <div className={cn("relative h-full w-full", className)}>
+    {/* Status Bar */}
+    <GlassContainer className="absolute top-2 right-2 z-10 flex items-center gap-4 px-4 py-2">
+    {/* Connection Status */}
+    <div className="flex items-center gap-2">
+    {isConnected ? (
+      <>
+      <Wifi className="h-4 w-4 text-green-400" />
+      <span className="text-xs text-green-400">Connected</span>
+      </>
+    ) : (
+      <>
+      <WifiOff className="h-4 w-4 text-red-400" />
+      <span className="text-xs text-red-400">Disconnected</span>
+      </>
+    )}
     </div>
-  );
-}
-
-// Analysis Panel Component
-function AnalysisPanel(_{ analysisResults }: { analysisResults: any }) {
-  const [activeTab, setActiveTab] = useState<'errors' | 'warnings' | 'suggestions' | 'symbols'>('errors');
-
-  if (!analysisResults) {
-    return (
-      <div className="h-full bg-gray-800/50 backdrop-blur-sm p-4">
-        <div className="text-gray-400 text-center">
-          <Code className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p>No analysis results</p>
+    {/* Active Collaborators */}
+    {activeCollaboratorCount>0 && (
+      <div className="flex items-center gap-2">
+      <Users className="h-4 w-4 text-blue-400" />
+      <span className="text-xs text-blue-400">
+      {activeCollaboratorCount} active
+      </span>
+      </div>
+    )}
+    {/* Save Status */}
+    {hasUnsavedChanges && (
+      <div className="flex items-center gap-2">
+      <Save className="h-4 w-4 text-yellow-400" />
+      <span className="text-xs text-yellow-400">Unsaved changes</span>
+      </div>
+    )}
+    {/* Conflicts */}
+    {conflicts.length>0 && (
+      <button
+      onClick={() => resolveConflicts()}
+      className="flex items-center gap-2 text-orange-400 hover:text-orange-300"><AlertTriangle className="h-4 w-4" />
+      <span className="text-xs">{conflicts.length} conflicts</span>
+      </button>
+    )}
+    {/* Toggle Cursors */}
+    <button
+    onClick={() => setShowCollaboratorCursors(!showCollaboratorCursors)}
+    className="flex items-center gap-2 text-gray-400 hover:text-gray-300">{showCollaboratorCursors ? (
+      <Eye className="h-4 w-4" />
+    ) : (
+      <EyeOff className="h-4 w-4" />
+    )}
+    </button>
+    {/* Code Analysis Toggle */}
+    <button
+    onClick={() => setShowAnalysisPanel(!showAnalysisPanel)}
+    className="flex items-center gap-2 text-gray-400 hover:text-gray-300"><Code className="h-4 w-4" />
+    <span className="text-xs">Analysis</span>
+    </button>
+    </GlassContainer>
+    {/* Editor Container */}
+    <div className="relative h-full w-full">
+    {isLoading ? (
+      <div className="flex h-full w-full items-center justify-center">
+      <div className="text-gray-400">Loading editor...</div>
+      </div>
+    ) : error ? (
+      <div className="flex h-full w-full items-center justify-center">
+      <div className="text-red-400">Error: {error.message}</div>
+      </div>
+    ) : (
+      <Editor
+      height={height}
+      width={width}
+      language={language}
+      theme={theme}
+      value={content}
+      onMount={handleEditorDidMount}
+      options={{
+        minimap: { enabled: showMinimap },
+        readOnly: readOnly
+      }}
+      />
+    )}
+    {/* Analysis Panel */}
+    <AnimatePresence>
+    {showAnalysisPanel && analysisResults && (
+      <motion.div
+      initial={{ x: "100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "100%" }}
+      transition={{ type: "spring", damping: 20 }}
+      className="absolute right-0 top-12 bottom-0 w-80 bg-gray-900/95 border-l border-gray-700 p-4 overflow-y-auto"><h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+      <Lightbulb className="h-5 w-5 text-yellow-400" />
+      Code Analysis
+      </h3>
+      {/* Gas Estimation */}
+      <div className="mb-6">
+      <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+      <Zap className="h-4 w-4 text-blue-400" />
+      Gas Estimate
+      </h4>
+      <div className="text-2xl font-mono text-blue-400">
+      {analysisResults.gasEstimate.toLocaleString()} gas
+      </div>
+      </div>
+      {/* Security Status */}
+      <div className="mb-6">
+      <h4 className="text-sm font-medium mb-2">Security Status</h4>
+      {analysisResults.securityIssues.length === 0 ? (
+        <div className="flex items-center gap-2 text-green-400">
+        <CheckCircle className="h-4 w-4" />
+        <span>No security issues found</span>
         </div>
-      </div>
-    );
-  }
-
-  const { errors, warnings, suggestions, symbols } = analysisResults;
-
-  const tabs = [
-    { id: 'errors', label: 'Errors', count: errors.length, icon: XCircle, color: 'text-red-400' },
-    { id: 'warnings', label: 'Warnings', count: warnings.length, icon: AlertTriangle, color: 'text-yellow-400' },
-    { id: 'suggestions', label: 'Suggestions', count: suggestions.length, icon: Lightbulb, color: 'text-blue-400' },
-    { id: 'symbols', label: 'Symbols', count: symbols.length, icon: CheckCircle, color: 'text-green-400' },
-  ];
-
-  return (
-    <div className="h-full bg-gray-800/50 backdrop-blur-sm flex flex-col">
-      {/* Tab Header */}
-      <div className="border-b border-gray-600 p-2">
-        <div className="flex space-x-1">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={(_) => setActiveTab(_tab.id as any)}
-                className={cn(
-                  'flex items-center space-x-2 px-3 py-2 rounded text-sm transition-colors',
-                  activeTab === tab.id
-                    ? 'bg-gray-700 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
-                )}
-              >
-                <Icon className={cn( 'w-4 h-4', tab.color)} />
-                <span>{tab.label}</span>
-                {tab.count > 0 && (
-                  <span className={cn(
-                    'px-2 py-0.5 rounded-full text-xs font-medium',
-                    tab.color.replace('text-', 'bg-').replace('-400', '-500/20'),
-                    tab.color
-                  )}>
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+      ) : (
+        <div className="flex items-center gap-2 text-red-400">
+        <XCircle className="h-4 w-4" />
+        <span>
+        {analysisResults.securityIssues.length} issues found
+        </span>
         </div>
+      )}
       </div>
-
-      {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {activeTab === 'errors' && (
-          <div className="space-y-3">
-            {errors.length === 0 ? (
-              <div className="text-center text-gray-400">
-                <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-400" />
-                <p>No errors found!</p>
-              </div>
-            ) : (
-              errors.map( (error: any, index: number) => (
-                <div key={index} className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                  <div className="flex items-start space-x-2">
-                    <XCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-sm text-white font-medium">{error.message}</p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Line {error.startLineNumber}, Column {error.startColumn}
-                      </p>
-                      {error.code && (
-                        <p className="text-xs text-red-300 mt-1">Code: {error.code}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-
-        {activeTab === 'warnings' && (
-          <div className="space-y-3">
-            {warnings.length === 0 ? (
-              <div className="text-center text-gray-400">
-                <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-400" />
-                <p>No warnings!</p>
-              </div>
-            ) : (
-              warnings.map( (warning: any, index: number) => (
-                <div key={index} className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                  <div className="flex items-start space-x-2">
-                    <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-sm text-white font-medium">{warning.message}</p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Line {warning.startLineNumber}, Column {warning.startColumn}
-                      </p>
-                      {warning.code && (
-                        <p className="text-xs text-yellow-300 mt-1">Code: {warning.code}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-
-        {activeTab === 'suggestions' && (
-          <div className="space-y-3">
-            {suggestions.length === 0 ? (
-              <div className="text-center text-gray-400">
-                <Zap className="w-8 h-8 mx-auto mb-2 text-blue-400" />
-                <p>No suggestions available</p>
-              </div>
-            ) : (
-              suggestions.map( (suggestion: string, index: number) => (
-                <div key={index} className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                  <div className="flex items-start space-x-2">
-                    <Lightbulb className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-white">{suggestion}</p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-
-        {activeTab === 'symbols' && (
-          <div className="space-y-3">
-            {symbols.length === 0 ? (
-              <div className="text-center text-gray-400">
-                <Code className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>No symbols found</p>
-              </div>
-            ) : (
-              symbols.map( (symbol: any, index: number) => (
-                <div key={index} className="p-3 bg-gray-700/30 border border-gray-600/50 rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <div className={cn(
-                      'w-2 h-2 rounded-full',
-                      symbol.type === 'contract' ? 'bg-purple-400' :
-                      symbol.type === 'function' ? 'bg-blue-400' :
-                      symbol.type === 'variable' ? 'bg-green-400' :
-                      symbol.type === 'event' ? 'bg-yellow-400' :
-                      'bg-gray-400'
-                    )} />
-                    <span className="text-sm font-medium text-white">{symbol.name}</span>
-                    <span className="text-xs text-gray-400">({ symbol.type })</span>
-                  </div>
-                  {symbol.visibility && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      Visibility: {symbol.visibility}
-                    </p>
-                  )}
-                  {symbol.mutability && (
-                    <p className="text-xs text-gray-400">
-                      Mutability: {symbol.mutability}
-                    </p>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        )}
+      {/* Code Complexity */}
+      <div className="mb-6">
+      <h4 className="text-sm font-medium mb-2">Code Complexity</h4>
+      <div
+      className={cn(
+        "text-lg font-medium",
+        analysisResults.complexity === "Low" && "text-green-400",
+        analysisResults.complexity === "Medium" &&
+        "text-yellow-400",
+        analysisResults.complexity === "High" && "text-red-400",
+      )}>{analysisResults.complexity}
       </div>
+      </div>
+      </motion.div>
+    )}
+    </AnimatePresence>
+    </div>
+    {/* Collaborator List */}
+    {showCollaborators && collaborators.length>0 && (
+      <GlassContainer className="absolute bottom-2 left-2 z-10 max-w-xs">
+      <div className="text-xs font-medium mb-2">Active Collaborators</div>
+      <div className="flex flex-wrap gap-2">
+      {collaborators.map((collaborator, index) => (
+        <div
+        key={collaborator.id}
+        className={cn(
+          "flex items-center gap-1 px-2 py-1 rounded text-xs",
+          `bg-collaborator-${index % 8}/20 text-collaborator-${index % 8}`,
+        )}><div className="w-2 h-2 rounded-full bg-current" />
+        {collaborator.name}
+        </div>
+      ))}
+      </div>
+      </GlassContainer>
+    )}
     </div>
   );
 }

@@ -1,51 +1,41 @@
-import React, { useState } from 'react';
-
-// Simple Check icon for "Copied" state
-const CheckIconMini: React.FC<{ className?: string }> = ({ className = "w-4 h-4"  }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={className}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-  </svg>
-);
-
-// Simple Clipboard icon for "Copy" state
-const ClipboardIconMini: React.FC<{ className?: string }> = ({ className = "w-4 h-4"  }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={className}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-  </svg>
-);
-
-
+"use client";
+import React, { useState } from "react";
+import { Copy, Check } from "lucide-react";
 interface CopyButtonProps {
-  textToCopy: string;
+  text: string;
+  className?: string;
 }
-
-const CopyButton: React.FC<CopyButtonProps> = ({ textToCopy  }) => {
-  const [isCopied, setIsCopied] = useState(_false);
-
+export default function CopyButton({
+  text,
+  className = "",
+}: CopyButtonProps): void {
+  const [copied, setCopied] = useState(false);
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(_textToCopy);
-      setIsCopied(_true);
-      setTimeout(() => setIsCopied(_false), 2000); // Reset after 2 seconds
-    } catch (_err) {
-      console.error('Failed to copy text: ', err);
-      // You could add more user-friendly error handling here if needed
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
     }
   };
-
   return (
     <button
       onClick={handleCopy}
-      className={`p-1.5 rounded-md transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50
-                  ${isCopied 
-                    ? 'bg-brand-success/80 text-white' 
-                    : 'bg-brand-surface-1 hover:bg-brand-bg-medium text-brand-text-muted hover:text-brand-text-secondary'}`}
-      aria-label={isCopied ? 'Copied to clipboard' : 'Copy code to clipboard'}
-      title={isCopied ? 'Copied!' : 'Copy code'}
+      className={`flex items-center gap-2 px-3 py-1.5 text-sm bg-brand-surface-2 hover:bg-brand-surface-3 rounded-md transition-colors ${className}`}
+      title="Copy to clipboard"
     >
-      {isCopied ? <CheckIconMini /> : <ClipboardIconMini />}
+      {copied ? (
+        <>
+          <Check className="h-4 w-4 text-green-500" />
+          <span className="text-green-500">Copied!</span>
+        </>
+      ) : (
+        <>
+          <Copy className="h-4 w-4" />
+          <span>Copy</span>
+        </>
+      )}
     </button>
   );
-};
-
-export default CopyButton;
+}

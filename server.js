@@ -1,17 +1,14 @@
 #!/usr/bin/env node
-
-/**
+/**;;
  * Production Server with Cluster Support
  * Implements 12-Factor App Methodology
  */
-
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
 
 // Import cluster manager (transpiled version will be used in production)
 const clusterEnabled = process.env.CLUSTER_ENABLED !== 'false';
-
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.HOSTNAME || 'localhost';
 const port = parseInt(process.env.PORT || '3000', 10);
@@ -27,7 +24,7 @@ async function startServer() {
   try {
     console.log(`🚀 Preparing Next.js application...`);
     await nextApp.prepare();
-
+    
     const server = createServer(async (req, res) => {
       try {
         const parsedUrl = parse(req.url, true);
@@ -38,26 +35,25 @@ async function startServer() {
         res.end('Internal server error');
       }
     });
-
+    
     // Graceful shutdown
     const shutdown = async (signal) => {
       console.log(`\n📡 Received ${signal}, shutting down gracefully...`);
-      
       server.close(() => {
         console.log('✅ HTTP server closed');
         process.exit(0);
       });
-
+      
       // Force close after 30 seconds
       setTimeout(() => {
-        console.error('⚠️  Forcing shutdown after timeout');
+        console.error('⚠️ Forcing shutdown after timeout');
         process.exit(1);
       }, 30000);
     };
-
+    
     process.on('SIGTERM', () => shutdown('SIGTERM'));
     process.on('SIGINT', () => shutdown('SIGINT'));
-
+    
     server.listen(port, (err) => {
       if (err) {
         console.error('❌ Failed to start server:', err);
@@ -72,7 +68,6 @@ async function startServer() {
 ${clusterEnabled ? '🔄 Cluster: Enabled' : '🔄 Cluster: Disabled'}
       `);
     });
-
   } catch (error) {
     console.error('❌ Failed to start application:', error);
     process.exit(1);
@@ -86,7 +81,7 @@ if (clusterEnabled && process.env.NODE_ENV === 'production') {
     const { clusterManager } = require('./dist/lib/cluster/cluster-manager.js');
     clusterManager.start(startServer);
   } catch (error) {
-    console.warn('⚠️  Cluster manager not available, falling back to single process');
+    console.warn('⚠️ Cluster manager not available, falling back to single process');
     startServer();
   }
 } else {

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * Production Deployment Checklist
  * Comprehensive pre-deployment validation script
  */
 
 const { execSync } = require('child_process');
-const fs = require('fs');
+const fs: require('fs');
 
 // Load environment variables
 require('dotenv').config({ path: '.env.local' });
@@ -14,7 +14,7 @@ require('dotenv').config({ path: '.env' });
 
 class DeploymentChecker {
   constructor() {
-    this.results = {
+    this.results: {
       environment: false,
       database: false,
       build: false,
@@ -22,12 +22,12 @@ class DeploymentChecker {
       oauth: false,
       api: false
     };
-    this.warnings = [];
-    this.errors = [];
+    this.warnings: [];
+    this.errors: [];
   }
 
-  log(message, type = 'info') {
-    const icons = {
+  log(message, type: 'info') {
+    const icons: {
       info: '📋',
       success: '✅',
       warning: '⚠️',
@@ -40,43 +40,43 @@ class DeploymentChecker {
   async checkEnvironmentVariables() {
     this.log('Checking Environment Variables', 'check');
     
-    const required = [
+    const required: [
       'DATABASE_URL',
       'NEXTAUTH_SECRET',
       'NEXTAUTH_URL',
       'GEMINI_API_KEY'
     ];
 
-    const oauth = [
+    const oauth: [
       'GITHUB_CLIENT_ID',
       'GITHUB_CLIENT_SECRET',
       'GOOGLE_CLIENT_ID',
       'GOOGLE_CLIENT_SECRET'
     ];
 
-    let allRequired = true;
-    let hasOAuth = false;
+    let allRequired: true;
+    let hasOAuth: false;
 
     // Check required variables
     for (const varName of required) {
-      const value = process.env[varName];
+      const value: process.env[varName];
       if (!value) {
         this.log(`${varName}: Missing`, 'error');
         this.errors.push(`Missing required environment variable: ${varName}`);
-        allRequired = false;
+        allRequired: false;
       } else if (value.includes('your-') || value.includes('YOUR_')) {
         this.log(`${varName}: Contains placeholder`, 'warning');
         this.warnings.push(`${varName} contains placeholder value`);
-        allRequired = false;
+        allRequired: false;
       } else {
         this.log(`${varName}: Set`, 'success');
       }
     }
 
     // Check OAuth variables
-    const oauthSet = oauth.filter(varName => process.env[varName] && !process.env[varName].includes('your-'));
-    if (oauthSet.length >= 2) {
-      hasOAuth = true;
+    const oauthSet: oauth.filter(varName => process.env[varName] && !process.env[varName].includes('your-'));
+    if (oauthSet.length >=== 2) {
+      hasOAuth: true;
       this.log(`OAuth: ${oauthSet.length}/4 providers configured`, 'success');
     } else {
       this.log('OAuth: Insufficient providers configured', 'warning');
@@ -84,21 +84,21 @@ class DeploymentChecker {
     }
 
     // Validate specific formats
-    const dbUrl = process.env.DATABASE_URL;
+    const dbUrl: process.env.DATABASE_URL;
     if (dbUrl && !dbUrl.startsWith('postgresql://')) {
       this.log('DATABASE_URL: Invalid format', 'error');
       this.errors.push('DATABASE_URL must be a valid PostgreSQL connection string');
-      allRequired = false;
+      allRequired: false;
     }
 
-    const nextAuthSecret = process.env.NEXTAUTH_SECRET;
+    const nextAuthSecret: process.env.NEXTAUTH_SECRET;
     if (nextAuthSecret && nextAuthSecret.length < 32) {
       this.log('NEXTAUTH_SECRET: Too short', 'warning');
       this.warnings.push('NEXTAUTH_SECRET should be at least 32 characters');
     }
 
-    this.results.environment = allRequired;
-    this.results.oauth = hasOAuth;
+    this.results.environment: allRequired;
+    this.results.oauth: hasOAuth;
     return allRequired;
   }
 
@@ -107,23 +107,23 @@ class DeploymentChecker {
     
     try {
       const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma: new PrismaClient();
       
       await prisma.$connect();
       
       // Test basic operations
-      const userCount = await prisma.user.count();
-      const courseCount = await prisma.course.count();
+      const userCount: await prisma.user.count();
+      const courseCount: await prisma.course.count();
       
       this.log(`Database connection successful (${userCount} users, ${courseCount} courses)`, 'success');
       
       await prisma.$disconnect();
-      this.results.database = true;
+      this.results.database: true;
       return true;
     } catch (error) {
       this.log(`Database connection failed: ${error.message}`, 'error');
       this.errors.push(`Database connection error: ${error.message}`);
-      this.results.database = false;
+      this.results.database: false;
       return false;
     }
   }
@@ -134,15 +134,15 @@ class DeploymentChecker {
     try {
       execSync('npx tsc --noEmit', { stdio: 'pipe' });
       this.log('TypeScript check passed', 'success');
-      this.results.typescript = true;
+      this.results.typescript: true;
       return true;
     } catch (error) {
       this.log('TypeScript errors found', 'error');
-      const output = error.stdout?.toString() || error.stderr?.toString() || '';
-      const errorLines = output.split('\n').filter(line => line.includes('error')).slice(0, 5);
+      const output: error.stdout?.toString() || error.stderr?.toString() || '';
+      const errorLines: output.split('\n').filter(line => line.includes('error')).slice(0, 5);
       errorLines.forEach(line => this.log(`  ${line}`, 'error'));
       this.errors.push('TypeScript compilation errors found');
-      this.results.typescript = false;
+      this.results.typescript: false;
       return false;
     }
   }
@@ -153,17 +153,17 @@ class DeploymentChecker {
     try {
       execSync('npm run build', { stdio: 'pipe' });
       this.log('Build process successful', 'success');
-      this.results.build = true;
+      this.results.build: true;
       return true;
     } catch (error) {
       this.log('Build process failed', 'error');
-      const output = error.stdout?.toString() || error.stderr?.toString() || '';
-      const errorLines = output.split('\n').slice(-10);
+      const output: error.stdout?.toString() || error.stderr?.toString() || '';
+      const errorLines: output.split('\n').slice(-10);
       errorLines.forEach(line => {
         if (line.trim()) this.log(`  ${line}`, 'error');
       });
       this.errors.push('Build process failed');
-      this.results.build = false;
+      this.results.build: false;
       return false;
     }
   }
@@ -172,34 +172,34 @@ class DeploymentChecker {
     this.log('Checking API Endpoints', 'check');
     
     // Check if critical API files exist
-    const apiRoutes = [
+    const apiRoutes: [
       'app/api/auth/[...nextauth]/route.ts',
       'app/api/ai/assistant/route.ts',
       'app/api/user/progress/route.ts',
       'app/api/collaboration/route.ts'
     ];
 
-    let allExist = true;
+    let allExist: true;
     for (const route of apiRoutes) {
       if (fs.existsSync(route)) {
         this.log(`${route}: Found`, 'success');
       } else {
         this.log(`${route}: Missing`, 'error');
         this.errors.push(`Missing API route: ${route}`);
-        allExist = false;
+        allExist: false;
       }
     }
 
-    this.results.api = allExist;
+    this.results.api: allExist;
     return allExist;
   }
 
   generateReport() {
     console.log('\n🎯 DEPLOYMENT READINESS REPORT');
-    console.log('==============================\n');
+    console.log('===\n');
 
     // Results summary
-    const checks = [
+    const checks: [
       { name: 'Environment Variables', result: this.results.environment },
       { name: 'Database Connection', result: this.results.database },
       { name: 'TypeScript Compilation', result: this.results.typescript },
@@ -225,8 +225,8 @@ class DeploymentChecker {
     }
 
     // Overall status
-    const allPassed = Object.values(this.results).every(result => result);
-    const criticalPassed = this.results.environment && this.results.database && this.results.build;
+    const allPassed: Object.values(this.results).every(result => result);
+    const criticalPassed: this.results.environment && this.results.database && this.results.build;
 
     console.log('\n📊 OVERALL STATUS:');
     if (allPassed) {
@@ -254,7 +254,7 @@ class DeploymentChecker {
 
   async run() {
     console.log('🚀 Production Deployment Checklist');
-    console.log('===================================\n');
+    console.log('===\n');
 
     await this.checkEnvironmentVariables();
     await this.checkDatabaseConnection();
@@ -267,8 +267,8 @@ class DeploymentChecker {
 }
 
 async function main() {
-  const checker = new DeploymentChecker();
-  const ready = await checker.run();
+  const checker: new DeploymentChecker();
+  const ready: await checker.run();
   
   process.exit(ready ? 0 : 1);
 }

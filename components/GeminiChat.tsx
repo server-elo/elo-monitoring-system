@@ -1,122 +1,144 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChatMessage, ChatMessageRole } from '../types';
-import SendIcon from './icons/SendIcon';
-import UserIcon from './icons/UserIcon';
-import BotIcon from './icons/BotIcon';
-import SpinnerIcon from './icons/SpinnerIcon';
-
+"use client";
+import React, { useState, useRef, useEffect } from "react";
+import { ChatMessage, ChatMessageRole } from "../types";
+import SendIcon from "./icons/SendIcon";
+import UserIcon from "./icons/UserIcon";
+import BotIcon from "./icons/BotIcon";
+import SpinnerIcon from "./icons/SpinnerIcon";
 interface GeminiChatProps {
-  chatMessages: ChatMessage[]; 
-  onSendMessage: (_message: string) => Promise<void>; 
-  isLoading: boolean; 
-  currentModuleTitle: string | null; 
+  chatMessages: ChatMessage[];
+  onSendMessage: (message: string) => Promise<void>;
+  isLoading: boolean;
+  currentModuleTitle: string | null;
 }
-
-const GeminiChat: React.FC<GeminiChatProps> = ({ chatMessages, onSendMessage, isLoading, currentModuleTitle }) => {
-  const [userInput, setUserInput] = useState('');
-  const chatContainerRef = useRef<HTMLDivElement>(_null);
-
+const GeminiChat: React.FC<GeminiChatProps> = ({
+  chatMessages,
+  onSendMessage,
+  isLoading,
+  currentModuleTitle,
+}) => {
+  const [userInput, setUserInput] = useState("");
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (_chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   }, [chatMessages]);
-
-  const handleSubmit = (_e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (userInput.trim() && !isLoading) {
       onSendMessage(userInput.trim());
-      setUserInput('');
+      setUserInput("");
     }
   };
-
   const getFormattedTimestamp = (date: Date): string => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
-
   return (
-    <div className="flex flex-col h-full bg-brand-surface-2 rounded-lg shadow-lg overflow-hidden">
-      <header className="p-4 border-b border-brand-bg-light/50 bg-brand-surface-1">
-        <h2 className="text-lg font-semibold text-brand-accent">
+    <div className="flex flex-col h-full bg-brand-surface-1 rounded-lg">
+      {/* Header */}
+      <div className="p-4 border-b border-brand-border">
+        <h3 className="text-lg font-semibold text-brand-text-primary">
           AI Learning Assistant
-        </h2>
+        </h3>
         {currentModuleTitle && (
-          <p className="text-xs text-brand-text-muted">Focusing on: {currentModuleTitle}</p>
-       )}
-      </header>
-
-      <div ref={chatContainerRef} className="flex-grow p-4 space-y-4 overflow-y-auto bg-brand-surface-1/50">
-        {chatMessages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.role === ChatMessageRole.USER ? 'justify-end' : 'justify-start'}`}>
-            <div className={`flex items-start max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl break-words ${msg.role === ChatMessageRole.USER ? 'flex-row-reverse' : ''}`}>
-              <div className={`p-2 rounded-full text-white self-start mx-2 shrink-0 ${msg.role === ChatMessageRole.USER ? 'bg-brand-secondary' : 'bg-brand-accent'}`}>
-                 {msg.role === ChatMessageRole.USER ? <UserIcon className="w-5 h-5" /> : <BotIcon className="w-5 h-5" />}
-              </div>
+          <p className="text-sm text-brand-text-secondary">
+            Module: {currentModuleTitle}
+          </p>
+        )}
+      </div>
+      {/* Chat Messages */}
+      <div
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4"
+      >
+        {chatMessages.length === 0 ? (
+          <div className="text-center text-brand-text-secondary py-8">
+            <BotIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>Ask me anything about Solidity!</p>
+            <p className="text-sm mt-2">I'm here to help you learn.</p>
+          </div>
+        ) : (
+          chatMessages.map((message, index) => (
+            <div
+              key={index}
+              className={`flex ${
+                message.role === ChatMessageRole.User
+                  ? "justify-end"
+                  : "justify-start"
+              }`}
+            >
               <div
-                className={`px-4 py-3 rounded-lg shadow ${
-                  msg.role === ChatMessageRole.USER 
-                    ? 'bg-brand-secondary text-white rounded-br-none' 
-                    : msg.role === ChatMessageRole.ERROR 
-                      ? 'bg-red-600 text-white rounded-bl-none'
-                      : 'bg-brand-bg-light text-brand-text-primary rounded-bl-none'
-                }`}
+                className={`flex max-w-[80%] ${
+                  message.role === ChatMessageRole.User
+                    ? "flex-row-reverse"
+                    : "flex-row"
+                } gap-3`}
               >
-                {msg.text.split(_/(\`\`\`[\w\s]*\n[\s\S]*?\n\`\`\`)/g).map((part, index) => {
-                  if (_part.startsWith('```')) {
-                    const codeContent = part.replace(/```[\w\s]*\n?/, '').replace(/\n?```$/, '');
-                    return (
-                      <pre key={index} className="bg-brand-bg-dark text-brand-text-secondary p-3 my-2 rounded-md text-sm overflow-x-auto whitespace-pre-wrap font-mono">
-                        {codeContent}
-                      </pre>
-                   );
-                  }
-                  return <span key={index} className="whitespace-pre-wrap">{part}</span>;
-                })}
-
-                <p className={`text-xs mt-2 ${msg.role === ChatMessageRole.USER ? 'text-violet-200 text-right' : 'text-indigo-200 text-left'}`}>
-                  {getFormattedTimestamp(_msg.timestamp)}
-                </p>
+                <div className="flex-shrink-0">
+                  {message.role === ChatMessageRole.User ? (
+                    <UserIcon className="w-8 h-8 text-brand-accent" />
+                  ) : (
+                    <BotIcon className="w-8 h-8 text-brand-primary" />
+                  )}
+                </div>
+                <div
+                  className={`px-4 py-3 rounded-lg ${
+                    message.role === ChatMessageRole.User
+                      ? "bg-brand-accent text-white"
+                      : "bg-brand-surface-2 text-brand-text-primary"
+                  }`}
+                >
+                  <p className="text-sm whitespace-pre-wrap">
+                    {message.content}
+                  </p>
+                  <p className="text-xs opacity-70 mt-1">
+                    {getFormattedTimestamp(message.timestamp)}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-       ))}
+          ))
+        )}
         {isLoading && (
           <div className="flex justify-start">
-             <div className="flex items-start max-w-xs">
-                <div className="p-2 rounded-full bg-brand-accent text-white self-start mx-2 shrink-0">
-                    <BotIcon className="w-5 h-5" />
-                </div>
-                <div className="px-4 py-3 rounded-lg shadow bg-brand-bg-light text-brand-text-primary rounded-bl-none">
-                    <SpinnerIcon className="w-5 h-5 text-brand-accent" />
-                </div>
+            <div className="flex gap-3 max-w-[80%]">
+              <BotIcon className="w-8 h-8 text-brand-primary" />
+              <div className="px-4 py-3 rounded-lg bg-brand-surface-2">
+                <SpinnerIcon className="w-5 h-5 animate-spin text-brand-primary" />
+              </div>
             </div>
           </div>
-       )}
+        )}
       </div>
-
-      <form onSubmit={handleSubmit} className="p-4 border-t border-brand-bg-light/50 bg-brand-surface-1">
-        <div className="flex items-center space-x-2">
+      {/* Input Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="p-4 border-t border-brand-border"
+      >
+        <div className="flex gap-2">
           <input
             type="text"
             value={userInput}
-            onChange={(_e) => setUserInput(_e.target.value)}
-            placeholder={isLoading ? "Assistant is typing..." : (_currentModuleTitle ? `Ask about ${currentModuleTitle}...` : "Ask anything...")}
-            className="flex-grow p-3 bg-brand-bg-medium border border-brand-bg-light text-brand-text-primary placeholder-brand-text-muted rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-transparent outline-none transition-shadow"
+            onChange={(e: unknown) => setUserInput(e.target.value)}
+            placeholder="Type your question..."
+            className="flex-1 px-4 py-2 bg-brand-surface-2 text-brand-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-accent"
             disabled={isLoading}
-            aria-label="Chat message input"
           />
           <button
             type="submit"
-            disabled={isLoading || !userInput.trim()}
-            className="p-3 bg-brand-primary text-white rounded-lg hover:bg-violet-800 focus:ring-2 focus:ring-brand-accent focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-            aria-label="Send message"
+            disabled={!userInput.trim() || isLoading}
+            className="px-4 py-2 bg-brand-accent text-white rounded-lg hover:bg-brand-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? <SpinnerIcon className="w-5 h-5" /> : <SendIcon className="w-5 h-5" />}
+            <SendIcon className="w-5 h-5" />
           </button>
         </div>
       </form>
     </div>
- );
+  );
 };
-
 export default GeminiChat;

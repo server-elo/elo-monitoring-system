@@ -21,10 +21,9 @@ export interface LeaderboardUser {
   completionRate: number;
   averageScore: number;
   contributionScore: number;
-  timeSpent: number; // in minutes
-}
-
-export interface Badge {
+  timeSpent: number;
+  // in minutes;
+} export interface Badge {
   id: string;
   name: string;
   description: string;
@@ -32,9 +31,7 @@ export interface Badge {
   color: string;
   earnedAt: Date;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
-}
-
-export interface Achievement {
+} export interface Achievement {
   id: string;
   title: string;
   description: string;
@@ -42,9 +39,7 @@ export interface Achievement {
   xpReward: number;
   earnedAt: Date;
   category: 'learning' | 'streak' | 'completion' | 'community' | 'special';
-}
-
-export interface LeaderboardCategory {
+} export interface LeaderboardCategory {
   id: string;
   name: string;
   description: string;
@@ -52,9 +47,7 @@ export interface LeaderboardCategory {
   sortBy: keyof LeaderboardUser;
   timeframe: 'daily' | 'weekly' | 'monthly' | 'all-time';
   enabled: boolean;
-}
-
-export interface LeaderboardFilters {
+} export interface LeaderboardFilters {
   timeframe: 'daily' | 'weekly' | 'monthly' | 'all-time';
   category: string;
   courseCategory?: string;
@@ -63,9 +56,7 @@ export interface LeaderboardFilters {
   minXP?: number;
   maxXP?: number;
   search?: string;
-}
-
-export interface LeaderboardResponse {
+} export interface LeaderboardResponse {
   users: LeaderboardUser[];
   total: number;
   page: number;
@@ -75,46 +66,34 @@ export interface LeaderboardResponse {
   lastUpdated: Date;
   category: LeaderboardCategory;
   filters: LeaderboardFilters;
-}
-
-export interface CommunityStats {
+} export interface CommunityStats {
   totalUsers: number;
-  activeUsers: {
+  const activeUsers: {
     today: number;
     thisWeek: number;
     thisMonth: number;
-  };
-  lessonsCompleted: {
+  }; const lessonsCompleted = {
     today: number;
     thisWeek: number;
     thisMonth: number;
     total: number;
-  };
-  averageCompletionTime: {
-    daily: number; // in minutes
+  }; const averageCompletionTime = {
+    daily: number; // in minutes,
     weekly: number;
     monthly: number;
-  };
-  engagementMetrics: {
+  }; const engagementMetrics = {
     dailyActiveUsers: number;
     weeklyActiveUsers: number;
     monthlyActiveUsers: number;
     averageSessionTime: number;
     bounceRate: number;
     retentionRate: number;
-  };
-  trendingTopics: TrendingTopic[];
-  communityMilestones: CommunityMilestone[];
-  recentAchievements: Achievement[];
-  platformGrowth: {
+  }; trendingTopics: TrendingTopic[]; communityMilestones: CommunityMilestone[]; recentAchievements: Achievement[]; const platformGrowth = {
     userGrowthRate: number;
     contentGrowthRate: number;
     engagementGrowthRate: number;
-  };
-  lastUpdated: Date;
-}
-
-export interface TrendingTopic {
+  }; lastUpdated: Date;
+} export interface TrendingTopic {
   id: string;
   title: string;
   category: string;
@@ -122,9 +101,7 @@ export interface TrendingTopic {
   engagement: number;
   trend: 'up' | 'down' | 'stable';
   trendPercentage: number;
-}
-
-export interface CommunityMilestone {
+} export interface CommunityMilestone {
   id: string;
   title: string;
   description: string;
@@ -132,86 +109,65 @@ export interface CommunityMilestone {
   achievedAt: Date;
   value: number;
   type: 'users' | 'lessons' | 'xp' | 'achievements' | 'community';
-}
-
-export interface StatsFilters {
+} export interface StatsFilters {
   startDate?: Date;
   endDate?: Date;
-  userDemographics?: {
-    ageRange?: [number, number];
-    region?: string;
-    role?: 'student' | 'instructor' | 'admin';
-  };
-  courseCategories?: string[];
-  difficultyLevels?: ('beginner' | 'intermediate' | 'advanced')[];
-  engagementTypes?: ('lessons' | 'quizzes' | 'projects' | 'community')[];
-}
-
-export interface ExportOptions {
+  userDemographics?: { ageRange?: [number;
+  number];
+  region?: string;
+  role?: 'student' | 'instructor' | 'admin';
+}; courseCategories?: string[]; difficultyLevels?: ('beginner' | 'intermediate' | 'advanced')[]; engagementTypes?: ('lessons' | 'quizzes' | 'projects' | 'community')[];
+} export interface ExportOptions {
   format: 'csv' | 'json';
-  dateRange: {
-    start: Date;
-    end: Date;
-  };
-  includeFields: string[];
-  filters?: StatsFilters;
-}
-
-export interface RealTimeUpdate {
+  const dateRange: { start: Date;
+  end: Date;
+};
+includeFields = string[]; filters?: StatsFilters;
+} export interface RealTimeUpdate {
   type: 'leaderboard' | 'stats' | 'achievement' | 'milestone';
-  data: any;
+  data: unknown;
   timestamp: Date;
   userId?: string;
   category?: string;
-}
-
-export interface WebSocketMessage {
+} export interface WebSocketMessage {
   type: 'subscribe' | 'unsubscribe' | 'update' | 'ping' | 'pong';
   channel?: string;
-  data?: any;
+  data?: unknown;
   timestamp: Date;
   id: string;
-}
-
-export interface LeaderboardCache {
+} export interface LeaderboardCache {
   key: string;
   data: LeaderboardResponse;
   expiresAt: Date;
   lastUpdated: Date;
-}
-
-export interface CommunityConfig {
-  leaderboards: {
+} export interface CommunityConfig {
+  const leaderboards: {
     enabled: boolean;
     categories: LeaderboardCategory[];
-    updateInterval: number; // in milliseconds
-    cacheTimeout: number; // in milliseconds
+    updateInterval: number;
+    // in milliseconds;
+    cacheTimeout: number;
+    // in milliseconds;
     maxUsersPerPage: number;
     realTimeUpdates: boolean;
-  };
-  statistics: {
+  }; const statistics = {
     enabled: boolean;
-    updateInterval: number;
-    retentionPeriod: number; // in days
+    updateInterval: number; retentionPeriod: number; // in days,
     exportEnabled: boolean;
     realTimeUpdates: boolean;
-  };
-  realTime: {
+  }; const realTime = {
     enabled: boolean;
     websocketUrl: string;
     fallbackPollingInterval: number;
     maxReconnectAttempts: number;
     heartbeatInterval: number;
-  };
-  performance: {
+  }; const performance = {
     cacheEnabled: boolean;
     cacheTTL: number;
     debounceDelay: number;
     maxConcurrentUsers: number;
   };
-}
-
-export interface UserProgress {
+} export interface UserProgress {
   userId: string;
   lessonId: string;
   courseId: string;
@@ -220,23 +176,17 @@ export interface UserProgress {
   timeSpent: number;
   xpEarned: number;
   achievementsUnlocked: string[];
-}
-
-export interface LeaderboardEvent {
+} export interface LeaderboardEvent {
   type: 'xp_gained' | 'lesson_completed' | 'achievement_unlocked' | 'streak_updated' | 'badge_earned';
   userId: string;
-  data: {
-    xpGained?: number;
-    lessonId?: string;
-    achievementId?: string;
-    streakCount?: number;
-    badgeId?: string;
-    [key: string]: any;
-  };
-  timestamp: Date;
-}
-
-export interface CommunityFeatureFlags {
+  const data: { xpGained?: number;
+  lessonId?: string;
+  achievementId?: string;
+  streakCount?: number;
+  badgeId?: string;
+  [key: string]: unknown;
+}; timestamp: Date;
+} export interface CommunityFeatureFlags {
   leaderboardsEnabled: boolean;
   statisticsEnabled: boolean;
   realTimeUpdatesEnabled: boolean;
@@ -246,9 +196,7 @@ export interface CommunityFeatureFlags {
   communityMilestonesEnabled: boolean;
   exportEnabled: boolean;
   adminControlsEnabled: boolean;
-}
-
-export interface AdminCommunityControls {
+} export interface AdminCommunityControls {
   canManageLeaderboards: boolean;
   canViewStatistics: boolean;
   canExportData: boolean;
@@ -256,43 +204,15 @@ export interface AdminCommunityControls {
   canModerateContent: boolean;
   canManageAchievements: boolean;
   canManageBadges: boolean;
-}
-
-// Error types for community features
+} // Error types for community features
 export interface CommunityError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
   timestamp: Date;
-}
-
-export type CommunityErrorCode =
-  | 'LEADERBOARD_FETCH_FAILED'
-  | 'STATS_FETCH_FAILED'
-  | 'WEBSOCKET_CONNECTION_FAILED'
-  | 'CACHE_ERROR'
-  | 'PERMISSION_DENIED'
-  | 'RATE_LIMIT_EXCEEDED'
-  | 'INVALID_FILTERS'
-  | 'EXPORT_FAILED'
-  | 'UPDATE_FAILED';
-
-// Community Error class
-export class CommunityError extends Error {
-  public code: CommunityErrorCode;
-  public details?: any;
-  public timestamp: Date;
-
-  constructor( code: CommunityErrorCode, message: string, details?: any) {
-    super(_message);
-    this.name = 'CommunityError';
-    this.code = code;
-    this.details = details;
-    this.timestamp = new Date(_);
-  }
-}
-
-// Performance monitoring types
+} export type CommunityErrorCode = | 'LEADERBOARD_FETCH_FAILED' | 'STATS_FETCH_FAILED' | 'WEBSOCKET_CONNECTION_FAILED' | 'CACHE_ERROR' | 'PERMISSION_DENIED' | 'RATE_LIMIT_EXCEEDED' | 'INVALID_FILTERS' | 'EXPORT_FAILED' | 'UPDATE_FAILED'; // Community Error class
+export class CommunityError extends Error { public code: CommunityErrorCode; public details?: unknown; public timestamp: Date; constructor( code: CommunityErrorCode, message: string, details?: unknown) { super(message); this.name = 'CommunityError'; this.code: code; this.details: details; this.timestamp = new Date(); }
+} // Performance monitoring types
 export interface PerformanceMetrics {
   leaderboardLoadTime: number;
   statsLoadTime: number;
@@ -302,16 +222,12 @@ export interface PerformanceMetrics {
   concurrentUsers: number;
   memoryUsage: number;
   timestamp: Date;
-}
-
-export interface LoadingState {
+} export interface LoadingState {
   leaderboards: boolean;
   statistics: boolean;
   export: boolean;
   refresh: boolean;
-}
-
-export interface CommunityNotification {
+} export interface CommunityNotification {
   id: string;
   type: 'achievement' | 'rank_change' | 'milestone' | 'badge' | 'streak';
   title: string;
@@ -320,5 +236,5 @@ export interface CommunityNotification {
   timestamp: Date;
   read: boolean;
   userId: string;
-  data?: any;
+  data?: unknown;
 }

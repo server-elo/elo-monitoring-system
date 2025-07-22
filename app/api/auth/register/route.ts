@@ -1,145 +1,76 @@
-import { NextRequest } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { PasswordUtils, registrationSchema } from '@/lib/auth/password';
-import { logger } from '@/lib/monitoring/simple-logger';
-import { rateLimiter, rateLimitConfigs } from '@/lib/security/rateLimiting';
-import {
-  successResponse 
-  errorResponse 
-  validationErrorResponse 
-  withErrorHandling 
-  generateRequestId 
-  getClientIP
-} from '@/lib/api/utils';
-import { ApiErrorCode, HttpStatus } from '@/lib/api/types';
-
-async function registerHandler(request: NextRequest) {
-  const requestId = generateRequestId();
-
+import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { UserRole } from "@prisma/client";
+// Registration schema
+const registerSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      "Password must contain uppercase, lowercase, number and special character",
+    ),
+  username: z.string().min(3).max(20).optional(),
+});
+export async function POST(request: Request): void {
   try {
-    // Apply rate limiting
-    const rateLimitMiddleware = rateLimiter.createMiddleware(rateLimitConfigs.registration);
-    const rateLimitResult = await rateLimitMiddleware(request);
-    if (rateLimitResult) {
-      return rateLimitResult;
-    }
-
     const body = await request.json();
-
-    // Validate input data
-    const validationResult = registrationSchema.safeParse(body);
-    if (!validationResult.success) {
-      const errors = validationResult.error.errors.map(err => ({
-        field: err.path.join('.') 
-        message: err.message 
-        code: 'INVALID_FORMAT' 
-      }));
-
-      logger.warn('Registration validation failed', { 
-        metadata: { 
-          errors: validationResult.error.errors 
-          email: body.email 
-          requestId,
-        }
-      });
-
-      return validationErrorResponse(errors, requestId);
-    }
-
-    const { name, email, password } = validationResult.data;
-
+    // Validate input
+    const validatedData = registerSchema.parse(body);
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() } 
+      where: { email: validatedData.email.toLowerCase() },
     });
-
     if (existingUser) {
-      logger.warn('Registration attempt with existing email', { 
-        metadata: { email, requestId }
-      });
-
-      return errorResponse(
-        ApiErrorCode.RESOURCE_ALREADY_EXISTS 
-        'User with this email already exists' 
-        HttpStatus.CONFLICT 
-        { field: 'email' } 
-        requestId,
-     );
+      return NextResponse.json(
+        { error: "User with this email already exists" },
+        { status: 400 },
+      );
     }
-
     // Hash password
-    const hashedPassword = await PasswordUtils.hashPassword(_password);
-
-    // Create user first
+    const hashedPassword = await bcrypt.hash(validatedData.password, 12);
+    // Create user with profile
     const user = await prisma.user.create({
-      data: { 
-        name 
-        email: email.toLowerCase() 
-        password: hashedPassword 
-        role: 'STUDENT' 
-      } 
-      select: { 
-        id: true 
-        name: true 
-        email: true 
-        role: true 
-        createdAt: true 
-      }
+      data: {
+        name: validatedData.name,
+        email: validatedData.email.toLowerCase(),
+        password: hashedPassword,
+        role: UserRole.STUDENT,
+        profile: {
+          create: {
+            bio: "",
+            totalXP: 0,
+            currentLevel: 1,
+            streak: 0,
+          },
+        },
+      },
+      include: {
+        profile: true,
+      },
     });
-
-    // Create user profile
-    await prisma.userProfile.create({
-      data: { 
-        userId: user.id 
-        skillLevel: 'BEGINNER' 
-        totalXP: 0 
-        currentLevel: 1 
-        streak: 0 
-        preferences: { 
-          theme: 'auto' 
-          notifications: true 
-          language: 'en' 
-        }
-      }
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user;
+    return NextResponse.json({
+      success: true,
+      user: userWithoutPassword,
+      message: "User registered successfully",
     });
-
-    const result = user;
-
-    logger.info('User registered successfully', { metadata: {
-      metadata: { 
-        userId: result.id 
-        email: result.email 
-        name: result.name 
-        requestId 
-        ip: getClientIP(request) 
-      }
-    });
-
-    // Return user data (without password)
-    const responseData = {
-      id: result.id 
-      name: result.name 
-      email: result.email 
-      role: result.role 
-      createdAt: result.createdAt 
-    };
-
-    return successResponse(responseData, undefined, HttpStatus.CREATED, requestId);
-
   } catch (error) {
-    logger.error('Registration error', error instanceof Error ? error : new Error('Unknown error'), {
-      metadata: { requestId } 
-    });
-
-    return errorResponse(
-      ApiErrorCode.INTERNAL_SERVER_ERROR 
-      'Internal server error during registration' 
-      HttpStatus.INTERNAL_SERVER_ERROR 
-      undefined 
-      requestId,
-   );
+    console.error("Registration error:", error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation error", details: error.errors },
+        { status: 400 },
+      );
+    }
+    return NextResponse.json(
+      { error: "Failed to register user" },
+      { status: 500 },
+    );
   }
 }
-
-// Export handlers
-export const POST = withErrorHandling(_registerHandler);

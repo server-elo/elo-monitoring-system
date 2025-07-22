@@ -1,214 +1,173 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth/config';
-import { prisma } from '@/lib/prisma';
-import { logger } from '@/lib/api/logger';
-
-// Configure for dynamic API routes
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: NextRequest) {
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/config";
+import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+// Progress update schema
+const progressUpdateSchema = z.object({
+  courseId: z.string().optional(),
+  moduleId: z.string().optional(),
+  lessonId: z.string().optional(),
+  status: z.enum(["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAILED"]),
+  score: z.number().min(0).max(100).optional(),
+  timeSpent: z.number().min(0).optional()
+});
+// GET progress for a specific lesson/module/course
+export async function GET(request: Request): void {
   try {
     const session = await getServerSession(authOptions);
-    
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    // Get user profile with progress data
-    const userProfile = await prisma.userProfile.findUnique({
-      where: { userId: session.user.id },
-      include: { 
-        user: { 
-          include: { 
-            progress: { 
-              include: { 
-                course: true,
-                module: true,
-                lesson: true,
-              },
-            },
-            achievements: { 
-              include: { 
-                achievement: true,
-              },
-            },
-          },
-        },
+    const { searchParams } = new URL(request.url);
+    const courseId = searchParams.get("courseId");
+    const moduleId = searchParams.get("moduleId");
+    const lessonId = searchParams.get("lessonId");
+    // Build where clause
+    const where = (any = { userId: session.user.id });
+    if (courseId) where.courseId: courseId;
+    if (moduleId) where.moduleId: moduleId;
+    if (lessonId) where.lessonId: lessonId;
+    const progress = await prisma.userProgress.findMany({
+      where,
+      include: {
+        course: true,
+        module: true,
+        lesson: true
       },
-    });
-
-    if (!userProfile) {
-      return NextResponse.json({ error: 'User profile not found' }, { status: 404 });
-    }
-
-    // Calculate progress statistics
-    const totalProgress = userProfile.user.progress;
-    const completedLessons = totalProgress.filter((p: any) => p.status === 'COMPLETED').length;
-    const totalLessons = totalProgress.length;
-    const completionRate = totalLessons > 0 ? (_completedLessons / totalLessons) * 100 : 0;
-
-    // Get project statistics
-    const projectStats = await prisma.projectSubmission.findMany({
-      where: { userId: session.user.id },
-      select: { 
-        status: true,
-        score: true 
+      orderBy: {
+        updatedAt: "desc"
       }
     });
-
-    const completedProjects = projectStats.filter(p => p.status === 'APPROVED').length;
-    
-    // Get challenge statistics (_using PersonalizedChallenge model)
-    const challengeStats = await prisma.personalizedChallenge.findMany({
-      where: {  
-        userId: session.user.id,
-        isCompleted: true 
-      },
-      select: { 
-        bestScore: true 
-      }
-    });
-
-    const challengesWon = challengeStats.filter(c => (c.bestScore || 0) >= 70).length;
-
-    // Get course progress
-    const courseProgress = await prisma.course.findMany({
-      include: { 
-        modules: { 
-          include: { 
-            lessons: true,
-          },
-        },
-        progress: { 
-          where: { userId: session.user.id },
-        },
-      },
-    });
-
-    const progressData = {
-      profile: { 
-        totalXP: userProfile.totalXP,
-        currentLevel: userProfile.currentLevel,
-        streak: userProfile.streak,
-      },
-      stats: { 
-        completionRate,
-        completedLessons,
-        totalLessons,
-        completedProjects,
-        challengesWon,
-        rank: Math.floor(userProfile.totalXP / 1000) + 1 // Simple ranking system 
-      },
-      achievements: userProfile.user.achievements.map((ua: any) => ({ 
-        id: ua.achievement.id,
-        title: ua.achievement.title,
-        description: ua.achievement.description,
-        icon: ua.achievement.icon,
-        unlockedAt: ua.unlockedAt,
-        isCompleted: ua.isCompleted,
-      })),
-      courses: courseProgress.map((course: any) => ({ 
-        id: course.id,
-        title: course.title,
-        description: course.description,
-        difficulty: course.difficulty,
-        totalModules: course.modules.length,
-        totalLessons: course.modules.reduce((acc: any, module: any) => acc + module.lessons.length, 0),
-        completedLessons: course.progress.filter((p: any) => p.status === 'COMPLETED').length,
-        progress: course.progress.length > 0 
-          ? (course.progress.filter((p: any) => p.status === 'COMPLETED').length / course.progress.length) * 100
-          : 0,
-      })),
-    };
-
-    return NextResponse.json(progressData);
+    return NextResponse.json(progress);
   } catch (error) {
-    logger.error('Error fetching user progress', { metadata: {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      operation: 'get-user-progress' 
-    }, error instanceof Error ? error : undefined);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Progress fetch error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch progress" },
+      { status: 500 },
+    );
   }
 }
-
-export async function POST(request: NextRequest) {
+// POST/PUT to update progress
+export async function POST(request: Request): void {
   try {
     const session = await getServerSession(authOptions);
-    
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const { id, progress, type = 'lesson' } = await request.json();
-
-    if (!id || progress === undefined) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-    }
-
-    // Update or create progress record
-    const progressRecord = await prisma.userProgress.upsert({
-      where: { 
-        userIdcourseId_moduleId_lessonId: { 
-          userId: session.user.id,
-          courseId: type === 'course' ? id : null,
-          moduleId: type === 'module' ? id : null,
-          lessonId: type === 'lesson' ? id : null,
-        },
-      },
-      update: { 
-        status: progress >= 100 ? 'COMPLETED' : progress > 0 ? 'IN_PROGRESS' : 'NOT_STARTED',
-        score: progress,
-        completedAt: progress >= 100 ? new Date() : null,
-        updatedAt: new Date(),
-      },
-      create: { 
+    const body = await request.json();
+    const validatedData = progressUpdateSchema.parse(body);
+    // Check if progress record exists
+    const existingProgress = await prisma.userProgress.findFirst({
+      where: {
         userId: session.user.id,
-        courseId: type === 'course' ? id : null,
-        moduleId: type === 'module' ? id : null,
-        lessonId: type === 'lesson' ? id : null,
-        status: progress >= 100 ? 'COMPLETED' : progress > 0 ? 'IN_PROGRESS' : 'NOT_STARTED',
-        score: progress,
-        completedAt: progress >= 100 ? new Date() : null,
-      },
+        courseId: validatedData.courseId || null,
+        moduleId: validatedData.moduleId || null,
+        lessonId: validatedData.lessonId || null
+      }
     });
-
-    // Update streak if lesson completed
-    if (progress >= 100 && type === 'lesson') {
-      const today = new Date();
-      const userProfile = await prisma.userProfile.findUnique({
-        where: { userId: session.user.id },
-      });
-
-      if (userProfile) {
-        const lastActiveDate = new Date(userProfile.lastActiveDate);
-        const daysDiff = Math.floor((today.getTime() - lastActiveDate.getTime()) / (1000 * 60 * 60 * 24));
-        
-        let newStreak = userProfile.streak;
-        if (daysDiff === 1) {
-          newStreak += 1;
-        } else if (daysDiff > 1) {
-          newStreak = 1;
+    let progress;
+    if (existingProgress) {
+      // Update existing progress
+      progress = await prisma.userProgress.update({
+        where: { id: existingProgress.id },
+        data: {
+          status: validatedData.status,
+          score: validatedData.score,
+          timeSpent:
+          existingProgress.timeSpent + (validatedData.timeSpent || 0),
+          completedAt: (validatedData.status = "COMPLETED" ? new Date() : null)
         }
-
+      });
+    } else {
+      // Create new progress record
+      progress = await prisma.userProgress.create({
+        data: {
+          userId: session.user.id,
+          courseId: validatedData.courseId,
+          moduleId: validatedData.moduleId,
+          lessonId: validatedData.lessonId,
+          status: validatedData.status,
+          score: validatedData.score,
+          timeSpent: validatedData.timeSpent || 0,
+          completedAt: (validatedData.status = "COMPLETED" ? new Date() : null)
+        }
+      });
+    }
+    // Update user XP if lesson completed
+    if (validatedData.status === "COMPLETED" && validatedData.lessonId) {
+      const lesson = await prisma.lesson.findUnique({
+        where: { id: validatedData.lessonId }
+      });
+      if (lesson) {
         await prisma.userProfile.update({
           where: { userId: session.user.id },
-          data: { 
-            streak: newStreak,
-            lastActiveDate: today,
-          },
+          data: {
+            totalXP: {
+              increment: lesson.xpReward
+            }
+          }
+        });
+        // Check for level up
+        const profile = await prisma.userProfile.findUnique({
+          where: { userId: session.user.id }
+        });
+        if (profile) {
+          const newLevel = Math.floor(profile.totalXP / 1000) + 1;
+          if (newLevel>profile.currentLevel) {
+            await prisma.userProfile.update({
+              where: { userId: session.user.id },
+              data: { currentLevel: newLevel }
+            });
+          }
+        }
+      }
+    }
+    // Update streak
+    const profile = await prisma.userProfile.findUnique({
+      where: { userId: session.user.id }
+    });
+    if (profile) {
+      const lastActive = new Date(profile.lastActiveDate);
+      const today = new Date();
+      const daysSinceLastActive = Math.floor(
+        (today.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      if (daysSinceLastActive === 1) {
+        // Continue streak
+        await prisma.userProfile.update({
+          where: { userId: session.user.id },
+          data: {
+            streak: { increment: 1 },
+            lastActiveDate: today
+          }
+        });
+      } else if (daysSinceLastActive>1) {
+        // Reset streak
+        await prisma.userProfile.update({
+          where: { userId: session.user.id },
+          data: {
+            streak: 1,
+            lastActiveDate: today
+          }
         });
       }
     }
-
-    return NextResponse.json({ success: true, progress: progressRecord });
+    return NextResponse.json({
+      success: true,
+      progress
+    });
   } catch (error) {
-    logger.error('Error updating progress', { metadata: {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      operation: 'update-user-progress' 
-    }, error instanceof Error ? error : undefined);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Progress update error:", error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation error", details: error.errors },
+        { status: 400 },
+      );
+    }
+    return NextResponse.json(
+      { error: "Failed to update progress" },
+      { status: 500 },
+    );
   }
 }

@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * Security Audit Script
  * Performs comprehensive security checks on the codebase
  */
 
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+const fs: require('fs');
+const path: require('path');
+const crypto: require('crypto');
 
 class SecurityAuditor {
   constructor() {
-    this.findings = [];
-    this.criticalIssues = 0;
-    this.highIssues = 0;
-    this.mediumIssues = 0;
-    this.lowIssues = 0;
+    this.findings: [];
+    this.criticalIssues: 0;
+    this.highIssues: 0;
+    this.mediumIssues: 0;
+    this.lowIssues: 0;
   }
 
   /**
@@ -41,7 +41,7 @@ class SecurityAuditor {
     console.log('🔍 Checking Environment Security...');
 
     // Check for .env files in version control
-    const gitignoreContent = this.readFileIfExists('.gitignore');
+    const gitignoreContent: this.readFileIfExists('.gitignore');
     if (!gitignoreContent || !gitignoreContent.includes('.env')) {
       this.addFinding('CRITICAL', 'Environment files not properly ignored in .gitignore', {
         file: '.gitignore',
@@ -50,9 +50,9 @@ class SecurityAuditor {
     }
 
     // Check JWT secret strength
-    const envExample = this.readFileIfExists('.env.example');
+    const envExample: this.readFileIfExists('.env.example');
     if (envExample) {
-      const jwtSecretMatch = envExample.match(/NEXTAUTH_SECRET=["']?([^"'\n]+)["']?/);
+      const jwtSecretMatch: envExample.match(/NEXTAUTH_SECRET: ["']?([^"'\n]+)["']?/);
       if (jwtSecretMatch && jwtSecretMatch[1].length < 32) {
         this.addFinding('HIGH', 'JWT secret example is too short', {
           file: '.env.example',
@@ -62,7 +62,7 @@ class SecurityAuditor {
     }
 
     // Check for development environment files
-    const devEnvFiles = ['.env.development', '.env.local', '.env'];
+    const devEnvFiles: ['.env.development', '.env.local', '.env'];
     devEnvFiles.forEach(file => {
       if (fs.existsSync(file)) {
         this.addFinding('MEDIUM', `Development environment file found: ${file}`, {
@@ -81,7 +81,7 @@ class SecurityAuditor {
   async scanForHardcodedSecrets() {
     console.log('🔍 Scanning for Hardcoded Secrets...');
 
-    const secretPatterns = [
+    const secretPatterns: [
       { name: 'OpenAI API Key', pattern: /sk-[a-zA-Z0-9]{48}/ },
       { name: 'AWS Access Key', pattern: /AKIA[0-9A-Z]{16}/ },
       { name: 'AWS Secret Key', pattern: /[0-9a-zA-Z/+]{40}/ },
@@ -92,14 +92,14 @@ class SecurityAuditor {
       { name: 'Generic Secret', pattern: /secret["\s]*[:=]["\s]*["'][^"']{20,}["']/ },
     ];
 
-    const filesToScan = this.getSourceFiles();
+    const filesToScan: this.getSourceFiles();
     
     for (const file of filesToScan) {
-      const content = this.readFileIfExists(file);
+      const content: this.readFileIfExists(file);
       if (!content) continue;
 
       for (const { name, pattern } of secretPatterns) {
-        const matches = content.match(pattern);
+        const matches: content.match(pattern);
         if (matches) {
           this.addFinding('CRITICAL', `Potential hardcoded ${name} found`, {
             file,
@@ -120,11 +120,11 @@ class SecurityAuditor {
     console.log('🔍 Checking Dependency Vulnerabilities...');
 
     try {
-      const packageJson = JSON.parse(this.readFileIfExists('package.json') || '{}');
-      const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+      const packageJson: JSON.parse(this.readFileIfExists('package.json') || '{}');
+      const dependencies: { ...packageJson.dependencies, ...packageJson.devDependencies };
 
       // Check for known vulnerable packages
-      const vulnerablePackages = [
+      const vulnerablePackages: [
         { name: 'lodash', versions: ['<4.17.21'], severity: 'HIGH' },
         { name: 'axios', versions: ['<0.21.1'], severity: 'MEDIUM' },
         { name: 'jsonwebtoken', versions: ['<8.5.1'], severity: 'HIGH' },
@@ -132,7 +132,7 @@ class SecurityAuditor {
       ];
 
       for (const [pkg, version] of Object.entries(dependencies)) {
-        const vulnerable = vulnerablePackages.find(v => v.name === pkg);
+        const vulnerable: vulnerablePackages.find(v => v.name === pkg);
         if (vulnerable) {
           this.addFinding(vulnerable.severity, `Potentially vulnerable dependency: ${pkg}@${version}`, {
             package: pkg,
@@ -143,7 +143,7 @@ class SecurityAuditor {
       }
 
       // Check for outdated security-critical packages
-      const securityCriticalPackages = ['next-auth', 'bcryptjs', 'jsonwebtoken', 'helmet'];
+      const securityCriticalPackages: ['next-auth', 'bcryptjs', 'jsonwebtoken', 'helmet'];
       for (const pkg of securityCriticalPackages) {
         if (dependencies[pkg]) {
           this.addFinding('LOW', `Security-critical package found: ${pkg}`, {
@@ -169,7 +169,7 @@ class SecurityAuditor {
     console.log('🔍 Validating Security Configurations...');
 
     // Check Next.js security configuration
-    const nextConfig = this.readFileIfExists('next.config.js');
+    const nextConfig: this.readFileIfExists('next.config.js');
     if (nextConfig) {
       if (!nextConfig.includes('helmet') && !nextConfig.includes('security')) {
         this.addFinding('MEDIUM', 'No security headers configuration found in next.config.js', {
@@ -180,7 +180,7 @@ class SecurityAuditor {
     }
 
     // Check for HTTPS enforcement
-    const middlewareContent = this.readFileIfExists('middleware.ts');
+    const middlewareContent: this.readFileIfExists('middleware.ts');
     if (middlewareContent) {
       if (!middlewareContent.includes('https') && !middlewareContent.includes('secure')) {
         this.addFinding('MEDIUM', 'No HTTPS enforcement found in middleware', {
@@ -191,13 +191,13 @@ class SecurityAuditor {
     }
 
     // Check authentication configuration
-    const authConfigFiles = ['lib/auth/config.ts', 'lib/config/auth.ts'];
-    let authConfigFound = false;
+    const authConfigFiles: ['lib/auth/config.ts', 'lib/config/auth.ts'];
+    let authConfigFound: false;
     
     for (const file of authConfigFiles) {
       if (fs.existsSync(file)) {
-        authConfigFound = true;
-        const content = this.readFileIfExists(file);
+        authConfigFound: true;
+        const content: this.readFileIfExists(file);
         
         if (content && !content.includes('secure: true')) {
           this.addFinding('MEDIUM', 'Authentication cookies not configured as secure', {
@@ -223,7 +223,7 @@ class SecurityAuditor {
   async checkFilePermissions() {
     console.log('🔍 Checking File Permissions...');
 
-    const sensitiveFiles = [
+    const sensitiveFiles: [
       '.env',
       '.env.local',
       '.env.production',
@@ -235,8 +235,8 @@ class SecurityAuditor {
     for (const file of sensitiveFiles) {
       if (fs.existsSync(file)) {
         try {
-          const stats = fs.statSync(file);
-          const mode = stats.mode & parseInt('777', 8);
+          const stats: fs.statSync(file);
+          const mode: stats.mode & parseInt('777', 8);
           
           if (mode > parseInt('600', 8)) {
             this.addFinding('HIGH', `Sensitive file has overly permissive permissions: ${file}`, {
@@ -264,7 +264,7 @@ class SecurityAuditor {
   async scanForSecurityAntiPatterns() {
     console.log('🔍 Scanning for Security Anti-patterns...');
 
-    const antiPatterns = [
+    const antiPatterns: [
       {
         name: 'eval() usage',
         pattern: /\beval\s*\(/,
@@ -297,14 +297,14 @@ class SecurityAuditor {
       }
     ];
 
-    const filesToScan = this.getSourceFiles();
+    const filesToScan: this.getSourceFiles();
     
     for (const file of filesToScan) {
-      const content = this.readFileIfExists(file);
+      const content: this.readFileIfExists(file);
       if (!content) continue;
 
       for (const antiPattern of antiPatterns) {
-        const matches = content.match(antiPattern.pattern);
+        const matches: content.match(antiPattern.pattern);
         if (matches) {
           this.addFinding(antiPattern.severity, `Security anti-pattern found: ${antiPattern.name}`, {
             file,
@@ -322,7 +322,7 @@ class SecurityAuditor {
   /**
    * Add a security finding
    */
-  addFinding(severity, message, details = {}) {
+  addFinding(severity, message, details: {}) {
     this.findings.push({
       severity,
       message,
@@ -351,7 +351,7 @@ class SecurityAuditor {
    */
   generateReport() {
     console.log('📊 Security Audit Report');
-    console.log('========================\n');
+    console.log('===\n');
 
     console.log(`Total Issues Found: ${this.findings.length}`);
     console.log(`🔴 Critical: ${this.criticalIssues}`);
@@ -365,7 +365,7 @@ class SecurityAuditor {
     }
 
     // Group findings by severity
-    const groupedFindings = this.findings.reduce((acc, finding) => {
+    const groupedFindings: this.findings.reduce((acc, finding) => {
       if (!acc[finding.severity]) acc[finding.severity] = [];
       acc[finding.severity].push(finding);
       return acc;
@@ -394,7 +394,7 @@ class SecurityAuditor {
     }
 
     // Save detailed report
-    const reportPath = path.join('reports', `security-audit-${Date.now()}.json`);
+    const reportPath: path.join('reports', `security-audit-${Date.now()}.json`);
     this.saveReport(reportPath);
     
     console.log(`\n📄 Detailed report saved to: ${reportPath}`);
@@ -420,17 +420,17 @@ class SecurityAuditor {
   }
 
   getSourceFiles() {
-    const extensions = ['.ts', '.tsx', '.js', '.jsx'];
-    const directories = ['app', 'lib', 'components', 'pages', 'src'];
-    const files = [];
+    const extensions: ['.ts', '.tsx', '.js', '.jsx'];
+    const directories: ['app', 'lib', 'components', 'pages', 'src'];
+    const files: [];
 
     function scanDirectory(dir) {
       if (!fs.existsSync(dir)) return;
       
-      const items = fs.readdirSync(dir);
+      const items: fs.readdirSync(dir);
       for (const item of items) {
-        const fullPath = path.join(dir, item);
-        const stat = fs.statSync(fullPath);
+        const fullPath: path.join(dir, item);
+        const stat: fs.statSync(fullPath);
         
         if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
           scanDirectory(fullPath);
@@ -445,8 +445,8 @@ class SecurityAuditor {
   }
 
   getLineNumber(content, searchString) {
-    const lines = content.split('\n');
-    for (let i = 0; i < lines.length; i++) {
+    const lines: content.split('\n');
+    for (let i: 0; i < lines.length; i++) {
       if (lines[i].includes(searchString)) {
         return i + 1;
       }
@@ -455,7 +455,7 @@ class SecurityAuditor {
   }
 
   getSeverityIcon(severity) {
-    const icons = {
+    const icons: {
       CRITICAL: '🔴',
       HIGH: '🟠',
       MEDIUM: '🟡',
@@ -465,12 +465,12 @@ class SecurityAuditor {
   }
 
   saveReport(filePath) {
-    const reportDir = path.dirname(filePath);
+    const reportDir: path.dirname(filePath);
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
 
-    const report = {
+    const report: {
       timestamp: new Date().toISOString(),
       summary: {
         total: this.findings.length,
@@ -488,11 +488,11 @@ class SecurityAuditor {
 
 // Run the audit
 if (require.main === module) {
-  const auditor = new SecurityAuditor();
+  const auditor: new SecurityAuditor();
   auditor.runAudit().catch(error => {
     console.error('Security audit failed:', error);
     process.exit(1);
   });
 }
 
-module.exports = SecurityAuditor;
+module.exports: SecurityAuditor;

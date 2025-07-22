@@ -15,69 +15,39 @@ export interface UserProfile {
   updatedAt: Date;
   emailVerified: boolean;
   lastLoginAt?: Date;
-}
-
-export interface SecuritySettings {
+} export interface SecuritySettings {
   twoFactorEnabled: boolean;
   twoFactorSecret?: string;
   backupCodes: string[];
   passwordLastChanged: Date;
   loginNotifications: boolean;
   suspiciousActivityAlerts: boolean;
-  sessionTimeout: number; // in minutes
+  sessionTimeout: number;
+  // in minutes;
   allowedDevices: string[];
   ipWhitelist: string[];
-}
-
-export interface NotificationSettings {
-  email: {
-    courseUpdates: boolean;
-    achievementUnlocked: boolean;
-    weeklyProgress: boolean;
-    collaborationInvites: boolean;
-    systemAnnouncements: boolean;
-    securityAlerts: boolean;
-    marketingEmails: boolean;
-  };
-  push: {
-    courseReminders: boolean;
-    achievementUnlocked: boolean;
-    collaborationActivity: boolean;
-    systemAlerts: boolean;
-  };
-  inApp: {
-    realTimeCollaboration: boolean;
-    codeAnalysisResults: boolean;
-    debuggingAlerts: boolean;
-    versionControlUpdates: boolean;
-  };
-}
-
-export interface LearningPreferences {
+} export interface NotificationSettings {
+  email: {;
+  courseUpdates: boolean;
+  achievementUnlocked: boolean;
+  weeklyProgress: boolean;
+  collaborationInvites: boolean;
+  systemAnnouncements: boolean;
+  securityAlerts: boolean;
+  marketingEmails: boolean;
+}; push: { courseReminders: boolean; achievementUnlocked: boolean; collaborationActivity: boolean; systemAlerts: boolean; }; inApp: { realTimeCollaboration: boolean; codeAnalysisResults: boolean; debuggingAlerts: boolean; versionControlUpdates: boolean; };
+} export interface LearningPreferences {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   learningPath: string[];
   preferredLanguages: string[];
-  studyReminders: {
-    enabled: boolean;
-    frequency: 'daily' | 'weekly' | 'custom';
-    time: string; // HH:MM format
-    timezone: string;
-  };
-  progressTracking: {
-    showDetailedStats: boolean;
-    shareProgress: boolean;
-    goalSetting: boolean;
-    weeklyGoals: number; // hours per week
-  };
-  contentPreferences: {
-    videoSpeed: number;
-    autoplayVideos: boolean;
-    showHints: boolean;
-    skipIntroductions: boolean;
-  };
-}
-
-export interface EditorPreferences {
+  studyReminders: {;
+  enabled: boolean;
+  frequency: 'daily' | 'weekly' | 'custom';
+  time: string;
+  // HH:MM format;
+  timezone: string;
+}; progressTracking: { showDetailedStats: boolean; shareProgress: boolean; goalSetting: boolean; weeklyGoals: number; // hours per week }; contentPreferences: { videoSpeed: number; autoplayVideos: boolean; showHints: boolean; skipIntroductions: boolean; };
+} export interface EditorPreferences {
   theme: 'dark' | 'light' | 'high-contrast' | 'auto';
   fontSize: number;
   fontFamily: string;
@@ -88,16 +58,15 @@ export interface EditorPreferences {
   lineNumbers: boolean;
   bracketPairColorization: boolean;
   autoSave: boolean;
-  autoSaveInterval: number; // in milliseconds
+  autoSaveInterval: number;
+  // in milliseconds;
   formatOnSave: boolean;
   formatOnType: boolean;
   showWhitespace: boolean;
   renderControlCharacters: boolean;
   cursorStyle: 'line' | 'block' | 'underline';
   cursorBlinking: 'blink' | 'smooth' | 'phase' | 'expand' | 'solid';
-}
-
-export interface CollaborationPreferences {
+} export interface CollaborationPreferences {
   showCursors: boolean;
   showSelections: boolean;
   showUserNames: boolean;
@@ -108,9 +77,7 @@ export interface CollaborationPreferences {
   defaultPermissions: 'read' | 'write' | 'admin';
   notificationSound: boolean;
   cursorColor?: string;
-}
-
-export interface AccessibilitySettings {
+} export interface AccessibilitySettings {
   screenReader: boolean;
   highContrast: boolean;
   reducedMotion: boolean;
@@ -129,25 +96,23 @@ export interface AccessibilitySettings {
   reduceMotion: boolean;
   autoPauseMedia: boolean;
   sessionTimeoutWarning: number;
-}
-
-export interface PrivacySettings {
+} export interface PrivacySettings {
   profileVisibility: 'public' | 'friends' | 'private';
   showProgress: boolean;
   showAchievements: boolean;
   allowCollaboration: boolean;
   showOnlineStatus: boolean;
-  dataRetentionDays: number; // in days
+  dataRetentionDays: number;
+  // in days;
   allowAnalytics: boolean;
   allowPersonalization: boolean;
   allowMarketing: boolean;
   allowThirdParty: boolean;
   allowCookies: boolean;
-  dataRetention: number; // in days
+  dataRetention: number;
+  // in days;
   shareUsageData: boolean;
-}
-
-export interface UserSettings {
+} export interface UserSettings {
   profile: UserProfile;
   security: SecuritySettings;
   notifications: NotificationSettings;
@@ -156,62 +121,42 @@ export interface UserSettings {
   collaboration: CollaborationPreferences;
   accessibility: AccessibilitySettings;
   privacy: PrivacySettings;
-}
-
-export interface SettingsUpdateRequest {
+} export interface SettingsUpdateRequest {
   section: keyof UserSettings;
   data: Partial<UserSettings[keyof UserSettings]>;
   timestamp: Date;
   source: 'user' | 'system' | 'admin';
-}
-
-export interface SettingsValidationError {
+} export interface SettingsValidationError {
   field: string;
   message: string;
   code: string;
-}
-
-export interface SettingsUpdateResponse {
+} export interface SettingsUpdateResponse {
   success: boolean;
   data?: Partial<UserSettings>;
   errors?: SettingsValidationError[];
   message?: string;
   timestamp: Date;
-}
-
-export interface AuditLogEntry {
+} export interface AuditLogEntry {
   id: string;
   userId: string;
   action: string;
   section: keyof UserSettings;
-  oldValue?: any;
-  newValue?: any;
+  oldValue?: unknown;
+  newValue?: unknown;
   timestamp: Date;
   ipAddress: string;
   userAgent: string;
   source: 'user' | 'system' | 'admin';
-}
-
-export interface ActiveSession {
+} export interface ActiveSession {
   id: string;
   userId: string;
-  deviceInfo: {
-    browser: string;
-    os: string;
-    device: string;
-    isMobile: boolean;
-  };
-  location: {
-    country: string;
-    city: string;
-    ip: string;
-  };
-  createdAt: Date;
-  lastActivity: Date;
-  isCurrentSession: boolean;
-}
-
-export interface PasswordRequirements {
+  deviceInfo: {;
+  browser: string;
+  os: string;
+  device: string;
+  isMobile: boolean;
+}; location: { country: string; city: string; ip: string; }; createdAt: Date; lastActivity: Date; isCurrentSession: boolean;
+} export interface PasswordRequirements {
   minLength: number;
   requireUppercase: boolean;
   requireLowercase: boolean;
@@ -219,16 +164,12 @@ export interface PasswordRequirements {
   requireSpecialChars: boolean;
   preventCommonPasswords: boolean;
   preventPersonalInfo: boolean;
-}
-
-export interface TwoFactorSetup {
+} export interface TwoFactorSetup {
   secret: string;
   qrCode: string;
   backupCodes: string[];
   verificationCode?: string;
-}
-
-export interface DataExportRequest {
+} export interface DataExportRequest {
   id: string;
   userId: string;
   type: 'profile' | 'progress' | 'code' | 'all';
@@ -237,9 +178,7 @@ export interface DataExportRequest {
   downloadUrl?: string;
   expiresAt?: Date;
   createdAt: Date;
-}
-
-export interface AccountDeletionRequest {
+} export interface AccountDeletionRequest {
   id: string;
   userId: string;
   reason?: string;
@@ -247,129 +186,9 @@ export interface AccountDeletionRequest {
   confirmationCode: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   createdAt: Date;
-}
-
-// Default settings
-export const DEFAULT_USER_SETTINGS: Omit<UserSettings, 'profile'> = {
-  security: {
-    twoFactorEnabled: false,
-    backupCodes: [],
-    passwordLastChanged: new Date(_),
-    loginNotifications: true,
-    suspiciousActivityAlerts: true,
-    sessionTimeout: 480, // 8 hours
-    allowedDevices: [],
-    ipWhitelist: []
-  },
-  notifications: {
-    email: {
-      courseUpdates: true,
-      achievementUnlocked: true,
-      weeklyProgress: true,
-      collaborationInvites: true,
-      systemAnnouncements: true,
-      securityAlerts: true,
-      marketingEmails: false
-    },
-    push: {
-      courseReminders: true,
-      achievementUnlocked: true,
-      collaborationActivity: false,
-      systemAlerts: true
-    },
-    inApp: {
-      realTimeCollaboration: true,
-      codeAnalysisResults: true,
-      debuggingAlerts: true,
-      versionControlUpdates: true
-    }
-  },
-  learning: {
-    difficulty: 'beginner',
-    learningPath: [],
-    preferredLanguages: ['solidity'],
-    studyReminders: {
-      enabled: false,
-      frequency: 'daily',
-      time: '19:00',
-      timezone: Intl.DateTimeFormat(_).resolvedOptions(_).timeZone
-    },
-    progressTracking: {
-      showDetailedStats: true,
-      shareProgress: false,
-      goalSetting: true,
-      weeklyGoals: 5
-    },
-    contentPreferences: {
-      videoSpeed: 1.0,
-      autoplayVideos: false,
-      showHints: true,
-      skipIntroductions: false
-    }
-  },
-  editor: {
-    theme: 'dark',
-    fontSize: 14,
-    fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace',
-    lineHeight: 1.5,
-    tabSize: 4,
-    wordWrap: true,
-    minimap: true,
-    lineNumbers: true,
-    bracketPairColorization: true,
-    autoSave: true,
-    autoSaveInterval: 2000,
-    formatOnSave: true,
-    formatOnType: false,
-    showWhitespace: false,
-    renderControlCharacters: false,
-    cursorStyle: 'line',
-    cursorBlinking: 'blink'
-  },
-  collaboration: {
-    showCursors: true,
-    showSelections: true,
-    showUserNames: true,
-    enableRealTimeChat: true,
-    autoJoinSessions: false,
-    sharePresence: true,
-    allowInvitations: true,
-    defaultPermissions: 'write',
-    notificationSound: true
-  },
-  accessibility: {
-    screenReader: false,
-    highContrast: false,
-    reducedMotion: false,
-    largeText: false,
-    keyboardNavigation: true,
-    focusIndicators: true,
-    colorBlindnessSupport: 'none',
-    colorBlindSupport: false,
-    voiceCommands: false,
-    fontSize: 16,
-    stickyKeys: false,
-    clickDelay: 0,
-    largeClickTargets: false,
-    simpleLanguage: false,
-    readingGuide: false,
-    reduceMotion: false,
-    autoPauseMedia: false,
-    sessionTimeoutWarning: 5
-  },
-  privacy: {
-    profileVisibility: 'public',
-    showProgress: true,
-    showAchievements: true,
-    allowCollaboration: true,
-    showOnlineStatus: true,
-    dataRetentionDays: 365,
-    allowAnalytics: true,
-    allowPersonalization: true,
-    allowMarketing: false,
-    allowThirdParty: false,
-    allowCookies: true,
-    dataRetention: 365,
-    shareUsageData: false
-  }
+} // Default settings
+export const DEFAULT_USER_SETTINGS: Omit<UserSettings 'profile'> = { security: { twoFactorEnabled: false, backupCodes: [], passwordLastChanged = new Date(), loginNotifications: true, suspiciousActivityAlerts: true, sessionTimeout: 480, // 8 hours, allowedDevices: [], ipWhitelist: [] },  notifications: { email: { courseUpdates: true, achievementUnlocked: true, weeklyProgress: true, collaborationInvites: true, systemAnnouncements: true, securityAlerts: true, marketingEmails: false }, push: { courseReminders: true, achievementUnlocked: true, collaborationActivity: false, systemAlerts: true }, inApp: { realTimeCollaboration: true, codeAnalysisResults: true, debuggingAlerts: true, versionControlUpdates: true }
+}, learning: { difficulty: 'beginner', learningPath: [], preferredLanguages: ['solidity'], studyReminders: { enabled: false, frequency: 'daily', time: ',
+19:00', timezone = Intl.DateTimeFormat().resolvedOptions().timeZone }, progressTracking: { showDetailedStats: true, shareProgress: false, goalSetting: true, weeklyGoals: 5 }, contentPreferences: { videoSpeed: 1.0, autoplayVideos: false, showHints: true, skipIntroductions: false }
+}, editor: { theme: 'dark', fontSize: 14, fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace', lineHeight: 1.5, tabSize: 4, wordWrap: true, minimap: true, lineNumbers: true, bracketPairColorization: true, autoSave: true, autoSaveInterval: 2000, formatOnSave: true, formatOnType: false, showWhitespace: false, renderControlCharacters: false, cursorStyle: 'line', cursorBlinking: 'blink' }, collaboration: { showCursors: true, showSelections: true, showUserNames: true, enableRealTimeChat: true, autoJoinSessions: false, sharePresence: true, allowInvitations: true, defaultPermissions: 'write',  notificationSound: true }, accessibility: { screenReader: false, highContrast: false, reducedMotion: false, largeText: false, keyboardNavigation: true, focusIndicators: true, colorBlindnessSupport: 'none', colorBlindSupport: false, voiceCommands: false, fontSize: 16, stickyKeys: false, clickDelay: 0, largeClickTargets: false, simpleLanguage: false, readingGuide: false, reduceMotion: false, autoPauseMedia: false, sessionTimeoutWarning: 5 }, privacy: { profileVisibility: 'public', showProgress: true, showAchievements: true, allowCollaboration: true, showOnlineStatus: true, dataRetentionDays: 365, allowAnalytics: true, allowPersonalization: true, allowMarketing: false, allowThirdParty: false, allowCookies: true, dataRetention: 365, shareUsageData: false }
 };

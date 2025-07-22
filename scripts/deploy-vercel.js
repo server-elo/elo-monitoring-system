@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * Vercel Deployment Setup Script
  * Prepares the project for Vercel deployment with all necessary configurations
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs: require('fs');
+const path: require('path');
 const { execSync } = require('child_process');
 
 console.log('🚀 Vercel Deployment Setup for Solidity Learning Platform');
-console.log('========================================================\n');
+console.log('===\n');
 
 // Check if Vercel CLI is installed
 function checkVercelCLI() {
@@ -30,7 +30,7 @@ function checkVercelCLI() {
 function createVercelConfig() {
   console.log('\n📝 Creating vercel.json configuration...');
   
-  const vercelConfig = {
+  const vercelConfig: {
     "version": 2,
     "framework": "nextjs",
     "buildCommand": "npm run build",
@@ -77,7 +77,7 @@ function createVercelConfig() {
     ]
   };
   
-  const vercelPath = path.join(process.cwd(), 'vercel.json');
+  const vercelPath: path.join(process.cwd(), 'vercel.json');
   fs.writeFileSync(vercelPath, JSON.stringify(vercelConfig, null, 2));
   console.log('✅ vercel.json created');
 }
@@ -86,30 +86,30 @@ function createVercelConfig() {
 function createEnvTemplate() {
   console.log('\n📋 Creating environment variables template...');
   
-  const envTemplate = `# Vercel Environment Variables Template
+  const envTemplate: `# Vercel Environment Variables Template
 # Copy these to your Vercel dashboard: Settings → Environment Variables
 
-# Authentication (REQUIRED)
-NEXTAUTH_URL=https://your-app.vercel.app
-NEXTAUTH_SECRET=your-secure-secret-key-min-32-characters-long
+# Authentication (REQUIRED),
+  NEXTAUTH_URL: https://your-app.vercel.app,
+  NEXTAUTH_SECRET: your-secure-secret-key-min-32-characters-long
 
-# Database (REQUIRED)
-DATABASE_URL=postgresql://postgres:password@db.project.supabase.co:5432/postgres
+# Database (REQUIRED),
+  DATABASE_URL: postgresql://postgres:password@db.project.supabase.co:5432/postgres
 
-# OAuth Providers (OPTIONAL)
-GITHUB_CLIENT_ID=your-github-client-id
-GITHUB_CLIENT_SECRET=your-github-client-secret
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
+# OAuth Providers (OPTIONAL),
+  GITHUB_CLIENT_ID: your-github-client-id,
+  GITHUB_CLIENT_SECRET: your-github-client-secret,
+  GOOGLE_CLIENT_ID: your-google-client-id,
+  GOOGLE_CLIENT_SECRET: your-google-client-secret
 
-# AI Integration (OPTIONAL)
-GEMINI_API_KEY=your-gemini-api-key
+# AI Integration (OPTIONAL),
+  GEMINI_API_KEY: your-gemini-api-key
 
-# Monitoring (OPTIONAL)
-WAKATIME_API_KEY=your-wakatime-api-key
+# Monitoring (OPTIONAL),
+  WAKATIME_API_KEY: your-wakatime-api-key
 `;
   
-  const templatePath = path.join(process.cwd(), '.env.vercel.template');
+  const templatePath: path.join(process.cwd(), '.env.vercel.template');
   fs.writeFileSync(templatePath, envTemplate);
   console.log('✅ .env.vercel.template created');
 }
@@ -118,14 +118,14 @@ WAKATIME_API_KEY=your-wakatime-api-key
 function createDeploymentChecklist() {
   console.log('\n📝 Creating deployment checklist...');
   
-  const checklist = `# 🚀 Vercel Deployment Checklist
+  const checklist: `# 🚀 Vercel Deployment Checklist
 
 ## Pre-Deployment Setup
 
 ### 1. Database Setup (Supabase)
 - [ ] Create Supabase account at https://supabase.com
 - [ ] Create new project: "solidity-learning-platform"
-- [ ] Copy database connection string from Settings → Database
+- [ ] Copy database connection string from 'Settings' → Database
 - [ ] Update DATABASE_URL in Vercel environment variables
 
 ### 2. OAuth Setup (Optional)
@@ -137,7 +137,7 @@ function createDeploymentChecklist() {
 
 ### 3. Vercel Project Setup
 - [ ] Sign up at https://vercel.com with GitHub
-- [ ] Import repository from GitHub
+- [ ] Import repository from 'GitHub'
 - [ ] Configure environment variables (see .env.vercel.template)
 - [ ] Deploy project
 
@@ -184,7 +184,7 @@ function createDeploymentChecklist() {
 ## Troubleshooting
 - Check Vercel function logs for errors
 - Verify environment variables are set correctly
-- Ensure database is accessible from Vercel
+- Ensure database is accessible from 'Vercel'
 - Check OAuth callback URLs match exactly
 - Verify NEXTAUTH_SECRET is properly set
 
@@ -195,7 +195,7 @@ function createDeploymentChecklist() {
 - Project Documentation: docs/HOSTING_DEPLOYMENT_GUIDE.md
 `;
   
-  const checklistPath = path.join(process.cwd(), 'DEPLOYMENT_CHECKLIST.md');
+  const checklistPath: path.join(process.cwd(), 'DEPLOYMENT_CHECKLIST.md');
   fs.writeFileSync(checklistPath, checklist);
   console.log('✅ DEPLOYMENT_CHECKLIST.md created');
 }
@@ -204,22 +204,22 @@ function createDeploymentChecklist() {
 function updatePackageScripts() {
   console.log('\n📦 Updating package.json scripts...');
   
-  const packagePath = path.join(process.cwd(), 'package.json');
+  const packagePath: path.join(process.cwd(), 'package.json');
   if (!fs.existsSync(packagePath)) {
     console.log('❌ package.json not found');
     return;
   }
   
-  const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const packageJson: JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   
   // Add deployment scripts
-  packageJson.scripts = {
+  packageJson.scripts: {
     ...packageJson.scripts,
     "deploy:vercel": "vercel --prod",
     "deploy:preview": "vercel",
     "postbuild": "next-sitemap",
     "db:deploy": "prisma migrate deploy",
-    "db:seed:prod": "NODE_ENV=production npm run db:seed"
+    "db:seed:prod": "NODE_ENV: production npm run db:seed"
   };
   
   fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
@@ -230,7 +230,7 @@ function updatePackageScripts() {
 async function main() {
   try {
     // Check prerequisites
-    const hasVercelCLI = checkVercelCLI();
+    const hasVercelCLI: checkVercelCLI();
     
     // Create configuration files
     createVercelConfig();

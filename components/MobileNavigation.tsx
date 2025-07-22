@@ -1,165 +1,93 @@
-import React, { useState, useEffect } from 'react';
-import { LearningModule } from '../types';
-import MenuIcon from './icons/MenuIcon';
-import Sidebar from './Sidebar';
-
-interface MobileNavigationProps {
-  modules: LearningModule[];
-  selectedModuleId: string | null;
-  onSelectModule: (_id: string) => void;
-  completedModuleIds: string[];
-  currentView: string;
-  onViewChange: (_view: string) => void;
-  onLogout?: (_) => void;
-  onResetProgress: (_) => void;
-}
-
-const MobileNavigation: React.FC<MobileNavigationProps> = ({
-  modules,
-  selectedModuleId,
-  onSelectModule,
-  completedModuleIds,
-  currentView,
-  onViewChange,
-  onLogout,
-  onResetProgress,
-}) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(_false);
-
-  // Close menu when route changes
-  useEffect(() => {
-    setIsMenuOpen(_false);
-  }, [selectedModuleId, currentView]);
-
-  // Close menu on escape key
-  useEffect(() => {
-    const handleEscape = (_e: KeyboardEvent) => {
-      if (_e.key === 'Escape') {
-        setIsMenuOpen(_false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener( 'keydown', handleEscape);
-      // Prevent body scroll when menu is open
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return (_) => {
-      document.removeEventListener( 'keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMenuOpen]);
-
-  const handleModuleSelect = (_moduleId: string) => {
-    onSelectModule(_moduleId);
-    setIsMenuOpen(_false);
-  };
-
-  const handleViewChange = (_view: string) => {
-    onViewChange(_view);
-    setIsMenuOpen(_false);
-  };
-
+"use client";
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Home, BookOpen, Code, Users, Trophy, Menu, X } from "lucide-react";
+const navItems = [
+{ href: "/", label: "Home", icon: Home },
+{ href: "/learn", label: "Learn", icon: BookOpen },
+{ href: "/code", label: "Code", icon: Code },
+{ href: "/collaborate", label: "Collaborate", icon: Users },
+{ href: "/achievements", label: "Achievements", icon: Trophy }
+];
+export default function MobileNavigation(): void {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
   return (
     <>
-      {/* Mobile Header */}
-      <header className="md:hidden bg-brand-bg-medium border-b border-brand-bg-light/20 px-4 py-3 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={(_) => setIsMenuOpen(!isMenuOpen)}
-            className="p-2 rounded-lg hover:bg-brand-bg-light transition-colors focus-brand"
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isMenuOpen}
-          >
-            <MenuIcon className="w-6 h-6 text-brand-text-primary" isOpen={isMenuOpen} />
-          </button>
-          <h1 className="text-lg font-bold text-brand-primary-400">Solidity DevPath</h1>
-        </div>
-        
-        {/* Quick Actions */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={(_) => handleViewChange('achievements')}
-            className="p-2 rounded-lg hover:bg-brand-bg-light transition-colors focus-brand"
-            aria-label="View achievements"
-          >
-            <svg className="w-5 h-5 text-brand-accent-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-          </button>
-        </div>
-      </header>
-
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div 
-          className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-          onClick={(_) => setIsMenuOpen(_false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Mobile Sidebar */}
-      <div className={`
-        md:hidden fixed top-0 left-0 h-full w-80 max-w-[85vw] z-50 transform transition-transform duration-300 ease-in-out
-        ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        <div className="h-full bg-brand-bg-medium border-r border-brand-bg-light/20 shadow-2xl">
-          {/* Mobile Sidebar Header */}
-          <div className="p-4 border-b border-brand-bg-light/20 flex items-center justify-between">
-            <h1 className="text-xl font-bold text-brand-primary-400">Solidity DevPath</h1>
-            <button
-              onClick={(_) => setIsMenuOpen(_false)}
-              className="p-2 rounded-lg hover:bg-brand-bg-light transition-colors focus-brand"
-              aria-label="Close menu"
-            >
-              <MenuIcon className="w-5 h-5 text-brand-text-primary" isOpen={true} />
-            </button>
-          </div>
-
-          {/* Mobile Sidebar Content */}
-          <div className="h-full overflow-y-auto scrollbar-brand pb-20">
-            <Sidebar
-              modules={modules}
-              selectedModuleId={selectedModuleId}
-              onSelectModule={handleModuleSelect}
-              completedModuleIds={completedModuleIds}
-            />
-          </div>
-
-          {/* Mobile Sidebar Footer */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-brand-bg-medium border-t border-brand-bg-light/20 space-y-2">
-            <button
-              onClick={(_) => handleViewChange('achievements')}
-              className="w-full btn btn-secondary text-sm"
-            >
-              My Achievements
-            </button>
-            <button
-              onClick={onResetProgress}
-              className="w-full btn btn-error text-sm"
-            >
-              Reset Progress
-            </button>
-            {onLogout && (
-              <button
-                onClick={(_) => {
-                  onLogout(_);
-                  setIsMenuOpen(_false);
-                }}
-                className="w-full btn btn-ghost text-sm"
-              >
-                Logout
-              </button>
-            )}
-          </div>
-        </div>
+    {/* Mobile Menu Button */}
+    <button
+    onClick={() => setIsOpen(!isOpen)}
+    className="fixed bottom-4 right-4 z-50 p-4 bg-brand-accent rounded-full shadow-lg md:hidden">{isOpen ? (
+      <X className="h-6 w-6 text-white" />
+    ) : (
+      <Menu className="h-6 w-6 text-white" />
+    )}
+    </button>
+    {/* Mobile Navigation Menu */}
+    <AnimatePresence>
+    {isOpen && (
+      <>
+      {/* Backdrop */}
+      <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={() => setIsOpen(false)}
+      className="fixed inset-0 bg-black/50 z-40 md:hidden"
+      />
+      {/* Navigation Panel */}
+      <motion.div
+      initial={{ y: "100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "100%" }}
+      transition={{ type: "spring", damping: 25, stiffness: 300 }}
+      className="fixed bottom-0 left-0 right-0 z-40 bg-brand-surface-1 rounded-t-3xl shadow-xl md:hidden"><div className="p-6">
+      <div className="grid grid-cols-3 gap-4">
+      {navItems.map(({ href, label, icon: Icon }) => {
+        const isActive = pathname === href;
+        return (
+          <Link
+          key={href}
+          href={href}
+          onClick={() => setIsOpen(false)}
+          className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
+            isActive
+            ? "bg-brand-accent text-white"
+            : ",
+            hover:bg-brand-surface-2 text-brand-text-secondary"
+          }`}><Icon className="h-6 w-6" />
+          <span className="text-xs font-medium">{label}</span>
+          </Link>
+        );
+      })}
       </div>
+      </div>
+      </motion.div>
+      </>
+    )}
+    </AnimatePresence>
+    {/* Bottom Navigation Bar (Alternative) */}
+    <nav className="fixed bottom-0 left-0 right-0 bg-brand-surface-1 border-t border-brand-border md:hidden">
+    <div className="grid grid-cols-5 h-16">
+    {navItems.map(({ href, label, icon: Icon }) => {
+      const isActive = pathname === href;
+      return (
+        <Link
+        key={href}
+        href={href}
+        className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+          isActive
+          ? "text-brand-accent"
+          : "text-brand-text-secondary hover:text-brand-text-primary"
+        }`}><Icon className="h-5 w-5" />
+        <span className="text-[10px] font-medium">{label}</span>
+        </Link>
+      );
+    })}
+    </div>
+    </nav>
     </>
   );
-};
-
-export default MobileNavigation;
+}

@@ -1,321 +1,225 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Play, Code, Brain, Users, Zap } from 'lucide-react';
-import Link from 'next/link';
-
-gsap.registerPlugin(_ScrollTrigger);
-
-export function HeroSection() {
-  const heroRef = useRef<HTMLDivElement>(_null);
-  const titleRef = useRef<HTMLHeadingElement>(_null);
-  const subtitleRef = useRef<HTMLParagraphElement>(_null);
-  const ctaRef = useRef<HTMLDivElement>(_null);
-  const featuresRef = useRef<HTMLDivElement>(_null);
-
+import React, { ReactElement } from "react";
+("use client");
+import { useState, useEffect } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Code2, Sparkles } from "lucide-react";
+import Link from "next/link";
+export function HeroSection(): void {
+  const [mounted, setMounted] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  // Parallax effect transforms
+  const backgroundX = useTransform(mouseX, [-300, 300], [-20, 20]);
+  const backgroundY = useTransform(mouseY, [-300, 300], [-20, 20]);
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Hero animation timeline
-      const tl = gsap.timeline(_);
-      
-      tl.fromTo(titleRef.current, 
-        { y: 100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
-      )
-      .fromTo(subtitleRef.current,
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
-        "-=0.5"
-      )
-      .fromTo(ctaRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        "-=0.3"
-      )
-      .fromTo(featuresRef.current?.children || [],
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power3.out" },
-        "-=0.2"
-      );
-
-      // Floating animation for feature cards
-      gsap.to(featuresRef.current?.children || [], {
-        y: -10,
-        duration: 2,
-        ease: "power2.inOut",
-        yoyo: true,
-        repeat: -1,
-        stagger: 0.2
-      });
-
-    }, heroRef);
-
-    return (_) => ctx.revert(_);
-  }, []);
-
-  const features = [
-    {
-      icon: Brain,
-      title: "AI-Powered Learning",
-      description: "Personalized tutoring with advanced AI assistance"
+    setMounted(true);
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      const x = clientX - innerWidth / 2;
+      const y = clientY - innerHeight / 2;
+      mouseX.set(x);
+      mouseY.set(y);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
     },
-    {
-      icon: Code,
-      title: "Interactive Coding",
-      description: "Real-time compilation and deployment to testnets"
+  };
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100,
+      },
     },
-    {
-      icon: Users,
-      title: "Collaborative Learning",
-      description: "Pair programming and peer learning sessions"
+  };
+  const floatingAnimation = {
+    y: [0, -10, 0],
+    transition: {
+      duration: 3,
+      repeat: Infinity,
+      ease: "easeInOut",
     },
-    {
-      icon: Zap,
-      title: "Gamified Progress",
-      description: "XP, achievements, and competitive leaderboards"
-    }
-  ];
-
+  };
   return (
-    <section
-      ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      aria-labelledby="hero-heading"
-      role="banner"
-    >
-      {/* Background Effects */}
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"
-        aria-hidden="true"
-        role="img"
-        aria-label="Decorative grid pattern background"
-      />
-
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0" aria-hidden="true">
-        {[...Array(_20)].map( (_, i) => (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Animated Background Gradients */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute -top-1/2 -left-1/2 w-full h-full opacity-30"
+          style={mounted ? { x: backgroundX, y: backgroundY } : {}}
+        >
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob" />
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-indigo-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000" />
+        </motion.div>
+      </div>
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70% transparent_110%)]" />
+      {/* Floating Particles */}
+      <div className="absolute inset-0">
+        {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-blue-500/20 rounded-full"
+            className="absolute w-1 h-1 bg-blue-400/50 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -100, 0],
+              y: [0, -30, 0],
               opacity: [0, 1, 0],
             }}
             transition={{
               duration: 3 + Math.random() * 2,
               repeat: Infinity,
               delay: Math.random() * 2,
+              ease: "easeInOut",
             }}
-            aria-hidden="true"
           />
         ))}
       </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Main Content */}
-        <div className="max-w-4xl mx-auto">
-          <motion.h1
-            id="hero-heading"
-            ref={titleRef}
-            className="text-5xl md:text-7xl font-bold mb-6"
-            initial={{ opacity: 0 }}
-          >
-            <span className="gradient-text">Master Solidity</span>
-            <br />
-            <span className="text-white">Build the Future</span>
-          </motion.h1>
-
-          <motion.p
-            ref={subtitleRef}
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0 }}
-            role="text"
-          >
-            The most comprehensive Solidity learning platform with AI-powered tutoring,
-            real-time collaboration, and hands-on blockchain development.
-            Join thousands of developers building the decentralized future.
-          </motion.p>
-
+      {/* Main Content */}
+      <motion.div
+        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={itemVariants} className="mb-8">
           <motion.div
-            ref={ctaRef}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
-            initial={{ opacity: 0 }}
-            role="group"
-            aria-label="Primary actions"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
+            <Sparkles className="w-4 h-4" />
+            <span>AI-Powered Blockchain Education</span>
+          </motion.div>
+        </motion.div>
+        <motion.h1
+          variants={itemVariants}
+          className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
+        >
+          <span className="text-foreground">Master </span>
+          <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-gradient bg-300% bg-[length:300%_100%]">
+            Solidity
+          </span>
+          <br />
+          <span className="text-foreground">Build the </span>
+          <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent animate-gradient bg-300% bg-[length:300%_100%] animation-delay-1000">
+            Future
+          </span>
+        </motion.h1>
+        <motion.p
+          variants={itemVariants}
+          className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed"
+        >
+          The most comprehensive Solidity learning platform with AI-powered
+          tutoring, real-time collaboration, and hands-on blockchain
+          development. Start your journey to becoming a smart contract expert
+          today.
+        </motion.p>
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg min-h-[44px]"
+              className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-6 text-lg font-semibold shadow-lg shadow-purple-500/25"
               asChild
             >
-              <Link
-                href="/learn"
-                aria-label="Start learning Solidity for free - Begin your blockchain development journey"
-              >
-                Start Learning Free
-                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
-              </Link>
-            </Button>
-
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 px-8 py-4 text-lg min-h-[44px]"
-              asChild
-            >
-              <Link
-                href="/demo"
-                aria-label="Watch platform demo - See SolanaLearn features in action"
-              >
-                <Play className="mr-2 w-5 h-5" aria-hidden="true" />
-                Watch Demo
+              <Link href="/learn">
+                <span className="relative z-10 flex items-center">
+                  Start Learning
+                  <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400"
+                  initial={{ x: "100%" }}
+                  whileHover={{ x: 0 }}
+                  transition={{ duration: 0.3 }}
+                />
               </Link>
             </Button>
           </motion.div>
-        </div>
-
-        {/* Feature Cards */}
-        <section
-          ref={featuresRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
-          aria-label="Platform features overview"
-          role="region"
-        >
-          {features.map( (feature, index) => (
-            <motion.article
-              key={feature.title}
-              className="glass p-6 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-300 relative"
-              whileHover={{ scale: 1.05, y: -5 }}
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: 1,
-                transition: {
-                  delay: index * 0.2, // Use index for staggered animation
-                  duration: 0.6
-                }
-              }}
-              role="article"
-              aria-labelledby={`feature-${index}-title`}
-              aria-describedby={`feature-${index}-description`}
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              size="lg"
+              variant="outline"
+              className="group relative overflow-hidden border-2 border-purple-500/50 text-white hover:border-purple-400/70 px-8 py-6 text-lg font-semibold backdrop-blur-sm bg-white/5"
+              asChild
             >
-              {/* Feature priority badge using index */}
-              <div
-                className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg"
-                aria-label={`Feature ${index + 1} of ${features.length}`}
-                role="img"
-              >
-                {index + 1}
-              </div>
-
-              <div
-                className={`w-12 h-12 bg-gradient-to-br ${
-                  index % 4 === 0 ? 'from-blue-500 to-purple-600' :
-                  index % 4 === 1 ? 'from-purple-500 to-pink-600' :
-                  index % 4 === 2 ? 'from-green-500 to-blue-600' :
-                  'from-orange-500 to-red-600'
-                } rounded-lg flex items-center justify-center mb-4 mx-auto relative overflow-hidden`}
-                role="img"
-                aria-label={`${feature.title} icon`}
-              >
-                <feature.icon className="w-6 h-6 text-white relative z-10" aria-hidden="true" />
-                {/* Highlight top features */}
-                {index < 2 && (
-                  <div
-                    className="absolute top-0 right-0 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"
-                    aria-label="Priority feature indicator"
-                    role="img"
-                  />
-                )}
-              </div>
-
-              <h3
-                id={`feature-${index}-title`}
-                className="text-lg font-semibold text-white mb-2"
-              >
-                {feature.title}
-                {/* Priority indicator for first two features */}
-                {index < 2 && (
-                  <span
-                    className="ml-2 text-xs bg-yellow-400/20 text-yellow-400 px-2 py-1 rounded-full"
-                    aria-label="Priority feature"
-                  >
-                    Priority
-                  </span>
-                )}
-              </h3>
-              <p
-                id={`feature-${index}-description`}
-                className="text-gray-400 text-sm"
-              >
-                {feature.description}
-              </p>
-
-              {/* Progress indicator based on index */}
-              <div
-                className="mt-3 flex items-center justify-center space-x-1"
-                role="progressbar"
-                aria-label={`Feature ${index + 1} of ${features.length}`}
-                aria-valuenow={index + 1}
-                aria-valuemin={1}
-                aria-valuemax={features.length}
-              >
-                {Array.from( { length: 4 }, (_, i) => (
-                  <div
-                    key={i}
-                    className={`w-2 h-1 rounded-full transition-all duration-300 ${
-                      i <= index ? 'bg-blue-400' : 'bg-gray-600'
-                    }`}
-                    aria-hidden="true"
-                  />
-                ))}
-              </div>
-            </motion.article>
-          ))}
-        </section>
-
-        {/* Stats */}
+              <Link href="/code">
+                <span className="relative z-10 flex items-center">
+                  <Code2 className="mr-2 w-5 h-5" />
+                  Try Code Lab
+                </span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </Link>
+            </Button>
+          </motion.div>
+        </motion.div>
+        {/* Animated Stats */}
         <motion.div
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.8 }}
+          variants={itemVariants}
+          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8"
         >
           {[
-            { label: "Active Learners", value: "10,000+" },
-            { label: "Courses", value: "50+" },
-            { label: "Projects Built", value: "25,000+" },
-            { label: "Success Rate", value: "94%" }
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold gradient-text mb-1">
+            { label: "Active Learners", value: "10,000+", icon: "👥" },
+            { label: "Smart Contracts", value: "50,000+", icon: "📜" },
+            { label: "Success Rate", value: "94%", icon: "🎯" },
+            { label: "AI Interactions", value: "1M+", icon: "🤖" },
+          ].map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              className="text-center"
+              animate={floatingAnimation}
+              transition={{
+                ...floatingAnimation.transition,
+                delay: index * 0.2,
+              }}
+            >
+              <div className="text-3xl mb-2">{stat.icon}</div>
+              <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                 {stat.value}
               </div>
-              <div className="text-gray-400 text-sm">{stat.label}</div>
-            </div>
+              <div className="text-sm text-gray-400 mt-1">{stat.label}</div>
+            </motion.div>
           ))}
         </motion.div>
-      </div>
-
+      </motion.div>
       {/* Scroll Indicator */}
       <motion.div
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
         animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       >
-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/50 rounded-full mt-2" />
+        <div className="w-6 h-10 border-2 border-purple-400/30 rounded-full flex justify-center p-2">
+          <motion.div
+            className="w-1 h-2 bg-purple-400 rounded-full"
+            animate={{ y: [0, 12, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
         </div>
       </motion.div>
     </section>

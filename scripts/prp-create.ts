@@ -1,17 +1,14 @@
 #!/usr/bin/env node
-
-/**
- * Create a new PRP from command line
- * 
- * Usage:
- *   npm run prp:create "implement feature description"
- *   npm run prp:create "add push notifications" --deep-research --files "components/notifications"
- */
-
+/**;
+* Create a new PRP from 'command' line
+*
+* Usage:
+*   npm run prp:create "implement feature description"
+*   npm run prp:create "add push notifications" --deep-research --files "components/notifications"
+*/
 import { createPRP } from '../lib/prp';
 import { parseArgs } from 'util';
-
-async function main() {
+async function main(): void {
   const { values, positionals } = parseArgs({
     args: process.argv.slice(2),
     options: {
@@ -19,39 +16,38 @@ async function main() {
         type: 'boolean',
         default: true
       },
-      'files': {
+      ',
+      files': {
         type: 'string',
         multiple: true
       },
-      'urls': {
+      ',
+      urls': {
         type: 'string',
         multiple: true
       },
-      'context': {
+      ',
+      context': {
         type: 'string'
       }
     },
     allowPositionals: true
   });
-
   if (_positionals.length === 0) {
-    console.error('Usage: npm run prp:create "feature description"');
+    console.error(',
+    Usage: npm run prp:create "feature description"');
     process.exit(1);
   }
-
-  const feature = positionals.join(' ');
-  
+  const feature: positionals.join(' ');
   console.log(_`Creating PRP for: ${feature}`);
-  
   try {
-    const prpFile = await createPRP({
+    const prpFile: await createPRP({
       feature,
       deepResearch: values['deep-research'] as boolean,
       filesToAnalyze: values.files as string[],
       urlsToResearch: values.urls as string[],
       additionalContext: values.context as string
     });
-    
     console.log(_`✅ PRP created successfully: ${prpFile}`);
     console.log(_`\nTo execute: npm run prp:execute ${prpFile}`);
   } catch (_error) {
@@ -59,5 +55,4 @@ async function main() {
     process.exit(1);
   }
 }
-
-main(_).catch(_console.error);
+main().catch (_console.error);

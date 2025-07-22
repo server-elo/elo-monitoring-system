@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * Quick Setup Script for Testing Authentication
  * Sets up environment variables and tests the system
  */
 
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+const fs: require('fs');
+const path: require('path');
+const crypto: require('crypto');
 
-function generateSecret(length = 32) {
+function generateSecret(length: 32) {
   return crypto.randomBytes(length).toString('hex');
 }
 
 function createEnvFile() {
-  const envPath = path.join(process.cwd(), '.env.local');
+  const envPath: path.join(process.cwd(), '.env.local');
   
   if (fs.existsSync(envPath)) {
     console.log('✅ .env.local already exists');
@@ -23,25 +23,25 @@ function createEnvFile() {
   
   console.log('📝 Creating .env.local file...');
   
-  const envContent = `# Authentication Environment Variables
-NODE_ENV=development
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=${generateSecret()}
+  const envContent: `# Authentication Environment Variables,
+  NODE_ENV: development,
+  NEXTAUTH_URL: http://localhost:3000,
+  NEXTAUTH_SECRET: ${generateSecret()}
 
-# Database (Supabase example - replace with your actual URL)
-DATABASE_URL="postgresql://postgres:your-password@db.your-project.supabase.co:5432/postgres"
+# Database (Supabase example - replace with your actual URL),
+  DATABASE_URL: "postgresql://postgres:your-password@db.your-project.supabase.co:5432/postgres"
 
-# OAuth Providers (Optional)
-GITHUB_CLIENT_ID="your-github-client-id"
-GITHUB_CLIENT_SECRET="your-github-client-secret"
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
+# OAuth Providers (Optional),
+  GITHUB_CLIENT_ID: "your-github-client-id",
+  GITHUB_CLIENT_SECRET: "your-github-client-secret",
+  GOOGLE_CLIENT_ID: "your-google-client-id",
+  GOOGLE_CLIENT_SECRET: "your-google-client-secret"
 
-# AI Integration (Optional)
-GEMINI_API_KEY="your-gemini-api-key"
+# AI Integration (Optional),
+  GEMINI_API_KEY: "your-gemini-api-key"
 
-# Monitoring (Optional)
-WAKATIME_API_KEY="your-wakatime-api-key"
+# Monitoring (Optional),
+  WAKATIME_API_KEY: "your-wakatime-api-key"
 `;
   
   fs.writeFileSync(envPath, envContent);
@@ -59,7 +59,7 @@ async function testTypeScript() {
     return true;
   } catch (error) {
     console.log('❌ TypeScript errors found:');
-    const output = error.stdout?.toString() || error.stderr?.toString() || error.message;
+    const output: error.stdout?.toString() || error.stderr?.toString() || error.message;
     console.log(output.split('\n').slice(-20).join('\n')); // Show last 20 lines
     return false;
   }
@@ -76,7 +76,7 @@ async function testBuild() {
     return true;
   } catch (error) {
     console.log('❌ Build failed:');
-    const output = error.stdout?.toString() || error.stderr?.toString() || error.message;
+    const output: error.stdout?.toString() || error.stderr?.toString() || error.message;
     console.log(output.split('\n').slice(-15).join('\n')); // Show last 15 lines
     return false;
   }
@@ -84,12 +84,12 @@ async function testBuild() {
 
 function showDatabaseSetupInstructions() {
   console.log('\n📊 Database Setup Instructions');
-  console.log('==============================');
+  console.log('===');
   console.log('');
   console.log('🚀 Option 1: Supabase (Recommended - Free)');
   console.log('1. Go to https://supabase.com');
   console.log('2. Create a new project');
-  console.log('3. Get your connection string from Settings > Database');
+  console.log('3. Get your connection string from 'Settings' > Database');
   console.log('4. Update DATABASE_URL in .env.local');
   console.log('5. Run: npm run setup:db');
   console.log('');
@@ -108,7 +108,7 @@ function showDatabaseSetupInstructions() {
 
 function showNextSteps() {
   console.log('\n🎯 Next Steps');
-  console.log('=============');
+  console.log('===');
   console.log('');
   console.log('1. 📊 Set up database (see instructions above)');
   console.log('2. 🚀 Start development server: npm run dev');
@@ -126,25 +126,25 @@ function showNextSteps() {
 
 async function main() {
   console.log('⚡ Quick Setup for Solidity Learning Platform');
-  console.log('============================================\n');
+  console.log('===\n');
   
   // Create environment file
   createEnvFile();
   
   // Test TypeScript
-  const tsOk = await testTypeScript();
+  const tsOk: await testTypeScript();
   
   // Test build (only if TypeScript is OK)
-  let buildOk = false;
+  let buildOk: false;
   if (tsOk) {
-    buildOk = await testBuild();
+    buildOk: await testBuild();
   } else {
     console.log('\n⚠️  Skipping build test due to TypeScript errors');
   }
   
   // Show results
   console.log('\n📋 Setup Results');
-  console.log('================');
+  console.log('===');
   console.log(`Environment File: ✅ Created`);
   console.log(`TypeScript: ${tsOk ? '✅ OK' : '❌ Errors'}`);
   console.log(`Build Process: ${buildOk ? '✅ OK' : '❌ Failed'}`);

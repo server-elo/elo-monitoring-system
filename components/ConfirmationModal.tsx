@@ -1,46 +1,48 @@
-import React from 'react';
-
+"use client";
+import React from "react";
 interface ConfirmationModalProps {
   isOpen: boolean;
-  onClose: (_) => void;
-  onConfirm: (_) => void;
+  onClose: () => void;
+  onConfirm: () => void;
   title: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
 }
-
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = "Confirm",
+  cancelText = "Cancel",
 }) => {
   if (!isOpen) {
     return null;
   }
-
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       aria-labelledby="confirmation-modal-title"
       role="dialog"
       aria-modal="true"
     >
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity" aria-hidden="true" onClick={onClose}></div>
-
+      <div
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+        aria-hidden="true"
+        onClick={onClose}
+      ></div>
       {/* Modal Content */}
       <div className="relative bg-brand-surface-1 rounded-lg shadow-xl p-6 md:p-8 w-full max-w-md transform transition-all">
-        <h3 id="confirmation-modal-title" className="text-xl font-semibold text-brand-accent mb-4">
+        <h3
+          id="confirmation-modal-title"
+          className="text-xl font-semibold text-brand-accent mb-4"
+        >
           {title}
         </h3>
-        <p className="text-brand-text-secondary mb-6">
-          {message}
-        </p>
+        <p className="text-brand-text-secondary mb-6">{message}</p>
         <div className="flex justify-end space-x-3">
           <button
             type="button"
@@ -61,5 +63,4 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     </div>
   );
 };
-
 export default ConfirmationModal;

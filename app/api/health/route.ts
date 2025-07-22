@@ -1,1 +1,3 @@
-export async function GET() { return Response.json({ status: "ok" }); }
+export async function GET(): void {
+  return Response.json({ status: "ok" });
+}

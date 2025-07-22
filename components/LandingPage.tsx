@@ -1,219 +1,181 @@
-
-import React, { useState } from 'react';
-
-interface LandingPageProps {
-  onLogin: (_formData: { email?: string; password?: string }) => void;
-  onSignup: (_formData: { email?: string; password?: string; confirmPassword?: string }) => void;
-  onDirectAccess: (_) => void; // New prop
-}
-
-const LandingPage: React.FC<LandingPageProps> = ( { onLogin, onSignup, onDirectAccess }) => {
-  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [signupEmail, setSignupEmail] = useState('');
-  const [signupPassword, setSignupPassword] = useState('');
-  const [signupConfirmPassword, setSignupConfirmPassword] = useState('');
-
-  const handleLoginSubmit = (_e: React.FormEvent) => {
-    e.preventDefault(_);
-    onLogin( { email: loginEmail, password: loginPassword });
-  };
-
-  const handleSignupSubmit = (_e: React.FormEvent) => {
-    e.preventDefault(_);
-    if (_signupPassword !== signupConfirmPassword) {
-      alert("Passwords don't match!"); 
-      return;
-    }
-    onSignup( { email: signupEmail, password: signupPassword });
-  };
-
+"use client";
+import React from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  BookOpen,
+  Code,
+  Trophy,
+  Users,
+  Zap,
+  ArrowRight,
+  CheckCircle,
+  Sparkles,
+} from "lucide-react";
+export default function LandingPage(): void {
+  const features = [
+    {
+      icon: BookOpen,
+      title: "Structured Learning",
+      description:
+        "Progress through carefully crafted modules from basics to advanced concepts",
+    },
+    {
+      icon: Code,
+      title: "Interactive Coding",
+      description:
+        "Write, test, and deploy smart contracts in our browser-based IDE",
+    },
+    {
+      icon: Trophy,
+      title: "Gamification",
+      description: "Earn XP, unlock achievements, and compete on leaderboards",
+    },
+    {
+      icon: Users,
+      title: "Collaborative Learning",
+      description: "Code together in real-time and learn from the community",
+    },
+  ];
+  const benefits = [
+    "Learn at your own pace with AI-powered assistance",
+    "Build real-world projects and deploy to testnets",
+    "Get instant feedback on your code",
+    "Join a community of blockchain developers",
+  ];
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 text-brand-text-primary font-sans">
-      <header className="text-center mb-10 md:mb-12">
-        <h1 className="text-5xl md:text-6xl font-extrabold text-brand-accent mb-4 landing-title-animate">
-          Solidity & Blockchain DevPath
-        </h1>
-        <p className="text-lg md:text-xl text-brand-text-secondary max-w-2xl mx-auto landing-title-animate" style={{ animationDelay: '0.2s' }}>
-          Master smart contract development with our interactive learning platform, powered by Gemini AI. Track your progress and prepare for the future of Web3.
-        </p>
-      </header>
-
-      <main className="w-full max-w-md p-8 md:p-10 glass-card">
-        <div className="mb-6 flex border-b border-white/10">
-          <button
-            onClick={(_) => setActiveTab('login')}
-            className={`landing-tab-button flex-1 py-3 text-center font-medium ${activeTab === 'login' ? 'text-brand-accent active-tab' : 'text-brand-text-muted hover:text-brand-text-primary'}`}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Hero Section */}
+      <section className="pt-20 pb-32 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            Login
-          </button>
-          <button
-            onClick={(_) => setActiveTab('signup')}
-            className={`landing-tab-button flex-1 py-3 text-center font-medium ${activeTab === 'signup' ? 'text-brand-accent active-tab' : 'text-brand-text-muted hover:text-brand-text-primary'}`}
-          >
-            Sign Up
-          </button>
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+              Master{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Solidity
+              </span>{" "}
+              Development
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+              The most comprehensive platform to learn smart contract
+              development with AI-powered tutoring and real-time collaboration
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/learn"
+                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              >
+                Start Learning <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+              <Link
+                href="/code"
+                className="inline-flex items-center px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg border border-white/20 hover:bg-white/20 transition-all duration-200"
+              >
+                Try the Editor <Code className="ml-2 h-5 w-5" />
+              </Link>
+            </div>
+          </motion.div>
         </div>
-
-        {activeTab === 'login' && (
-          <form onSubmit={handleLoginSubmit} className="space-y-6">
-            <div className="relative">
-              <input 
-                type="email" 
-                id="login-email" 
-                value={loginEmail} 
-                onChange={(_e) => setLoginEmail(_e.target.value)} 
-                className="landing-input peer w-full px-4 py-3 rounded-lg" 
-                placeholder=" " 
-                autoComplete="email" 
-              />
-              <label 
-                htmlFor="login-email" 
-                className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
+      </section>
+      {/* Features Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Everything You Need to Become a Solidity Expert
+            </h2>
+            <p className="text-xl text-gray-300">
+              Our platform combines the best learning tools with cutting-edge
+              technology
+            </p>
+          </motion.div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-200"
               >
-                Email Address (_mock)
-              </label>
+                <feature.icon className="h-12 w-12 text-blue-400 mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-300">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+      {/* Benefits Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <Sparkles className="h-16 w-16 text-yellow-400 mx-auto mb-6" />
+            <h2 className="text-4xl font-bold text-white mb-12">
+              Why Choose SolanaLearn?
+            </h2>
+            <div className="space-y-4">
+              {benefits.map((benefit, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="flex items-center justify-center gap-3"
+                >
+                  <CheckCircle className="h-6 w-6 text-green-400 flex-shrink-0" />
+                  <p className="text-lg text-gray-300">{benefit}</p>
+                </motion.div>
+              ))}
             </div>
-            <div className="relative">
-              <input 
-                type="password" 
-                id="login-password" 
-                value={loginPassword} 
-                onChange={(_e) => setLoginPassword(_e.target.value)} 
-                className="landing-input peer w-full px-4 py-3 rounded-lg" 
-                placeholder=" " 
-                autoComplete="current-password" 
-              />
-              <label 
-                htmlFor="login-password" 
-                className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
-              >
-                Password (_mock)
-              </label>
-            </div>
-            <button type="submit" className="landing-button w-full">
-              Login
-            </button>
-          </form>
-        )}
-
-        {activeTab === 'signup' && (
-          <form onSubmit={handleSignupSubmit} className="space-y-6">
-            <div className="relative">
-              <input 
-                type="email" 
-                id="signup-email" 
-                value={signupEmail} 
-                onChange={(_e) => setSignupEmail(_e.target.value)} 
-                className="landing-input peer w-full px-4 py-3 rounded-lg" 
-                placeholder=" " 
-                autoComplete="email" 
-              />
-              <label 
-                htmlFor="signup-email" 
-                className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
-              >
-                Email Address (_mock)
-              </label>
-            </div>
-            <div className="relative">
-              <input 
-                type="password" 
-                id="signup-password" 
-                value={signupPassword} 
-                onChange={(_e) => setSignupPassword(_e.target.value)} 
-                className="landing-input peer w-full px-4 py-3 rounded-lg" 
-                placeholder=" " 
-                autoComplete="new-password"
-              />
-              <label 
-                htmlFor="signup-password" 
-                className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
-              >
-                Password (_mock)
-              </label>
-            </div>
-            <div className="relative">
-              <input 
-                type="password" 
-                id="signup-confirm-password" 
-                value={signupConfirmPassword} 
-                onChange={(_e) => setSignupConfirmPassword(_e.target.value)} 
-                className="landing-input peer w-full px-4 py-3 rounded-lg" 
-                placeholder=" " 
-                autoComplete="new-password"
-              />
-               <label 
-                htmlFor="signup-confirm-password" 
-                className="landing-label absolute text-sm left-4 top-3.5 origin-top-left"
-              >
-                Confirm Password (_mock)
-              </label>
-            </div>
-            <button type="submit" className="landing-button w-full">
-              Create Account
-            </button>
-          </form>
-        )}
-        
-        <div className="mt-8 text-center">
-           <button 
-            onClick={onDirectAccess}
-            className="landing-button w-full bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500 hover:from-emerald-600 hover:via-green-600 hover:to-emerald-600"
-            style={{
-                 backgroundImage: 'linear-gradient( to right, var(--brand-colors-aurora-3, #10B981) 0%, #22C55E 50%, var( --brand-colors-aurora-3, #10B981) 100%)'
-            }}
+          </motion.div>
+        </div>
+      </section>
+      {/* CTA Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12"
+          >
+            <Zap className="h-16 w-16 text-yellow-300 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Ready to Start Your Blockchain Journey?
+            </h2>
+            <p className="text-xl text-gray-100 mb-8">
+              Join thousands of developers learning Solidity the right way
+            </p>
+            <Link
+              href="/auth/register"
+              className="inline-flex items-center px-8 py-4 bg-white text-purple-600 font-semibold rounded-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
-            Access Course Directly
-          </button>
+              Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </motion.div>
         </div>
-
-         <p className="text-xs text-brand-text-muted/70 mt-6 text-center">
-          Login and Sign Up are simulated. No data is persistently stored beyond your browser's local storage for progress.
-        </p>
-      </main>
-      
-      <footer className="mt-10 md:mt-12 text-center space-y-4">
-        <div className="flex justify-center items-center space-x-6 landing-title-animate" style={{ animationDelay: '0.4s' }}>
-          <a 
-            href="https://github.com/ezekaj" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-brand-text-muted hover:text-brand-accent transition-colors duration-200 flex items-center space-x-2"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            <span>GitHub</span>
-          </a>
-          <a 
-            href="https://www.linkedin.com/in/elvi-zekaj-240b10243/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-brand-text-muted hover:text-brand-accent transition-colors duration-200 flex items-center space-x-2"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-            <span>LinkedIn</span>
-          </a>
-          <a 
-            href="mailto:elvizekaj02@gmail.com" 
-            className="text-brand-text-muted hover:text-brand-accent transition-colors duration-200 flex items-center space-x-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span>Email</span>
-          </a>
-        </div>
-        <p className="text-sm text-brand-text-muted/80 landing-title-animate" style={{ animationDelay: '0.6s' }}>
-          &copy; {new Date().getFullYear()} Solidity DevPath. Learn, Build, Innovate.
-        </p>
-      </footer>
+      </section>
     </div>
   );
-};
-
-export default LandingPage;
+}

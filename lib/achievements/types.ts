@@ -1,28 +1,21 @@
-// Achievement system types and interfaces
-
-export type AchievementStatus = 'locked' | 'inprogress' | 'unlocked' | 'featured';
+// Achievement system types and interfaces export type AchievementStatus = 'locked' | 'inprogress' | 'unlocked' | 'featured';
 export type AchievementCategory = 'learning' | 'social' | 'milestone' | 'special' | 'streak';
-export type AchievementRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
-
-export interface AchievementRequirement {
+export type AchievementRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'; export interface AchievementRequirement {
   type: 'lesson_complete' | 'quiz_score' | 'project_submit' | 'streak_days' | 'xp_earned' | 'time_spent' | 'social_action';
   target: number;
   current: number;
-  metadata?: Record<string, any>;
-}
-
-export interface AchievementReward {
+  metadata?: Record<string;
+  any>;
+} export interface AchievementReward {
   xp: number;
   badge?: string;
   title?: string;
-  unlocks?: string[]; // IDs of content/features unlocked
-  special?: {
+  unlocks?: string[];
+  // IDs of content/features unlocked special?: {
     type: 'avatar' | 'theme' | 'feature';
     value: string;
   };
-}
-
-export interface Achievement {
+} export interface Achievement {
   id: string;
   title: string;
   description: string;
@@ -33,43 +26,38 @@ export interface Achievement {
   image?: string;
   requirements: AchievementRequirement[];
   rewards: AchievementReward;
-  prerequisites?: string[]; // Achievement IDs that must be unlocked first
-  hidden?: boolean; // Hidden until prerequisites are met
-  deprecated?: boolean; // No longer obtainable
-  releaseDate?: Date;
-  expiryDate?: Date; // For limited-time achievements
-}
-
-export interface UserAchievement {
+  prerequisites?: string[];
+  // Achievement IDs that must be unlocked first hidden?: boolean;
+  // Hidden until prerequisites are met deprecated?: boolean;
+  // No longer obtainable releaseDate?: Date;
+  expiryDate?: Date;
+  // For limited-time achievements;
+} export interface UserAchievement {
   achievementId: string;
   status: AchievementStatus;
-  progress: number; // 0-100 percentage
-  unlockedAt?: Date;
+  progress: number;
+  // 0-100 percentage unlockedAt?: Date;
   notificationShown?: boolean;
-  metadata?: Record<string, any>;
-}
-
-export interface AchievementProgress {
+  metadata?: Record<string;
+  any>;
+} export interface AchievementProgress {
   userId: string;
-  achievements: Record<string, UserAchievement>;
+  achievements: Record<string;
+  UserAchievement>;
   totalXP: number;
   level: number;
   badges: string[];
-  streaks: {
+  const streaks: {
     current: number;
     longest: number;
     lastActivity: Date;
-  };
-  statistics: {
-    totalUnlocked: number;
-    byCategory: Record<AchievementCategory, number>;
-    byRarity: Record<AchievementRarity, number>;
+  }; const statistics = {
+    totalUnlocked: number; byCategory: Record<AchievementCategory,
+    number>; byRarity: Record<AchievementRarity,
+    number>;
     completionRate: number;
-  };
-  lastUpdated: Date;
-}
-
-export interface AchievementNotification {
+  }; lastUpdated: Date;
+} export interface AchievementNotification {
   id: string;
   achievementId: string;
   type: 'unlock' | 'progress' | 'milestone';
@@ -77,27 +65,23 @@ export interface AchievementNotification {
   message: string;
   timestamp: Date;
   read: boolean;
-  celebrated?: boolean; // Whether unlock animation was shown
+  celebrated?: boolean;
+  // Whether unlock animation was shown
   rewards?: AchievementReward;
-}
-
-export interface AchievementEvent {
+} export interface AchievementEvent {
   type: 'lesson_complete' | 'quiz_complete' | 'project_submit' | 'login' | 'streak_update' | 'xp_gain';
   userId: string;
-  data: Record<string, any>;
+  data: Record<string;
+  any>;
   timestamp: Date;
-}
-
-export interface AchievementFilter {
+} export interface AchievementFilter {
   status?: AchievementStatus[];
   category?: AchievementCategory[];
   rarity?: AchievementRarity[];
   search?: string;
   sortBy?: 'title' | 'rarity' | 'progress' | 'unlockeddate' | 'category';
   sortOrder?: 'asc' | 'desc';
-}
-
-export interface AchievementStats {
+} export interface AchievementStats {
   totalAchievements: number;
   unlockedCount: number;
   inProgressCount: number;
@@ -110,9 +94,7 @@ export interface AchievementStats {
   currentStreak: number;
   longestStreak: number;
   recentUnlocks: UserAchievement[];
-}
-
-// Achievement configuration
+} // Achievement configuration
 export interface AchievementConfig {
   enableNotifications: boolean;
   enableSounds: boolean;
@@ -121,9 +103,7 @@ export interface AchievementConfig {
   celebrationDuration: number;
   autoSave: boolean;
   syncInterval: number;
-}
-
-// Level progression system
+} // Level progression system
 export interface LevelInfo {
   level: number;
   xpRequired: number;
@@ -132,9 +112,7 @@ export interface LevelInfo {
   description: string;
   rewards?: AchievementReward;
   unlocks?: string[];
-}
-
-// Leaderboard types
+} // Leaderboard types
 export interface LeaderboardEntry {
   userId: string;
   username: string;
@@ -144,53 +122,47 @@ export interface LeaderboardEntry {
   achievementCount: number;
   rank: number;
   badges: string[];
-}
-
-export interface Leaderboard {
+} export interface Leaderboard {
   type: 'xp' | 'achievements' | 'streak' | 'weekly' | 'monthly';
   entries: LeaderboardEntry[];
   userRank?: number;
   lastUpdated: Date;
-  timeframe?: {
-    start: Date;
-    end: Date;
-  };
-}
-
-// Achievement validation and checking
+  timeframe?: { start: Date;
+  end: Date;
+};
+} // Achievement validation and checking
 export interface AchievementChecker {
-  checkAchievement( achievement: Achievement, userProgress: AchievementProgress, event?: AchievementEvent): boolean;
-  calculateProgress( achievement: Achievement, userProgress: AchievementProgress): number;
-  getNextMilestone( achievement: Achievement, userProgress: AchievementProgress): AchievementRequirement | null;
-}
-
-// Achievement manager interface
+  checkAchievement( achievement: Achievement;
+  userProgress: AchievementProgress;
+  event?: AchievementEvent): boolean;
+  calculateProgress( achievement: Achievement;
+  userProgress: AchievementProgress): number;
+  getNextMilestone( achievement: Achievement;
+  userProgress: AchievementProgress): AchievementRequirement | null;
+} // Achievement manager interface
 export interface AchievementManager {
-  // Core functionality
-  loadUserProgress(_userId: string): Promise<AchievementProgress>;
+  // Core functionality loadUserProgress(userId: string): Promise<AchievementProgress>;
   saveUserProgress(progress: AchievementProgress): Promise<void>;
-  processEvent(_event: AchievementEvent): Promise<AchievementNotification[]>;
-  
-  // Achievement queries
-  getAllAchievements(_): Achievement[];
+  processEvent(event: AchievementEvent): Promise<AchievementNotification[]>;
+  // Achievement queries getAllAchievements(): Achievement[];
   getAchievement(_id: string): Achievement | null;
-  getUserAchievements( userId: string, filter?: AchievementFilter): Promise<UserAchievement[]>;
-  getAchievementStats(_userId: string): Promise<AchievementStats>;
-  
-  // Progress tracking
-  updateProgress( userId: string, achievementId: string, progress: Partial<UserAchievement>): Promise<void>;
-  unlockAchievement( userId: string, achievementId: string): Promise<AchievementNotification>;
-  
-  // Notifications
-  getNotifications( userId: string, unreadOnly?: boolean): Promise<AchievementNotification[]>;
-  markNotificationRead( userId: string, notificationId: string): Promise<void>;
-  
-  // Leaderboards
-  getLeaderboard( type: Leaderboard['type'], limit?: number): Promise<Leaderboard>;
-  getUserRank( userId: string, type: Leaderboard['type']): Promise<number>;
-}
-
-// Utility types
-export type AchievementEventHandler = (_event: AchievementEvent) => Promise<void>;
+  getUserAchievements(userId: string;
+  filter?: AchievementFilter): Promise<UserAchievement[]>;
+  getAchievementStats(userId: string): Promise<AchievementStats>;
+  // Progress tracking updateProgress(userId: string;
+  achievementId: string;
+  progress: Partial<UserAchievement>): Promise<void>;
+  unlockAchievement(userId: string;
+  achievementId: string): Promise<AchievementNotification>;
+  // Notifications getNotifications(userId: string;
+  unreadOnly?: boolean): Promise<AchievementNotification[]>;
+  markNotificationRead(userId: string;
+  notificationId: string): Promise<void>;
+  // Leaderboards getLeaderboard( type: Leaderboard['type'];
+  limit?: number): Promise<Leaderboard>;
+  getUserRank(userId: string;
+  type: Leaderboard['type']): Promise<number>;
+} // Utility types
+export type AchievementEventHandler = (event: AchievementEvent) => Promise<void>;
 export type AchievementUnlockHandler = ( achievement: Achievement, notification: AchievementNotification) => Promise<void>;
 export type ProgressUpdateHandler = ( userId: string, achievementId: string, oldProgress: number, newProgress: number) => void;

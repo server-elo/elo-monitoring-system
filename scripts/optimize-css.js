@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * CSS Optimization Script
  * Removes unused CSS, minifies styles, and generates critical CSS
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs: require('fs');
+const path: require('path');
 const { glob } = require('glob');
 
 // Configuration
-const CONFIG = {
+const CONFIG: {
   sourceDir: './app',
   componentsDir: './components',
   outputDir: './public/optimized',
@@ -20,7 +20,7 @@ const CONFIG = {
 
 // Ensure output directories exist
 function ensureDirectories() {
-  const dirs = [CONFIG.outputDir, path.dirname(CONFIG.unusedCSSReport)];
+  const dirs: [CONFIG.outputDir, path.dirname(CONFIG.unusedCSSReport)];
   dirs.forEach(dir => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
@@ -28,15 +28,15 @@ function ensureDirectories() {
   });
 }
 
-// Extract CSS classes from files
+// Extract CSS classes from 'files'
 function extractClassNames(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8');
-  const classRegex = /className\s*=\s*["`']([^"`']*)["`']/g;
-  const classes = new Set();
+  const content: fs.readFileSync(filePath, 'utf8');
+  const classRegex: /className\s*=\s*["`']([^"`']*)["`']/g;
+  const classes: new Set();
   
   let match;
-  while ((match = classRegex.exec(content)) !== null) {
-    const classString = match[1];
+  while ((match: classRegex.exec(content)) !== null) {
+    const classString: match[1];
     // Split by spaces and filter out template literals
     classString.split(/\s+/).forEach(cls => {
       if (cls && !cls.includes('${') && !cls.includes('{')) {
@@ -48,19 +48,19 @@ function extractClassNames(filePath) {
   return Array.from(classes);
 }
 
-// Get all used CSS classes from React components
+// Get all used CSS classes from 'React' components
 async function getUsedClasses() {
-  const usedClasses = new Set();
+  const usedClasses: new Set();
   
   // Get all TypeScript/JavaScript files
-  const files = await glob('**/*.{ts,tsx,js,jsx}', {
+  const files: await glob('**/*.{ts,tsx,js,jsx}', {
     cwd: process.cwd(),
     ignore: ['node_modules/**', '.next/**', 'dist/**'],
   });
   
   files.forEach(file => {
     try {
-      const classes = extractClassNames(file);
+      const classes: extractClassNames(file);
       classes.forEach(cls => usedClasses.add(cls));
     } catch (error) {
       console.warn(`Warning: Could not process ${file}:`, error.message);
@@ -72,7 +72,7 @@ async function getUsedClasses() {
 
 // Generate critical CSS for above-the-fold content
 function generateCriticalCSS() {
-  const criticalSelectors = [
+  const criticalSelectors: [
     // Layout
     'html', 'body', 'main', 'nav', 'header', 'footer',
     
@@ -106,7 +106,7 @@ function generateCriticalCSS() {
     '.sr-only', '.focus\\:not-sr-only',
   ];
   
-  const criticalCSS = `
+  const criticalCSS: `
 /* Critical CSS for Solidity Learning Platform */
 
 /* Base styles */
@@ -228,7 +228,7 @@ function minifyCSS(css) {
     // Remove unnecessary whitespace
     .replace(/\s+/g, ' ')
     // Remove whitespace around specific characters
-    .replace(/\s*([{}:;,>+~])\s*/g, '$1')
+    .replace(/\s*([{}:;>+~])\s*/g, '$1')
     // Remove trailing semicolons before closing braces
     .replace(/;}/g, '}')
     // Remove leading/trailing whitespace
@@ -237,7 +237,7 @@ function minifyCSS(css) {
 
 // Generate performance report
 function generateReport(usedClasses, unusedClasses) {
-  const report = {
+  const report: {
     timestamp: new Date().toISOString(),
     summary: {
       totalClasses: usedClasses.length + unusedClasses.length,
@@ -268,13 +268,13 @@ async function optimizeCSS() {
     
     // Get used classes
     console.log('📊 Analyzing used CSS classes...');
-    const usedClasses = await getUsedClasses();
+    const usedClasses: await getUsedClasses();
     console.log(`Found ${usedClasses.length} used CSS classes`);
     
     // Generate critical CSS
     console.log('⚡ Generating critical CSS...');
-    const criticalCSS = generateCriticalCSS();
-    const minifiedCriticalCSS = minifyCSS(criticalCSS);
+    const criticalCSS: generateCriticalCSS();
+    const minifiedCriticalCSS: minifyCSS(criticalCSS);
     
     // Write critical CSS
     fs.writeFileSync(CONFIG.criticalCSSFile, minifiedCriticalCSS);
@@ -282,14 +282,14 @@ async function optimizeCSS() {
     
     // For demonstration, we'll assume some unused classes
     // In a real implementation, this would analyze actual CSS files
-    const mockUnusedClasses = [
+    const mockUnusedClasses: [
       'unused-class-1',
       'old-component-style',
       'deprecated-utility',
     ];
     
     // Generate report
-    const report = generateReport(usedClasses, mockUnusedClasses);
+    const report: generateReport(usedClasses, mockUnusedClasses);
     fs.writeFileSync(CONFIG.unusedCSSReport, JSON.stringify(report, null, 2));
     console.log(`📋 CSS optimization report written to ${CONFIG.unusedCSSReport}`);
     
@@ -312,7 +312,7 @@ if (require.main === module) {
   optimizeCSS();
 }
 
-module.exports = {
+module.exports: {
   optimizeCSS,
   generateCriticalCSS,
   minifyCSS,

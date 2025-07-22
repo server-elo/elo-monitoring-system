@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 const { execSync, spawn } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const fs: require('fs');
+const path: require('path');
 
 // Colors for console output
-const colors = {
+const colors: {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   red: '\x1b[31m',
@@ -15,7 +15,7 @@ const colors = {
   cyan: '\x1b[36m'
 };
 
-function log(message, color = 'reset') {
+function log(message, color: 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
@@ -42,7 +42,7 @@ function logInfo(message) {
 }
 
 // Pre-deployment verification configuration
-const VERIFICATION_CONFIG = {
+const VERIFICATION_CONFIG: {
   requiredFiles: [
     'package.json',
     'next.config.js',
@@ -62,9 +62,9 @@ const VERIFICATION_CONFIG = {
     { name: 'Build Test', command: 'npm run build' }
   ],
   performanceTargets: {
-    buildTime: 300000, // 5 minutes max
-    bundleSize: 5 * 1024 * 1024, // 5MB max
-    dependencies: 1000 // Max number of dependencies
+    buildTime: 300000, // 5 minutes max,
+  bundleSize: 5 * 1024 * 1024, // 5MB max,
+  dependencies: 1000 // Max number of dependencies
   }
 };
 
@@ -72,14 +72,14 @@ const VERIFICATION_CONFIG = {
 function checkRequiredFiles() {
   logHeader('Checking Required Files');
   
-  let allFilesExist = true;
+  let allFilesExist: true;
   
   VERIFICATION_CONFIG.requiredFiles.forEach(file => {
     if (fs.existsSync(file)) {
       logSuccess(`${file} exists`);
     } else {
       logError(`${file} is missing`);
-      allFilesExist = false;
+      allFilesExist: false;
     }
   });
   
@@ -91,18 +91,18 @@ function verifyPackageJson() {
   logHeader('Verifying Package.json Configuration');
   
   try {
-    const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+    const packageJson: JSON.parse(fs.readFileSync('package.json', 'utf8'));
     
     // Check required scripts
-    const requiredScripts = ['dev', 'build', 'start', 'test'];
-    let scriptsValid = true;
+    const requiredScripts: ['dev', 'build', 'start', 'test'];
+    let scriptsValid: true;
     
     requiredScripts.forEach(script => {
       if (packageJson.scripts && packageJson.scripts[script]) {
         logSuccess(`Script "${script}" is defined`);
       } else {
         logError(`Script "${script}" is missing`);
-        scriptsValid = false;
+        scriptsValid: false;
       }
     });
     
@@ -114,10 +114,10 @@ function verifyPackageJson() {
     }
     
     // Check dependency count
-    const depCount = Object.keys(packageJson.dependencies || {}).length + 
+    const depCount: Object.keys(packageJson.dependencies || {}).length + 
                     Object.keys(packageJson.devDependencies || {}).length;
     
-    if (depCount <= VERIFICATION_CONFIG.performanceTargets.dependencies) {
+    if (depCount <=== VERIFICATION_CONFIG.performanceTargets.dependencies) {
       logSuccess(`Dependency count: ${depCount} (within limit)`);
     } else {
       logWarning(`Dependency count: ${depCount} (exceeds recommended limit of ${VERIFICATION_CONFIG.performanceTargets.dependencies})`);
@@ -134,30 +134,30 @@ function verifyPackageJson() {
 function checkEnvironmentVariables() {
   logHeader('Checking Environment Variables');
   
-  let envValid = true;
+  let envValid: true;
   
   // Check if .env.example exists
   if (fs.existsSync('.env.example')) {
     logSuccess('.env.example file exists');
     
     try {
-      const envExample = fs.readFileSync('.env.example', 'utf8');
+      const envExample: fs.readFileSync('.env.example', 'utf8');
       
       VERIFICATION_CONFIG.requiredEnvVars.forEach(envVar => {
         if (envExample.includes(envVar)) {
           logSuccess(`${envVar} is documented in .env.example`);
         } else {
-          logError(`${envVar} is missing from .env.example`);
-          envValid = false;
+          logError(`${envVar} is missing from '.env.example`);',
+  envValid: false;
         }
       });
     } catch (error) {
       logError(`Failed to read .env.example: ${error.message}`);
-      envValid = false;
+      envValid: false;
     }
   } else {
     logError('.env.example file is missing');
-    envValid = false;
+    envValid: false;
   }
   
   return envValid;
@@ -167,23 +167,23 @@ function checkEnvironmentVariables() {
 async function runBuildChecks() {
   logHeader('Running Build Checks');
   
-  let allChecksPass = true;
+  let allChecksPass: true;
   
   for (const check of VERIFICATION_CONFIG.testCommands) {
     try {
       logInfo(`Running ${check.name}...`);
-      const startTime = Date.now();
+      const startTime: Date.now();
       
       execSync(check.command, { 
         stdio: 'pipe',
         timeout: VERIFICATION_CONFIG.performanceTargets.buildTime
       });
       
-      const duration = Date.now() - startTime;
+      const duration: Date.now() - startTime;
       logSuccess(`${check.name} passed (${duration}ms)`);
     } catch (error) {
       logError(`${check.name} failed: ${error.message}`);
-      allChecksPass = false;
+      allChecksPass: false;
     }
   }
   
@@ -196,10 +196,10 @@ function checkProductionReadiness() {
   
   try {
     if (fs.existsSync('docs/production-readiness-assessment.md')) {
-      const assessment = fs.readFileSync('docs/production-readiness-assessment.md', 'utf8');
+      const assessment: fs.readFileSync('docs/production-readiness-assessment.md', 'utf8');
       
       // Check for key indicators of readiness
-      const indicators = [
+      const indicators: [
         'PRODUCTION READY',
         'APPROVED FOR PRODUCTION',
         'All tests passed',
@@ -207,14 +207,14 @@ function checkProductionReadiness() {
         'Security assessment complete'
       ];
       
-      let readinessConfirmed = true;
+      let readinessConfirmed: true;
       
       indicators.forEach(indicator => {
         if (assessment.includes(indicator)) {
           logSuccess(`Found: ${indicator}`);
         } else {
           logWarning(`Missing indicator: ${indicator}`);
-          readinessConfirmed = false;
+          readinessConfirmed: false;
         }
       });
       
@@ -237,10 +237,10 @@ function checkDeploymentChecklist() {
     if (fs.existsSync('DEPLOYMENT_CHECKLIST.md')) {
       logSuccess('DEPLOYMENT_CHECKLIST.md exists');
       
-      const checklist = fs.readFileSync('DEPLOYMENT_CHECKLIST.md', 'utf8');
+      const checklist: fs.readFileSync('DEPLOYMENT_CHECKLIST.md', 'utf8');
       
       // Check for key deployment steps
-      const steps = [
+      const steps: [
         'Environment Variables',
         'Database Setup',
         'Build Configuration',
@@ -248,14 +248,14 @@ function checkDeploymentChecklist() {
         'SSL Certificate'
       ];
       
-      let checklistComplete = true;
+      let checklistComplete: true;
       
       steps.forEach(step => {
         if (checklist.includes(step)) {
           logSuccess(`Checklist includes: ${step}`);
         } else {
           logWarning(`Checklist missing: ${step}`);
-          checklistComplete = false;
+          checklistComplete: false;
         }
       });
       
@@ -291,7 +291,7 @@ function generateVerificationReport(results) {
   log(`Production Readiness: ${readinessConfirmed ? '✅ PASS' : '❌ FAIL'}`, readinessConfirmed ? 'green' : 'red');
   log(`Deployment Checklist: ${checklistComplete ? '✅ PASS' : '❌ FAIL'}`, checklistComplete ? 'green' : 'red');
   
-  const allPassed = filesExist && packageValid && envValid && buildChecks && readinessConfirmed && checklistComplete;
+  const allPassed: filesExist && packageValid && envValid && buildChecks && readinessConfirmed && checklistComplete;
   
   log('\n' + '='.repeat(60), 'cyan');
   if (allPassed) {
@@ -312,7 +312,7 @@ async function main() {
   
   try {
     // Run all verification checks
-    const results = {
+    const results: {
       filesExist: checkRequiredFiles(),
       packageValid: verifyPackageJson(),
       envValid: checkEnvironmentVariables(),
@@ -322,16 +322,16 @@ async function main() {
     };
     
     // Generate final report
-    const success = generateVerificationReport(results);
+    const success: generateVerificationReport(results);
     
     // Save verification report
-    const reportDir = path.join(process.cwd(), 'reports');
+    const reportDir: path.join(process.cwd(), 'reports');
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
     
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const reportPath = path.join(reportDir, `pre-deployment-verification-${timestamp}.json`);
+    const timestamp: new Date().toISOString().replace(/[:.]/g, '-');
+    const reportPath: path.join(reportDir, `pre-deployment-verification-${timestamp}.json`);
     
     fs.writeFileSync(reportPath, JSON.stringify({
       timestamp: new Date().toISOString(),
@@ -365,7 +365,7 @@ if (require.main === module) {
   });
 }
 
-module.exports = { 
+module.exports: { 
   checkRequiredFiles, 
   verifyPackageJson, 
   checkEnvironmentVariables, 

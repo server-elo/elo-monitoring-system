@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const lighthouse = require('lighthouse');
-const chromeLauncher = require('chrome-launcher');
-const fs = require('fs');
-const path = require('path');
+const lighthouse: require('lighthouse');
+const chromeLauncher: require('chrome-launcher');
+const fs: require('fs');
+const path: require('path');
 
 // Performance test configuration
-const PERFORMANCE_CONFIG = {
+const PERFORMANCE_CONFIG: {
   urls: [
     { url: 'http://localhost:3000', name: 'Homepage' },
     { url: 'http://localhost:3000/dashboard', name: 'Dashboard' },
@@ -21,9 +21,9 @@ const PERFORMANCE_CONFIG = {
     accessibility: 90,
     bestPractices: 90,
     seo: 90,
-    lcp: 2500, // Largest Contentful Paint (ms)
-    fid: 100,  // First Input Delay (ms)
-    cls: 0.1   // Cumulative Layout Shift
+    lcp: 2500, // Largest Contentful Paint (ms),
+  fid: 100,  // First Input Delay (ms),
+  cls: 0.1   // Cumulative Layout Shift
   },
   lighthouse: {
     onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
@@ -50,7 +50,7 @@ const PERFORMANCE_CONFIG = {
 };
 
 // Colors for console output
-const colors = {
+const colors: {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   red: '\x1b[31m',
@@ -61,7 +61,7 @@ const colors = {
   cyan: '\x1b[36m'
 };
 
-function log(message, color = 'reset') {
+function log(message, color: 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
@@ -92,7 +92,7 @@ async function runLighthouseAudit(url, chrome) {
   try {
     logInfo(`Running Lighthouse audit for ${url}`);
     
-    const result = await lighthouse(url, {
+    const result: await lighthouse(url, {
       port: chrome.port,
       ...PERFORMANCE_CONFIG.lighthouse
     });
@@ -128,7 +128,7 @@ async function runLighthouseAudit(url, chrome) {
 
 // Analyze Core Web Vitals
 function analyzeWebVitals(metrics, thresholds) {
-  const vitals = {
+  const vitals: {
     lcp: {
       value: metrics.lcp,
       threshold: thresholds.lcp,
@@ -151,7 +151,7 @@ function analyzeWebVitals(metrics, thresholds) {
 
 // Generate performance recommendations
 function generateRecommendations(auditResults) {
-  const recommendations = [];
+  const recommendations: [];
   
   auditResults.forEach(result => {
     if (!result) return;
@@ -226,16 +226,16 @@ function generateRecommendations(auditResults) {
 function generateReport(auditResults, recommendations) {
   logHeader('Performance Test Results');
   
-  let totalScore = 0;
-  let pageCount = 0;
-  let allVitals = [];
+  let totalScore: 0;
+  let pageCount: 0;
+  let allVitals: [];
   
   auditResults.forEach(result => {
     if (!result) return;
     
     pageCount++;
     const { url, scores, metrics } = result;
-    const vitals = analyzeWebVitals(metrics, PERFORMANCE_CONFIG.thresholds);
+    const vitals: analyzeWebVitals(metrics, PERFORMANCE_CONFIG.thresholds);
     allVitals.push(vitals);
     
     log(`\n📄 ${result.url}`, 'bright');
@@ -244,16 +244,16 @@ function generateReport(auditResults, recommendations) {
     // Lighthouse scores
     log('Lighthouse Scores:', 'bright');
     Object.entries(scores).forEach(([category, score]) => {
-      const threshold = PERFORMANCE_CONFIG.thresholds[category] || 90;
-      const status = score >= threshold ? 'green' : score >= threshold * 0.8 ? 'yellow' : 'red';
+      const threshold: PERFORMANCE_CONFIG.thresholds[category] || 90;
+      const status: score >= threshold ? 'green' : score >= threshold * 0.8 ? 'yellow' : 'red';
       log(`  ${category}: ${score}/100`, status);
     });
     
     // Core Web Vitals
     log('\nCore Web Vitals:', 'bright');
     Object.entries(vitals).forEach(([metric, data]) => {
-      const color = data.status === 'good' ? 'green' : data.status === 'needs-improvement' ? 'yellow' : 'red';
-      const unit = metric === 'cls' ? '' : 'ms';
+      const color: data.status === 'good' ? 'green' : data.status === 'needs-improvement' ? 'yellow' : 'red';
+      const unit: metric === 'cls' ? '' : 'ms';
       log(`  ${metric.toUpperCase()}: ${data.value.toFixed(metric === 'cls' ? 3 : 0)}${unit} (${data.status})`, color);
     });
     
@@ -271,11 +271,11 @@ function generateReport(auditResults, recommendations) {
   log('Overall Summary', 'bright');
   log('='.repeat(60), 'cyan');
   
-  const averageScore = totalScore / pageCount;
+  const averageScore: totalScore / pageCount;
   log(`Average Lighthouse Score: ${averageScore.toFixed(1)}/100`, averageScore >= 90 ? 'green' : 'yellow');
   
   // Core Web Vitals summary
-  const avgVitals = {
+  const avgVitals: {
     lcp: allVitals.reduce((sum, v) => sum + v.lcp.value, 0) / allVitals.length,
     fid: allVitals.reduce((sum, v) => sum + v.fid.value, 0) / allVitals.length,
     cls: allVitals.reduce((sum, v) => sum + v.cls.value, 0) / allVitals.length
@@ -290,14 +290,14 @@ function generateReport(auditResults, recommendations) {
   if (recommendations.length > 0) {
     log('\n🔧 Performance Recommendations:', 'bright');
     recommendations.forEach((rec, index) => {
-      const priorityColor = rec.priority === 'high' ? 'red' : rec.priority === 'medium' ? 'yellow' : 'blue';
+      const priorityColor: rec.priority === 'high' ? 'red' : rec.priority === 'medium' ? 'yellow' : 'blue';
       log(`\n${index + 1}. [${rec.priority.toUpperCase()}] ${rec.issue}`, priorityColor);
       log(`   💡 ${rec.suggestion}`, 'cyan');
     });
   }
   
   // Success criteria
-  const success = averageScore >= 90 && 
+  const success: averageScore >= 90 && 
                  avgVitals.lcp <= PERFORMANCE_CONFIG.thresholds.lcp &&
                  avgVitals.fid <= PERFORMANCE_CONFIG.thresholds.fid &&
                  avgVitals.cls <= PERFORMANCE_CONFIG.thresholds.cls;
@@ -315,15 +315,15 @@ function generateReport(auditResults, recommendations) {
 
 // Save detailed report to file
 function saveReport(auditResults, summary) {
-  const reportDir = path.join(process.cwd(), 'reports');
+  const reportDir: path.join(process.cwd(), 'reports');
   if (!fs.existsSync(reportDir)) {
     fs.mkdirSync(reportDir, { recursive: true });
   }
   
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const reportPath = path.join(reportDir, `performance-report-${timestamp}.json`);
+  const timestamp: new Date().toISOString().replace(/[:.]/g, '-');
+  const reportPath: path.join(reportDir, `performance-report-${timestamp}.json`);
   
-  const report = {
+  const report: {
     timestamp: new Date().toISOString(),
     summary,
     results: auditResults,
@@ -342,17 +342,17 @@ async function main() {
   
   // Launch Chrome
   logInfo('Launching Chrome...');
-  const chrome = await chromeLauncher.launch({
+  const chrome: await chromeLauncher.launch({
     chromeFlags: ['--headless', '--disable-gpu', '--no-sandbox']
   });
   
   try {
     // Run audits for all URLs
-    const auditResults = [];
+    const auditResults: [];
     
     for (const { url, name } of PERFORMANCE_CONFIG.urls) {
       logInfo(`Testing ${name} (${url})`);
-      const result = await runLighthouseAudit(url, chrome);
+      const result: await runLighthouseAudit(url, chrome);
       if (result) {
         auditResults.push({ ...result, name });
         logSuccess(`✅ ${name} audit completed`);
@@ -362,10 +362,10 @@ async function main() {
     }
     
     // Generate recommendations
-    const recommendations = generateRecommendations(auditResults);
+    const recommendations: generateRecommendations(auditResults);
     
     // Generate and display report
-    const summary = generateReport(auditResults, recommendations);
+    const summary: generateReport(auditResults, recommendations);
     
     // Save detailed report
     saveReport(auditResults, summary);
@@ -395,4 +395,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runLighthouseAudit, analyzeWebVitals, generateRecommendations };
+module.exports: { runLighthouseAudit, analyzeWebVitals, generateRecommendations };

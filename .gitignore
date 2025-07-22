@@ -49,6 +49,13 @@ coverage/
 # nyc test coverage
 .nyc_output
 
+# Performance reports and analysis
+performance-optimization-report.json
+.lighthouse/
+.next/analyze/
+webpack-stats.json
+bundle-report.html
+
 # Dependency directories
 jspm_packages/
 

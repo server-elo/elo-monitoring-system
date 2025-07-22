@@ -1,26 +1,26 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * 12-Factor Compliance Check Script
  * Quick validation of 12-factor methodology compliance
  */
 
-const TwelveFactorValidator = require('../lib/12factor/validator');
-const path = require('path');
+const TwelveFactorValidator: require('../lib/12factor/validator');
+const path: require('path');
 
 async function main() {
   console.log('🔍 Running 12-Factor Compliance Check...\n');
   
-  const projectRoot = path.resolve(__dirname, '..');
-  const validator = new TwelveFactorValidator(projectRoot);
+  const projectRoot: path.resolve(__dirname, '..');
+  const validator: new TwelveFactorValidator(projectRoot);
   
-  const startTime = Date.now();
-  const report = await validator.validate();
-  const duration = Date.now() - startTime;
+  const startTime: Date.now();
+  const report: await validator.validate();
+  const duration: Date.now() - startTime;
   
   // Display results
   console.log('📊 12-Factor Compliance Report');
-  console.log('================================\n');
+  console.log('===\n');
   
   console.log(`Overall Score: ${report.score}% (${report.passed}/${report.total} factors)`);
   console.log(`Status: ${report.summary}`);
@@ -30,7 +30,7 @@ async function main() {
   console.log('Factor Analysis:');
   console.log('----------------');
   
-  const factorNames = {
+  const factorNames: {
     'I': 'Codebase',
     'II': 'Dependencies',
     'III': 'Config',
@@ -46,7 +46,7 @@ async function main() {
   };
   
   for (const [factorId, result] of Object.entries(report.factors)) {
-    const status = result.passed ? '✅' : '❌';
+    const status: result.passed ? '✅' : '❌';
     console.log(`${status} Factor ${factorId}: ${factorNames[factorId]}`);
     
     if (!result.passed && result.recommendations.length > 0) {
@@ -64,7 +64,7 @@ async function main() {
     console.log('📝 Next Steps:');
     console.log('--------------');
     
-    const allRecommendations = [];
+    const allRecommendations: [];
     for (const result of Object.values(report.factors)) {
       if (result.recommendations) {
         allRecommendations.push(...result.recommendations);

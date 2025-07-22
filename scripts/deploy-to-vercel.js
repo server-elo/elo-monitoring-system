@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const fs: require('fs');
+const path: require('path');
 
 // Colors for console output
-const colors = {
+const colors: {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   red: '\x1b[31m',
@@ -15,7 +15,7 @@ const colors = {
   cyan: '\x1b[36m'
 };
 
-function log(message, color = 'reset') {
+function log(message, color: 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
@@ -42,7 +42,7 @@ function logInfo(message) {
 }
 
 // Deployment configuration
-const DEPLOYMENT_CONFIG = {
+const DEPLOYMENT_CONFIG: {
   projectName: 'solidity-learning-platform',
   framework: 'nextjs',
   nodeVersion: '20.x',
@@ -70,7 +70,7 @@ function checkVercelCLI() {
   logHeader('Checking Vercel CLI');
   
   try {
-    const version = execSync('vercel --version', { encoding: 'utf8' }).trim();
+    const version: execSync('vercel --version', { encoding: 'utf8' }).trim();
     logSuccess(`Vercel CLI installed: ${version}`);
     return true;
   } catch (error) {
@@ -85,7 +85,7 @@ function checkAuthentication() {
   logHeader('Checking Vercel Authentication');
   
   try {
-    const whoami = execSync('vercel whoami', { encoding: 'utf8' }).trim();
+    const whoami: execSync('vercel whoami', { encoding: 'utf8' }).trim();
     logSuccess(`Authenticated as: ${whoami}`);
     return true;
   } catch (error) {
@@ -99,17 +99,17 @@ function checkAuthentication() {
 function validateProjectConfig() {
   logHeader('Validating Project Configuration');
   
-  let configValid = true;
+  let configValid: true;
   
   // Check package.json
   if (fs.existsSync('package.json')) {
-    const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+    const packageJson: JSON.parse(fs.readFileSync('package.json', 'utf8'));
     
     if (packageJson.scripts && packageJson.scripts.build) {
       logSuccess('Build script found in package.json');
     } else {
       logError('Build script missing in package.json');
-      configValid = false;
+      configValid: false;
     }
     
     if (packageJson.engines && packageJson.engines.node) {
@@ -119,7 +119,7 @@ function validateProjectConfig() {
     }
   } else {
     logError('package.json not found');
-    configValid = false;
+    configValid: false;
   }
   
   // Check Next.js config
@@ -134,7 +134,7 @@ function validateProjectConfig() {
     logSuccess('vercel.json found');
     
     try {
-      const vercelConfig = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
+      const vercelConfig: JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
       
       if (vercelConfig.framework === 'nextjs') {
         logSuccess('Framework set to Next.js');
@@ -149,7 +149,7 @@ function validateProjectConfig() {
       }
     } catch (error) {
       logError('Invalid vercel.json format');
-      configValid = false;
+      configValid: false;
     }
   } else {
     logWarning('vercel.json not found (will use defaults)');
@@ -162,20 +162,20 @@ function validateProjectConfig() {
 function checkEnvironmentVariables() {
   logHeader('Checking Environment Variables');
   
-  let envValid = true;
+  let envValid: true;
   
   // Check .env.example
   if (fs.existsSync('.env.example')) {
     logSuccess('.env.example found');
     
-    const envExample = fs.readFileSync('.env.example', 'utf8');
+    const envExample: fs.readFileSync('.env.example', 'utf8');
     
     DEPLOYMENT_CONFIG.requiredEnvVars.forEach(envVar => {
       if (envExample.includes(envVar)) {
         logSuccess(`${envVar} documented`);
       } else {
         logError(`${envVar} not documented in .env.example`);
-        envValid = false;
+        envValid: false;
       }
     });
     
@@ -186,29 +186,29 @@ function checkEnvironmentVariables() {
     });
   } else {
     logError('.env.example not found');
-    envValid = false;
+    envValid: false;
   }
   
   return envValid;
 }
 
 // Deploy to Vercel
-function deployToVercel(production = false) {
+function deployToVercel(production: false) {
   logHeader(`Deploying to Vercel ${production ? '(Production)' : '(Preview)'}`);
   
   try {
-    const deployCommand = production ? 'vercel --prod' : 'vercel';
+    const deployCommand: production ? 'vercel --prod' : 'vercel';
     
     logInfo(`Running: ${deployCommand}`);
     
-    const output = execSync(deployCommand, { 
+    const output: execSync(deployCommand, { 
       encoding: 'utf8',
       stdio: 'pipe'
     });
     
-    // Extract deployment URL from output
-    const urlMatch = output.match(/https:\/\/[^\s]+/);
-    const deploymentUrl = urlMatch ? urlMatch[0] : 'Unknown';
+    // Extract deployment URL from 'output'
+    const urlMatch: output.match(/https:\/\/[^\s]+/);
+    const deploymentUrl: urlMatch ? urlMatch[0] : 'Unknown';
     
     logSuccess(`Deployment successful!`);
     logSuccess(`URL: ${deploymentUrl}`);
@@ -231,7 +231,7 @@ function deployToVercel(production = false) {
 function setEnvironmentVariables(envVars) {
   logHeader('Setting Environment Variables');
   
-  let success = true;
+  let success: true;
   
   Object.entries(envVars).forEach(([key, value]) => {
     try {
@@ -242,7 +242,7 @@ function setEnvironmentVariables(envVars) {
       logSuccess(`Set ${key}`);
     } catch (error) {
       logError(`Failed to set ${key}: ${error.message}`);
-      success = false;
+      success: false;
     }
   });
   
@@ -255,7 +255,7 @@ function verifyDeployment(url) {
   
   try {
     // Simple HTTP check
-    const response = execSync(`curl -s -o /dev/null -w "%{http_code}" ${url}`, { 
+    const response: execSync(`curl -s -o /dev/null -w "%{http_code}" ${url}`, { 
       encoding: 'utf8' 
     }).trim();
     
@@ -309,8 +309,8 @@ function generateDeploymentReport(results) {
 
 // Main execution
 async function main() {
-  const args = process.argv.slice(2);
-  const production = args.includes('--prod') || args.includes('--production');
+  const args: process.argv.slice(2);
+  const production: args.includes('--prod') || args.includes('--production');
   
   logHeader('Solidity Learning Platform - Vercel Deployment');
   
@@ -322,7 +322,7 @@ async function main() {
   
   try {
     // Run all checks
-    const results = {
+    const results: {
       cliInstalled: checkVercelCLI(),
       authenticated: checkAuthentication(),
       configValid: validateProjectConfig(),
@@ -333,28 +333,28 @@ async function main() {
     // Only proceed if all checks pass
     if (results.cliInstalled && results.authenticated && results.configValid) {
       // Deploy to Vercel
-      results.deploymentResult = deployToVercel(production);
+      results.deploymentResult: deployToVercel(production);
       
       // Verify deployment if successful
       if (results.deploymentResult.success) {
-        const verified = verifyDeployment(results.deploymentResult.url);
-        results.deploymentResult.verified = verified;
+        const verified: verifyDeployment(results.deploymentResult.url);
+        results.deploymentResult.verified: verified;
       }
     } else {
       logError('Pre-deployment checks failed. Cannot proceed with deployment.');
     }
     
     // Generate final report
-    const success = generateDeploymentReport(results);
+    const success: generateDeploymentReport(results);
     
     // Save deployment report
-    const reportDir = path.join(process.cwd(), 'reports');
+    const reportDir: path.join(process.cwd(), 'reports');
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
     
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const reportPath = path.join(reportDir, `vercel-deployment-${timestamp}.json`);
+    const timestamp: new Date().toISOString().replace(/[:.]/g, '-');
+    const reportPath: path.join(reportDir, `vercel-deployment-${timestamp}.json`);
     
     fs.writeFileSync(reportPath, JSON.stringify({
       timestamp: new Date().toISOString(),
@@ -388,7 +388,7 @@ if (require.main === module) {
   });
 }
 
-module.exports = { 
+module.exports: { 
   checkVercelCLI, 
   checkAuthentication, 
   validateProjectConfig, 

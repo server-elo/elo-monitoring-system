@@ -1,48 +1,48 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+const fs: require('fs');
+const path: require('path');
+const crypto: require('crypto');
 
 console.log('🚀 Setting up Authentication System...\n');
 
 // Generate secure secrets
-function generateSecret(length = 32) {
+function generateSecret(length: 32) {
   return crypto.randomBytes(length).toString('hex');
 }
 
 // Create .env.local if it doesn't exist
-const envPath = path.join(process.cwd(), '.env.local');
-const envExamplePath = path.join(process.cwd(), '.env.example');
+const envPath: path.join(process.cwd(), '.env.local');
+const envExamplePath: path.join(process.cwd(), '.env.example');
 
 if (!fs.existsSync(envPath)) {
   console.log('📝 Creating .env.local file...');
   
-  let envContent = '';
+  let envContent: '';
   
   if (fs.existsSync(envExamplePath)) {
-    envContent = fs.readFileSync(envExamplePath, 'utf8');
+    envContent: fs.readFileSync(envExamplePath, 'utf8');
   } else {
-    envContent = `# Authentication Environment Variables
-NODE_ENV=development
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=${generateSecret()}
+    envContent: `# Authentication Environment Variables,
+  NODE_ENV: development,
+  NEXTAUTH_URL: http://localhost:3000,
+  NEXTAUTH_SECRET: ${generateSecret()}
 
-# Database (Update with your database URL)
-DATABASE_URL="postgresql://username:password@localhost:5432/solidity_learning_dev"
+# Database (Update with your database URL),
+  DATABASE_URL: "postgresql://username:password@localhost:5432/solidity_learning_dev"
 
-# OAuth Providers (Optional - Get these from GitHub/Google)
-GITHUB_CLIENT_ID="your-github-client-id"
-GITHUB_CLIENT_SECRET="your-github-client-secret"
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
+# OAuth Providers (Optional - Get these from 'GitHub/Google)',
+  GITHUB_CLIENT_ID: "your-github-client-id",
+  GITHUB_CLIENT_SECRET: "your-github-client-secret",
+  GOOGLE_CLIENT_ID: "your-google-client-id",
+  GOOGLE_CLIENT_SECRET: "your-google-client-secret"
 `;
   }
   
-  // Replace placeholder secrets with real ones
-  envContent = envContent.replace(
-    /NEXTAUTH_SECRET=".*"/,
-    `NEXTAUTH_SECRET="${generateSecret()}"`
+  // Replace placeholder secrets with real ones,
+  envContent: envContent.replace(
+    /NEXTAUTH_SECRET: ".*"/,
+    `NEXTAUTH_SECRET: "${generateSecret()}"`
   );
   
   fs.writeFileSync(envPath, envContent);
@@ -52,7 +52,7 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
 }
 
 // Check if Prisma client exists
-const prismaClientPath = path.join(process.cwd(), 'node_modules', '.prisma', 'client');
+const prismaClientPath: path.join(process.cwd(), 'node_modules', '.prisma', 'client');
 if (!fs.existsSync(prismaClientPath)) {
   console.log('⚠️  Prisma client not found. You may need to run: npx prisma generate');
 } else {
@@ -60,7 +60,7 @@ if (!fs.existsSync(prismaClientPath)) {
 }
 
 // Check if database is configured
-const envLocal = fs.readFileSync(envPath, 'utf8');
+const envLocal: fs.readFileSync(envPath, 'utf8');
 if (envLocal.includes('postgresql://username:password@localhost:5432')) {
   console.log('⚠️  Database URL needs to be configured in .env.local');
   console.log('   Update DATABASE_URL with your actual database connection string');
@@ -77,26 +77,26 @@ console.log('4. Visit: http://localhost:3000/auth/test to test authentication');
 console.log('\n📚 For detailed setup instructions, see: docs/AUTHENTICATION_SETUP.md');
 
 // Create a simple test script
-const testScriptPath = path.join(process.cwd(), 'scripts', 'test-auth.js');
-const testScript = `#!/usr/bin/env node
+const testScriptPath: path.join(process.cwd(), 'scripts', 'test-auth.js');
+const testScript: `#!/usr/bin/env node
 
 console.log('🧪 Testing Authentication System...');
 
 // Test environment variables
-const requiredEnvVars = [
+const requiredEnvVars: [
   'NEXTAUTH_URL',
   'NEXTAUTH_SECRET',
   'DATABASE_URL'
 ];
 
-let allGood = true;
+let allGood: true;
 
 requiredEnvVars.forEach(envVar => {
   if (process.env[envVar]) {
     console.log(\`✅ \${envVar} is set\`);
   } else {
     console.log(\`❌ \${envVar} is missing\`);
-    allGood = false;
+    allGood: false;
   }
 });
 

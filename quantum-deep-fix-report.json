@@ -1,0 +1,2960 @@
+{
+  "timestamp": "2025-07-22T10:08:29.624Z",
+  "summary": {
+    "deepFixed": 9,
+    "standardFixed": 405,
+    "total": 414
+  },
+  "details": [
+    {
+      "file": "/home/elo/learning_solidity/components/CopyButton.tsx",
+      "fixes": [
+        "Reconstructed from minified code",
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": "/home/elo/learning_solidity/components/GeminiChat.tsx",
+      "fixes": [
+        "Reconstructed from minified code",
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": "/home/elo/learning_solidity/components/LandingPage.tsx",
+      "fixes": [
+        "Reconstructed from minified code",
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": "/home/elo/learning_solidity/components/MobileNavigation.tsx",
+      "fixes": [
+        "Reconstructed from minified code",
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": "/home/elo/learning_solidity/components/ModuleContent.tsx",
+      "fixes": [
+        "Reconstructed from minified code",
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": "/home/elo/learning_solidity/components/QuizComponent.tsx",
+      "fixes": [
+        "Reconstructed from minified code",
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": "/home/elo/learning_solidity/components/Sidebar.tsx",
+      "fixes": [
+        "Reconstructed from minified code",
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": "/home/elo/learning_solidity/app/auth/login/page.tsx",
+      "fixes": [
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": "/home/elo/learning_solidity/app/learn/page.tsx",
+      "fixes": [
+        "Fixed comparison operators",
+        "Fixed arrow function syntax",
+        "Fixed template literals",
+        "Fixed self-closing JSX tags",
+        "Fixed import statements",
+        "Fixed export statements"
+      ],
+      "deepFixed": true
+    },
+    {
+      "file": ".agents/scripts/batch-fix-console.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": ".storybook/main.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/api/auth/login.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/api/courses/courses.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/api/health/health.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/api/integration.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/authentication/user-auth-flows.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/collaboration/CollaborationPerformance.test.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/database/database-operations.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/e2e/global-setup.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/error-handling/error-boundaries.test.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/integration/auth-flow.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/integration/test-workflows.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/mocks/auth/nextAuth.mock.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/mocks/cache/redis.mock.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/mocks/database/prisma.mock.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/mocks/websocket/socketIO.mock.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/performance/load-testing.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/realtime/websocket-collaboration.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/security/inputValidation.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/security/rateLimiting.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/stress/edge-cases.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/unit/ai/multi-agent/SecurityAgent.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/unit/analysis/solidity-analyzer.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/unit/components/glassmorphism-ui.test.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/unit/gamification/xp-system.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/utils/assertionHelpers.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/utils/mockPrisma.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/utils/mockRedis.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/utils/performanceHelpers.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "__tests__/utils/testHelpers.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "app/api/ai/code-assistant/generate/route.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "app/api/user/progress/route.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "app/auth/login/page.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "app/demo/mobile-editor/page.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "app/learn/page.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/LandingPage.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/MobileNavigation.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ModuleContent.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/QuizComponent.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ai/AICodeAnalyzer.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ai/AICodeAssistant.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ai/AITutorButtons.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ai/AnalysisVisualization.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ai/CodeAnalysisPanel.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ai/EnhancedAIAssistant.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ai/MultiAgentAnalysis.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/auth/EnhancedAuthModal.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/auth/EnhancedAuthProvider.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/auth/EnhancedLoginModal.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/auth/PasswordResetModal.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/auth/PasswordStrengthIndicator.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/auth/ProtectedRoute.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/code/CodeLab.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/collaboration/CollaborationChat.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/collaboration/CollaborativeEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/collaboration/ConnectionStatusIndicator.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/collaboration/FileSharing.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/collaboration/LiveChatSystem.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/collaboration/MonacoCollaborativeEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/collaboration/RealTimeCodeEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/community/Leaderboards.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/curriculum/LearningPathVisualization.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/curriculum/PrerequisiteDisplay.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/debugging/SolidityDebuggerInterface.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/dev/AccessibilityTester.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/discovery/DiscoveryProvider.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/discovery/FeatureSpotlight.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/discovery/SmartTooltip.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/editor/AdvancedCollaborativeMonacoEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/editor/GasOptimizationPanel.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/editor/MobileCodeEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/editor/MobileCodeSnippets.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/editor/MobileEditorToolbar.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/editor/MobileOptimizedCodeEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/editor/SecurityEnhancedEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/editor/SecurityStatusIndicator.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/error-handling/AsyncErrorBoundary.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/errors/ErrorBoundary.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/help/ContextualTooltip.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/help/HelpProvider.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/help/HelpSystem.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/help/KeyboardShortcuts.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/lazy/LazyComponents.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/lazy/LazyMonacoEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/learning/GamificationSystem.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/learning/InteractiveCodeEditor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/learning/InteractiveExercise.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/learning/LearningDashboard.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/learning/LessonProgressTracker.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/learning/LessonViewer.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/learning/StructuredCurriculum.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/monitoring/PerformanceMonitor.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/navigation/CommandPalette.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/navigation/NavigationFlowOptimizer.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/navigation/SmartNav.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/notifications/NotificationIntegrations.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/onboarding/InteractiveTutorial.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/onboarding/OnboardingFlow.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/performance/LighthouseOptimizer.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/performance/PerformanceOptimizer.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/performance/PerformanceProvider.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/providers/FallbackProvider.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/pwa/PWAStatus.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/sections/GamificationPreview.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/sections/ModernHero.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/settings/LearningPreferencesSection.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/settings/SecuritySection.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/Accessibility.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/AccessibleForm.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/BottomSheet.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/Branding.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/ContextualHelp.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/ErrorHandling.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/FeatureState.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/LazyLoadingComponents.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/LoadingStates.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/Modal.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/Notification.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/OptimizedImage.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/SessionStatusIndicator.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/SmartSearch.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/ui/use-toast.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/xp/LevelUpCelebration.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/xp/ProgressBar.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/xp/XPCounter.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "components/xp/XPNotification.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "config/app.config.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "constants.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useAuthProgress.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useAutoSave.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useButtonAction.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useLearningProgress.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useLessonProgress.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useLocalStorage.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useMediaQuery.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/usePerformance.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useSecurityAnalysis.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "hooks/useUserPresence.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "jest.setup.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/accessibility/AccessibilityTester.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/accessibility/EditorAccessibility.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/accessibility/contrast-utils.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/achievements/data.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/achievements/manager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/admin/auditLogger.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/admin/auth.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/AICodeReviewer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/AIPracticeGenerator.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/AIServiceManager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/EnhancedTutorSystem.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/HealthMonitor.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/LearningAssistant.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/MultiLLMManager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/QuantumLearningEngine.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/SmartRequestRouter.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/multi-agent/BaseAgent.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/multi-agent/MultiAgentOrchestrator.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/ArchitectureAgent.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/PerformanceAgent.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/SecurityAgent.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/TestingAgent.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/analysis/SolidityCodeAnalyzer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/auth.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/cache.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/client.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/errorHandler.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/integration.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/logger.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/logging.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/middleware/file-upload.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/middleware.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/optimizedApiClient.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/rate-limiting.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/rateLimit.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/response.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/security.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/testing.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/utils.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/api/validation.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/auth/config.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/auth/mock-auth.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/auth/navigationGuard.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/auth/password.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/auth/sessionManager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/blockchain/Web3Provider.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/cache/api-cache.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/cache/api-middleware.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/cache/redis-client.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/career/BlockchainCertification.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/career/JobMatchingEngine.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/career/MentorshipPlatform.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/cluster/cluster-manager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/collaboration/AdvancedCollaborativeEditor.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/collaboration/CollaborationClient.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/collaboration/CollaborativeEditor.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/collaboration/ConnectionManager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/collaboration/OperationalTransform.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/community/leaderboard.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/community/statistics.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/community/websocket.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/compiler/SolidityCompiler.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/components/ErrorBoundaryRegistry.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/components/PerformanceOptimizer.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/config/ai-config.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/config/env-validator.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/config/env.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/config/environment.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/config/safe-env.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/config/secrets.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/config/server-env.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/context/LearningContext.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/curriculum/data.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/curriculum/manager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/curriculum/solidityModules.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/database/cleanup.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/database/data-removal.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/database/maintenance.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/database/migration-scripts.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/database/query-optimization.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/debugging/SolidityDebugger.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/design-system/tokens.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/editor/ErrorHighlighting.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/editor/MonacoSoliditySetup.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/editor/RealTimeSyntaxChecker.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/editor/SolidityIntelliSense.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/editor/SoliditySemanticAnalyzer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/editor/templates.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/enterprise/EnterpriseAPI.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/environment/validation.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/errors/ErrorContext.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/errors/recovery.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/errors/types.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/features/feature-flags.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/gas/GasOptimizationChallenges.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/git/CommitManager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/git/GitIntegration.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hints/IntelligentHintSystem.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useAdvancedCollaborativeEditor.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useAdvancedGestures.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useApiData.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useAuth.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useEnhancedKeyboardNavigation.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useFeatureFlags.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useKeyboardNavigation.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useLazyLoading.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useMobileDetect.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useNotificationIntegrations.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useNotificationSocket.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useRealTimeXP.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useSessionStatus.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useSettings.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/hooks/useSolidityAnalyzer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/learning/AdaptiveLearning.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/learning/AdaptiveLearningEngine.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/analytics.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/apiPerformance.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/bundle-analysis.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/client-logger.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/database-monitoring.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/error-tracking.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/google-analytics.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/sentry-config.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/monitoring/uptime-monitoring.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/performance/BundleAnalyzer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/performance/PerformanceMonitor.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/performance/PerformanceOptimizer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/performance/WebVitalsMonitor.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/prisma-client-wrapper.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/prisma.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/prp/executor.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/prp/index.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/prp/master.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/prp/prp-master-cli.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/prp/test-enhanced-prp-master.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/prp/test-quantum-master.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/pwa/service-worker-manager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/realtime/sse-client.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/BehavioralAnalyzer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/InputSanitizer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/SecurityScanner.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/ZeroTrustMiddleware.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/config.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/input-validation.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/middleware.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/rateLimiting.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/session.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/security/validation.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/socket/NotificationSocketService.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/socket/SocketProvider.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/socket/server.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/storage/CodePersistence.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/templates/SmartContractTemplates.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/testing/ux-testing.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/theme/ThemeProvider.tsx",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/utils/accessibility.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/utils/assetOptimization.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/utils/cache.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/utils/cssOptimization.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/utils/fallback-integration.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/utils/redirects.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/vcs/SolidityVersionControl.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/websocket/client.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/websocket/optimized-websocket.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "lib/workers/worker-manager.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "middleware.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "public/sw.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/accessibility-test.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/check-ai-health.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/comprehensive-syntax-fix.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/comprehensive-syntax-formatter.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/comprehensive-typescript-fix.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/deploy-to-vercel.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/deployment-checklist.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/final-syntax-fix.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-admin-components-syntax.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-all-final-quantum.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-all-syntax-errors.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-all-syntax.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-all-typescript-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-all-typescript-syntax.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-analytics-final.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-analytics-quantum.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-api-routes-syntax.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-const-assignments.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-critical-syntax-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-deep-syntax-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-env-imports.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-final-syntax-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-final-syntax-issues.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-final-syntax-quantum.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-final-syntax-quantum.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-final-test-files.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-import-paths.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-import-spaces.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-imports.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-interfaces-quantum.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-jsx-clean.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-jsx-syntax.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-jsx-syntax.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-next-config-comprehensive.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-original-syntax.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-remaining-syntax.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-remaining-ts-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-remaining-ts-errors.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-remaining-typescript-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-route-syntax-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-specific-syntax-patterns.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-specific-syntax.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-syntax-errors-final.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-syntax-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-syntax-quantum.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-syntax-simple.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-advanced.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-compiler-based.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-comprehensive.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-errors.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-final.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-generics.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-incrementally.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-syntax-comprehensive.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-syntax-targeted.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/fix-typescript-syntax.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/master-typescript-fix.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/migrate-enhanced-ai.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/migrate.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/optimize-css.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/optimize-local-dev.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/performance-test.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/pre-deployment-verification.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/production-deployment.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/prp-create.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/prp-execute.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/prp-master-quantum.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/quantum-deep-fix.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/quantum-syntax-fixer.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/quantum-syntax-fixer.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/quick-syntax-fix.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/run-tests.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/security-audit.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/seed.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/setup-database.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/setup-sentry.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/simple-12factor-check.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/systematic-syntax-fix.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/targeted-syntax-fix.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/test-enhanced-tutor.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/test-env-setup.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/typescript-helpers.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/validate-env.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/validate-environment.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "scripts/verify-12factor-compliance.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "sentry.client.config.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "server.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "services/geminiService.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "socket-server/server.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "src/config.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "tests/accessibility/accessibility.spec.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "tests/e2e/authentication.spec.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "tests/e2e/security.security.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "tests/enhanced-tutor-integration.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "tests/gas-optimization.test.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "tests/performance/core-web-vitals.spec.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "tests/ux/ux-test-suite.spec.ts",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    },
+    {
+      "file": "verify-fix.js",
+      "fixes": [
+        "if-condition-fix"
+      ],
+      "deepFixed": false
+    }
+  ]
+}

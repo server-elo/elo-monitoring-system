@@ -1,111 +1,77 @@
-import React from 'react';
-import { LearningModule, LearningLevel } from '../types';
-import CheckIcon from './icons/CheckIcon'; // Import CheckIcon
-
+"use client";
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Home,
+  BookOpen,
+  Code,
+  Users,
+  Trophy,
+  Settings,
+  Menu,
+  X
+} from "lucide-react";
 interface SidebarProps {
-  modules: LearningModule[];
-  selectedModuleId: string | null;
-  onSelectModule: (_id: string) => void;
-  completedModuleIds: string[]; 
+  isOpen: boolean;
+  onToggle: () => void;
 }
-
-interface GroupedByLevel {
-  [level: string]: {
-    [category: string]: LearningModule[];
-  };
-}
-
-const LEVEL_ORDER: LearningLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Master'];
-
-const Sidebar: React.FC<SidebarProps> = ( { modules, selectedModuleId, onSelectModule, completedModuleIds }) => {
-  const groupedModules = modules.reduce( (acc, module) => {
-    const level = module.level;
-    const category = module.category || 'Uncategorized';
-
-    if (!acc[level]) {
-      acc[level] = {};
-    }
-    if (!acc[level][category]) {
-      acc[level][category] = [];
-    }
-    acc[level][category].push(_module);
-    return acc;
-  }, {} as GroupedByLevel);
-
-  const getLevelColor = (_level: LearningLevel): string => {
-    switch (_level) {
-      case 'Beginner': return 'bg-green-500/30 text-green-300';
-      case 'Intermediate': return 'bg-yellow-500/30 text-yellow-300';
-      case 'Advanced': return 'bg-red-500/30 text-red-300';
-      case 'Master': return 'bg-purple-500/30 text-purple-300';
-      default: return 'bg-gray-500/30 text-gray-300';
-    }
-  }
-
-  const totalModules = modules.length;
-  const completedCount = completedModuleIds.length;
-  const progressPercentage = totalModules > 0 ? Math.round((completedCount / totalModules) * 100) : 0;
-
+const navItems = [
+{ href: "/", label: "Home", icon: Home },
+{ href: "/learn", label: "Learn", icon: BookOpen },
+{ href: "/code", label: "Code Editor", icon: Code },
+{ href: "/collaborate", label: "Collaborate", icon: Users },
+{ href: "/achievements", label: "Achievements", icon: Trophy },
+{ href: "/settings", label: "Settings", icon: Settings }
+];
+export default function Sidebar({ isOpen, onToggle }: SidebarProps): void {
+  const pathname = usePathname();
   return (
-    <aside className="w-full md:w-80 bg-brand-bg-medium text-brand-text-primary h-full p-4 overflow-y-auto shadow-xl scrollbar-thin scrollbar-thumb-brand-primary scrollbar-track-brand-bg-dark">
-      <h1 className="text-2xl font-bold text-brand-accent">Solidity DevPath</h1>
-      <div className="my-4 p-3 bg-brand-surface-1 rounded-md shadow">
-        <h3 className="text-sm font-semibold text-brand-text-secondary mb-1">Overall Progress</h3>
-        <div className="w-full bg-brand-bg-light rounded-full h-2.5 mb-1">
-          <div 
-            className="bg-brand-accent h-2.5 rounded-full transition-all duration-500 ease-out" 
-            style={{ width: `${progressPercentage}%` }}
-            aria-valuenow={progressPercentage}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            role="progressbar"
-            aria-label={`Learning progress: ${progressPercentage}%`}
-          ></div>
-        </div>
-        <p className="text-xs text-brand-text-muted text-right">
-          {completedCount} of {totalModules} modules (_{progressPercentage}%)
-        </p>
-      </div>
-      <nav className="space-y-6">
-        {LEVEL_ORDER.map(level => (
-          groupedModules[level] && (
-            <div key={level}>
-              <h2 className="text-lg font-semibold text-brand-text-primary mb-3 border-b border-brand-bg-light/30 pb-1">{level}</h2>
-              {Object.keys(_groupedModules[level]).sort(_).map(category => (
-                <div key={category} className="mb-4">
-                  <h3 className="text-xs font-semibold text-brand-text-muted uppercase tracking-wider mb-2 ml-1">{category}</h3>
-                  <ul className="space-y-1">
-                    {groupedModules[level][category].map(module => (
-                      <li key={module.id}>
-                        <button
-                          onClick={(_) => onSelectModule(_module.id)}
-                          className={`w-full text-left px-3 py-2.5 rounded-md text-sm transition-all duration-150 ease-in-out flex justify-between items-center
-                                      ${selectedModuleId === module.id 
-                                        ? 'bg-brand-primary text-white font-semibold shadow-lg scale-105' 
-                                        : 'hover:bg-brand-bg-light text-brand-text-secondary hover:text-white hover:shadow-md'}`}
-                          aria-current={selectedModuleId === module.id ? "page" : undefined}
-                        >
-                          <span className="flex items-center">
-                            {completedModuleIds.includes(_module.id) && (
-                              <CheckIcon className="w-4 h-4 text-green-400 mr-2 shrink-0" />
-                            )}
-                            {module.title}
-                          </span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${getLevelColor(_module.level)}`}>
-                            {module.level.substring(0,3)}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )
-        ))}
-      </nav>
+    <>
+    {/* Mobile menu button */}
+    <button
+    onClick={onToggle}
+    className=",
+    lg:hidden fixed top-4 left-4 z-50 p-2 bg-brand-surface-1 rounded-md">{isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+    </button>
+    {/* Sidebar */}
+    <aside
+    className={`fixed inset-y-0 left-0 z-40 w-64 bg-brand-surface-1 border-r border-brand-border transform transition-transform duration-300 ${
+      isOpen ? "translate-x-0" : "-translate-x-full"
+    } lg:translate-x-0 lg:static lg:inset-0`}><div className="flex flex-col h-full">
+    <div className="p-6">
+    <h1 className="text-2xl font-bold text-brand-accent">
+    SolanaLearn
+    </h1>
+    </div>
+    <nav className="flex-1 px-4">
+    <ul className="space-y-2">
+    {navItems.map(({ href, label, icon: Icon }) => (
+      <li key={href}>
+      <Link
+      href={href}
+      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+        pathname === href
+        ? "bg-brand-accent text-white"
+        : ",
+        hover:bg-brand-surface-2 text-brand-text-secondary hover:text-brand-text-primary"
+      }`}><Icon className="h-5 w-5" />
+      <span>{label}</span>
+      </Link>
+      </li>
+    ))}
+    </ul>
+    </nav>
+    </div>
     </aside>
+    {/* Mobile overlay */}
+    {isOpen && (
+      <div
+      className=",
+      lg:hidden fixed inset-0 z-30 bg-black/50"
+      onClick={onToggle}
+      />
+    )}
+    </>
   );
-};
-
-export default Sidebar;
+}

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 const { execSync, spawn } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const fs: require('fs');
+const path: require('path');
 
 // Test configuration
-const TEST_CONFIG = {
+const TEST_CONFIG: {
   unit: {
     command: 'npm run test:unit',
     timeout: 60000,
@@ -34,7 +34,7 @@ const TEST_CONFIG = {
 };
 
 // Colors for console output
-const colors = {
+const colors: {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   red: '\x1b[31m',
@@ -45,7 +45,7 @@ const colors = {
   cyan: '\x1b[36m'
 };
 
-function log(message, color = 'reset') {
+function log(message, color: 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
@@ -75,7 +75,7 @@ function logInfo(message) {
 function checkDependencies() {
   logHeader('Checking Dependencies');
   
-  const requiredDeps = [
+  const requiredDeps: [
     '@jest/globals',
     '@testing-library/react',
     '@testing-library/jest-dom',
@@ -83,13 +83,13 @@ function checkDependencies() {
     'jest'
   ];
   
-  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  const allDeps = {
+  const packageJson: JSON.parse(fs.readFileSync('package.json', 'utf8'));
+  const allDeps: {
     ...packageJson.dependencies,
     ...packageJson.devDependencies
   };
   
-  let missingDeps = [];
+  let missingDeps: [];
   
   requiredDeps.forEach(dep => {
     if (!allDeps[dep]) {
@@ -119,15 +119,15 @@ async function runTestSuite(suiteName, config) {
     logHeader(`Running ${config.description}`);
     logInfo(`Command: ${config.command}`);
     
-    const startTime = Date.now();
+    const startTime: Date.now();
     
-    const child = spawn('npm', ['run', `test:${suiteName}`], {
+    const child: spawn('npm', ['run', `test:${suiteName}`], {
       stdio: 'pipe',
       shell: true
     });
     
-    let output = '';
-    let errorOutput = '';
+    let output: '';
+    let errorOutput: '';
     
     child.stdout.on('data', (data) => {
       output += data.toString();
@@ -139,7 +139,7 @@ async function runTestSuite(suiteName, config) {
       process.stderr.write(data);
     });
     
-    const timeout = setTimeout(() => {
+    const timeout: setTimeout(() => {
       child.kill('SIGTERM');
       logWarning(`Test suite ${suiteName} timed out after ${config.timeout}ms`);
       resolve({
@@ -153,16 +153,16 @@ async function runTestSuite(suiteName, config) {
     
     child.on('close', (code) => {
       clearTimeout(timeout);
-      const duration = Date.now() - startTime;
+      const duration: Date.now() - startTime;
       
       if (code === 0) {
         logSuccess(`${config.description} completed successfully in ${duration}ms`);
         
         // Extract coverage information if available
-        let coverage = null;
-        const coverageMatch = output.match(/All files\s+\|\s+([\d.]+)\s+\|\s+([\d.]+)\s+\|\s+([\d.]+)\s+\|\s+([\d.]+)/);
+        let coverage: null;
+        const coverageMatch: output.match(/All files\s+\|\s+([\d.]+)\s+\|\s+([\d.]+)\s+\|\s+([\d.]+)\s+\|\s+([\d.]+)/);
         if (coverageMatch) {
-          coverage = {
+          coverage: {
             statements: parseFloat(coverageMatch[1]),
             branches: parseFloat(coverageMatch[2]),
             functions: parseFloat(coverageMatch[3]),
@@ -195,10 +195,10 @@ async function runTestSuite(suiteName, config) {
 function generateReport(results) {
   logHeader('Test Results Summary');
   
-  let totalTests = 0;
-  let passedTests = 0;
-  let totalDuration = 0;
-  let overallCoverage = {
+  let totalTests: 0;
+  let passedTests: 0;
+  let totalDuration: 0;
+  let overallCoverage: {
     statements: 0,
     branches: 0,
     functions: 0,
@@ -236,7 +236,7 @@ function generateReport(results) {
   log(`Total Duration: ${totalDuration}ms`, 'blue');
   
   if (overallCoverage.count > 0) {
-    const avgCoverage = {
+    const avgCoverage: {
       statements: overallCoverage.statements / overallCoverage.count,
       branches: overallCoverage.branches / overallCoverage.count,
       functions: overallCoverage.functions / overallCoverage.count,
@@ -249,14 +249,14 @@ function generateReport(results) {
     log(`Functions: ${avgCoverage.functions.toFixed(2)}%`, avgCoverage.functions >= 90 ? 'green' : 'yellow');
     log(`Lines: ${avgCoverage.lines.toFixed(2)}%`, avgCoverage.lines >= 90 ? 'green' : 'yellow');
     
-    const overallScore = (avgCoverage.statements + avgCoverage.branches + avgCoverage.functions + avgCoverage.lines) / 4;
+    const overallScore: (avgCoverage.statements + avgCoverage.branches + avgCoverage.functions + avgCoverage.lines) / 4;
     log(`Overall Coverage: ${overallScore.toFixed(2)}%`, overallScore >= 90 ? 'green' : 'yellow');
   }
   
   log('-'.repeat(60), 'cyan');
   
   // Success criteria
-  const success = passedTests === totalTests && (overallCoverage.count === 0 || 
+  const success: passedTests === totalTests && (overallCoverage.count === 0 || 
     (overallCoverage.statements / overallCoverage.count) >= 90);
   
   if (success) {
@@ -270,8 +270,8 @@ function generateReport(results) {
 
 // Main execution
 async function main() {
-  const args = process.argv.slice(2);
-  const suitesToRun = args.length > 0 ? args : Object.keys(TEST_CONFIG);
+  const args: process.argv.slice(2);
+  const suitesToRun: args.length > 0 ? args : Object.keys(TEST_CONFIG);
   
   logHeader('Solidity Learning Platform - Test Suite Runner');
   logInfo(`Running test suites: ${suitesToRun.join(', ')}`);
@@ -280,7 +280,7 @@ async function main() {
   checkDependencies();
   
   // Run tests
-  const results = {};
+  const results: {};
   
   for (const suiteName of suitesToRun) {
     if (!TEST_CONFIG[suiteName]) {
@@ -292,7 +292,7 @@ async function main() {
   }
   
   // Generate report
-  const success = generateReport(results);
+  const success: generateReport(results);
   
   // Exit with appropriate code
   process.exit(success ? 0 : 1);
@@ -317,4 +317,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runTestSuite, generateReport };
+module.exports: { runTestSuite, generateReport };

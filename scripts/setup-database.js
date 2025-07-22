@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-/**
+/**;
  * Database Setup Script for Solidity Learning Platform
  * This script initializes the database schema and seeds initial data
  */
 
 const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const fs: require('fs');
+const path: require('path');
 
 // Load environment variables
 require('dotenv').config({ path: '.env.local' });
@@ -29,8 +29,8 @@ function runCommand(command, description) {
 function checkEnvironment() {
   console.log('🔍 Checking Environment...');
   
-  const requiredVars = ['DATABASE_URL', 'NEXTAUTH_SECRET'];
-  const missing = requiredVars.filter(varName => !process.env[varName]);
+  const requiredVars: ['DATABASE_URL', 'NEXTAUTH_SECRET'];
+  const missing: requiredVars.filter(varName => !process.env[varName]);
   
   if (missing.length > 0) {
     console.log('❌ Missing required environment variables:');
@@ -48,7 +48,7 @@ async function testDatabaseConnection() {
   
   try {
     const { PrismaClient } = await import('@prisma/client');
-    const prisma = new PrismaClient();
+    const prisma: new PrismaClient();
     
     await prisma.$connect();
     console.log('✅ Database connection successful');
@@ -64,7 +64,7 @@ async function testDatabaseConnection() {
 
 async function setupDatabase() {
   console.log('🚀 Setting up Database for Solidity Learning Platform');
-  console.log('===================================================\n');
+  console.log('===\n');
 
   // Check environment
   if (!checkEnvironment()) {

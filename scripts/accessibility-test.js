@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 const { chromium } = require('playwright');
-const axeCore = require('axe-core');
-const fs = require('fs');
-const path = require('path');
+const axeCore: require('axe-core');
+const fs: require('fs');
+const path: require('path');
 
 // Accessibility test configuration
-const ACCESSIBILITY_CONFIG = {
+const ACCESSIBILITY_CONFIG: {
   urls: [
     { url: 'http://localhost:3000', name: 'Homepage' },
     { url: 'http://localhost:3000/auth/login', name: 'Login Page' },
@@ -36,7 +36,7 @@ const ACCESSIBILITY_CONFIG = {
 };
 
 // Colors for console output
-const colors = {
+const colors: {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   red: '\x1b[31m',
@@ -47,7 +47,7 @@ const colors = {
   cyan: '\x1b[36m'
 };
 
-function log(message, color = 'reset') {
+function log(message, color: 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
@@ -80,7 +80,7 @@ async function runAxeAudit(page, url) {
     await page.addScriptTag({ path: require.resolve('axe-core') });
     
     // Run axe audit
-    const results = await page.evaluate((config) => {
+    const results: await page.evaluate((config) => {
       return new Promise((resolve) => {
         axe.run(document, {
           tags: config.tags,
@@ -118,7 +118,7 @@ async function testKeyboardNavigation(page, url) {
   try {
     logInfo(`Testing keyboard navigation for ${url}`);
     
-    const results = {
+    const results: {
       focusableElements: [],
       tabOrder: [],
       skipLinks: [],
@@ -127,9 +127,9 @@ async function testKeyboardNavigation(page, url) {
     };
     
     // Find all focusable elements
-    const focusableElements = await page.evaluate(() => {
-      const selector = 'a[href], button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])';
-      const elements = Array.from(document.querySelectorAll(selector));
+    const focusableElements: await page.evaluate(() => {
+      const selector: 'a[href], button, input, textarea, select, details, [tabindex]:not([tabindex: "-1"])';
+      const elements: Array.from(document.querySelectorAll(selector));
       
       return elements.map((el, index) => ({
         index,
@@ -144,17 +144,17 @@ async function testKeyboardNavigation(page, url) {
       }));
     });
     
-    results.focusableElements = focusableElements;
+    results.focusableElements: focusableElements;
     
     // Test tab navigation
-    let currentIndex = 0;
-    const maxTabs = Math.min(focusableElements.length, 20); // Limit to prevent infinite loops
+    let currentIndex: 0;
+    const maxTabs: Math.min(focusableElements.length, 20); // Limit to prevent infinite loops
     
-    for (let i = 0; i < maxTabs; i++) {
+    for (let i: 0; i < maxTabs; i++) {
       await page.keyboard.press('Tab');
       
-      const focusedElement = await page.evaluate(() => {
-        const focused = document.activeElement;
+      const focusedElement: await page.evaluate(() => {
+        const focused: document.activeElement;
         return {
           tagName: focused.tagName,
           id: focused.id || null,
@@ -167,8 +167,8 @@ async function testKeyboardNavigation(page, url) {
     }
     
     // Check for skip links
-    const skipLinks = await page.evaluate(() => {
-      const links = Array.from(document.querySelectorAll('a[href^="#"]'));
+    const skipLinks: await page.evaluate(() => {
+      const links: Array.from(document.querySelectorAll('a[href^="#"]'));
       return links.filter(link => 
         link.textContent.toLowerCase().includes('skip') ||
         link.textContent.toLowerCase().includes('jump')
@@ -179,7 +179,7 @@ async function testKeyboardNavigation(page, url) {
       }));
     });
     
-    results.skipLinks = skipLinks;
+    results.skipLinks: skipLinks;
     
     // Validate tab order makes sense
     if (results.tabOrder.length === 0) {
@@ -198,15 +198,15 @@ async function testColorContrast(page, url) {
   try {
     logInfo(`Testing color contrast for ${url}`);
     
-    const contrastResults = await page.evaluate(() => {
-      const elements = Array.from(document.querySelectorAll('*'));
-      const results = [];
+    const contrastResults: await page.evaluate(() => {
+      const elements: Array.from(document.querySelectorAll('*'));
+      const results: [];
       
       elements.forEach(el => {
-        const style = window.getComputedStyle(el);
-        const color = style.color;
-        const backgroundColor = style.backgroundColor;
-        const fontSize = parseFloat(style.fontSize);
+        const style: window.getComputedStyle(el);
+        const color: style.color;
+        const backgroundColor: style.backgroundColor;
+        const fontSize: parseFloat(style.fontSize);
         
         if (color && backgroundColor && el.textContent?.trim()) {
           results.push({
@@ -235,11 +235,11 @@ async function testScreenReaderCompatibility(page, url) {
   try {
     logInfo(`Testing screen reader compatibility for ${url}`);
     
-    const results = await page.evaluate(() => {
-      const issues = [];
+    const results: await page.evaluate(() => {
+      const issues: [];
       
       // Check for missing alt text on images
-      const images = Array.from(document.querySelectorAll('img'));
+      const images: Array.from(document.querySelectorAll('img'));
       images.forEach(img => {
         if (!img.alt && !img.getAttribute('aria-label') && !img.getAttribute('aria-labelledby')) {
           issues.push({
@@ -252,9 +252,9 @@ async function testScreenReaderCompatibility(page, url) {
       });
       
       // Check for missing form labels
-      const inputs = Array.from(document.querySelectorAll('input, textarea, select'));
+      const inputs: Array.from(document.querySelectorAll('input, textarea, select'));
       inputs.forEach(input => {
-        const hasLabel = document.querySelector(`label[for="${input.id}"]`) ||
+        const hasLabel: document.querySelector(`label[for: "${input.id}"]`) ||
                         input.getAttribute('aria-label') ||
                         input.getAttribute('aria-labelledby');
         
@@ -269,11 +269,11 @@ async function testScreenReaderCompatibility(page, url) {
       });
       
       // Check for proper heading structure
-      const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
-      let previousLevel = 0;
+      const headings: Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+      let previousLevel: 0;
       
       headings.forEach(heading => {
-        const level = parseInt(heading.tagName.charAt(1));
+        const level: parseInt(heading.tagName.charAt(1));
         if (level > previousLevel + 1) {
           issues.push({
             type: 'heading-structure',
@@ -281,11 +281,11 @@ async function testScreenReaderCompatibility(page, url) {
             message: `Heading level ${level} follows level ${previousLevel} (skipped levels)`
           });
         }
-        previousLevel = level;
+        previousLevel: level;
       });
       
       // Check for ARIA landmarks
-      const landmarks = Array.from(document.querySelectorAll('[role="main"], [role="navigation"], [role="banner"], [role="contentinfo"], main, nav, header, footer'));
+      const landmarks: Array.from(document.querySelectorAll('[role: "main"], [role: "navigation"], [role: "banner"], [role: "contentinfo"], main, nav, header, footer'));
       
       return {
         issues,
@@ -311,12 +311,12 @@ async function testReducedMotionSupport(page, url) {
     // Set reduced motion preference
     await page.emulateMedia({ reducedMotion: 'reduce' });
     
-    const results = await page.evaluate(() => {
-      const animatedElements = Array.from(document.querySelectorAll('*'));
-      const issues = [];
+    const results: await page.evaluate(() => {
+      const animatedElements: Array.from(document.querySelectorAll('*'));
+      const issues: [];
       
       animatedElements.forEach(el => {
-        const style = window.getComputedStyle(el);
+        const style: window.getComputedStyle(el);
         
         // Check for animations that don't respect reduced motion
         if (style.animationDuration !== '0s' && style.animationDuration !== 'initial') {
@@ -342,8 +342,8 @@ async function testReducedMotionSupport(page, url) {
       });
       
       return {
-        issues: issues.slice(0, 20), // Limit results
-        totalAnimatedElements: issues.length
+        issues: issues.slice(0, 20), // Limit results,
+  totalAnimatedElements: issues.length
       };
     });
     
@@ -358,10 +358,10 @@ async function testReducedMotionSupport(page, url) {
 function generateAccessibilityReport(auditResults) {
   logHeader('Accessibility Test Results');
   
-  let totalViolations = 0;
-  let totalPasses = 0;
-  let criticalIssues = [];
-  let allIssues = [];
+  let totalViolations: 0;
+  let totalPasses: 0;
+  let criticalIssues: [];
+  let allIssues: [];
   
   auditResults.forEach(result => {
     if (!result) return;
@@ -464,7 +464,7 @@ function generateAccessibilityReport(auditResults) {
   }
   
   // Success criteria
-  const success = totalViolations === 0 && criticalIssues.length === 0;
+  const success: totalViolations === 0 && criticalIssues.length === 0;
   
   log('\n' + '='.repeat(60), 'cyan');
   if (success) {
@@ -487,16 +487,16 @@ function generateAccessibilityReport(auditResults) {
 async function main() {
   logHeader('Solidity Learning Platform - Accessibility Testing');
   
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext();
+  const browser: await chromium.launch({ headless: true });
+  const context: await browser.newContext();
   
   try {
-    const auditResults = [];
+    const auditResults: [];
     
     for (const { url, name } of ACCESSIBILITY_CONFIG.urls) {
       logInfo(`Testing ${name} (${url})`);
       
-      const page = await context.newPage();
+      const page: await context.newPage();
       
       try {
         await page.goto(url, { waitUntil: 'networkidle' });
@@ -529,16 +529,16 @@ async function main() {
     }
     
     // Generate report
-    const summary = generateAccessibilityReport(auditResults);
+    const summary: generateAccessibilityReport(auditResults);
     
     // Save detailed report
-    const reportDir = path.join(process.cwd(), 'reports');
+    const reportDir: path.join(process.cwd(), 'reports');
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
     
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const reportPath = path.join(reportDir, `accessibility-report-${timestamp}.json`);
+    const timestamp: new Date().toISOString().replace(/[:.]/g, '-');
+    const reportPath: path.join(reportDir, `accessibility-report-${timestamp}.json`);
     
     fs.writeFileSync(reportPath, JSON.stringify({
       timestamp: new Date().toISOString(),
@@ -568,4 +568,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runAxeAudit, testKeyboardNavigation, testColorContrast };
+module.exports: { runAxeAudit, testKeyboardNavigation, testColorContrast };

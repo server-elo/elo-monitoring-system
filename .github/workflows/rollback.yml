@@ -1,0 +1,134 @@
+name: Emergency Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to rollback to (commit SHA or tag)'
+        required: true
+        type: string
+      reason:
+        description: 'Reason for rollback'
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version }}
+      
+      - name: Validate version
+        run: |
+          if ! git rev-parse --verify ${{ github.event.inputs.version }}; then
+            echo "Invalid version: ${{ github.event.inputs.version }}"
+            exit 1
+          fi
+          echo "Rolling back to version: ${{ github.event.inputs.version }}"
+      
+      - name: Log rollback initiation
+        run: |
+          echo "Rollback initiated by: ${{ github.actor }}"
+          echo "Target version: ${{ github.event.inputs.version }}"
+          echo "Reason: ${{ github.event.inputs.reason }}"
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      
+      - name: Rollback deployment
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
+          
+          # Rollback
+          ssh -i ~/.ssh/deploy_key $DEPLOY_USER@$DEPLOY_HOST << 'ENDSSH'
+            cd /opt/solidity-learning-platform
+            
+            # Create backup of current state
+            docker-compose -f docker-compose.prod.yml ps > rollback-state-$(date +%Y%m%d-%H%M%S).log
+            
+            # Stop current deployment
+            docker-compose -f docker-compose.prod.yml down
+            
+            # Checkout specific version
+            git fetch --all
+            git checkout ${{ github.event.inputs.version }}
+            
+            # Pull specific version images
+            IMAGE_TAG="${{ github.event.inputs.version }}"
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG} || \
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${IMAGE_TAG:0:7} || \
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
+            
+            # Tag for local use
+            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || \
+            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${IMAGE_TAG:0:7} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || \
+            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            
+            # Start services with rolled back version
+            docker-compose -f docker-compose.prod.yml up -d
+            
+            # Wait for services to be ready
+            sleep 30
+            
+            # Verify rollback
+            docker-compose -f docker-compose.prod.yml ps
+            curl -f http://localhost/api/health || exit 1
+          ENDSSH
+      
+      - name: Verify rollback
+        run: |
+          if [ -n "${{ secrets.PRODUCTION_URL }}" ]; then
+            echo "Verifying production URL..."
+            curl -f https://${{ secrets.PRODUCTION_URL }}/api/health || exit 1
+          fi
+      
+      - name: Create rollback record
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🔄 Rollback to ${context.payload.inputs.version}`,
+              body: `## Rollback Information
+              
+              **Initiated by:** @${context.actor}
+              **Target version:** ${context.payload.inputs.version}
+              **Reason:** ${context.payload.inputs.reason}
+              **Timestamp:** ${new Date().toISOString()}
+              **Workflow run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
+              
+              ### Action Required
+              - [ ] Investigate root cause
+              - [ ] Create fix for the issue
+              - [ ] Plan forward deployment
+              `,
+              labels: ['rollback', 'production', 'urgent']
+            });
+      
+      - name: Notify rollback
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Production Rollback ${{ job.status }}
+            Version: ${{ github.event.inputs.version }}
+            Reason: ${{ github.event.inputs.reason }}
+            Initiated by: ${{ github.actor }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        continue-on-error: true

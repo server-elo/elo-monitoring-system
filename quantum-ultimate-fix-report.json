@@ -1,0 +1,3825 @@
+{
+  "timestamp": "2025-07-22T11:02:17.818Z",
+  "totalFiles": 636,
+  "filesFixed": 633,
+  "totalErrors": 0,
+  "fixedErrors": 633,
+  "results": [
+    {
+      "file": "types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "sentry.server.config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "sentry.edge.config.ts",
+      "fixed": false,
+      "errors": 0,
+      "message": "No changes needed"
+    },
+    {
+      "file": "sentry.client.config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "playwright.config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "middleware.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "constants.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "types/settings.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "types/security.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "types/learning.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "types/collaboration.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/setup.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/global-teardown.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/global-setup.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/gas-optimization.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/enhanced-tutor-system.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/enhanced-tutor-integration.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/ux/ux-test-suite.spec.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/performance/core-web-vitals.spec.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/e2e/security.security.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/e2e/performance.perf.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/e2e/collaboration.spec.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/e2e/authentication.spec.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/e2e/auth.setup.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/e2e/ai-tutoring.spec.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/ai/enhanced-tutor.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "tests/accessibility/accessibility.spec.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "src/config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "services/geminiService.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/verify-12factor-compliance.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/validate-shell-fixes.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/typescript-helpers.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/test-env-validation.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/test-env-setup.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/test-enhanced-tutor.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/simple-12factor-check.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/setup-database.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/quantum-ultimate-syntax-fixer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/quantum-syntax-fixer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/quantum-syntax-fixer-final.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/quantum-port-manager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/quantum-performance-optimizer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/prp-validate.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/prp-master-quantum.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/prp-execute.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/prp-create.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/migrate-enhanced-ai.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/master-typescript-fix.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-typescript-syntax-targeted.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-typescript-syntax-comprehensive.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-typescript-compiler-based.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-syntax-simple.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-syntax-quantum.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-specific-syntax.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-remaining-ts-errors.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-object-property-commas.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-next-config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-next-config-comprehensive.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-jsx-syntax.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-imports-and-syntax.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-final-typescript-errors.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-final-syntax-quantum.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-env-imports.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-client-env-access.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-all-typescript-syntax.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-all-syntax.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/fix-all-syntax-errors.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/execute-migration.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/comprehensive-typescript-fix.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/check-performance.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/check-ai-health.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "scripts/bundle-analysis.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "prisma/seed.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/utils.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prisma.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prisma-client-wrapper.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/env.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/workers/worker-manager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/websocket/optimized-websocket.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/websocket/client.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/vcs/SolidityVersionControl.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/validation/auth.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/utils/redirects.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/utils/rateLimiter.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/utils/fallback-integration.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/utils/cssOptimization.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/utils/cache.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/utils/assetOptimization.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/utils/accessibility.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/testing/ux-testing.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/testing/uatScenarios.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/templates/SmartContractTemplates.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/storage/CodePersistence.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/socket/server.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/socket/client.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/socket/NotificationSocketService.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/services/SettingsService.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/server/graceful-shutdown.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/validation.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/session.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/rateLimiting.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/middleware.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/input-validation.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/headers.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/ZeroTrustMiddleware.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/SecurityScanner.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/QuantumSecurity.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/InputSanitizer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/security/BehavioralAnalyzer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/realtime/sse-client.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/pwa/service-worker-manager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/validator.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/test-quantum-master.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/test-enhanced-prp-master.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/quantum-orchestral-system.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/prp-master-quantum-commands.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/prp-master-cli.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/master.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/index.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/executor.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/creator.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/prp/commands/prp-master-quantum.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/projects/ProjectBasedLearning.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/performance/optimization-utils.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/performance/WebVitalsMonitor.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/performance/PerformanceOptimizer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/performance/PerformanceMonitor.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/performance/BundleAnalyzer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/uptime-monitoring.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/simple-logger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/server-logger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/sentry-config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/logger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/google-analytics.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/errorTracking.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/error-tracking.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/database-monitoring.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/client-logger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/bundle-analysis.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/apiPerformance.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/monitoring/analytics.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/logging/structured-logger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/learning/AdaptiveLearningEngine.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/learning/AdaptiveLearning.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useSwipeGesture.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useSolidityVersionControl.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useSolidityDebugger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useSolidityAnalyzer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useSettings.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useSessionStatus.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useRealTimeXP.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useNotificationSocket.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useNotificationIntegrations.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useMobileDetect.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useLazyLoading.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useKeyboardNavigation.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useErrorRecovery.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useEnhancedKeyboardNavigation.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useAuth.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useAsyncButton.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useApiData.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useAdvancedGestures.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useAdvancedCollaborativeEditor.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useAchievements.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/__tests__/useSettings.test.ts",
+      "fixed": false,
+      "errors": 0,
+      "message": "No changes needed"
+    },
+    {
+      "file": "lib/hints/IntelligentHintSystem.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/github/GitHubIntegration.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/git/GitIntegration.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/git/CommitManager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/gas/GasOptimizationChallenges.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/gas/GasOptimizationAnalyzer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/forms/form-handler.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/features/feature-flags.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/features/ProductionReadyFeatures.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/errors/types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/errors/recovery.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/environment/validation.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/enterprise/EnterpriseAPI.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/editor/templates.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/editor/SoliditySemanticAnalyzer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/editor/SolidityLanguageDefinition.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/editor/SolidityIntelliSense.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/editor/RealTimeSyntaxChecker.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/editor/MonacoSoliditySetup.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/editor/ErrorHighlighting.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/editor/AdvancedEditorConfig.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/design-system/tokens.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/deployment/TestnetDeployment.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/debugging/SolidityDebugger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/database/query-optimization.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/database/orphaned-data.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/database/migrations.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/database/migration-scripts.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/database/maintenance.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/database/data-removal.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/database/cleanup.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/curriculum/types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/curriculum/solidityModules.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/curriculum/manager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/curriculum/data.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/server-env.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/secrets.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/safe-env.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/index.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/environment.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/env.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/env-validator.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/env-types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/client-env.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/config/ai-config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/compiler/SolidityCompiler.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/community/websocket.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/community/types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/community/statistics.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/community/leaderboard.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/collaboration/OperationalTransform.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/collaboration/ConnectionManager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/collaboration/CollaborativeEditor.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/collaboration/CollaborativeCoding.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/collaboration/CollaborationClient.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/collaboration/AdvancedCollaborativeEditor.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/cluster/cluster-manager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/career/MentorshipPlatform.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/career/JobMatchingEngine.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/career/BlockchainCertification.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/cache/redis-client.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/cache/cache-config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/cache/api-middleware.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/cache/api-cache.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/auth/sessionManager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/auth/password.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/auth/navigationGuard.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/auth/config.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/validation.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/utils.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/testing.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/security.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/schema-types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/responseBuilder.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/response.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/rateLimit.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/rate-limiting.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/optimizedApiClient.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/middleware.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/logging.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/logger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/integration.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/file-handling.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/errors.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/errorHandler.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/documentation.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/client.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/cache.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/cache-middleware.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/auth.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/api/middleware/file-upload.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/animations/micro-interactions.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/analysis/SolidityCodeAnalyzer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/SmartRequestRouter.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/QuantumLearningEngine.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/MultiLLMManager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/LocalLLMService.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/LearningAssistant.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/HealthMonitor.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/EnhancedTutorSystem.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/AIServiceManager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/AIPracticeGenerator.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/AICodeReviewer.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/quantum-multi-agent/types/quantum-types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/utils.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/index.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/MultiAgentOrchestrator.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/BaseAgent.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/index.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/TestingAgent.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/SecurityAgent.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/PerformanceAgent.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/ai/multi-agent/agents/ArchitectureAgent.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/admin/types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/admin/auth.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/admin/auditLogger.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/achievements/types.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/achievements/manager.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/achievements/data.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/accessibility/contrast-utils.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/accessibility/EditorAccessibility.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/accessibility/AccessibilityTester.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useUserPresence.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useSwipeGesture.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useSecurityAnalysis.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useProgress.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/usePerformance.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useMediaQuery.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useLocalStorage.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useLoadingState.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useLessonProgress.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useLearningProgress.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useGitIntegration.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useGasAnalysis.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useCollaborationConnection.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useButtonAction.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useAutoSave.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "hooks/useAuthProgress.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/index.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/types/index.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/types/abi.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/lazy/index.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/index.ts",
+      "fixed": false,
+      "errors": 0,
+      "message": "No changes needed"
+    },
+    {
+      "file": "app/ping/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/user/progress-stats/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/user/progress/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/user/profile/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/user/dashboard/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/health/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/auth/register/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/auth/[...nextauth]/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/ai/code-assistant/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/ai/code-assistant/generate/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/api/ai/code-assistant/analyze/route.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/vcs/SolidityVersionControl.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/validation/simple-validation.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/utils/testHelpers.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/utils/performanceHelpers.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/utils/mockRedis.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/utils/mockPrisma.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/utils/dataGenerators.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/utils/assertionHelpers.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/monitoring/error-tracking.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/gamification/xp-system.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/gamification/achievement-manager.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/editor/real-time-collaboration.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/database/cleanup-operations.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/auth/auth-service.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/auth/auth-service-comprehensive.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/api/validation.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/analysis/solidity-analyzer.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/ai/multi-agent/SecurityAgent.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/ai/multi-agent/MultiAgentOrchestrator.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/ai/multi-agent/BaseAgent.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/stress/edge-cases.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/security/rateLimiting.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/security/inputValidation.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/security/authentication.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/realtime/websocket-collaboration.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/performance/performance-validation.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/performance/load-testing.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/mocks/websocket/socketIO.mock.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/mocks/database/prisma.mock.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/mocks/cache/redis.mock.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/mocks/auth/sessionManager.mock.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/mocks/auth/nextAuth.mock.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/integration/test-workflows.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/integration/multi-agent-api.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/integration/database.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/integration/auth-flow.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/e2e/user-journey.spec.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/e2e/global-teardown.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/e2e/global-setup.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/database/maintenance.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/database/database-operations.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/components/monaco/monacoEditor.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/caching/caching-systems.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/authentication/user-auth-flows.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/api/integration.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/api/auth.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/api/health/health.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/api/courses/courses.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/api/auth/login.test.ts",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/theme/ThemeProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/socket/SocketProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/providers/ProviderComposer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/providers/AppProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/hooks/useFeatureFlags.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/errors/ErrorContext.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/context/LearningContext.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/context/CollaborationContext.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/components/PerformanceOptimizer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/components/ErrorBoundaryRegistry.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/components/ErrorBoundaryHOCs.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/blockchain/Web3Provider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "lib/auth/mock-auth.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/Sidebar.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/QuizComponent.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ModuleContent.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/MobileNavigation.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/LandingPage.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/GeminiChat.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/CopyButton.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ConfirmationModal.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/xp/XPNotification.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/xp/XPCounter.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/xp/ProgressBar.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/xp/LevelUpCelebration.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/vcs/VersionControlInterface.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/use-toast.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/toaster.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/toast.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/textarea.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/tabs.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/switch.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/slider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/separator.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/select.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/scroll-area.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/progress.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/label.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/input.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/dropdown-menu.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/dialog.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/checkbox.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/card.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/button.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/badge.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/avatar.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/alert.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/VisualFeedbackSystem.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/UserAvatar.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Typography.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Tooltip.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/ThemeToggle.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/ThemeDemo.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/SmartSearch.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/SkeletonLoader.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/SessionStatusIndicator.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/SaveStatusIndicator.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/PageTransition.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/OptimizedImage.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Onboarding.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Notification.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Neumorphism.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Modal.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/LoadingStates.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/LoadingSpinner.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/LoadingSkeletons.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/LazyLoadingComponents.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/InteractiveCard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Input.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/GlassmorphismModal.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Glass.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Form.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/FeedbackIndicators.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/FeatureState.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/ErrorMessage.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/ErrorHandling.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/EnhancedButton.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/EmptyState.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/CustomToast.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/ContextualHelp.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Branding.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/BottomSheet.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/AnimatedButton.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/AccessibleForm.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ui/Accessibility.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/testing/UATDashboard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/testing/NotificationTestingPage.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/testing/FeedbackCollectionSystem.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/SecuritySection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/ProfileSection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/PrivacySection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/NotificationSection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/LearningPreferencesSection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/AccessibilitySection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/__tests__/integration.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/__tests__/SettingsPage.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/__tests__/SecuritySection.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/settings/__tests__/ProfileSection.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/security/ThreatIntelligenceDashboard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/TestimonialsSection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/ModernHero.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/InteractiveDemoSection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/HeroSection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/GamificationPreview.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/FeaturesSection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/EnhancedFeaturesShowcase.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/CompetitiveAnalysisSection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/sections/CTASection.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/pwa/PWAStatus.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/providers/SessionProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/providers/FallbackProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/progress/ProgressDashboard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/performance/PerformanceProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/performance/PerformanceOptimizer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/performance/PerformanceMonitor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/performance/LighthouseOptimizer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/onboarding/OnboardingFlow.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/onboarding/InteractiveTutorial.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/notifications/NotificationIntegrations.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/navigation/SmartNav.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/navigation/ResponsiveNav.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/navigation/NavigationWrapper.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/navigation/NavigationFlowOptimizer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/navigation/GuidedOnboarding.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/navigation/CommandPalette.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/navigation/AuthenticatedNavbar.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/navigation/AuthenticatedNav.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/monitoring/PerformanceMonitor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/mobile/TouchGestureDemo.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/StructuredCurriculum.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/ProjectBasedLearning.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/PersonalizedLearningDashboard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/ModuleNavigation.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/ModuleCard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/LessonViewer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/LessonProgressTracker.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/LessonCard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/LearningPathVisualization.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/LearningDashboard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/LearningButtons.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/InteractiveExercise.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/InteractiveCodeEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/learning/GamificationSystem.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/lazy/LazyMonacoEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/lazy/LazyComponents.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/layout/Navigation.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/layout/Footer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/icons/UserIcon.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/icons/SpinnerIcon.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/icons/SendIcon.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/icons/MenuIcon.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/icons/CheckIcon.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/icons/BotIcon.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/help/KeyboardShortcuts.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/help/HelpSystem.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/help/HelpProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/help/ContextualTooltip.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/forms/ContactForm.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/errors/SpecializedErrorBoundaries.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/errors/SimpleErrorBoundary.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/errors/ErrorBoundary.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/error-handling/NotFoundPage.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/error-handling/AsyncErrorBoundary.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/error/ErrorBoundaryFallback.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/index.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/SolidityEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/SecurityStatusIndicator.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/SecurityOverlay.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/SecurityEnhancedEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/MobileQuickActionBar.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/MobileOptimizedCodeEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/MobileEditorToolbar.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/MobileCodeSnippets.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/MobileCodeEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/GasOptimizationPanel.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/EnhancedCodeEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/AdvancedIDEInterface.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/editor/AdvancedCollaborativeMonacoEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/discovery/SmartTooltip.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/discovery/FeatureSpotlight.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/discovery/DiscoveryProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/dev/AccessibilityTester.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/debugging/SolidityDebuggerInterface.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/curriculum/PrerequisiteDisplay.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/curriculum/ModuleCard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/curriculum/LessonCard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/curriculum/LearningPathVisualization.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/curriculum/LearningAnalytics.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/curriculum/CurriculumDashboard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/community/Leaderboards.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/community/CommunityStats.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/community/CommunityHub.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/UserPresencePanel.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/UserPresenceIndicator.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/SessionRecovery.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/RealTimeCodeEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/MonacoCollaborativeEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/LiveChatSystem.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/FileSharing.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/ConnectionStatusIndicator.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/ComprehensiveCollaborationDashboard.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/CollaborativeEditor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/CollaborationChat.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/collaboration/AdvancedUserPresence.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/code/MobileOptimizedCodeLab.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/code/CodeLab.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/blockchain/WalletConnect.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/blockchain/ContractDeployer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/blockchain/BlockchainIntegration.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/ProtectedRoute.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/PasswordStrengthIndicator.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/PasswordResetModal.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/EnhancedLoginModal.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/EnhancedAuthProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/EnhancedAuthModal.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/AuthenticationModal.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/AuthModal.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/auth/AuthButtons.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/MultiAgentAnalysis.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/EnhancedAITutor.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/EnhancedAIAssistant.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/CodeAnalysisPanel.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/AnalysisVisualization.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/AITutorButtons.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/AILearningPath.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/AIContractGenerator.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/AICodeAssistant.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "components/ai/AICodeAnalyzer.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/providers.optimized.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/not-found.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/layout.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/layout.optimized.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/layout.backup.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/test-page/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/test/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/test/auth-integration/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/profile/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/performance-dashboard/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/learn/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/jobs/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/demo/mobile-editor/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/dashboard/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/collaborate/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/code/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/certificates/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/auth/login/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/auth/demo/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "app/achievements/page.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/utils/TestProvider.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/gamification/achievement-notification.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/editor/interactive-code-editor.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/components/glassmorphism-ui.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/components/SmartNavigation.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/components/SkeletonLoader.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/unit/components/ErrorBoundary.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/error-handling/error-boundaries.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/editor/AdvancedCollaborativeMonacoEditor.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/debugging/SolidityDebuggerInterface.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/community/CommunityFeatures.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/collaboration/CollaborationSystem.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/collaboration/CollaborationPerformance.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/collaboration/CollaborationIntegration.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    },
+    {
+      "file": "__tests__/admin/AdminSystem.test.tsx",
+      "fixed": true,
+      "errors": 0,
+      "message": "Successfully fixed"
+    }
+  ]
+}
