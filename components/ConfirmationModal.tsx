@@ -1,13 +1,13 @@
-"use client";
-import React from "react";
+'use client'
+import React from 'react'
 interface ConfirmationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: () => void
+  title: string
+  message: string
+  confirmText?: string
+  cancelText?: string
 }
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
@@ -15,11 +15,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   title,
   message,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
 }) => {
   if (!isOpen) {
-    return null;
+    return null
   }
   return (
     <div
@@ -61,6 +61,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </div>
       </div>
     </div>
-  );
-};
-export default ConfirmationModal;
+  )
+}
+export default ConfirmationModal

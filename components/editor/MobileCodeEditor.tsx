@@ -1,51 +1,244 @@
-'use client'; import React, { useState, useEffect, useRef, useCallback } from 'react';
-import dynamic from 'next/dynamic';
-import { MobileEditorToolbar } from './MobileEditorToolbar';
-import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
-import { withPerformanceOptimization } from '@/lib/components/PerformanceOptimizer'; // Dynamically import Monaco to reduce initial bundle size;
-const MonacoEditor = dynamic( () => import('@monaco-editor/react').then((mod: unknown) => mod.default), {  ssr: false, loading: () => ( <div className="flex items-center justify-center h-full bg-gray-900"> <Loader2 className="w-8 h-8 animate-spin text-blue-500" /> </div> ),;
+'use client'
+
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import dynamic from 'next/dynamic'
+import { MobileEditorToolbar } from './MobileEditorToolbar'
+import { cn } from '@/lib/utils'
+import { Loader2 } from 'lucide-react'
+import { withPerformanceOptimization } from '@/lib/components/PerformanceOptimizer'
+
+// Dynamically import Monaco to reduce initial bundle size
+const MonacoEditor = dynamic(
+  () => import('@monaco-editor/react').then((mod: any) => mod.default),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full bg-gray-900">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    ),
+  },
+)
+
+interface MobileCodeEditorProps {
+  documentId?: string
+  initialContent?: string
+  language?: string
+  theme?: string
+  height?: string | number
+  autoSave?: boolean
+  showToolbar?: boolean
+  className?: string
+  onContentChange?: (content: string) => void
+  onSave?: (content: string) => void
 }
-); interface MobileCodeEditorProps {
-  documentId?: string;
-  initialContent?: string;
-  language?: string;
-  theme?: string;
-  height?: string | number;
-  autoSave?: boolean;
-  autoSaveInterval?: number;
-  readOnly?: boolean;
-  className?: string;
-  onContentChange?: (content: string) => void;
-  onRun?: () => void;
-  onShare?: () => void;
-  showLineNumbers?: boolean;
-  fontSize?: number;
-} function MobileCodeEditorComponent({ documentId: documentId, initialContent: '',, language = 'solidity', theme = 'vs-dark', height = '100%', autoSave: true, autoSaveInterval: 2000, readOnly: false,: className, onContentChange: onRun, onShare, showLineNumbers: true, fontSize = 14
-}: MobileCodeEditorProps): void { const [content, setContent] = useState(initialContent); const [hasChanges, setHasChanges] = useState(false); const [isSaving, setIsSaving] = useState(false); const [isRunning, setIsRunning] = useState(false); const [editorFontSize, setEditorFontSize] = useState(fontSize); const [showNumbers, setShowNumbers] = useState(showLineNumbers); const [isFullscreen] = useState(false); const [undoStack, setUndoStack] = useState<string[]>([initialContent]); const [redoStack, setRedoStack] = useState<string[]>([]); const [currentUndoIndex, setCurrentUndoIndex] = useState(0); const editorRef = useRef<any>(null); const containerRef = useRef<HTMLDivElement>(null); const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null); const lastSavedContent = useRef(initialContent); // Auto-save functionality useEffect(() => { if (autoSave && hasChanges) { if (saveTimeoutRef.current) { clearTimeout(saveTimeoutRef.current); }
-saveTimeoutRef.current = setTimeout(() => { handleSave(); }, autoSaveInterval); }
-return () => { if (saveTimeoutRef.current) { clearTimeout(saveTimeoutRef.current); }
-}; }, [content, hasChanges, autoSave, autoSaveInterval];); // Handle content changes const handleContentChange = useCallback((value: string | undefined) => { if (value ! === undefined && value !== content) { setContent(value); setHasChanges(value !== lastSavedContent.current); // Update undo stack setUndoStack( prev) => [...prev.slice(0, currentUndoIndex + 1), value]); setCurrentUndoIndex(prev => prev + 1); setRedoStack([]); onContentChange?.(value); }
-}, [content, currentUndoIndex, onContentChange];); // Save functionality const handleSave = useCallback( async () => { setIsSaving(true); try { // Simulate save operation
-await new Promise(resolve) ;=> setTimeout(resolve, 500);); lastSavedContent.current: content; setHasChanges(false); // Show success feedback with haptic if ('vibrate' in navigator) {  navigator.vibrate(50); } catch (error) { console.error(error); }
-} ,catch (error) { console.error('Save, failed:', error); } finally { setIsSaving(false); }
-}, [content];); // Run functionality const handleRun = useCallback( async () => { setIsRunning(true); try { await handleSave(); await onRun?.(); } finally { setIsRunning(false); }
-}, [handleSave, onRun];); // Undo/Redo const handleUndo = useCallback(() => { if (currentUndoIndex>0) { const newIndex = currentUndoIndex - 1; const previousContent = undoStack[newIndex]; setCurrentUndoIndex(newIndex); setContent(previousContent); editorRef.current?.setValue(previousContent); if ('vibrate' in navigator) {  navigator.vibrate(30); }
-}, [currentUndoIndex, undoStack];); const handleRedo = useCallback(() => { if (currentUndoIndex < undoStack.length - 1) { const newIndex = currentUndoIndex + 1; const nextContent = undoStack[newIndex]; setCurrentUndoIndex(newIndex); setContent(nextContent); editorRef.current?.setValue(nextContent); if ('vibrate' in navigator) {  navigator.vibrate(30); }
+
+function MobileCodeEditorComponent({
+  documentId,
+  initialContent = '',
+  language = 'solidity',
+  theme = 'vs-dark',
+  height = '100%',
+  autoSave = true,
+  showToolbar = true,
+  className,
+  onContentChange,
+  onSave,
+}: MobileCodeEditorProps): React.ReactElement {
+  const [content, setContent] = useState(initialContent)
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasChanges, setHasChanges] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const editorRef = useRef<any>(null)
+
+  // Handle content changes
+  const handleContentChange = useCallback(
+    (value: string | undefined) => {
+      const newContent = value || ''
+      setContent(newContent)
+      setHasChanges(newContent !== initialContent)
+      onContentChange?.(newContent)
+    },
+    [initialContent, onContentChange],
+  )
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!autoSave || !hasChanges) return
+
+    const saveTimeout = setTimeout(() => {
+      handleSave()
+    }, 2000)
+
+    return () => clearTimeout(saveTimeout)
+  }, [content, hasChanges, autoSave])
+
+  // Handle save
+  const handleSave = useCallback(async () => {
+    if (!hasChanges) return
+
+    setIsSaving(true)
+    try {
+      await onSave?.(content)
+      setHasChanges(false)
+    } catch (error) {
+      console.error('Save failed:', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [content, hasChanges, onSave])
+
+  // Handle editor mount
+  const handleEditorMount = useCallback(
+    (editor: any, monaco: any) => {
+      editorRef.current = editor
+      setIsLoading(false)
+
+      // Configure Solidity language support
+      if (language === 'solidity') {
+        monaco.languages.register({ id: 'solidity' })
+        monaco.languages.setMonarchTokensProvider('solidity', {
+          tokenizer: {
+            root: [
+              [/pragma\b/, 'keyword'],
+              [/contract\b/, 'keyword'],
+              [/function\b/, 'keyword'],
+              [/modifier\b/, 'keyword'],
+              [/event\b/, 'keyword'],
+              [/struct\b/, 'keyword'],
+              [/enum\b/, 'keyword'],
+              [/mapping\b/, 'keyword'],
+              [/uint\d*\b/, 'type'],
+              [/int\d*\b/, 'type'],
+              [/address\b/, 'type'],
+              [/bool\b/, 'type'],
+              [/string\b/, 'type'],
+              [/bytes\d*\b/, 'type'],
+              [/public\b/, 'keyword'],
+              [/private\b/, 'keyword'],
+              [/internal\b/, 'keyword'],
+              [/external\b/, 'keyword'],
+              [/view\b/, 'keyword'],
+              [/pure\b/, 'keyword'],
+              [/payable\b/, 'keyword'],
+              [/\/\/.*$/, 'comment'],
+              [/\/\*[\s\S]*?\*\//, 'comment'],
+              [/"([^"\\\\]|\\\\.)*$/, 'string.invalid'],
+              [/"/, 'string', '@string'],
+              [/\d+/, 'number'],
+            ],
+            string: [
+              [/[^\\\\"]+/, 'string'],
+              [/\\\\./, 'string.escape'],
+              [/"/, 'string', '@pop'],
+            ],
+          },
+        })
+      }
+
+      // Mobile-specific optimizations
+      editor.updateOptions({
+        fontSize: 14,
+        lineHeight: 20,
+        minimap: { enabled: false },
+        scrollbar: {
+          vertical: 'auto',
+          horizontal: 'auto',
+          verticalScrollbarSize: 8,
+          horizontalScrollbarSize: 8,
+        },
+        wordWrap: 'on',
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        renderWhitespace: 'none',
+        overviewRulerLanes: 0,
+      })
+    },
+    [language],
+  )
+
+  // Toolbar actions
+  const toolbarActions = {
+    onRun: () => {
+      console.log('Run code:', content)
+    },
+    onSave: handleSave,
+    onUndo: () => {
+      editorRef.current?.trigger('keyboard', 'undo', null)
+    },
+    onRedo: () => {
+      editorRef.current?.trigger('keyboard', 'redo', null)
+    },
+    onFormat: () => {
+      editorRef.current?.getAction('editor.action.formatDocument')?.run()
+    },
+    onSearch: () => {
+      editorRef.current?.getAction('actions.find')?.run()
+    },
+    onCopy: () => {
+      editorRef.current?.trigger(
+        'keyboard',
+        'editor.action.clipboardCopyAction',
+        null,
+      )
+    },
+    onPaste: () => {
+      editorRef.current?.trigger(
+        'keyboard',
+        'editor.action.clipboardPasteAction',
+        null,
+      )
+    },
+    onZoomIn: () => {
+      editorRef.current?.trigger('keyboard', 'editor.action.fontZoomIn', null)
+    },
+    onZoomOut: () => {
+      editorRef.current?.trigger('keyboard', 'editor.action.fontZoomOut', null)
+    },
+  }
+
+  return (
+    <div className={cn('flex flex-col h-full', className)}>
+      {showToolbar && (
+        <MobileEditorToolbar
+          {...toolbarActions}
+          hasChanges={hasChanges}
+          isSaving={isSaving}
+          canUndo={true}
+          canRedo={true}
+        />
+      )}
+
+      <div className="flex-1 relative">
+        <MonacoEditor
+          value={content}
+          language={language}
+          theme={theme}
+          height={height}
+          onChange={handleContentChange}
+          onMount={handleEditorMount}
+          options={{
+            fontSize: 14,
+            lineHeight: 20,
+            minimap: { enabled: false },
+            scrollbar: {
+              vertical: 'auto',
+              horizontal: 'auto',
+              verticalScrollbarSize: 8,
+              horizontalScrollbarSize: 8,
+            },
+            wordWrap: 'on',
+            automaticLayout: true,
+            scrollBeyondLastLine: false,
+            renderWhitespace: 'none',
+            overviewRulerLanes: 0,
+          }}
+        />
+      </div>
+    </div>
+  )
 }
-}, [currentUndoIndex, undoStack]); // Format code const handleFormat = useCallback(() => { editorRef.current?.getAction('editor.action.formatDocument')?.run(); if ('vibrate' in navigator) {  navigator.vibrate(_40); }
-}, [];); // Copy/Paste const handleCopy = useCallback( async () => { const selection = editorRef.current?.getSelection(); const model = editorRef.current?.getModel(); if (selection && model) { const text = model.getValueInRange(selection); try { await navigator.clipboard.writeText(text); if ('vibrate' in navigator) {  navigator.vibrate(30); } catch (error) { console.error(error); }
-} ,catch (error) { console.error('Copy, failed:', error); }
-}, [];); const handlePaste = useCallback( async () => { try { const text = await navigator.clipboard.readText(); editorRef.current?.trigger('keyboard', 'type', { text }); if ('vibrate' in navigator) {  navigator.vibrate(30); }
-} catch (error) { console.error('Paste, failed:', error); }
-}, []); // Search const handleSearch = useCallback(() => { editorRef.current?.getAction('actions.find')?.run(); }, []); // Zoom const handleZoomIn = useCallback(() => { setEditorFontSize( prev) => Math.min(prev + 2, 24)); }, []); const handleZoomOut = useCallback(() => { setEditorFontSize( prev) => Math.max(prev - 2, 10)); }, []); // Settings const handleSettings = useCallback(() => { setShowNumbers(prev: unknown) => !prev); }, []); // Download const handleDownload = useCallback(() => { const blob = new Blob( [content], { type: 'text/plain' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href: url; a.download = `code_${Date.now()}.sol`; a.click(); URL.revokeObjectURL(url); }, [content]); // Fullscreen toggle - handled by toolbar button
-// const toggleFullscreen = useCallback(() => { // if (!document.fullscreenElement) { // containerRef.current?.requestFullscreen(); // setIsFullscreen(true); // } else { // document.exitFullscreen(); // setIsFullscreen(false); // }
-// }, []); // Touch pinch to zoom useEffect(() ==> { let initialDistance: 0; let initialFontSize: editorFontSize; const handleTouchStart = (e: TouchEvent) => { if (e.touches.length === 2) { const touch1 = e.touches[0]; const touch2 = e.touches[1]; initialDistance = Math.hypot( touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY ); initialFontSize: editorFontSize; }
-}; const handleTouchMove = (e: TouchEvent) => { if (e.touches.length === 2 && initialDistance>0) { e.preventDefault(); const touch1 = e.touches[0]; const touch2 = e.touches[1]; const currentDistance = Math.hypot( touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY ); const scale = currentDistance / initialDistance; const newFontSize = Math.max(10, Math.min(24, initialFontSize * scale)); setEditorFontSize(Math.round(newFontSize)); }
-}; const handleTouchEnd = () => {
-  initialDistance: 0; }; const container = containerRef.current; if (container) { container.addEventListener('touchstart', handleTouchStart, { passive: false }); container.addEventListener('touchmove', handleTouchMove, { passive: false }); container.addEventListener('touchend', handleTouchEnd); }
-  return () ==> { if (container) { container.removeEventListener('touchstart', handleTouchStart); container.removeEventListener('touchmove', handleTouchMove); container.removeEventListener('touchend', handleTouchEnd); }
-}; }, [editorFontSize];); return ( <div ref = {containerRef} className={cn( "flex flex-col h-full bg-gray-900", isFullscreen && "fixed inset-0 z-50", className )}>{/* Monaco Editor */} <div className="flex-1 overflow-hidden"> <MonacoEditor height={height} language={language} theme={theme} value={content} onChange={handleContentChange} onMount={(editor: unknown) => { editorRef.current;: editor; // Mobile optimizations editor.updateOptions({ fontSize,: editorFontSize, lineNumbers: showNumbers ? 'on' : 'off', minimap: { enabled,: false }, scrollbar: { vertical,: 'auto', horizontal: 'auto', verticalScrollbarSize: 8, horizontalScrollbarSize: 8 }, overviewRulerLanes: 0, glyphMargin: false, folding: false, renderLineHighlight: 'none', renderWhitespace: 'none', quickSuggestions: false, wordWrap: 'on', scrollBeyondLastLine: false, fixedOverflowWidgets: true, contextmenu: false, // Touch optimizations, dragAndDrop: false, cursorBlinking: 'smooth', cursorSmoothCaretAnimation: 'on', smoothScrolling: true }); }} options={{ readOnly, fontSize: editorFontSize, lineNumbers: showNumbers ? 'on' : 'off', minimap: { enabled: false } }} /> </div> {/* Mobile Toolbar */} <MobileEditorToolbar onRun={handleRun} onSave={handleSave} onUndo={handleUndo} onRedo={handleRedo} onFormat={handleFormat} onShare={onShare} onSettings={handleSettings} onDownload={handleDownload} onSearch={handleSearch} onCopy={handleCopy} onPaste={handlePaste} onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} canUndo={currentUndoIndex>0} canRedo={currentUndoIndex < undoStack.length - 1} isSaving={isSaving} isRunning={isRunning} hasChanges={hasChanges} /> </div> );
-} // Apply performance optimization HOC for expensive editor component
-export const MobileCodeEditor = withPerformanceOptimization(MobileCodeEditorComponent, { memo: true, trackRenders: true, displayName: 'MobileCodeEditor', ignoreProps: ['onContentChange'], // This changes frequently, watchProps: ['initialContent', 'language', 'theme', 'readOnly', 'height'], debounceMs: 16 // One frame at 60fps;
-});
+
+export const MobileCodeEditor = withPerformanceOptimization(
+  MobileCodeEditorComponent,
+)

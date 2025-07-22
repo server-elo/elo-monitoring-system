@@ -1,4 +1,8 @@
-'use client'; import React, { useState, useEffect } from 'react';
+"use client";
+
+;
+
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Clock, AlertTriangle, RefreshCw, WifiOff, X } from 'lucide-react';
 import { SessionManager, SessionStatus, SessionEvent } from '@/lib/auth/sessionManager';

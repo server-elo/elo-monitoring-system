@@ -1,10 +1,10 @@
-import React, { ReactElement } from "react";
-("use client");
-import { useState, useEffect, ReactElement } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { ReactElement } from 'react'
+;('use client')
+import { useState, useEffect, ReactElement } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Menu,
   X,
@@ -16,10 +16,10 @@ import {
   BookOpen,
   Code,
   Users,
-} from "lucide-react";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
+} from 'lucide-react'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { Button } from '@/components/ui/button'
+import { Avatar } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,40 +27,40 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { AuthenticationModal } from "@/components/auth/AuthenticationModal";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/dropdown-menu'
+import { AuthenticationModal } from '@/components/auth/AuthenticationModal'
+import { Badge } from '@/components/ui/badge'
 const navItems = [
-  { label: "Learn", href: "/learn", icon: BookOpen },
-  { label: "Code Lab", href: "/code", icon: Code },
-  { label: "Collaborate", href: "/collaborate", icon: Users },
-  { label: "Achievements", href: "/achievements", icon: Trophy },
-  { label: "Jobs", href: "/jobs" },
-  { label: "Certificates", href: "/certificates" },
-];
+  { label: 'Learn', href: '/learn', icon: BookOpen },
+  { label: 'Code Lab', href: '/code', icon: Code },
+  { label: 'Collaborate', href: '/collaborate', icon: Users },
+  { label: 'Achievements', href: '/achievements', icon: Trophy },
+  { label: 'Jobs', href: '/jobs' },
+  { label: 'Certificates', href: '/certificates' },
+]
 export default function AuthenticatedNav(): ReactElement {
-  const { data: session, status } = useSession();
-  const [isOpen, setIsOpen] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const pathname = usePathname();
+  const { data: session, status } = useSession()
+  const [isOpen, setIsOpen] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const pathname = usePathname()
   // Close mobile menu when route changes
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    setIsOpen(false)
+  }, [pathname])
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset'
     }
     return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
-  };
+    await signOut({ callbackUrl: '/' })
+  }
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -78,25 +78,25 @@ export default function AuthenticatedNav(): ReactElement {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
               {navItems.map((item: unknown) => {
-                const Icon = item.icon;
+                const Icon = item.icon
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={`flex items-center gap-1 text-sm font-medium transition-colors duration-200 ${
                       pathname === item.href
-                        ? "text-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? 'text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {Icon && <Icon size={16} />}
                     {item.label}
                   </Link>
-                );
+                )
               })}
               <ThemeToggle />
               {/* User Menu */}
-              {status === "loading" ? (
+              {status === 'loading' ? (
                 <div className="w-8 h-8 rounded-full bg-gray-300 animate-pulse" />
               ) : session ? (
                 <DropdownMenu>
@@ -111,7 +111,7 @@ export default function AuthenticatedNav(): ReactElement {
                             session.user?.image ||
                             `https://ui-avatars.com/api/?name=${session.user?.name}&background=3b82f6&color=fff`
                           }
-                          alt={session.user?.name || "User"}
+                          alt={session.user?.name || 'User'}
                           className="rounded-full"
                         />
                       </Avatar>
@@ -206,10 +206,10 @@ export default function AuthenticatedNav(): ReactElement {
               />
               {/* Mobile Menu */}
               <motion.div
-                initial={{ x: "100%" }}
+                initial={{ x: '100%' }}
                 animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", damping: 20 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', damping: 20 }}
                 className=",
       md:hidden fixed right-0 top-16 h-[calc(100vh-4rem)] w-full max-w-sm bg-background border-l border-border overflow-y-auto"
               >
@@ -224,7 +224,7 @@ export default function AuthenticatedNav(): ReactElement {
                               session.user?.image ||
                               `https://ui-avatars.com/api/?name=${session.user?.name}&background=3b82f6&color=fff`
                             }
-                            alt={session.user?.name || "User"}
+                            alt={session.user?.name || 'User'}
                             className="rounded-full"
                           />
                         </Avatar>
@@ -258,7 +258,7 @@ export default function AuthenticatedNav(): ReactElement {
                       </>
                     )}
                     {navItems.map((item: unknown) => {
-                      const Icon = item.icon;
+                      const Icon = item.icon
                       return (
                         <Link
                           key={item.href}
@@ -268,7 +268,7 @@ export default function AuthenticatedNav(): ReactElement {
                           {Icon && <Icon size={20} />}
                           <span>{item.label}</span>
                         </Link>
-                      );
+                      )
                     })}
                     {session && (
                       <>
@@ -315,5 +315,5 @@ export default function AuthenticatedNav(): ReactElement {
         onClose={() => setShowAuthModal(false)}
       />
     </>
-  );
+  )
 }

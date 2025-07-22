@@ -1,4 +1,8 @@
-'use client'; import React, { useId, useState, useRef } from 'react';
+"use client";
+
+;
+
+import React, { useId, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils'; // Accessible Form Field Component

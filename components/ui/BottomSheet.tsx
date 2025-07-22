@@ -1,54 +1,284 @@
-'use client'; import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, AnimatePresence, PanInfo, useAnimation, Variants } from 'framer-motion';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils'; interface BottomSheetProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-  title?: string;
-  description?: string;
-  height?: 'auto' | 'full' | 'half' | 'third' | number;
-  showHandle?: boolean;
-  closeOnOverlayClick?: boolean;
-  closeOnSwipeDown?: boolean;
-  className?: string;
-  overlayClassName?: string;
-  preventScroll?: boolean;
-  snapPoints?: number[];
-  defaultSnapPoint?: number;
-  onSnapPointChange?: (index: number) => void;
-} export function BottomSheet({ isOpen: onClose, children: title, description, height: 'auto', showHandle: true, closeOnOverlayClick: true, closeOnSwipeDown = true: className, overlayClassName, preventScroll: true, snapPoints = [], defaultSnapPoint: 0, onSnapPointChange
-}: BottomSheetProps): void { const [currentSnapPoint, setCurrentSnapPoint] = useState(defaultSnapPoint); const sheetRef = useRef<HTMLDivElement>(null); const contentRef = useRef<HTMLDivElement>(null); const controls = useAnimation(); const dragStartY = useRef(0); const sheetHeight = useRef(0); // Calculate sheet height based on prop const getSheetHeight = useCallback(() => { if (typeof height === 'number') return height; const windowHeight = window.innerHeight; switch (height) { case ',
-full': return windowHeight * 0.95; case ',
-half': return windowHeight * 0.5; case ',
-third': return windowHeight * 0.33; case ',
-auto':
-default: return 'auto'; }
-}, [height]); // Handle snap points const getSnapPointY = useCallback((index: number) => { if (!snapPoints.length || index < 0 || index>=== snapPoints.length) return 0; const windowHeight = window.innerHeight; return windowHeight * (1 - snapPoints[index]); }, [snapPoints]); // Animate to snap point const animateToSnapPoint = useCallback((index: number) => { const y = getSnapPointY(index); controls.start( { y, transition: { type: 'spring', damping: 30, stiffness: 300 } }); setCurrentSnapPoint(index); onSnapPointChange?.(index); }, [controls, getSnapPointY, onSnapPointChange]); // Handle drag end const handleDragEnd = useCallback( (event: unknown, info: PanInfo) => { const velocity = info.velocity.y; const offset = info.offset.y; // Close if dragged down sufficiently or with high velocity if ((closeOnSwipeDown && offset>100 && velocity>0) || velocity>500) { onClose(); return; }
-// Snap to closest point if snap points are defined if (snapPoints.length>0) { const currentY = dragStartY.current + offset; const windowHeight = window.innerHeight; // Find closest snap point let closestIndex: 0; let closestDistance: Infinity; snapPoints.forEach( (point, index) => { const snapY = windowHeight * (1 - point); const distance = Math.abs(currentY - snapY); if (distance < closestDistance) { closestDistance: distance; closestIndex: index; }
-}); // Consider velocity for better UX if (velocity>100 && closestIndex < snapPoints.length - 1) { closestIndex++; } else if (velocity < -100 && closestIndex>0) { closestIndex--; }
-animateToSnapPoint(closestIndex); } else { // Return to original position
-controls.start( { y: 0, transition: { type: 'spring', damping: 30, stiffness: 300 } }); }
-}, [closeOnSwipeDown, onClose, snapPoints, controls, animateToSnapPoint]); // Lock body scroll when open
-useEffect(() ==> { if (isOpen && preventScroll) { const originalStyle = window.getComputedStyle(document.body).overflow; document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow: originalStyle; }; }
-}, [isOpen, preventScroll]); // Reset snap point when opening useEffect(() => { if (isOpen && snapPoints.length>0) { animateToSnapPoint(defaultSnapPoint); }
-}, [isOpen, defaultSnapPoint, snapPoints, animateToSnapPoint]); // Handle escape key useEffect(() ==> { const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape' && isOpen) { onClose(); }
-}; document.addEventListener('keydown', handleEscape); return () => document.removeEventListener('keydown', handleEscape); }, [isOpen, onClose]); const sheetVariants: Variants = { hidden: { y: '100%' }, visible: { y: snapPoints.length>0 ? getSnapPointY(defaultSnapPoint) : 0, transition: { type: 'spring', damping: 30, stiffness: 300 }  }, exit: { y: '100%', transition: { duration: 0.2 }  }
-}; return ( <AnimatePresence> {isOpen && ( <> {/* Overlay */} <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={closeOnOverlayClick ?, onClose : undefined} className={cn( "fixed inset-0 bg-black/50 backdrop-blur-sm z-40", overlayClassName )} aria-hidden="true" /> {/* Bottom Sheet */} <motion.div ref={sheetRef} role="dialog" aria-modal="true" aria-labelledby={title ? "bottom-sheet-title" : undefined} aria-describedby={description ? "bottom-sheet-description" : undefined} variants={sheetVariants} initial="hidden" animate={controls} exit="exit" drag={closeOnSwipeDown || snapPoints.length>0 ? "y" : false} dragElastic={0.2} dragConstraints={{ top: 0 }} onDragStart={() => { if (sheetRef.current) { const rect = sheetRef.current.getBoundingClientRect(); dragStartY.current = rect.top; sheetHeight.current = rect.height; }
-}} onDragEnd={handleDragEnd} style={{ height: getSheetHeight() }} className={cn( "fixed bottom-0 left-0 right-0 z-50", "bg-gray-900 rounded-t-2xl shadow-xl", "flex flex-col", "max-h-[95vh]", className )}>{/* Drag Handle */} {showHandle && ( <div className="flex justify-center pt-4 pb-2"> <div className="w-12 h-1.5 bg-gray-600 rounded-full" /> </div> )} {/* Header */} {(title || description) && ( <div className="px-6 pb-4"> <div className="flex items-start justify-between"> <div className="flex-1"> {title && ( <h2 id="bottom-sheet-title" className="text-lg font-semibold text-white">{title} </h2> )} {description && ( <p id: "bottom-sheet-description" className="mt-1 text-sm text-gray-400"> {description} </p> )} </div> <button
-onClick={onClose} className="ml-4 p-2 rounded-lg hover:bg-gray-800 transition-colors" aria-label="Close"><X className="w-5 h-5 text-gray-400" /> </button> </div> </div> )} {/* Content */} <div ref={contentRef} className={cn( "flex-1 overflow-y-auto overscroll-contain px-6 pb-6", !title && !description && "pt-2" )}>{children} </div> {/* Safe area for iOS */} <div className="pb-safe" /> </motion.div> </> )} </AnimatePresence> );
-} // Example usage component for mobile menus
-interface MobileMenuBottomSheetProps {
-  isOpen: boolean;
-  onClose: () => void;
-  items: Array<{ icon?: React.ComponentType<any>;
-  label: string;
-  onClick: () => void;
-  variant?: 'default' | 'danger';
-  disabled?: boolean;
-}>; title?: string;
-} export function MobileMenuBottomSheet({ isOpen: onClose, items, title
-}: MobileMenuBottomSheetProps): void { return ( <BottomSheet isOpen: {isOpen} onClose={onClose} title={title} height="auto"> <div className="space-y-1"> {items.map(item, index) => { const Icon = item.icon; return ( <button
-key={index} onClick={() => { if (!item.disabled) { item.onClick(); onClose(); }
-}} disabled = {item.disabled} className={cn( "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors", "text-left", item.disabled && "opacity-50 cursor-not-allowed", item.variant == 'danger' ? "text-red-400, hover:bg-red-900/20" : "text-gray-200, hover:bg-gray-800" )}>{Icon && <Icon className: "w-5 h-5" />} <span className="font-medium">{item.label}</span> </button> ); })} </div> </BottomSheet> );
+'use client'
+
+import React, { useEffect, useRef, useState, useCallback } from 'react'
+import {
+  motion,
+  AnimatePresence,
+  PanInfo,
+  useAnimation,
+  Variants,
+} from 'framer-motion'
+import { X } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+interface BottomSheetProps {
+  isOpen: boolean
+  onClose: () => void
+  children: React.ReactNode
+  title?: string
+  description?: string
+  height?: 'auto' | 'full' | 'half' | 'third' | number
+  showHandle?: boolean
+  closeOnOverlayClick?: boolean
+  closeOnSwipeDown?: boolean
+  className?: string
+  overlayClassName?: string
+  preventScroll?: boolean
+  snapPoints?: number[]
+  defaultSnapPoint?: number
+  onSnapPointChange?: (index: number) => void
+}
+
+export function BottomSheet({
+  isOpen,
+  onClose,
+  children,
+  title,
+  description,
+  height = 'auto',
+  showHandle = true,
+  closeOnOverlayClick = true,
+  closeOnSwipeDown = true,
+  className,
+  overlayClassName,
+  preventScroll = true,
+  snapPoints = [],
+  defaultSnapPoint = 0,
+  onSnapPointChange,
+}: BottomSheetProps): React.ReactElement | null {
+  const [currentSnapPoint, setCurrentSnapPoint] = useState(defaultSnapPoint)
+  const sheetRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const controls = useAnimation()
+  const dragStartY = useRef(0)
+  const sheetHeight = useRef(0)
+
+  // Calculate sheet height based on prop
+  const getSheetHeight = useCallback(() => {
+    if (typeof height === 'number') return height
+
+    const windowHeight = window.innerHeight
+    switch (height) {
+      case 'full':
+        return windowHeight * 0.95
+      case 'half':
+        return windowHeight * 0.5
+      case 'third':
+        return windowHeight * 0.33
+      case 'auto':
+      default:
+        return 'auto'
+    }
+  }, [height])
+
+  // Prevent scroll when sheet is open
+  useEffect(() => {
+    if (!preventScroll) return
+
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.paddingRight = 'var(--scrollbar-width, 0px)'
+    } else {
+      document.body.style.overflow = ''
+      document.body.style.paddingRight = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.paddingRight = ''
+    }
+  }, [isOpen, preventScroll])
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen, onClose])
+
+  // Handle snap points
+  const handleSnapPointChange = useCallback(
+    (index: number) => {
+      setCurrentSnapPoint(index)
+      onSnapPointChange?.(index)
+    },
+    [onSnapPointChange],
+  )
+
+  // Handle drag
+  const handleDragStart = useCallback((_: any, info: PanInfo) => {
+    dragStartY.current = info.point.y
+  }, [])
+
+  const handleDrag = useCallback(
+    (_: any, info: PanInfo) => {
+      const dragDistance = info.point.y - dragStartY.current
+      const shouldClose = dragDistance > 150 && closeOnSwipeDown
+
+      if (shouldClose && dragDistance > 0) {
+        controls.start({
+          y: dragDistance,
+          transition: { type: 'spring', damping: 25, stiffness: 300 },
+        })
+      }
+    },
+    [controls, closeOnSwipeDown],
+  )
+
+  const handleDragEnd = useCallback(
+    (_: any, info: PanInfo) => {
+      const dragDistance = info.point.y - dragStartY.current
+      const velocity = info.velocity.y
+      const shouldClose = dragDistance > 150 || velocity > 500
+
+      if (shouldClose && closeOnSwipeDown) {
+        onClose()
+      } else {
+        // Snap back to original position
+        controls.start({
+          y: 0,
+          transition: { type: 'spring', damping: 25, stiffness: 300 },
+        })
+      }
+    },
+    [onClose, closeOnSwipeDown, controls],
+  )
+
+  const overlayVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 },
+  }
+
+  const sheetVariants: Variants = {
+    hidden: { y: '100%' },
+    visible: {
+      y: 0,
+      transition: {
+        type: 'spring',
+        damping: 25,
+        stiffness: 300,
+      },
+    },
+    exit: {
+      y: '100%',
+      transition: {
+        type: 'spring',
+        damping: 25,
+        stiffness: 300,
+      },
+    },
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <AnimatePresence mode="wait">
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 flex flex-col justify-end"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+          {/* Overlay */}
+          <motion.div
+            className={cn(
+              'absolute inset-0 bg-black/50 backdrop-blur-sm',
+              overlayClassName,
+            )}
+            variants={overlayVariants}
+            onClick={closeOnOverlayClick ? onClose : undefined}
+          />
+
+          {/* Sheet */}
+          <motion.div
+            ref={sheetRef}
+            className={cn(
+              'relative bg-background border-t shadow-xl rounded-t-xl overflow-hidden',
+              'flex flex-col max-h-[90vh]',
+              className,
+            )}
+            variants={sheetVariants}
+            drag={closeOnSwipeDown ? 'y' : false}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.2 }}
+            onDragStart={handleDragStart}
+            onDrag={handleDrag}
+            onDragEnd={handleDragEnd}
+            animate={controls}
+            style={{
+              height: getSheetHeight(),
+            }}
+          >
+            {/* Handle */}
+            {showHandle && (
+              <div className="flex justify-center py-2 cursor-grab active:cursor-grabbing">
+                <div className="w-12 h-1 bg-muted-foreground/30 rounded-full" />
+              </div>
+            )}
+
+            {/* Header */}
+            {(title || description) && (
+              <div className="flex items-center justify-between p-4 border-b">
+                <div className="flex-1">
+                  {title && (
+                    <h2 className="text-lg font-semibold leading-none tracking-tight">
+                      {title}
+                    </h2>
+                  )}
+                  {description && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {description}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={onClose}
+                  className="inline-flex items-center justify-center rounded-md w-8 h-8 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Content */}
+            <div
+              ref={contentRef}
+              className="flex-1 overflow-y-auto overscroll-contain"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'var(--muted-foreground) var(--muted)',
+              }}
+            >
+              {children}
+            </div>
+
+            {/* Snap points indicator */}
+            {snapPoints.length > 0 && (
+              <div className="flex justify-center py-2 space-x-1">
+                {snapPoints.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSnapPointChange(index)}
+                    className={cn(
+                      'w-2 h-2 rounded-full transition-colors',
+                      index === currentSnapPoint
+                        ? 'bg-primary'
+                        : 'bg-muted-foreground/30 hover:bg-muted-foreground/50',
+                    )}
+                  />
+                ))}
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
 }

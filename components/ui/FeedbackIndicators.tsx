@@ -1,4 +1,8 @@
-'use client'; import React from 'react';
+"use client";
+
+;
+
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle, Info, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';

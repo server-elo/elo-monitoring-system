@@ -1,4 +1,8 @@
-'use client'; import React, { useState, useEffect, useRef, useCallback } from 'react';
+"use client";
+
+;
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Clock, BookOpen, Play, Users, FileText, Zap, TrendingUp, ArrowRight, X } from 'lucide-react';

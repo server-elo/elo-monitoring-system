@@ -1,4 +1,5 @@
 "use client";
+
 import { ReactElement, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
@@ -92,7 +93,7 @@ export default function DashboardPage(): ReactElement {
       if (response.ok) {
         const data = await response.json();
         setDashboardData(data);
-      } catch (error) { console.error(error); }
+      }
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     } finally {

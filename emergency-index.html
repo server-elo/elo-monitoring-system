@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solidity Learning Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <div class="container mx-auto px-4 py-8">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold mb-6 text-blue-400">
+        🚀 Solidity Learning Platform
+      </h1>
+      
+      <div class="bg-green-900/50 border border-green-700 rounded-lg p-6 max-w-md mx-auto mb-8">
+        <div class="flex items-center justify-center mb-4">
+          <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
+          <span class="text-green-400 font-semibold">EMERGENCY MODE ACTIVE</span>
+        </div>
+        <p class="text-green-300 text-sm">
+          Platform is running in safe mode
+        </p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
+        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div class="text-blue-400 text-2xl mb-3">📚</div>
+          <h3 class="text-lg font-semibold mb-2">Learn Solidity</h3>
+          <p class="text-gray-400 text-sm">
+            Interactive tutorials and examples
+          </p>
+        </div>
+
+        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div class="text-green-400 text-2xl mb-3">⚡</div>
+          <h3 class="text-lg font-semibold mb-2">Gas Optimization</h3>
+          <p class="text-gray-400 text-sm">
+            Advanced optimization tools
+          </p>
+        </div>
+
+        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div class="text-purple-400 text-2xl mb-3">🤖</div>
+          <h3 class="text-lg font-semibold mb-2">AI Assistant</h3>
+          <p class="text-gray-400 text-sm">
+            Smart code analysis
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Simple uptime tracker
+    let startTime = Date.now();
+    console.log('🚀 Emergency deployment active - uptime tracking started');
+    
+    setInterval(() => {
+      const uptime = Math.floor((Date.now() - startTime) / 1000);
+      document.title = `Solidity Platform (Uptime: ${Math.floor(uptime/60)}m${uptime%60}s)`;
+    }, 1000);
+  </script>
+</body>
+</html>
+  

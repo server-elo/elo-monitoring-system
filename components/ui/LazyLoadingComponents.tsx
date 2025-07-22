@@ -1,4 +1,8 @@
-'use client'; import React, { Suspense, lazy, useState, useEffect } from 'react';
+"use client";
+
+;
+
+import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Code, Video, Cube, FileText, Settings, Users, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';

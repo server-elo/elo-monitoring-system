@@ -1,7 +1,7 @@
-"use client";
-import React from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
+'use client'
+import React from 'react'
+import Link from 'next/link'
+import { motion } from 'framer-motion'
 import {
   BookOpen,
   Code,
@@ -11,38 +11,38 @@ import {
   ArrowRight,
   CheckCircle,
   Sparkles,
-} from "lucide-react";
+} from 'lucide-react'
 export default function LandingPage(): void {
   const features = [
     {
       icon: BookOpen,
-      title: "Structured Learning",
+      title: 'Structured Learning',
       description:
-        "Progress through carefully crafted modules from basics to advanced concepts",
+        'Progress through carefully crafted modules from basics to advanced concepts',
     },
     {
       icon: Code,
-      title: "Interactive Coding",
+      title: 'Interactive Coding',
       description:
-        "Write, test, and deploy smart contracts in our browser-based IDE",
+        'Write, test, and deploy smart contracts in our browser-based IDE',
     },
     {
       icon: Trophy,
-      title: "Gamification",
-      description: "Earn XP, unlock achievements, and compete on leaderboards",
+      title: 'Gamification',
+      description: 'Earn XP, unlock achievements, and compete on leaderboards',
     },
     {
       icon: Users,
-      title: "Collaborative Learning",
-      description: "Code together in real-time and learn from the community",
+      title: 'Collaborative Learning',
+      description: 'Code together in real-time and learn from the community',
     },
-  ];
+  ]
   const benefits = [
-    "Learn at your own pace with AI-powered assistance",
-    "Build real-world projects and deploy to testnets",
-    "Get instant feedback on your code",
-    "Join a community of blockchain developers",
-  ];
+    'Learn at your own pace with AI-powered assistance',
+    'Build real-world projects and deploy to testnets',
+    'Get instant feedback on your code',
+    'Join a community of blockchain developers',
+  ]
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Hero Section */}
@@ -54,10 +54,10 @@ export default function LandingPage(): void {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Master{" "}
+              Master{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
                 Solidity
-              </span>{" "}
+              </span>{' '}
               Development
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
@@ -177,5 +177,5 @@ export default function LandingPage(): void {
         </div>
       </section>
     </div>
-  );
+  )
 }

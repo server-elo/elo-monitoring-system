@@ -26,7 +26,7 @@ export const cacheConfig = {
     dedupingInterval: 2000,
     errorRetryCount: 3,
   },
-};
+}
 // Cache headers helper
 export const getCacheHeaders = (
   type: keyof typeof cacheConfig.api | keyof typeof cacheConfig.static,
@@ -34,8 +34,8 @@ export const getCacheHeaders = (
   const cacheTime =
     cacheConfig.api[type as keyof typeof cacheConfig.api] ||
     cacheConfig.static[type as keyof typeof cacheConfig.static] ||
-    300;
+    300
   return {
-    "Cache-Control": `public, max-age=${cacheTime}, s-maxage=${cacheTime}, stale-while-revalidate=${cacheTime * 2}`,
-  };
-};
+    'Cache-Control': `public, max-age=${cacheTime}, s-maxage=${cacheTime}, stale-while-revalidate=${cacheTime * 2}`,
+  }
+}

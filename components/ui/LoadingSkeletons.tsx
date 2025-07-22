@@ -1,4 +1,8 @@
-'use client'; import React from 'react';
+"use client";
+
+;
+
+import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils'; // Base skeleton component with glassmorphism styling
 interface SkeletonProps {

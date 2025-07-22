@@ -1,5 +1,9 @@
-import React, { ReactElement } from 'react';
-/** * Interactive Card Component *  * Advanced card component with 3D transforms, mouse tracking, and interactive effects */ "use client" import { useRef, useState, ReactNode } from 'react';
+"use client";
+
+;
+
+
+import { useRef, useState, ReactNode } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { GlassCard } from './Glass'; interface InteractiveCardProps {

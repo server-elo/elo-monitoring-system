@@ -1,4 +1,8 @@
-'use client'; import React from 'react';
+"use client";
+
+;
+
+import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Clock, Zap, Lock, Calendar, MessageSquare, ExternalLink, Mail, Info, CheckCircle, Wrench } from 'lucide-react';

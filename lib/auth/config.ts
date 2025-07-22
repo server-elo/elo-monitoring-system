@@ -5,11 +5,11 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { UserRole } from "@prisma/client";
-import bcrypt from "bcryptjs";
-/**;
-* NextAuth Configuration
-* Simplified version to get the site working
-*/
+import * as bcrypt from "bcryptjs";
+/**
+ * NextAuth Configuration
+ * Simplified version to get the site working
+ */
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
       try {
         if (!credentials?.email || !credentials?.password) {
           return null;
-        } catch (error) { console.error(error); }
+        }
         // Find user by email
         const user = await prisma.user.findUnique({
           where: {
@@ -94,21 +94,20 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/auth/login",
-    signUp: "/auth/register",
     error: "/auth/error"
   },
   callbacks: {
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = (user as any).role || UserRole.STUDENT;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as UserRole;
+      if (token && session.user) {
+        (session.user as any).id = token.id as string;
+        (session.user as any).role = token.role as UserRole;
       }
       return session;
     },
@@ -125,8 +124,8 @@ export const authOptions: NextAuthOptions = {
               data: {
                 userId: user.id,
                 bio: "",
-                githubUsername: (account?.provider = "github"
-                ? profile?.login
+                githubUsername: (account?.provider === "github"
+                ? (profile as any)?.login
                 : null)
               }
             });
@@ -154,7 +153,7 @@ export const authOptions: NextAuthOptions = {
       }
     }
   },
-  debug: (process.env.NODE_ENV = "development"),
+  debug: (process.env.NODE_ENV === "development"),
   secret: process.env.NEXTAUTH_SECRET
 };
 /**

@@ -1,4 +1,8 @@
-"use client" import React from 'react';
+"use client";
+
+;
+
+import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, AlertTriangle, X } from 'lucide-react'; interface CustomToastProps {
   message: string;

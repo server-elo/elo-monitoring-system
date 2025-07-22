@@ -6,6 +6,6 @@
  *
  * @deprecated Use @/lib/monitoring/logger instead
  */
-"use client";
+'use client'
 // Re-export everything from 'the' universal logger
-export * from "./logger";
+export * from './logger'

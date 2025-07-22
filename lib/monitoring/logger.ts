@@ -6,6 +6,6 @@
  *
  * @module lib/monitoring/logger
  */
-"use client";
+'use client'
 // Always export the client logger to ensure client-side safety
-export * from "./client-logger";
+export * from './client-logger'

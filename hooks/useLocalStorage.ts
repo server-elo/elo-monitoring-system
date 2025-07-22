@@ -53,7 +53,7 @@ export function useLocalStorage<T>(
         // Save to local storage
         if (typeof window !== "undefined") {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        } catch (error) { console.error(error); }
+        }
       } catch (error) {
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
@@ -65,7 +65,7 @@ export function useLocalStorage<T>(
     try {
       if (typeof window !== "undefined") {
         window.localStorage.removeItem(key);
-      } catch (error) { console.error(error); }
+      }
       setStoredValue(initialValue);
     } catch (error) {
       console.warn(`Error removing localStorage key "${key}":`, error);

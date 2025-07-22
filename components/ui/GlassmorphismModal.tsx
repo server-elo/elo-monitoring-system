@@ -1,2 +1,3 @@
-"use client";
-export { Glass as GlassmorphismModal } from "./Glass";
+'use client'
+
+export { Glass as GlassmorphismModal } from './Glass'

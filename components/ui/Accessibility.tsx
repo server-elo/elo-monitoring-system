@@ -1,4 +1,8 @@
-'use client'; import React, { useEffect, useRef, useState, useId } from 'react';
+"use client";
+
+;
+
+import React, { useEffect, useRef, useState, useId } from 'react';
 import { motion } from 'framer-motion'; // Skip to Content Link
 interface SkipLinkProps {
   targetId: string;

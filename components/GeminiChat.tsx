@@ -1,15 +1,15 @@
-"use client";
-import React, { useState, useRef, useEffect } from "react";
-import { ChatMessage, ChatMessageRole } from "../types";
-import SendIcon from "./icons/SendIcon";
-import UserIcon from "./icons/UserIcon";
-import BotIcon from "./icons/BotIcon";
-import SpinnerIcon from "./icons/SpinnerIcon";
+'use client'
+import React, { useState, useRef, useEffect } from 'react'
+import { ChatMessage, ChatMessageRole } from '../types'
+import SendIcon from './icons/SendIcon'
+import UserIcon from './icons/UserIcon'
+import BotIcon from './icons/BotIcon'
+import SpinnerIcon from './icons/SpinnerIcon'
 interface GeminiChatProps {
-  chatMessages: ChatMessage[];
-  onSendMessage: (message: string) => Promise<void>;
-  isLoading: boolean;
-  currentModuleTitle: string | null;
+  chatMessages: ChatMessage[]
+  onSendMessage: (message: string) => Promise<void>
+  isLoading: boolean
+  currentModuleTitle: string | null
 }
 const GeminiChat: React.FC<GeminiChatProps> = ({
   chatMessages,
@@ -17,27 +17,26 @@ const GeminiChat: React.FC<GeminiChatProps> = ({
   isLoading,
   currentModuleTitle,
 }) => {
-  const [userInput, setUserInput] = useState("");
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [userInput, setUserInput] = useState('')
+  const chatContainerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
     }
-  }, [chatMessages]);
+  }, [chatMessages])
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (userInput.trim() && !isLoading) {
-      onSendMessage(userInput.trim());
-      setUserInput("");
+      onSendMessage(userInput.trim())
+      setUserInput('')
     }
-  };
+  }
   const getFormattedTimestamp = (date: Date): string => {
     return date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
   return (
     <div className="flex flex-col h-full bg-brand-surface-1 rounded-lg">
       {/* Header */}
@@ -68,15 +67,15 @@ const GeminiChat: React.FC<GeminiChatProps> = ({
               key={index}
               className={`flex ${
                 message.role === ChatMessageRole.User
-                  ? "justify-end"
-                  : "justify-start"
+                  ? 'justify-end'
+                  : 'justify-start'
               }`}
             >
               <div
                 className={`flex max-w-[80%] ${
                   message.role === ChatMessageRole.User
-                    ? "flex-row-reverse"
-                    : "flex-row"
+                    ? 'flex-row-reverse'
+                    : 'flex-row'
                 } gap-3`}
               >
                 <div className="flex-shrink-0">
@@ -89,8 +88,8 @@ const GeminiChat: React.FC<GeminiChatProps> = ({
                 <div
                   className={`px-4 py-3 rounded-lg ${
                     message.role === ChatMessageRole.User
-                      ? "bg-brand-accent text-white"
-                      : "bg-brand-surface-2 text-brand-text-primary"
+                      ? 'bg-brand-accent text-white'
+                      : 'bg-brand-surface-2 text-brand-text-primary'
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">
@@ -139,6 +138,6 @@ const GeminiChat: React.FC<GeminiChatProps> = ({
         </div>
       </form>
     </div>
-  );
-};
-export default GeminiChat;
+  )
+}
+export default GeminiChat

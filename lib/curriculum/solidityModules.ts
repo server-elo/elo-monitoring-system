@@ -45,8 +45,7 @@ export const solidityModules: Module[] = [
     {
       id: 'res-1',
       title: 'Bitcoin Whitepaper',
-      url: ',
-      https://bitcoin.org/bitcoin.pdf',
+      url: 'https://bitcoin.org/bitcoin.pdf',
       type: 'documentation',
       description: 'The original blockchain implementation'
     }
@@ -78,8 +77,7 @@ export const solidityModules: Module[] = [
     {
       id: 'res-2',
       title: 'Ethereum Documentation',
-      url: ',
-      https://ethereum.org/en/developers/docs/',
+      url: 'https://ethereum.org/en/developers/docs/',
       type: 'documentation'
     }
     ],
@@ -97,13 +95,13 @@ export const solidityModules: Module[] = [
     type: LessonType.PRACTICAL,
     content: `# Your First Smart Contract
     ## Hello World Contract
-    \`\`\`;solidity;
+    \`\`\`solidity
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.19;
     contract HelloWorld {
       string public greeting = "Hello, World!";
       function setGreeting(string memory _greeting) public {
-        greeting: _greeting;
+        greeting = _greeting;
       }
       function getGreeting() public view returns (string memory) {
         return greeting;
@@ -197,10 +195,10 @@ export const solidityModules: Module[] = [
     - **structs**: Custom data structures
     - **mappings**: Key-value stores
     ## Example
-    \`\`\`solidity;
+    \`\`\`solidity
     contract DataTypes {
-      uint256 public myNumber: 42;
-      bool public isActive: true;
+      uint256 public myNumber = 42;
+      bool public isActive = true;
       address public owner;
       string public name = "Solidity";
       uint256[] public numbers;
@@ -210,7 +208,7 @@ export const solidityModules: Module[] = [
         uint256 age;
       }
     }
-    \`\`\``,;
+    \`\`\``,
     duration: 45,
     order: 1,
     prerequisites: [],
@@ -243,12 +241,15 @@ export const solidityModules: Module[] = [
     description: 'Understanding and preventing common smart contract vulnerabilities',
     type: LessonType.THEORY,
     content: `# Common Smart Contract Vulnerabilities
-    ## Reentrancy
-    The most famous vulnerability that led to the DAO hack...
-    ## Integer Overflow/Underflow
-    When arithmetic operations exceed type boundaries...
-    ## Access Control
-    Ensuring only authorized users can call sensitive functions...`,
+
+## Reentrancy
+The most famous vulnerability that led to the DAO hack...
+
+## Integer Overflow/Underflow
+When arithmetic operations exceed type boundaries...
+
+## Access Control
+Ensuring only authorized users can call sensitive functions...`,
     duration: 60,
     order: 1,
     prerequisites: [],
@@ -290,8 +291,7 @@ export const solidityModules: Module[] = [
     {
       id: 'res-sec-1',
       title: 'Smart Contract Security Best Practices',
-      url: ',
-      https://consensys.github.io/smart-contract-best-practices/',
+      url: 'https://consensys.github.io/smart-contract-best-practices/',
       type: 'documentation'
     }
     ],
@@ -329,15 +329,10 @@ export const solidityModules: Module[] = [
     interface IERC20 {
       function totalSupply() external view returns (uint256);
       function balanceOf(address account) external view returns (uint256);
-      function transfer(address to;
-      uint256 amount) external returns (bool);
-      function allowance(address owner;
-      address spender) external view returns (uint256);
-      function approve(address spender;
-      uint256 amount) external returns (bool);
-      function transferFrom(address from;
-      address to;
-      uint256 amount) external returns (bool);
+      function transfer(address to, uint256 amount) external returns (bool);
+      function allowance(address owner, address spender) external view returns (uint256);
+      function approve(address spender, uint256 amount) external returns (bool);
+      function transferFrom(address from, address to, uint256 amount) external returns (bool);
     }
     \`\`\``,
     duration: 90,
@@ -377,8 +372,7 @@ export const solidityModules: Module[] = [
     {
       id: 'res-defi-1',
       title: 'OpenZeppelin Contracts',
-      url: ',
-      https://github.com/OpenZeppelin/openzeppelin-contracts',
+      url: 'https://github.com/OpenZeppelin/openzeppelin-contracts',
       type: 'github',
       description: 'Battle-tested smart contract library'
     }
@@ -422,8 +416,7 @@ export const solidityModules: Module[] = [
       description: 'Clean, well-documented, gas-efficient code'
     }
     ],
-    starterRepo: ',
-    https://github.com/example/dex-starter'
+    starterRepo: 'https://github.com/example/dex-starter'
   },
   certificate: {
     id: 'cert-defi-1',

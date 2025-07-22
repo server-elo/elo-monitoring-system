@@ -9,8 +9,8 @@
 'use client';
 import React, { useState, ReactElement } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {;
-Play,
+import {
+  Play,
 Save,
 Undo2,
 Redo2,

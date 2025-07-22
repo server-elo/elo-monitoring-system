@@ -1,30 +1,32 @@
-import React, { ReactElement } from "react";
-("use client");
-import { useState, useEffect } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Code2, Sparkles } from "lucide-react";
-import Link from "next/link";
-export function HeroSection(): void {
-  const [mounted, setMounted] = useState(false);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+'use client'
+
+import React, { ReactElement } from 'react'
+import { useState, useEffect } from 'react'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { ArrowRight, Code2, Sparkles } from 'lucide-react'
+import Link from 'next/link'
+
+export function HeroSection(): ReactElement {
+  const [mounted, setMounted] = useState(false)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
   // Parallax effect transforms
-  const backgroundX = useTransform(mouseX, [-300, 300], [-20, 20]);
-  const backgroundY = useTransform(mouseY, [-300, 300], [-20, 20]);
+  const backgroundX = useTransform(mouseX, [-300, 300], [-20, 20])
+  const backgroundY = useTransform(mouseY, [-300, 300], [-20, 20])
   useEffect(() => {
-    setMounted(true);
+    setMounted(true)
     const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      const x = clientX - innerWidth / 2;
-      const y = clientY - innerHeight / 2;
-      mouseX.set(x);
-      mouseY.set(y);
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
+      const { clientX, clientY } = e
+      const { innerWidth, innerHeight } = window
+      const x = clientX - innerWidth / 2
+      const y = clientY - innerHeight / 2
+      mouseX.set(x)
+      mouseY.set(y)
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [mouseX, mouseY])
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -34,27 +36,27 @@ export function HeroSection(): void {
         delayChildren: 0.3,
       },
     },
-  };
+  }
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: 'spring',
         damping: 12,
         stiffness: 100,
       },
     },
-  };
+  }
   const floatingAnimation = {
     y: [0, -10, 0],
     transition: {
       duration: 3,
       repeat: Infinity,
-      ease: "easeInOut",
+      ease: 'easeInOut',
     },
-  };
+  }
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background Gradients */}
@@ -88,7 +90,7 @@ export function HeroSection(): void {
               duration: 3 + Math.random() * 2,
               repeat: Infinity,
               delay: Math.random() * 2,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
           />
         ))}
@@ -150,7 +152,7 @@ export function HeroSection(): void {
                 </span>
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400"
-                  initial={{ x: "100%" }}
+                  initial={{ x: '100%' }}
                   whileHover={{ x: 0 }}
                   transition={{ duration: 0.3 }}
                 />
@@ -185,10 +187,10 @@ export function HeroSection(): void {
           className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8"
         >
           {[
-            { label: "Active Learners", value: "10,000+", icon: "👥" },
-            { label: "Smart Contracts", value: "50,000+", icon: "📜" },
-            { label: "Success Rate", value: "94%", icon: "🎯" },
-            { label: "AI Interactions", value: "1M+", icon: "🤖" },
+            { label: 'Active Learners', value: '10,000+', icon: '👥' },
+            { label: 'Smart Contracts', value: '50,000+', icon: '📜' },
+            { label: 'Success Rate', value: '94%', icon: '🎯' },
+            { label: 'AI Interactions', value: '1M+', icon: '🤖' },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -212,16 +214,16 @@ export function HeroSection(): void {
       <motion.div
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
         animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
       >
         <div className="w-6 h-10 border-2 border-purple-400/30 rounded-full flex justify-center p-2">
           <motion.div
             className="w-1 h-2 bg-purple-400 rounded-full"
             animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           />
         </div>
       </motion.div>
     </section>
-  );
+  )
 }

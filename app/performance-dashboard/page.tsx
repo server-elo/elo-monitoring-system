@@ -1,5 +1,6 @@
+"use client";
+
 import React, { ReactElement } from "react";
-("use client");
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { PerformanceMonitor } from "@/components/performance/PerformanceMonitor";

@@ -1,43 +1,229 @@
-/** * React Hook for Security Analysis *  * Provides easy integration of the SecurityScanner with React components * and Monaco Editor instances. */ 'use client'; import { useState, useEffect, useCallback, useRef } from 'react';
-import { editor } from 'monaco-editor';
-import { SecurityScanner, SecurityScanResult, SecurityIssue } from '@/lib/security/SecurityScanner'; interface UseSecurityAnalysisOptions {
+/**
+ * React Hook for Security Analysis Integration
+ * 
+ * Provides easy integration of the SecurityScanner with React components
+ * and Monaco Editor instances for real-time security vulnerability detection.
+ */
+'use client';
+
+import { useState, useEffect, useCallback, useRef } from 'react';
+import * as monaco from 'monaco-editor';
+import { SecurityScanner, SecurityScanResult, SecurityVulnerability } from '@/lib/security/SecurityScanner';
+
+interface UseSecurityAnalysisOptions {
   enableRealtime?: boolean;
   enableAIAnalysis?: boolean;
   enablePatternMatching?: boolean;
   severityThreshold?: 'low' | 'medium' | 'high' | 'critical';
   maxCodeLength?: number;
   enableAutoFix?: boolean;
-} interface UseSecurityAnalysisReturn {
+}
+
+interface UseSecurityAnalysisReturn {
   scanResult: SecurityScanResult | null;
   isScanning: boolean;
   lastError: Error | null;
   scanner: SecurityScanner | null;
   performAnalysis: () => Promise<void>;
   clearResults: () => void;
-  updateConfig: (config: Partial<UseSecurityAnalysisOptions>) => void;
-  autoFixIssue: (issue: SecurityIssue) => Promise<boolean>;
-  jumpToIssue: (issue: SecurityIssue) => void;
-} export function useSecurityAnalysis( editorInstance: editor.IStandaloneCodeEditor | null, userId: string, options: UseSecurityAnalysisOptions = {}
-): UseSecurityAnalysisReturn { const [scanResult, setScanResult] = useState<SecurityScanResult | null>(null); const [isScanning, setIsScanning] = useState(false); const [lastError, setLastError] = useState<Error | null>(null); const [scanner, setScanner] = useState<SecurityScanner | null>(null); const scannerRef = useRef<SecurityScanner | null>(null); const optionsRef = useRef(options); // Update options ref when options change useEffect(() => { optionsRef.current: options; }, [options]); // Initialize scanner when editorInstance is available useEffect(() => { if (!editorInstance || !userId) { return; }
-try { const newScanner = new SecurityScanner(editorInstance, userId, { enableRealtime: options.enableRealtime ?? true, enableAIAnalysis: options.enableAIAnalysis ?? true, enablePatternMatching: options.enablePatternMatching ?? true, severityThreshold: options.severityThreshold ?? 'low', maxCodeLength: options.maxCodeLength ?? 10000, enableAutoFix: options.enableAutoFix ?? true, enableVisualIndicators: true, enableHoverTooltips: true }); // Add listener for scan results const handleScanResult = (result: SecurityScanResult | null) => { setScanResult(result); setIsScanning(false); setLastError(null); };  newScanner.addListener(handleScanResult); // The SecurityScanner performs automatic analysis on content changes // Set initial scanning state setIsScanning(false); setScanner(newScanner); scannerRef.current: newScanner; return () => {  newScanner.removeListener(handleScanResult);  newScanner.dispose(); scannerRef.current: null; }; } catch (error) { console.error('Failed to initialize security, scanner:', error); setLastError(error instanceof Error ?, error : new Error('Scanner initialization failed')); }
-}, [editorInstance, userId]); // Perform manual analysis const performAnalysis = useCallback( async () => { if (!scannerRef.current) { throw new Error('Scanner not initialized'); }
-try { setIsScanning(true); setLastError(null); // SecurityScanner automatically analyzes on content changes // Force trigger by simulating a minor content change if (editorInstance && editorInstance.getModel()) { const model = editorInstance.getModel(); const value = model.getValue(); // Trigger analysis by updating the model model.setValue(value); } catch (error) { console.error(error); }
-} catch (error) { const errorObj = error instanceof Error ? error : new Error('Analysis failed'); setLastError(errorObj); setIsScanning(false); throw errorObj; }
-}, []); // Clear results const clearResults = useCallback(() => { setScanResult(null); setLastError(null); setIsScanning(false); }, []); // Update scanner configuration
-const updateConfig = useCallback((newConfig: Partial<UseSecurityAnalysisOptions>) => { if (scannerRef.current) { scannerRef.current.updateConfig({ enableRealtime: newConfig.enableRealtime, enableAIAnalysis: newConfig.enableAIAnalysis, enablePatternMatching: newConfig.enablePatternMatching, severityThreshold: newConfig.severityThreshold, maxCodeLength: newConfig.maxCodeLength, enableAutoFix: newConfig.enableAutoFix }); }
-optionsRef.current = { ...optionsRef.current, ...newConfig }; }, []); // Auto-fix an issue const autoFixIssue = useCallback( async (issue: SecurityIssue): Promise<boolean> => { if (!editorInstance || !issue.autoFixAvailable) { return false; }
-try { const model = editorInstance.getModel(); if (!model) return false; // Generate auto-fix based on issue type const fix = generateAutoFix(issue); if (!fix) return false; // Apply the fix const range = new monaco.Range( issue.line, issue.column, issue.endLine, issue.endColumn
-); editorInstance.executeEdits('security-autofix', [{ range, text: fix, forceMoveMarkers: true }]); // Trigger re-analysis after a short delay setTimeout(() => { performAnalysis().catch (console.error); }, 500); return true; } catch (error) { console.error('Auto-fix, failed:', error); return false; }
-}, [editorInstance, performAnalysis]); // Jump to issue location in editorInstance const jumpToIssue = useCallback((issue: SecurityIssue) => { if (!editorInstance) return; const range = new monaco.Range( issue.line, issue.column, issue.endLine, issue.endColumn
-); editorInstance.setSelection(range); editorInstance.revealRangeInCenter(range); editorInstance.focus(); }, [editorInstance]); return { scanResult, isScanning, lastError, scanner, performAnalysis, clearResults, updateConfig, autoFixIssue, jumpToIssue };
-} // Helper function to generate auto-fixes
-function generateAutoFix(issue: SecurityIssue): string | null { switch (issue.type) { case ',
-vulnerability': if (issue.title.includes('tx.origin')) { return 'msg.sender'; }
-break; case 'gas-optimization': if (issue.title.includes('Function Visibility')) { return issue.suggestion.includes('external') ? 'external' : 'public'; }
-break; case 'best-practice': if (issue.title.includes('Error Message')) { // Extract the condition from 'require' statement const match = issue.message.match(_/require\s*\(\s*([^)]+)\s*\)/); if (match) { return `require( ${match[1]}, "Condition failed")`; }
+  applyAutoFix: (vulnerability: SecurityVulnerability) => Promise<boolean>;
+  jumpToVulnerability: (vulnerability: SecurityVulnerability) => void;
+  getSecurityMetrics: () => SecurityMetrics;
 }
-break; }
-return null;
-} // Custom hook for security metrics
-export function useSecurityMetrics(scanResult: SecurityScanResult | null): void { const metrics: { totalIssues: scanResult?.issues.length || 0, criticalIssues: scanResult?.issues.filter(i => i.severity === 'critical').length || 0, highIssues: scanResult?.issues.filter(i => i.severity === 'high').length || 0, mediumIssues: scanResult?.issues.filter(i => i.severity === 'medium').length || 0, lowIssues: scanResult?.issues.filter(i => i.severity === 'low').length || 0, fixableIssues: scanResult?.issues.filter(i => i.autoFixAvailable).length || 0, gasOptimizations: scanResult?.issues.filter(i => i.type === 'gas-optimization').length || 0, securityScore: scanResult?.overallScore || 0, analysisTime: scanResult?.scanTime || 0, aiAnalysisUsed: scanResult?.aiAnalysisUsed || false, cacheHit: scanResult?.cacheHit || false }; const getScoreColor = (score: number) => { if (score >=== 80) return 'text-green-600'; if (score >=== 60) return 'text-yellow-600'; return 'text-red-600'; }; const getScoreLabel = (score: number) => { if (score >=== 90) return 'Excellent'; if (score >=== 80) return 'Good'; if (score >=== 60) return 'Fair'; if (score >=== 40) return 'Poor'; return 'Critical'; }; return { ...metrics, getScoreColor, getScoreLabel };
+
+interface SecurityMetrics {
+  totalVulnerabilities: number;
+  criticalCount: number;
+  highCount: number;
+  mediumCount: number;
+  lowCount: number;
+  autoFixableCount: number;
+  patternBasedCount: number;
+  aiDetectedCount: number;
+  securityScore: number;
+}
+
+export function useSecurityAnalysis(
+  editorInstance: monaco.editor.IStandaloneCodeEditor | null,
+  userId: string,
+  options: UseSecurityAnalysisOptions = {}
+): UseSecurityAnalysisReturn {
+  const [scanResult, setScanResult] = useState<SecurityScanResult | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [lastError, setLastError] = useState<Error | null>(null);
+  const [scanner, setScanner] = useState<SecurityScanner | null>(null);
+  const scannerRef = useRef<SecurityScanner | null>(null);
+
+  // Initialize scanner when editor instance changes
+  useEffect(() => {
+    if (!editorInstance || !userId) {
+      return;
+    }
+
+    try {
+      const newScanner = new SecurityScanner(editorInstance, userId, {
+        enableRealtime: options.enableRealtime ?? true,
+        enableAIAnalysis: options.enableAIAnalysis ?? true,
+        enablePatternMatching: options.enablePatternMatching ?? true,
+        severityThreshold: options.severityThreshold ?? 'low',
+        maxCodeLength: options.maxCodeLength ?? 10000,
+        enableAutoFix: options.enableAutoFix ?? true,
+        enableVisualIndicators: true,
+        enableHoverTooltips: true
+      });
+
+      // Set up event handler for scan results
+      const handleScanResult = (result: SecurityScanResult | null) => {
+        setScanResult(result);
+        setIsScanning(false);
+        setLastError(null);
+      };
+
+      newScanner.addListener(handleScanResult);
+      
+      // The SecurityScanner performs automatic analysis on content changes
+      // Set initial scanning state
+      setIsScanning(false);
+      setScanner(newScanner);
+      scannerRef.current = newScanner;
+
+      return () => {
+        newScanner.removeListener(handleScanResult);
+        newScanner.dispose();
+        scannerRef.current = null;
+      };
+    } catch (error) {
+      console.error('Failed to initialize security scanner:', error);
+      setLastError(error instanceof Error ? error : new Error('Scanner initialization failed'));
+    }
+  }, [editorInstance, userId, options.enableRealtime, options.enableAIAnalysis, options.enablePatternMatching, options.severityThreshold, options.maxCodeLength, options.enableAutoFix]);
+
+  // Perform manual security analysis
+  const performAnalysis = useCallback(async () => {
+    if (!scannerRef.current) {
+      throw new Error('Scanner not initialized');
+    }
+
+    try {
+      setIsScanning(true);
+      setLastError(null);
+      
+      const result = await scannerRef.current.performFullScan();
+      setScanResult(result);
+      
+      console.log(`✅ Security scan completed: ${result.vulnerabilities.length} vulnerabilities found`);
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error('Security scan failed');
+      setLastError(errorObj);
+      console.error('Security scan failed:', errorObj);
+      throw errorObj;
+    } finally {
+      setIsScanning(false);
+    }
+  }, []);
+
+  // Clear scan results
+  const clearResults = useCallback(() => {
+    setScanResult(null);
+    setLastError(null);
+    
+    if (scannerRef.current) {
+      scannerRef.current.clearDecorations();
+    }
+  }, []);
+
+  // Apply auto-fix for a vulnerability
+  const applyAutoFix = useCallback(async (vulnerability: SecurityVulnerability): Promise<boolean> => {
+    if (!scannerRef.current) {
+      throw new Error('Scanner not initialized');
+    }
+
+    if (!vulnerability.autoFixAvailable || !vulnerability.suggestedFix) {
+      return false;
+    }
+
+    try {
+      const applied = await scannerRef.current.applyAutoFix(vulnerability);
+      
+      if (applied) {
+        // Re-scan after applying fix
+        await performAnalysis();
+      }
+      
+      return applied;
+    } catch (error) {
+      console.error('Failed to apply auto-fix:', error);
+      return false;
+    }
+  }, [performAnalysis]);
+
+  // Jump to vulnerability location in editor
+  const jumpToVulnerability = useCallback((vulnerability: SecurityVulnerability) => {
+    if (!editorInstance) {
+      return;
+    }
+
+    editorInstance.revealLineInCenter(vulnerability.range.startLineNumber);
+    editorInstance.setSelection({
+      startLineNumber: vulnerability.range.startLineNumber,
+      startColumn: vulnerability.range.startColumn,
+      endLineNumber: vulnerability.range.endLineNumber,
+      endColumn: vulnerability.range.endColumn
+    });
+    editorInstance.focus();
+  }, [editorInstance]);
+
+  // Get aggregated security metrics
+  const getSecurityMetrics = useCallback((): SecurityMetrics => {
+    if (!scanResult) {
+      return {
+        totalVulnerabilities: 0,
+        criticalCount: 0,
+        highCount: 0,
+        mediumCount: 0,
+        lowCount: 0,
+        autoFixableCount: 0,
+        patternBasedCount: 0,
+        aiDetectedCount: 0,
+        securityScore: 100
+      };
+    }
+
+    const vulnerabilities = scanResult.vulnerabilities;
+    const criticalCount = vulnerabilities.filter(v => v.severity === 'critical').length;
+    const highCount = vulnerabilities.filter(v => v.severity === 'high').length;
+    const mediumCount = vulnerabilities.filter(v => v.severity === 'medium').length;
+    const lowCount = vulnerabilities.filter(v => v.severity === 'low').length;
+    const autoFixableCount = vulnerabilities.filter(v => v.autoFixAvailable).length;
+    const patternBasedCount = vulnerabilities.filter(v => v.detectionMethod === 'pattern').length;
+    const aiDetectedCount = vulnerabilities.filter(v => v.detectionMethod === 'ai').length;
+
+    // Calculate security score (100 - weighted vulnerability score)
+    const weightedScore = criticalCount * 10 + highCount * 5 + mediumCount * 2 + lowCount * 1;
+    const securityScore = Math.max(0, 100 - weightedScore);
+
+    return {
+      totalVulnerabilities: vulnerabilities.length,
+      criticalCount,
+      highCount,
+      mediumCount,
+      lowCount,
+      autoFixableCount,
+      patternBasedCount,
+      aiDetectedCount,
+      securityScore
+    };
+  }, [scanResult]);
+
+  return {
+    scanResult,
+    isScanning,
+    lastError,
+    scanner,
+    performAnalysis,
+    clearResults,
+    applyAutoFix,
+    jumpToVulnerability,
+    getSecurityMetrics
+  };
 }

@@ -31,8 +31,7 @@ interface ModuleNavigationProps {
   /** Module progress */
   moduleProgress?: ModuleProgress;
   /** Map of lesson progress */
-  lessonProgress: Map<string;
-  LessonProgress>;
+  lessonProgress: Map<string, LessonProgress>;
   /** Callback when a lesson is selected */
   onLessonSelect: (lesson: Lesson) => void;
   /** Whether navigation is collapsible */
@@ -67,8 +66,8 @@ export function ModuleNavigation({
   moduleProgress,
   lessonProgress,
   onLessonSelect,
-  collapsible: false,
-  defaultCollapsed: false,
+  collapsible = false,
+  defaultCollapsed = false,
   className
 }: ModuleNavigationProps): ReactElement {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
@@ -97,38 +96,30 @@ export function ModuleNavigation({
   // Get lesson icon based on type
   const getLessonIcon = (type: string) => {
     switch (type) {
-      case ',
-      theory':
-      return Book;
-      case ',
-      practical':
-      case ',
-      exercise':
-      return Code;
-      case ',
-      project':
-      return FileText;
-      case ',
-      quiz':
-      return Lightbulb;
+      case 'theory':
+        return Book;
+      case 'practical':
+      case 'exercise':
+        return Code;
+      case 'project':
+        return FileText;
+      case 'quiz':
+        return Lightbulb;
       default:
-      return Book;
+        return Book;
     }
   };
   // Get status icon
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case ',
-      completed':
-      return <CheckCircle2 className="w-4 h-4 text-green-500" />;
-      case ',
-      in_progress':
-      return <Clock className="w-4 h-4 text-yellow-500" />;
-      case ',
-      locked':
-      return <Lock className="w-4 h-4 text-gray-400" />;
+      case 'completed':
+        return <CheckCircle2 className="w-4 h-4 text-green-500" />;
+      case 'in_progress':
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      case 'locked':
+        return <Lock className="w-4 h-4 text-gray-400" />;
       default:
-      return <Circle className="w-4 h-4 text-gray-400" />;
+        return <Circle className="w-4 h-4 text-gray-400" />;
     }
   };
   return (
@@ -173,10 +164,10 @@ export function ModuleNavigation({
     {/* Lessons List */}
     <ScrollArea className="flex-1">
     <div className="p-2">
-    {module.lessons.map(lesson, index) => {
+    {module.lessons.map((lesson, index) => {
       const status = getLessonStatus(lesson);
       const LessonIcon = getLessonIcon(lesson.type);
-      const isActive = currentLesson?.id = lesson.id;
+      const isActive = currentLesson?.id === lesson.id;
       const isAccessible = status !== 'locked';
       const progress = lessonProgress.get(lesson.id);
       return (

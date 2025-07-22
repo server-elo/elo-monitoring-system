@@ -2,9 +2,9 @@
  * @fileoverview Learning dashboard component that integrates all learning modules
  * @module components/learning/LearningDashboard
  */
-"use client";
-import { ReactElement, useState, useMemo, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+'use client'
+import { ReactElement, useState, useMemo, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Module,
   Lesson,
@@ -12,9 +12,9 @@ import {
   ModuleStatus,
   LearningPath,
   UserId,
-} from "@/types/learning";
-import { useLearningProgress } from "@/hooks/useLearningProgress";
-import { cn } from "@/lib/utils";
+} from '@/types/learning'
+import { useLearningProgress } from '@/hooks/useLearningProgress'
+import { cn } from '@/lib/utils'
 import {
   getAllModules,
   getModuleById,
@@ -22,22 +22,22 @@ import {
   getNextLesson,
   getPreviousLesson,
   learningPaths,
-} from "@/lib/curriculum/solidityModules";
+} from '@/lib/curriculum/solidityModules'
 // Components
-import { LearningPathVisualization } from "./LearningPathVisualization";
-import { ModuleCard } from "./ModuleCard";
-import { LessonCard } from "./LessonCard";
-import { ModuleNavigation } from "./ModuleNavigation";
-import { LessonViewer } from "./LessonViewer";
-import { InteractiveExercise } from "./InteractiveExercise";
+import { LearningPathVisualization } from './LearningPathVisualization'
+import { ModuleCard } from './ModuleCard'
+import { LessonCard } from './LessonCard'
+import { ModuleNavigation } from './ModuleNavigation'
+import { LessonViewer } from './LessonViewer'
+import { InteractiveExercise } from './InteractiveExercise'
 // UI Components
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
 import {
   Book,
   Trophy,
@@ -48,14 +48,14 @@ import {
   ChevronLeft,
   Grid,
   List,
-} from "lucide-react";
+} from 'lucide-react'
 interface LearningDashboardProps {
   /** User ID for tracking progress */
-  userId: UserId;
+  userId: UserId
   /** Optional CSS class name */
-  className?: string;
+  className?: string
 }
-type ViewMode = "path" | "modules" | "lesson" | "exercise";
+type ViewMode = 'path' | 'modules' | 'lesson' | 'exercise'
 /**
  * Main learning dashboard that provides access to all learning features.
  *
@@ -73,16 +73,16 @@ export function LearningDashboard({
   className,
 }: LearningDashboardProps): ReactElement {
   // State
-  const [viewMode, setViewMode] = useState<ViewMode>("modules");
-  const [selectedPath, setSelectedPath] = useState<LearningPath | null>(null);
-  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('modules')
+  const [selectedPath, setSelectedPath] = useState<LearningPath | null>(null)
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null)
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null)
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
     null,
-  );
-  const [moduleViewType, setModuleViewType] = useState<"grid" | "list">("grid");
+  )
+  const [moduleViewType, setModuleViewType] = useState<'grid' | 'list'>('grid')
   // Get all modules
-  const modules = useMemo(() => getAllModules(), []);
+  const modules = useMemo(() => getAllModules(), [])
   // Progress tracking
   const {
     userProgress,
@@ -99,130 +99,130 @@ export function LearningDashboard({
     getUserLevel,
     getXPForNextLevel,
     addXP,
-  } = useLearningProgress(userId);
+  } = useLearningProgress(userId)
   // Calculate module statuses
   const moduleProgressMap = useMemo(() => {
-    const map = new Map<string, ModuleStatus>();
+    const map = new Map<string, ModuleStatus>()
     modules.forEach((module: unknown) => {
-      const progress = getModuleProgress(module.id);
+      const progress = getModuleProgress(module.id)
       if (progress?.status) {
-        map.set(module.id, progress.status);
+        map.set(module.id, progress.status)
       } else {
         // Check if prerequisites are met
         const prerequisitesMet = module.prerequisites.every(
           (prereqId: unknown) => {
-            const prereqProgress = getModuleProgress(prereqId as any);
-            return prereqProgress?.status === ModuleStatus.COMPLETED;
+            const prereqProgress = getModuleProgress(prereqId as any)
+            return prereqProgress?.status === ModuleStatus.COMPLETED
           },
-        );
+        )
         map.set(
           module.id,
           prerequisitesMet ? ModuleStatus.AVAILABLE : ModuleStatus.LOCKED,
-        );
+        )
       }
-    });
-    return map;
-  }, [modules, getModuleProgress]);
+    })
+    return map
+  }, [modules, getModuleProgress])
   // Calculate lesson progress map
   const lessonProgressMap = useMemo(() => {
-    const map = new Map<string, any>();
+    const map = new Map<string, any>()
     if (selectedModule) {
       selectedModule.lessons.forEach((lesson: unknown) => {
-        const progress = getLessonProgress(lesson.id);
+        const progress = getLessonProgress(lesson.id)
         if (progress) {
-          map.set(lesson.id, progress);
+          map.set(lesson.id, progress)
         }
-      });
+      })
     }
-    return map;
-  }, [selectedModule, getLessonProgress]);
+    return map
+  }, [selectedModule, getLessonProgress])
   // Handle module selection
   const handleModuleSelect = (moduleId: string) => {
-    const module = getModuleById(moduleId);
+    const module = getModuleById(moduleId)
     if (module) {
-      setSelectedModule(module);
-      setViewMode("lesson");
+      setSelectedModule(module)
+      setViewMode('lesson')
       // Start module if not started
-      const progress = getModuleProgress(module.id);
+      const progress = getModuleProgress(module.id)
       if (!progress) {
-        startModule(module.id);
+        startModule(module.id)
       }
     }
-  };
+  }
   // Handle lesson selection
   const handleLessonSelect = (lesson: Lesson) => {
-    setSelectedLesson(lesson);
-    startLesson(lesson.id);
-  };
+    setSelectedLesson(lesson)
+    startLesson(lesson.id)
+  }
   // Handle lesson completion
   const handleLessonComplete = () => {
     if (selectedLesson) {
-      completeLesson(selectedLesson.id, 100);
-      addXP(50); // Base XP for lesson completion
+      completeLesson(selectedLesson.id, 100)
+      addXP(50) // Base XP for lesson completion
       // Check if module is complete
       if (selectedModule) {
         const allLessonsComplete = selectedModule.lessons.every(
           (lesson: unknown) => getLessonProgress(lesson.id)?.completed,
-        );
+        )
         if (allLessonsComplete) {
-          completeModule(selectedModule.id);
-          addXP(200); // Bonus XP for module completion
+          completeModule(selectedModule.id)
+          addXP(200) // Bonus XP for module completion
         }
       }
     }
-  };
+  }
   // Handle exercise start
   const handleExerciseStart = (exercise: Exercise) => {
-    setSelectedExercise(exercise);
-    setViewMode("exercise");
-    startExercise(exercise.id);
-  };
+    setSelectedExercise(exercise)
+    setViewMode('exercise')
+    startExercise(exercise.id)
+  }
   // Handle exercise completion
   const handleExerciseComplete = (score: number, solution: string) => {
     if (selectedExercise) {
-      completeExercise(selectedExercise.id, score, solution);
-      addXP(selectedExercise.xpReward);
-      setViewMode("lesson");
-      setSelectedExercise(null);
+      completeExercise(selectedExercise.id, score, solution)
+      addXP(selectedExercise.xpReward)
+      setViewMode('lesson')
+      setSelectedExercise(null)
     }
-  };
+  }
   // Handle navigation
   const handleNextLesson = () => {
     if (selectedLesson) {
-      const nextLesson = getNextLesson(selectedLesson.id);
+      const nextLesson = getNextLesson(selectedLesson.id)
       if (nextLesson) {
-        handleLessonSelect(nextLesson);
+        handleLessonSelect(nextLesson)
       }
     }
-  };
+  }
   const handlePreviousLesson = () => {
     if (selectedLesson) {
-      const prevLesson = getPreviousLesson(selectedLesson.id);
+      const prevLesson = getPreviousLesson(selectedLesson.id)
       if (prevLesson) {
-        handleLessonSelect(prevLesson);
+        handleLessonSelect(prevLesson)
       }
     }
-  };
+  }
   // Calculate overall progress
   const overallProgress = useMemo(() => {
-    const totalModules = modules.length;
+    const totalModules = modules.length
     const completedModules = Array.from(moduleProgressMap.values()).filter(
       (status: unknown) => (status = ModuleStatus.COMPLETED),
-    ).length;
+    ).length
     return totalModules > 0
       ? Math.round((completedModules / totalModules) * 100)
-      : 0;
-  }, [modules, moduleProgressMap]);
+      : 0
+  }, [modules, moduleProgressMap])
   // Get current level and XP
-  const currentLevel = getUserLevel();
-  const xpForNextLevel = getXPForNextLevel();
-  const currentXP = userProgress?.totalXp || 0;
-  const xpProgress = ((currentXP % xpForNextLevel) / xpForNextLevel) * 100;
+  const currentLevel = getUserLevel()
+  const xpForNextLevel = getXPForNextLevel()
+  const currentXP = userProgress?.totalXp || 0
+  const xpProgress = ((currentXP % xpForNextLevel) / xpForNextLevel) * 100
   return (
-    <div className={cn("flex h-full", className)}>
+    <div className={cn('flex h-full', className)}>
       {/* Sidebar for lesson view */}
       {
-        (viewMode = "lesson" && selectedModule && (
+        (viewMode = 'lesson' && selectedModule && (
           <ModuleNavigation
             module={selectedModule}
             currentLesson={selectedLesson || undefined}
@@ -239,19 +239,19 @@ export function LearningDashboard({
         <div className="border-b p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              {viewMode !== "modules" && (
+              {viewMode !== 'modules' && (
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => {
-                    if (viewMode === "exercise") {
-                      setViewMode("lesson");
-                    } else if (viewMode === "lesson") {
-                      setViewMode("modules");
-                      setSelectedModule(null);
-                      setSelectedLesson(null);
+                    if (viewMode === 'exercise') {
+                      setViewMode('lesson')
+                    } else if (viewMode === 'lesson') {
+                      setViewMode('modules')
+                      setSelectedModule(null)
+                      setSelectedLesson(null)
                     } else {
-                      setViewMode("modules");
+                      setViewMode('modules')
                     }
                   }}
                 >
@@ -259,10 +259,10 @@ export function LearningDashboard({
                 </Button>
               )}
               <h1 className="text-3xl font-bold">
-                {(viewMode = "modules" && "Learning Dashboard")}
-                {(viewMode = "path" && "Learning Path")}
-                {(viewMode = "lesson" && selectedModule?.title)}
-                {(viewMode = "exercise" && "Exercise")}
+                {(viewMode = 'modules' && 'Learning Dashboard')}
+                {(viewMode = 'path' && 'Learning Path')}
+                {(viewMode = 'lesson' && selectedModule?.title)}
+                {(viewMode = 'exercise' && 'Exercise')}
               </h1>
             </div>
             {/* User Stats */}
@@ -293,7 +293,7 @@ export function LearningDashboard({
           </div>
           {/* Progress Overview (modules view only) */}
           {
-            (viewMode = "modules" && (
+            (viewMode = 'modules' && (
               <div className="grid grid-cols-4 gap-4">
                 <Card className="p-4">
                   <div className="flex items-center gap-3">
@@ -362,7 +362,7 @@ export function LearningDashboard({
           <AnimatePresence mode="wait">
             {/* Modules View */}
             {
-              (viewMode = "modules" && (
+              (viewMode = 'modules' && (
                 <motion.div
                   key="modules"
                   initial={{ opacity: 0 }}
@@ -384,8 +384,8 @@ export function LearningDashboard({
                               key={path.id}
                               className="p-6 cursor-pointer hover:shadow-lg transition-shadow"
                               onClick={() => {
-                                setSelectedPath(path);
-                                setViewMode("path");
+                                setSelectedPath(path)
+                                setViewMode('path')
                               }}
                             >
                               <h3 className="text-xl font-semibold mb-2">
@@ -421,19 +421,19 @@ export function LearningDashboard({
                         <div className="flex items-center gap-2">
                           <Button
                             variant={
-                              (moduleViewType = "grid" ? "secondary" : "ghost")
+                              (moduleViewType = 'grid' ? 'secondary' : 'ghost')
                             }
                             size="icon"
-                            onClick={() => setModuleViewType("grid")}
+                            onClick={() => setModuleViewType('grid')}
                           >
                             <Grid className="w-4 h-4" />
                           </Button>
                           <Button
                             variant={
-                              (moduleViewType = "list" ? "secondary" : "ghost")
+                              (moduleViewType = 'list' ? 'secondary' : 'ghost')
                             }
                             size="icon"
-                            onClick={() => setModuleViewType("list")}
+                            onClick={() => setModuleViewType('list')}
                           >
                             <List className="w-4 h-4" />
                           </Button>
@@ -442,10 +442,10 @@ export function LearningDashboard({
                       <ScrollArea className="flex-1">
                         <div
                           className={cn(
-                            "p-6",
-                            (moduleViewType = "grid"
-                              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                              : "space-y-4"),
+                            'p-6',
+                            (moduleViewType = 'grid'
+                              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                              : 'space-y-4'),
                           )}
                         >
                           {modules.map((module: unknown) => (
@@ -461,7 +461,7 @@ export function LearningDashboard({
                                 module.lessons.length,
                               )}
                               onClick={() => handleModuleSelect(module.id)}
-                              detailed={(moduleViewType = "list")}
+                              detailed={(moduleViewType = 'list')}
                             />
                           ))}
                         </div>
@@ -473,7 +473,7 @@ export function LearningDashboard({
             }
             {/* Learning Path View */}
             {
-              (viewMode = "path" && selectedPath && (
+              (viewMode = 'path' && selectedPath && (
                 <motion.div
                   key="path"
                   initial={{ opacity: 0 }}
@@ -492,7 +492,7 @@ export function LearningDashboard({
             }
             {/* Lesson View */}
             {
-              (viewMode = "lesson" && selectedLesson && (
+              (viewMode = 'lesson' && selectedLesson && (
                 <motion.div
                   key="lesson"
                   initial={{ opacity: 0 }}
@@ -515,7 +515,7 @@ export function LearningDashboard({
             }
             {/* Exercise View */}
             {
-              (viewMode = "exercise" && selectedExercise && (
+              (viewMode = 'exercise' && selectedExercise && (
                 <motion.div
                   key="exercise"
                   initial={{ opacity: 0 }}
@@ -528,8 +528,8 @@ export function LearningDashboard({
                     progress={getExerciseProgress(selectedExercise.id)}
                     onComplete={handleExerciseComplete}
                     onClose={() => {
-                      setViewMode("lesson");
-                      setSelectedExercise(null);
+                      setViewMode('lesson')
+                      setSelectedExercise(null)
                     }}
                   />
                 </motion.div>
@@ -539,5 +539,5 @@ export function LearningDashboard({
         </div>
       </div>
     </div>
-  );
+  )
 }

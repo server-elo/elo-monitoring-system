@@ -9,8 +9,8 @@
 'use client';
 import React, { useState, useMemo, ReactElement } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {;
-Search,
+import {
+  Search,
 FileCode,
 Hash,
 Function,
@@ -34,8 +34,8 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {;
-Sheet,
+import {
+  Sheet,
 SheetContent,
 SheetDescription,
 SheetHeader,

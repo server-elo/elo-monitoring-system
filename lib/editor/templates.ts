@@ -4,18 +4,18 @@
  * Predefined code templates for common smart contract patterns
  */
 export interface CodeTemplate {
-  id: string;
-  name: string;
-  description: string;
-  code: string;
-  category: "basic" | "defi" | "nft" | "dao" | "security" | "advanced";
+  id: string
+  name: string
+  description: string
+  code: string
+  category: 'basic' | 'defi' | 'nft' | 'dao' | 'security' | 'advanced'
 }
 export const solidityTemplates: CodeTemplate[] = [
   {
-    id: "erc20-basic",
-    name: "ERC20 Token",
-    description: "Basic ERC20 token implementation",
-    category: "basic",
+    id: 'erc20-basic',
+    name: 'ERC20 Token',
+    description: 'Basic ERC20 token implementation',
+    category: 'basic',
     code: `// SPDX-License-Identifier: MIT
   pragma solidity ^0.8.20;
   interface IERC20 {
@@ -85,10 +85,10 @@ export const solidityTemplates: CodeTemplate[] = [
   }`,
   },
   {
-    id: "erc721-basic",
-    name: "ERC721 NFT",
-    description: "Basic ERC721 NFT implementation",
-    category: "nft",
+    id: 'erc721-basic',
+    name: 'ERC721 NFT',
+    description: 'Basic ERC721 NFT implementation',
+    category: 'nft',
     code: `// SPDX-License-Identifier: MIT
   pragma solidity ^0.8.20;
   interface IERC721 {
@@ -176,10 +176,10 @@ export const solidityTemplates: CodeTemplate[] = [
   }`,
   },
   {
-    id: "multisig-wallet",
-    name: "MultiSig Wallet",
-    description: "Multi-signature wallet for secure fund management",
-    category: "security",
+    id: 'multisig-wallet',
+    name: 'MultiSig Wallet',
+    description: 'Multi-signature wallet for secure fund management',
+    category: 'security',
     code: `// SPDX-License-Identifier: MIT
   pragma solidity ^0.8.20;
   contract MultiSigWallet {
@@ -312,10 +312,10 @@ export const solidityTemplates: CodeTemplate[] = [
   }`,
   },
   {
-    id: "escrow",
-    name: "Escrow Contract",
-    description: "Secure escrow for trustless transactions",
-    category: "defi",
+    id: 'escrow',
+    name: 'Escrow Contract',
+    description: 'Secure escrow for trustless transactions',
+    category: 'defi',
     code: `// SPDX-License-Identifier: MIT
   pragma solidity ^0.8.20;
   contract Escrow {
@@ -399,10 +399,10 @@ export const solidityTemplates: CodeTemplate[] = [
   }`,
   },
   {
-    id: "voting",
-    name: "Voting System",
-    description: "Decentralized voting contract",
-    category: "dao",
+    id: 'voting',
+    name: 'Voting System',
+    description: 'Decentralized voting contract',
+    category: 'dao',
     code: `// SPDX-License-Identifier: MIT
   pragma solidity ^0.8.20;
   contract Voting {
@@ -524,10 +524,10 @@ export const solidityTemplates: CodeTemplate[] = [
   }`,
   },
   {
-    id: "staking",
-    name: "Staking Contract",
-    description: "Token staking with rewards",
-    category: "defi",
+    id: 'staking',
+    name: 'Staking Contract',
+    description: 'Token staking with rewards',
+    category: 'defi',
     code: `// SPDX-License-Identifier: MIT
   pragma solidity ^0.8.20;
   interface IERC20 {
@@ -631,12 +631,12 @@ export const solidityTemplates: CodeTemplate[] = [
     }
   }`,
   },
-];
+]
 export function getTemplateById(id: string): CodeTemplate | undefined {
-  return solidityTemplates.find((template: unknown) => (template.id = id));
+  return solidityTemplates.find((template: unknown) => (template.id = id))
 }
 export function getTemplatesByCategory(category: string): CodeTemplate[] {
   return solidityTemplates.filter(
     (template: unknown) => (template.category = category),
-  );
+  )
 }

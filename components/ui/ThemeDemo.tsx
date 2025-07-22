@@ -1,22 +1,23 @@
-"use client";
-import { ReactElement } from "react";
-import { useTheme } from "@/lib/theme/ThemeProvider";
+'use client'
+
+import { ReactElement } from 'react'
+import { useTheme } from '@/lib/theme/ThemeProvider'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Info, CheckCircle2, AlertCircle } from "lucide-react";
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Info, CheckCircle2, AlertCircle } from 'lucide-react'
 export function ThemeDemo(): ReactElement {
-  const { theme, actualTheme } = useTheme();
+  const { theme, actualTheme } = useTheme()
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card>
@@ -25,7 +26,7 @@ export function ThemeDemo(): ReactElement {
           <CardDescription>
             Current theme: <Badge variant="secondary">{theme}</Badge>
             {
-              (theme = "system" && (
+              (theme = 'system' && (
                 <span className="ml-2">
                   (Resolved to: <Badge variant="outline">{actualTheme}</Badge>)
                 </span>
@@ -164,5 +165,5 @@ export function ThemeDemo(): ReactElement {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

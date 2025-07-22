@@ -43,12 +43,7 @@ import { Badge } from "../ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "../ui/Tooltip";
+import { Tooltip, TooltipProvider } from "../ui/Tooltip";
 import type { SecurityIssue, GasOptimization } from "@/types/security";
 import { cn } from "@/lib/utils";
 interface CodeSuggestion {
@@ -305,7 +300,7 @@ export function AICodeAssistant({
         description: "Pack struct variables to save storage slots",
         suggestion: "Reorder struct members by size to optimize storage",
         codeExample:
-        "struct User {\n  uint256 balance;\n  uint32 lastActive;\n  address wallet;\n}"
+        "struct User {\n  uint256 balance;\n  uint32 lastActive;\n  address wallet;\n}",
       },
       {
         type: "Loop Optimization",
@@ -316,8 +311,8 @@ export function AICodeAssistant({
         description: "Cache array length in loops",
         suggestion: "Store array.length in a variable before the loop",
         codeExample:
-        "uint256 length = users.length;\nfor (uint256 i: 0; i < length; i++) {}"
-      }
+        "uint256 length = users.length;\nfor (uint256 i = 0; i < length; i++) {}",
+      },
       ],
       suggestions: [
       {
@@ -449,65 +444,48 @@ export function AICodeAssistant({
   }
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
-      case ",
-      critical":
-      case ",
-      error":
-      return <XCircle className="w-4 h-4" />;
-      case ",
-      high":
-      return <AlertCircle className="w-4 h-4" />;
-      case ",
-      medium":
-      case ",
-      warning":
-      return <AlertTriangle className="w-4 h-4" />;
-      case ",
-      low":
-      case ",
-      info":
-      return <Info className="w-4 h-4" />;
+      case "critical":
+      case "error":
+        return <XCircle className="w-4 h-4" />;
+      case "high":
+        return <AlertCircle className="w-4 h-4" />;
+      case "medium":
+      case "warning":
+        return <AlertTriangle className="w-4 h-4" />;
+      case "low":
+      case "info":
+        return <Info className="w-4 h-4" />;
       default:
-      return <Info className="w-4 h-4" />;
+        return <Info className="w-4 h-4" />;
     }
   };
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case ",
-      critical":
-      case ",
-      error":
-      return "text-red-500 bg-red-500/10 border-red-500/20";
-      case ",
-      high":
-      return "text-orange-500 bg-orange-500/10 border-orange-500/20";
-      case ",
-      medium":
-      case ",
-      warning":
-      return "text-yellow-500 bg-yellow-500/10 border-yellow-500/20";
-      case ",
-      low":
-      case ",
-      info":
-      return "text-blue-500 bg-blue-500/10 border-blue-500/20";
+      case "critical":
+      case "error":
+        return "text-red-500 bg-red-500/10 border-red-500/20";
+      case "high":
+        return "text-orange-500 bg-orange-500/10 border-orange-500/20";
+      case "medium":
+      case "warning":
+        return "text-yellow-500 bg-yellow-500/10 border-yellow-500/20";
+      case "low":
+      case "info":
+        return "text-blue-500 bg-blue-500/10 border-blue-500/20";
       default:
-      return "text-gray-500 bg-gray-500/10 border-gray-500/20";
+        return "text-gray-500 bg-gray-500/10 border-gray-500/20";
     }
   };
   const getImpactColor = (impact?: string) => {
     switch (impact) {
-      case ",
-      high":
-      return "text-red-500";
-      case ",
-      medium":
-      return "text-yellow-500";
-      case ",
-      low":
-      return "text-green-500";
+      case "high":
+        return "text-red-500";
+      case "medium":
+        return "text-yellow-500";
+      case "low":
+        return "text-green-500";
       default:
-      return "text-gray-500";
+        return "text-gray-500";
     }
   };
   return (
@@ -570,20 +548,16 @@ export function AICodeAssistant({
       exit={{ height: 0, opacity: 0 }}
       className="mt-4 space-y-2 overflow-hidden"><label className="flex items-center space-x-2 text-sm text-gray-300">
       <input
-      type="checkbox"
-      checked={autoAnalyze}
+      type="checkboxchecked={autoAnalyze}
       onChange={(e: unknown) => setAutoAnalyze(e.target.checked)}
-      className="rounded border-gray-600"
-      />
+      className="rounded border-gray-600/>
       <span>Auto-analyze code changes</span>
       </label>
       <label className="flex items-center space-x-2 text-sm text-gray-300">
       <input
-      type="checkbox"
-      checked={realTimeAnalysis}
+      type="checkboxchecked={realTimeAnalysis}
       onChange={(e: unknown) => setRealTimeAnalysis(e.target.checked)}
-      className="rounded border-gray-600"
-      />
+      className="rounded border-gray-600/>
       <span>Real-time analysis</span>
       </label>
       </motion.div>
@@ -703,9 +677,7 @@ export function AICodeAssistant({
         <Tooltip>
         <TooltipTrigger asChild>
         <Button
-        variant="ghost"
-        size="sm"
-        onClick={() =>
+        variant="ghost  size="sm  onClick={() =>
         copyToClipboard(
           suggestion.code,
           suggestion.id,
@@ -728,9 +700,7 @@ export function AICodeAssistant({
       <Tooltip>
       <TooltipTrigger asChild>
       <Button
-      variant="ghost"
-      size="sm"
-      onClick={() =>
+      variant="ghostsize="smonClick={() =>
       toggleSuggestionExpansion(suggestion.id)
     }>{expandedSuggestions.has(
       suggestion.id,
@@ -755,9 +725,7 @@ export function AICodeAssistant({
       <Tooltip>
       <TooltipTrigger asChild>
       <Button
-      variant="default"
-      size="sm"
-      onClick={() =>
+      variant="defaultsize="smonClick={() =>
       applySuggestion(suggestion)
     }
     className="bg-purple-600 hover:bg-purple-700">Apply
@@ -880,10 +848,7 @@ Filter by severity:
       )}
       {issue.autoFixAvailable && (
         <Button
-        variant="secondary"
-        size="sm"
-        className="mt-2"
-        onClick={() => {
+        variant="secondary" size="sm" className="mt-2" onClick={() => {
           /* Implement auto-fix */
         }}><CheckCircle className="w-3 h-3 mr-1" />
         Auto-fix available
@@ -1015,10 +980,10 @@ Code Quality Metrics
     className={cn(
       "text-sm font-medium",
       value >= 80
-      ? "text-green-400"
-      : value >= 60
-      ? "text-yellow-400"
-      : "text-red-400",
+        ? "text-green-400"
+        : value >= 60
+        ? "text-yellow-400"
+        : "text-red-400",
     )}>{value}%
     </span>
     </div>
@@ -1027,10 +992,10 @@ Code Quality Metrics
     className={cn(
       "h-2 rounded-full transition-all",
       value >= 80
-      ? "bg-green-500"
-      : value >= 60
-      ? "bg-yellow-500"
-      : "bg-red-500",
+        ? "bg-green-500"
+        : value >= 60
+        ? "bg-yellow-500"
+        : "bg-red-500",
     )}
     style={{ width: `${value}%` }}
     />

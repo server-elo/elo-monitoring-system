@@ -1,4 +1,8 @@
-"use client" import React, { useState } from 'react';
+"use client";
+
+;
+
+import React, { useState } from 'react';
 import { motion } from 'framer-motion'; // Neomorphic Container Component
 interface NeumorphicContainerProps {
   children: React.ReactNode;

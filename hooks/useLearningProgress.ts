@@ -34,23 +34,23 @@ interface UseLearningProgressReturn {
   /** Start a lesson */
   startLesson: (lessonId: LessonId) => void;
   /** Complete a lesson */
-  completeLesson: (lessonId: LessonId;
-  score?: number) => void;
+  completeLesson: (lessonId: LessonId,
+    score?: number) => void;
   /** Update lesson time spent */
-  updateLessonTime: (lessonId: LessonId;
-  additionalMinutes: number) => void;
+  updateLessonTime: (lessonId: LessonId,
+    additionalMinutes: number) => void;
   /** Start an exercise */
   startExercise: (exerciseId: ExerciseId) => void;
   /** Complete an exercise */
   completeExercise: (
-    exerciseId: ExerciseId;
-    score: number;
-    solution?: string;
+    exerciseId: ExerciseId,
+    score: number,
+    solution?: string
   ) => void;
   /** Get completion percentage for a module */
   getModuleCompletionPercentage: (
-    moduleId: ModuleId;
-    totalLessons: number;
+    moduleId: ModuleId,
+    totalLessons: number
   ) => number;
   /** Get user's current level based on XP */
   getUserLevel: () => number;
@@ -62,7 +62,7 @@ interface UseLearningProgressReturn {
   resetProgress: () => void;
 }
 // XP thresholds for each level
-const XP_PER_LEVEL: 1000;
+const XP_PER_LEVEL = 1000;
 const XP_MULTIPLIER = 1.2; // Each level requires 20% more XP
 /**
 * Hook for managing user's learning progress.

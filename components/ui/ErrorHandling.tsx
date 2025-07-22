@@ -1,4 +1,8 @@
-"use client" import React, { Component, ErrorInfo, ReactNode } from 'react';
+"use client";
+
+;
+
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './button'; // Error Boundary Component
 interface ErrorBoundaryState {

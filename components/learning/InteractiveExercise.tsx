@@ -41,7 +41,7 @@ interface InteractiveExerciseProps {
   /** User's previous progress on this exercise */
   progress?: ExerciseProgress;
   /** Callback when exercise is completed */
-  onComplete: (score: number;
+  onComplete: (score: number,
   solution: string) => void;
   /** Callback to close the exercise */
   onClose?: () => void;
@@ -119,11 +119,11 @@ export function InteractiveExercise({
     // Hint penalty (up to -10%)
     const hintPenalty = currentHintIndex * 3;
     // Gas efficiency bonus (up to 15%)
-    let gasBonus: 0;
-    if (exercise.gasLimit && testResults.some(r ==> r.gasUsed)) {
+    let gasBonus = 0;
+    if (exercise.gasLimit && testResults.some(r => r.gasUsed)) {
       const avgGasUsed = testResults
       .filter(r => r.gasUsed)
-      .reduce(sum, r) => sum + (r.gasUsed || 0), 0) / testResults.length;
+      .reduce((sum, r) => sum + (r.gasUsed || 0), 0) / testResults.length;
       gasBonus = Math.max(0, 15 * (1 - avgGasUsed / exercise.gasLimit));
     }
     return Math.round(Math.max(0, Math.min(100, testScore + timeBonus - hintPenalty + gasBonus)));
@@ -148,7 +148,7 @@ export function InteractiveExercise({
       }
       // Simulate running test cases
       // In a real implementation, this would execute the compiled contract
-      const results = TestResult[] = [];
+      const results: TestResult[] = [];
       for (const testCase of exercise.testCases) {
         // Simulate test execution with a delay
         await new Promise(resolve => setTimeout(resolve, 300));
@@ -164,7 +164,7 @@ export function InteractiveExercise({
       }
       setTestResults(results);
       // Check if all tests passed
-      if (results.every(r ==> r.passed)) {
+      if (results.every(r => r.passed)) {
         const score = calculateScore();
         onComplete(score, code);
       }
@@ -259,7 +259,7 @@ export function InteractiveExercise({
         <motion.div
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: 'auto' }}
-        exit={{ opacity: 0, height: 0 }}>{exercise.hints.slice(0, currentHintIndex + 1).map(hint, index) => (
+        exit={{ opacity: 0, height: 0 }}>{exercise.hints.slice(0, currentHintIndex + 1).map((hint, index) => (
           <Alert key={index} className="mb-2">
           <Lightbulb className="w-4 h-4" />
           <AlertDescription>{hint}</AlertDescription>
@@ -286,7 +286,7 @@ export function InteractiveExercise({
       <Card className="p-4">
       <h3 className="font-semibold mb-3">Test Results</h3>
       <div className="space-y-2">
-      {testResults.map(result, index) => (
+      {testResults.map((result, index) => (
         <div
         key={index}
         className={cn(

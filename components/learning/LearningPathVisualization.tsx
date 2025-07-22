@@ -14,7 +14,7 @@ interface LearningPathVisualizationProps {
   /** All available modules */
   modules: Module[];
   /** User's progress for each module */
-  moduleProgress: Map<string;
+  moduleProgress: Map<string,
   ModuleStatus>;
   /** Callback when a module is clicked */
   onModuleClick?: (moduleId: string) => void;
@@ -104,11 +104,11 @@ export function LearningPathVisualization({
     {/* Connection Lines */}
     <svg
     className="absolute inset-0 w-full h-full pointer-events-none"
-    style={{ zIndex: 0 }}>{pathModules.slice(0, -1).map(_, index) => {
+    style={{ zIndex: 0 }}>{pathModules.slice(0, -1).map((_, index) => {
       const startY = 120 * index + 60;
       const endY = 120 * (index + 1) + 60;
       const startStatus = moduleProgress.get(pathModules[index].id) || ModuleStatus.LOCKED;
-      const isActive = startStatus = ModuleStatus.COMPLETED || startStatus = ModuleStatus.IN_PROGRESS;
+      const isActive = startStatus === ModuleStatus.COMPLETED || startStatus === ModuleStatus.IN_PROGRESS;
       return (
         <motion.line
         key={`line-${index}`}
@@ -128,7 +128,7 @@ export function LearningPathVisualization({
     </svg>
     {/* Module Cards */}
     <div className="relative z-10 space-y-8">
-    {pathModules.map(module, index) => {
+    {pathModules.map((module, index) => {
       const status = moduleProgress.get(module.id) || ModuleStatus.LOCKED;
       const isAccessible = isModuleAccessible(module.id);
       return (
@@ -151,10 +151,9 @@ export function LearningPathVisualization({
         className={cn(
           'flex-1 p-6 rounded-xl border-2 transition-all cursor-pointer',
           isAccessible
-          ? ',
-          hover:shadow-lg hover:border-primary'
-          : 'opacity-60 cursor-not-allowed',
-          status = ModuleStatus.IN_PROGRESS && 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20'
+            ? 'hover:shadow-lg hover:border-primary'
+            : 'opacity-60 cursor-not-allowed',
+          status === ModuleStatus.IN_PROGRESS && 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20'
         )}
         onClick={() => isAccessible && onModuleClick?.(module.id)}><div className="flex items-start justify-between">
         <div className="flex-1">
@@ -231,7 +230,7 @@ export function LearningPathVisualization({
     <div className="mt-12 p-6 bg-muted/50 rounded-xl">
     <h3 className="font-semibold mb-3">Skills You'll Learn</h3>
     <div className="flex flex-wrap gap-2">
-    {learningPath.skills.map(skill, index) => (
+    {learningPath.skills.map((skill, index) => (
       <motion.span
       key={skill}
       initial={{ opacity: 0, scale: 0.8 }}

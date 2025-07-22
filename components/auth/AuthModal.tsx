@@ -1,35 +1,35 @@
-"use client";
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
+'use client'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card } from '@/components/ui/card'
 interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  defaultMode?: "login" | "register";
+  isOpen: boolean
+  onClose: () => void
+  defaultMode?: 'login' | 'register'
 }
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
-  defaultMode = "login",
+  defaultMode = 'login',
 }) => {
-  const [mode, setMode] = useState<"login" | "register">(defaultMode);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<'login' | 'register'>(defaultMode)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+    e.preventDefault()
+    setIsLoading(true)
+    setError(null)
     // TODO: Implement actual authentication logic
     setTimeout(() => {
-      setIsLoading(false);
-      onClose();
-    }, 1000);
-  };
-  if (!isOpen) return null;
+      setIsLoading(false)
+      onClose()
+    }, 1000)
+  }
+  if (!isOpen) return null
   return (
     <AnimatePresence>
       <motion.div
@@ -48,7 +48,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <Card className="w-full max-w-md bg-black/80 backdrop-blur-md border border-white/20 p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">
-                {mode === "login" ? "Sign In" : "Create Account"}
+                {mode === 'login' ? 'Sign In' : 'Create Account'}
               </h2>
               <button
                 onClick={onClose}
@@ -58,7 +58,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {mode === "register" && (
+              {mode === 'register' && (
                 <div>
                   <Label htmlFor="name" className="text-white">
                     Name
@@ -96,7 +96,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                 />
               </div>
-              {mode === "register" && (
+              {mode === 'register' && (
                 <div>
                   <Label htmlFor="confirmPassword" className="text-white">
                     Confirm Password
@@ -121,24 +121,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 disabled={isLoading}
               >
                 {isLoading
-                  ? "Loading..."
-                  : mode === "login"
-                    ? "Sign In"
-                    : "Create Account"}
+                  ? 'Loading...'
+                  : mode === 'login'
+                    ? 'Sign In'
+                    : 'Create Account'}
               </Button>
             </form>
             <div className="mt-6 text-center">
               <p className="text-gray-400 text-sm">
-                {mode === "login"
+                {mode === 'login'
                   ? "Don't have an account? "
-                  : "Already have an account? "}
+                  : 'Already have an account? '}
                 <button
                   onClick={() =>
-                    setMode(mode === "login" ? "register" : "login")
+                    setMode(mode === 'login' ? 'register' : 'login')
                   }
                   className="text-blue-400 hover:text-blue-300 transition-colors"
                 >
-                  {mode === "login" ? "Sign up" : "Sign in"}
+                  {mode === 'login' ? 'Sign up' : 'Sign in'}
                 </button>
               </p>
             </div>
@@ -146,5 +146,5 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
-};
+  )
+}

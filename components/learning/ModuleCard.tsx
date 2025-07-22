@@ -56,9 +56,9 @@ export function ModuleCard({
   module,
   status,
   completionPercentage,
-  isSelected: false,
+  isSelected = false,
   onClick,
-  detailed: false,
+  detailed = false,
   className
 }: ModuleCardProps): ReactElement {
   const isAccessible = status !== ModuleStatus.LOCKED;
@@ -78,20 +78,16 @@ export function ModuleCard({
   // Get difficulty color
   const getDifficultyColor = () => {
     switch (module.difficulty) {
-      case ',
-      beginner':
-      return 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400';
-      case ',
-      intermediate':
-      return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400';
-      case ',
-      advanced':
-      return 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400';
-      case ',
-      expert':
-      return 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400';
+      case 'beginner':
+        return 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400';
+      case 'advanced':
+        return 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400';
+      case 'expert':
+        return 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400';
       default:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400';
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400';
     }
   };
   return (
@@ -101,10 +97,9 @@ export function ModuleCard({
     className={className}><Card
     className={cn(
       'cursor-pointer transition-all duration-200',
-      isAccessible ? ',
-      hover:shadow-lg' : 'opacity-60 cursor-not-allowed',
+      isAccessible ? 'hover:shadow-lg' : 'opacity-60 cursor-not-allowed',
       isSelected && 'ring-2 ring-primary',
-      status = ModuleStatus.IN_PROGRESS && 'border-yellow-500/50'
+      status === ModuleStatus.IN_PROGRESS && 'border-yellow-500/50'
     )}
     onClick={isAccessible ? onClick : undefined}
     style={{
@@ -165,14 +160,14 @@ export function ModuleCard({
       </div>
     )}
     {/* Certificate Badge */}
-    {module.certificate && status = ModuleStatus.COMPLETED && (
+    {module.certificate && status === ModuleStatus.COMPLETED && (
       <div className="flex items-center gap-2 p-2 bg-primary/10 rounded-lg">
       <Trophy className="w-4 h-4 text-primary" />
       <span className="text-sm font-medium">Certificate Earned!</span>
       </div>
     )}
     {/* Prerequisites */}
-    {detailed && module.prerequisites.length>0 && status = ModuleStatus.LOCKED && (
+    {detailed && module.prerequisites.length>0 && status === ModuleStatus.LOCKED && (
       <div className="p-3 bg-muted/50 rounded-lg">
       <p className="text-sm text-muted-foreground mb-1">Prerequisites:</p>
       <p className="text-sm">Complete required modules first</p>

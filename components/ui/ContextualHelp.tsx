@@ -1,4 +1,8 @@
-'use client'; import React, { useState, useEffect } from 'react';
+"use client";
+
+;
+
+import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle, X, BookOpen, Play, Code, Lightbulb, ArrowRight, ExternalLink, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';

@@ -1,6 +1,6 @@
-"use client";
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+'use client'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   User,
   Settings,
@@ -16,28 +16,28 @@ import {
   Search,
   Briefcase,
   Award,
-} from "lucide-react";
-import { useAuth } from "@/lib/hooks/useAuth";
-import { AuthModal } from "@/components/auth/AuthModal";
-import Link from "next/link";
+} from 'lucide-react'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { AuthModal } from '@/components/auth/AuthModal'
+import Link from 'next/link'
 export const AuthenticatedNavbar = () => {
-  const { user, isAuthenticated, logout } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth()
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const navigationItems = [
-    { name: "Home", href: "/", icon: Home },
-    { name: "Learn", href: "/learn", icon: BookOpen },
-    { name: "Code Lab", href: "/code", icon: Code },
-    { name: "Collaborate", href: "/collaborate", icon: Users },
-    { name: "Achievements", href: "/achievements", icon: Trophy },
-    { name: "Jobs", href: "/jobs", icon: Briefcase },
-    { name: "Certificates", href: "/certificates", icon: Award },
-  ];
+    { name: 'Home', href: '/', icon: Home },
+    { name: 'Learn', href: '/learn', icon: BookOpen },
+    { name: 'Code Lab', href: '/code', icon: Code },
+    { name: 'Collaborate', href: '/collaborate', icon: Users },
+    { name: 'Achievements', href: '/achievements', icon: Trophy },
+    { name: 'Jobs', href: '/jobs', icon: Briefcase },
+    { name: 'Certificates', href: '/certificates', icon: Award },
+  ]
   const handleLogout = async () => {
-    await logout();
-    setShowUserMenu(false);
-  };
+    await logout()
+    setShowUserMenu(false)
+  }
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 bg-black/20 backdrop-blur-md border-b border-white/10">
@@ -115,13 +115,13 @@ export const AuthenticatedNavbar = () => {
                           <p className="text-gray-400 text-sm">{user.email}</p>
                           <span
                             className={`inline-block mt-2 px-2 py-1 text-xs rounded-full ${
-                              user.role === "ADMIN"
-                                ? "bg-purple-500/20 text-purple-300"
-                                : user.role === "INSTRUCTOR"
-                                  ? "bg-green-500/20 text-green-300"
-                                  : user.role === "MENTOR"
-                                    ? "bg-cyan-500/20 text-cyan-300"
-                                    : "bg-blue-500/20 text-blue-300"
+                              user.role === 'ADMIN'
+                                ? 'bg-purple-500/20 text-purple-300'
+                                : user.role === 'INSTRUCTOR'
+                                  ? 'bg-green-500/20 text-green-300'
+                                  : user.role === 'MENTOR'
+                                    ? 'bg-cyan-500/20 text-cyan-300'
+                                    : 'bg-blue-500/20 text-blue-300'
                             }`}
                           >
                             {user.role}
@@ -170,7 +170,7 @@ export const AuthenticatedNavbar = () => {
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
                 className=",
     md:hidden p-2 text-gray-400 hover:text-white transition-colors min-h-[44px] min-w-[44px] touch-manipulation"
-                aria-label={showMobileMenu ? "Close menu" : "Open menu"}
+                aria-label={showMobileMenu ? 'Close menu' : 'Open menu'}
                 aria-expanded={showMobileMenu}
               >
                 {showMobileMenu ? (
@@ -187,9 +187,9 @@ export const AuthenticatedNavbar = () => {
           {showMobileMenu && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
               className=",
       md:hidden bg-black/90 backdrop-blur-md border-t border-white/10"
             >
@@ -216,5 +216,5 @@ export const AuthenticatedNavbar = () => {
         onClose={() => setShowAuthModal(false)}
       />
     </>
-  );
-};
+  )
+}

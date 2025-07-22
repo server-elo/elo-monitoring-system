@@ -1,5 +1,9 @@
-import React, { ReactElement } from 'react';
-/** * Advanced Modal Component *  * Modern modal with animations, focus management, and accessibility */ "use client" import { useEffect, useRef, ReactNode } from 'react';
+"use client";
+
+;
+
+
+import { useEffect, useRef, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';

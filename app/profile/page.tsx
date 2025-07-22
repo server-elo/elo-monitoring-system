@@ -1,4 +1,5 @@
 "use client";
+
 import { ReactElement, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
@@ -72,7 +73,7 @@ export default function ProfilePage(): ReactElement {
         const data = await response.json();
         setProfile(data);
         setEditedProfile(data);
-      } catch (error) { console.error(error); }
+      }
     } catch (error) {
       console.error("Failed to fetch profile:", error);
     }
@@ -83,7 +84,7 @@ export default function ProfilePage(): ReactElement {
       if (response.ok) {
         const data = await response.json();
         setStats(data);
-      } catch (error) { console.error(error); }
+      }
     } catch (error) {
       console.error("Failed to fetch stats:", error);
     }

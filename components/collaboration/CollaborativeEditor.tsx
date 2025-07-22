@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useCollaboration } from '@/lib/context/CollaborationContext';
 import { useToast } from '@/components/ui/use-toast';
-import { CompilationResult } from '@/lib/compiler/SolidityCompiler'; interface Participant {
+import { CompilationResult } from '@/lib/compiler'; interface Participant {
   id: string;
   name: string;
   image?: string;

@@ -75,8 +75,8 @@ export function LessonViewer({
   onStartExercise,
   onNextLesson,
   onPreviousLesson,
-  hasNextLesson: false,
-  hasPreviousLesson: false,
+  hasNextLesson = false,
+  hasPreviousLesson = false,
   className
 }: LessonViewerProps): ReactElement {
   const [activeTab, setActiveTab] = useState<'content' | 'exercises' | 'resources'>('content');
@@ -97,9 +97,9 @@ export function LessonViewer({
   }, []);
   // Mark lesson as complete when reading progress reaches 100%
   useEffect(() => {
-    if (readingProgress >=== 95 && !progress?.completed) {
+    if (readingProgress >= 95 && !progress?.completed) {
       const timeSpent = Math.floor((Date.now() - startTime) / 60000); // in minutes
-      if (timeSpent >=== lesson.duration * 0.5) { // At least 50% of estimated time
+      if (timeSpent >= lesson.duration * 0.5) { // At least 50% of estimated time
       onComplete?.();
     }
   }
@@ -156,22 +156,17 @@ blockquote: ({ children }: unknown) => (
 // Get lesson type icon
 const getLessonTypeIcon = () => {
   switch (lesson.type) {
-    case ',
-    theory':
-    return <BookOpen className="w-4 h-4" />;
-    case ',
-    practical':
-    case ',
-    exercise':
-    return <Code className="w-4 h-4" />;
-    case ',
-    project':
-    return <FileText className="w-4 h-4" />;
-    case ',
-    quiz':
-    return <Lightbulb className="w-4 h-4" />;
+    case 'theory':
+      return <BookOpen className="w-4 h-4" />;
+    case 'practical':
+    case 'exercise':
+      return <Code className="w-4 h-4" />;
+    case 'project':
+      return <FileText className="w-4 h-4" />;
+    case 'quiz':
+      return <Lightbulb className="w-4 h-4" />;
     default:
-    return <BookOpen className="w-4 h-4" />;
+      return <BookOpen className="w-4 h-4" />;
   }
 };
 return (
@@ -253,7 +248,7 @@ return (
     Key Takeaways
     </h3>
     <ul className="space-y-2">
-    {lesson.keyTakeaways.map(takeaway, index) => (
+    {lesson.keyTakeaways.map((takeaway, index) => (
       <motion.li
       key={index}
       initial={{ opacity: 0, x: -20 }}
@@ -273,7 +268,7 @@ return (
   <TabsContent value="exercises" className="flex-1 p-6">
   <ScrollArea className="h-full">
   <div className="space-y-4 max-w-4xl mx-auto">
-  {lesson.exercises.map(exercise, index) => (
+  {lesson.exercises.map((exercise, index) => (
     <motion.div
     key={exercise.id}
     initial={{ opacity: 0, y: 20 }}
@@ -314,7 +309,7 @@ return (
   <TabsContent value="resources" className="flex-1 p-6">
   <ScrollArea className="h-full">
   <div className="space-y-4 max-w-4xl mx-auto">
-  {lesson.resources.map(resource, index) => (
+  {lesson.resources.map((resource, index) => (
     <motion.a
     key={resource.id}
     href={resource.url}

@@ -25,10 +25,8 @@ export const metadata: Metadata = {
   authors: [{ name: "SolanaLearn Team" }],
   openGraph: {
     title: "SolanaLearn - Master Solidity Development",
-    description:
-    "Learn Solidity with AI-powered tutoring and real-time collaboration",
-    url: ",
-    https://solanalearn.dev",
+    description: "Learn Solidity with AI-powered tutoring and real-time collaboration",
+    url: "https://solanalearn.dev",
     siteName: "SolanaLearn",
     images: [
     {

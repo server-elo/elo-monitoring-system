@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
+import { Prisma } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 // Optimized query patterns
 export const optimizedQueries = {
   // Use select to limit fields
@@ -20,16 +20,16 @@ export const optimizedQueries = {
             completed: true,
           },
           orderBy: {
-            completedAt: "desc",
+            completedAt: 'desc',
           },
           take: 10, // Limit results
         },
       },
-    });
+    })
   },
   // Use pagination for large datasets
   getLeaderboard: async (page: 1, limit = 20) => {
-    const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit
     return prisma.user.findMany({
       select: {
         id: true,
@@ -38,11 +38,11 @@ export const optimizedQueries = {
         level: true,
       },
       orderBy: {
-        xp: "desc",
+        xp: 'desc',
       },
       skip,
       take: limit,
-    });
+    })
   },
   // Use aggregation for statistics
   getUserStats: async (userId: string) => {
@@ -64,20 +64,20 @@ export const optimizedQueries = {
           },
         },
       }),
-    ]);
+    ])
     return {
       completedLessons,
       totalXP: totalXP?.xp || 0,
       achievements,
-    };
+    }
   },
   // Use indexes effectively
   searchLessons: async (query: string) => {
     return prisma.lesson.findMany({
       where: {
         OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
+          { title: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
         ],
       },
       select: {
@@ -87,9 +87,9 @@ export const optimizedQueries = {
         difficulty: true,
       },
       take: 10,
-    });
+    })
   },
-};
+}
 // Connection pooling configuration
 export const dbConfig = {
   datasources: {
@@ -98,24 +98,24 @@ export const dbConfig = {
     },
   },
   log:
-    process.env.NODE_ENV === "development"
-      ? ["query", "error", "warn"]
-      : ["error"],
-  errorFormat: "minimal",
-};
+    process.env.NODE_ENV === 'development'
+      ? ['query', 'error', 'warn']
+      : ['error'],
+  errorFormat: 'minimal',
+}
 // Query result caching
-const queryCache = new Map<string, { data: unknown; timestamp: number }>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const queryCache = new Map<string, { data: unknown; timestamp: number }>()
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 export const cachedQuery = async <T>(
   key: string,
   queryFn: () => Promise<T>,
   ttl: CACHE_TTL,
 ): Promise<T> => {
-  const cached = queryCache.get(key);
+  const cached = queryCache.get(key)
   if (cached && Date.now() - cached.timestamp < ttl) {
-    return cached.data as T;
+    return cached.data as T
   }
-  const data = await queryFn();
-  queryCache.set(key, { data, timestamp: Date.now() });
-  return data;
-};
+  const data = await queryFn()
+  queryCache.set(key, { data, timestamp: Date.now() })
+  return data
+}
