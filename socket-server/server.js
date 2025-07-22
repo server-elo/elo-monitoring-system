@@ -4,11 +4,86 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-require('dotenv').config(); const app = express();
-const httpServer = createServer(app); // Configure CORS for Socket.io
-const io = new Server(httpServer, { cors: { origin: process.env.FRONTEND_URL || "http://localhost:3000", methods: ["GET", "POST"], credentials: true }, transports: ['websocket', 'polling']
-}); // Middleware
-app.use(cors());
+require('dotenv').config();
+
+const app = express();
+const httpServer = createServer(app);
+
+// SECURE CORS Configuration
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.NEXT_PUBLIC_APP_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+  // Development origins
+  ...(process.env.NODE_ENV === 'development' ? [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:3001'
+  ] : [])
+].filter(Boolean);
+
+console.log('Socket server CORS origins:', allowedOrigins);
+
+// Configure CORS for Express
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.warn(`CORS blocked origin: ${origin}`);
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+
+// Configure CORS for Socket.io with strict origin validation
+const io = new Server(httpServer, {
+  cors: {
+    origin: function(origin, callback) {
+      // Allow requests with no origin (mobile apps, etc.)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.warn(`Socket.io CORS blocked origin: ${origin}`);
+        return callback(new Error(`Origin ${origin} not allowed by CORS policy`));
+      }
+    },
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['websocket', 'polling'],
+  // Additional security options
+  allowEIO3: false, // Disable Engine.IO v3 for security
+  cookie: {
+    name: "io",
+    httpOnly: true,
+    sameSite: "strict"
+  }
+}); 
+
+// Security middleware
+app.use(express.json({ limit: '1mb' })); // Limit request size
+app.use((req, res, next) => {
+  // Security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // Only set HSTS in production
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+  
+  next();
+});
 app.use(express.json()); // In-memory storage for free tier (use Redis in production)
 const collaborationSessions = new Map();
 const userSessions = new Map();

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { EnhancedSecurityMiddleware } from "./lib/security/enhanced-middleware";
 // Type definitions for protected routes
 type ProtectedRouteConfig = {
   requireAuth: boolean;
@@ -131,122 +132,16 @@ function isProtectedApiRoute(pathname: string): boolean {
 function isAdminApiRoute(pathname: string): boolean {
   return ADMIN_API_ROUTES.some((route: unknown) => pathname.startsWith(route));
 }
-export async function middleware(request: NextRequest): void {
-  const { pathname } = request.nextUrl;
-  // Skip auth check for public routes
-  const publicRoutes = [
-    "/",
-    "/auth/login",
-    "/auth/register",
-    "/auth/forgot-password",
-    "/auth/reset-password",
-    "/api/auth",
-    "/api/health",
-    "/api/alive",
-    "/api/ready",
-    "/api/config/health",
-    "/learn",
-    "/tutorials",
-    "/examples",
-    "/documentation",
-    "/privacy",
-    "/terms",
-    "/cookies",
-    "/_next",
-    "/favicon.ico",
-    "/images",
-    "/fonts",
-    "/sounds",
-  ];
-  // Check if it's a public route
-  const isPublicRoute = publicRoutes.some(
-    (route: unknown) => pathname === route || pathname.startsWith(route + "/"),
-  );
-  if (isPublicRoute) {
-    return NextResponse.next();
+export async function middleware(request: NextRequest): Promise<NextResponse> {
+  // Use the enhanced security middleware for comprehensive protection
+  const securityResponse = await EnhancedSecurityMiddleware.handle(request);
+  
+  if (securityResponse) {
+    return securityResponse;
   }
-  try {
-    // Get session token
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-    // Check protected routes
-    const protectedRoute = findProtectedRoute(pathname);
-    // Handle protected page routes
-    if (protectedRoute) {
-      if (!token) {
-        const loginUrl = new URL("/auth/login", request.url);
-        loginUrl.searchParams.set("callbackUrl", pathname);
-        return NextResponse.redirect(loginUrl);
-      }
-      // Check role requirements
-      if (protectedRoute.roles && protectedRoute.roles.length > 0) {
-        const userRole = token.role as string;
-        if (!protectedRoute.roles.includes(userRole)) {
-          return NextResponse.redirect(new URL("/unauthorized", request.url));
-        }
-      }
-    }
-    // Handle protected API routes
-    if (pathname.startsWith("/api/")) {
-      if (isProtectedApiRoute(pathname) || isAdminApiRoute(pathname)) {
-        if (!token) {
-          return NextResponse.json(
-            { error: "Authentication required" },
-            { status: 401 },
-          );
-        }
-        // Check admin routes
-        if (isAdminApiRoute(pathname)) {
-          const userRole = token.role as string;
-          if (userRole !== "ADMIN") {
-            return NextResponse.json(
-              { error: "Admin access required" },
-              { status: 403 },
-            );
-          }
-        }
-      }
-    }
-    // Add security headers
-    const response = NextResponse.next();
-    // Security headers
-    response.headers.set("X-Frame-Options", "DENY");
-    response.headers.set("X-Content-Type-Options", "nosniff");
-    response.headers.set("X-XSS-Protection", "1; mode=block");
-    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-    response.headers.set(
-      "Permissions-Policy",
-      "camera=(), microphone=(), geolocation=()",
-    );
-    // CORS headers for API routes
-    if (pathname.startsWith("/api/")) {
-      response.headers.set(
-        "Access-Control-Allow-Origin",
-        process.env.NEXT_PUBLIC_APP_URL || "*",
-      );
-      response.headers.set(
-        "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, OPTIONS",
-      );
-      response.headers.set(
-        "Access-Control-Allow-Headers",
-        "Content-Type, Authorization",
-      );
-    }
-    return response;
-  } catch (error) {
-    console.error("Middleware error:", error);
-    // On error, redirect to login for protected routes
-    if (pathname.startsWith("/api/")) {
-      return NextResponse.json(
-        { error: "Internal server error" },
-        { status: 500 },
-      );
-    }
-    return NextResponse.redirect(new URL("/auth/login", request.url));
-  }
+
+  // Fallback to basic middleware logic (should not reach here with enhanced middleware)
+  return NextResponse.next();
 }
 export const config = {
   matcher: [
