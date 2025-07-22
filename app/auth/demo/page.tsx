@@ -2,26 +2,12 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Shield,
-  User,
-  Lock,
-  CheckCircle,
-  Key,
-  Server,
-  Database,
-  Eye,
-  EyeOff,
-  Github,
-  Chrome,
-  Wallet,
-  Mail
-} from 'lucide-react';
-import { GlassCard } from '@/components/ui/Glassmorphism';
+import { Shield, User, Lock, CheckCircle, Key, Server, Database, Eye, EyeOff, Github, Chrome, Wallet, Mail } from 'lucide-react';
+import { GlassCard } from '@/components/ui/Glass';
 
 export default function AuthDemoPage() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const [showPassword, setShowPassword] = useState(_false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -118,8 +104,7 @@ export default function AuthDemoPage() {
             🔐 Authentication System Demo
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Complete authentication system for the Solidity Learning Platform with 
-            email/password, OAuth, role-based access control, and beautiful UI components.
+            Complete authentication system for the Solidity Learning Platform with email/password, OAuth, role-based access control, and beautiful UI components.
           </p>
         </motion.div>
 
@@ -180,7 +165,7 @@ export default function AuthDemoPage() {
               🚀 Implemented Features
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {demoFeatures.map( (feature, index) => (
+              {demoFeatures.map((feature, index) => (
                 <motion.div
                   key={feature.title}
                   initial={{ opacity: 0, y: 20 }}
@@ -217,25 +202,24 @@ export default function AuthDemoPage() {
             <h2 className="text-3xl font-bold text-white mb-6 text-center">
               🎨 Authentication UI Demo
             </h2>
-            
             <div className="max-w-md mx-auto">
               {/* Mode Toggle */}
               <div className="flex bg-white/10 rounded-lg p-1 mb-6">
                 <button
-                  onClick={(_) => setAuthMode('login')}
+                  onClick={() => setAuthMode('login')}
                   className={`flex-1 py-2 px-4 rounded-md transition-colors ${
-                    authMode === 'login' 
-                      ? 'bg-blue-600 text-white' 
+                    authMode === 'login'
+                      ? 'bg-blue-600 text-white'
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
                   Sign In
                 </button>
                 <button
-                  onClick={(_) => setAuthMode('register')}
+                  onClick={() => setAuthMode('register')}
                   className={`flex-1 py-2 px-4 rounded-md transition-colors ${
-                    authMode === 'register' 
-                      ? 'bg-blue-600 text-white' 
+                    authMode === 'register'
+                      ? 'bg-blue-600 text-white'
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
@@ -249,7 +233,6 @@ export default function AuthDemoPage() {
                   <Github className="w-5 h-5" />
                   <span>Continue with GitHub</span>
                 </button>
-                
                 <button className="w-full flex items-center justify-center space-x-2 p-3 bg-white hover:bg-gray-100 text-gray-900 border border-gray-300 rounded-lg transition-colors">
                   <Chrome className="w-5 h-5" />
                   <span>Continue with Google</span>
@@ -278,7 +261,7 @@ export default function AuthDemoPage() {
                       <input
                         type="text"
                         value={formData.name}
-                        onChange={(_e) => setFormData( {...formData, name: e.target.value})}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
                         className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Enter your full name"
                       />
@@ -295,7 +278,7 @@ export default function AuthDemoPage() {
                     <input
                       type="email"
                       value={formData.email}
-                      onChange={(_e) => setFormData( {...formData, email: e.target.value})}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
                       className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Enter your email"
                     />
@@ -311,13 +294,13 @@ export default function AuthDemoPage() {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
-                      onChange={(_e) => setFormData( {...formData, password: e.target.value})}
+                      onChange={(e) => setFormData({...formData, password: e.target.value})}
                       className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
-                      onClick={(_) => setShowPassword(!showPassword)}
+                      onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -352,7 +335,7 @@ export default function AuthDemoPage() {
               👥 User Roles & Permissions Demo
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {demoUsers.map( (user, index) => (
+              {demoUsers.map((user, index) => (
                 <motion.div
                   key={user.email}
                   initial={{ opacity: 0, y: 20 }}
@@ -363,17 +346,22 @@ export default function AuthDemoPage() {
                   <div className="text-4xl mb-3">{user.avatar}</div>
                   <h3 className="text-lg font-semibold text-white mb-1">{user.name}</h3>
                   <p className="text-gray-400 text-sm mb-3">{user.email}</p>
-                  <span className={`inline-block px-3 py-1 text-xs rounded-full ${
-                    user.role === 'ADMIN' ? 'bg-purple-500/20 text-purple-300' :
-                    user.role === 'INSTRUCTOR' ? 'bg-green-500/20 text-green-300' :
-                    user.role === 'MENTOR' ? 'bg-cyan-500/20 text-cyan-300' :
-                    'bg-blue-500/20 text-blue-300'
-                  }`}>
+                  <span
+                    className={`inline-block px-3 py-1 text-xs rounded-full ${
+                      user.role === 'ADMIN'
+                        ? 'bg-purple-500/20 text-purple-300'
+                        : user.role === 'INSTRUCTOR'
+                        ? 'bg-green-500/20 text-green-300'
+                        : user.role === 'MENTOR'
+                        ? 'bg-cyan-500/20 text-cyan-300'
+                        : 'bg-blue-500/20 text-blue-300'
+                    }`}
+                  >
                     {user.role}
                   </span>
                   <div className="mt-3 text-xs text-gray-400">
                     <p className="font-medium mb-1">Permissions:</p>
-                    {user.permissions.slice(0, 2).map( (perm, i) => (
+                    {user.permissions.slice(0, 2).map((perm, i) => (
                       <p key={i}>• {perm}</p>
                     ))}
                     {user.permissions.length > 2 && (
@@ -398,8 +386,7 @@ export default function AuthDemoPage() {
               🚀 Ready to Test with Database?
             </h2>
             <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-              The authentication system is fully implemented and ready for testing. 
-              Set up a database connection to test user registration, login, and all features.
+              The authentication system is fully implemented and ready for testing. Set up a database connection to test user registration, login, and all features.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a

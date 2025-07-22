@@ -1,62 +1,60 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn, getSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock, Eye, EyeOff, Github, Chrome, ArrowRight, Shield, Loader2 } from 'lucide-react';
-import { GlassCard } from '@/components/ui/Glassmorphism';
+import { GlassCard } from '@/components/ui/Glass';
 import { AsyncSubmitButton } from '@/components/ui/EnhancedButton';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { loginSchema, type LoginData } from '@/lib/auth/password';
 import { cn } from '@/lib/utils';
 import { withAuthErrorBoundary } from '@/lib/components/ErrorBoundaryHOCs';
 
-function LoginPage() {
-  const router = useRouter(_);
-  const searchParams = useSearchParams(_);
+function LoginPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl') || '/dashboard';
   const error = searchParams.get('error');
-  
-  const [showPassword, setShowPassword] = useState(_false);
-  const [isLoading, setIsLoading] = useState(_false);
-  const [authError, setAuthError] = useState<string | null>(_null);
-  const [isCheckingSession, setIsCheckingSession] = useState(_true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   // Form setup
   const form = useForm<LoginData>({
-    resolver: zodResolver(_loginSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
-      password: '',
-    },
+      password: ''
+    }
   });
 
   // Check if user is already authenticated
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const session = await getSession(_);
+        const session = await getSession();
         if (session) {
-          router.replace(_returnUrl);
+          router.replace(returnUrl);
           return;
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('Session check failed:', error);
       } finally {
-        setIsCheckingSession(_false);
+        setIsCheckingSession(false);
       }
     };
-
-    checkSession(_);
+    checkSession();
   }, [router, returnUrl]);
 
   // Handle URL error parameter
   useEffect(() => {
     if (error) {
-      switch (_error) {
+      switch (error) {
         case 'CredentialsSignin':
           setAuthError('Invalid email or password. Please check your credentials and try again.');
           break;
@@ -86,18 +84,17 @@ function LoginPage() {
     }
   }, [error]);
 
-  const handleSubmit = async (_data: LoginData) => {
-    setIsLoading(_true);
-    setAuthError(_null);
-
+  const handleSubmit = async (data: LoginData) => {
+    setIsLoading(true);
+    setAuthError(null);
     try {
       const result = await signIn('credentials', {
         email: data.email,
         password: data.password,
-        redirect: false,
+        redirect: false
       });
-
-      if (_result?.error) {
+      
+      if (result?.error) {
         setAuthError(
           result.error === 'CredentialsSignin'
             ? 'Invalid email or password. Please check your credentials and try again.'
@@ -106,37 +103,38 @@ function LoginPage() {
         return;
       }
 
-      if (_result?.ok) {
+      if (result?.ok) {
         // Get the updated session to check user role
-        const updatedSession = await getSession(_);
-
+        const updatedSession = await getSession();
+        
         // Role-based redirect logic
-        if (_updatedSession?.user?.role === 'ADMIN') {
+        if (updatedSession?.user?.role === 'ADMIN') {
           router.replace('/admin');
-        } else if (_updatedSession?.user?.role === 'INSTRUCTOR') {
+        } else if (updatedSession?.user?.role === 'INSTRUCTOR') {
           router.replace('/instructor');
         } else {
-          router.replace(_returnUrl);
+          router.replace(returnUrl);
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Login error:', error);
       setAuthError('An unexpected error occurred. Please try again.');
     } finally {
-      setIsLoading(_false);
+      setIsLoading(false);
     }
   };
 
-  const handleOAuthSignIn = async (_provider: string) => {
-    setIsLoading(_true);
-    setAuthError(_null);
-
+  const handleOAuthSignIn = async (provider: string) => {
+    setIsLoading(true);
+    setAuthError(null);
     try {
-      await signIn( provider, { callbackUrl: returnUrl });
-    } catch (_error) {
+      await signIn(provider, {
+        callbackUrl: returnUrl
+      });
+    } catch (error) {
       console.error(`${provider} sign-in error:`, error);
-      setAuthError(_`${provider} sign-in failed. Please try again.`);
-      setIsLoading(_false);
+      setAuthError(`${provider} sign-in failed. Please try again.`);
+      setIsLoading(false);
     }
   };
 
@@ -173,7 +171,7 @@ function LoginPage() {
             <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
             <p className="text-gray-300">Sign in to continue your Solidity learning journey</p>
           </div>
-
+          
           <GlassCard className="p-8">
             {/* Error Display */}
             {authError && (
@@ -190,7 +188,7 @@ function LoginPage() {
                     severity: 'critical',
                     category: 'auth',
                     context: 'inline',
-                    timestamp: new Date(_),
+                    timestamp: new Date(),
                     userMessage: authError,
                     actionable: false,
                     retryable: false
@@ -199,11 +197,11 @@ function LoginPage() {
                 />
               </motion.div>
             )}
-
+            
             {/* OAuth Providers */}
             <div className="space-y-3 mb-6">
               <button
-                onClick={(_) => handleOAuthSignIn('github')}
+                onClick={() => handleOAuthSignIn('github')}
                 disabled={isLoading}
                 className={cn(
                   "w-full flex items-center justify-center space-x-3 p-4 rounded-lg",
@@ -216,9 +214,9 @@ function LoginPage() {
                 <span>Continue with GitHub</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-
+              
               <button
-                onClick={(_) => handleOAuthSignIn('google')}
+                onClick={() => handleOAuthSignIn('google')}
                 disabled={isLoading}
                 className={cn(
                   "w-full flex items-center justify-center space-x-3 p-4 rounded-lg",
@@ -232,7 +230,7 @@ function LoginPage() {
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-
+            
             {/* Divider */}
             <div className="relative mb-6">
               <div className="absolute inset-0 flex items-center">
@@ -242,9 +240,9 @@ function LoginPage() {
                 <span className="px-2 bg-white/5 text-gray-400">Or continue with email</span>
               </div>
             </div>
-
+            
             {/* Email/Password Form */}
-            <form onSubmit={form.handleSubmit(_handleSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
@@ -272,7 +270,7 @@ function LoginPage() {
                   </p>
                 )}
               </div>
-
+              
               {/* Password Field */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
@@ -295,7 +293,7 @@ function LoginPage() {
                   />
                   <button
                     type="button"
-                    onClick={(_) => setShowPassword(!showPassword)}
+                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -307,12 +305,12 @@ function LoginPage() {
                   </p>
                 )}
               </div>
-
+              
               {/* Submit Button */}
               <AsyncSubmitButton
                 onSubmit={async () => {
-                  const data = form.getValues(_);
-                  await handleSubmit(_data);
+                  const data = form.getValues();
+                  await handleSubmit(data);
                 }}
                 submitText="Sign In"
                 loadingText="Signing In..."
@@ -326,13 +324,13 @@ function LoginPage() {
                 }}
               />
             </form>
-
+            
             {/* Footer Links */}
             <div className="mt-6 text-center space-y-2">
               <p className="text-gray-400 text-sm">
                 Don't have an account?{' '}
                 <button
-                  onClick={(_) => router.push(_`/auth/register${returnUrl !== '/dashboard' ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`)}
+                  onClick={() => router.push(`/auth/register${returnUrl !== '/dashboard' ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`)}
                   className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 >
                   Sign up
@@ -340,7 +338,7 @@ function LoginPage() {
               </p>
               <p className="text-gray-400 text-sm">
                 <button
-                  onClick={(_) => router.push('/auth/forgot-password')}
+                  onClick={() => router.push('/auth/forgot-password')}
                   className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 >
                   Forgot your password?
@@ -354,10 +352,22 @@ function LoginPage() {
   );
 }
 
+function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
 // Wrap with auth error boundary for specialized authentication error handling
 export default withAuthErrorBoundary(LoginPage, {
   name: 'LoginPage',
   enableRetry: true,
   maxRetries: 1,
-  showErrorDetails: process.env.NODE_ENV === 'development'
+  showErrorDetails: false // client-side: no dev tools
 });

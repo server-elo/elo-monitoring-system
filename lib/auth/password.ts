@@ -2,58 +2,33 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
 // Password validation schema
-export const passwordSchema = z.string(_)
-  .min(8, 'Password must be at least 8 characters long')
-  .regex( /[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex( /[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex( /[0-9]/, 'Password must contain at least one number')
-  .regex( /[^A-Za-z0-9]/, 'Password must contain at least one special character');
-
-// Email validation schema
-export const emailSchema = z.string(_)
-  .email('Please enter a valid email address')
-  .min(1, 'Email is required');
-
-// Registration schema
-export const registrationSchema = z.object({
-  name: z.string(_)
-    .min(2, 'Name must be at least 2 characters long')
-    .max(50, 'Name must be less than 50 characters'),
-  email: emailSchema,
-  password: passwordSchema,
-  confirmPassword: z.string(_),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-// Login schema
 export const loginSchema = z.object({
-  email: emailSchema,
-  password: z.string(_).min(1, 'Password is required'),
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(1, 'Password is required'),
 });
 
-// Password utilities
+export type LoginData = z.infer<typeof loginSchema>;
+
 export class PasswordUtils {
   /**
    * Hash a password using bcrypt
    */
-  static async hashPassword(_password: string): Promise<string> {
+  static async hashPassword(password: string): Promise<string> {
     const saltRounds = 12;
-    return bcrypt.hash( password, saltRounds);
+    return bcrypt.hash(password, saltRounds);
   }
 
   /**
    * Verify a password against its hash
    */
-  static async verifyPassword( password: string, hash: string): Promise<boolean> {
+  static async verifyPassword(password: string, hash: string): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
 
   /**
    * Generate a secure random password
    */
-  static generateSecurePassword(_length: number = 16): string {
+  static generateSecurePassword(length: number = 16): string {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
     let password = '';
     
@@ -63,14 +38,14 @@ export class PasswordUtils {
     const numbers = '0123456789';
     const special = '!@#$%^&*';
     
-    password += uppercase[Math.floor(_Math.random() * uppercase.length)];
-    password += lowercase[Math.floor(_Math.random() * lowercase.length)];
-    password += numbers[Math.floor(_Math.random() * numbers.length)];
-    password += special[Math.floor(_Math.random() * special.length)];
+    password += uppercase[Math.floor(Math.random() * uppercase.length)];
+    password += lowercase[Math.floor(Math.random() * lowercase.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += special[Math.floor(Math.random() * special.length)];
     
     // Fill the rest randomly
     for (let i = 4; i < length; i++) {
-      password += charset[Math.floor(_Math.random() * charset.length)];
+      password += charset[Math.floor(Math.random() * charset.length)];
     }
     
     // Shuffle the password
@@ -80,34 +55,34 @@ export class PasswordUtils {
   /**
    * Check password strength
    */
-  static checkPasswordStrength(_password: string): {
+  static checkPasswordStrength(password: string): {
     score: number;
     feedback: string[];
     isStrong: boolean;
   } {
     const feedback: string[] = [];
     let score = 0;
-
+    
     // Length check
-    if (_password.length >= 8) score += 1;
+    if (password.length >= 8) score += 1;
     else feedback.push('Use at least 8 characters');
-
-    if (_password.length >= 12) score += 1;
-    else if (_password.length >= 8) feedback.push('Consider using 12+ characters for better security');
-
+    
+    if (password.length >= 12) score += 1;
+    else if (password.length >= 8) feedback.push('Consider using 12+ characters for better security');
+    
     // Character variety checks
-    if (_/[A-Z]/.test(password)) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
     else feedback.push('Add uppercase letters');
-
-    if (_/[a-z]/.test(password)) score += 1;
+    
+    if (/[a-z]/.test(password)) score += 1;
     else feedback.push('Add lowercase letters');
-
-    if (_/[0-9]/.test(password)) score += 1;
+    
+    if (/[0-9]/.test(password)) score += 1;
     else feedback.push('Add numbers');
-
-    if (_/[^A-Za-z0-9]/.test(password)) score += 1;
+    
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
     else feedback.push('Add special characters (!@#$%^&*)');
-
+    
     // Common patterns check
     const commonPatterns = [
       /123456/,
@@ -115,29 +90,27 @@ export class PasswordUtils {
       /qwerty/i,
       /abc123/i,
       /admin/i,
-      /letmein/i,
+      /letmein/i
     ];
-
-    if (_commonPatterns.some(pattern => pattern.test(password))) {
+    
+    if (commonPatterns.some(pattern => pattern.test(password))) {
       score -= 2;
       feedback.push('Avoid common patterns and dictionary words');
     }
-
+    
     // Repetitive characters
-    if (_/(.)\1{2,}/.test(_password)) {
+    if (/(.)\1{2}/.test(password)) {
       score -= 1;
       feedback.push('Avoid repeating characters');
     }
-
-    const isStrong = score >= 5 && feedback.length === 0;
-
+    
+    // Ensure score is not negative
+    score = Math.max(0, score);
+    
     return {
-      score: Math.max(0, Math.min(6, score)),
+      score,
       feedback,
-      isStrong
+      isStrong: score >= 5 && feedback.length === 0
     };
   }
 }
-
-export type RegistrationData = z.infer<typeof registrationSchema>;
-export type LoginData = z.infer<typeof loginSchema>;
