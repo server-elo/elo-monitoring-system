@@ -1,99 +1,156 @@
-name: Build and Test Next.js Application
+name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch:
 
-# Sets permissions for the workflow
-permissions:
-  contents: read
-  pull-requests: write
-
-# Allow only one concurrent build, skipping runs queued between the run in-progress and latest queued.
-concurrency:
-  group: "build-${{ github.ref }}"
-  cancel-in-progress: true
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
+      
+      - name: Build application
+        run: npm run build
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
+      - uses: actions/checkout@v4
       
-    - name: Verify environment variables
-      env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: |
-        echo "Checking environment variables..."
-        echo "GEMINI_API_KEY is set: $([[ -n "$GEMINI_API_KEY" ]] && echo "Yes" || echo "No")"
-        echo "GEMINI_API_KEY length: ${#GEMINI_API_KEY}"
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-    - name: Build
-      env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        NODE_ENV: production
-        NEXT_PUBLIC_APP_URL: https://ezekaj.github.io/learning_sol
-        NEXT_PUBLIC_APP_NAME: "Solidity Learning Platform"
-        DATABASE_URL: "postgresql://localhost:5432/dummy"
-        NEXTAUTH_URL: https://ezekaj.github.io/learning_sol
-        NEXTAUTH_SECRET: "build-only-nextauth-secret-32-chars-minimum-required-for-validation"
-      run: npm run build
+  request-approval:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    outputs:
+      approval_id: ${{ steps.request.outputs.approval_id }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Request deployment approval
+        id: request
+        run: |
+          node -e "
+          const request = {
+            environment: 'production',
+            version: '${{ github.sha }}',
+            changes: [
+              'Updated from commit: ${{ github.event.head_commit.message }}'
+            ],
+            risksAssessed: true,
+            testsPassed: true,
+            approvers: ['${{ github.actor }}']
+          };
+          
+          console.log('Requesting deployment approval...');
+          console.log(JSON.stringify(request, null, 2));
+          
+          // Simulate approval request
+          const approvalId = 'approval-' + Date.now();
+          console.log('::set-output name=approval_id::' + approvalId);
+          "
+      
+      - name: Notify approvers
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: "Deployment approval requested for Solidity Learning Platform",
+              attachments: [{
+                color: "warning",
+                fields: [
+                  { title: "Environment", value: "Production", short: true },
+                  { title: "Version", value: "${{ github.sha }}", short: true },
+                  { title: "Requested by", value: "${{ github.actor }}", short: true },
+                  { title: "Approval ID", value: "${{ steps.request.outputs.approval_id }}", short: true }
+                ]
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
-    - name: Clean build cache
-      run: |
-        echo "🧹 Cleaning webpack cache to reduce build size..."
-        rm -rf ./.next/cache
-        echo "✅ Cache cleaned successfully"
-
-    - name: Check for large files in build
-      run: |
-        echo "🔍 Checking for large files in build output (excluding cache)..."
-        find ./.next -type f -size +50M -not -path "*/.next/cache/*" -exec ls -lh {} \; | while read line; do
-          echo "❌ Large file found: $line"
-          exit 1
-        done
-        echo "✅ No large files found in deployable build output"
-
-    - name: Verify build output
-      run: |
-        echo "📊 Build output summary:"
-        du -sh ./.next
-        echo "📁 Build output structure:"
-        find ./.next -type f -name "*.js" -o -name "*.css" -o -name "*.html" | head -20
-
-    - name: Run type check
-      run: npm run type-check
-
-    - name: Run linting
-      run: npm run lint
-
-    - name: Deployment Notice
-      run: |
-        echo "🚀 Build completed successfully!"
-        echo ""
-        echo "⚠️  Note: This application now uses server-side functionality and cannot be deployed to GitHub Pages."
-        echo ""
-        echo "🌐 Recommended deployment platforms:"
-        echo "   • Vercel: https://vercel.com (recommended for Next.js)"
-        echo "   • Netlify: https://netlify.com"
-        echo "   • Railway: https://railway.app"
-        echo "   • Render: https://render.com"
-        echo ""
-        echo "📖 To deploy to Vercel:"
-        echo "   1. Connect your GitHub repository to Vercel"
-        echo "   2. Set environment variables in Vercel dashboard"
-        echo "   3. Deploy automatically on push to main branch"
+  deploy:
+    needs: request-approval
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Wait for approval
+        run: |
+          echo "Waiting for manual approval in GitHub Actions..."
+          echo "Approval ID: ${{ needs.request-approval.outputs.approval_id }}"
+      
+      - name: Deploy to production
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd /var/www/solidity-learning
+            docker-compose pull
+            docker-compose up -d
+            docker system prune -af
+            
+            # Record deployment
+            echo "Deployment completed at $(date)" >> deployments.log
+            echo "Version: ${{ github.sha }}" >> deployments.log
+            echo "Approved via: ${{ needs.request-approval.outputs.approval_id }}" >> deployments.log

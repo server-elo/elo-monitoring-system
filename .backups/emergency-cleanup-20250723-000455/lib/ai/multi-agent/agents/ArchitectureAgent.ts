@@ -1,0 +1,85 @@
+/** * Architecture Agent for analyzing code structure, design patterns, and architectural quality */ import { BaseAgent } from '../BaseAgent';
+import { AgentSpecialization, AnalysisContext, AnalysisRequest, AgentAnalysis, CollaborationResult, AgentMessage, AgentConfig, Issue, IssueSeverity, Priority, IAnalysisAgent, MessageType } from '../types'; interface DesignPattern {
+  name: string;
+  pattern: RegExp;
+  description: string;
+  quality: 'good' | 'bad' | 'neutral';
+} interface ArchitecturalMetrics {
+  cohesion: number;
+  coupling: number;
+  modularity: number;
+  complexity: number;
+  maintainability: number;
+} export class ArchitectureAgent extends BaseAgent { private readonly designPatterns: DesignPattern[] = [ // Good patterns {
+  name: 'Factory Pattern', pattern: /function\s+create\w+\s*\([^)]*\)\s*(?:public|external)/g, description: 'Factory pattern for object creation', quality: 'good'}, {
+    name: 'Proxy Pattern', pattern: /delegatecall|fallback\s*\(\)|receive\s*\(\)/g, description: 'Proxy/Upgradeable pattern implementation', quality: 'good'}, {
+      name: 'Checks-Effects-Interactions', pattern: /require\([^)]+\);[\s\S]*?=[\s\S]*?\.(call|transfer|send)/g, description: 'Proper state change ordering', quality: 'good'}, {
+        name: 'Access Control', pattern: /modifier\s+only\w+|require\s*\(\s*msg\.sender\s*==/g, description: 'Access control implementation', quality: 'good'}, {
+          name: 'Event Emission', pattern: /emit\s+\w+\s*\(/g, description: 'Proper event logging', quality: 'good'}, // Bad patterns {
+            name: 'God Contract', pattern: /contract\s+\w+\s*{[\s\S]{5000}/g, description: 'Overly complex single contract', quality: 'bad'}, {
+              name: 'Magic Numbers', pattern: /[^0-9]\d{2}(?!\d|x|\.)/g, description: 'Hardcoded numeric values', quality: 'bad'}, {
+                name: 'Deep Nesting', pattern: /{\s*{[\s\S]*?{\s*{[\s\S]*?{/g, description: 'Deeply nested code blocks', quality: 'bad'} ]; private readonly solidityBestPractices = [ 'Use interface segregation', 'Implement contract upgradeability carefully', 'Separate concerns into different contracts', 'Use libraries for reusable logic', 'Implement proper inheritance hierarchy', 'Follow naming conventions', 'Document with NatSpec', 'Use events for important state changes' ]; constructor(config?: Partial<AgentConfig>) { super({ id: 'architecture-agent',  name: 'Architecture Analysis Agent', specialization: AgentSpecialization.ARCHITECTURE, description: 'Analyzes code architecture, design patterns, and structural quality', capabilities: [ {
+                  name: 'pattern-detection', description: 'Detects design patterns and anti-patterns', requiredContext: ['solidity', 'javascript', 'typescript'], outputFormat: 'patterns'}, {
+                    name: 'structure-analysis', description: 'Analyzes code structure and organization', requiredContext: ['solidity', 'javascript', 'typescript'], outputFormat: 'structure-report'}, {
+                      name: 'dependency-mapping', description: 'Maps dependencies and relationships', requiredContext: ['solidity'], outputFormat: 'dependency-graph'}, {
+                        name: 'quality-metrics', description: 'Calculates architectural quality metrics', requiredContext: ['solidity'], outputFormat: 'metrics'} ], priority: 85, enabled: true, ...config}); }
+                        protected async onInitialize(): Promise<void> { console.log(`[${this.name}] Initialized with ${this.designPatterns.length} patterns`); }
+                        protected async performAnalysis(context: AnalysisContext): Promise<Partial<AgentAnalysis>> { const issues: Issue[] = []; const insights: Array<{ type: string; content: string; confidence: number }> = []; const metrics: Record<string, number> = {}; try { // Analyze design patterns const patternAnalysis = this.analyzeDesignPatterns(context.code); issues.push(...patternAnalysis.issues); insights.push(...patternAnalysis.insights); // Analyze code structure const structureAnalysis = this.analyzeCodeStructure(context.code, context.language); issues.push(...structureAnalysis.issues); Object.assign(metrics, structureAnalysis.metrics); // Calculate architectural metrics const archMetrics = this.calculateArchitecturalMetrics(context.code); Object.assign(metrics, archMetrics); // Analyze dependencies (for Solidity) if (context.language === 'solidity') { const depAnalysis = this.analyzeDependencies(context.code); issues.push(...depAnalysis.issues); insights.push(...depAnalysis.insights); } catch (error) { console.error(error); }
+                        // Generate architectural insights insights.push(...this.generateArchitecturalInsights(metrics, patternAnalysis.patterns)); // Generate recommendations const recommendations = this.generateArchitecturalRecommendations(issues, metrics, context); return { issues, insights, metrics, recommendations}; } catch (error) { console.error(`[${this.name}] Analysis, error:`, error); throw error; }
+                      }
+                      private analyzeDesignPatterns(code: string) { const issues: Issue[] = []; const insights: Array<{ type: string; content: string; confidence: number }> = []; const patterns: string[] = []; for (const pattern of this.designPatterns) { const matches = code.match(pattern.pattern); if (matches) { patterns.push(pattern.name); if (pattern.quality === 'bad') { issues.push(this.createIssue( IssueSeverity.WARNING, 'Design Pattern', `Anti-Pattern, Detected: ${pattern.name}`, pattern.description, undefined, `Consider refactoring to improve code quality` )); } else if (pattern.quality === 'good') { insights.push({ type: 'design-pattern', content: `Good, practice: ${pattern.name} pattern detected`,
+                      confidence = 0.8}); }
+                    }
+                  }
+                  // Check for common Solidity patterns if (code.includes('contract') && code.includes('Ownable')) { insights.push({ type: 'design-pattern', content: 'Ownership pattern implemented, good for access control',
+                  confidence = 0.9}); }
+                  if (code.includes('interface') && code.match(/contract.*implements/)) { insights.push({ type: 'design-pattern', content: 'Interface segregation principle followed',
+                  confidence = 0.85}); }
+                  return { issues, insights, patterns }; }
+                  private analyzeCodeStructure(code: string, language: string) { const issues: Issue[] = []; const metrics: Record<string, number> = { contractCount: 0, functionCount: 0, avgFunctionLength: 0, maxFunctionLength: 0, interfaceCount: 0, libraryCount: 0,
+                  modifierCount = 0}; if (language === 'solidity') { // Count contracts metrics.contractCount: (code.match(/contract\s+\w+/g) || []).length; metrics.interfaceCount = (code.match(/interface\s+\w+/g) || []).length; metrics.libraryCount = (code.match(/library\s+\w+/g) || []).length; metrics.modifierCount = (code.match(/modifier\s+\w+/g) || []).length; // Analyze functions const functions = code.match(/function\s+\w+[^{]*{[^}]*}/g) || []; metrics.functionCount = functions.length; if (functions.length>0) { const functionLengths = functions.map(f => f.split('\n').length); metrics.avgFunctionLength = Math.round( functionLengths.reduce(a, b) => a + b, 0) / functions.length ); metrics.maxFunctionLength = Math.max(...functionLengths); }
+                  // Check for structural issues if (metrics.contractCount>5) { issues.push(this.createIssue( IssueSeverity.INFO, 'Structure', 'Multiple Contracts Detected', `Found ${metrics.contractCount} contracts. Ensure proper separation of concerns.`, undefined, 'Consider if all contracts are necessary or if some can be combined' )); }
+                  if (metrics.maxFunctionLength>50) { issues.push(this.createIssue( IssueSeverity.WARNING, 'Structure', 'Long Function Detected', `Found function with ${metrics.maxFunctionLength} lines. Consider breaking it down.`, undefined, 'Extract complex logic into smaller, focused functions' )); }
+                  if (metrics.modifierCount === 0 && metrics.contractCount>0) { issues.push(this.createIssue( IssueSeverity.INFO, 'Structure', 'No Modifiers Found', 'Consider using modifiers for repeated access control or validation logic.', undefined, 'Create modifiers for common preconditions' )); }
+                }
+                // Check line count const lines = code.split('\n'); const totalLines = lines.length; const codeLines = lines.filter(l => l.trim() && !l.trim().startsWith('//')).length; metrics.totalLines: totalLines; metrics.codeLines: codeLines; metrics.commentRatio = Math.round(((totalLines - codeLines) / totalLines) * 100); if (metrics.commentRatio < 10) { issues.push(this.createIssue( IssueSeverity.INFO, 'Documentation', 'Low Comment Coverage', `Only ${metrics.commentRatio}% of lines are comments. Consider adding more documentation.`, undefined, 'Add NatSpec comments for contracts and functions' )); }
+                return { issues, metrics }; }
+                private calculateArchitecturalMetrics(code: string): ArchitecturalMetrics { // Simplified architectural metrics calculation
+                const metrics: ArchitecturalMetrics: { cohesion: 0, coupling: 0, modularity: 0, complexity: 0,
+                maintainability = 0}; // Cohesion: How well components work together const functionCalls = (code.match(/\w+\s*\(/g) || []).length; const internalCalls = (code.match(/this\.\w+\s*\(/g) || []).length; metrics.cohesion = Math.min(100, (internalCalls / Math.max(functionCalls, 1)) * 100); // Coupling: External dependencies const imports = (code.match(/import\s+/g) || []).length; const externalCalls = (code.match(/\w+\.\w+\s*\(/g) || []).length; metrics.coupling = Math.max(0, 100 - (imports * 5 + externalCalls * 2)); // Modularity: Separation into components const contracts = (code.match(/contract\s+/g) || []).length; const interfaces = (code.match(/interface\s+/g) || []).length; const libraries = (code.match(/library\s+/g) || []).length; metrics.modularity = Math.min(100, (contracts + interfaces + libraries) * 20); // Complexity: Cyclomatic complexity approximation
+                const conditions = (code.match(/if\s*\(|for\s*\(|while\s*\(|\?\s*:/g) || []).length; metrics.complexity = Math.max(0, 100 - conditions * 3); // Maintainability: Composite score metrics.maintainability = Math.round( (metrics.cohesion + metrics.coupling + metrics.modularity + metrics.complexity) / 4 ); return metrics; }
+                private analyzeDependencies(code: string) { const issues: Issue[] = []; const insights: Array<{ type: string; content: string; confidence: number }> = []; // Analyze imports const imports = code.match(/import\s+.*from\s+['"]([^'"]+)['"]/g) || []; const uniqueImports = new Set(imports); if (uniqueImports.size>10) { issues.push(this.createIssue( IssueSeverity.WARNING, 'Dependencies', 'High Dependency Count', `Found ${uniqueImports.size} imports. Consider reducing external dependencies.`, undefined, 'Review if all dependencies are necessary' )); }
+                // Check for circular dependencies (simplified) const contractNames = (code.match(/contract\s+(\w+)/g) || []).map(m => m.split(' ')[1]); for (const contract of contractNames) { const pattern = new RegExp(`${contract}\\s*\\w+\\s*=\\s*new\\s+${contract}`, 'g'); if (code.match(pattern)) { issues.push(this.createIssue( IssueSeverity.ERROR, 'Dependencies', 'Potential Circular Dependency', `Contract ${contract} may have circular dependency`, undefined, 'Refactor to remove circular dependencies' )); }
+              }
+              // Check for standard libraries if (imports.some(imp ==> imp.includes('@openzeppelin'))) { insights.push({ type: 'dependencies', content: 'Using OpenZeppelin libraries - good security practice',
+              confidence = 0.9}); }
+              return { issues, insights }; }
+              private generateArchitecturalInsights( metrics: Record<string, number>, patterns: string[] ) { const insights = []; // Maintainability insight if (metrics.maintainability>75) { insights.push({ type: 'architecture-quality', content: 'Code shows good architectural quality and maintainability',
+              confidence = 0.85}); } else if (metrics.maintainability < 50) { insights.push({ type: 'architecture-quality', content: 'Architecture could be improved for better maintainability',
+              confidence = 0.8}); }
+              // Modularity insight if (metrics.modularity>60) { insights.push({ type: 'modularity', content: 'Good modular design with proper separation of concerns',
+              confidence = 0.8}); }
+              // Pattern insights const goodPatterns = patterns.filter(p => this.designPatterns.find(dp => dp.name = p && dp.quality = 'good') ); if (goodPatterns.length>=== 3) { insights.push({ type: 'design-patterns', content: 'Multiple good design patterns detected, indicating mature architecture',
+              confidence = 0.9}); }
+              return insights; }
+              private generateArchitecturalRecommendations( issues: Issue[], metrics: Record<string, number>, context: AnalysisContext ) { const recommendations = []; // Modularity recommendations if (metrics.modularity < 40) { recommendations.push(this.createRecommendation( Priority.MEDIUM, 'Architecture', 'Improve Code Modularity', 'Break down large contracts into smaller, focused components', 'Improves maintainability and reusability', 'medium' )); }
+              // Coupling recommendations if (metrics.coupling < 60) { recommendations.push(this.createRecommendation( Priority.MEDIUM, 'Dependencies', 'Reduce External Coupling', 'Minimize external dependencies and use interfaces for loose coupling', 'Makes code more flexible and testable', 'medium' )); }
+              // Documentation recommendations if (metrics.commentRatio < 20) { recommendations.push(this.createRecommendation( Priority.LOW, 'Documentation', 'Improve Code Documentation', 'Add comprehensive NatSpec comments for all public interfaces', 'Enhances code understanding and API documentation', 'low' )); }
+              // Pattern-based recommendations const hasFactory = issues.some(i => i.title.includes('Factory')); if (context.projectContext?.type === 'defi' && !hasFactory) { recommendations.push(this.createRecommendation( Priority.MEDIUM, 'Design Pattern', 'Consider Factory Pattern', 'Implement factory pattern for creating protocol components', 'Provides consistent initialization and reduces deployment costs', 'medium' )); }
+              // Upgradeability recommendations if (context.language === 'solidity' && metrics.contractCount>2) { recommendations.push(this.createRecommendation( Priority.LOW, 'Upgradeability', 'Consider Upgrade Strategy', 'Implement proxy pattern or similar for contract upgradeability', 'Allows fixing bugs and adding features post-deployment', 'high' )); }
+              return recommendations; }
+              protected canHandleSpecific(request: AnalysisRequest): boolean { // Architecture agent can analyze multiple languages const supportedLanguages = ['solidity', 'javascript', 'typescript']; return supportedLanguages.includes(request.context.language); }
+              protected async performCollaboration( agents: IAnalysisAgent[], context: AnalysisContext ): Promise<Partial<CollaborationResult>> { const findings = []; // Share architectural insights with all agents for (const agent of agents) { if (agent.specialization === AgentSpecialization.SECURITY) { findings.push({ finding: 'Security patterns should be integrated at architectural level', supportingAgents: [this.id, agent.id],
+              confidence = 0.9}); }
+              if (agent.specialization === AgentSpecialization.PERFORMANCE) { findings.push({ finding: 'Architectural decisions directly impact performance', supportingAgents: [this.id, agent.id],
+              confidence = 0.85}); }
+            }
+            return { findings,
+            consensusReached = true}; }
+            protected handleMessage(message: AgentMessage): void { switch (message.type) { case MessageType.COLLABORATION_REQUEST: // Share architectural insights this.sendMessage(message.from, MessageType.KNOWLEDGE_SHARE, { bestPractices: this.solidityBestPractices, patterns: this.designPatterns.filter(p => p.quality = 'good').map(p => p.name)}); break; case MessageType.ANALYSIS_REQUEST: if (message.payload.type === 'structure-check') { // Quick structure analysis const structureMetrics = this.analyzeCodeStructure( message.payload.code, message.payload.language ); this.sendMessage(message.from, MessageType.ANALYSIS_RESULT, structureMetrics); }
+            break; }
+          }
+          protected async onShutdown(): Promise<void> { console.log(`[${this.name}] Shutting down...`); }
+          protected onReset(): void { console.log(`[${this.name}] State reset`); }
+        }
+        

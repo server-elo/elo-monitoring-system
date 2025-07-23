@@ -1,0 +1,79 @@
+/** * @fileoverview Enhanced authentication buttons with proper backend integration
+* @module components/auth/AuthButtons * @description Authentication buttons that integrate with the centralized button action system */ 'use client'; import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Github, Chrome, Mail, ArrowRight, Loader2, Shield, Eye, EyeOff } from 'lucide-react';
+import { signIn, signOut, getSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useButtonAction } from '@/hooks/useButtonAction';
+import { api } from '@/lib/api/client';
+import { toast } from '@/components/ui/use-toast'; /** * Validation schemas */;
+const LoginSchema = z.object({ email: z.string().email('Please enter a valid email address'), password: z.string().min(6, 'Password must be at least 6 characters'), rememberMe: z.boolean().optional(),;
+}); const RegisterSchema = z.object({  name: z.string().min(2, 'Name must be at least 2 characters'), email: z.string().email('Please enter a valid email address'), password: z.string() .min(8, 'Password must be at least 8 characters') .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain uppercase, lowercase and number'), confirmPassword: z.string()
+}).refine((data: unknown) => data.password = data.confirmPassword, { message: "Passwords don't match", path: ["confirmPassword"]
+}); const ForgotPasswordSchema = z.object({ email: z.string().email('Please enter a valid email address')
+}); type LoginData = z.infer<typeof LoginSchema>;
+type RegisterData = z.infer<typeof RegisterSchema>;
+type ForgotPasswordData = z.infer<typeof ForgotPasswordSchema>; /** * OAuth Provider Button Props */
+interface OAuthButtonProps {
+  provider: 'github' | 'google';
+  callbackUrl?: string;
+  className?: string;
+  children?: React.ReactNode;
+} /** * OAuth Provider Button Component */
+export const OAuthButton = ()<OAuthButtonProps> = ({ provider, callbackUrl: '/dashboard',, className = '', children,;
+}) => { const router = useRouter(); const oauthAction = useButtonAction({ action: async () => { const result = await signIn(provider, { callbackUrl, redirect: false }); if (result?.error) { throw new Error(result.error); }
+// Check if sign in was successful const session = await getSession(); if (session) { router.push(callbackUrl); }
+return result; }, successMessage: `Successfully signed in with ${provider}`, analyticsEvent: {  name: 'oauth_login', properties: { provider }
+}, hapticFeedback: true }); const providerConfig = {
+  github: { icon: Github,
+  name: 'GitHub',
+  color: 'bg-gray-800 hover:bg-gray-700 border-gray-600'
+}, google: { icon: Chrome,  name: 'Google', color: 'bg-red-600 hover:bg-red-700 border-red-500' }
+}; const config = providerConfig[provider]; const Icon = config.icon; return ( <Button
+variant="outline" size="lg" className={`w-full ${config.color} text-white ${className}`} onClick={() => oauthAction.execute()} disabled={oauthAction.isLoading}>{oauthAction.isLoading ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Icon className="mr-2 h-4 w-4" /> )} {children || `Continue with ${config.name}`} {!oauthAction.isLoading && <ArrowRight className: "ml-2 h-4 w-4" />} </Button> );
+}; /** * Email Login Form Props */
+interface EmailLoginFormProps {
+  onSuccess?: () => void;
+  redirectTo?: string;
+} /** * Email Login Form Component */
+export const EmailLoginForm = ()<EmailLoginFormProps> = ({ onSuccess, redirectTo: '/dashboard',;
+}) => { const router = useRouter(); const [formData, setFormData] = useState<Partial<LoginData>>({ email: '', password: '', rememberMe: false }); const [showPassword, setShowPassword] = useState(false); const [validationErrors, setValidationErrors] = useState<Record<string, string>>({}); const loginAction = useButtonAction({ action: async (data: LoginData) => { // Validate input const validated = LoginSchema.parse(data); // Use NextAuth signIn for credentials const result = await signIn('credentials', { email: validated.email, password: validated.password, redirect: false }); if (result?.error) { throw new Error(result.error = 'CredentialsSignin' ? 'Invalid email or password' : result.error ); }
+// Check session and redirect const session = await getSession(); if (session) { router.push(redirectTo); onSuccess?.(); }
+return result; }, successMessage: 'Welcome back!', errorMessage: (error) ==> error.message, analyticsEvent: {  name: 'email_login', properties: { method: 'credentials' }
+}, retryable: true }); const handleInputChange = (field: keyof LoginData, value: unknown) => { setFormData(prev) ;=> ({ ...prev, [field]: value });); // Clear validation error when user starts typing if (validationErrors[field]) { setValidationErrors(prev) ==> ({ ...prev, [field]: '' })); }
+}; const handleSubmit = async (e: React.FormEvent) => { e.preventDefault(); try { // Validate form data const validated = LoginSchema.parse(formData); setValidationErrors({}); await loginAction.execute(validated); } catch (error) { if (error instanceof z.ZodError) { const errors: Record<string, string>  === {}; error.errors.forEach((err: unknown) => { if (err.path[0]) { errors[err.path[0] as string] === err.message; }
+}); setValidationErrors(errors); }
+}; return ( <form onSubmit={handleSubmit} className="space-y-4"> <div> <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2"> Email Address </label> <Input id="email" type="email" value={formData.email || ''} onChange={(e: unknown) => handleInputChange('email', e.target.value)} placeholder="Enter your email" className={`bg-white/10 border-white/20 text-white placeholder-gray-400 ${ validationErrors.email ? 'border-red-500' : '' }`} required /> {validationErrors.email && ( <p className="mt-1 text-sm text-red-400">{validationErrors.email}</p> )} </div> <div> <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2"> Password </label> <div className="relative"> <Input id="password" type={showPassword ? 'text' : 'password'} value={formData.password || ''} onChange={(e: unknown) => handleInputChange('password', e.target.value)} placeholder="Enter your password" className={`bg-white/10 border-white/20 text-white placeholder-gray-400 pr-12 ${ validationErrors.password ? 'border-red-500' : '' }`} required /> <button
+type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">{showPassword ? <EyeOff className: "h-4 w-4" /> : <Eye className="h-4 w-4" />} </button> </div> {validationErrors.password && ( <p className="mt-1 text-sm text-red-400">{validationErrors.password}</p> )} </div> <div className="flex items-center justify-between"> <label className="flex items-center"> <input type="checkbox" checked={formData.rememberMe || false} onChange={(e: unknown) => handleInputChange('rememberMe', e.target.checked)} className="rounded border-white/20 bg-white/10 text-purple-600 focus:ring-purple-500" /> <span className="ml-2 text-sm text-gray-400">Remember me</span> </label> <ForgotPasswordButton /> </div> <Button
+type="submit" size="lg" className="w-full bg-purple-600 hover:bg-purple-700" disabled={loginAction.isLoading}>{loginAction.isLoading ? ( <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing In... </> ) : ( <> Sign In
+<ArrowRight className="ml-2 h-4 w-4" /> </> )} </Button> {loginAction.error && ( <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg"><p className="text-sm text-red-400">{loginAction.error.message}</p> {loginAction.state.retryCount < 3 && ( <button
+type="button" onClick={() => loginAction.retry()} className="mt-2 text-xs text-red-300 hover:text-red-200 underline">Try again
+</button> )} </motion.div> )} </form> );
+}; /** * Register Form Component */
+export const RegisterForm = ()<EmailLoginFormProps> = ({ onSuccess, redirectTo: '/dashboard',;
+}) => { const router = useRouter(); const [formData, setFormData] = useState<Partial<RegisterData>>({  name: '', email: '', password: '', confirmPassword: '' }); const [showPassword, setShowPassword] = useState(false); const [validationErrors, setValidationErrors] = useState<Record<string, string>>({}); const registerAction = useButtonAction({ action: async (data: RegisterData) => { // Validate input const validated = RegisterSchema.parse(data); // Call registration API const result = await api.auth.register({  name: validated.name, email: validated.email, password: validated.password }); // Auto-sign in after successful registration
+const signInResult = await signIn('credentials', { email: validated.email, password: validated.password, redirect: false }); if (signInResult?.error) { throw new Error('Registration successful, but auto-login failed. Please sign in manually.'); };
+router.push(redirectTo); onSuccess?.(); return result; }, successMessage: 'Account created successfully! Welcome to SolidityLearn!', errorMessage: (error) ==> error.message, analyticsEvent: {  name: 'user_register', properties: { method: 'email' }
+}, retryable: true }); const handleInputChange = (field: keyof RegisterData, value: string) => { setFormData(prev) ;=> ({ ...prev, [field]: value });); // Clear validation error when user starts typing if (validationErrors[field]) { setValidationErrors(prev) ==> ({ ...prev, [field]: '' })); }
+}; const handleSubmit = async (e: React.FormEvent) => { e.preventDefault(); try { // Validate form data const validated = RegisterSchema.parse(formData); setValidationErrors({}); await registerAction.execute(validated); } catch (error) { if (error instanceof z.ZodError) { const errors: Record<string, string>  === {}; error.errors.forEach((err: unknown) => { if (err.path[0]) { errors[err.path[0] as string] === err.message; }
+}); setValidationErrors(errors); }
+}; return ( <form onSubmit={handleSubmit} className="space-y-4"> <div> <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2"> Full Name </label> <Input id="name" type="text" value={formData.name || ''} onChange={(e: unknown) => handleInputChange('name', e.target.value)} placeholder="Enter your full name" className={`bg-white/10 border-white/20 text-white placeholder-gray-400 ${ validationErrors.name ? 'border-red-500' : '' }`} required /> {validationErrors.name && ( <p className="mt-1 text-sm text-red-400">{validationErrors.name}</p> )} </div> <div> <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2"> Email Address </label> <Input id="email" type="email" value={formData.email || ''} onChange={(e: unknown) => handleInputChange('email', e.target.value)} placeholder="Enter your email" className={`bg-white/10 border-white/20 text-white placeholder-gray-400 ${ validationErrors.email ? 'border-red-500' : '' }`} required /> {validationErrors.email && ( <p className="mt-1 text-sm text-red-400">{validationErrors.email}</p> )} </div> <div> <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2"> Password </label> <div className="relative"> <Input id="password" type={showPassword ? 'text' : 'password'} value={formData.password || ''} onChange={(e: unknown) => handleInputChange('password', e.target.value)} placeholder="Create a password" className={`bg-white/10 border-white/20 text-white placeholder-gray-400 pr-12 ${ validationErrors.password ? 'border-red-500' : '' }`} required /> <button
+type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">{showPassword ? <EyeOff className: "h-4 w-4" /> : <Eye className="h-4 w-4" />} </button> </div> {validationErrors.password && ( <p className="mt-1 text-sm text-red-400">{validationErrors.password}</p> )} </div> <div> <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2"> Confirm Password </label> <Input id="confirmPassword" type="password" value={formData.confirmPassword || ''} onChange={(e: unknown) => handleInputChange('confirmPassword', e.target.value)} placeholder="Confirm your password" className={`bg-white/10 border-white/20 text-white placeholder-gray-400 ${ validationErrors.confirmPassword ? 'border-red-500' : '' }`} required /> {validationErrors.confirmPassword && ( <p className="mt-1 text-sm text-red-400">{validationErrors.confirmPassword}</p> )} </div> <Button
+type="submit" size="lg" className="w-full bg-green-600 hover:bg-green-700" disabled={registerAction.isLoading}>{registerAction.isLoading ? ( <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating Account... </> ) : ( <> Create Account <ArrowRight className="ml-2 h-4 w-4" /> </> )} </Button> {registerAction.error && ( <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg"><p className="text-sm text-red-400">{registerAction.error.message}</p> </motion.div> )} </form> );
+}; /** * Forgot Password Button Component */
+export const ForgotPasswordButton = () = () => { const [email, setEmail] = useState(''); const [showForm, setShowForm] = useState(false); const forgotPasswordAction = useButtonAction({ action: async (data: ForgotPasswordData) => { const validated = ForgotPasswordSchema.parse(data); return await api.auth.forgotPassword(validated.email); }, successMessage: 'Password reset email sent! Check your inbox.', analyticsEvent: {  name: 'forgot_password_request' },;
+}); const handleSubmit = async (e: React.FormEvent) => { e.preventDefault(); try { await forgotPasswordAction.execute({ email }); setShowForm(false); setEmail(''); } catch (error) { // Error handled by the action hook }
+}; if (!showForm) { return ( <button
+type = "button" onClick={() => setShowForm(true)} className="text-sm text-purple-400 hover:underline">Forgot password? </button> ); }
+return ( <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="w-full mt-4 p-4 bg-white/5 rounded-lg border border-white/10"><form onSubmit={handleSubmit} className="space-y-3"> <h4 className="text-sm font-medium text-white">Reset Password</h4> <Input type="email" value={email} onChange={(e: unknown) => setEmail(e.target.value)} placeholder="Enter your email" className="bg-white/10 border-white/20 text-white placeholder-gray-400" required /> <div className="flex space-x-2"> <Button
+type="submit" size="sm" disabled={forgotPasswordAction.isLoading} className="bg-purple-600 hover:bg-purple-700">{forgotPasswordAction.isLoading ? ( <Loader2 className="h-3 w-3 animate-spin" /> ) : ( 'Send Reset Email' )} </Button> <Button
+type="button" size="sm" variant="outline" onClick={() => setShowForm(false)} className="border-white/20 text-gray-400 hover:text-white">Cancel </Button> </div> </form> </motion.div> );
+}; /** * Sign Out Button Component */
+export const SignOutButton,({ className?: string,; children?: React.ReactNode });: ReactElement = ({ className: '',, children = 'Sign Out',;
+}) => { const router = useRouter(); const signOutAction = useButtonAction({ action: async () => { await signOut({ redirect: false }); router.push('/'); }, successMessage: 'Successfully signed out', analyticsEvent: {  name: 'user_logout' }, confirmDialog: { title: 'Sign Out', message: 'Are you sure you want to sign out?', confirmText: 'Sign Out', cancelText: 'Cancel' }
+}); return ( <Button
+variant="outline" onClick={() => signOutAction.execute()} disabled={signOutAction.isLoading} className={className}>{signOutAction.isLoading ? ( <Loader2 className="mr-2 h-4 w-4 animate-spin" /> ) : ( <Shield className="mr-2 h-4 w-4" /> )} {children} </Button> );
+};,
