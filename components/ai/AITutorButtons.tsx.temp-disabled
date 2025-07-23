@@ -1,0 +1,12 @@
+'use client';
+import { ReactElement } from 'react';
+
+export const AITutorButtons = (): ReactElement => {
+  return (
+    <div className="p-4">
+      <h3>AI Tutor - Coming Soon</h3>
+    </div>
+  );
+};
+
+export default AITutorButtons;

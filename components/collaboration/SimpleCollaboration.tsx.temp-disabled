@@ -1,0 +1,84 @@
+'use client';
+
+import { ReactElement, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Users, MessageSquare, Share } from 'lucide-react';
+
+interface SimpleCollaborationProps {
+  className?: string;
+}
+
+export const SimpleCollaboration = ({ className = '' }: SimpleCollaborationProps): ReactElement => {
+  const [isCollaborating, setIsCollaborating] = useState(false);
+  const [collaborators] = useState([
+    { id: '1', name: 'Alice', status: 'online' },
+    { id: '2', name: 'Bob', status: 'away' },
+    { id: '3', name: 'Charlie', status: 'online' }
+  ]);
+
+  const startCollaboration = (): void => {
+    setIsCollaborating(true);
+  };
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      <Card className="bg-gradient-to-br from-green-900/20 to-teal-900/20 border-green-500/20">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Users className="h-5 w-5" />
+              <span>Real-time Collaboration</span>
+            </div>
+            <Badge variant={isCollaborating ? 'default' : 'secondary'}>
+              {isCollaborating ? 'Active' : 'Offline'}
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!isCollaborating ? (
+            <div className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 bg-green-600/20 rounded-full flex items-center justify-center">
+                <Share className="h-8 w-8 text-green-400" />
+              </div>
+              <p className="text-gray-400">Start a collaboration session to code with others in real-time</p>
+              <Button onClick={startCollaboration} className="bg-green-600 hover:bg-green-700">
+                Start Collaboration
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-semibold text-gray-300 mb-2">Active Collaborators</h4>
+                <div className="space-y-2">
+                  {collaborators.map(collaborator => (
+                    <div key={collaborator.id} className="flex items-center justify-between p-2 bg-gray-800 rounded">
+                      <span className="text-white">{collaborator.name}</span>
+                      <Badge variant={collaborator.status === 'online' ? 'default' : 'outline'}>
+                        {collaborator.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <Button variant="outline" className="flex items-center space-x-2">
+                  <MessageSquare className="h-4 w-4" />
+                  <span>Chat</span>
+                </Button>
+                <Button variant="outline" className="flex items-center space-x-2">
+                  <Share className="h-4 w-4" />
+                  <span>Share</span>
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default SimpleCollaboration;

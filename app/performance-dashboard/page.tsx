@@ -4,6 +4,7 @@ import React, { ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { PerformanceMonitor } from "@/components/performance/PerformanceMonitor";
+import { AgentOpsMonitoringPanel } from "@/components/monitoring/AgentOpsMonitoringPanel";
 interface OptimizationData {
   before: {
     bundleSize: number;
@@ -163,6 +164,11 @@ export default function PerformanceDashboard(): void {
             </li>
           </ul>
         </Card>
+        
+        {/* AgentOps Monitoring Section */}
+        <div className="mt-8">
+          <AgentOpsMonitoringPanel />
+        </div>
       </div>
       <PerformanceMonitor />
     </div>

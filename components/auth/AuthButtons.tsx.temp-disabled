@@ -1,0 +1,14 @@
+'use client';
+import { ReactElement } from 'react';
+import { Button } from '@/components/ui/button';
+
+export const AuthButtons = (): ReactElement => {
+  return (
+    <div className="space-x-2">
+      <Button variant="outline">Sign In</Button>
+      <Button>Sign Up</Button>
+    </div>
+  );
+};
+
+export default AuthButtons;

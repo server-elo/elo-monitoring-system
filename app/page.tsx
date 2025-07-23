@@ -1,50 +1,20 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import Link from 'next/link';
+import { AuthenticatedNavbar } from '@/components/navigation/AuthenticatedNavbar';
+import { useCourseStore } from '@/lib/stores/courseStore';
 
 export default function HomePage(): ReactElement {
+  const { loadCourses } = useCourseStore();
+
+  useEffect(() => {
+    loadCourses();
+  }, [loadCourses]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-      {/* Navigation */}
-      <nav className="bg-black/20 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-white">SolanaLearn</h1>
-              </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <Link href="/learn" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    📚 Learn
-                  </Link>
-                  <Link href="/code" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    💻 Code Lab
-                  </Link>
-                  <Link href="/collaborate" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    🤝 Collaborate
-                  </Link>
-                  <Link href="/achievements" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    🏆 Achievements
-                  </Link>
-                  <Link href="/jobs" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    💼 Jobs
-                  </Link>
-                  <Link href="/certificates" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    📜 Certificates
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <div>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                Sign In
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AuthenticatedNavbar />
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">

@@ -24,7 +24,7 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
     styledComponents: true,
-    emotion: true,
+    // emotion: true, // Removed - we don't use Emotion CSS-in-JS
   },
   
   // External packages for server components
@@ -32,7 +32,7 @@ const nextConfig = {
   
   // Quantum Bundle optimization
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false, // Disabled to fix CSS loading issues
     scrollRestoration: true,
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', 'framer-motion'],
   },

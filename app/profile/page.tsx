@@ -154,8 +154,7 @@ export default function ProfilePage(): ReactElement {
     <motion.div
     initial={{ opacity: 0, x: -20 }}
     animate={{ opacity: 1, x: 0 }}
-    className=",
-    lg:col-span-1"><Card className="bg-gray-800 border-gray-700">
+    className="lg:col-span-1"><Card className="bg-gray-800 border-gray-700">
     <CardContent className="p-6">
     <div className="text-center">
     <div className="relative inline-block">
@@ -232,8 +231,7 @@ export default function ProfilePage(): ReactElement {
     <motion.div
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}
-    className=",
-    lg:col-span-2"><Card className="bg-gray-800 border-gray-700">
+    className="lg:col-span-2"><Card className="bg-gray-800 border-gray-700">
     <CardHeader>
     <div className="flex justify-between items-center">
     <CardTitle className="text-white">
@@ -283,7 +281,7 @@ export default function ProfilePage(): ReactElement {
       <Input
       id="name"
       value={editedProfile.name || ""}
-      onChange={(e: unknown) =>
+      onChange={(e) =>
       setEditedProfile({
         ...editedProfile,
         name: e.target.value
@@ -303,7 +301,7 @@ export default function ProfilePage(): ReactElement {
     <Textarea
     id="bio"
     value={editedProfile.bio || ""}
-    onChange={(e: unknown) =>
+    onChange={(e) =>
     setEditedProfile({
       ...editedProfile,
       bio: e.target.value
@@ -330,7 +328,7 @@ GitHub Username
   <Input
   id="github"
   value={editedProfile.githubUsername || ""}
-  onChange={(e: unknown) =>
+  onChange={(e) =>
   setEditedProfile({
     ...editedProfile,
     githubUsername: e.target.value
@@ -354,7 +352,7 @@ Twitter Username
   <Input
   id="twitter"
   value={editedProfile.twitterUsername || ""}
-  onChange={(e: unknown) =>
+  onChange={(e) =>
   setEditedProfile({
     ...editedProfile,
     twitterUsername: e.target.value
@@ -378,14 +376,13 @@ LinkedIn URL
   <Input
   id="linkedin"
   value={editedProfile.linkedinUrl || ""}
-  onChange={(e: unknown) =>
+  onChange={(e) =>
   setEditedProfile({
     ...editedProfile,
     linkedinUrl: e.target.value
   })
 }
-placeholder=",
-https://linkedin.com/in/username"
+placeholder="https://linkedin.com/in/username"
 className="bg-gray-700 border-gray-600 text-white"
 />
 ) : (
@@ -403,14 +400,13 @@ Website
   <Input
   id="website"
   value={editedProfile.websiteUrl || ""}
-  onChange={(e: unknown) =>
+  onChange={(e) =>
   setEditedProfile({
     ...editedProfile,
     websiteUrl: e.target.value
   })
 }
-placeholder=",
-https://example.com"
+placeholder="https://example.com"
 className="bg-gray-700 border-gray-600 text-white"
 />
 ) : (

@@ -46,6 +46,11 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "**/*-disabled/**/*",
+    "**/*disabled*/**/*",
+    "**/*.disabled",
+    "**/*.temp-disabled",
+    ".backups/**/*"
   ]
 }

@@ -1,0 +1,13 @@
+'use client';
+import { ReactElement } from 'react';
+
+export const CodeLab = (): ReactElement => {
+  return (
+    <div className="p-4">
+      <h2>Code Lab - Coming Soon</h2>
+      <p>Interactive code editor is being rebuilt...</p>
+    </div>
+  );
+};
+
+export default CodeLab;

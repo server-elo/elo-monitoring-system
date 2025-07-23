@@ -1,256 +1,261 @@
-# Production Deployment Guide
+# Solidity Learning Platform - Deployment Guide
 
 ## Overview
-This guide covers the complete production deployment process for the Solidity Learning Platform.
+This guide covers the deployment process for the Solidity Learning Platform v1.0.
 
 ## Prerequisites
-- Docker and Docker Compose installed
-- Node.js v20+ installed
-- Domain name configured with DNS pointing to your server
-- SSL certificates (or use Let's Encrypt)
-- PostgreSQL and Redis (or use Docker containers)
+- Node.js 20.x
+- Docker & Docker Compose
+- PostgreSQL 15+
+- Redis 7+
+- PM2 (for non-containerized deployment)
 
-## Current Status
-- ✅ Node.js updated to v20
-- ✅ Docker configuration ready
-- ✅ SSL/TLS scripts created
-- ✅ Monitoring (Sentry) configured
-- ✅ CI/CD pipelines created
-- ✅ Deployment scripts ready
-- ⚠️ TypeScript errors: ~49,900 (formatting issues)
-- ✅ 12-Factor compliance: 96.2%
-
-## Deployment Steps
-
-### 1. Fix TypeScript Errors
-The codebase has formatting issues that need to be resolved:
+## Environment Variables
+Create a `.env.production` file with all required variables:
 
 ```bash
-# Run the critical syntax fix script
-node scripts/fix-critical-syntax-errors.js
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/solidity_learning
+DB_USER=solidity_user
+DB_PASSWORD=your_secure_password
+DB_NAME=solidity_learning
 
-# If errors persist, run the comprehensive fix
-node scripts/fix-all-typescript-errors.js
+# Authentication
+NEXTAUTH_URL=https://your-domain.com
+NEXTAUTH_SECRET=generate-with-openssl-rand-base64-32
+JWT_SECRET=another-secure-secret
 
-# Check remaining errors
-npm run type-check
+# OAuth Providers
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# AI Services
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_ORG_ID=your_openai_org_id
+GEMINI_API_KEY=your_gemini_api_key
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+
+# Email (Optional)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+SMTP_FROM=noreply@your-domain.com
+
+# Blockchain (Optional)
+BLOCKCHAIN_RPC_URL=https://mainnet.infura.io/v3/your_project_id
+CONTRACT_ADDRESS=0x...
+ADMIN_WALLET_PRIVATE_KEY=0x...
+
+# Monitoring (Optional)
+MONITORING_API_KEY=your_monitoring_key
+SENTRY_DSN=https://...@sentry.io/...
+
+# Other
+SITE_URL=https://your-domain.com
 ```
 
-### 2. Set Up Environment
-```bash
-# Generate production environment variables
-node scripts/setup-production-env.js
+## Deployment Methods
 
-# Review and update .env.production with your values
-nano .env.production
-```
-
-### 3. Configure SSL/TLS
-
-#### For Production (Let's Encrypt):
-```bash
-./scripts/setup-ssl.sh letsencrypt your-domain.com admin@your-domain.com
-```
-
-#### For Development (Self-signed):
-```bash
-./scripts/setup-ssl.sh self-signed localhost
-```
-
-### 4. Deploy with Docker
+### 1. Docker Compose (Recommended)
 
 ```bash
 # Build and start all services
-docker-compose -f docker-compose.prod.yml up -d
-
-# Check service status
-docker-compose -f docker-compose.prod.yml ps
+docker-compose up -d
 
 # View logs
-docker-compose -f docker-compose.prod.yml logs -f
+docker-compose logs -f app
+
+# Stop services
+docker-compose down
+
+# Update and restart
+git pull
+docker-compose build
+docker-compose up -d
 ```
 
-### 5. Run Database Migrations
+### 2. PM2 Deployment
+
+```bash
+# Install dependencies
+npm ci --production
+
+# Build the application
+npm run build
+
+# Start with PM2
+pm2 start ecosystem.config.js
+
+# Save PM2 configuration
+pm2 save
+pm2 startup
+
+# Monitor
+pm2 monit
+
+# Reload after updates
+git pull
+npm ci --production
+npm run build
+pm2 reload all
+```
+
+### 3. Manual Deployment
+
+```bash
+# Install dependencies
+npm ci --production
+
+# Build
+npm run build
+
+# Start production server
+npm start
+```
+
+## Database Setup
+
 ```bash
 # Run migrations
-docker-compose -f docker-compose.prod.yml exec app npm run db:migrate:deploy
+npx prisma migrate deploy
 
 # Seed initial data (optional)
-docker-compose -f docker-compose.prod.yml exec app npm run db:seed
+npx prisma db seed
 ```
 
-### 6. Deploy Monitoring Stack
+## Health Checks
+The application exposes a health endpoint at `/api/health` for monitoring.
+
+## Reverse Proxy Configuration (Nginx)
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name your-domain.com;
+
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /_next/static {
+        proxy_cache STATIC;
+        proxy_pass http://localhost:3000;
+        add_header X-Cache-Status $upstream_cache_status;
+    }
+
+    location /static {
+        proxy_cache STATIC;
+        proxy_ignore_headers Cache-Control;
+        proxy_cache_valid 60m;
+        proxy_pass http://localhost:3000;
+        add_header X-Cache-Status $upstream_cache_status;
+    }
+}
+```
+
+## CI/CD with GitHub Actions
+Push to the `main` branch triggers automatic deployment. Configure these secrets in GitHub:
+- `DATABASE_URL_TEST`
+- `DEPLOY_HOST`
+- `DEPLOY_USER`
+- `DEPLOY_KEY`
+
+## Monitoring & Logs
+
+### Application Logs
 ```bash
-# Start monitoring services
-docker-compose -f docker-compose.monitoring.yml up -d
+# Docker
+docker-compose logs -f app
 
-# Access:
-# - Prometheus: http://localhost:9090
-# - Grafana: http://localhost:3003 (admin/admin)
-# - AlertManager: http://localhost:9093
+# PM2
+pm2 logs
+
+# Manual
+tail -f logs/out.log
+tail -f logs/err.log
 ```
 
-### 7. Verify Deployment
-```bash
-# Check health endpoints
-curl https://your-domain.com/api/health
-curl https://your-domain.com/api/health/detailed
-
-# Run SSL health check
-./scripts/ssl-health-check.sh
-```
-
-## CI/CD Pipeline
-
-### GitHub Actions Workflows
-1. **Production Deployment** (`.github/workflows/production-deploy.yml`)
-   - Triggers on push to main branch
-   - Runs quality checks, security scans, builds Docker image
-   - Deploys to production server
-
-2. **Emergency Rollback** (`.github/workflows/rollback.yml`)
-   - Manual trigger for emergency rollbacks
-   - Rolls back to specified version
-   - Creates issue for tracking
-
-3. **Development CI** (`.github/workflows/development.yml`)
-   - Runs on feature branches and PRs
-   - Linting, testing, security checks
-
-### Setting Up GitHub Secrets
-Add these secrets to your GitHub repository:
-- `DEPLOY_HOST`: Production server hostname/IP
-- `DEPLOY_USER`: SSH user for deployment
-- `DEPLOY_KEY`: SSH private key for deployment
-- `PRODUCTION_URL`: Your production domain
-- `SLACK_WEBHOOK`: Slack webhook for notifications
-- `SENTRY_DSN`: Sentry DSN for error tracking
-
-## Automated Deployment Script
-```bash
-# Run the deployment script
-./scripts/deploy.sh
-
-# This script will:
-# 1. Run pre-deployment checks
-# 2. Create database backup
-# 3. Build application
-# 4. Build Docker images
-# 5. Run migrations
-# 6. Deploy containers
-# 7. Run post-deployment tasks
-```
-
-## Monitoring and Alerts
-
-### Available Dashboards
-- **Application Performance**: Response times, error rates, throughput
-- **Infrastructure**: CPU, memory, disk usage
-- **Database**: Connections, query performance, slow queries
-- **Redis**: Memory usage, hit rates, connections
-
-### Alert Rules
-- High error rate (>5%)
-- Slow response time (p95 > 1s)
-- Database connection exhaustion (>80%)
-- Low disk space (<15%)
-- SSL certificate expiry (<7 days)
-
-### Accessing Monitoring
-- Grafana: `https://your-domain.com/grafana`
-- Prometheus: `https://your-domain.com/prometheus`
-- Logs: `docker-compose -f docker-compose.prod.yml logs -f [service]`
+### Performance Monitoring
+- Built-in performance dashboard at `/performance-dashboard`
+- AgentOps integration for AI monitoring (when configured)
+- Health endpoint: `/api/health`
 
 ## Troubleshooting
 
-### TypeScript Errors
-If TypeScript errors persist:
-1. Check for syntax errors in specific files
-2. Run prettier on individual files
-3. Manually fix complex syntax issues
-4. Consider using `// @ts-nocheck` temporarily for problematic files
-
-### Docker Issues
+### Build Errors
 ```bash
-# Reset Docker environment
-docker-compose -f docker-compose.prod.yml down -v
-docker system prune -a
-
-# Rebuild without cache
-docker-compose -f docker-compose.prod.yml build --no-cache
+# Clear cache and rebuild
+rm -rf .next node_modules
+npm ci
+npm run build
 ```
 
-### Database Issues
+### Database Connection Issues
 ```bash
-# Connect to database
-docker-compose -f docker-compose.prod.yml exec postgres psql -U postgres solidity_learning_prod
+# Test connection
+npx prisma db pull
 
-# Reset database (WARNING: Data loss)
-docker-compose -f docker-compose.prod.yml exec app npm run db:reset
+# Reset database (development only!)
+npx prisma migrate reset
 ```
 
-## Rollback Procedure
-
-### Automated Rollback
-Use GitHub Actions workflow:
-1. Go to Actions → Emergency Rollback
-2. Click "Run workflow"
-3. Enter version/commit SHA
-4. Provide reason
-5. Confirm rollback
-
-### Manual Rollback
+### Port Already in Use
 ```bash
-# Stop current deployment
-docker-compose -f docker-compose.prod.yml down
+# Find process using port 3000
+lsof -i :3000
 
-# Checkout previous version
-git checkout <previous-version>
-
-# Redeploy
-./scripts/deploy.sh
+# Kill process
+kill -9 <PID>
 ```
 
 ## Security Checklist
-- [ ] Environment variables properly set
-- [ ] SSL/TLS certificates valid
-- [ ] Database passwords strong and unique
-- [ ] API rate limiting enabled
-- [ ] CORS properly configured
-- [ ] Security headers in place
-- [ ] Regular dependency updates
-- [ ] Monitoring alerts configured
+- [ ] All environment variables set
+- [ ] HTTPS configured
+- [ ] Database credentials secured
+- [ ] API keys rotated regularly
+- [ ] Firewall rules configured
+- [ ] Regular security updates
+- [ ] Backup strategy in place
 
-## Performance Optimization
-- Enable Redis caching
-- Configure CDN for static assets
-- Enable Gzip compression
-- Optimize database queries
-- Use PM2 for Node.js clustering
-- Configure Nginx caching
+## Backup Strategy
+```bash
+# Database backup
+pg_dump $DATABASE_URL > backup_$(date +%Y%m%d).sql
 
-## Maintenance
-
-### Regular Tasks
-- Weekly: Check monitoring dashboards
-- Monthly: Update dependencies
-- Monthly: Review error logs
-- Quarterly: Security audit
-- Annually: SSL certificate renewal (if not auto-renewing)
-
-### Backup Strategy
-- Database: Daily automated backups
-- Application data: Weekly backups
-- Configuration: Version controlled
-- Retention: 30 days
+# Automated backups (add to crontab)
+0 2 * * * pg_dump $DATABASE_URL > /backups/db_$(date +\%Y\%m\%d).sql
+```
 
 ## Support
+For issues or questions, please check:
+- Application logs
+- Health endpoint status
+- Database connectivity
+- Environment variables
 
-For issues or questions:
-1. Check monitoring dashboards
-2. Review application logs
-3. Check Sentry for errors
-4. Consult deployment scripts
-5. Review GitHub issues
-
-Remember to always test changes in a staging environment before deploying to production!
+## Version
+Current Version: 1.0.0

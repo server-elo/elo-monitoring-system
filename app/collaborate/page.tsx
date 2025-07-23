@@ -1,19 +1,22 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import Link from 'next/link';
+import { AuthenticatedNavbar } from '@/components/navigation/AuthenticatedNavbar';
+import { Users, GitBranch, MessageCircle, Plus } from 'lucide-react';
 
 export default function CollaboratePage(): ReactElement {
+  const handleJoinProject = (projectName: string) => {
+    alert(`Joining project: ${projectName}. Check your notifications for team invite!`);
+  };
+
+  const handleCreateProject = () => {
+    alert('Create Project modal would open here. Feature coming soon!');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-      <nav className="bg-black/20 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="text-2xl font-bold text-white">SolanaLearn</Link>
-            <Link href="/" className="text-gray-300 hover:text-white">← Back to Home</Link>
-          </div>
-        </div>
-      </nav>
+      <AuthenticatedNavbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">

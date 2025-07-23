@@ -1,0 +1,131 @@
+'use client';
+
+import { ReactElement, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+
+interface ContractDeployerProps {
+  className?: string;
+}
+
+interface DeploymentStatus {
+  status: 'idle' | 'deploying' | 'success' | 'error';
+  txHash?: string;
+  contractAddress?: string;
+  message?: string;
+}
+
+export const ContractDeployer = ({ className = '' }: ContractDeployerProps): ReactElement => {
+  const [contractCode, setContractCode] = useState('// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\ncontract MyContract {\n    // Your contract code here\n}');
+  const [contractName, setContractName] = useState('MyContract');
+  const [deployment, setDeployment] = useState<DeploymentStatus>({ status: 'idle' });
+
+  const deployContract = async (): Promise<void> => {
+    setDeployment({ status: 'deploying' });
+    
+    try {
+      // Simulate deployment process
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      setDeployment({
+        status: 'success',
+        txHash: '0xabcd1234...5678efgh',
+        contractAddress: '0x9876...dcba',
+        message: 'Contract deployed successfully!'
+      });
+    } catch (error) {
+      setDeployment({
+        status: 'error',
+        message: 'Deployment failed. Please check your contract code.'
+      });
+    }
+  };
+
+  const getStatusBadge = (): ReactElement => {
+    switch (deployment.status) {
+      case 'deploying':
+        return <Badge variant="secondary">Deploying...</Badge>;
+      case 'success':
+        return <Badge variant="default">Success</Badge>;
+      case 'error':
+        return <Badge variant="destructive">Error</Badge>;
+      default:
+        return <Badge variant="outline">Ready</Badge>;
+    }
+  };
+
+  return (
+    <motion.div
+      className={`space-y-6 ${className}`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="bg-gradient-to-br from-blue-900/20 to-green-900/20 border-blue-500/20">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Smart Contract Deployer</span>
+            {getStatusBadge()}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="contract-name">Contract Name</Label>
+            <Input
+              id="contract-name"
+              value={contractName}
+              onChange={(e) => setContractName(e.target.value)}
+              placeholder="Enter contract name"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="contract-code">Contract Code</Label>
+            <Textarea
+              id="contract-code"
+              value={contractCode}
+              onChange={(e) => setContractCode(e.target.value)}
+              rows={10}
+              className="font-mono text-sm"
+              placeholder="Enter your Solidity contract code"
+            />
+          </div>
+
+          {deployment.status === 'success' && deployment.contractAddress && (
+            <div className="space-y-2 p-4 bg-green-900/20 rounded-lg border border-green-500/20">
+              <h4 className="font-semibold text-green-400">Deployment Successful!</h4>
+              <div className="space-y-1 text-sm">
+                <p><span className="text-gray-400">Transaction Hash:</span> 
+                   <code className="text-green-300 ml-2">{deployment.txHash}</code></p>
+                <p><span className="text-gray-400">Contract Address:</span> 
+                   <code className="text-green-300 ml-2">{deployment.contractAddress}</code></p>
+              </div>
+            </div>
+          )}
+
+          {deployment.status === 'error' && deployment.message && (
+            <div className="p-4 bg-red-900/20 rounded-lg border border-red-500/20">
+              <h4 className="font-semibold text-red-400">Deployment Failed</h4>
+              <p className="text-sm text-red-300 mt-1">{deployment.message}</p>
+            </div>
+          )}
+
+          <Button
+            onClick={deployContract}
+            disabled={deployment.status === 'deploying' || !contractCode.trim()}
+            className="w-full bg-blue-600 hover:bg-blue-700"
+          >
+            {deployment.status === 'deploying' ? 'Deploying...' : 'Deploy Contract'}
+          </Button>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+};
+
+export default ContractDeployer;

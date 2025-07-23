@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { solidityMonitor } from "@/lib/monitoring/agentops";
+import { getServerSession } from "next-auth";
 // Request validation schema
 const requestSchema = z.object({
   message: z.string().min(1).max(1000),
@@ -116,19 +118,55 @@ const generateAIResponse = (message: string, code?: string, type?: string) => {
     },
   };
 };
-export async function POST(request: NextRequest): void {
+export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+  let userId = 'anonymous';
+  
   try {
+    // Get user session
+    const session = await getServerSession();
+    userId = session?.user?.id || 'anonymous';
+    
     const body = await request.json();
     // Validate request
     const validatedData = requestSchema.parse(body);
+    
+    // Start AgentOps session
+    await solidityMonitor.startCodeAssistantSession(userId, validatedData.message);
+    
     // Generate AI response (mock for now)
     const aiResponse = generateAIResponse(
       validatedData.message,
       validatedData.code,
       validatedData.type,
     );
+    
+    // Track code generation if applicable
+    if (validatedData.type === 'suggest' || validatedData.type === 'fix') {
+      await solidityMonitor.trackCodeGeneration(userId, {
+        language: 'solidity',
+        complexity: aiResponse.metadata.category || 'general',
+        lines_generated: aiResponse.response.split('\n').length,
+        execution_time: Date.now() - startTime
+      });
+    }
+    
+    // Track tool usage
+    await solidityMonitor.trackToolUsage(userId, 'ai-code-assistant', {
+      type: validatedData.type,
+      category: aiResponse.metadata.category,
+      hasCode: !!validatedData.code
+    });
+    
     // Simulate processing time
-    await new Promise((resolve: unknown) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    // End session successfully
+    await solidityMonitor.endSession(userId, 'success', {
+      response_time: Date.now() - startTime,
+      category: aiResponse.metadata.category
+    });
+    
     return NextResponse.json({
       success: true,
       data: {
@@ -148,6 +186,18 @@ export async function POST(request: NextRequest): void {
         { status: 400 },
       );
     }
+    // Track error in monitoring
+    await solidityMonitor.trackError(error as Error, {
+      userId,
+      endpoint: 'ai-code-assistant',
+      method: 'POST'
+    });
+    
+    // End session with error
+    await solidityMonitor.endSession(userId, 'error', {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+    
     console.error("AI Assistant error:", error);
     return NextResponse.json(
       {
@@ -159,8 +209,15 @@ export async function POST(request: NextRequest): void {
   }
 }
 // Code analysis endpoint
-export async function PUT(request: NextRequest): void {
+export async function PUT(request: NextRequest) {
+  const startTime = Date.now();
+  let userId = 'anonymous';
+  
   try {
+    // Get user session
+    const session = await getServerSession();
+    userId = session?.user?.id || 'anonymous';
+    
     const body = await request.json();
     const { code } = body;
     if (!code) {
@@ -172,6 +229,9 @@ export async function PUT(request: NextRequest): void {
         { status: 400 },
       );
     }
+    
+    // Start monitoring session
+    await solidityMonitor.startCodeAssistantSession(userId, 'code-analysis');
     // Mock analysis results
     const analysis = {
       security: {
@@ -220,12 +280,46 @@ export async function PUT(request: NextRequest): void {
         documentation: 82,
       },
     };
+    
+    // Track code analysis
+    await solidityMonitor.trackCodeAnalysis(userId, {
+      contract_name: 'analyzed-contract',
+      vulnerabilities_found: analysis.security.issues.length,
+      gas_optimization_suggestions: analysis.gas.optimizations.length,
+      execution_time: Date.now() - startTime
+    });
+    
+    // Track tool usage
+    await solidityMonitor.trackToolUsage(userId, 'code-analyzer', {
+      security_score: analysis.security.score,
+      quality_score: analysis.quality.score,
+      total_savings: analysis.gas.totalSavings
+    });
+    
+    // End session successfully
+    await solidityMonitor.endSession(userId, 'success', {
+      response_time: Date.now() - startTime,
+      issues_found: analysis.security.issues.length + analysis.gas.optimizations.length
+    });
+    
     return NextResponse.json({
       success: true,
       data: analysis,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
+    // Track error
+    await solidityMonitor.trackError(error as Error, {
+      userId,
+      endpoint: 'ai-code-assistant',
+      method: 'PUT'
+    });
+    
+    // End session with error
+    await solidityMonitor.endSession(userId, 'error', {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+    
     console.error("Code analysis error:", error);
     return NextResponse.json(
       {

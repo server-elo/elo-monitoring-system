@@ -16,7 +16,7 @@ const registerSchema = z.object({
     ),
   username: z.string().min(3).max(20).optional(),
 });
-export async function POST(request: Request): void {
+export async function POST(request: Request): Promise<NextResponse> {
   try {
     const body = await request.json();
     // Validate input

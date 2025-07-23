@@ -12,7 +12,7 @@ const analyzeRequestSchema = z.object({
   includeCodeQuality: z.boolean().default(true),
 });
 // Mock AI analysis function
-async function performAIAnalysis(code: string, language: string): void {
+async function performAIAnalysis(code: string, language: string): Promise<any> {
   // In a real implementation, this would call an AI service
   // For now, we'll return a comprehensive mock analysis
   const lines = code.split("\n");
@@ -127,7 +127,7 @@ async function performAIAnalysis(code: string, language: string): void {
   };
   return analysis;
 }
-export async function POST(req: NextRequest): void {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const body = await req.json();
     const validatedData = analyzeRequestSchema.parse(body);

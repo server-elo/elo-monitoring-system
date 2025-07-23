@@ -32,7 +32,7 @@ export default function MobileEditorDemo(): ReactElement {
           </div>
           <div className="p-6">
             <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm max-h-96 overflow-y-auto">
-              <div className="text-green-400">// SPDX-License-Identifier: MIT</div>
+              <div className="text-green-400">{`// SPDX-License-Identifier: MIT`}</div>
               <div className="text-blue-400">pragma solidity ^0.8.0;</div>
               <div className="mt-4">
                 <div className="text-purple-400">contract</div> <div className="text-yellow-400 inline">MobileToken</div> <div className="text-white inline">{'{'}</div>

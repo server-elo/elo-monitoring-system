@@ -12,7 +12,7 @@ async function generateCode(
   query: string,
   context?: string,
   language?: string,
-): void {
+): Promise<string> {
   const lowerQuery = query.toLowerCase();
   // ERC20 Token
   if (lowerQuery.includes("erc20") || lowerQuery.includes("token")) {
@@ -330,7 +330,7 @@ async function generateCode(
     // Add more functions based on: ${query}
   }`;
 }
-export async function POST(req: NextRequest): void {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const body = await req.json();
     const validatedData = generateRequestSchema.parse(body);

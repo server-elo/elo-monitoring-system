@@ -1,20 +1,29 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import Link from 'next/link';
+import { AuthenticatedNavbar } from '@/components/navigation/AuthenticatedNavbar';
+import { MapPin, Clock, DollarSign, ExternalLink } from 'lucide-react';
 
 export default function JobsPage(): ReactElement {
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  
+  const handleApply = (jobTitle: string, company: string) => {
+    window.open(`https://jobs.example.com/apply?job=${encodeURIComponent(jobTitle)}&company=${encodeURIComponent(company)}`, '_blank');
+  };
+
+  const filters = [
+    { id: 'all', label: 'All Jobs' },
+    { id: 'smart-contracts', label: 'Smart Contracts' },
+    { id: 'defi', label: 'DeFi' },
+    { id: 'frontend', label: 'Frontend' },
+    { id: 'security', label: 'Security' },
+    { id: 'remote', label: 'Remote' }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-      {/* Navigation */}
-      <nav className="bg-black/20 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="text-2xl font-bold text-white">SolanaLearn</Link>
-            <Link href="/" className="text-gray-300 hover:text-white">← Back to Home</Link>
-          </div>
-        </div>
-      </nav>
+      <AuthenticatedNavbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
@@ -24,21 +33,19 @@ export default function JobsPage(): ReactElement {
 
         {/* Job Filters */}
         <div className="flex flex-wrap gap-3 mb-8">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold">
-            All Jobs
-          </button>
-          <button className="bg-white/10 text-gray-300 hover:bg-white/20 px-4 py-2 rounded-lg">
-            Remote
-          </button>
-          <button className="bg-white/10 text-gray-300 hover:bg-white/20 px-4 py-2 rounded-lg">
-            Full-time
-          </button>
-          <button className="bg-white/10 text-gray-300 hover:bg-white/20 px-4 py-2 rounded-lg">
-            Senior Level
-          </button>
-          <button className="bg-white/10 text-gray-300 hover:bg-white/20 px-4 py-2 rounded-lg">
-            $150k+
-          </button>
+          {filters.map((filter) => (
+            <button
+              key={filter.id}
+              onClick={() => setSelectedFilter(filter.id)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                selectedFilter === filter.id
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              }`}
+            >
+              {filter.label}
+            </button>
+          ))}
         </div>
 
         {/* Job Listings */}
@@ -69,8 +76,12 @@ export default function JobsPage(): ReactElement {
               <span className="bg-purple-600/30 text-purple-200 px-3 py-1 rounded-full text-sm">Leadership</span>
               <span className="bg-green-600/30 text-green-200 px-3 py-1 rounded-full text-sm">Remote</span>
             </div>
-            <button className="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-lg font-semibold">
-              Apply Now
+            <button 
+              onClick={() => handleApply('Lead Solidity Developer', 'Ethereum Foundation')}
+              className="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-colors"
+            >
+              <span>Apply Now</span>
+              <ExternalLink className="w-4 h-4" />
             </button>
           </div>
 

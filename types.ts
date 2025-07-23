@@ -1,36 +1,67 @@
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  avatar?: string;
+  xp: number;
+  level: number;
+  achievements: string[];
+  completedLessons: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-export type LearningLevel: 'Beginner' | 'Intermediate' | 'Advanced' | 'Master'; export interface QuizOption {
-  id: string;
-  text: string;
-} export interface QuizQuestion {
-  id: string;
-  questionText: string;
-  options: QuizOption[];
-  correctOptionId: string;
-  explanation?: string;
-  // Explanation for the correct answer;
-} export interface QuizData {
-  title: string;
-  questions: QuizQuestion[];
-} export interface LearningModule {
+export interface Course {
   id: string;
   title: string;
-  category: string;
-  level: LearningLevel;
-  summary: string;
+  description: string;
+  icon: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  estimatedTime: number;
+  lessons: Lesson[];
+  progress: number;
+  isLocked?: boolean;
+}
+
+export interface Lesson {
+  id: string;
+  title: string;
   content: string;
-  // Can contain markdown-like syntax;
-  keywords: string[];
-  geminiPromptSeed?: string;
-  videoEmbedUrl?: string;
-  // URL for embedding a video ( e.g.;
-  YouTube embed URL);
-  quiz?: QuizData;
-  // Quiz data for the module;
-} export enum ChatMessageRole { USER: 'user', MODEL: 'model', SYSTEM: 'system', ERROR: 'error'
-} export interface ChatMessage {
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  estimatedTime: number;
+  codeExample?: string;
+  quiz?: Quiz;
+  isCompleted?: boolean;
+}
+
+export interface Quiz {
   id: string;
-  role: ChatMessageRole;
-  text: string;
-  timestamp: Date;
+  questions: Question[];
+}
+
+export interface Question {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  xpReward: number;
+  isUnlocked: boolean;
+  unlockedAt?: Date;
+}
+
+export interface Certificate {
+  id: string;
+  title: string;
+  description: string;
+  issueDate: Date;
+  blockchainHash?: string;
+  downloadUrl?: string;
 }

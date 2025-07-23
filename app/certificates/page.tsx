@@ -1,20 +1,45 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import Link from 'next/link';
+import { AuthenticatedNavbar } from '@/components/navigation/AuthenticatedNavbar';
+import { useUserStore } from '@/lib/stores/userStore';
+import { useCourseStore } from '@/lib/stores/courseStore';
+import { ExternalLink, Download, Share2, Eye } from 'lucide-react';
 
 export default function CertificatesPage(): ReactElement {
+  const { user } = useUserStore();
+  const { courses } = useCourseStore();
+
+  const handleViewOnChain = (certificateId: string) => {
+    // Mock blockchain explorer link
+    const txHash = '0x' + Math.random().toString(16).substr(2, 40);
+    window.open(`https://etherscan.io/tx/${txHash}`, '_blank');
+  };
+
+  const handleDownload = (certificateName: string) => {
+    // Mock certificate download
+    alert(`Downloading ${certificateName} certificate as PDF...`);
+  };
+
+  const handleShare = (certificateName: string) => {
+    const shareUrl = `${window.location.origin}/certificates/verify/${Math.random().toString(36).substr(2, 9)}`;
+    navigator.clipboard.writeText(shareUrl);
+    alert(`${certificateName} verification link copied to clipboard!`);
+  };
+
+  const handleViewNFT = (nftId: string) => {
+    // Mock OpenSea link
+    window.open(`https://opensea.io/assets/ethereum/0x123/${nftId}`, '_blank');
+  };
+
+  const handleContinueLearning = (courseId: string) => {
+    window.location.href = `/learn/${courseId}`;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-      {/* Navigation */}
-      <nav className="bg-black/20 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="text-2xl font-bold text-white">SolanaLearn</Link>
-            <Link href="/" className="text-gray-300 hover:text-white">← Back to Home</Link>
-          </div>
-        </div>
-      </nav>
+      <AuthenticatedNavbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
@@ -60,11 +85,19 @@ export default function CertificatesPage(): ReactElement {
               <div className="p-4">
                 <div className="text-green-400 text-sm mb-2">✅ Earned December 15, 2024</div>
                 <div className="flex space-x-2">
-                  <button className="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm">
-                    View on Chain
+                  <button 
+                    onClick={() => handleViewOnChain('SF2025-001')}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm flex items-center justify-center space-x-1"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    <span>View on Chain</span>
                   </button>
-                  <button className="flex-1 bg-white/10 hover:bg-white/20 text-gray-300 px-3 py-2 rounded-lg text-sm">
-                    Download
+                  <button 
+                    onClick={() => handleDownload('Solidity Fundamentals')}
+                    className="flex-1 bg-white/10 hover:bg-white/20 text-gray-300 px-3 py-2 rounded-lg text-sm flex items-center justify-center space-x-1"
+                  >
+                    <Download className="w-3 h-3" />
+                    <span>Download</span>
                   </button>
                 </div>
               </div>
@@ -80,11 +113,19 @@ export default function CertificatesPage(): ReactElement {
               <div className="p-4">
                 <div className="text-blue-400 text-sm mb-2">✅ Earned January 8, 2025</div>
                 <div className="flex space-x-2">
-                  <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm">
-                    View NFT
+                  <button 
+                    onClick={() => handleViewNFT('SCS2025-007')}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex items-center justify-center space-x-1"
+                  >
+                    <Eye className="w-3 h-3" />
+                    <span>View NFT</span>
                   </button>
-                  <button className="flex-1 bg-white/10 hover:bg-white/20 text-gray-300 px-3 py-2 rounded-lg text-sm">
-                    Share
+                  <button 
+                    onClick={() => handleShare('Smart Contract Security')}
+                    className="flex-1 bg-white/10 hover:bg-white/20 text-gray-300 px-3 py-2 rounded-lg text-sm flex items-center justify-center space-x-1"
+                  >
+                    <Share2 className="w-3 h-3" />
+                    <span>Share</span>
                   </button>
                 </div>
               </div>
@@ -100,11 +141,19 @@ export default function CertificatesPage(): ReactElement {
               <div className="p-4">
                 <div className="text-purple-400 text-sm mb-2">✅ Earned January 20, 2025</div>
                 <div className="flex space-x-2">
-                  <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm">
-                    View SBT
+                  <button 
+                    onClick={() => handleViewNFT('GO2025-023')}
+                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm flex items-center justify-center space-x-1"
+                  >
+                    <Eye className="w-3 h-3" />
+                    <span>View SBT</span>
                   </button>
-                  <button className="flex-1 bg-white/10 hover:bg-white/20 text-gray-300 px-3 py-2 rounded-lg text-sm">
-                    LinkedIn
+                  <button 
+                    onClick={() => window.open('https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=Gas%20Optimization%20Master&organizationName=SolidityLearn&issueYear=2025', '_blank')}
+                    className="flex-1 bg-white/10 hover:bg-white/20 text-gray-300 px-3 py-2 rounded-lg text-sm flex items-center justify-center space-x-1"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    <span>LinkedIn</span>
                   </button>
                 </div>
               </div>
@@ -135,7 +184,10 @@ export default function CertificatesPage(): ReactElement {
                   <div className="bg-orange-500 h-2 rounded-full" style={{width: '70%'}}></div>
                 </div>
               </div>
-              <button className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold">
+              <button 
+                onClick={() => handleContinueLearning('defi-protocols')}
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors"
+              >
                 Continue Learning
               </button>
             </div>
@@ -159,7 +211,10 @@ export default function CertificatesPage(): ReactElement {
                   <div className="bg-cyan-500 h-2 rounded-full" style={{width: '38%'}}></div>
                 </div>
               </div>
-              <button className="w-full bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-3 rounded-lg font-semibold">
+              <button 
+                onClick={() => handleContinueLearning('cross-chain-development')}
+                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors"
+              >
                 Continue Learning
               </button>
             </div>
